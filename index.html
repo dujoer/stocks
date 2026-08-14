@@ -3,30 +3,41 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>龙虎榜机构 / 游资分析看板</title>
 <style>
+:root{
+  --bg-start:#0f172a;--bg-mid:#1e1b4b;--bg-end:#0f172a;
+  --card:rgba(255,255,255,.06);--card-border:rgba(255,255,255,.10);--card-radius:16px;
+  --table:rgba(15,23,42,.55);--table-header:rgba(30,41,59,.85);
+  --text:#f8fafc;--text-sub:#cbd5e1;--text-muted:#94a3b8;
+  --up:#f87171;--up-soft:rgba(248,113,113,.15);
+  --down:#4ade80;--down-soft:rgba(74,222,128,.15);
+  --amber:#fbbf24;--amber-soft:rgba(251,191,36,.12);
+  --blue:#60a5fa;--blue-soft:rgba(96,165,250,.15);
+  --purple:#c084fc;--purple-soft:rgba(192,132,252,.15);
+}
 *{box-sizing:border-box;}
 body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
-  background:linear-gradient(160deg,#0f172a 0%,#1e293b 45%,#0b2545 100%);color:#e2e8f0;min-height:100vh;}
-.wrap{max-width:980px;margin:0 auto;padding:48px 20px 60px;}
-header h1{font-size:30px;margin:0 0 8px;background:linear-gradient(90deg,#fbbf24,#f87171);
+  background:linear-gradient(135deg,var(--bg-start) 0%,var(--bg-mid) 45%,var(--bg-end) 100%);color:var(--text);min-height:100vh;}
+.wrap{max-width:1000px;margin:0 auto;padding:48px 20px 60px;}
+header h1{font-size:32px;margin:0 0 10px;background:linear-gradient(90deg,#fbbf24,#f87171,#c084fc);
   -webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;}
-header p{margin:4px 0;color:#94a3b8;font-size:14px;}
-.meta{margin:18px 0 28px;font-size:13px;color:#cbd5e1;}
-.meta b{color:#fbbf24;}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;}
-.card{position:relative;text-decoration:none;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
-  border-radius:16px;padding:20px;transition:.18s;backdrop-filter:blur(6px);}
-.card:hover{transform:translateY(-4px);border-color:#fbbf24;background:rgba(255,255,255,.09);box-shadow:0 12px 30px rgba(0,0,0,.35);}
-.badge{position:absolute;top:14px;right:14px;background:#fbbf24;color:#1e293b;font-size:11px;font-weight:700;
-  padding:2px 9px;border-radius:20px;}
-.date{font-size:20px;font-weight:700;color:#fff;letter-spacing:.5px;}
-.week{font-size:12px;color:#94a3b8;margin-bottom:14px;}
-.stats{display:flex;gap:10px;margin:12px 0 16px;}
-.stat{flex:1;background:rgba(0,0,0,.25);border-radius:10px;padding:10px 6px;text-align:center;}
-.stat .num{display:block;font-size:18px;font-weight:700;color:#fbbf24;}
-.stat .lbl{display:block;font-size:11px;color:#94a3b8;margin-top:2px;}
-.go{font-size:13px;color:#60a5fa;font-weight:600;}
-footer{margin-top:40px;padding-top:18px;border-top:1px solid rgba(255,255,255,.1);font-size:12px;color:#94a3b8;line-height:1.7;}
-.empty{color:#94a3b8;text-align:center;padding:60px 0;}
+header p{margin:4px 0;color:var(--text-muted);font-size:14px;line-height:1.6;}
+.meta{margin:18px 0 28px;font-size:13px;color:var(--text-sub);}
+.meta b{color:var(--amber);}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;}
+.card{position:relative;text-decoration:none;background:var(--card);border:1px solid var(--card-border);
+  border-radius:var(--card-radius);padding:22px;transition:.2s;backdrop-filter:blur(10px);box-shadow:0 4px 20px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.06);}
+.card:hover{transform:translateY(-5px);border-color:rgba(251,191,36,.35);background:linear-gradient(135deg,rgba(251,191,36,.08),rgba(255,255,255,.07));box-shadow:0 14px 40px rgba(0,0,0,.3);}
+.badge{position:absolute;top:14px;right:14px;background:var(--amber);color:#1e293b;font-size:11px;font-weight:700;
+  padding:3px 10px;border-radius:20px;box-shadow:0 2px 8px rgba(251,191,36,.25);}
+.date{font-size:22px;font-weight:800;color:#fff;letter-spacing:.5px;}
+.week{font-size:12px;color:var(--text-muted);margin-bottom:14px;}
+.stats{display:flex;gap:10px;margin:14px 0 18px;}
+.stat{flex:1;background:rgba(0,0,0,.22);border-radius:12px;padding:12px 6px;text-align:center;border:1px solid rgba(255,255,255,.06);}
+.stat .num{display:block;font-size:20px;font-weight:800;color:var(--amber);}
+.stat .lbl{display:block;font-size:11px;color:var(--text-muted);margin-top:3px;}
+.go{font-size:13px;color:var(--blue);font-weight:600;}
+footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--card-border);font-size:12px;color:var(--text-muted);line-height:1.8;}
+.empty{color:var(--text-muted);text-align:center;padding:60px 0;}
 </style></head>
 <body>
 <div class="wrap">
@@ -36,29 +47,29 @@ footer{margin-top:40px;padding-top:18px;border-top:1px solid rgba(255,255,255,.1
 </header>
 <div class="meta">共 <b>1</b> 期分析 · 最新 <b>2026-08-14</b> · 数据来源：腾讯自选股龙虎榜/板块接口</div>
 
-<div class="market-overview-compact" style="background:rgba(30,41,59,.55);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:20px 22px;margin:0 0 22px;box-shadow:0 8px 30px rgba(0,0,0,.25);backdrop-filter:blur(8px);">
+<div class="market-overview-compact" style="background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:20px;padding:20px 22px;margin:0 0 22px;box-shadow:0 8px 32px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.06);backdrop-filter:blur(12px);">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap">
     <h2 style="font-size:18px;margin:0;color:#fff;font-weight:700">📈 2026-08-14 大盘概览</h2>
     <span style="font-size:12px;color:#94a3b8">数据来源：腾讯自选股市场总览</span>
   </div>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px">
-        <div style="background:rgba(220,38,38,.15);border:1px solid rgba(248,113,113,.35);border-radius:12px;padding:12px 8px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.15);color:#f8fafc">
-          <div style="font-size:11px;color:#e2e8f0;letter-spacing:.3px;font-weight:500">上证指数</div>
-          <div style="font-size:20px;font-weight:700;color:#fff;margin:5px 0 2px;text-shadow:0 1px 2px rgba(0,0,0,.3)">3927.18</div>
+        <div style="background:linear-gradient(135deg,rgba(220,38,38,.18),rgba(220,38,38,.06));border:1px solid rgba(248,113,113,.35);border-radius:14px;padding:12px 8px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.18),0 0 14px rgba(248,113,113,.12);color:#f8fafc;backdrop-filter:blur(8px)">
+          <div style="font-size:11px;color:var(--text-sub);letter-spacing:.3px;font-weight:500">上证指数</div>
+          <div style="font-size:20px;font-weight:800;color:#fff;margin:5px 0 2px;text-shadow:0 1px 2px rgba(0,0,0,.3)">3927.18</div>
           <div style="font-size:13px;font-weight:700;color:#fca5a5">+0.01% ↑</div>
-          <div style="font-size:10px;color:#cbd5e1;margin-top:4px;text-shadow:0 1px 2px rgba(0,0,0,.3)">H 3932.64 · L 3903.70</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:4px">H 3932.64 · L 3903.70</div>
         </div>
-        <div style="background:rgba(220,38,38,.15);border:1px solid rgba(248,113,113,.35);border-radius:12px;padding:12px 8px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.15);color:#f8fafc">
-          <div style="font-size:11px;color:#e2e8f0;letter-spacing:.3px;font-weight:500">深证成指</div>
-          <div style="font-size:20px;font-weight:700;color:#fff;margin:5px 0 2px;text-shadow:0 1px 2px rgba(0,0,0,.3)">14354.31</div>
+        <div style="background:linear-gradient(135deg,rgba(220,38,38,.18),rgba(220,38,38,.06));border:1px solid rgba(248,113,113,.35);border-radius:14px;padding:12px 8px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.18),0 0 14px rgba(248,113,113,.12);color:#f8fafc;backdrop-filter:blur(8px)">
+          <div style="font-size:11px;color:var(--text-sub);letter-spacing:.3px;font-weight:500">深证成指</div>
+          <div style="font-size:20px;font-weight:800;color:#fff;margin:5px 0 2px;text-shadow:0 1px 2px rgba(0,0,0,.3)">14354.31</div>
           <div style="font-size:13px;font-weight:700;color:#fca5a5">+0.45% ↑</div>
-          <div style="font-size:10px;color:#cbd5e1;margin-top:4px;text-shadow:0 1px 2px rgba(0,0,0,.3)">H 14384.18 · L 14203.99</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:4px">H 14384.18 · L 14203.99</div>
         </div>
-        <div style="background:rgba(220,38,38,.15);border:1px solid rgba(248,113,113,.35);border-radius:12px;padding:12px 8px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.15);color:#f8fafc">
-          <div style="font-size:11px;color:#e2e8f0;letter-spacing:.3px;font-weight:500">创业板指</div>
-          <div style="font-size:20px;font-weight:700;color:#fff;margin:5px 0 2px;text-shadow:0 1px 2px rgba(0,0,0,.3)">3626.30</div>
+        <div style="background:linear-gradient(135deg,rgba(220,38,38,.18),rgba(220,38,38,.06));border:1px solid rgba(248,113,113,.35);border-radius:14px;padding:12px 8px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.18),0 0 14px rgba(248,113,113,.12);color:#f8fafc;backdrop-filter:blur(8px)">
+          <div style="font-size:11px;color:var(--text-sub);letter-spacing:.3px;font-weight:500">创业板指</div>
+          <div style="font-size:20px;font-weight:800;color:#fff;margin:5px 0 2px;text-shadow:0 1px 2px rgba(0,0,0,.3)">3626.30</div>
           <div style="font-size:13px;font-weight:700;color:#fca5a5">+1.12% ↑</div>
-          <div style="font-size:10px;color:#cbd5e1;margin-top:4px;text-shadow:0 1px 2px rgba(0,0,0,.3)">H 3633.03 · L 3578.61</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:4px">H 3633.03 · L 3578.61</div>
         </div>
         <div style="background:rgba(37,99,235,.14);border:1px solid rgba(96,165,250,.40);border-radius:12px;padding:12px 8px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.15);color:#f8fafc">
           <div style="font-size:11px;color:#e2e8f0;letter-spacing:.3px;font-weight:500">沪深京成交额</div>
@@ -68,44 +79,44 @@ footer{margin-top:40px;padding-top:18px;border-top:1px solid rgba(255,255,255,.1
         </div></div>
   <div style="display:flex;height:28px;border-radius:8px;overflow:hidden;margin:12px 0;font-size:11px;color:#fff;text-align:center;line-height:28px;box-shadow:0 2px 6px rgba(0,0,0,.2);">
     <div style="background:linear-gradient(90deg,#dc2626,#ef4444);width:43.3%;min-width:42px">涨 2400<br><span style="font-size:9px;opacity:.9">43.3%</span></div>
-    <div style="background:#64748b;width:3.1%;min-width:32px">平 173</div>
+    <div style="background:linear-gradient(90deg,rgba(148,163,184,.70),rgba(148,163,184,.55));width:3.1%;min-width:32px">平 173</div>
     <div style="background:linear-gradient(90deg,#16a34a,#22c55e);width:53.6%;min-width:42px">跌 2970<br><span style="font-size:9px;opacity:.9">53.6%</span></div>
   </div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin:12px 0"><div style="background:rgba(15,23,42,.55);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:9px 6px;text-align:center;min-width:72px">
-          <div style="font-size:10px;color:#94a3b8">涨停</div>
-          <div style="font-size:16px;font-weight:700;color:#f87171;margin-top:3px">54</div>
-        </div><div style="background:rgba(15,23,42,.55);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:9px 6px;text-align:center;min-width:72px">
-          <div style="font-size:10px;color:#94a3b8">跌停</div>
-          <div style="font-size:16px;font-weight:700;color:#4ade80;margin-top:3px">1</div>
-        </div><div style="background:rgba(15,23,42,.55);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:9px 6px;text-align:center;min-width:72px">
-          <div style="font-size:10px;color:#94a3b8">涨跌比</div>
-          <div style="font-size:16px;font-weight:700;color:#fbbf24;margin-top:3px">0.81</div>
-        </div><div style="background:rgba(15,23,42,.55);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:9px 6px;text-align:center;min-width:72px">
-          <div style="font-size:10px;color:#94a3b8">上涨家数</div>
-          <div style="font-size:16px;font-weight:700;color:#f87171;margin-top:3px">2400<span style='font-size:10px;color:#64748b'> (43.3%)</span></div>
-        </div><div style="background:rgba(15,23,42,.55);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:9px 6px;text-align:center;min-width:72px">
-          <div style="font-size:10px;color:#94a3b8">下跌家数</div>
-          <div style="font-size:16px;font-weight:700;color:#4ade80;margin-top:3px">2970<span style='font-size:10px;color:#64748b'> (53.6%)</span></div>
-        </div><div style="background:rgba(15,23,42,.55);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:9px 6px;text-align:center;min-width:72px">
-          <div style="font-size:10px;color:#94a3b8">5日新高/低</div>
-          <div style="font-size:16px;font-weight:700;color:#60a5fa;margin-top:3px">708/2272</div>
-        </div><div style="background:rgba(15,23,42,.55);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:9px 6px;text-align:center;min-width:72px">
-          <div style="font-size:10px;color:#94a3b8">20日新高/低</div>
-          <div style="font-size:16px;font-weight:700;color:#a78bfa;margin-top:3px">563/118</div>
-        </div><div style="background:rgba(15,23,42,.55);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:9px 6px;text-align:center;min-width:72px">
-          <div style="font-size:10px;color:#94a3b8">PE_TTM</div>
-          <div style="font-size:16px;font-weight:700;color:#f8fafc;margin-top:3px">21.63</div>
-        </div><div style="background:rgba(15,23,42,.55);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:9px 6px;text-align:center;min-width:72px">
-          <div style="font-size:10px;color:#94a3b8">10年分位</div>
-          <div style="font-size:16px;font-weight:700;color:#f472b6;margin-top:3px">93.37%</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin:12px 0"><div style="background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:12px;padding:10px 6px;text-align:center;min-width:72px;backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.12)">
+          <div style="font-size:10px;color:var(--text-muted)">涨停</div>
+          <div style="font-size:16px;font-weight:800;color:#f87171;margin-top:3px">54</div>
+        </div><div style="background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:12px;padding:10px 6px;text-align:center;min-width:72px;backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.12)">
+          <div style="font-size:10px;color:var(--text-muted)">跌停</div>
+          <div style="font-size:16px;font-weight:800;color:#4ade80;margin-top:3px">1</div>
+        </div><div style="background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:12px;padding:10px 6px;text-align:center;min-width:72px;backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.12)">
+          <div style="font-size:10px;color:var(--text-muted)">涨跌比</div>
+          <div style="font-size:16px;font-weight:800;color:#fbbf24;margin-top:3px">0.81</div>
+        </div><div style="background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:12px;padding:10px 6px;text-align:center;min-width:72px;backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.12)">
+          <div style="font-size:10px;color:var(--text-muted)">上涨家数</div>
+          <div style="font-size:16px;font-weight:800;color:#f87171;margin-top:3px">2400<span style='font-size:10px;color:var(--text-muted)'> (43.3%)</span></div>
+        </div><div style="background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:12px;padding:10px 6px;text-align:center;min-width:72px;backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.12)">
+          <div style="font-size:10px;color:var(--text-muted)">下跌家数</div>
+          <div style="font-size:16px;font-weight:800;color:#4ade80;margin-top:3px">2970<span style='font-size:10px;color:var(--text-muted)'> (53.6%)</span></div>
+        </div><div style="background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:12px;padding:10px 6px;text-align:center;min-width:72px;backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.12)">
+          <div style="font-size:10px;color:var(--text-muted)">5日新高/低</div>
+          <div style="font-size:16px;font-weight:800;color:#60a5fa;margin-top:3px">708/2272</div>
+        </div><div style="background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:12px;padding:10px 6px;text-align:center;min-width:72px;backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.12)">
+          <div style="font-size:10px;color:var(--text-muted)">20日新高/低</div>
+          <div style="font-size:16px;font-weight:800;color:#a78bfa;margin-top:3px">563/118</div>
+        </div><div style="background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:12px;padding:10px 6px;text-align:center;min-width:72px;backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.12)">
+          <div style="font-size:10px;color:var(--text-muted)">PE_TTM</div>
+          <div style="font-size:16px;font-weight:800;color:#f8fafc;margin-top:3px">21.63</div>
+        </div><div style="background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:12px;padding:10px 6px;text-align:center;min-width:72px;backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.12)">
+          <div style="font-size:10px;color:var(--text-muted)">10年分位</div>
+          <div style="font-size:16px;font-weight:800;color:#f472b6;margin-top:3px">93.37%</div>
         </div></div>
   <div style="margin:10px 0 6px"><span style="display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:3px 8px;font-size:11px;color:#e2e8f0;margin:2px 4px 2px 0"><span style="color:#94a3b8">情绪</span> 情绪狂热</span><span style="display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:3px 8px;font-size:11px;color:#e2e8f0;margin:2px 4px 2px 0"><span style="color:#94a3b8">技术</span> 极强</span><span style="display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:3px 8px;font-size:11px;color:#e2e8f0;margin:2px 4px 2px 0"><span style="color:#94a3b8">估值</span> 高估强势</span><span style="display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:3px 8px;font-size:11px;color:#e2e8f0;margin:2px 4px 2px 0"><span style="color:#94a3b8">量能</span> 缩量震荡</span><span style="display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:3px 8px;font-size:11px;color:#e2e8f0;margin:2px 4px 2px 0"><span style="color:#94a3b8">大小盘</span> 小盘占优</span><span style="display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:3px 8px;font-size:11px;color:#e2e8f0;margin:2px 4px 2px 0"><span style="color:#94a3b8">风格</span> 成长占优</span></div>
-  <div style="font-size:13px;color:#fde68a;background:rgba(251,191,36,.08);border-left:3px solid #fbbf24;border-radius:0 10px 10px 0;padding:11px 14px;line-height:1.6;margin-top:12px">
+  <div style="font-size:13px;color:var(--amber);background:linear-gradient(90deg,rgba(251,191,36,.10),rgba(251,191,36,.03));border:1px solid rgba(251,191,36,.20);border-radius:12px;padding:12px 16px;line-height:1.6;margin-top:12px">
     <b>📌 专业点评：</b>缩量，情绪狂热，普涨，小盘占优，成长占优，高估强势，涨跌比 2400:2970，短期温和上涨。
   </div>
 </div>
 
-<div class="sector-overview-compact" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:18px 20px;margin:0 0 22px;">
+<div class="sector-overview-compact" style="background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:20px;padding:18px 20px;margin:0 0 22px;box-shadow:0 4px 20px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.05);backdrop-filter:blur(10px);">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap">
     <h2 style="font-size:17px;margin:0;color:#fff">🔥 2026-08-14 板块热度</h2>
     <span style="font-size:12px;color:#94a3b8">数据来源：腾讯自选股板块排行</span>
@@ -120,12 +131,12 @@ footer{margin-top:40px;padding-top:18px;border-top:1px solid rgba(255,255,255,.1
       <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e2e8f0">光通信</span><span style="color:#dc2626;font-weight:600">+2.71%</span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e2e8f0">5G概念</span><span style="color:#dc2626;font-weight:600">+1.53%</span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e2e8f0">共封装光模块(CPO）</span><span style="color:#dc2626;font-weight:600">+2.88%</span></div>
     </div>
   </div>
-  <div style="font-size:13px;color:#fde68a;background:rgba(0,0,0,.2);border-radius:8px;padding:10px 12px;margin-top:12px;line-height:1.5">
+  <div style="font-size:13px;color:var(--amber);background:linear-gradient(135deg,rgba(251,191,36,.10),rgba(251,191,36,.03));border:1px solid rgba(251,191,36,.20);border-radius:12px;padding:12px 14px;margin-top:12px;line-height:1.5">
     <b>轮动点评：</b>行业领涨：通信设备、通信服务、小金属；概念领涨：光通信、5G概念、共封装光模块(CPO）；主力净流入最多：光通信。
   </div>
 </div>
 
-<div class="leader-overview-compact" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:18px 20px;margin:0 0 22px;">
+<div class="leader-overview-compact" style="background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:20px;padding:18px 20px;margin:0 0 22px;box-shadow:0 4px 20px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.05);backdrop-filter:blur(10px);">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap">
     <h2 style="font-size:17px;margin:0;color:#fff">👑 2026-08-14 当日龙头股（多口径）</h2>
     <span style="font-size:12px;color:#94a3b8">悬停看来源与算法</span>
