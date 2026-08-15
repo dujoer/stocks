@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全行业板块强度精选矩阵 · 2026-08-15</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+  :root{
+    --bg:#f5f7fa; --card:#ffffff; --ink:#1f2933; --sub:#5b6770; --line:#e3e8ef;
+    --red:#d92b2b; --green:#1a8a4f; --amber:#c77c00; --blue:#1f5fbf; --purple:#7b3fb0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+       background:var(--bg);color:var(--ink);line-height:1.6;}
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 60px;}
+  header{background:linear-gradient(135deg,#1f3a5f,#2b6cb0);color:#fff;border-radius:14px;padding:26px 30px;margin-bottom:22px;}
+  header h1{margin:0 0 6px;font-size:24px;font-weight:700;}
+  header p{margin:2px 0;font-size:13px;opacity:.92;}
+  .tag{display:inline-block;background:rgba(255,255,255,.18);border-radius:20px;padding:2px 12px;font-size:12px;margin:6px 6px 0 0;}
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 24px;margin-bottom:20px;
+          box-shadow:0 1px 3px rgba(0,0,0,.04);}
+  h2{font-size:19px;margin:0 0 14px;padding-left:11px;border-left:4px solid var(--blue);}
+  h3{font-size:15px;margin:18px 0 8px;color:var(--ink);}
+  .muted{color:var(--sub);font-size:13px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(218px,1fr));gap:14px;margin:14px 0;}
+  .kpi{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:14px 16px;}
+  .kpi .n{font-size:22px;font-weight:700;}
+  .kpi .l{font-size:12px;color:var(--sub);margin-top:3px;}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0;}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:center;vertical-align:middle;}
+  th{background:#eef3f9;color:#33414f;font-weight:600;}
+  td.l{text-align:left;}
+  .A{background:#e7f6ec;} .B{background:#fff5e0;} .C{background:#eef1f6;} .X{background:#fbeaea;color:#9a3b3b;}
+  .pill{padding:1px 8px;border-radius:10px;font-size:11px;font-weight:600;}
+  .pA{background:#1a8a4f;color:#fff;} .pB{background:#c77c00;color:#fff;} .pC{background:#5b6770;color:#fff;} .pX{background:#d92b2b;color:#fff;}
+  .up{color:var(--red);} .dn{color:var(--green);}
+  .note{background:#f3f7fb;border-left:3px solid var(--blue);padding:10px 14px;border-radius:6px;font-size:13px;margin:12px 0;}
+  .warn{background:#fff6f2;border-left:3px solid var(--amber);padding:10px 14px;border-radius:6px;font-size:13px;margin:12px 0;}
+  .chart{width:100%;height:420px;margin:8px 0 4px;}
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:760px){.twocol{grid-template-columns:1fr;}}
+  ul.t{margin:8px 0 8px 18px;padding:0;} ul.t li{margin:5px 0;font-size:13.5px;}
+  .foot{font-size:11.5px;color:#8a949e;text-align:center;margin-top:26px;line-height:1.7;}
+  b.r{color:var(--red);} b.g{color:var(--green);}
+  .small{font-size:11.5px;color:var(--sub);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>全行业板块强度精选矩阵</h1>
+  <p>方法：以「趋势强度高」的板块为池 → 每只挑瓶颈环节代表 → 套用 5 条优先逻辑硬筛 + 近 15 日 K 线量价终审</p>
+  <p>数据基准日：2026-08-14（周五收盘）｜ 候选池 47 只 ｜ 工具：westock 行情/技术/资金/K线</p>
+  <div>
+    <span class="tag">AI算力硬件链</span><span class="tag">半导体国产替代</span><span class="tag">创新药/CRO</span>
+    <span class="tag">人形机器人</span><span class="tag">商业航天/军工</span><span class="tag">小金属/稀土/贵金属</span>
+  </div>
+</header>
+
+<!-- 方法论 -->
+<section>
+  <h2>一、筛选方法（你的 5 条优先逻辑 + 量价终审）</h2>
+  <div class="grid">
+    <div class="kpi"><div class="n">①</div><div class="l"><b>量价同步</b><br>上涨放量、回调缩量且不破 5/10 日线</div></div>
+    <div class="kpi"><div class="n">②</div><div class="l"><b>业绩/订单可验证</b><br>中报、季报指引、大客户绑定（定性）</div></div>
+    <div class="kpi"><div class="n">③</div><div class="l"><b>机构/产业资本流入</b><br>主力 5/10/20 日持续净流入（红线）</div></div>
+    <div class="kpi"><div class="n">④</div><div class="l"><b>瓶颈环节</b><br>设备/光芯片/电子布/稀土等卡位</div></div>
+    <div class="kpi"><div class="n">⑤</div><div class="l"><b>换手温和 &lt;8%</b><br>非情绪亢奋、非游资一日游</div></div>
+  </div>
+  <div class="warn"><b>⚠ 核心陷阱：低换手 ≠ 安全边际。</b>本批 47 只里，北方稀土、金力永磁、湖南黄金、锡业股份、洛阳钼业、绿的谐波、复旦微电、振华科技、中国卫星等
+  换手率均很低（0.9%~2.5%），但<b class="r">20 日主力净流出均为大额负值</b>——典型「图形好看、底部温和派发」。真正分水岭是<b>筛选器③（主力是否持续流入）</b>。下图横轴换手率、纵轴 20 日主力净流入，可肉眼看穿这一陷阱。</div>
+  <div id="scatter" class="chart"></div>
+  <p class="small">说明：右上方（低换手+20日资金正）才是「干净趋势票」区；左下方（低换手+20日资金负）是伪装成低位的派发区；右侧高换手区为情绪博弈区。</p>
+</section>
+
+<!-- 总表 -->
+<section>
+  <h2>二、全行业筛选总表（47 只 · 5 条逻辑硬筛 + K线终审）</h2>
+  <table>
+    <tr><th>板块</th><th>标的</th><th>瓶颈位</th><th>换手%</th><th>MA站位</th><th>20日主力(亿)</th><th>量价/K线结论</th><th>分层</th><th>动作 / 买点</th></tr>
+    <!-- AI算力 -->
+    <tr><td rowspan="11" class="l"><b>AI算力<br>硬件链</b></td><td class="l">中际旭创</td><td class="l">CPO</td><td>1.8</td><td>破MA5</td><td class="dn">-17.7</td><td>高位派发</td><td><span class="pill pX">排除</span></td><td class="l">20日大负流出</td></tr>
+    <tr><td class="l">新易盛</td><td class="l">CPO</td><td>3.1</td><td>破MA5</td><td class="dn">-14.0</td><td>反弹非趋势</td><td><span class="pill pX">排除</span></td><td class="l">中期派发</td></tr>
+    <tr><td class="l">天孚通信</td><td class="l">光器件</td><td>4.8</td><td>站上全</td><td class="up">+5.9</td><td>涨放健康·10日+56%超买</td><td><span class="pill pB">二级</span></td><td class="l">等回踩MA10 227.6</td></tr>
+    <tr><td class="l">光迅科技</td><td class="l">光芯片</td><td>5.0</td><td>站上全</td><td class="dn">-1.2</td><td>8/10放量跌已收复</td><td><span class="pill pC">条件</span></td><td class="l">20日资金中性，观察</td></tr>
+    <tr><td class="l">中材科技</td><td class="l">电子布</td><td>3.6</td><td>站上全</td><td class="up">+15.5</td><td>涨放健康·10日+39%超买</td><td><span class="pill pB">二级</span></td><td class="l">等回踩MA10 52.8</td></tr>
+    <tr><td class="l">中国巨石</td><td class="l">玻纤</td><td>7.0</td><td>站上全</td><td class="dn">-2.0</td><td>派发(5日-10亿)</td><td><span class="pill pX">排除</span></td><td class="l">换手临界+流出</td></tr>
+    <tr><td class="l">沪电股份</td><td class="l">PCB</td><td>1.8</td><td>微破MA5</td><td class="dn">-4.6</td><td>派发</td><td><span class="pill pX">排除</span></td><td class="l">20日负</td></tr>
+    <tr><td class="l">胜宏科技</td><td class="l">PCB</td><td>4.0</td><td>破MA5</td><td class="dn">-3.8</td><td>派发</td><td><span class="pill pX">排除</span></td><td class="l">20日负</td></tr>
+    <tr class="A"><td class="l">深南电路</td><td class="l">PCB</td><td>1.0</td><td>站上全</td><td class="up">+1.0</td><td>涨放/回缩健康</td><td><span class="pill pA">一级</span></td><td class="l">回踩MA10 361.6 不破</td></tr>
+    <tr><td class="l">寒武纪</td><td class="l">算力芯片</td><td>1.6</td><td>破位</td><td class="up">+2.3</td><td>破位下行(资金价背离)</td><td><span class="pill pX">排除</span></td><td class="l">技术破位</td></tr>
+    <tr><td class="l">海光信息</td><td class="l">算力芯片</td><td>0.8</td><td>破位</td><td class="dn">-2.6</td><td>派发下行</td><td><span class="pill pX">排除</span></td><td class="l">破位+流出</td></tr>
+    <!-- 半导体 -->
+    <tr><td rowspan="9" class="l"><b>半导体<br>国产替代</b></td><td class="l">北方华创</td><td class="l">设备</td><td>0.9</td><td>微破MA5</td><td class="dn">-4.6</td><td>缩量回踩·5/10日正</td><td><span class="pill pA">一级</span></td><td class="l">回踩MA5 748.7 确认</td></tr>
+    <tr><td class="l">中微公司</td><td class="l">设备</td><td>1.6</td><td>微破MA5</td><td class="up">+8.6</td><td>高位高换手震荡</td><td><span class="pill pC">条件</span></td><td class="l">等缩量企稳MA5</td></tr>
+    <tr><td class="l">拓荆科技</td><td class="l">设备</td><td>1.7</td><td>破MA5/20</td><td class="dn">-10.0</td><td>派发+破位</td><td><span class="pill pX">排除</span></td><td class="l">—</td></tr>
+    <tr class="A"><td class="l">华海清科</td><td class="l">设备</td><td>1.7</td><td>微破MA5</td><td class="up">+8.3</td><td>缩量回踩MA10</td><td><span class="pill pA">一级</span></td><td class="l">回踩MA10 253.4 不破</td></tr>
+    <tr><td class="l">兆易创新</td><td class="l">存储</td><td>7.1</td><td>站上全</td><td class="dn">-12.2</td><td>派发</td><td><span class="pill pX">排除</span></td><td class="l">20日大负</td></tr>
+    <tr><td class="l">君正股份</td><td class="l">存储</td><td>8.2</td><td>站上全</td><td class="dn">-5.6</td><td>换手&gt;8%红线</td><td><span class="pill pX">排除</span></td><td class="l">过滤②失败</td></tr>
+    <tr><td class="l">源杰科技</td><td class="l">光芯片</td><td>2.7</td><td>站上全</td><td class="up">+10.2</td><td>涨放·10日+39%超买</td><td><span class="pill pB">二级</span></td><td class="l">等回踩MA10 1366</td></tr>
+    <tr class="A"><td class="l">圣邦股份</td><td class="l">模拟</td><td>3.3</td><td>站上全</td><td class="up">+10.1</td><td>涨放/回缩健康</td><td><span class="pill pA">一级</span></td><td class="l">回踩MA5 116.7/MA10 110</td></tr>
+    <tr class="A"><td class="l">思瑞浦</td><td class="l">模拟</td><td>2.4</td><td>站上全</td><td class="up">+1.7</td><td>涨放/回缩健康</td><td><span class="pill pA">一级</span></td><td class="l">回踩MA5 263.7/MA10 250</td></tr>
+    <!-- 创新药 -->
+    <tr><td rowspan="6" class="l"><b>创新药<br>/CRO</b></td><td class="l">百利天恒</td><td class="l">创新药</td><td>0.4</td><td>破位</td><td class="dn">-3.2</td><td>破位+20日负</td><td><span class="pill pX">排除</span></td><td class="l">—</td></tr>
+    <tr><td class="l">荣昌生物</td><td class="l">创新药</td><td>2.0</td><td>微破MA5</td><td class="dn">-8.0</td><td>派发</td><td><span class="pill pX">排除</span></td><td class="l">20日大负</td></tr>
+    <tr><td class="l">贝达药业</td><td class="l">创新药</td><td>3.0</td><td>站上全</td><td class="dn">-4.2</td><td>20日负</td><td><span class="pill pX">排除</span></td><td class="l">—</td></tr>
+    <tr class="A"><td class="l">药明康德</td><td class="l">CRO</td><td>2.2</td><td>微破MA5</td><td class="up">+29.2</td><td>底部放量反转最干净</td><td><span class="pill pA">一级</span></td><td class="l">回踩MA10 151.7 分批</td></tr>
+    <tr><td class="l">康龙化成</td><td class="l">CRO</td><td>5.5</td><td>站上全</td><td class="dn">-1.7</td><td>急涨20日+38%·20日微负</td><td><span class="pill pX">排除</span></td><td class="l">派发风险</td></tr>
+    <tr><td class="l">泰格医药</td><td class="l">CRO</td><td>4.6</td><td>站上全</td><td class="dn">-5.7</td><td>20日负</td><td><span class="pill pX">排除</span></td><td class="l">—</td></tr>
+    <!-- 机器人 -->
+    <tr><td rowspan="6" class="l"><b>人形<br>机器人</b></td><td class="l">绿的谐波</td><td class="l">减速器</td><td>4.0</td><td>微破MA5</td><td class="dn">-17.6</td><td>派发</td><td><span class="pill pX">排除</span></td><td class="l">20日大负</td></tr>
+    <tr><td class="l">双环传动</td><td class="l">减速器</td><td>2.4</td><td>破位</td><td class="dn">-5.2</td><td>派发</td><td><span class="pill pX">排除</span></td><td class="l">—</td></tr>
+    <tr><td class="l">五洲新春</td><td class="l">丝杠</td><td>3.4</td><td>破位</td><td class="dn">-1.3</td><td>20日负</td><td><span class="pill pX">排除</span></td><td class="l">—</td></tr>
+    <tr class="A"><td class="l">秦川机床</td><td class="l">丝杠/机床</td><td>3.3</td><td>微破MA5</td><td class="up">+0.45</td><td>涨放/回缩健康</td><td><span class="pill pA">一级</span></td><td class="l">回踩MA10 10.34</td></tr>
+    <tr><td class="l">柯力传感</td><td class="l">传感器</td><td>1.4</td><td>微破MA5</td><td class="dn">-0.9</td><td>20日负</td><td><span class="pill pX">排除</span></td><td class="l">—</td></tr>
+    <tr><td class="l">鸣志电器</td><td class="l">电机</td><td>0.9</td><td>微破MA5</td><td class="dn">-0.7</td><td>20日负</td><td><span class="pill pX">排除</span></td><td class="l">—</td></tr>
+    <!-- 军工 -->
+    <tr><td rowspan="6" class="l"><b>商业航天<br>/军工</b></td><td class="l">中国卫星</td><td class="l">卫星</td><td>2.2</td><td>站上全</td><td class="dn">-17.0</td><td>派发</td><td><span class="pill pX">排除</span></td><td class="l">20日大负</td></tr>
+    <tr class="A"><td class="l">中航沈飞</td><td class="l">军机</td><td>0.7</td><td>微破MA5</td><td class="dn">-0.7</td><td>低换手缩量慢牛</td><td><span class="pill pA">一级</span></td><td class="l">回踩MA10 43.67</td></tr>
+    <tr><td class="l">航天电子</td><td class="l">航天电子</td><td>1.5</td><td>微破MA5</td><td class="dn">-13.6</td><td>派发</td><td><span class="pill pX">排除</span></td><td class="l">20日大负</td></tr>
+    <tr class="A"><td class="l">航发动力</td><td class="l">航发</td><td>1.4</td><td>站上全</td><td class="up">+5.3</td><td>低换手慢牛最干净</td><td><span class="pill pA">一级</span></td><td class="l">回踩MA10 36.22/MA20 35.4</td></tr>
+    <tr><td class="l">复旦微电</td><td class="l">军工FPGA</td><td>1.9</td><td>站上全</td><td class="dn">-3.7</td><td>派发</td><td><span class="pill pX">排除</span></td><td class="l">20日负</td></tr>
+    <tr><td class="l">振华科技</td><td class="l">军工电子</td><td>2.2</td><td>破位</td><td class="dn">-4.9</td><td>派发</td><td><span class="pill pX">排除</span></td><td class="l">—</td></tr>
+    <!-- 周期 -->
+    <tr><td rowspan="9" class="l"><b>小金属<br>/稀土/贵金属</b></td><td class="l">北方稀土</td><td class="l">稀土</td><td>2.9</td><td>站上全</td><td class="dn">-18.3</td><td>派发大负</td><td><span class="pill pX">排除</span></td><td class="l">20日大负</td></tr>
+    <tr><td class="l">中国稀土</td><td class="l">稀土</td><td>8.5</td><td>站上全</td><td class="up">+3.7</td><td>换手&gt;8%+20日+33%过热</td><td><span class="pill pX">排除</span></td><td class="l">过滤②失败</td></tr>
+    <tr><td class="l">金力永磁</td><td class="l">磁材</td><td>2.0</td><td>微破MA5</td><td class="dn">-4.5</td><td>派发</td><td><span class="pill pX">排除</span></td><td class="l">20日负</td></tr>
+    <tr><td class="l">洛阳钼业</td><td class="l">铜钴</td><td>0.9</td><td>破位</td><td class="up">+1.3</td><td>派发+急跌</td><td><span class="pill pX">排除</span></td><td class="l">破位·5/10日大负</td></tr>
+    <tr><td class="l">湖南黄金</td><td class="l">黄金/锑</td><td>2.2</td><td>微破MA5</td><td class="dn">-3.9</td><td>派发</td><td><span class="pill pX">排除</span></td><td class="l">20日负</td></tr>
+    <tr><td class="l">锡业股份</td><td class="l">锡</td><td>2.3</td><td>微破MA5</td><td class="dn">-7.2</td><td>派发</td><td><span class="pill pX">排除</span></td><td class="l">20日负</td></tr>
+    <tr><td class="l">紫金矿业</td><td class="l">铜金</td><td>0.9</td><td>破位</td><td class="up">+16.5</td><td>中期强·短期派发</td><td><span class="pill pX">排除</span></td><td class="l">破位·5日-26亿</td></tr>
+    <tr class="A"><td class="l">山东黄金</td><td class="l">黄金</td><td>1.6</td><td>微破MA5</td><td class="up">+1.6</td><td>急涨后缩量回踩</td><td><span class="pill pA">一级</span></td><td class="l">回踩MA10 29.55</td></tr>
+    <tr class="A"><td class="l">中金黄金</td><td class="l">黄金</td><td>1.5</td><td>微破MA5</td><td class="up">+4.7</td><td>急涨后缩量回踩</td><td><span class="pill pA">一级</span></td><td class="l">回踩MA10 24.23</td></tr>
+  </table>
+  <p class="small">分层：<span class="pill pA">一级</span> 量价干净+资金持续流入+非过热（挂单等回踩）；<span class="pill pB">二级</span> 通过筛选但急涨超买（严禁追高，只等回踩）；<span class="pill pC">条件</span>  midline/分歧大（观察）；<span class="pill pX">排除</span> 派发/破位/换手超限。</p>
+</section>
+
+<!-- 板块分节 -->
+<section>
+  <h2>三、逐板块结论与买点</h2>
+
+  <h3>① AI算力硬件链 —— 强趋势，但「高位派发」与「过热」并存</h3>
+  <div class="note">板块内部极度分化：CPO 龙头中际旭创、新易盛 20 日主力净流出超百亿（<b class="r">假回踩真派发</b>），直接排除；电子布/玻纤中材科技资金最干净（20日+15.5亿）但 10 日急涨 39% 过热；PCB 里<b class="g">深南电路</b>量价最健康（涨放/回缩、换手仅1%）是一级买点。光迅科技 20 日资金微负，列条件观察。</div>
+
+  <h3>② 半导体国产替代 —— 设备/模拟干净，存储派发</h3>
+  <div class="note"><b class="g">华海清科、圣邦股份、思瑞浦</b>三线资金全正、量价同步，为一级；<b class="g">北方华创</b>缩量回踩 MA5、5/10 日资金正，等重新站上即入。中微公司 20 日强但高位高换手震荡（派发迹象）降为条件。兆易创新、拓荆科技 20 日大负，排除。君正股份换手 8.2% 破红线。</div>
+
+  <h3>③ 创新药/CRO —— 仅药明康德经得起资金检验</h3>
+  <div class="note">板块 20 日普遍派发，唯<b class="g">药明康德</b>出现「底部放量反转、5/10/20 日主力全正（+29亿）」，是基本面+资金最干净的共振，列一级（回踩 MA10 151.7 分批）。康龙/泰格/荣昌/贝达均为 20 日净流出，排除。</div>
+
+  <h3>④ 人形机器人 —— 主题热度未转化为资金流入</h3>
+  <div class="note">绿的谐波 20 日净流出 -17.6 亿（派发），双环/五洲/柯力/鸣志 20 日全负，整条链资金面弱，暂排除。仅<b class="g">秦川机床</b>（丝杠/机床）三线资金微正、量价健康，列一级但偏主题、仓位宜轻。</div>
+
+  <h3>⑤ 商业航天/军工 —— 低换手慢牛在航发/沈飞</h3>
+  <div class="note"><b class="g">航发动力、中航沈飞</b>极致低换手（1.4%/0.7%）、缩量慢牛、机构特征最干净，为一级回踩买点。中国卫星/航天电子/复旦微电 20 日大负派发，振华科技破位，排除。</div>
+
+  <h3>⑥ 小金属/稀土/贵金属 —— 稀土全线派发，黄金可回踩</h3>
+  <div class="note">稀土（北方/中国/金力）20 日全线大额净流出，看似低位实为派发，排除；中国稀土还叠加换手 8.5%+20日+33% 过热双红线。洛阳钼业、紫金矿业破位（紫金 20 日虽 +16.5 亿但 5 日 -26 亿短期派发）。<b class="g">中金黄金、山东黄金</b>20 日资金强、急涨后缩量回踩 MA10，列一级。</div>
+</section>
+
+<!-- 观察池 -->
+<section>
+  <h2>四、观察池分层与买点纪律</h2>
+  <div class="twocol">
+    <div>
+      <h3>★ 一级观察池（11 只 · 可挂单等回踩）</h3>
+      <ul class="t">
+        <li><b>深南电路</b>(PCB) — 回踩 MA10 361.6 不破</li>
+        <li><b>华海清科</b>(设备) — 回踩 MA10 253.4 不破</li>
+        <li><b>航发动力</b>(航发) — 回踩 MA10 36.22 / MA20 35.4</li>
+        <li><b>中航沈飞</b>(军机) — 回踩 MA10 43.67</li>
+        <li><b>思瑞浦</b>(模拟) — 回踩 MA5 263.7 / MA10 250</li>
+        <li><b>圣邦股份</b>(模拟) — 回踩 MA5 116.7 / MA10 110</li>
+        <li><b>秦川机床</b>(丝杠) — 回踩 MA10 10.34（轻仓）</li>
+        <li><b>北方华创</b>(设备) — 重新站上 MA5 748.7+主力延续</li>
+        <li><b>药明康德</b>(CRO) — 回踩 MA10 151.7 分批</li>
+        <li><b>山东黄金</b>(黄金) — 回踩 MA10 29.55</li>
+        <li><b>中金黄金</b>(黄金) — 回踩 MA10 24.23</li>
+      </ul>
+    </div>
+    <div>
+      <h3>▲ 二级（过热待回踩 · 严禁追高）</h3>
+      <ul class="t">
+        <li><b>天孚通信</b>(光器件) — 等回踩 MA10 227.6 / MA20 212.9（10日+56%超买）</li>
+        <li><b>中材科技</b>(电子布) — 等回踩 MA10 52.8（10日+39%超买）</li>
+        <li><b>源杰科技</b>(光芯片) — 等回踩 MA10 1366 / MA20 1343（高换手博弈）</li>
+      </ul>
+      <h3>◇ 条件观察（2 只）</h3>
+      <ul class="t">
+        <li><b>光迅科技</b> — 20 日资金中性，等转强</li>
+        <li><b>中微公司</b> — 高位震荡，等缩量企稳 MA5</li>
+      </ul>
+      <h3>✕ 明确排除（33 只）</h3>
+      <p class="small">派发/破位/换手超限：中际旭创、新易盛、中国巨石、沪电、胜宏、寒武纪、海光、拓荆、兆易、君正、百利天恒、荣昌、贝达、康龙、泰格、绿的谐波、双环、五洲、柯力、鸣志、中国卫星、航天电子、复旦微电、振华、北方稀土、中国稀土、金力永磁、洛阳钼业、湖南黄金、锡业、紫金等。</p>
+    </div>
+  </div>
+  <div id="bar" class="chart"></div>
+  <p class="small">一级观察池主力资金 5/10/20 日净流入（亿元）：可见多数「近段正、中期正」，是趋势延续的燃料；中航沈飞/山东黄金近 5 日微负属正常回踩，不构成派发。</p>
+</section>
+
+<!-- 风控 -->
+<section>
+  <h2>五、风控与执行纪律（承接前两轮）</h2>
+  <div class="grid">
+    <div class="kpi"><div class="n">5~6成</div><div class="l">当前建议仓位（中性偏谨慎）</div></div>
+    <div class="kpi"><div class="n">&lt;8%</div><div class="l">换手率红线（超则剔除）</div></div>
+    <div class="kpi"><div class="n">MA10</div><div class="l">回踩不破即买点锚</div></div>
+    <div class="kpi"><div class="n">20日</div><div class="l">主力净流出→派发信号</div></div>
+  </div>
+  <ul class="t">
+    <li><b>买点规则：</b>只在「回踩 5/10 日线缩量不破」时挂单，不在大阳线后追高；一级池单只等回踩确认后再分批，不一次打满。</li>
+    <li><b>派发识别（最重要）：</b>若持仓出现「高位价涨量缩 + 主力 20 日净流出扩大 + 涨停/大单减少」→ 假红三兵，减仓。</li>
+    <li><b>降温信号：</b>两市成交持续 &lt; 5 日均量 95%、涨停 &lt; 40 家、创 5 日新低 &gt; 1500 家 → 总仓降至 4~5 成。</li>
+    <li><b>加仓信号：</b>放量站上 3980/4000 + 美元破 99 + 美债 10Y 破 4.60% → 回补至 6~7 成。</li>
+    <li><b>止损纪律：</b>回踩买点失效（跌破 MA20 且主力转净流出）→ 离场，不摊平。</li>
+  </ul>
+  <div class="warn">本报告所有标的均为按「5 条优先逻辑 + K线量价」筛选出的<b>观察样本</b>，用于演示方法、非买卖建议。北向实时净流向自 2024-05 停更，相关口径以替代观测（USDCNH 6.74、中概股）为准，文中已标注 [STALE]。产业趋势与个股随财报/政策/资金面动态变化，买点信号需盘中复核。</div>
+</section>
+
+<div class="foot">
+  数据基准日 2026-08-14（周五收盘）｜ 工具：westock 行情/技术/资金/K线 ｜ 覆盖 6 大高强度板块、47 只瓶颈环节代表<br>
+  本报告仅供研究参考，不构成个人投资建议。市场有风险，决策需独立。
+</div>
+
+</div>
+
+<script>
+// 散点：换手率 vs 20日主力净流入
+var sc = echarts.init(document.getElementById('scatter'));
+var A=[['深南电路',1.0,1.01],['华海清科',1.7,8.30],['航发动力',1.4,5.27],['中航沈飞',0.7,-0.72],
+       ['思瑞浦',2.4,1.72],['圣邦股份',3.3,10.06],['秦川机床',3.3,0.45],['北方华创',0.9,-4.55],
+       ['药明康德',2.2,29.23],['山东黄金',1.6,1.63],['中金黄金',1.5,4.68]];
+var B=[['天孚通信',4.8,5.88],['中材科技',3.6,15.45],['源杰科技',2.7,10.21]];
+var C=[['光迅科技',5.0,-1.17],['中微公司',1.6,8.64]];
+var X=[['中际旭创',1.8,-17.66],['新易盛',3.1,-14.03],['中国巨石',7.0,-1.99],['沪电',1.8,-4.55],
+       ['胜宏',4.0,-3.78],['寒武纪',1.6,2.34],['海光',0.8,-2.6],['拓荆',1.7,-10.0],['兆易',7.1,-12.2],
+       ['君正',8.2,-5.56],['百利',0.4,-3.23],['荣昌',2.0,-8.0],['贝达',3.0,-4.2],['康龙',5.5,-1.68],
+       ['泰格',4.6,-5.7],['绿的',4.0,-17.6],['双环',2.4,-5.2],['五洲',3.4,-1.3],['柯力',1.4,-0.9],
+       ['鸣志',0.9,-0.7],['中国卫星',2.2,-17.0],['航天电子',1.5,-13.6],['复旦',1.9,-3.7],['振华',2.2,-4.9],
+       ['北方稀土',2.9,-18.3],['中国稀土',8.5,3.7],['金力',2.0,-4.5],['洛阳钼业',0.9,1.3],['湖南黄金',2.2,-3.9],
+       ['锡业',2.3,-7.2],['紫金',0.9,16.5]];
+function mk(d,c){return d.map(function(x){return {value:[x[1],x[2]],name:x[0]};});}
+sc.setOption({
+  title:{text:'换手率 × 20日主力净流入（低换手≠安全）',left:'center',textStyle:{fontSize:14}},
+  tooltip:{formatter:function(p){return p.data.name+'<br>换手 '+p.value[0]+'%<br>20日主力 '+p.value[1]+'亿';}},
+  legend:{bottom:0,data:['一级','二级','条件','排除']},
+  grid:{left:60,right:30,top:50,bottom:50},
+  xAxis:{name:'换手率%',min:0,max:9,splitLine:{lineStyle:{type:'dashed'}}},
+  yAxis:{name:'20日主力净流入(亿)',splitLine:{lineStyle:{type:'dashed'}}},
+  series:[
+    {name:'一级',type:'scatter',symbolSize:13,itemStyle:{color:'#1a8a4f'},data:mk(A,'A'),
+     label:{show:true,formatter:function(p){return p.data.name;},fontSize:10,position:'right'}},
+    {name:'二级',type:'scatter',symbolSize:13,itemStyle:{color:'#c77c00'},data:mk(B,'B'),
+     label:{show:true,formatter:function(p){return p.data.name;},fontSize:10,position:'right'}},
+    {name:'条件',type:'scatter',symbolSize:13,itemStyle:{color:'#5b6770'},data:mk(C,'C'),
+     label:{show:true,formatter:function(p){return p.data.name;},fontSize:10,position:'right'}},
+    {name:'排除',type:'scatter',symbolSize:11,itemStyle:{color:'#d92b2b',opacity:.65},data:mk(X,'X')}
+  ]
+});
+
+// 柱状：一级观察池 5/10/20日主力
+var bar = echarts.init(document.getElementById('bar'));
+var names=['深南电路','华海清科','航发动力','中航沈飞','思瑞浦','圣邦股份','秦川机床','北方华创','药明康德','山东黄金','中金黄金'];
+var d5=[2.05,4.21,-0.47,4.18,1.60,5.21,0.67,6.38,12.25,-3.02,-0.70];
+var d10=[1.69,0.68,1.47,1.96,2.28,11.84,0.77,8.04,25.69,-0.75,2.16];
+var d20=[1.01,8.30,5.27,-0.72,1.72,10.06,0.45,-4.55,29.23,1.63,4.68];
+bar.setOption({
+  title:{text:'一级观察池：主力资金 5/10/20 日净流入（亿元）',left:'center',textStyle:{fontSize:14}},
+  tooltip:{trigger:'axis'},
+  legend:{bottom:0,data:['5日','10日','20日']},
+  grid:{left:55,right:25,top:50,bottom:55},
+  xAxis:{type:'category',data:names,axisLabel:{interval:0,rotate:38,fontSize:11}},
+  yAxis:{type:'value',name:'亿'},
+  series:[
+    {name:'5日',type:'bar',data:d5,itemStyle:{color:'#7fb3e8'}},
+    {name:'10日',type:'bar',data:d10,itemStyle:{color:'#2b6cb0'}},
+    {name:'20日',type:'bar',data:d20,itemStyle:{color:'#1a8a4f'}}
+  ]
+});
+window.addEventListener('resize',function(){sc.resize();bar.resize();});
+</script>
+</body>
+</html>
