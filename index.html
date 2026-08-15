@@ -49,6 +49,17 @@ header p{margin:4px 0;color:var(--text-muted);font-size:14px;line-height:1.6;}
 .go{font-size:13px;color:var(--blue);font-weight:600;}
 footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--card-border);font-size:12px;color:var(--text-muted);line-height:1.8;}
 .empty{color:var(--text-muted);text-align:center;padding:60px 0;}
+.strategy-series{background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:20px;padding:18px 20px;margin:0 0 22px;box-shadow:0 4px 20px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.05);backdrop-filter:blur(10px);}
+.ss-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px;}
+.ss-head h2{font-size:17px;margin:0;color:#f7f1ec;font-weight:700;}
+.ss-note{font-size:12px;color:var(--text-muted);margin:0 0 14px;line-height:1.6;}
+.ss-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;}
+.ss-row{display:flex;flex-direction:column;gap:3px;text-decoration:none;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:14px;padding:13px 15px;transition:.2s;position:relative;}
+.ss-row:hover{transform:translateY(-3px);border-color:rgba(201,166,107,.36);background:linear-gradient(135deg,rgba(201,166,107,.10),rgba(255,255,255,.06));box-shadow:0 10px 30px rgba(0,0,0,.25);}
+.ss-tag{position:absolute;top:11px;right:12px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;background:var(--amber);color:#2a303c;}
+.ss-tag.alt{background:rgba(201,166,107,.18);color:#d8bd8a;border:1px solid rgba(201,166,107,.3);}
+.ss-title{font-size:15px;font-weight:700;color:#f7f1ec;padding-right:52px;}
+.ss-desc{font-size:12px;color:var(--text-sub);line-height:1.5;}
 </style></head>
 <body>
 <div class="wrap">
@@ -163,86 +174,24 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--card-border);
   </div>
 </div>
 <div class='compact-yzb'><div class='cy-head'>🐉 今日游资活跃 <span class='cy-active'><b>14</b> 家活跃</span> <span class='cy-dormant'><b>6</b> 家未上榜</span> <span class='cy-sub'>名册 20 家</span></div><div class='cy-chips'><span class='yzb-chip'><b>知春路</b> <i class='pos'>1.36亿</i></span><span class='yzb-chip'><b>拉萨天团</b> <i class='pos'>7559万</i></span><span class='yzb-chip'><b>佛山系</b> <i class='pos'>4545万</i></span><span class='yzb-chip'><b>孙哥</b> <i class='pos'>4467万</i></span><span class='yzb-chip'><b>玉兰路</b> <i class='pos'>2289万</i></span><span class='yzb-chip'><b>思明南路</b> <i class='pos'>583万</i></span></div><div class='cy-foot'>净买最强 TOP6（点击对应日期卡片查看游资监控总表 ⑤）</div></div>
-<div class="grid">
+<section class="strategy-series">
+  <div class="ss-head">
+    <h2>📚 A股策略研究系列 · 2026-08-15</h2>
+    <span style="font-size:12px;color:#9a9aa4">自上而下6维度 · 5条择时过滤 · 聚焦有前景+趋势好的方向</span>
+  </div>
+  <p class="ss-note">同一轮分析的不同粒度：全市场扫描 → 产业趋势扩展 → 个股/全行业硬筛 → 黄金复核 → 全量逻辑审计修正。建议从「聚焦观察池」与「全量逻辑审计与修正」入手。所有标的均为观察样本，<b style="color:#c98b7d">非投资建议</b>。</p>
+  <div class="ss-list">
+    <a class="ss-row" href="focus_watchlist_20260815.html"><span class="ss-tag">最新</span><span class="ss-title">聚焦观察池</span><span class="ss-desc">6大方向 + 对应标的 + A/B/C分层 + 买点锚 + 风控纪律</span></a>
+    <a class="ss-row" href="全量逻辑审计与修正_20260815.html"><span class="ss-tag">权威版</span><span class="ss-title">全量逻辑审计与修正</span><span class="ss-desc">18只统一口径重审 · A买点区4只 / 排除4只</span></a>
+    <a class="ss-row" href="A股策略研究简报_20260815.html"><span class="ss-tag alt">策略</span><span class="ss-title">A股策略研究简报</span><span class="ss-desc">宏观 / 大盘 / 赛道 / 技术 / 风险 / 实操 6维度</span></a>
+    <a class="ss-row" href="产业趋势扩展扫描_20260815.html"><span class="ss-tag alt">策略</span><span class="ss-title">产业趋势扩展扫描</span><span class="ss-desc">三主线 + 两卫星 + 一左侧</span></a>
+    <a class="ss-row" href="个股筛选矩阵_20260815.html"><span class="ss-tag alt">策略</span><span class="ss-title">个股筛选矩阵（15只）</span><span class="ss-desc">半导体/通信初版硬筛 · 5通过 / 10排除</span></a>
+    <a class="ss-row" href="全行业板块强度精选矩阵_20260815.html"><span class="ss-tag alt">策略</span><span class="ss-title">全行业板块强度矩阵</span><span class="ss-desc">6板块47只瓶颈代表 · 33排除</span></a>
+    <a class="ss-row" href="黄金板块复核_20260815.html"><span class="ss-tag alt">策略</span><span class="ss-title">黄金板块复核</span><span class="ss-desc">中金 / 山东 / 赤峰 / 四川 4只复核</span></a>
+  </div>
+</section>
 
-        <!-- 策略研究系列 2026-08-15 -->
-        <a class="card" href="focus_watchlist_20260815.html">
-          <span class="badge">最新</span>
-          <div class="date">2026-08-15</div>
-          <div class="week">聚焦观察池</div>
-          <div class="stats">
-            <div class="stat"><span class="num">6</span><span class="lbl">方向</span></div>
-            <div class="stat"><span class="num">≈30</span><span class="lbl">标的</span></div>
-            <div class="stat"><span class="num">A·B·C</span><span class="lbl">分层</span></div>
-          </div>
-          <div class="go">查看聚焦观察池 →</div>
-        </a>
-        <a class="card" href="A股策略研究简报_20260815.html">
-          <span class="badge">策略</span>
-          <div class="date">2026-08-15</div>
-          <div class="week">自上而下全维度</div>
-          <div class="stats">
-            <div class="stat"><span class="num">6</span><span class="lbl">分析维度</span></div>
-            <div class="stat"><span class="num">3</span><span class="lbl">中线主线</span></div>
-            <div class="stat"><span class="num">5-6</span><span class="lbl">仓位(成)</span></div>
-          </div>
-          <div class="go">查看策略研究简报 →</div>
-        </a>
-        <a class="card" href="产业趋势扩展扫描_20260815.html">
-          <span class="badge">策略</span>
-          <div class="date">2026-08-15</div>
-          <div class="week">产业趋势扩展</div>
-          <div class="stats">
-            <div class="stat"><span class="num">3</span><span class="lbl">主线</span></div>
-            <div class="stat"><span class="num">2</span><span class="lbl">卫星</span></div>
-            <div class="stat"><span class="num">1</span><span class="lbl">左侧</span></div>
-          </div>
-          <div class="go">查看产业趋势扫描 →</div>
-        </a>
-        <a class="card" href="个股筛选矩阵_20260815.html">
-          <span class="badge">策略</span>
-          <div class="date">2026-08-15</div>
-          <div class="week">15只硬筛</div>
-          <div class="stats">
-            <div class="stat"><span class="num">15</span><span class="lbl">候选</span></div>
-            <div class="stat"><span class="num">5</span><span class="lbl">通过</span></div>
-            <div class="stat"><span class="num">10</span><span class="lbl">排除</span></div>
-          </div>
-          <div class="go">查看个股筛选矩阵 →</div>
-        </a>
-        <a class="card" href="全行业板块强度精选矩阵_20260815.html">
-          <span class="badge">策略</span>
-          <div class="date">2026-08-15</div>
-          <div class="week">全行业47只</div>
-          <div class="stats">
-            <div class="stat"><span class="num">6</span><span class="lbl">板块</span></div>
-            <div class="stat"><span class="num">47</span><span class="lbl">标的</span></div>
-            <div class="stat"><span class="num">33</span><span class="lbl">排除</span></div>
-          </div>
-          <div class="go">查看板块强度矩阵 →</div>
-        </a>
-        <a class="card" href="黄金板块复核_20260815.html">
-          <span class="badge">策略</span>
-          <div class="date">2026-08-15</div>
-          <div class="week">黄金4只复核</div>
-          <div class="stats">
-            <div class="stat"><span class="num">4</span><span class="lbl">黄金</span></div>
-            <div class="stat"><span class="num">2</span><span class="lbl">排除</span></div>
-            <div class="stat"><span class="num">2</span><span class="lbl">条件</span></div>
-          </div>
-          <div class="go">查看黄金板块复核 →</div>
-        </a>
-        <a class="card" href="全量逻辑审计与修正_20260815.html">
-          <span class="badge">策略</span>
-          <div class="date">2026-08-15</div>
-          <div class="week">18只重审</div>
-          <div class="stats">
-            <div class="stat"><span class="num">18</span><span class="lbl">标的</span></div>
-            <div class="stat"><span class="num">4</span><span class="lbl">A级</span></div>
-            <div class="stat"><span class="num">4</span><span class="lbl">排除</span></div>
-          </div>
-          <div class="go">查看逻辑审计修正 →</div>
-        </a>
+<div class="grid">
 
         <a class="card" href="lhb_institution_analysis_2026-08-14.html">
           <span class="badge">最新</span>
