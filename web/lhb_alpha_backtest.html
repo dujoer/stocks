@@ -1,0 +1,54 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>龙虎榜个股收益 vs 大盘 (alpha)</title>
+<style>
+:root{--bg:#f4f6fa;--card:#fff;--ink:#1f2937;--muted:#6b7280;--red:#e23b3b;--blue:#3b82f6;--line:#e5e7eb}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6}
+.wrap{max-width:1000px;margin:0 auto;padding:24px 18px 60px}header h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:13px}section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:16px 0}
+section h2{font-size:16px;margin:0 0 12px}table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{color:var(--muted);font-weight:600}td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.pos{color:var(--red);font-weight:700}.neg{color:#0a9d6b;font-weight:700}
+.note{color:var(--muted);font-size:12px;margin-top:10px;line-height:1.8}
+.tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600}
+.tag.r{background:#fdeaea;color:var(--red)}.tag.c{background:#eef2ff;color:var(--blue)}
+.banner{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:12px;padding:14px 16px;margin:16px 0;font-size:13.5px;line-height:1.8}
+.banner b{color:#7c2d12}
+</style></head><body><div class="wrap">
+<header><h1>龙虎榜个股收益 vs 大盘 · 超额收益(alpha)分析</h1>
+<div class="sub">入场 = 龙虎榜当日收盘买入（朴素法）。对比 个股收益 / 沪深300 / 中证500 同窗口收益。</div></header>
+
+<div class="banner"><b>一句话结论：</b>这段时间（2026-06 中 ~ 08 中）大盘单边下行，<b>买龙虎榜票无论绝对还是相对都亏钱</b>——
+共振股平均跑输沪深300约 0.4%~6.8%，仅 35%~42% 的次数跑赢指数。但<b>共振相对对照仍有选股价值</b>（跌幅更小 / alpha 更浅），
+说明它是"选股排序器"而非"印钞机"，必须叠加<b>市场趋势风控</b>（大盘在200日线下方时空仓/低仓）才可用。</div>
+
+<section><h2><span class="tag r">共振</span> 机构+游资共振 个股收益 vs 大盘</h2>
+<table><thead><tr>
+<th>持有</th><th class="num">个股均收</th><th class="num">HS300均收</th><th class="num">超额α</th><th class="num">跑赢HS300</th>
+<th class="num">ZZ500均收</th><th class="num">超额α</th><th class="num">跑赢ZZ500</th><th class="num">n</th>
+</tr></thead><tbody><tr><td class="num">T+1</td><td class="num"><span class="neg">-0.83%</span></td><td class="num"><span class="neg">-0.40%</span></td><td class="num"><span class="neg">-0.43%</span></td><td class="num">41.8</td><td class="num"><span class="neg">-0.71%</span></td><td class="num"><span class="neg">-0.12%</span></td><td class="num">43.0</td><td class="num">79</td></tr><tr><td class="num">T+3</td><td class="num"><span class="neg">-3.75%</span></td><td class="num"><span class="neg">-0.73%</span></td><td class="num"><span class="neg">-3.02%</span></td><td class="num">34.2</td><td class="num"><span class="neg">-1.47%</span></td><td class="num"><span class="neg">-2.28%</span></td><td class="num">41.8</td><td class="num">79</td></tr><tr><td class="num">T+5</td><td class="num"><span class="neg">-4.39%</span></td><td class="num"><span class="neg">-1.46%</span></td><td class="num"><span class="neg">-2.93%</span></td><td class="num">41.8</td><td class="num"><span class="neg">-2.70%</span></td><td class="num"><span class="neg">-1.69%</span></td><td class="num">41.8</td><td class="num">79</td></tr><tr><td class="num">T+10</td><td class="num"><span class="neg">-9.28%</span></td><td class="num"><span class="neg">-2.48%</span></td><td class="num"><span class="neg">-6.80%</span></td><td class="num">35.4</td><td class="num"><span class="neg">-4.80%</span></td><td class="num"><span class="neg">-4.48%</span></td><td class="num">34.2</td><td class="num">79</td></tr></tbody></table>
+<div class="note">α = 个股均收 − 大盘均收。跑赢% = 该股 T+N 收益 > 同期大盘收益 的样本占比。</div></section>
+
+<section><h2><span class="tag c">对照</span> 非共振上榜股 个股收益 vs 大盘</h2>
+<table><thead><tr>
+<th>持有</th><th class="num">个股均收</th><th class="num">HS300均收</th><th class="num">超额α</th><th class="num">跑赢HS300</th>
+<th class="num">ZZ500均收</th><th class="num">超额α</th><th class="num">跑赢ZZ500</th><th class="num">n</th>
+</tr></thead><tbody><tr><td class="num">T+1</td><td class="num"><span class="neg">-0.51%</span></td><td class="num"><span class="neg">-0.17%</span></td><td class="num"><span class="neg">-0.34%</span></td><td class="num">47.0</td><td class="num"><span class="neg">-0.24%</span></td><td class="num"><span class="neg">-0.27%</span></td><td class="num">45.5</td><td class="num">483</td></tr><tr><td class="num">T+3</td><td class="num"><span class="neg">-3.20%</span></td><td class="num"><span class="neg">-0.54%</span></td><td class="num"><span class="neg">-2.66%</span></td><td class="num">37.3</td><td class="num"><span class="neg">-0.98%</span></td><td class="num"><span class="neg">-2.22%</span></td><td class="num">38.1</td><td class="num">483</td></tr><tr><td class="num">T+5</td><td class="num"><span class="neg">-5.50%</span></td><td class="num"><span class="neg">-1.04%</span></td><td class="num"><span class="neg">-4.46%</span></td><td class="num">32.7</td><td class="num"><span class="neg">-1.82%</span></td><td class="num"><span class="neg">-3.68%</span></td><td class="num">34.2</td><td class="num">483</td></tr><tr><td class="num">T+10</td><td class="num"><span class="neg">-10.05%</span></td><td class="num"><span class="neg">-2.53%</span></td><td class="num"><span class="neg">-7.52%</span></td><td class="num">30.5</td><td class="num"><span class="neg">-4.73%</span></td><td class="num"><span class="neg">-5.32%</span></td><td class="num">31.7</td><td class="num">482</td></tr></tbody></table></section>
+
+<section><h2>怎么读这张表</h2>
+<div class="note">
+① <b>绝对收益全负</b>：这是大盘 beta 的锅。沪深300 从 07-01 见顶 4959 跌到 08-03 的 4543（约 −8%），中证500 同段 −9%。买什么都大概率亏。<br>
+② <b>超额α全负</b>：连相对大盘都是负的——共振股 T+10 平均跑输沪深300 <b>6.8%</b>。说明"龙虎榜净买+共振"在这段<b>不是正 alpha 因子</b>。<br>
+③ <b>共振仍有选股价值</b>：同窗口下，共振的 α 始终<b>浅于</b>对照（T+10：-6.80% vs -7.52% vs HS300；T+5：-2.93% vs -4.46%）。即共振能把"更抗跌的票"挑出来，但挑不出"能逆市涨的票"。<br>
+④ <b>跑赢指数比例 &lt;50%</b>：共振仅 35%~42% 次数跑赢 HS300，对照仅 30%~47%。即"无脑买龙虎榜"大概率是跑输指数的。<br>
+⑤ <b>真正的用法</b>：该因子是<b>选股排序器</b>，须配合<b>市场趋势门控</b>——大盘在 200 日线下方时空仓/低仓（本量化系统已有此设计）。2026年7月属下行段，门控会提示"别买"。
+</div></section>
+
+<section><h2>方法与局限</h2>
+<div class="note">
+• 入场：龙虎榜当日(板日)收盘买入，持有 T+1/3/5/10 收盘卖出，朴素法。<br>
+• 样本窗口：龙虎榜 entry ≤ 2026-07-24（保证 T+10 可观测；K线缓存终点 08-20）。可观测样本（K线缓存命中）：机构+游资共振 79 只、非共振对照 483 只（T+10 为 482，因 1 只缓存止于 T+9），合计 562 只；其余上榜股因 K线缓存缺失按缺失跳过，未进入下表。注：本表为 entry≤07-24 的可观测子集，不同于「共振聚合看板」覆盖 06-15~08-14 全窗口的 161 只共振样本。<br>
+• 基准：沪深300(sh000300)、中证500(sh000905)，与个股同入场日、同 T 日对齐。<br>
+• 局限：单一市况（2026夏下行市），样本外待补；未含交易成本；回踩买法(alpha版)另算。本表仅作概率提示，不构成投资建议。
+</div></section>
+</div></body></html>

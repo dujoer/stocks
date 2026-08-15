@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>龙虎榜机构 / 游资分析看板</title>
+<style>
+:root{
+  --bg-start:#1a1f2e;--bg-mid:#232838;--bg-end:#1a1f2e;
+  --card:rgba(255,255,255,.06);--card-border:rgba(255,255,255,.10);--card-radius:16px;
+  --table:rgba(26,31,46,.55);--table-header:rgba(30,41,59,.85);
+  --text:#f0e6dd;--text-sub:#c9c3b8;--text-muted:#9a9aa4;
+  --up:#c98b7d;--up-soft:rgba(201,139,125,.18);
+  --down:#8da894;--down-soft:rgba(141,168,148,.18);
+  --amber:#c9a66b;--amber-soft:rgba(201,166,107,.15);
+  --blue:#8b9bb5;--blue-soft:rgba(139,155,181,.16);
+  --purple:#a899b3;--purple-soft:rgba(168,153,179,.16);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:linear-gradient(135deg,var(--bg-start) 0%,var(--bg-mid) 45%,var(--bg-end) 100%);color:var(--text);min-height:100vh;}
+.wrap{max-width:1000px;margin:0 auto;padding:48px 20px 60px;}
+header h1{font-size:32px;margin:0 0 10px;background:linear-gradient(90deg,#c9a66b,#c98b7d,#a899b3);
+  -webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;}
+header p{margin:4px 0;color:var(--text-muted);font-size:14px;line-height:1.6;}
+.meta{margin:18px 0 28px;font-size:13px;color:var(--text-sub);}
+.meta b{color:var(--amber);}
+.compact-yzb{background:var(--card);border:1px solid var(--card-border);border-radius:var(--card-radius);padding:16px 18px;margin:18px 0;backdrop-filter:blur(8px);box-shadow:0 4px 20px rgba(0,0,0,.15);}
+.cy-head{font-size:14px;color:var(--text-sub);font-weight:600;margin-bottom:10px;}
+.cy-active{color:var(--up);font-weight:700;margin-left:6px;}
+.cy-dormant{color:var(--text-muted);font-weight:600;margin-left:6px;}
+.cy-sub{color:var(--text-muted);font-size:12px;margin-left:6px;}
+.cy-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.yzb-chip{background:rgba(255,255,255,.06);border:1px solid var(--card-border);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--text-sub);}
+.yzb-chip b{color:#f7f1ec;}
+.yzb-chip .pos{color:var(--up);font-style:normal;font-weight:600;}
+.yzb-chip .neg{color:var(--down);font-style:normal;font-weight:600;}
+.cy-foot{font-size:11px;color:var(--text-muted);margin-top:10px;}
+.featured{display:flex;gap:16px;align-items:center;background:linear-gradient(135deg,rgba(201,139,125,.14),rgba(168,153,179,.10));border:1px solid rgba(201,139,125,.34);border-radius:var(--card-radius);padding:20px 22px;margin:18px 0;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,.22);}
+.feat-badge{flex:none;background:var(--amber);color:#2a303c;font-size:12px;font-weight:800;padding:6px 14px;border-radius:20px;box-shadow:0 2px 8px rgba(201,166,107,.30);}
+.feat-body{flex:1;}
+.feat-title{font-size:18px;font-weight:800;color:#f7f1ec;margin-bottom:6px;}
+.feat-desc{font-size:13px;color:var(--text-sub);line-height:1.6;margin-bottom:10px;}
+.feat-link{display:inline-block;font-size:14px;font-weight:700;color:var(--amber);text-decoration:none;border:1px solid rgba(201,166,107,.5);border-radius:10px;padding:7px 16px;transition:.2s;}
+.feat-link:hover{background:rgba(201,166,107,.16);transform:translateY(-2px);}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;}
+.card{position:relative;text-decoration:none;background:var(--card);border:1px solid var(--card-border);
+  border-radius:var(--card-radius);padding:22px;transition:.2s;backdrop-filter:blur(10px);box-shadow:0 4px 20px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.06);}
+.card:hover{transform:translateY(-5px);border-color:rgba(201,166,107,.36);background:linear-gradient(135deg,rgba(201,166,107,.10),rgba(255,255,255,.07));box-shadow:0 14px 40px rgba(0,0,0,.3);}
+.badge{position:absolute;top:14px;right:14px;background:var(--amber);color:#2a303c;font-size:11px;font-weight:700;
+  padding:3px 10px;border-radius:20px;box-shadow:0 2px 8px rgba(201,166,107,.28);}
+.date{font-size:22px;font-weight:800;color:#f7f1ec;letter-spacing:.5px;}
+.week{font-size:12px;color:var(--text-muted);margin-bottom:14px;}
+.stats{display:flex;gap:10px;margin:14px 0 18px;}
+.stat{flex:1;background:rgba(0,0,0,.22);border-radius:12px;padding:12px 6px;text-align:center;border:1px solid rgba(255,255,255,.06);}
+.stat .num{display:block;font-size:20px;font-weight:800;color:var(--amber);}
+.stat .lbl{display:block;font-size:11px;color:var(--text-muted);margin-top:3px;}
+.go{font-size:13px;color:var(--blue);font-weight:600;}
+footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--card-border);font-size:12px;color:var(--text-muted);line-height:1.8;}
+.empty{color:var(--text-muted);text-align:center;padding:60px 0;}
+</style></head>
+<body>
+<div class="wrap">
+<header>
+  <h1>📊 龙虎榜机构 / 游资分析看板</h1>
+  <p>每日全量龙虎榜个股 · 机构专用榜 / 游资席位榜 / 营业部席位胜率聚合 · 1/3/5/10 交易日窗口 · 每只票附规则化专业解读 · 1-5 日机会研判</p>
+</header>
+<div class="meta">共 <b>1</b> 期分析 · 最新 <b>2026-08-14</b> · 数据来源：腾讯自选股龙虎榜/板块接口</div>
+
+<div class="market-overview-compact" style="background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:20px;padding:20px 22px;margin:0 0 22px;box-shadow:0 8px 32px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.06);backdrop-filter:blur(12px);">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap">
+    <h2 style="font-size:18px;margin:0;color:#f7f1ec;font-weight:700">📈 2026-08-14 大盘概览</h2>
+    <span style="font-size:12px;color:#9a9aa4">数据来源：腾讯自选股市场总览</span>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px">
+        <div style="background:linear-gradient(135deg,rgba(185,116,104,.18),rgba(220,38,38,.06));border:1px solid rgba(201,139,125,.36);border-radius:14px;padding:12px 8px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.18),0 0 14px rgba(201,139,125,.15);color:#f0e6dd;backdrop-filter:blur(8px)">
+          <div style="font-size:11px;color:var(--text-sub);letter-spacing:.3px;font-weight:500">上证指数</div>
+          <div style="font-size:20px;font-weight:800;color:#f7f1ec;margin:5px 0 2px;text-shadow:0 1px 2px rgba(0,0,0,.3)">3927.18</div>
+          <div style="font-size:13px;font-weight:700;color:#d6a89d">+0.01% ↑</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:4px">H 3932.64 · L 3903.70</div>
+        </div>
+        <div style="background:linear-gradient(135deg,rgba(185,116,104,.18),rgba(220,38,38,.06));border:1px solid rgba(201,139,125,.36);border-radius:14px;padding:12px 8px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.18),0 0 14px rgba(201,139,125,.15);color:#f0e6dd;backdrop-filter:blur(8px)">
+          <div style="font-size:11px;color:var(--text-sub);letter-spacing:.3px;font-weight:500">深证成指</div>
+          <div style="font-size:20px;font-weight:800;color:#f7f1ec;margin:5px 0 2px;text-shadow:0 1px 2px rgba(0,0,0,.3)">14354.31</div>
+          <div style="font-size:13px;font-weight:700;color:#d6a89d">+0.45% ↑</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:4px">H 14384.18 · L 14203.99</div>
+        </div>
+        <div style="background:linear-gradient(135deg,rgba(185,116,104,.18),rgba(220,38,38,.06));border:1px solid rgba(201,139,125,.36);border-radius:14px;padding:12px 8px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.18),0 0 14px rgba(201,139,125,.15);color:#f0e6dd;backdrop-filter:blur(8px)">
+          <div style="font-size:11px;color:var(--text-sub);letter-spacing:.3px;font-weight:500">创业板指</div>
+          <div style="font-size:20px;font-weight:800;color:#f7f1ec;margin:5px 0 2px;text-shadow:0 1px 2px rgba(0,0,0,.3)">3626.30</div>
+          <div style="font-size:13px;font-weight:700;color:#d6a89d">+1.12% ↑</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:4px">H 3633.03 · L 3578.61</div>
+        </div>
+        <div style="background:rgba(120,137,162,.16);border:1px solid rgba(139,155,181,.40);border-radius:12px;padding:12px 8px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.15);color:#f0e6dd">
+          <div style="font-size:11px;color:#e6ded6;letter-spacing:.3px;font-weight:500">沪深京成交额</div>
+          <div style="font-size:20px;font-weight:700;color:#f7f1ec;margin:5px 0 2px;text-shadow:0 1px 2px rgba(0,0,0,.3)">2.143万亿</div>
+          <div style="font-size:13px;font-weight:700;color:#a7b4c9">缩量</div>
+          <div style="font-size:10px;color:#c9c3b8;margin-top:4px;text-shadow:0 1px 2px rgba(0,0,0,.3)">5日均 2.338万亿</div>
+        </div></div>
+  <div style="display:flex;height:28px;border-radius:8px;overflow:hidden;margin:12px 0;font-size:11px;color:#f7f1ec;text-align:center;line-height:28px;box-shadow:0 2px 6px rgba(0,0,0,.2);">
+    <div style="background:linear-gradient(90deg,#b87064,#c98b7d);width:43.3%;min-width:42px">涨 2400<br><span style="font-size:9px;opacity:.9">43.3%</span></div>
+    <div style="background:linear-gradient(90deg,rgba(154,154,164,.70),rgba(154,154,164,.55));width:3.1%;min-width:32px">平 173</div>
+    <div style="background:linear-gradient(90deg,#7d9682,#8da894);width:53.6%;min-width:42px">跌 2970<br><span style="font-size:9px;opacity:.9">53.6%</span></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin:12px 0"><div style="background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:12px;padding:10px 6px;text-align:center;min-width:72px;backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.12)">
+          <div style="font-size:10px;color:var(--text-muted)">涨停</div>
+          <div style="font-size:16px;font-weight:800;color:#c98b7d;margin-top:3px">54</div>
+        </div><div style="background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:12px;padding:10px 6px;text-align:center;min-width:72px;backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.12)">
+          <div style="font-size:10px;color:var(--text-muted)">跌停</div>
+          <div style="font-size:16px;font-weight:800;color:#8da894;margin-top:3px">1</div>
+        </div><div style="background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:12px;padding:10px 6px;text-align:center;min-width:72px;backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.12)">
+          <div style="font-size:10px;color:var(--text-muted)">涨跌比</div>
+          <div style="font-size:16px;font-weight:800;color:#c9a66b;margin-top:3px">0.81</div>
+        </div><div style="background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:12px;padding:10px 6px;text-align:center;min-width:72px;backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.12)">
+          <div style="font-size:10px;color:var(--text-muted)">上涨家数</div>
+          <div style="font-size:16px;font-weight:800;color:#c98b7d;margin-top:3px">2400<span style='font-size:10px;color:var(--text-muted)'> (43.3%)</span></div>
+        </div><div style="background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:12px;padding:10px 6px;text-align:center;min-width:72px;backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.12)">
+          <div style="font-size:10px;color:var(--text-muted)">下跌家数</div>
+          <div style="font-size:16px;font-weight:800;color:#8da894;margin-top:3px">2970<span style='font-size:10px;color:var(--text-muted)'> (53.6%)</span></div>
+        </div><div style="background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:12px;padding:10px 6px;text-align:center;min-width:72px;backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.12)">
+          <div style="font-size:10px;color:var(--text-muted)">5日新高/低</div>
+          <div style="font-size:16px;font-weight:800;color:#8b9bb5;margin-top:3px">708/2272</div>
+        </div><div style="background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:12px;padding:10px 6px;text-align:center;min-width:72px;backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.12)">
+          <div style="font-size:10px;color:var(--text-muted)">20日新高/低</div>
+          <div style="font-size:16px;font-weight:800;color:#a899b3;margin-top:3px">563/118</div>
+        </div><div style="background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:12px;padding:10px 6px;text-align:center;min-width:72px;backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.12)">
+          <div style="font-size:10px;color:var(--text-muted)">PE_TTM</div>
+          <div style="font-size:16px;font-weight:800;color:#f0e6dd;margin-top:3px">21.63</div>
+        </div><div style="background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:12px;padding:10px 6px;text-align:center;min-width:72px;backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.12)">
+          <div style="font-size:10px;color:var(--text-muted)">10年分位</div>
+          <div style="font-size:16px;font-weight:800;color:#c994a6;margin-top:3px">93.37%</div>
+        </div></div>
+  <div style="margin:10px 0 6px"><span title="涨跌家数比+涨跌停比+成交额" style="display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:3px 8px;font-size:11px;color:#e6ded6;margin:2px 4px 2px 0;cursor:help"><span style="color:#9a9aa4">情绪</span> 情绪狂热</span><span title="MACD/KDJ/RSI/均线/布林带" style="display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:3px 8px;font-size:11px;color:#e6ded6;margin:2px 4px 2px 0;cursor:help"><span style="color:#9a9aa4">技术</span> 极强</span><span title="PE/PB/股息率历史分位" style="display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:3px 8px;font-size:11px;color:#e6ded6;margin:2px 4px 2px 0;cursor:help"><span style="color:#9a9aa4">估值</span> 高估强势</span><span title="成交额相对5/10/20日均值变化" style="display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:3px 8px;font-size:11px;color:#e6ded6;margin:2px 4px 2px 0;cursor:help"><span style="color:#9a9aa4">量能</span> 缩量震荡</span><span title="沪深300 vs 中证1000 5日收益差" style="display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:3px 8px;font-size:11px;color:#e6ded6;margin:2px 4px 2px 0;cursor:help"><span style="color:#9a9aa4">大小盘</span> 小盘占优</span><span title="全指成长 vs 全指价值 5日收益差" style="display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:3px 8px;font-size:11px;color:#e6ded6;margin:2px 4px 2px 0;cursor:help"><span style="color:#9a9aa4">风格</span> 成长占优</span></div>
+  <div style="font-size:12px;color:#c9c3b8;margin:8px 0 4px"><b>📰 要闻：</b><span title="通信板块单日净流入超百亿，科技主线资金认可度高；利好光通信、CPO、PCB、算力租赁" style="display:inline-block;background:rgba(201,166,107,.10);border:1px solid rgba(201,166,107,.20);border-radius:20px;padding:3px 8px;font-size:11px;color:#e6ded6;margin:2px 4px 2px 0;cursor:help"><span style="color:#c9a66b">[盘面/行业]</span> A股缩量分化成交降至2.16万亿，CPO/光模块/算力产业链逆势爆发</span><span title="海外流动性预期改善，利于成长股估值修复与外资回流" style="display:inline-block;background:rgba(201,166,107,.10);border:1px solid rgba(201,166,107,.20);border-radius:20px;padding:3px 8px;font-size:11px;color:#e6ded6;margin:2px 4px 2px 0;cursor:help"><span style="color:#c9a66b">[海外宏观]</span> 美联储9月加息预期降温，美国7月PPI涨幅温和、美债收益率回落</span><span title="直接利好国内光纤光缆、光通信厂商" style="display:inline-block;background:rgba(201,166,107,.10);border:1px solid rgba(201,166,107,.20);border-radius:20px;padding:3px 8px;font-size:11px;color:#e6ded6;margin:2px 4px 2px 0;cursor:help"><span style="color:#c9a66b">[政策]</span> 商务部：8月14日起对原产于印度进口单模光纤继续征收反倾销税，期限5年</span><span title="中长期利好本地基建、民营龙头及创投相关板块" style="display:inline-block;background:rgba(201,166,107,.10);border:1px solid rgba(201,166,107,.20);border-radius:20px;padding:3px 8px;font-size:11px;color:#e6ded6;margin:2px 4px 2px 0;cursor:help"><span style="color:#c9a66b">[区域政策]</span> 上海发布行动方案进一步促进民间投资发展，放宽准入并强化资金保障</span></div>
+  <div style="font-size:13px;color:var(--amber);background:linear-gradient(90deg,rgba(201,166,107,.13),rgba(201,166,107,.05));border:1px solid rgba(201,166,107,.22);border-radius:12px;padding:12px 16px;line-height:1.6;margin-top:12px">
+    <div style="margin-bottom:6px"><b>📌 专业点评：</b>缩量，情绪狂热，普涨，小盘占优，成长占优，高估强势，涨跌比 2400:2970，短期温和上涨。</div>
+    <div style="border-top:1px dashed rgba(201,166,107,.25);padding-top:6px"><b>🔮 次日展望：</b>量能平稳，明日大概率维持震荡；MACD 红柱/正值；DIF 上穿 DEA，短期偏多；KDJ 超买，短线有回调压力；MA5 在 MA20 上方；情绪偏高，次日分歧可能加大；估值处于历史高位，追高风险大。</div>
+  </div>
+</div>
+
+<div class="sector-overview-compact" style="background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:20px;padding:18px 20px;margin:0 0 22px;box-shadow:0 4px 20px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.05);backdrop-filter:blur(10px);">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+    <h2 style="font-size:17px;margin:0;color:#f7f1ec">🔥 2026-08-14 板块热度</h2>
+    <span style="font-size:12px;color:#9a9aa4">数据来源：腾讯自选股板块排行</span>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px">
+    <div>
+      <div style="font-size:12px;color:#c9a66b;font-weight:600;margin-bottom:6px">领涨行业</div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">通信设备</span><span style="color:#b87064;font-weight:600">+3.63%</span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">通信服务</span><span style="color:#b87064;font-weight:600">+2.33%</span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">小金属</span><span style="color:#b87064;font-weight:600">+3.04%</span></div>
+    </div>
+    <div>
+      <div style="font-size:12px;color:#c9a66b;font-weight:600;margin-bottom:6px">领涨概念</div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">光通信</span><span style="color:#b87064;font-weight:600">+2.71%</span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">5G概念</span><span style="color:#b87064;font-weight:600">+1.53%</span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">共封装光模块(CPO）</span><span style="color:#b87064;font-weight:600">+2.88%</span></div>
+    </div>
+  </div>
+  <div style="font-size:13px;color:var(--amber);background:linear-gradient(135deg,rgba(201,166,107,.13),rgba(201,166,107,.05));border:1px solid rgba(201,166,107,.22);border-radius:12px;padding:12px 14px;margin-top:12px;line-height:1.5">
+    <b>轮动点评：</b>行业领涨：通信设备、通信服务、小金属；概念领涨：光通信、5G概念、共封装光模块(CPO）；主力净流入最多：光通信。
+  </div>
+</div>
+
+<div class="leader-overview-compact" style="background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid var(--card-border);border-radius:20px;padding:18px 20px;margin:0 0 22px;box-shadow:0 4px 20px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.05);backdrop-filter:blur(10px);">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+    <h2 style="font-size:17px;margin:0;color:#f7f1ec">👑 2026-08-14 当日龙头股（多口径）</h2>
+    <span style="font-size:12px;color:#9a9aa4">悬停看来源与算法</span>
+  </div>
+  <div style="font-size:12px;color:var(--text-muted);margin:0 0 10px">口径说明：①板块龙头=领涨行业/概念排行标注；②资金龙头=龙虎榜净买前排；③连板梯队=全市场连续涨停天数（westock-mcp limitup_days，含未上龙虎榜者）🔥=当日上龙虎榜；④大市值/高成交龙头=龙虎榜内个股按行情快照排序。</div>
+  <div style="font-size:13px;color:#e6ded6;font-weight:600;margin:4px 0">📶 连板梯队</div>
+  <div style="margin:5px 0;padding:7px 10px;background:rgba(26,31,46,.55);border:1px solid rgba(255,255,255,.10);border-radius:8px;font-size:13px"><span style="display:inline-block;background:rgba(220,38,38,.25);border-color:rgba(248,113,113,.5);color:#d6a89d;font-weight:700;border-radius:6px;padding:1px 7px;margin-right:6px" title="连板天数 | 数据来源：westock-mcp tool_ranking limitup_days（全市场连续涨停天数，含未上龙虎榜者）；封单量=limitup_seal_volume。计算方法：全市场当日涨停(涨幅≥9.9%)个股按连续涨停交易日数分组；🔥=该票当日亦上龙虎榜。">5连板</span> <span style="color:#9a9aa4;font-size:11px">(1只)</span>：<span style='color:#e6ded6'>蓝盾光电</span><span style='color:#9a9aa4;font-size:11px'>(47.29)</span> 🔥<span style='color:#c98b7d;font-size:10px' title='收盘涨停封单量：6615手'>榜</span></div><div style="margin:5px 0;padding:7px 10px;background:rgba(26,31,46,.55);border:1px solid rgba(255,255,255,.10);border-radius:8px;font-size:13px"><span style="display:inline-block;background:rgba(201,166,107,.20);border-color:rgba(251,191,36,.45);color:#d8bd8a;font-weight:700;border-radius:6px;padding:1px 7px;margin-right:6px" title="连板天数 | 数据来源：westock-mcp tool_ranking limitup_days（全市场连续涨停天数，含未上龙虎榜者）；封单量=limitup_seal_volume。计算方法：全市场当日涨停(涨幅≥9.9%)个股按连续涨停交易日数分组；🔥=该票当日亦上龙虎榜。">3连板</span> <span style="color:#9a9aa4;font-size:11px">(5只)</span>：<span style='color:#e6ded6'>澳洋健康</span>、<span style='color:#e6ded6'>金 螳 螂</span><span style='color:#9a9aa4;font-size:11px'>(5.29)</span> 🔥<span style='color:#c98b7d;font-size:10px' title='收盘涨停封单量：17.7万手'>榜</span>、<span style='color:#e6ded6'>坤泰股份</span>、<span style='color:#e6ded6'>天洋新材</span>、<span style='color:#e6ded6'>华西股份</span></div><div style="margin:5px 0;padding:7px 10px;background:rgba(26,31,46,.55);border:1px solid rgba(255,255,255,.10);border-radius:8px;font-size:13px"><span style="display:inline-block;background:rgba(201,166,107,.20);border-color:rgba(251,191,36,.45);color:#d8bd8a;font-weight:700;border-radius:6px;padding:1px 7px;margin-right:6px" title="连板天数 | 数据来源：westock-mcp tool_ranking limitup_days（全市场连续涨停天数，含未上龙虎榜者）；封单量=limitup_seal_volume。计算方法：全市场当日涨停(涨幅≥9.9%)个股按连续涨停交易日数分组；🔥=该票当日亦上龙虎榜。">2连板</span> <span style="color:#9a9aa4;font-size:11px">(5只)</span>：<span style='color:#e6ded6'>神奇制药</span><span style='color:#9a9aa4;font-size:11px'>(6.41)</span> 🔥<span style='color:#c98b7d;font-size:10px' title='收盘涨停封单量：23.3万手'>榜</span>、<span style='color:#e6ded6'>海洋王</span><span style='color:#9a9aa4;font-size:11px'>(6.78)</span> 🔥<span style='color:#c98b7d;font-size:10px' title='收盘涨停封单量：14.8万手'>榜</span>、<span style='color:#e6ded6'>共进股份</span><span style='color:#9a9aa4;font-size:11px'>(17.56)</span> 🔥<span style='color:#c98b7d;font-size:10px' title='收盘涨停封单量：5.2万手'>榜</span>、<span style='color:#e6ded6'>博济医药</span>、<span style='color:#e6ded6'>理工能科</span><span style='color:#9a9aa4;font-size:11px'>(13.05)</span> 🔥<span style='color:#c98b7d;font-size:10px' title='收盘涨停封单量：3.1万手'>榜</span></div><div style="margin:5px 0;padding:7px 10px;background:rgba(26,31,46,.55);border:1px solid rgba(255,255,255,.10);border-radius:8px;font-size:13px"><span style="display:inline-block;background:rgba(120,137,162,.18);border-color:rgba(139,155,181,.45);color:#a7b4c9;font-weight:700;border-radius:6px;padding:1px 7px;margin-right:6px" title="连板天数 | 数据来源：westock-mcp tool_ranking limitup_days（全市场连续涨停天数，含未上龙虎榜者）；封单量=limitup_seal_volume。计算方法：全市场当日涨停(涨幅≥9.9%)个股按连续涨停交易日数分组；🔥=该票当日亦上龙虎榜。">首板</span> <span style="color:#9a9aa4;font-size:11px">(52只)</span>：<span style='color:#e6ded6'>盈新发展</span><span style='color:#9a9aa4;font-size:11px'>(3.03)</span> 🔥<span style='color:#c98b7d;font-size:10px' title='收盘涨停封单量：39.7万手'>榜</span>、<span style='color:#e6ded6'>索菱股份</span>、<span style='color:#e6ded6'>莲花控股</span>、<span style='color:#e6ded6'>中石科技</span><span style='color:#9a9aa4;font-size:11px'>(67.36)</span>、<span style='color:#e6ded6'>网宿科技</span><span style='color:#9a9aa4;font-size:11px'>(17.33)</span> 🔥<span style='color:#c98b7d;font-size:10px' title='收盘涨停封单量：14.9万手'>榜</span>、<span style='color:#e6ded6'>亨通光电</span><span style='color:#9a9aa4;font-size:11px'>(62.98)</span>、<span style='color:#e6ded6'>大唐电信</span>、<span style='color:#e6ded6'>雪迪龙</span>、<span style='color:#e6ded6'>华森制药</span>、<span style='color:#e6ded6'>康盛股份</span>、<span style='color:#e6ded6'>数据港</span><span style='color:#9a9aa4;font-size:11px'>(29.04)</span>、<span style='color:#e6ded6'>利君股份</span>、<span style='color:#e6ded6'>旭光电子</span>、<span style='color:#e6ded6'>大恒科技</span><span style='color:#9a9aa4;font-size:11px'>(13.22)</span>、<span style='color:#e6ded6'>厦工股份</span>、<span style='color:#e6ded6'>重药控股</span>、<span style='color:#e6ded6'>成都路桥</span>、<span style='color:#e6ded6'>艾华集团</span>、<span style='color:#e6ded6'>金田股份</span><span style='color:#9a9aa4;font-size:11px'>(10.95)</span> 🔥<span style='color:#c98b7d;font-size:10px' title='收盘涨停封单量：5.4万手'>榜</span>、<span style='color:#e6ded6'>人民同泰</span>、<span style='color:#e6ded6'>杭电股份</span><span style='color:#9a9aa4;font-size:11px'>(29.87)</span> 🔥<span style='color:#c98b7d;font-size:10px' title='收盘涨停封单量：5.1万手'>榜</span>、<span style='color:#e6ded6'>圣达生物</span>、<span style='color:#e6ded6'>郑中设计</span>、<span style='color:#e6ded6'>天安新材</span>、<span style='color:#e6ded6'>阿莱德</span><span style='color:#9a9aa4;font-size:11px'>(37.62)</span>、<span style='color:#e6ded6'>华宏科技</span>、<span style='color:#e6ded6'>德创环保</span>、<span style='color:#e6ded6'>ST龙大</span>、<span style='color:#e6ded6'>桂发祥</span>、<span style='color:#e6ded6'>中天精装</span>、<span style='color:#e6ded6'>越剑智能</span>、<span style='color:#e6ded6'>经纬辉开</span><span style='color:#9a9aa4;font-size:11px'>(9.26)</span> 🔥<span style='color:#c98b7d;font-size:10px' title='收盘涨停封单量：3.0万手'>榜</span>、<span style='color:#e6ded6'>大豪科技</span><span style='color:#9a9aa4;font-size:11px'>(15.18)</span>、<span style='color:#e6ded6'>华骐环保</span>、<span style='color:#e6ded6'>豪美新材</span>、<span style='color:#e6ded6'>华正新材</span>、<span style='color:#e6ded6'>快意电梯</span>、<span style='color:#e6ded6'>金时科技</span>、<span style='color:#e6ded6'>利通电子</span>、<span style='color:#e6ded6'>祥龙电业</span>、<span style='color:#e6ded6'>敏芯股份</span><span style='color:#9a9aa4;font-size:11px'>(53.56)</span> 🔥<span style='color:#c98b7d;font-size:10px' title='收盘涨停封单量：1.8万手'>榜</span>、<span style='color:#e6ded6'>剑桥科技</span><span style='color:#9a9aa4;font-size:11px'>(185.90)</span> 🔥<span style='color:#c98b7d;font-size:10px' title='收盘涨停封单量：1.7万手'>榜</span>、<span style='color:#e6ded6'>开开实业</span><span style='color:#9a9aa4;font-size:11px'>(17.60)</span> 🔥<span style='color:#c98b7d;font-size:10px' title='收盘涨停封单量：1.6万手'>榜</span>、<span style='color:#e6ded6'>中国稀土</span><span style='color:#9a9aa4;font-size:11px'>(60.95)</span>、<span style='color:#e6ded6'>中源协和</span>、<span style='color:#e6ded6'>正裕工业</span>、<span style='color:#e6ded6'>海星股份</span>、<span style='color:#e6ded6'>海阳科技</span>、<span style='color:#e6ded6'>中瓷电子</span>、<span style='color:#e6ded6'>富信科技</span>、<span style='color:#e6ded6'>西点药业</span>、<span style='color:#e6ded6'>九州一轨</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:10px">
+    <div><div style="font-size:12px;color:#c9a66b;font-weight:600;margin-bottom:4px">💰 资金龙头 Top6</div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">1. 蓝盾光电</span><span style="font-size:12px"><span title="收盘价 | 数据来源：腾讯自选股行情快照 data_quote（date=当日）。计算方法：price=当日收盘价（最后一笔成交价）；涨跌幅=(price-昨收)/昨收。">47.29</span> <span style="color:#b87064;font-weight:600">+19.99%</span> <span style="color:#c9a66b">4.73亿</span></span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">2. 剑桥科技</span><span style="font-size:12px"><span title="收盘价 | 数据来源：腾讯自选股行情快照 data_quote（date=当日）。计算方法：price=当日收盘价（最后一笔成交价）；涨跌幅=(price-昨收)/昨收。">185.90</span> <span style="color:#b87064;font-weight:600">+10.00%</span> <span style="color:#c9a66b">4.60亿</span></span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">3. 网宿科技</span><span style="font-size:12px"><span title="收盘价 | 数据来源：腾讯自选股行情快照 data_quote（date=当日）。计算方法：price=当日收盘价（最后一笔成交价）；涨跌幅=(price-昨收)/昨收。">17.33</span> <span style="color:#b87064;font-weight:600">+20.01%</span> <span style="color:#c9a66b">3.64亿</span></span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">4. 杭电股份</span><span style="font-size:12px"><span title="收盘价 | 数据来源：腾讯自选股行情快照 data_quote（date=当日）。计算方法：price=当日收盘价（最后一笔成交价）；涨跌幅=(price-昨收)/昨收。">29.87</span> <span style="color:#b87064;font-weight:600">+10.02%</span> <span style="color:#c9a66b">2.30亿</span></span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">5. 经纬辉开</span><span style="font-size:12px"><span title="收盘价 | 数据来源：腾讯自选股行情快照 data_quote（date=当日）。计算方法：price=当日收盘价（最后一笔成交价）；涨跌幅=(price-昨收)/昨收。">9.26</span> <span style="color:#b87064;font-weight:600">+19.95%</span> <span style="color:#c9a66b">1.30亿</span></span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">6. 共进股份</span><span style="font-size:12px"><span title="收盘价 | 数据来源：腾讯自选股行情快照 data_quote（date=当日）。计算方法：price=当日收盘价（最后一笔成交价）；涨跌幅=(price-昨收)/昨收。">17.56</span> <span style="color:#b87064;font-weight:600">+10.03%</span> <span style="color:#c9a66b">1.03亿</span></span></div></div>
+    <div><div style="font-size:12px;color:#c9a66b;font-weight:600;margin-bottom:4px">👑 板块龙头 Top6</div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">大豪科技 <span style="font-size:10px;color:#9a9aa4">电子布</span></span><span style="font-size:12px"><span title="收盘价 | 数据来源：腾讯自选股行情快照 data_quote（date=当日）。计算方法：price=当日收盘价（最后一笔成交价）；涨跌幅=(price-昨收)/昨收。">15.18</span> <span style="color:#b87064;font-weight:600">+10.00%</span></span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">中材科技 <span style="font-size:10px;color:#9a9aa4">玻璃玻纤</span></span><span style="font-size:12px"><span title="收盘价 | 数据来源：腾讯自选股行情快照 data_quote（date=当日）。计算方法：price=当日收盘价（最后一笔成交价）；涨跌幅=(price-昨收)/昨收。">59.93</span> <span style="color:#b87064;font-weight:600">+7.48%</span></span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">蓝盾光电 <span style="font-size:10px;color:#9a9aa4">气溶胶检测</span></span><span style="font-size:12px"><span title="收盘价 | 数据来源：腾讯自选股行情快照 data_quote（date=当日）。计算方法：price=当日收盘价（最后一笔成交价）；涨跌幅=(price-昨收)/昨收。">47.29</span> <span style="color:#b87064;font-weight:600">+19.99%</span></span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">阿莱德 <span style="font-size:10px;color:#9a9aa4">通信设备</span></span><span style="font-size:12px"><span title="收盘价 | 数据来源：腾讯自选股行情快照 data_quote（date=当日）。计算方法：price=当日收盘价（最后一笔成交价）；涨跌幅=(price-昨收)/昨收。">37.62</span> <span style="color:#b87064;font-weight:600">+20.00%</span></span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">亨通光电 <span style="font-size:10px;color:#9a9aa4">光芯片</span></span><span style="font-size:12px"><span title="收盘价 | 数据来源：腾讯自选股行情快照 data_quote（date=当日）。计算方法：price=当日收盘价（最后一笔成交价）；涨跌幅=(price-昨收)/昨收。">62.98</span> <span style="color:#b87064;font-weight:600">+10.01%</span></span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">大恒科技 <span style="font-size:10px;color:#9a9aa4">激光</span></span><span style="font-size:12px"><span title="收盘价 | 数据来源：腾讯自选股行情快照 data_quote（date=当日）。计算方法：price=当日收盘价（最后一笔成交价）；涨跌幅=(price-昨收)/昨收。">13.22</span> <span style="color:#b87064;font-weight:600">+9.98%</span></span></div></div>
+  </div>
+</div>
+<div class='compact-yzb'><div class='cy-head'>🐉 今日游资活跃 <span class='cy-active'><b>14</b> 家活跃</span> <span class='cy-dormant'><b>6</b> 家未上榜</span> <span class='cy-sub'>名册 20 家</span></div><div class='cy-chips'><span class='yzb-chip'><b>知春路</b> <i class='pos'>1.36亿</i></span><span class='yzb-chip'><b>拉萨天团</b> <i class='pos'>7559万</i></span><span class='yzb-chip'><b>佛山系</b> <i class='pos'>4545万</i></span><span class='yzb-chip'><b>孙哥</b> <i class='pos'>4467万</i></span><span class='yzb-chip'><b>玉兰路</b> <i class='pos'>2289万</i></span><span class='yzb-chip'><b>思明南路</b> <i class='pos'>583万</i></span></div><div class='cy-foot'>净买最强 TOP6（点击对应日期卡片查看游资监控总表 ⑤）</div></div>
+
+    <div class="featured">
+      <div class="feat-badge">📈 月级专题</div>
+      <div class="feat-body">
+        <div class="feat-title">机构 + 游资共振 · 近 1 个月聚合分析</div>
+        <div class="feat-desc">覆盖 06-15 ~ 08-14 共 44 个交易日 · 共振样本 161 只 · 含每日共振趋势 / 共振明细(可筛近30天) / 游资活跃榜 / 机构净买 Top / 样本内胜率初探</div>
+        <a class="feat-link" href="lhb_resonance_dashboard.html">打开共振聚合看板 →</a>
+        <a class="feat-link" href="lhb_pullback_backtest.html" style="margin-left:8px">回踩买入胜率检验 →</a>
+        <a class="feat-link" href="lhb_alpha_backtest.html" style="margin-left:8px">个股收益 vs 大盘(alpha) →</a>
+      </div>
+    </div>
+<div class="grid">
+
+        <a class="card" href="lhb_institution_analysis_2026-08-14.html">
+          <span class="badge">最新</span>
+          <div class="date">2026-08-14</div>
+          <div class="week">周五</div>
+          <div class="stats">
+            <div class="stat"><span class="num">29</span><span class="lbl">全量上榜</span></div>
+            <div class="stat"><span class="num">15</span><span class="lbl">涨停</span></div>
+            <div class="stat"><span class="num">2</span><span class="lbl">共振</span></div>
+          </div>
+          <div class="stats" style="margin-top:8px">
+            <div class="stat"><span class="num">22.60亿</span><span class="lbl">机构净买</span></div>
+            <div class="stat"><span class="num">-2.23亿</span><span class="lbl">游资净买</span></div>
+          </div>
+          <div class="go">查看当日全量个股专业解读 →</div>
+        </a>
+</div>
+<footer>
+  口径说明：窗口按交易日计，1 日为当日，3/5/10 日为从当日起向前倒推对应交易日数的累加。<br>
+  机构采用净买入(netBuyAmt)口径（源数据"机构买入额"字段存在系统性异常已剔除）；游资以席位整体净买卖口径呈现。<br>
+  ⚠️ 本看板为盘后滞后资金痕迹，仅提示概率优势方向，<b>不构成任何投资建议</b>。投资有风险，决策须谨慎。
+</footer>
+</div>
+</body></html>
