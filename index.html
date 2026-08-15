@@ -23,6 +23,17 @@ header h1{font-size:32px;margin:0 0 10px;background:linear-gradient(90deg,#c9a66
 header p{margin:4px 0;color:var(--text-muted);font-size:14px;line-height:1.6;}
 .meta{margin:18px 0 28px;font-size:13px;color:var(--text-sub);}
 .meta b{color:var(--amber);}
+.compact-yzb{background:var(--card);border:1px solid var(--card-border);border-radius:var(--card-radius);padding:16px 18px;margin:18px 0;backdrop-filter:blur(8px);box-shadow:0 4px 20px rgba(0,0,0,.15);}
+.cy-head{font-size:14px;color:var(--text-sub);font-weight:600;margin-bottom:10px;}
+.cy-active{color:var(--up);font-weight:700;margin-left:6px;}
+.cy-dormant{color:var(--text-muted);font-weight:600;margin-left:6px;}
+.cy-sub{color:var(--text-muted);font-size:12px;margin-left:6px;}
+.cy-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.yzb-chip{background:rgba(255,255,255,.06);border:1px solid var(--card-border);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--text-sub);}
+.yzb-chip b{color:#f7f1ec;}
+.yzb-chip .pos{color:var(--up);font-style:normal;font-weight:600;}
+.yzb-chip .neg{color:var(--down);font-style:normal;font-weight:600;}
+.cy-foot{font-size:11px;color:var(--text-muted);margin-top:10px;}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;}
 .card{position:relative;text-decoration:none;background:var(--card);border:1px solid var(--card-border);
   border-radius:var(--card-radius);padding:22px;transition:.2s;backdrop-filter:blur(10px);box-shadow:0 4px 20px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.06);}
@@ -151,6 +162,7 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--card-border);
     <div><div style="font-size:12px;color:#c9a66b;font-weight:600;margin-bottom:4px">👑 板块龙头 Top6</div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">大豪科技 <span style="font-size:10px;color:#9a9aa4">电子布</span></span><span style="font-size:12px"><span title="收盘价 | 数据来源：腾讯自选股行情快照 data_quote（date=当日）。计算方法：price=当日收盘价（最后一笔成交价）；涨跌幅=(price-昨收)/昨收。">15.18</span> <span style="color:#b87064;font-weight:600">+10.00%</span></span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">中材科技 <span style="font-size:10px;color:#9a9aa4">玻璃玻纤</span></span><span style="font-size:12px"><span title="收盘价 | 数据来源：腾讯自选股行情快照 data_quote（date=当日）。计算方法：price=当日收盘价（最后一笔成交价）；涨跌幅=(price-昨收)/昨收。">59.93</span> <span style="color:#b87064;font-weight:600">+7.48%</span></span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">蓝盾光电 <span style="font-size:10px;color:#9a9aa4">气溶胶检测</span></span><span style="font-size:12px"><span title="收盘价 | 数据来源：腾讯自选股行情快照 data_quote（date=当日）。计算方法：price=当日收盘价（最后一笔成交价）；涨跌幅=(price-昨收)/昨收。">47.29</span> <span style="color:#b87064;font-weight:600">+19.99%</span></span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">阿莱德 <span style="font-size:10px;color:#9a9aa4">通信设备</span></span><span style="font-size:12px"><span title="收盘价 | 数据来源：腾讯自选股行情快照 data_quote（date=当日）。计算方法：price=当日收盘价（最后一笔成交价）；涨跌幅=(price-昨收)/昨收。">37.62</span> <span style="color:#b87064;font-weight:600">+20.00%</span></span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">亨通光电 <span style="font-size:10px;color:#9a9aa4">光芯片</span></span><span style="font-size:12px"><span title="收盘价 | 数据来源：腾讯自选股行情快照 data_quote（date=当日）。计算方法：price=当日收盘价（最后一笔成交价）；涨跌幅=(price-昨收)/昨收。">62.98</span> <span style="color:#b87064;font-weight:600">+10.01%</span></span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08)"><span style="color:#e6ded6">大恒科技 <span style="font-size:10px;color:#9a9aa4">激光</span></span><span style="font-size:12px"><span title="收盘价 | 数据来源：腾讯自选股行情快照 data_quote（date=当日）。计算方法：price=当日收盘价（最后一笔成交价）；涨跌幅=(price-昨收)/昨收。">13.22</span> <span style="color:#b87064;font-weight:600">+9.98%</span></span></div></div>
   </div>
 </div>
+<div class='compact-yzb'><div class='cy-head'>🐉 今日游资活跃 <span class='cy-active'><b>14</b> 家活跃</span> <span class='cy-dormant'><b>6</b> 家未上榜</span> <span class='cy-sub'>名册 20 家</span></div><div class='cy-chips'><span class='yzb-chip'><b>知春路</b> <i class='pos'>1.36亿</i></span><span class='yzb-chip'><b>拉萨天团</b> <i class='pos'>7559万</i></span><span class='yzb-chip'><b>佛山系</b> <i class='pos'>4545万</i></span><span class='yzb-chip'><b>孙哥</b> <i class='pos'>4467万</i></span><span class='yzb-chip'><b>玉兰路</b> <i class='pos'>2289万</i></span><span class='yzb-chip'><b>思明南路</b> <i class='pos'>583万</i></span></div><div class='cy-foot'>净买最强 TOP6（点击对应日期卡片查看游资监控总表 ⑤）</div></div>
 <div class="grid">
 
         <a class="card" href="lhb_institution_analysis_2026-08-14.html">
