@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>龙虎榜分析</title>
+<style>* { box-sizing: border-box; }
+body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:linear-gradient(135deg,#1a1f2e 0%,#232838 45%,#1a1f2e 100%); color:#f0e6dd; min-height:100vh; }
+.wrap { max-width:1040px; margin:0 auto; padding:40px 20px 60px; }
+.topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
+  border-bottom:1px solid rgba(255,255,255,.10); }
+.topnav a { color:#c9a66b; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(201,166,107,.30); transition:.2s; }
+.topnav a:hover { background:rgba(201,166,107,.14); }
+header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#c9a66b,#c98b7d,#a899b3);
+  -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
+header p { margin:4px 0; color:#9a9aa4; font-size:13px; line-height:1.6; }
+.meta { margin:14px 0 24px; font-size:12px; color:#c9c3b8; line-height:1.7; }
+.meta b { color:#c9a66b; }
+.section { background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.10); border-radius:20px; padding:18px 20px; margin:0 0 22px;
+  box-shadow:0 4px 20px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.05); backdrop-filter:blur(10px); }
+.section h2 { font-size:17px; margin:0 0 14px; color:#f7f1ec; display:flex; align-items:center; gap:8px; }
+.section h2:before { content:""; width:4px; height:16px; background:#c9a66b; border-radius:3px; }
+.idxrow { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px; }
+.idx { flex:1; min-width:200px; background:linear-gradient(135deg,rgba(185,116,104,.18),rgba(220,38,38,.06));
+  border:1px solid rgba(201,139,125,.36); border-radius:14px; padding:13px 10px; text-align:center;
+  box-shadow:0 4px 14px rgba(0,0,0,.18), 0 0 16px rgba(201,139,125,.12); }
+.idx .k { font-size:11px; color:#c9c3b8; letter-spacing:.3px; }
+.idx .v { font-size:22px; font-weight:800; color:#f7f1ec; margin:5px 0 2px; }
+.idx .c { font-size:13px; font-weight:700; }
+.idx .hl { font-size:10px; color:#9a9aa4; margin-top:4px; }
+.bar { display:flex; height:34px; border-radius:8px; overflow:hidden; margin:10px 0; font-size:12px;
+  color:#f7f1ec; text-align:center; line-height:34px; box-shadow:0 2px 6px rgba(0,0,0,.2); }
+.chiprow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+.chip { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:12px;
+  padding:10px 6px; text-align:center; min-width:74px; backdrop-filter:blur(6px); box-shadow:0 2px 10px rgba(0,0,0,.12); }
+.chip .ck { font-size:10px; color:#9a9aa4; }
+.chip .cv { font-size:16px; font-weight:800; margin-top:3px; }
+.tag { display:inline-block; border-radius:20px; padding:3px 11px; font-size:12px; margin:3px 4px 3px 0;
+  background:#eef2f8; color:#33414f; }
+.tag.hot { background:#fdeceb; color:#d8392b; }
+.tag.cold { background:#e9f6ef; color:#1a9e5a; }
+.pill { display:inline-block; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
+  border-radius:20px; padding:4px 11px; font-size:12px; color:#e6ded6; margin:3px 4px 3px 0; cursor:help; }
+.pill b { color:#c9a66b; font-weight:700; }
+table { width:100%; border-collapse:collapse; font-size:13px; background:rgba(26,31,46,.55);
+  border:1px solid rgba(255,255,255,.08); border-radius:12px; overflow:hidden; margin:10px 0; }
+th,td { padding:8px 10px; text-align:left; border-bottom:1px solid rgba(255,255,255,.07); }
+th { background:rgba(30,41,59,.8); color:#e6ded6; font-weight:600; font-size:12px; }
+td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+.up { color:#c98b7d; } .down { color:#8da894; }
+.note { color:#9a9aa4; font-size:12px; margin-top:8px; line-height:1.6; }
+.amberbox { font-size:13px; color:#c9a66b; background:linear-gradient(135deg,rgba(201,166,107,.13),rgba(201,166,107,.05));
+  border:1px solid rgba(201,166,107,.22); border-radius:12px; padding:12px 16px; margin:12px 0; line-height:1.6; }
+.ladder { margin:6px 0; padding:8px 10px; background:rgba(26,31,46,.55); border:1px solid rgba(255,255,255,.10);
+  border-radius:8px; font-size:13px; }
+.ladder .badge { display:inline-block; border-radius:6px; padding:1px 8px; margin-right:8px; font-weight:700; font-size:12px; }
+.ladder .b5 { background:rgba(220,38,38,.25); border:1px solid rgba(248,113,113,.5); color:#d6a89d; }
+.ladder .b4 { background:rgba(220,38,38,.18); border:1px solid rgba(248,113,113,.4); color:#d6a89d; }
+.ladder .b3 { background:rgba(201,166,107,.20); border:1px solid rgba(251,191,36,.45); color:#d8bd8a; }
+.ladder .b2 { background:rgba(201,166,107,.20); border:1px solid rgba(251,191,36,.45); color:#d8bd8a; }
+.ladder .b1 { background:rgba(120,137,162,.18); border:1px solid rgba(139,155,181,.45); color:#a7b4c9; }
+.namechip { display:inline-block; color:#e6ded6; margin:2px 6px 2px 0; font-size:13px; }
+.empty { color:#9a9aa4; text-align:center; padding:38px 0; font-size:14px; line-height:1.8; }
+.empty b { color:#c9a66b; }
+footer { margin-top:40px; padding-top:16px; border-top:1px solid rgba(255,255,255,.10);
+  font-size:12px; color:#9a9aa4; line-height:1.8; }
+a.inlink { color:#c9a66b; text-decoration:none; border:1px solid rgba(201,166,107,.5);
+  border-radius:10px; padding:6px 14px; font-size:13px; font-weight:700; display:inline-block; margin:4px 6px 4px 0; }
+a.inlink:hover { background:rgba(201,166,107,.16); }
+.wrap.landing { max-width:880px; text-align:center; }
+.landing header h1 { font-size:34px; }
+.landing header p { margin:6px 0; color:#9a9aa4; font-size:14px; }
+.date { margin:18px 0 30px; font-size:13px; color:#c9a66b; letter-spacing:.5px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; text-align:left; }
+.card { display:block; text-decoration:none; color:#f0e6dd; background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.10); border-radius:18px; padding:20px 18px;
+  box-shadow:0 4px 20px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.05); backdrop-filter:blur(10px); transition:.2s; }
+.card:hover { border-color:rgba(201,166,107,.45); transform:translateY(-2px); background:linear-gradient(135deg,rgba(201,166,107,.12),rgba(255,255,255,.03)); }
+.card .ic { font-size:26px; }
+.card .t { font-size:17px; font-weight:700; margin:10px 0 6px; color:#f7f1ec; }
+.card .d { font-size:12.5px; color:#9a9aa4; line-height:1.6; }
+.hist { margin-top:30px; font-size:12.5px; color:#c9c3b8; }
+.hist a { color:#c9a66b; text-decoration:none; border:1px solid rgba(201,166,107,.4); border-radius:10px; padding:5px 12px; display:inline-block; margin:4px; }
+.foot { margin-top:42px; font-size:12px; color:#9a9aa4; line-height:1.8; }
+</style>
+</head>
+<body>
+<div class='wrap'>
+<div class='topnav'>
+<a href='daily_overview.html'>每日总览</a>
+<a href='portfolio.html'>组合总看板</a>
+<a href='lhb.html'>龙虎榜分析</a>
+<a href='hotmoney.html'>游资看板</a>
+<a href='status_2026-08-20.html'>状态报告</a>
+<a href='lhb_institution_analysis_2026-08-14.html'>历史龙虎榜(08-14)</a>
+</div>
+<header>
+<h1>🐉 龙虎榜分析</h1>
+<p>机构专用榜 / 机构+游资共振 / 席位胜率 — 2026-08-20</p>
+</header>
+<div class='meta'>数据来源：westock-mcp data_lhb（jg 机构专用榜 / gslmr 机构+游资共振买入 / gslxw 席位胜率）。yzb 当日为空。</div>
+<div class='section'>
+<h2>🏛️ 机构专用榜 TOP20（按净买额）</h2>
+<div class='note'>机构专用席位净买入口径；净买额为净流入（买入−卖出）。共 39 只个股上榜机构榜。</div>
+<table>
+<tr>
+<th>名称</th>
+<th class='num'>上榜</th>
+<th class='num'>机构买入(亿)</th>
+<th class='num'>机构净买(亿)</th>
+<th class='num'>净买率%</th>
+<th class='num'>席位</th>
+<th class='num'>总买入(亿)</th>
+<th class='num'>排名</th>
+</tr>
+<tr>
+<td>
+<b>恒逸石化</b> <span class='note'>sz000703</span>
+</td>
+<td class='num'>3</td>
+<td class='num'>-4.37</td>
+<td class='num up'>11.41</td>
+<td class='num up'>4.59</td>
+<td class='num'>6</td>
+<td class='num'>7.04</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>石药创新</b> <span class='note'>sz300765</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-3.54</td>
+<td class='num up'>4.64</td>
+<td class='num up'>4.59</td>
+<td class='num'>6</td>
+<td class='num'>1.10</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>博济医药</b> <span class='note'>sz300404</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.74</td>
+<td class='num up'>1.66</td>
+<td class='num up'>31.76</td>
+<td class='num'>4</td>
+<td class='num'>0.92</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>惠泰医疗</b> <span class='note'>sh688617</span>
+</td>
+<td class='num'>3</td>
+<td class='num'>2.61</td>
+<td class='num up'>1.60</td>
+<td class='num up'>3.45</td>
+<td class='num'>4</td>
+<td class='num'>4.21</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>宝莱特</b> <span class='note'>sz300246</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.67</td>
+<td class='num up'>1.25</td>
+<td class='num up'>16.72</td>
+<td class='num'>5</td>
+<td class='num'>0.57</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>博腾股份</b> <span class='note'>sz300363</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>0.01</td>
+<td class='num up'>1.08</td>
+<td class='num up'>11.01</td>
+<td class='num'>4</td>
+<td class='num'>1.10</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>神农种业</b> <span class='note'>sz300189</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>0.79</td>
+<td class='num up'>0.83</td>
+<td class='num up'>41.05</td>
+<td class='num'>5</td>
+<td class='num'>1.62</td>
+<td class='num'>4</td>
+</tr>
+<tr>
+<td>
+<b>通鼎互联</b> <span class='note'>sz002491</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.09</td>
+<td class='num up'>0.75</td>
+<td class='num up'>19.10</td>
+<td class='num'>2</td>
+<td class='num'>0.67</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>誉衡药业</b> <span class='note'>sz002437</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>0.07</td>
+<td class='num up'>0.65</td>
+<td class='num up'>22.96</td>
+<td class='num'>2</td>
+<td class='num'>0.72</td>
+<td class='num'>8</td>
+</tr>
+<tr>
+<td>
+<b>柘中股份</b> <span class='note'>sz002346</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>0.18</td>
+<td class='num up'>0.63</td>
+<td class='num up'>4.81</td>
+<td class='num'>4</td>
+<td class='num'>0.81</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>哈三联</b> <span class='note'>sz002900</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.28</td>
+<td class='num up'>0.56</td>
+<td class='num up'>40.10</td>
+<td class='num'>3</td>
+<td class='num'>0.27</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>永安药业</b> <span class='note'>sz002365</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.36</td>
+<td class='num up'>0.53</td>
+<td class='num up'>29.81</td>
+<td class='num'>3</td>
+<td class='num'>0.17</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>安科生物</b> <span class='note'>sz300009</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>0.36</td>
+<td class='num up'>0.50</td>
+<td class='num up'>16.32</td>
+<td class='num'>2</td>
+<td class='num'>0.85</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>神奇制药</b> <span class='note'>sh600613</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.39</td>
+<td class='num up'>0.39</td>
+<td class='num up'>12.55</td>
+<td class='num'>1</td>
+<td class='num'>0.00</td>
+<td class='num'>3</td>
+</tr>
+<tr>
+<td>
+<b>速达股份</b> <span class='note'>sz001277</span>
+</td>
+<td class='num'>3</td>
+<td class='num'>-0.35</td>
+<td class='num up'>0.36</td>
+<td class='num up'>13.56</td>
+<td class='num'>2</td>
+<td class='num'>0.01</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>播恩集团</b> <span class='note'>sz001366</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.13</td>
+<td class='num up'>0.34</td>
+<td class='num up'>12.98</td>
+<td class='num'>3</td>
+<td class='num'>0.22</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>华东数控</b> <span class='note'>sz002248</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.28</td>
+<td class='num up'>0.33</td>
+<td class='num up'>20.72</td>
+<td class='num'>3</td>
+<td class='num'>0.05</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>桂发祥</b> <span class='note'>sz002820</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.27</td>
+<td class='num up'>0.32</td>
+<td class='num up'>18.99</td>
+<td class='num'>3</td>
+<td class='num'>0.05</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>华大智造</b> <span class='note'>sh688114</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.08</td>
+<td class='num up'>0.32</td>
+<td class='num up'>1.66</td>
+<td class='num'>3</td>
+<td class='num'>0.24</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>西点药业</b> <span class='note'>sz301130</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>0.02</td>
+<td class='num up'>0.31</td>
+<td class='num up'>31.94</td>
+<td class='num'>3</td>
+<td class='num'>0.33</td>
+<td class='num'>2</td>
+</tr>
+</table>
+</div>
+<div class='section'>
+<h2>🔗 机构 + 游资共振买入（31 只）</h2>
+<div class='note'>同时出现机构与活跃游资席位合力的个股；netAmt 为共振净流入，upRate 为当日涨幅，winNum 为龙虎榜上榜席位家数。</div>
+<table>
+<tr>
+<th>名称</th>
+<th class='num'>上榜天数</th>
+<th class='num'>共振净买(亿)</th>
+<th class='num'>当日涨幅%</th>
+<th class='num'>买入(亿)</th>
+<th class='num'>卖出(亿)</th>
+<th class='num'>席位家数</th>
+</tr>
+<tr>
+<td>
+<b>通鼎互联</b> <span class='note'>sz002491</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>3.13</td>
+<td class='num up'>+9.99%</td>
+<td class='num'>3.14</td>
+<td class='num'>0.01</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>宝鼎科技</b> <span class='note'>sz002552</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>2.56</td>
+<td class='num up'>+10.01%</td>
+<td class='num'>2.61</td>
+<td class='num'>0.04</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>安科生物</b> <span class='note'>sz300009</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>2.14</td>
+<td class='num up'>+19.98%</td>
+<td class='num'>2.14</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>石药创新</b> <span class='note'>sz300765</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>2.07</td>
+<td class='num up'>+20.00%</td>
+<td class='num'>2.07</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>誉衡药业</b> <span class='note'>sz002437</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>1.63</td>
+<td class='num up'>+10.00%</td>
+<td class='num'>1.63</td>
+<td class='num'>0.00</td>
+<td class='num'>8</td>
+</tr>
+<tr>
+<td>
+<b>宝泰隆</b> <span class='note'>sh601011</span>
+</td>
+<td class='num'>3</td>
+<td class='num up'>1.07</td>
+<td class='num up'>+5.26%</td>
+<td class='num'>1.07</td>
+<td class='num'>0.00</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>康希诺</b> <span class='note'>sh688185</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>1.04</td>
+<td class='num up'>+20.00%</td>
+<td class='num'>1.04</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>澳洋健康</b> <span class='note'>sz002172</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.92</td>
+<td class='num up'>+9.90%</td>
+<td class='num'>0.92</td>
+<td class='num'>0.00</td>
+<td class='num'>4</td>
+</tr>
+<tr>
+<td>
+<b>华大智造</b> <span class='note'>sh688114</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.77</td>
+<td class='num up'>+20.00%</td>
+<td class='num'>0.77</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>金健米业</b> <span class='note'>sh600127</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.76</td>
+<td class='num up'>+9.97%</td>
+<td class='num'>0.76</td>
+<td class='num'>0.00</td>
+<td class='num'>4</td>
+</tr>
+<tr>
+<td>
+<b>百花医药</b> <span class='note'>sh600721</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.47</td>
+<td class='num down'>-0.44%</td>
+<td class='num'>0.47</td>
+<td class='num'>0.00</td>
+<td class='num'>7</td>
+</tr>
+<tr>
+<td>
+<b>华曙高科</b> <span class='note'>sh688433</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.33</td>
+<td class='num up'>+20.00%</td>
+<td class='num'>0.33</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>狮头股份</b> <span class='note'>sh600539</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.28</td>
+<td class='num up'>+10.03%</td>
+<td class='num'>0.28</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>爱丽家居</b> <span class='note'>sh603221</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.25</td>
+<td class='num up'>+5.93%</td>
+<td class='num'>0.25</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>永安药业</b> <span class='note'>sz002365</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.25</td>
+<td class='num up'>+9.98%</td>
+<td class='num'>0.25</td>
+<td class='num'>0.01</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>*ST威领</b> <span class='note'>sz002667</span>
+</td>
+<td class='num'>3</td>
+<td class='num up'>0.23</td>
+<td class='num up'>+10.02%</td>
+<td class='num'>0.24</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>速达股份</b> <span class='note'>sz001277</span>
+</td>
+<td class='num'>3</td>
+<td class='num up'>0.21</td>
+<td class='num up'>+10.01%</td>
+<td class='num'>0.33</td>
+<td class='num'>0.12</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>城投控股</b> <span class='note'>sh600649</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.20</td>
+<td class='num up'>+10.05%</td>
+<td class='num'>0.20</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>神奇制药</b> <span class='note'>sh600613</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.19</td>
+<td class='num up'>+10.03%</td>
+<td class='num'>0.19</td>
+<td class='num'>0.00</td>
+<td class='num'>3</td>
+</tr>
+<tr>
+<td>
+<b>中大力德</b> <span class='note'>sz002896</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.14</td>
+<td class='num down'>-10.00%</td>
+<td class='num'>0.14</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>西点药业</b> <span class='note'>sz301130</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.14</td>
+<td class='num up'>+0.21%</td>
+<td class='num'>0.14</td>
+<td class='num'>0.00</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>开开实业</b> <span class='note'>sh600272</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.12</td>
+<td class='num down'>-6.00%</td>
+<td class='num'>0.12</td>
+<td class='num'>0.00</td>
+<td class='num'>9</td>
+</tr>
+<tr>
+<td>
+<b>近岸蛋白</b> <span class='note'>sh688137</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.09</td>
+<td class='num up'>+20.00%</td>
+<td class='num'>0.09</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>万邦医药</b> <span class='note'>sz301520</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.09</td>
+<td class='num down'>-4.10%</td>
+<td class='num'>0.10</td>
+<td class='num'>0.01</td>
+<td class='num'>38</td>
+</tr>
+<tr>
+<td>
+<b>汉森制药</b> <span class='note'>sz002412</span>
+</td>
+<td class='num'>3</td>
+<td class='num up'>0.08</td>
+<td class='num up'>+9.98%</td>
+<td class='num'>0.08</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>长裕集团</b> <span class='note'>sh603407</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.07</td>
+<td class='num down'>-9.98%</td>
+<td class='num'>0.07</td>
+<td class='num'>0.00</td>
+<td class='num'>4</td>
+</tr>
+<tr>
+<td>
+<b>宝莱特</b> <span class='note'>sz300246</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.07</td>
+<td class='num down'>-15.45%</td>
+<td class='num'>0.07</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>播恩集团</b> <span class='note'>sz001366</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.06</td>
+<td class='num down'>-5.10%</td>
+<td class='num'>0.06</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>志邦家居</b> <span class='note'>sh603801</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.06</td>
+<td class='num up'>+10.05%</td>
+<td class='num'>0.06</td>
+<td class='num'>0.00</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>*ST利达</b> <span class='note'>sh603828</span>
+</td>
+<td class='num'>3</td>
+<td class='num up'>0.03</td>
+<td class='num up'>+9.93%</td>
+<td class='num'>0.03</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>罗普斯金</b> <span class='note'>sz002333</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.01</td>
+<td class='num down'>-9.94%</td>
+<td class='num'>0.03</td>
+<td class='num'>0.02</td>
+<td class='num'>1</td>
+</tr>
+</table>
+</div>
+<div class='section'>
+<h2>🎯 营业部席位胜率聚合 TOP20</h2>
+<table>
+<tr>
+<th>营业部席位</th>
+<th class='num'>胜率%</th>
+<th class='num'>净买额(亿)</th>
+<th>涉及个股</th>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司武汉紫阳东路证券营业部</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>53.4</td>
+<td class='num up'>3.25</td>
+<td style='color:#c9c3b8;font-size:12px'>通鼎互联、宝鼎科技、石药创新</td>
+</tr>
+<tr>
+<td>国新证券股份有限公司北京分公司</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>50.9</td>
+<td class='num up'>1.95</td>
+<td style='color:#c9c3b8;font-size:12px'>金健米业、澳洋健康、誉衡药业</td>
+</tr>
+<tr>
+<td>东北证券股份有限公司佛山分公司</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>50.6</td>
+<td class='num up'>1.79</td>
+<td style='color:#c9c3b8;font-size:12px'>安科生物</td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司南京太平南路证券营业部</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>50.8</td>
+<td class='num up'>1.72</td>
+<td style='color:#c9c3b8;font-size:12px'>宝泰隆、康希诺、*ST威领</td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司上海松江区中山东路证券营业部</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>53.2</td>
+<td class='num up'>1.51</td>
+<td style='color:#c9c3b8;font-size:12px'>通鼎互联、宝鼎科技</td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司北京知春路证券营业部</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>52.4</td>
+<td class='num up'>1.18</td>
+<td style='color:#c9c3b8;font-size:12px'>宝鼎科技</td>
+</tr>
+<tr>
+<td>东方证券股份有限公司杭州龙井路证券营业部</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>50.0</td>
+<td class='num up'>1.00</td>
+<td style='color:#c9c3b8;font-size:12px'>石药创新</td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司上海自贸试验区第二分公司</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>53.6</td>
+<td class='num up'>0.82</td>
+<td style='color:#c9c3b8;font-size:12px'>通鼎互联</td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司三亚迎宾路证券营业部</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>50.6</td>
+<td class='num up'>0.68</td>
+<td style='color:#c9c3b8;font-size:12px'>澳洋健康</td>
+</tr>
+<tr>
+<td>华泰证券股份有限公司苏州吴中大道证券营业部</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>56.0</td>
+<td class='num up'>0.67</td>
+<td style='color:#c9c3b8;font-size:12px'>誉衡药业</td>
+</tr>
+<tr>
+<td>上海证券有限责任公司上海分公司</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>58.6</td>
+<td class='num up'>0.61</td>
+<td style='color:#c9c3b8;font-size:12px'>华大智造</td>
+</tr>
+<tr>
+<td>平安证券股份有限公司浙江分公司</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>50.7</td>
+<td class='num up'>0.57</td>
+<td style='color:#c9c3b8;font-size:12px'>华曙高科、永安药业</td>
+</tr>
+<tr>
+<td>江海证券有限公司哈尔滨世茂大道证券营业部</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>82.3</td>
+<td class='num up'>0.45</td>
+<td style='color:#c9c3b8;font-size:12px'>康希诺</td>
+</tr>
+<tr>
+<td>东方财富证券股份有限公司江苏分公司</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>66.7</td>
+<td class='num up'>0.37</td>
+<td style='color:#c9c3b8;font-size:12px'>百花医药、万邦医药</td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司济南舜华路证券营业部</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>53.3</td>
+<td class='num up'>0.36</td>
+<td style='color:#c9c3b8;font-size:12px'>安科生物</td>
+</tr>
+<tr>
+<td>东海证券股份有限公司福州长乐北路证券营业部</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>68.1</td>
+<td class='num up'>0.25</td>
+<td style='color:#c9c3b8;font-size:12px'>爱丽家居</td>
+</tr>
+<tr>
+<td>中国中金财富证券有限公司深圳桃园路证券营业部</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>63.6</td>
+<td class='num up'>0.20</td>
+<td style='color:#c9c3b8;font-size:12px'>城投控股</td>
+</tr>
+<tr>
+<td>甬兴证券有限公司台州分公司</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>84.6</td>
+<td class='num up'>0.19</td>
+<td style='color:#c9c3b8;font-size:12px'>神奇制药</td>
+</tr>
+<tr>
+<td>中国中金财富证券有限公司湖南分公司</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>60.0</td>
+<td class='num up'>0.18</td>
+<td style='color:#c9c3b8;font-size:12px'>百花医药</td>
+</tr>
+<tr>
+<td>招商证券股份有限公司北京分公司</td>
+<td class='num' style='color:#c9a66b;font-weight:700'>100.0</td>
+<td class='num up'>0.16</td>
+<td style='color:#c9c3b8;font-size:12px'>华大智造</td>
+</tr>
+</table>
+</div>
+<div class='section'>
+<h2>📐 窗口收益（alpha vs 大盘）</h2>
+<div class='empty'>1·3·5·10 交易日窗口收益回测属量化专题，需历史复权数据支撑，本页未内置；可参考远程历史分析页：<br>
+<a class='inlink' href='lhb_institution_analysis_2026-08-14.html'>机构分析(08-14) →</a>
+<a class='inlink' href='lhb_resonance_dashboard.html'>机构+游资共振聚合看板 →</a>
+<a class='inlink' href='lhb_alpha_backtest.html'>个股收益 vs 大盘(alpha) →</a>
+<a class='inlink' href='lhb_pullback_backtest.html'>回踩买入胜率检验 →</a>
+</div>
+</div>
+<footer>⚠️ 盘后滞后资金痕迹，仅提示概率优势方向，不构成投资建议。</footer>
+</div>
+</body>
+</html>
