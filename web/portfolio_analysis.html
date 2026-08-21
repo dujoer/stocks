@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>组合分析</title>
+<style>* { box-sizing: border-box; }
+body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:linear-gradient(135deg,#1a1f2e 0%,#232838 45%,#1a1f2e 100%); color:#f0e6dd; min-height:100vh; }
+.wrap { max-width:1040px; margin:0 auto; padding:40px 20px 60px; }
+.topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
+  border-bottom:1px solid rgba(255,255,255,.10); }
+.topnav a { color:#c9a66b; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(201,166,107,.30); transition:.2s; }
+.topnav a:hover { background:rgba(201,166,107,.14); }
+header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#c9a66b,#c98b7d,#a899b3);
+  -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
+header p { margin:4px 0; color:#9a9aa4; font-size:13px; line-height:1.6; }
+.meta { margin:14px 0 24px; font-size:12px; color:#c9c3b8; line-height:1.7; }
+.meta b { color:#c9a66b; }
+.section { background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.10); border-radius:20px; padding:18px 20px; margin:0 0 22px;
+  box-shadow:0 4px 20px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.05); backdrop-filter:blur(10px); }
+.section h2 { font-size:17px; margin:0 0 14px; color:#f7f1ec; display:flex; align-items:center; gap:8px; }
+.section h2:before { content:""; width:4px; height:16px; background:#c9a66b; border-radius:3px; }
+.idxrow { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px; }
+.idx { flex:1; min-width:200px; background:linear-gradient(135deg,rgba(185,116,104,.18),rgba(220,38,38,.06));
+  border:1px solid rgba(201,139,125,.36); border-radius:14px; padding:13px 10px; text-align:center;
+  box-shadow:0 4px 14px rgba(0,0,0,.18), 0 0 16px rgba(201,139,125,.12); }
+.idx .k { font-size:11px; color:#c9c3b8; letter-spacing:.3px; }
+.idx .v { font-size:22px; font-weight:800; color:#f7f1ec; margin:5px 0 2px; }
+.idx .c { font-size:13px; font-weight:700; }
+.idx .hl { font-size:10px; color:#9a9aa4; margin-top:4px; }
+.bar { display:flex; height:34px; border-radius:8px; overflow:hidden; margin:10px 0; font-size:12px;
+  color:#f7f1ec; text-align:center; line-height:34px; box-shadow:0 2px 6px rgba(0,0,0,.2); }
+.chiprow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+.chip { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:12px;
+  padding:10px 6px; text-align:center; min-width:74px; backdrop-filter:blur(6px); box-shadow:0 2px 10px rgba(0,0,0,.12); }
+.chip .ck { font-size:10px; color:#9a9aa4; }
+.chip .cv { font-size:16px; font-weight:800; margin-top:3px; }
+.tag { display:inline-block; border-radius:20px; padding:3px 11px; font-size:12px; margin:3px 4px 3px 0;
+  background:#eef2f8; color:#33414f; }
+.tag.hot { background:#fdeceb; color:#d8392b; }
+.tag.cold { background:#e9f6ef; color:#1a9e5a; }
+.pill { display:inline-block; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
+  border-radius:20px; padding:4px 11px; font-size:12px; color:#e6ded6; margin:3px 4px 3px 0; cursor:help; }
+.pill b { color:#c9a66b; font-weight:700; }
+table { width:100%; border-collapse:collapse; font-size:13px; background:rgba(26,31,46,.55);
+  border:1px solid rgba(255,255,255,.08); border-radius:12px; overflow:hidden; margin:10px 0; }
+th,td { padding:8px 10px; text-align:left; border-bottom:1px solid rgba(255,255,255,.07); }
+th { background:rgba(30,41,59,.8); color:#e6ded6; font-weight:600; font-size:12px; }
+td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+.up { color:#c98b7d; } .down { color:#8da894; }
+.note { color:#9a9aa4; font-size:12px; margin-top:8px; line-height:1.6; }
+.amberbox { font-size:13px; color:#c9a66b; background:linear-gradient(135deg,rgba(201,166,107,.13),rgba(201,166,107,.05));
+  border:1px solid rgba(201,166,107,.22); border-radius:12px; padding:12px 16px; margin:12px 0; line-height:1.6; }
+.ladder { margin:6px 0; padding:8px 10px; background:rgba(26,31,46,.55); border:1px solid rgba(255,255,255,.10);
+  border-radius:8px; font-size:13px; }
+.ladder .badge { display:inline-block; border-radius:6px; padding:1px 8px; margin-right:8px; font-weight:700; font-size:12px; }
+.ladder .b5 { background:rgba(220,38,38,.25); border:1px solid rgba(248,113,113,.5); color:#d6a89d; }
+.ladder .b4 { background:rgba(220,38,38,.18); border:1px solid rgba(248,113,113,.4); color:#d6a89d; }
+.ladder .b3 { background:rgba(201,166,107,.20); border:1px solid rgba(251,191,36,.45); color:#d8bd8a; }
+.ladder .b2 { background:rgba(201,166,107,.20); border:1px solid rgba(251,191,36,.45); color:#d8bd8a; }
+.ladder .b1 { background:rgba(120,137,162,.18); border:1px solid rgba(139,155,181,.45); color:#a7b4c9; }
+.namechip { display:inline-block; color:#e6ded6; margin:2px 6px 2px 0; font-size:13px; }
+.empty { color:#9a9aa4; text-align:center; padding:38px 0; font-size:14px; line-height:1.8; }
+.empty b { color:#c9a66b; }
+footer { margin-top:40px; padding-top:16px; border-top:1px solid rgba(255,255,255,.10);
+  font-size:12px; color:#9a9aa4; line-height:1.8; }
+a.inlink { color:#c9a66b; text-decoration:none; border:1px solid rgba(201,166,107,.5);
+  border-radius:10px; padding:6px 14px; font-size:13px; font-weight:700; display:inline-block; margin:4px 6px 4px 0; }
+a.inlink:hover { background:rgba(201,166,107,.16); }
+.wrap.landing { max-width:880px; text-align:center; }
+.landing header h1 { font-size:34px; }
+.landing header p { margin:6px 0; color:#9a9aa4; font-size:14px; }
+.date { margin:18px 0 30px; font-size:13px; color:#c9a66b; letter-spacing:.5px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; text-align:left; }
+.card { display:block; text-decoration:none; color:#f0e6dd; background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.10); border-radius:18px; padding:20px 18px;
+  box-shadow:0 4px 20px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.05); backdrop-filter:blur(10px); transition:.2s; }
+.card:hover { border-color:rgba(201,166,107,.45); transform:translateY(-2px); background:linear-gradient(135deg,rgba(201,166,107,.12),rgba(255,255,255,.03)); }
+.card .ic { font-size:26px; }
+.card .t { font-size:17px; font-weight:700; margin:10px 0 6px; color:#f7f1ec; }
+.card .d { font-size:12.5px; color:#9a9aa4; line-height:1.6; }
+.hist { margin-top:30px; font-size:12.5px; color:#c9c3b8; }
+.hist a { color:#c9a66b; text-decoration:none; border:1px solid rgba(201,166,107,.4); border-radius:10px; padding:5px 12px; display:inline-block; margin:4px; }
+.foot { margin-top:42px; font-size:12px; color:#9a9aa4; line-height:1.8; }
+</style>
+</head>
+<body>
+<div class='wrap'>
+<div class='topnav'>
+<a href='index.html'>首页</a>
+<a href='daily_overview.html'>每日总览</a>
+<a href='portfolio.html'>组合总看板</a>
+<a href='portfolio_analysis.html'>组合分析</a>
+<a href='lhb.html'>龙虎榜分析</a>
+<a href='hotmoney.html'>游资看板</a>
+<a href='status_2026-08-21.html'>状态报告</a>
+</div>
+<header>
+<h1>💼 组合分析 — 换仓后快照</h1>
+<p>数据口径：持仓来自券商导出（2026-08-22），行情涨跌为 2026-08-21（最新交易日）。共 9 只持仓股。</p>
+</header>
+<div class='meta'>数据源：券商导出持仓（table.xls）→ _all_store.json + 腾讯自选股实时行情。本页仅做组合层面的客观分析，不构成买卖建议。</div>
+<div class='section'>
+<h2>📊 组合快照</h2>
+<div class='idxrow'>
+<div class='idx'>
+<div class='k'>持仓股市值</div>
+<div class='v'>334,371</div>
+<div class='c'>元</div>
+</div>
+<div class='idx'>
+<div class='k'>浮动盈亏</div>
+<div class='v down'>-27,020</div>
+<div class='c down'>-8.08%</div>
+</div>
+<div class='idx'>
+<div class='k'>8.21 当日盈亏</div>
+<div class='v down'>-2,941</div>
+<div class='c'>元</div>
+</div>
+<div class='idx'>
+<div class='k'>持仓数 / 亏损数</div>
+<div class='v'>9</div>
+<div class='c'>8 只浮亏</div>
+</div>
+</div>
+</div>
+<div class='section'>
+<h2>🧩 仓位结构</h2>
+<div class='bar'>
+<div style='width:15.28%;background:#c98b7d' title='超捷股份 15.3%'>15.3%</div>
+<div style='width:13.29%;background:#c9a66b' title='捷捷微电 13.3%'>13.3%</div>
+<div style='width:12.07%;background:#8da894' title='云南锗业 12.1%'>12.1%</div>
+<div style='width:11.96%;background:#a899b3' title='益方生物 12.0%'>12.0%</div>
+<div style='width:11.38%;background:#7fa8c9' title='江波龙 11.4%'>11.4%</div>
+<div style='width:9.41%;background:#d6a89d' title='全志科技 9.4%'>9.4%</div>
+<div style='width:9.40%;background:#9bbf8a' title='长电科技 9.4%'>9.4%</div>
+<div style='width:8.71%;background:#c9b07a' title='中粮糖业 8.7%'>8.7%</div>
+<div style='width:8.50%;background:#b08fc9' title='中瓷电子 8.5%'>8.5%</div>
+</div>
+<div class='note'>各持仓占比（按 8.21 现价市值计算，总持仓股市值 334,371 元）。</div>
+</div>
+<div class='section'>
+<h2>🏭 板块集中度</h2>
+<div class='chiprow'>
+<div class='chip'>
+<div class='ck'>半导体链</div>
+<div class='cv'>64.0%</div>
+</div>
+<div class='chip'>
+<div class='ck'>汽车</div>
+<div class='cv'>15.3%</div>
+</div>
+<div class='chip'>
+<div class='ck'>创新药</div>
+<div class='cv'>12.0%</div>
+</div>
+<div class='chip'>
+<div class='ck'>农业/食糖</div>
+<div class='cv'>8.7%</div>
+</div>
+</div>
+<div class='note'>半导体链（材料/功率/存储/SoC/封测）合计 <b class='down'>64.0%</b>，为组合核心暴露。</div>
+</div>
+<div class='section'>
+<h2>📋 持仓明细</h2>
+<table>
+<tr>
+<th>名称</th>
+<th class='num'>持仓</th>
+<th class='num'>成本</th>
+<th class='num'>现价</th>
+<th class='num'>浮动盈亏</th>
+<th class='num'>盈亏%</th>
+<th class='num'>8.21</th>
+<th class='num'>仓位%</th>
+<th class='num'>天数</th>
+</tr>
+<tr>
+<td>
+<b>超捷股份</b> <span class='note'>301005·SZ</span>
+<div class='note'>汽车零部件(紧固件)</div>
+</td>
+<td class='num'>700</td>
+<td class='num'>92.69</td>
+<td class='num'>73.01</td>
+<td class='num down'>-13,775.30</td>
+<td class='num down'>-21.23%</td>
+<td class='num up'>+1.52%</td>
+<td class='num'>15.28%</td>
+<td class='num'>3</td>
+</tr>
+<tr>
+<td>
+<b>捷捷微电</b> <span class='note'>300623·SZ</span>
+<div class='note'>功率半导体</div>
+</td>
+<td class='num'>1,500</td>
+<td class='num'>29.70</td>
+<td class='num'>29.62</td>
+<td class='num down'>-127.50</td>
+<td class='num down'>-0.29%</td>
+<td class='num up'>+0.65%</td>
+<td class='num'>13.29%</td>
+<td class='num'>4</td>
+</tr>
+<tr>
+<td>
+<b>云南锗业</b> <span class='note'>002428·SZ</span>
+<div class='note'>半导体材料(锗)</div>
+</td>
+<td class='num'>400</td>
+<td class='num'>106.95</td>
+<td class='num'>100.88</td>
+<td class='num down'>-2,427.60</td>
+<td class='num down'>-5.67%</td>
+<td class='num down'>-2.59%</td>
+<td class='num'>12.07%</td>
+<td class='num'>5</td>
+</tr>
+<tr>
+<td>
+<b>益方生物</b> <span class='note'>688382·SH</span>
+<div class='note'>创新药</div>
+</td>
+<td class='num'>2,000</td>
+<td class='num'>21.76</td>
+<td class='num'>20.00</td>
+<td class='num down'>-3,528.00</td>
+<td class='num down'>-8.11%</td>
+<td class='num down'>-6.59%</td>
+<td class='num'>11.96%</td>
+<td class='num'>4</td>
+</tr>
+<tr>
+<td>
+<b>江波龙</b> <span class='note'>301308·SZ</span>
+<div class='note'>存储芯片</div>
+</td>
+<td class='num'>100</td>
+<td class='num'>390.88</td>
+<td class='num'>380.66</td>
+<td class='num down'>-1,021.50</td>
+<td class='num down'>-2.61%</td>
+<td class='num up'>+0.44%</td>
+<td class='num'>11.38%</td>
+<td class='num'>3</td>
+</tr>
+<tr>
+<td>
+<b>全志科技</b> <span class='note'>300458·SZ</span>
+<div class='note'>SoC芯片</div>
+</td>
+<td class='num'>1,000</td>
+<td class='num'>34.72</td>
+<td class='num'>31.46</td>
+<td class='num down'>-3,257.00</td>
+<td class='num down'>-9.38%</td>
+<td class='num up'>+0.32%</td>
+<td class='num'>9.41%</td>
+<td class='num'>4</td>
+</tr>
+<tr>
+<td>
+<b>长电科技</b> <span class='note'>600584·SH</span>
+<div class='note'>半导体封测</div>
+</td>
+<td class='num'>400</td>
+<td class='num'>78.57</td>
+<td class='num'>78.57</td>
+<td class='num up'>1.20</td>
+<td class='num up'>+0.00%</td>
+<td class='num down'>-1.14%</td>
+<td class='num'>9.40%</td>
+<td class='num'>10</td>
+</tr>
+<tr>
+<td>
+<b>中粮糖业</b> <span class='note'>600737·SH</span>
+<div class='note'>农业/食糖</div>
+</td>
+<td class='num'>2,000</td>
+<td class='num'>15.70</td>
+<td class='num'>14.56</td>
+<td class='num down'>-2,288.00</td>
+<td class='num down'>-7.28%</td>
+<td class='num down'>-8.14%</td>
+<td class='num'>8.71%</td>
+<td class='num'>3</td>
+</tr>
+<tr>
+<td>
+<b>中瓷电子</b> <span class='note'>003031·SZ</span>
+<div class='note'>半导体材料(电子陶瓷)</div>
+</td>
+<td class='num'>200</td>
+<td class='num'>145.02</td>
+<td class='num'>142.04</td>
+<td class='num down'>-596.80</td>
+<td class='num down'>-2.06%</td>
+<td class='num up'>+10.00%</td>
+<td class='num'>8.50%</td>
+<td class='num'>4</td>
+</tr>
+</table>
+</div>
+<div class='section'>
+<h2>⚠️ 风险标记</h2>
+<div class='ladder'>⚠️ 半导体链单产业链暴露 <b>64.0%</b>（9 只中 6 只），行业集中度偏高。</div>
+<div class='ladder'>⚠️ 前三大仓位合计 <b>40.6%</b>：超捷股份、捷捷微电、云南锗业。</div>
+<div class='ladder'>⚠️ 当前 <b>8/9</b> 只持仓处于浮动亏损；最大亏损 <b class='down'>超捷股份 -21.23%</b>。</div>
+<div class='ladder'>⚠️ 估值极端标的：超捷股份(PE=946)、云南锗业(PE=3,458)、益方生物(PE=亏损)、中瓷电子(PE=101) —— 需以「机构主导+量价健康+业绩可验证」规则严格卡控。</div>
+</div>
+<div class='section'>
+<h2>🔄 换仓对比</h2>
+<div class='amberbox'>
+<b>相对上一组合（8.21 旧组合 5 只）：</b>持仓数 5 → 9；清仓 华懋科技、经纬辉开、恒瑞医药；仅 <b>长电科技、云南锗业</b> 延续；新开 中瓷电子、超捷股份、捷捷微电、江波龙、全志科技、中粮糖业、益方生物（7 只）。组合市值（持仓股）约 <b>334,371 元</b>，浮动盈亏 <b class='down'>−8.08%</b>，较旧组合 −4.01% 进一步走弱，且换仓后整体未盈利。</div>
+</div>
+<div class='section'>
+<h2>🧭 可执行观察（规则/板块）</h2>
+<div class='ladder'>• 板块节奏：8.20 医药爆发、8.21 医药全线退潮，资金切向贵金属/通信/铜与半导体分化；本组合重仓半导体链（~50%）与当前「科技分化」市况一致，但单一产业链暴露过大，建议单产业链上限 ≤35%。</div>
+<div class='ladder'>• 最强标的：中瓷电子 8.21 涨停 +10%（电子陶瓷/半导体封装材料），属板块内最强，可纳入「强趋势+相对低位+机构主导」观察池。</div>
+<div class='ladder'>• 风险源：超捷股份 −21%（PE≈945，估值极高、疑似追高），建议按「止损/减仓规则」审视；益方生物（创新药、亏损）、云南锗业（PE≈3457）估值极端，不满足「业绩可验证」筛选。</div>
+<div class='ladder'>• 防御回撤：中粮糖业 8.21 −8.14%，与 8.20 粮食防御（金健米业 4 板）逻辑相悖，说明防御板块亦会快速回撤，需配合量价与机构席位验证。</div>
+<div class='ladder'>• 回撤纪律：当前 −8.08% 仍在 15% 容忍度内，但换仓后多数持仓仅 3–4 天（仅长电 10 天），与「中长线」定位有张力；建议对每笔明确「波段/中线」属性并匹配止损。</div>
+</div>
+</div>
+</body>
+</html>
