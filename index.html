@@ -45,18 +45,17 @@ footer { margin-top:48px; padding-top:18px; border-top:1px solid #e3e7ec;
 <div class='wrap'>
 <header class='top'>
   <h1>A股分析中心 · 总门户</h1>
-  <div class='sub'>龙虎榜主看板 · 板块强度 · 群体心理风险雷达 · 自下而上选股</div>
+  <div class='sub'>龙虎榜主看板 · 板块强度 · 群体心理风险雷达</div>
   <div class='updated'>门户重建于 2026-08-31 · 各卡片标注对应子系统的数据最新日期与新鲜度</div>
 </header>
 
 <div class='grid'>
-<a class='card' href='web/index.html'><div class='cardtop'><span class='ic'>🐉</span><span class='badge fresh'>今日</span></div><div class='t'>龙虎榜主看板</div><div class='d'>大盘概览 / 板块热度 / 连板梯队 / 组合持仓 / 龙虎榜机构榜·共振·席位胜率</div><div class='meta'>数据截至 2026-08-31</div></a>
+<a class='card' href='web/index.html'><div class='cardtop'><span class='ic'>🐉</span><span class='badge fresh'>今日</span></div><div class='t'>龙虎榜主看板</div><div class='d'>大盘概览 / 板块热度 / 连板梯队 / 龙虎榜机构榜·共振·席位胜率</div><div class='meta'>数据截至 2026-08-31</div></a>
 <a class='card' href='web/sector-strength-index.html'><div class='cardtop'><span class='ic'>🔥</span><span class='badge fresh'>今日</span></div><div class='t'>板块强度</div><div class='d'>行业/概念板块主力资金、强度与主力行为（抢筹/建仓/洗盘/出货）日更与趋势</div><div class='meta'>数据截至 2026-08-31</div></a>
 <a class='card' href='market-trend/index.html'><div class='cardtop'><span class='ic'>🧠</span><span class='badge fresh'>今日</span></div><div class='t'>群体心理风险雷达</div><div class='d'>情绪周期 / 认知偏差热力 / 风险分层，每日单篇 + 跨日趋势索引</div><div class='meta'>数据截至 2026-08-31</div></a>
-<a class='card' href='web/bottom-up-stock-picks-20260831.html'><div class='cardtop'><span class='ic'>🔎</span><span class='badge fresh'>今日</span></div><div class='t'>自下而上选股</div><div class='d'>财务硬门槛 + 预期差体检的个股深度筛选报告（每日一期）</div><div class='meta'>数据截至 2026-08-31</div></a>
 </div>
 
-<div class='note'>提示：板块强度 / 心理雷达 / 选股 三个子系统需先各自完成当日数据拉取与构建，再运行本门户生成器即可自动带出最新日期。龙虎榜主看板由 <code>build_dashboards.py</code> 统一生成。</div>
+<div class='note'>提示：板块强度 / 心理雷达 两个子系统需先各自完成当日数据拉取与构建，再运行本门户生成器即可自动带出最新日期。龙虎榜主看板由 <code>build_dashboards.py</code> 统一生成。</div>
 
 <h2>📅 每日更新清单（SOP）</h2>
 <div class='note'>完整操作手册（数据口径、已知坑、校验清单）见 <a href='DAILY_UPDATE_SOP.html'>DAILY_UPDATE_SOP.html</a>。下表为精简步骤，各子系统最新日期以本门户卡片为准。</div>
@@ -65,9 +64,8 @@ footer { margin-top:48px; padding-top:18px; border-top:1px solid #e3e7ec;
 <div class='step'><div class='no'>2</div><div><b>② 生成龙虎榜主看板</b><br><span class='sd'><code>python quant\build_dashboards.py --date {DATE}</code> → 重写 web/ 下 7 个页面（含导航 index.html）。</span></div></div>
 <div class='step'><div class='no'>3</div><div><b>③ 板块强度（可选）</b><br><span class='sd'>若当日行业/概念快照已落盘：<code>python quant\run_daily_sector.py --date {DATE} --industry &lt;file&gt; --concept &lt;file&gt;</code> → 刷新 web/sector-strength-* 与索引。</span></div></div>
 <div class='step'><div class='no'>4</div><div><b>④ 心理风险雷达（可选）</b><br><span class='sd'>按 market-trend 既有 _build 范式，用当日 westock 真实数据生成 crowd-psychology-risk-radar-{DATE}.html 并入 market-trend/index.html。</span></div></div>
-<div class='step'><div class='no'>5</div><div><b>⑤ 自下而上选股（可选）</b><br><span class='sd'>依选股方法论产出 web/bottom-up-stock-picks-{DATE}.html。</span></div></div>
-<div class='step'><div class='no'>6</div><div><b>⑥ 刷新总门户</b><br><span class='sd'><code>python quant\build_portal.py</code> → 重建本页，自动带出各子系统最新日期与新鲜度。</span></div></div>
-<div class='step'><div class='no'>7</div><div><b>⑦ 校验与推送</b><br><span class='sd'>检查无外链/死链、JS 语法；经 GitHub 连接器推送 web/ 与 market-trend/ 至仓库。</span></div></div>
+<div class='step'><div class='no'>5</div><div><b>⑤ 刷新总门户</b><br><span class='sd'><code>python quant\build_portal.py</code> → 重建本页，自动带出各子系统最新日期与新鲜度。</span></div></div>
+<div class='step'><div class='no'>6</div><div><b>⑥ 校验与推送</b><br><span class='sd'>检查无外链/死链、JS 语法；经 GitHub 连接器推送 web/ 与 market-trend/ 至仓库。</span></div></div>
 </div>
 
 <footer>
