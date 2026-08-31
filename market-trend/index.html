@@ -89,6 +89,15 @@
   .disclaimer{background:#f3f0e8;border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-top:24px;font-size:.82rem;color:#4a453c;line-height:1.7;}
   .disclaimer b{color:var(--accent);}
   .foot{text-align:center;color:var(--muted);font-size:.74rem;margin-top:28px;}
+
+  .notelist{max-height:360px;overflow-y:auto;border:1px solid var(--line);border-radius:12px;background:#faf8f3;}
+  .notelist .nrow{display:flex;gap:10px;align-items:baseline;padding:9px 14px;border-bottom:1px solid var(--line);font-size:.8rem;line-height:1.5;}
+  .notelist .nrow:last-child{border-bottom:0;}
+  .notelist .nrow .d{font-weight:800;color:var(--accent2);min-width:64px;flex-shrink:0;}
+  .notelist .nrow .r{font-weight:800;color:var(--accent);min-width:86px;flex-shrink:0;}
+  .notelist .nrow .t{color:#3a352e;}
+  .notelist .nrow.holiday{background:#eee9df;font-style:italic;}
+  .notelist .nrow.holiday .d,.notelist .nrow.holiday .t{color:var(--muted);}
 </style>
 </head>
 <body>
@@ -152,46 +161,46 @@
           <line x1="431" y1="40" x2="431" y2="200" stroke="#b8893b" stroke-width="1.2" stroke-dasharray="5 4"/>
           <text class="axislab" x="431" y="34" text-anchor="middle" fill="#b8893b">08-22/23 休市</text>
           <!-- area -->
-          <polygon fill="url(#area)" points="60,75.2 142.5,139.2 225.0,187.2 307.5,83.2 390.0,128.0 472.5,158.4 555.0,78.4 637.5,115.2 720.0,102.4 802.5,108.8 810.0,200 60,200"/>
-          <!-- line -->
+          <polygon fill="url(#area)" points="60,108.8 142.5,102.4 225.0,115.2 307.5,78.4 390.0,158.4 472.5,128.0 555.0,83.2 637.5,187.2 720.0,139.2 802.5,75.2 810.0,200 60,200"/>
+          <!-- line (newest -> oldest) -->
           <polyline fill="none" stroke="#b8332a" stroke-width="2.5" stroke-linejoin="round"
-            points="60,75.2 142.5,139.2 225.0,187.2 307.5,83.2 390.0,128.0 472.5,158.4 555.0,78.4 637.5,115.2 720.0,102.4 802.5,108.8"/>
-          <!-- points + value labels -->
-          <circle cx="60" cy="75.2" r="5" fill="#b8332a"/>
-          <text class="vallab" x="60" y="62" text-anchor="middle">78%</text>
-          <circle cx="142.5" cy="139.2" r="5" fill="#b8332a"/>
-          <text class="vallab" x="142.5" y="156" text-anchor="middle">38%</text>
-          <circle cx="225.0" cy="187.2" r="6" fill="#8a1810"/>
-          <text class="vallab" x="225.0" y="204" text-anchor="middle" fill="#8a1810">8%</text>
-          <circle cx="307.5" cy="83.2" r="5" fill="#b8332a"/>
-          <text class="vallab" x="307.5" y="70" text-anchor="middle">73%</text>
-          <circle cx="390.0" cy="128.0" r="5" fill="#b8332a"/>
-          <text class="vallab" x="390.0" y="115" text-anchor="middle">45%</text>
-          <circle cx="472.5" cy="158.4" r="5" fill="#b8332a"/>
-          <text class="vallab" x="472.5" y="175" text-anchor="middle">26%</text>
-          <circle cx="555.0" cy="78.4" r="5" fill="#b8332a"/>
-          <text class="vallab" x="555.0" y="65" text-anchor="middle">76%</text>
-          <circle cx="637.5" cy="115.2" r="5" fill="#b8332a"/>
-          <text class="vallab" x="637.5" y="102" text-anchor="middle">53%</text>
-          <circle cx="720.0" cy="102.4" r="5" fill="#b8332a"/>
-          <text class="vallab" x="720.0" y="89" text-anchor="middle">61%</text>
-          <circle cx="802.5" cy="108.8" r="5" fill="#b8332a"/>
-          <text class="vallab" x="802.5" y="95" text-anchor="middle">57%</text>
-          <!-- day labels -->
-          <text class="daylab" x="60" y="222" text-anchor="middle">08-17</text>
-          <text class="daylab" x="142.5" y="222" text-anchor="middle">08-18</text>
-          <text class="daylab" x="225.0" y="222" text-anchor="middle">08-19</text>
-          <text class="daylab" x="307.5" y="222" text-anchor="middle">08-20</text>
-          <text class="daylab" x="390.0" y="222" text-anchor="middle">08-21</text>
-          <text class="daylab" x="472.5" y="222" text-anchor="middle">08-24</text>
-          <text class="daylab" x="555.0" y="222" text-anchor="middle">08-25</text>
-          <text class="daylab" x="637.5" y="222" text-anchor="middle">08-26</text>
-          <text class="daylab" x="720.0" y="222" text-anchor="middle">08-27</text>
-          <text class="daylab" x="802.5" y="222" text-anchor="middle">08-31</text>
+            points="60,108.8 142.5,102.4 225.0,115.2 307.5,78.4 390.0,158.4 472.5,128.0 555.0,83.2 637.5,187.2 720.0,139.2 802.5,75.2"/>
+          <!-- points + value labels (08-31 left -> 08-17 right) -->
+          <circle cx="60" cy="108.8" r="5" fill="#b8332a"/>
+          <text class="vallab" x="60" y="95" text-anchor="middle">57%</text>
+          <circle cx="142.5" cy="102.4" r="5" fill="#b8332a"/>
+          <text class="vallab" x="142.5" y="89" text-anchor="middle">61%</text>
+          <circle cx="225.0" cy="115.2" r="5" fill="#b8332a"/>
+          <text class="vallab" x="225.0" y="102" text-anchor="middle">53%</text>
+          <circle cx="307.5" cy="78.4" r="5" fill="#b8332a"/>
+          <text class="vallab" x="307.5" y="65" text-anchor="middle">76%</text>
+          <circle cx="390.0" cy="158.4" r="5" fill="#b8332a"/>
+          <text class="vallab" x="390.0" y="175" text-anchor="middle">26%</text>
+          <circle cx="472.5" cy="128.0" r="5" fill="#b8332a"/>
+          <text class="vallab" x="472.5" y="115" text-anchor="middle">45%</text>
+          <circle cx="555.0" cy="83.2" r="5" fill="#b8332a"/>
+          <text class="vallab" x="555.0" y="70" text-anchor="middle">73%</text>
+          <circle cx="637.5" cy="187.2" r="6" fill="#8a1810"/>
+          <text class="vallab" x="637.5" y="204" text-anchor="middle" fill="#8a1810">8%</text>
+          <circle cx="720.0" cy="139.2" r="5" fill="#b8332a"/>
+          <text class="vallab" x="720.0" y="156" text-anchor="middle">38%</text>
+          <circle cx="802.5" cy="75.2" r="5" fill="#b8332a"/>
+          <text class="vallab" x="802.5" y="62" text-anchor="middle">78%</text>
+          <!-- day labels (newest -> oldest) -->
+          <text class="daylab" x="60" y="222" text-anchor="middle">08-31</text>
+          <text class="daylab" x="142.5" y="222" text-anchor="middle">08-27</text>
+          <text class="daylab" x="225.0" y="222" text-anchor="middle">08-26</text>
+          <text class="daylab" x="307.5" y="222" text-anchor="middle">08-25</text>
+          <text class="daylab" x="390.0" y="222" text-anchor="middle">08-24</text>
+          <text class="daylab" x="472.5" y="222" text-anchor="middle">08-21</text>
+          <text class="daylab" x="555.0" y="222" text-anchor="middle">08-20</text>
+          <text class="daylab" x="637.5" y="222" text-anchor="middle">08-19</text>
+          <text class="daylab" x="720.0" y="222" text-anchor="middle">08-18</text>
+          <text class="daylab" x="802.5" y="222" text-anchor="middle">08-17</text>
         </svg>
       </div>
       <div class="src" style="margin-top:8px">
-        <p class="note" data-i18n="t_trend_note" style="font-size:.8rem;color:var(--muted)">08-19 广度崩至 8%（恐慌/踩踏），08-20 修复至 73%，08-21 反弹后分化回落至 45%，08-24 放量普跌广度再崩至 26%，08-25 缩量普涨广度暴拉回 76%（官方「狂热」标签与真实广度共振向上，但量缩、技术极弱 = 低质量反弹），08-26 技术反包广度回落至 53%（无量反包、量价背离，官方「狂热」标签虚高），08-27 放量反包广度回升至 61%（成交放量 +3172亿 至 ¥2.1259万亿、涨停扩至 78、量价背离修复，官方「狂热」标签由涨停>50触发与真实 61% 广度略超前但量价已共振），08-31 缩量滞涨广度回落至 57%（成交 ¥2.131万亿 微增 +293亿、涨停 89、跌停 13、连板高度升至 6 板，但涨股比由 61% 回落、指数红而广度不济、结构分化加剧、估值高位 = 缩量滞涨 / 结构分化）。08-22~08-23 与 08-29~08-30 周末休市无交易；08-31 为最新一期。全线 10 期风险等级均为「高」。</p>
+        <div class="notelist" data-i18n="t_trend_note"></div>
       </div>
     </div>
   </section>
@@ -202,7 +211,7 @@
     <div class="card">
       <div class="traj" id="traj"></div>
       <div class="src" style="margin-top:10px">
-        <p class="note" data-i18n="t_traj_note" style="font-size:.8rem;color:var(--muted)">六阶段框架：绝望 → 怀疑 → 乐观 → 狂热 → 焦虑 → 自满。本序列由 08-17「狂热」经分歧、恐慌，08-21 回落至「怀疑（分歧加剧）」，08-24 转入「恐慌 / 退潮」（广度崩塌），08-25 由恐慌回「修复 / 分歧（弱反弹）」（缩量普涨、广度回暖至 76%，但量缩、技术极弱），08-26 转入「修复延续 / 量价背离」（技术反包、MACD金叉、三指齐涨、连板维持5板，但成交继续缩、广度回落至53%、官方「狂热」标签虚高），08-27 转入「修复确认 / 放量共振」（放量反包、成交放量至¥2.1259万亿、涨股比回升至61%、涨停扩至78、三指齐涨涨幅扩大、MACD金叉、量价背离修复，但趋势仍弱、估值偏高、结构分化），08-31 转入「缩量滞涨 / 结构分化」（指数红、涨股比由61%回落至57%、成交¥2.131万亿仅微增、涨停89但跌停13、连板高度升至6板、结构分化加剧——影视/数字媒体领涨而贵金属/光伏/白电/乘用车领跌、估值高位），风险由「修复」退向「滞涨」。08-22~08-23 与 08-29~08-30 周末休市。</p>
+        <div class="notelist" data-i18n="t_traj_note"></div>
       </div>
     </div>
   </section>
@@ -245,8 +254,30 @@
       s_issues:"期", s_issues_lbl:"已归档日报（每日独立保留）",
       s_all:"全部", s_risk_lbl:"各期风险等级（10 期同为「高」）",
       s_span_lbl:"覆盖交易日跨度（08-22~08-23 与 08-29~08-30 周末休市；最新 08-31）",
-      t_trend:"涨股比走势（市场广度）", t_trend_note:"08-19 广度崩至 8%（恐慌/踩踏），08-20 修复至 73%，08-21 反弹后分化回落至 45%，08-24 放量普跌广度再崩至 26%，08-25 缩量普涨广度暴拉回 76%（官方「狂热」标签与真实广度共振向上，但量缩、技术极弱 = 低质量反弹），08-26 技术反包广度回落至 53%（无量反包、量价背离，官方「狂热」标签虚高），08-27 放量反包广度回升至 61%（成交放量 +3172亿 至 ¥2.1259万亿、涨停扩至 78、量价背离修复，官方「狂热」标签由涨停>50触发与真实 61% 广度略超前但量价已共振），08-31 缩量滞涨广度回落至 57%（成交 ¥2.131万亿 微增 +293亿、涨停 89、跌停 13、连板高度升至 6 板，但涨股比由 61% 回落、指数红而广度不济、结构分化加剧、估值高位 = 缩量滞涨 / 结构分化）。08-22~08-23 与 08-29~08-30 周末休市无交易；08-31 为最新一期。全线 10 期风险等级均为「高」。",
-      t_traj:"情绪周期轨迹（六阶段定位）", t_traj_note:"六阶段框架：绝望 → 怀疑 → 乐观 → 狂热 → 焦虑 → 自满。本序列由 08-17「狂热」经分歧、恐慌，08-21 回落至「怀疑（分歧加剧）」，08-24 转入「恐慌 / 退潮」（广度崩塌），08-25 由恐慌回「修复 / 分歧（弱反弹）」（缩量普涨、广度回暖至 76%，但量缩、技术极弱），08-26 转入「修复延续 / 量价背离」（技术反包、MACD金叉、三指齐涨、连板维持5板，但成交继续缩、广度回落至53%、官方「狂热」标签虚高），08-27 转入「修复确认 / 放量共振」（放量反包、成交放量至¥2.1259万亿、涨股比回升至61%、涨停扩至78、三指齐涨涨幅扩大、MACD金叉、量价背离修复，但趋势仍弱、估值偏高、结构分化），08-31 转入「缩量滞涨 / 结构分化」（指数红、涨股比由61%回落至57%、成交¥2.131万亿仅微增、涨停89但跌停13、连板高度升至6板、结构分化加剧——影视/数字媒体领涨而贵金属/光伏/白电/乘用车领跌、估值高位），风险由「修复」退向「滞涨」。08-22~08-23 与 08-29~08-30 周末休市。",
+      t_trend:"涨股比走势（市场广度）", t_trend_note:`<div class="nrow"><span class="d">08-31</span><span class="r">涨股比 57%</span><span class="t">缩量滞涨·结构分化：指数三红但广度不济，成交¥2.131万亿微增、涨停89/跌停13、连板升至6板；影视/数字媒体领涨，贵金属/光伏/白电领跌，估值高位。</span></div>
+<div class="nrow"><span class="d">08-27</span><span class="r">涨股比 61%</span><span class="t">放量反包·量价共振：成交放量+3172亿至¥2.1259万亿、涨停78、三指齐涨，量价背离修复；官方「狂热」标签略超前真实广度。</span></div>
+<div class="nrow"><span class="d">08-26</span><span class="r">涨股比 53%</span><span class="t">无量反包·量价背离：技术面翻极强（MACD金叉）、连板5板，但成交续缩、广度回落，官方「狂热」标签虚高。</span></div>
+<div class="nrow"><span class="d">08-25</span><span class="r">涨股比 76%</span><span class="t">缩量普涨·低质量反弹：广度暴拉回76%，官方「狂热」标签与真实广度共振向上，但量缩、小盘占优、技术极弱。</span></div>
+<div class="nrow"><span class="d">08-24</span><span class="r">涨股比 26%</span><span class="t">放量普跌·广度崩塌：成交放量至¥2.007万亿，科技硬件开盘即兑现，资金切低位防御+贵金属。</span></div>
+<div class="nrow"><span class="d">08-21</span><span class="r">涨股比 45%</span><span class="t">反弹后分化：成交缩至¥1.879万亿，医药全面退潮，官方「狂热」标签与真实广度背离=诱多陷阱。</span></div>
+<div class="nrow"><span class="d">08-20</span><span class="r">涨股比 73%</span><span class="t">超跌修复：成交缩至¥2.08万亿，杠杆由AI切新能源/资源，去风险信号。</span></div>
+<div class="nrow"><span class="d">08-19</span><span class="r">涨股比 8%</span><span class="t">踩踏式退潮：涨停38/跌停130，创业板−6.26%，AI硬件踩踏出清，强平风险积聚。</span></div>
+<div class="nrow"><span class="d">08-18</span><span class="r">涨股比 38%</span><span class="t">狂热末端·分歧：涨停81、跌停1→6，资金高低切，杠杆-价格背离放大尾部风险。</span></div>
+<div class="nrow"><span class="d">08-17</span><span class="r">涨股比 78%</span><span class="t">情绪狂热+估值高估：涨停110、连板4板，两融周增触发狂热阈值，逼近反身性末端高危区。</span></div>
+<div class="nrow holiday"><span class="d">08-22~08-23</span><span class="t">周末休市 · 无交易</span></div>
+<div class="nrow holiday"><span class="d">08-29~08-30</span><span class="t">周末休市 · 无交易</span></div>`,
+      t_traj:"情绪周期轨迹（六阶段定位）", t_traj_note:`<div class="nrow"><span class="d">08-31</span><span class="r">缩量滞涨</span><span class="t">结构分化：指数红、涨股比61%→57%、成交¥2.131万亿仅微增、涨停89但跌停13、连板升至6板，风险由「修复」退向「滞涨」。</span></div>
+<div class="nrow"><span class="d">08-27</span><span class="r">修复确认</span><span class="t">放量共振：放量反包、成交至¥2.1259万亿、涨股比回升至61%、涨停78、MACD金叉、量价背离修复，但趋势弱、估值高、结构分化。</span></div>
+<div class="nrow"><span class="d">08-26</span><span class="r">修复延续</span><span class="t">量价背离：技术反包、MACD金叉、三指齐涨、连板5板，但成交续缩、广度53%、官方「狂热」标签虚高。</span></div>
+<div class="nrow"><span class="d">08-25</span><span class="r">修复/分歧</span><span class="t">弱反弹：缩量普涨、广度76%，但量缩、技术极弱。</span></div>
+<div class="nrow"><span class="d">08-24</span><span class="r">恐慌/退潮</span><span class="t">广度崩塌：成交放量、科技兑现、资金切防御。</span></div>
+<div class="nrow"><span class="d">08-21</span><span class="r">怀疑</span><span class="t">分歧加剧：反弹后分化、轮动，官方「狂热」标签与真实广度背离。</span></div>
+<div class="nrow"><span class="d">08-20</span><span class="r">怀疑</span><span class="t">修复中：超跌反弹，杠杆去风险。</span></div>
+<div class="nrow"><span class="d">08-19</span><span class="r">焦虑/恐慌</span><span class="t">踩踏式退潮：广度崩至8%、跌停130。</span></div>
+<div class="nrow"><span class="d">08-18</span><span class="r">狂热末端</span><span class="t">分歧：涨停81、跌停增加，杠杆-价格背离。</span></div>
+<div class="nrow"><span class="d">08-17</span><span class="r">狂热</span><span class="t">情绪狂热+估值高估象限，逼近反身性末端。</span></div>
+<div class="nrow holiday"><span class="d">08-22~08-23</span><span class="t">周末休市 · 无交易</span></div>
+<div class="nrow holiday"><span class="d">08-29~08-30</span><span class="t">周末休市 · 无交易</span></div>`,
       t_reports:"每日风险雷达", t_source:"数据来源与口径",
       src_mcp:"行情数据源", src_real:"真实性约束", src_gap:"口径缺口", src_cycle:"分析框架",
       t_disclaimer_t:"免责声明：", t_disclaimer:"本报告基于公开市场数据的行为金融视角研判，仅供研究与学习参考，不构成任何投资建议或买卖要约。市场有风险，决策须独立，盈亏自负。报告中的情绪周期定位、认知偏差与风险等级为主观框架下的观察结论，可能随数据更新而调整。",
@@ -262,8 +293,30 @@
       s_issues:"issues", s_issues_lbl:"Archived daily reports (each day preserved)",
       s_all:"all", s_risk_lbl:"Risk level per issue (all 10 = High)",
       s_span_lbl:"Trading-day coverage span (08-22/23 & 08-29/30 weekend closed; latest 08-31)",
-      t_trend:"Up-Stock Ratio Trend (Breadth)", t_trend_note:"Breadth collapsed to 8% on 08-19 (panic), rebounded to 73% on 08-20, fell to 45% on 08-21, collapsed again to 26% on 08-24 amid broad sell-off, then roared back to 76% on 08-25 in a volume-shrinking rally (official 'Euphoria' tag now aligns upward with real breadth, yet volume-down & technics weak = low-quality bounce), then 08-26 technical rebound pulled breadth back to 53% (volume-less rebound / price-volume divergence, official 'Euphoria' tag overstated), then 08-27 volume-expanded rebound lifted breadth to 61% (turnover expands +317.2bn to ¥2.1259tn, limit-up widens to 78, divergence repaired; official 'Euphoria' tag triggered by limit-up>50 slightly ahead of real 61% breadth but price-volume now resonates), then 08-31 volume-flat stall pulled breadth back to 57% (turnover only +29.3bn to ¥2.131tn, 89 limit-up, 13 limit-down, board height rises to 6, yet up-ratio falls from 61%, indices red-but-breadth-thin, structure divergence deepens, valuation elevated = volume-flat stall / structural divergence). 08-22/23 & 08-29/30 weekend closed; 08-31 is the latest issue. All 10 issues rated High risk.",
-      t_traj:"Sentiment Cycle Path (6-stage)", t_traj_note:"Six-stage frame: Despair → Doubt → Optimism → Euphoria → Anxiety → Complacency. Path runs from 08-17 Euphoria through divergence & panic, to Doubt (divergence intensifying) on 08-21, into Panic / Washout (breadth collapse) on 08-24, then 08-25 shifts from panic back to Repair / Divergence (weak bounce) — volume-shrinking rally, breadth recovers to 76%, yet volume-down & technics weak; 08-26 moves to Repair continues / price-volume divergence (technical rebound, MACD golden cross, all three up, streak holds 5 boards, yet volume keeps shrinking, breadth falls to 53%, official 'Euphoria' tag overstated); 08-27 moves to Repair confirmed / volume resonance (volume-expanded rebound, turnover to ¥2.1259tn, breadth recovers to 61%, limit-up widens to 78, all three indices up with widening gains, MACD golden cross, divergence repaired, yet trend still weak, valuation elevated, structure diverged); 08-31 moves to Volume-flat stall / Structural divergence (indices red, up-ratio falls 61%→57%, turnover only +29.3bn to ¥2.131tn, 89 limit-up but 13 limit-down, board height rises to 6, structure divergence deepens — media/digital lead up while precious-metal/PV/white-goods lead down, valuation elevated), risk shifts from Repair back toward Stall. 08-22/23 & 08-29/30 weekend closed.",
+      t_trend:"Up-Stock Ratio Trend (Breadth)", t_trend_note:`<div class="nrow"><span class="d">08-31</span><span class="r">Up 57%</span><span class="t">Volume-flat stall / structural divergence: indices up but breadth thin; turnover only +29.3bn to ¥2.131tn, 89 limit-up / 13 limit-down, board height to 6; media/digital lead up, precious-metal/PV/white-goods lead down, valuation elevated.</span></div>
+<div class="nrow"><span class="d">08-27</span><span class="r">Up 61%</span><span class="t">Volume-expanded rebound / resonance: turnover +317.2bn to ¥2.1259tn, 78 limit-up, all three up, divergence repaired; official 'Euphoria' tag slightly ahead of real breadth.</span></div>
+<div class="nrow"><span class="d">08-26</span><span class="r">Up 53%</span><span class="t">Volume-less rebound / divergence: MACD golden cross, 5 boards, but volume keeps shrinking, breadth falls, official 'Euphoria' tag overstated.</span></div>
+<div class="nrow"><span class="d">08-25</span><span class="r">Up 76%</span><span class="t">Volume-shrinking rally / low-quality bounce: breadth roars to 76%, official tag aligns upward, yet volume-down, small-cap led, technics weak.</span></div>
+<div class="nrow"><span class="d">08-24</span><span class="r">Up 26%</span><span class="t">Broad sell-off / breadth collapse: turnover expands to ¥2.007tn, tech sold at open, funds rotate to defensives.</span></div>
+<div class="nrow"><span class="d">08-21</span><span class="r">Up 45%</span><span class="t">Post-rebound divergence: turnover shrinks to ¥1.879tn, pharma rolls over, official tag diverges from real breadth = bait trap.</span></div>
+<div class="nrow"><span class="d">08-20</span><span class="r">Up 73%</span><span class="t">Oversold rebound: turnover shrinks to ¥2.08tn, margin rotates from AI to new-energy/resources = de-risking.</span></div>
+<div class="nrow"><span class="d">08-19</span><span class="r">Up 8%</span><span class="t">Cascading sell-off: 38 limit-up / 130 limit-down, ChiNext −6.26%, AI hardware cascade, forced-liquidation risk.</span></div>
+<div class="nrow"><span class="d">08-18</span><span class="r">Up 38%</span><span class="t">Euphoria end / divergence: 81 limit-up, limit-down 1→6, rotation, margin-price divergence amplifies tail risk.</span></div>
+<div class="nrow"><span class="d">08-17</span><span class="r">Up 78%</span><span class="t">Euphoria + overvaluation: 110 limit-up, 4 boards, margin surge triggers euphoria threshold, near reflexivity-end danger zone.</span></div>
+<div class="nrow holiday"><span class="d">08-22~08-23</span><span class="t">Weekend closed · no trading</span></div>
+<div class="nrow holiday"><span class="d">08-29~08-30</span><span class="t">Weekend closed · no trading</span></div>`,
+      t_traj:"Sentiment Cycle Path (6-stage)", t_traj_note:`<div class="nrow"><span class="d">08-31</span><span class="r">Stall</span><span class="t">Structural divergence: indices up, up-ratio 61%→57%, turnover only +29.3bn, 89 limit-up but 13 limit-down, board to 6; risk shifts from Repair toward Stall.</span></div>
+<div class="nrow"><span class="d">08-27</span><span class="r">Repair</span><span class="t">Confirmed / volume resonance: volume-expanded rebound, turnover ¥2.1259tn, breadth to 61%, 78 limit-up, MACD golden cross, divergence repaired, yet trend weak, valuation high, structure diverged.</span></div>
+<div class="nrow"><span class="d">08-26</span><span class="r">Repair</span><span class="t">Continues / price-volume divergence: technical rebound, MACD golden cross, three up, 5 boards, yet volume shrinks, breadth 53%, official 'Euphoria' tag overstated.</span></div>
+<div class="nrow"><span class="d">08-25</span><span class="r">Repair</span><span class="t">Divergence / weak bounce: volume-shrinking rally, breadth 76%, yet volume-down, technics weak.</span></div>
+<div class="nrow"><span class="d">08-24</span><span class="r">Panic</span><span class="t">Washout / breadth collapse: turnover expands, tech sold, funds to defensives.</span></div>
+<div class="nrow"><span class="d">08-21</span><span class="r">Doubt</span><span class="t">Divergence intensifying: post-rebound split, rotation, official tag diverges from real breadth.</span></div>
+<div class="nrow"><span class="d">08-20</span><span class="r">Doubt</span><span class="t">Recovering: oversold rebound, margin de-risking.</span></div>
+<div class="nrow"><span class="d">08-19</span><span class="r">Panic</span><span class="t">Cascading sell-off: breadth to 8%, 130 limit-down.</span></div>
+<div class="nrow"><span class="d">08-18</span><span class="r">Euphoria end</span><span class="t">Divergence: 81 limit-up, limit-down rising, margin-price divergence.</span></div>
+<div class="nrow"><span class="d">08-17</span><span class="r">Euphoria</span><span class="t">Euphoria + overvaluation quadrant, near reflexivity-end danger zone.</span></div>
+<div class="nrow holiday"><span class="d">08-22~08-23</span><span class="t">Weekend closed · no trading</span></div>
+<div class="nrow holiday"><span class="d">08-29~08-30</span><span class="t">Weekend closed · no trading</span></div>`,
       t_reports:"Daily Risk Radars", t_source:"Sources & Notes",
       src_mcp:"Market data", src_real:"Authenticity", src_gap:"Coverage gaps", src_cycle:"Framework",
       t_disclaimer_t:"Disclaimer: ", t_disclaimer:"This report is a behavioral-finance read on public market data for research and study only — not investment advice or an offer. Markets carry risk; decide independently and own the outcome. Sentiment positioning, biases and risk grades are subjective observations under a fixed framework and may shift with new data.",
@@ -369,12 +422,13 @@
       summaryEn:"Up-ratio falls 61%→57%, 89 limit-up, 13 limit-down, turnover ¥2.131tn (+29.3bn); three indices up (SSE +0.86% / SZ +0.44% / ChiNext +0.42%) yet breadth thin, board height rises to 6 (Sea Gull Housing), structure divergence deepens — digital media +7.19% / cinema +7.02% / publishing +5.26% lead up, ornaments −4.67% / PV −3.12% / passenger cars −2.82% lead down; valuation elevated, volume not effectively expanded = volume-flat stall / structural divergence."
     }
   ];
+  REPORTS.reverse();
 
   var HOLIDAYS = [
     {date:"2026-08-22", cycleZh:"周末休市", cycleEn:"Weekend closed", noteZh:"周六 · 无交易", noteEn:"Sat · no trading"},
     {date:"2026-08-23", cycleZh:"周末休市", cycleEn:"Weekend closed", noteZh:"周日 · 无交易", noteEn:"Sun · no trading"}
   ];
-  var TRAJ = REPORTS.concat(HOLIDAYS).sort(function(a,b){ return a.date < b.date ? -1 : 1; });
+  var TRAJ = REPORTS.concat(HOLIDAYS).sort(function(a,b){ return a.date > b.date ? -1 : 1; });
 
   function chip(label, val){
     return '<span class="rchip"><i>'+label+'</i><b>'+val+'</b></span>';
