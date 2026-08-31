@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>状态报告</title>
+<style>* { box-sizing: border-box; }
+body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:linear-gradient(135deg,#1a1f2e 0%,#232838 45%,#1a1f2e 100%); color:#f0e6dd; min-height:100vh; }
+.wrap { max-width:1040px; margin:0 auto; padding:40px 20px 60px; }
+.topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
+  border-bottom:1px solid rgba(255,255,255,.10); }
+.topnav a { color:#c9a66b; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(201,166,107,.30); transition:.2s; }
+.topnav a:hover { background:rgba(201,166,107,.14); }
+header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#c9a66b,#c98b7d,#a899b3);
+  -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
+header p { margin:4px 0; color:#9a9aa4; font-size:13px; line-height:1.6; }
+.meta { margin:14px 0 24px; font-size:12px; color:#c9c3b8; line-height:1.7; }
+.meta b { color:#c9a66b; }
+.section { background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.10); border-radius:20px; padding:18px 20px; margin:0 0 22px;
+  box-shadow:0 4px 20px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.05); backdrop-filter:blur(10px); }
+.section h2 { font-size:17px; margin:0 0 14px; color:#f7f1ec; display:flex; align-items:center; gap:8px; }
+.section h2:before { content:""; width:4px; height:16px; background:#c9a66b; border-radius:3px; }
+.idxrow { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px; }
+.idx { flex:1; min-width:200px; background:linear-gradient(135deg,rgba(185,116,104,.18),rgba(220,38,38,.06));
+  border:1px solid rgba(201,139,125,.36); border-radius:14px; padding:13px 10px; text-align:center;
+  box-shadow:0 4px 14px rgba(0,0,0,.18), 0 0 16px rgba(201,139,125,.12); }
+.idx .k { font-size:11px; color:#c9c3b8; letter-spacing:.3px; }
+.idx .v { font-size:22px; font-weight:800; color:#f7f1ec; margin:5px 0 2px; }
+.idx .c { font-size:13px; font-weight:700; }
+.idx .hl { font-size:10px; color:#9a9aa4; margin-top:4px; }
+.bar { display:flex; height:34px; border-radius:8px; overflow:hidden; margin:10px 0; font-size:12px;
+  color:#f7f1ec; text-align:center; line-height:34px; box-shadow:0 2px 6px rgba(0,0,0,.2); }
+.chiprow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+.chip { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:12px;
+  padding:10px 6px; text-align:center; min-width:74px; backdrop-filter:blur(6px); box-shadow:0 2px 10px rgba(0,0,0,.12); }
+.chip .ck { font-size:10px; color:#9a9aa4; }
+.chip .cv { font-size:16px; font-weight:800; margin-top:3px; }
+.tag { display:inline-block; border-radius:20px; padding:3px 11px; font-size:12px; margin:3px 4px 3px 0;
+  background:#eef2f8; color:#33414f; }
+.tag.hot { background:#fdeceb; color:#d8392b; }
+.tag.cold { background:#e9f6ef; color:#1a9e5a; }
+.pill { display:inline-block; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
+  border-radius:20px; padding:4px 11px; font-size:12px; color:#e6ded6; margin:3px 4px 3px 0; cursor:help; }
+.pill b { color:#c9a66b; font-weight:700; }
+table { width:100%; border-collapse:collapse; font-size:13px; background:rgba(26,31,46,.55);
+  border:1px solid rgba(255,255,255,.08); border-radius:12px; overflow:hidden; margin:10px 0; }
+th,td { padding:8px 10px; text-align:left; border-bottom:1px solid rgba(255,255,255,.07); }
+th { background:rgba(30,41,59,.8); color:#e6ded6; font-weight:600; font-size:12px; }
+td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+.up { color:#c98b7d; } .down { color:#8da894; }
+.note { color:#9a9aa4; font-size:12px; margin-top:8px; line-height:1.6; }
+.amberbox { font-size:13px; color:#c9a66b; background:linear-gradient(135deg,rgba(201,166,107,.13),rgba(201,166,107,.05));
+  border:1px solid rgba(201,166,107,.22); border-radius:12px; padding:12px 16px; margin:12px 0; line-height:1.6; }
+.ladder { margin:6px 0; padding:8px 10px; background:rgba(26,31,46,.55); border:1px solid rgba(255,255,255,.10);
+  border-radius:8px; font-size:13px; }
+.ladder .badge { display:inline-block; border-radius:6px; padding:1px 8px; margin-right:8px; font-weight:700; font-size:12px; }
+.ladder .b5 { background:rgba(220,38,38,.25); border:1px solid rgba(248,113,113,.5); color:#d6a89d; }
+.ladder .b4 { background:rgba(220,38,38,.18); border:1px solid rgba(248,113,113,.4); color:#d6a89d; }
+.ladder .b3 { background:rgba(201,166,107,.20); border:1px solid rgba(251,191,36,.45); color:#d8bd8a; }
+.ladder .b2 { background:rgba(201,166,107,.20); border:1px solid rgba(251,191,36,.45); color:#d8bd8a; }
+.ladder .b1 { background:rgba(120,137,162,.18); border:1px solid rgba(139,155,181,.45); color:#a7b4c9; }
+.namechip { display:inline-block; color:#e6ded6; margin:2px 6px 2px 0; font-size:13px; }
+.empty { color:#9a9aa4; text-align:center; padding:38px 0; font-size:14px; line-height:1.8; }
+.empty b { color:#c9a66b; }
+footer { margin-top:40px; padding-top:16px; border-top:1px solid rgba(255,255,255,.10);
+  font-size:12px; color:#9a9aa4; line-height:1.8; }
+a.inlink { color:#c9a66b; text-decoration:none; border:1px solid rgba(201,166,107,.5);
+  border-radius:10px; padding:6px 14px; font-size:13px; font-weight:700; display:inline-block; margin:4px 6px 4px 0; }
+a.inlink:hover { background:rgba(201,166,107,.16); }
+.wrap.landing { max-width:880px; text-align:center; }
+.landing header h1 { font-size:34px; }
+.landing header p { margin:6px 0; color:#9a9aa4; font-size:14px; }
+.date { margin:18px 0 30px; font-size:13px; color:#c9a66b; letter-spacing:.5px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; text-align:left; }
+.card { display:block; text-decoration:none; color:#f0e6dd; background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.10); border-radius:18px; padding:20px 18px;
+  box-shadow:0 4px 20px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.05); backdrop-filter:blur(10px); transition:.2s; }
+.card:hover { border-color:rgba(201,166,107,.45); transform:translateY(-2px); background:linear-gradient(135deg,rgba(201,166,107,.12),rgba(255,255,255,.03)); }
+.card .ic { font-size:26px; }
+.card .t { font-size:17px; font-weight:700; margin:10px 0 6px; color:#f7f1ec; }
+.card .d { font-size:12.5px; color:#9a9aa4; line-height:1.6; }
+.hist { margin-top:30px; font-size:12.5px; color:#c9c3b8; }
+.hist a { color:#c9a66b; text-decoration:none; border:1px solid rgba(201,166,107,.4); border-radius:10px; padding:5px 12px; display:inline-block; margin:4px; }
+.foot { margin-top:42px; font-size:12px; color:#9a9aa4; line-height:1.8; }
+</style>
+</head>
+<body>
+<div class='wrap'>
+<div class='topnav'>
+<a href='daily_overview.html'>每日总览</a>
+<a href='portfolio.html'>组合总看板</a>
+<a href='portfolio_analysis.html'>组合分析</a>
+<a href='lhb.html'>龙虎榜分析</a>
+<a href='hotmoney.html'>游资看板</a>
+<a href='status_2026-08-25.html'>状态报告</a>
+<a href='lhb_institution_analysis_2026-08-14.html'>历史龙虎榜(08-14)</a>
+</div>
+<header>
+<h1>📋 状态报告</h1>
+<p>2026-08-25 · 龙虎榜手动更新 + 全量数据刷新</p>
+</header>
+<div class='section'>
+<h2>✅ 本轮完成情况</h2>
+<div class='amberbox' style='color:#f7f1ec'>1. <b>龙虎榜数据</b>：通过 westock-mcp data_lhb 拉取 2026-08-25 真实龙虎榜（机构榜 35 只、游资席位 72 个、机构+游资共振 18 只、席位胜率 20 条），已渲染 lhb.html（机构榜/共振/胜率）与 hotmoney.html（席位净买榜/胜率）。<br>2. <b>大盘/板块/连板刷新</b>：data_market_overview(2026-08-25)、data_hot(board)、tool_ranking(limitup_days) 全部更新为 2026-08-25（估值口径 2026-08-24）。<br>3. <b>组合行情</b>：9 只持仓 2026-08-25 实时市值 322,051.00 元，浮动盈亏 -12.22%。<br>4. <b>推送</b>：7 个页面（含导航 index.html、龙虎榜归档页 lhb_2026-08-25.html）已生成并推送至 GitHub 仓库 dujoer/stocks 的 web/ 目录（main 分支，2026-08-25 提交）。远程保留的历史页：08-14 龙虎榜分析页（lhb_institution_analysis_2026-08-14.html、lhb_resonance_dashboard.html 等）。</div>
+</div>
+<div class='section'>
+<h2>📁 产出文件</h2>
+<div class='chiprow'>
+<span class='pill'>index.html</span>
+<span class='pill'>daily_overview.html</span>
+<span class='pill'>portfolio.html</span>
+<span class='pill'>lhb.html</span>
+<span class='pill'>hotmoney.html</span>
+<span class='pill'>status_2026-08-25.html</span>
+</div>
+<div class='note'>数据落盘：quant/market_overview、board_hot、quotes、news.json、limitup、lhb（均为 2026-08-25）。生成脚本：quant/build_dashboards.py。</div>
+</div>
+<div class='section'>
+<h2>⚠️ 口径说明</h2>
+<div class='empty' style='text-align:left'>· 估值（PE 分位）接口最新快照为 2026-08-24，其余均为 2026-08-25。<br>· 窗口收益(alpha)回测未内置，链接至远程历史分析页。<br>· 所有资金数据为盘后公开龙虎榜，滞后且非未来收益承诺。</div>
+</div>
+<footer>由 A 股量化助理生成 · 仅供参考，不构成投资建议。</footer>
+</div>
+</body>
+</html>

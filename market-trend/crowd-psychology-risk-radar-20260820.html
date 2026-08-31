@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>群体心理风险雷达 · A股</title>
+<style>
+  :root{
+    --bg:#f6f4ef; --card:#ffffff; --ink:#1c1b19; --muted:#6b675f; --line:#e7e2d8;
+    --accent:#b8332a; --accent2:#1f4e5f; --gold:#b8893b;
+    --up:#d8392b; --down:#1a9e5a;
+    --h1:#a5d6a7; --h2:#fff59d; --h3:#ffcc80; --h4:#ef9a9a; --h5:#e53935;
+    --shadow:0 1px 3px rgba(28,27,25,.08),0 8px 24px rgba(28,27,25,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
+    line-height:1.62;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 18px 60px;}
+  /* Masthead */
+  .masthead{background:linear-gradient(135deg,#221f1c 0%,#3a3026 100%);color:#f7f3ea;
+    border-radius:0 0 18px 18px;padding:30px 26px 24px;position:relative;overflow:hidden;}
+  .masthead:before{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;
+    background:radial-gradient(circle,rgba(184,137,59,.35),transparent 70%);}
+  .kicker{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:700;}
+  .masthead h1{font-size:2.05rem;font-weight:800;letter-spacing:-.01em;margin:6px 0 4px;line-height:1.1;}
+  .masthead .sub{font-size:.92rem;color:#cfc6b6;max-width:640px;}
+  .mast-meta{margin-top:14px;font-size:.78rem;color:#bdb4a4;display:flex;gap:16px;flex-wrap:wrap;align-items:center;}
+  .toggle{position:absolute;top:22px;right:24px;display:inline-flex;border:1px solid rgba(247,243,234,.35);
+    border-radius:999px;overflow:hidden;background:rgba(0,0,0,.18);}
+  .toggle button{background:transparent;border:0;color:#e9e2d2;font-size:.82rem;font-weight:600;
+    padding:7px 16px;cursor:pointer;font-family:inherit;}
+  .toggle button.active{background:var(--gold);color:#221f1c;}
+  /* TLDR */
+  .tldr{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--accent);
+    border-radius:14px;padding:22px 24px;margin:22px 0;box-shadow:var(--shadow);}
+  .tldr .lbl{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.14em;color:var(--accent);
+    text-transform:uppercase;margin-bottom:8px;}
+  .tldr p{font-size:1.04rem;line-height:1.7;font-weight:500;}
+  .grade{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-weight:700;
+    background:#fdecea;color:var(--accent);border:1px solid #f3c2bd;border-radius:999px;padding:6px 16px;font-size:.92rem;}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+  .chip{background:#f3f0e8;border:1px solid var(--line);border-radius:8px;padding:5px 11px;font-size:.8rem;color:var(--muted);}
+  .chip b{color:var(--ink);}
+  /* sections */
+  .sec{margin-top:34px;}
+  .sec h2{font-size:1.28rem;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .sec h2 .bar{width:6px;height:22px;background:var(--accent);border-radius:2px;display:inline-block;}
+  .sec h2 .en{font-size:.78rem;font-weight:500;color:var(--muted);letter-spacing:.02em;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;box-shadow:var(--shadow);}
+  .note{font-size:.78rem;color:var(--muted);margin-top:10px;}
+  /* sentiment rail */
+  .rail{display:flex;gap:6px;margin:6px 0 4px;flex-wrap:wrap;}
+  .rail .s{flex:1;min-width:78px;text-align:center;padding:10px 4px;border-radius:10px;background:#eef0ea;
+    color:#5b5a55;font-weight:700;font-size:.86rem;border:1px solid #e2e4dc;}
+  .rail .s small{display:block;font-weight:500;font-size:.62rem;color:#8a877f;margin-top:2px;}
+  .rail .s.on{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 4px 14px rgba(184,51,42,.3);}
+  .rail .s.on small{color:#ffe2df;}
+  /* heatmap */
+  .heat{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+  .heat .cell{border-radius:12px;padding:13px 12px;min-height:118px;display:flex;flex-direction:column;
+    justify-content:space-between;border:1px solid rgba(0,0,0,.06);}
+  .heat .cell .bn{font-weight:800;font-size:.92rem;line-height:1.2;color:#241f18;}
+  .heat .cell .bd{font-size:.72rem;line-height:1.4;color:#3c362e;margin-top:6px;}
+  .heat .cell .sev{display:inline-flex;align-items:center;justify-content:center;align-self:flex-start;
+    margin-top:8px;font-size:.7rem;font-weight:800;border-radius:999px;padding:2px 9px;background:rgba(0,0,0,.16);color:#1c1b19;}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:.76rem;color:var(--muted);align-items:center;}
+  .legend i{width:14px;height:14px;border-radius:4px;display:inline-block;margin-right:5px;vertical-align:-2px;}
+  /* radar + breadth layout */
+  .duo{display:grid;grid-template-columns:340px 1fr;gap:18px;align-items:stretch;}
+  @media(max-width:760px){.duo{grid-template-columns:1fr}.heat{grid-template-columns:repeat(2,1fr)}}
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:.86rem;}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{font-size:.74rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#faf8f3;}
+  td .val{font-weight:700;font-variant-numeric:tabular-nums;}
+  .cat{font-size:.74rem;font-weight:800;letter-spacing:.06em;color:var(--accent2);text-transform:uppercase;
+    padding:14px 12px 6px;}
+  .up{color:var(--up);} .down{color:var(--down);}
+  /* risk cards */
+  .risk3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media(max-width:760px){.risk3{grid-template-columns:1fr}}
+  .rc{border-radius:14px;padding:18px 18px;box-shadow:var(--shadow);border:1px solid var(--line);}
+  .rc.red{background:linear-gradient(180deg,#fdecea,#fff);border-top:4px solid var(--accent);}
+  .rc.amber{background:linear-gradient(180deg,#fff8e8,#fff);border-top:4px solid var(--gold);}
+  .rc.green{background:linear-gradient(180deg,#eef7f0,#fff);border-top:4px solid var(--down);}
+  .rc h3{font-size:1.02rem;font-weight:800;margin-bottom:4px;}
+  .rc .tag{font-size:.7rem;font-weight:700;letter-spacing:.04em;padding:2px 9px;border-radius:999px;display:inline-block;margin-bottom:10px;}
+  .rc.red .tag{background:#f3c2bd;color:var(--accent);}
+  .rc.amber .tag{background:#f3e0b3;color:#8a6418;}
+  .rc.green .tag{background:#bfe6cb;color:#14703a;}
+  .rc p{font-size:.82rem;line-height:1.55;color:#3a352e;margin:6px 0;}
+  .rc .rep{font-size:.8rem;color:var(--muted);}
+  .rc .cond{font-size:.8rem;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-weight:600;color:var(--ink);}
+  /* source / disclaimer */
+  .src li{list-style:none;padding:8px 0;border-bottom:1px solid var(--line);font-size:.84rem;display:flex;gap:10px;flex-wrap:wrap;}
+  .src li b{color:var(--accent2);min-width:150px;display:inline-block;}
+  .disclaimer{background:#f3f0e8;border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-top:24px;font-size:.82rem;color:#4a453c;line-height:1.7;}
+  .disclaimer b{color:var(--accent);}
+  .foot{text-align:center;color:var(--muted);font-size:.74rem;margin-top:28px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="toggle" role="group" aria-label="language">
+      <button id="btnZh" class="active" onclick="setLang('zh')">中文</button>
+      <button id="btnEn" onclick="setLang('en')">EN</button>
+    </div>
+    <div class="kicker" data-i18n="t_kicker">A股 · 群体行为金融研判</div>
+    <h1 data-i18n="t_title">群体心理风险雷达</h1>
+    <div class="sub" data-i18n="t_sub">行为金融偏差 · 拥挤度 · 融资 · 热度 — 综合风险雷达。基于 westock 官方行情数据的真实查询结果。</div>
+    <div class="mast-meta">
+      <span><span data-i18n="t_date">数据截至</span>：<b>2026-08-20 收盘（北京时间，盘后）</b></span>
+      <span data-i18n="t_path">分析路径：群体心理分析（路径 C）</span>
+    </div>
+  </header>
+
+  <!-- TL;DR -->
+  <section class="tldr">
+    <span class="lbl" data-i18n="t_tldr">一句话结论</span>
+    <p data-i18n="t_tldr_text">A股 08-20 由「恐慌 / 退潮」（08-19）进入「超跌反弹 / 修复」：实时涨跌分布强劲修复——涨股比由 8%→<b>73%</b>、涨停 38→<b>84</b>、跌停 130→<b>13</b>，但指数仅小幅回升（上证 +0.24% / 深成 +0.59% / 创业板 +0.64%），且 5日（创业板 −2.52%）、60日（创业板 −13.6%）仍为负，反弹幅度远未收复 08-19 暴跌；两市成交 ¥2.08 万亿（较前日 −4317亿，缩量反弹）。连板高度仅 <b>4板</b>（金健米业，粮食防御延续），退潮后高度未恢复、防御股领涨，风险偏好仍低。资金出现关键变化：主力5日净流入榜首由 AI 切换为<b>紫金矿业 +226.98亿</b>（资源避险），农业银行 +95.99亿（红利）紧随，长鑫 / 太辰光 / 天孚仍在前十但今日单日已净流出（长鑫 T0 −7.86亿）；<b>融资单日加仓榜（金风科技 +8.17亿 / 云南锗业 +5.95亿 / 宁德时代 +2.32亿）已无 AI 硬件身影</b>，杠杆由 AI 高低切至新能源 / 资源 / 卫星——去风险信号。板块层面，反弹先锋为医药生物（生物制品 +7.85% / 细胞免疫治疗 +7.16% / 创新药 +4.52%）与贵金属 +5.50%（山东黄金 +8.59%），而 AI 硬件（半导体 −0.36% 但净流出 −699.82亿、芯片概念 20日 −1042亿）仍是净流出最大方向。热搜由 AI 转向<b>医药生物</b>（沃森 +20% / 神奇制药 +10%）与消费 / 粮食防御。官方画像（T-1 08-19 快照）情绪仍「中性」、板块宽度「全面下跌」，与 08-20 实时 73% 广度背离，快照滞后预警持续。基本面（PMI 49.2 / 产能利用率 73% 环比 −1pct / 社融同比 −7.25%）依旧未跟上。群体心理由焦虑转入<b>怀疑（修复中）</b>，但高估值（PE分位≥90%）+ 中期弱势 + 缩量弱反弹 = 反弹质量是核心风险，等级维持高。</p>
+    <div class="grade"><span data-i18n="t_risk">风险等级</span>：<span data-i18n="t_risk_hi">高</span></div>
+    <div class="chips">
+      <span class="chip"><span data-i18n="c_upratio">涨股比</span> <b>73%</b></span>
+      <span class="chip"><span data-i18n="c_limitup">涨停</span> <b>84</b></span>
+      <span class="chip"><span data-i18n="c_board">连板高度</span> <b>4板</b></span>
+      <span class="chip"><span data-i18n="c_pe">估值 PE分位</span> <b>≥90%</b></span>
+      <span class="chip"><span data-i18n="c_pmi">制造业PMI</span> <b>49.2</b></span>
+      <span class="chip"><span data-i18n="c_turn">两市成交</span> <b>¥2.08万亿</b></span>
+    </div>
+  </section>
+
+  <!-- Sentiment cycle + Bias heatmap -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_bias">行为偏差热力图</span><span class="en">Behavioral Bias Heatmap</span></h2>
+    <div class="card">
+      <div class="cat" style="padding-left:0" data-i18n="t_cycle">情绪周期定位（六阶段）</div>
+      <div class="rail">
+        <div class="s"><span data-i18n="r1">绝望</span><small>Despair</small></div>
+        <div class="s on"><span data-i18n="r2">怀疑</span><small>Doubt</small></div>
+        <div class="s"><span data-i18n="r3">乐观</span><small>Optimism</small></div>
+        <div class="s"><span data-i18n="r4">狂热</span><small>Euphoria</small></div>
+        <div class="s"><span data-i18n="r5">焦虑</span><small>Anxiety</small></div>
+        <div class="s"><span data-i18n="r6">自满</span><small>Complacency</small></div>
+      </div>
+      <div class="note" data-i18n="t_cycle_note">注：上方「怀疑」为实时群体心理定位——08-20 涨跌分布（涨股比 73%、跌停 13 只、指数 +0.2%~0.6%）显示群体由 08-19 的恐慌 / 退潮进入超跌反弹后的犹豫与怀疑：广度从 8% 修复至 73%，但连板高度仅 4板（防御股）、指数涨幅微弱，群体对反弹持续性存疑。官方市场画像（data_market_overview type=summary，2026-08-19 当日 T-1 快照）情绪评分仍为「中性」（score 3，平滑窗口滞后），与实时 73% 广度背离，属快照滞后预警；反弹若因量能不足 / 估值高悬而夭折，情绪将回摆至焦虑 / 绝望。</div>
+      <div class="heat" id="heat"></div>
+      <div class="legend">
+        <span data-i18n="t_leg">严重度（由数据综合映射）</span>：
+        <span><i style="background:var(--h1)"></i>1</span>
+        <span><i style="background:var(--h2)"></i>2</span>
+        <span><i style="background:var(--h3)"></i>3</span>
+        <span><i style="background:var(--h4)"></i>4</span>
+        <span><i style="background:var(--h5)"></i>5（高危）</span>
+      </div>
+      <div class="note" data-i18n="t_bias_note">注：偏差严重度为基于下方真实数据的模型映射（1=低，5=高），用于呈现群体心理的脆弱点分布，并非对个股的买卖建议。</div>
+    </div>
+  </section>
+
+  <!-- Radar + Breadth -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_radar">风险雷达</span><span class="en">Risk Radar</span></h2>
+    <div class="duo">
+      <div class="card">
+        <svg viewBox="0 0 320 320" width="100%" role="img" aria-label="risk radar">
+          <!-- grid -->
+          <g fill="none" stroke="#e2ddd1">
+            <polygon points="160,40 277,110 237,230 83,230 43,110" stroke-width="1"/>
+            <polygon points="160,75 240,121 211,199 109,199 79,121" stroke-width="1"/>
+            <polygon points="160,110 203,133 183,169 137,169 117,133" stroke-width="1"/>
+            <line x1="160" y1="150" x2="160" y2="40" stroke-width="1"/>
+            <line x1="160" y1="150" x2="277" y2="110" stroke-width="1"/>
+            <line x1="160" y1="150" x2="237" y2="230" stroke-width="1"/>
+            <line x1="160" y1="150" x2="83" y2="230" stroke-width="1"/>
+            <line x1="160" y1="150" x2="43" y2="110" stroke-width="1"/>
+          </g>
+          <!-- data polygon -->
+          <polygon points="160,84 242,122 202,194 160,210 118,194 55,114"
+            fill="rgba(184,51,42,.28)" stroke="#b8332a" stroke-width="2.2"/>
+          <g fill="#b8332a">
+            <circle cx="160" cy="84" r="3.2"/><circle cx="242" cy="122" r="3.2"/>
+            <circle cx="202" cy="194" r="3.2"/><circle cx="160" cy="210" r="3.2"/>
+            <circle cx="118" cy="194" r="3.2"/><circle cx="55" cy="114" r="3.2"/>
+          </g>
+          <g font-size="11" font-weight="700" fill="#3a352e" text-anchor="middle">
+            <text x="160" y="30" data-i18n="ax_crowd">拥挤度</text>
+            <text x="292" y="106" data-i18n="ax_margin">融资</text>
+            <text x="250" y="212" data-i18n="ax_turn">换手</text>
+            <text x="160" y="248" data-i18n="ax_breadth">广度</text>
+            <text x="70" y="212" data-i18n="ax_media">媒体情绪</text>
+            <text x="30" y="106" data-i18n="ax_val">估值</text>
+          </g>
+          <g font-size="10" fill="#b8332a" text-anchor="middle" font-weight="800">
+            <text x="160" y="80">60</text><text x="240" y="118">70</text><text x="200" y="190">55</text>
+            <text x="160" y="206">75</text><text x="114" y="190">55</text><text x="58" y="118">90</text>
+          </g>
+        </svg>
+        <div class="note" data-i18n="t_radar_note">六维风险读数（0–100，由下方真实数据综合映射）：拥挤度 60 / 融资 70 / 换手 55 / 广度 75 / 媒体情绪 55 / 估值 90。读数越高代表该维度群体脆弱性越强。广度由 18 修复至 75（08-20 涨股比 73%），拥挤度由 88 降至 60（AI 硬件踩踏后资金分散、主线不清），融资由 92 降至 70（杠杆仍加但由 AI 高低切、极端背离缓和），媒体由 88 降至 55（热搜由暴跌 / IPO 转向医药 / 消费，注意力扩散）；估值仍高悬 90（PE分位≥90%）。</div>
+      </div>
+      <div class="card">
+        <div class="cat" style="padding-left:0" data-i18n="t_breadth">市场涨跌分布（2026-08-20 收盘）</div>
+        <svg viewBox="0 0 560 200" width="100%" role="img" aria-label="breadth bars">
+          <g font-size="13" font-weight="700">
+            <rect x="120" y="16" width="307" height="34" rx="6" fill="#d8392b"/>
+            <text x="162" y="39" fill="#fff" data-i18n="b_up">上涨</text><text x="200" y="39" fill="#fff" font-size="14">4096 · 73%</text>
+            <rect x="120" y="64" width="101" height="34" rx="6" fill="#1a9e5a"/>
+            <text x="492" y="87" fill="#fff" data-i18n="b_down">下跌</text>
+            <rect x="120" y="112" width="8" height="34" rx="6" fill="#9b958a"/>
+            <text x="144" y="135" fill="#3a352e" data-i18n="b_flat">平盘</text><text x="200" y="135" fill="#3a352e" font-size="13">105</text>
+          </g>
+          <g font-size="13" fill="#3a352e" font-weight="700">
+            <text x="14" y="39" data-i18n="b_limitup">涨停</text><text x="14" y="87" data-i18n="b_limitdn">跌停</text><text x="14" y="135" data-i18n="b_amt">成交额</text>
+          </g>
+          <text x="64" y="39" fill="#d8392b" font-size="15">84</text>
+          <text x="64" y="87" fill="#1a9e5a" font-size="15">13</text>
+          <text x="64" y="135" fill="#1c1b19" font-size="14">≈¥2.08万亿</text>
+        </svg>
+        <div class="note" data-i18n="t_breadth_note">涨股比由 8%→73% 呈 V 型修复、跌停由 130→13：恐慌缓和、超跌反弹确认。但指数仅微涨（上证 +0.24% / 深成 +0.59% / 创业板 +0.64%），5日（创业板 −2.52%）、60日（创业板 −13.6%）仍为负，反弹幅度远未收复 08-19 暴跌；成交 ¥2.08 万亿较前日 −4317亿（缩量反弹），承接力待验证。官方画像情绪评分仍「中性」，与实时 73% 广度背离，须警惕快照欺骗。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key evidence -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_evidence">关键证据表</span><span class="en">Key Evidence</span></h2>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table>
+        <thead><tr><th data-i18n="th_metric">指标</th><th data-i18n="th_read">真实读数</th><th data-i18n="th_interp">行为金融解读</th></tr></thead>
+        <tbody>
+          <tr><td class="cat" colspan="3" data-i18n="ev_market">一、市场广度与总览</td></tr>
+          <tr><td data-i18n="ev_upratio">涨股比</td><td><span class="val up">73%</span>（涨4096 / 跌1347 / 平105）</td><td data-i18n="ev_upratio_i">由 78%→38%→8%→73%，V型修复但指数涨幅微弱，属超跌反弹非反转</td></tr>
+          <tr><td data-i18n="ev_limit">涨停 / 跌停</td><td><span class="val up">84</span> / <span class="val down">13</span></td><td data-i18n="ev_limit_i">涨停回升（38→84）、跌停骤降（130→13），恐慌缓和；但连板高度仅 4板，风险偏好仍低</td></tr>
+          <tr><td data-i18n="ev_amount">两市成交额</td><td><span class="val">≈¥2.08万亿</span>（较前日 −4316.79亿，缩量反弹）</td><td data-i18n="ev_amount_i">量能较 08-19（¥2.51万亿）缩减，缩量反弹，承接力与持续性待验证</td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_index">二、核心指数表现（2026-08-20 收盘）</td></tr>
+          <tr><td data-i18n="ev_sh">上证指数</td><td><span class="val up">3903.72　+0.24%</span></td><td data-i18n="ev_sh_i">微涨修复，PE 17.99（估值相对合理），但 5日 −0.59%、60日 −4.64% 仍弱</td></tr>
+          <tr><td data-i18n="ev_sz">深证成指</td><td><span class="val up">13972.78　+0.59%</span></td><td data-i18n="ev_sz_i">弱反弹，PE 44.48，5日 −2.22%、60日 −11.21% 中期仍弱</td></tr>
+          <tr><td data-i18n="ev_cyb">创业板指</td><td><span class="val up">3495.59　+0.64%</span>（PE 58.49）</td><td data-i18n="ev_cyb_i">弱反弹，但 5日 −2.52%、60日 −13.6%，高估值高弹性主线套牢盘未解</td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_sector">三、板块排行与主线</td></tr>
+          <tr><td data-i18n="ev_secup">领涨行业</td><td><span class="val up">生物制品 +7.85%</span>（优宁维 +20%）<br>贵金属 +5.50%（山东黄金 +8.59%）/ 医疗服务 +4.24%（CRO 博腾 +20%）<br>概念：细胞免疫治疗 +7.16% / 干细胞 +6.47% / 创新药 +4.52%</td><td data-i18n="ev_secup_i">医药生物（创新药 / CRO）+ 贵金属（避险资源）成反弹先锋，资金由 AI 高低切至医药 / 资源 / 防御</td></tr>
+          <tr><td data-i18n="ev_secdn">净流出居前</td><td><span class="val down">半导体 −0.36%（净流出 −699.82亿）</span><br>芯片概念 +0.90%（净流出 −120.33亿，20日 −1042.14亿）/ 电池 −0.84%（−155.99亿）</td><td data-i18n="ev_secdn_i">AI 硬件仍是净流出最大方向（半导体 20日 −837.70亿 / 芯片 20日 −1042亿），反弹中资金仍撤离高位科技</td></tr>
+          <tr><td data-i18n="ev_board">极端题材</td><td><span class="val up">连板高度 4 板</span>（金健米业 — 粮食防御延续）<br>2板：*ST威领 / 志邦家居 / 汉森制药 / 速达股份<br>新热点：沃森生物 +20% / 神奇制药 +10%（医药）</td><td data-i18n="ev_board_i">连板由 3板→4板（仍低、防御股），热点由科技切至医药 / 粮食 / 资源，主线混乱、持续性差</td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_flow">四、资金：连板 / 主力 / 两融</td></tr>
+          <tr><td data-i18n="ev_height">连板高度</td><td><span class="val up">金健米业 4板</span>（2026-08-20）</td><td data-i18n="ev_height_i">高度仅 4板且为防御股，退潮后风险偏好仍低，无清晰领涨主线</td></tr>
+          <tr><td data-i18n="ev_main">主力5日净流入TOP</td><td>紫金矿业 <span class="val up">+226.98亿</span><br>长鑫科技 +164.20亿（T0 −7.86亿）/ 太辰光 +151.75亿 / 农业银行 +95.99亿 / 药明康德 +92.03亿</td><td data-i18n="ev_main_i">聪明钱5日聚资源避险（紫金 +227亿）、红利（农行 +96亿）与医药（药明 +92亿）；AI（长鑫 / 太辰光 / 天孚）仍在前十但今日单日已净流出（长鑫 T0 −7.86亿）</td></tr>
+          <tr><td data-i18n="ev_margin">融资单日变动TOP</td><td>金风科技 <span class="val up">+8.17亿</span><br>云南锗业 +5.95亿 / 东材科技 +2.74亿 / 宁德时代 +2.32亿 / 招商轮船 +2.22亿</td><td data-i18n="ev_margin_i">杠杆单日加仓榜已无 AI 硬件，转向新能源（金风 / 宁德）/ 材料（云南锗业 / 东材）/ 卫星（中国卫星）/ 电子（立讯）——去风险信号明显</td></tr>
+          <tr><td data-i18n="ev_hot">热搜TOP</td><td>沃森生物 +20.00% / 神奇制药 +10.03%（医药）<br>一鸣食品 +0.86%（消费）/ 金健米业 +9.97%（粮食）<br>长鑫科技 +0.03% · 长电科技 +2.24% · 通鼎互联 +9.99%（半导体分化）/ C宇树-W −18.70%</td><td data-i18n="ev_hot_i">热搜由 AI 转向医药生物 / 消费 / 粮食防御；C宇树-W 次新 −18.70% 回落，注意力扩散而非聚焦</td></tr>
+          <tr><td data-i18n="ev_margintotal">市场两融余额</td><td><span class="val">数据源未返回聚合值</span></td><td data-i18n="ev_margintotal_i">缺口：聚合两融余额为空，以个股融资变动替代观察（见上）</td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_macro">五、核心宏观指标</td></tr>
+          <tr><td data-i18n="ev_pmi">制造业PMI（7月）</td><td><span class="val down">49.2</span>（<50，环比 −0.20）</td><td data-i18n="ev_pmi_i">基本面收缩，与「高估值 + 中期弱势」明显背离；非制造业新订单 44.4</td></tr>
+          <tr><td data-i18n="ev_capu">产能利用率（Q2）</td><td><span class="val down">73.0%</span>（同比 −1.0pct）</td><td data-i18n="ev_capu_i">实物经济动能走弱，价格缺乏业绩支撑；煤炭 61.2%（−8.1pct）</td></tr>
+          <tr><td data-i18n="ev_cpi">CPI（7月）</td><td><span class="val">0.5%</span></td><td data-i18n="ev_cpi_i">低通胀、需求偏弱，难证景气全面复苏</td></tr>
+          <tr><td data-i18n="ev_social">社融（7月）</td><td><span class="val down">累计同比 −7.25%</span></td><td data-i18n="ev_social_i">信用需求弱（增量累计 22.25 万亿），资金绕道股市 = 流动性驱动特征</td></tr>
+          <tr><td data-i18n="ev_m1m2">M1-M2 剪刀差</td><td><span class="val down">−3.7%</span></td><td data-i18n="ev_m1m2_i">活钱偏弱，资金空转，典型后周期现象</td></tr>
+          <tr><td data-i18n="ev_yield">10Y 国债收益率</td><td><span class="val down">1.70%</span></td><td data-i18n="ev_yield_i">极低无风险利率，既支撑估值也反映增长担忧</td></tr>
+          <tr><td data-i18n="ev_lpr">LPR</td><td>1Y <span class="val">3.0%</span> / 5Y <span class="val">3.5%</span></td><td data-i18n="ev_lpr_i">宽松基调未变；8-20 报价待公布</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note" data-i18n="t_ev_note">数据口径：宏观指标多截至 2026-07（月频）或 2026-08-19/20（日频）；PMI/产能/社融为 08-20 复核最新月频值（无新发布），CPI/M1-M2/10Y/LPR 为 08-17/18/19 已查询月频/日频值（未更新）。财新PMI数据源覆盖仅至 2025-08（49.2），不作为主要依据。详见末尾「数据来源与日期口径」。</div>
+  </section>
+
+  <!-- Risk stratification -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_risk">风险分层</span><span class="en">Risk Stratification</span></h2>
+    <div class="risk3">
+      <div class="rc red">
+        <span class="tag" data-i18n="rc1_tag">红线区 · 高估值 + 弱反弹 + 杠杆未降</span>
+        <h3 data-i18n="rc1_t">高估值 + 弱反弹 + 杠杆未降</h3>
+        <p data-i18n="rc1_d">估值 PE分位≥90% 高悬，中期趋势弱势下跌（创业板 60日 −13.6%），而反弹缩量（¥2.08万亿，较前日 −4317亿）、涨幅微弱（指数仅 +0.2%~0.6%）；融资仍在加（金风科技 +8.17亿 / 宁德时代 +2.32亿），杠杆未随退潮降敞口。反弹若因量能不足 / 估值高悬而夭折，套牢盘与融资盘二次杀跌风险高。</p>
+        <p class="rep" data-i18n="rc1_rep">代表：创业板高位、抱团防御（金健米业 4板）、融资加仓新能源（金风 / 宁德）</p>
+        <div class="cond" data-i18n="rc1_cond">条件框架：反弹期不追高、不加杠杆；以量能回升 + 指数站回短期均线上方为右侧确认条件，破位即减。</div>
+      </div>
+      <div class="rc amber">
+        <span class="tag" data-i18n="rc2_tag">黄线区 · 主线切换混乱</span>
+        <h3 data-i18n="rc2_t">AI硬件退潮 + 主线切换混乱</h3>
+        <p data-i18n="rc2_d">AI 硬件仍是净流出最大方向（半导体 −699.82亿、芯片概念 20日 −1042亿），反弹中资金乱切至医药生物（生物制品 +7.85% / 细胞免疫 +7.16% / 创新药 +4.52%）、贵金属 +5.50%、新能源（金风 / 宁德）与粮食防御；连板高度仅 4板（金健米业防御），无清晰领涨主线，轮动加快、持续性差。</p>
+        <p class="rep" data-i18n="rc2_rep">代表：医药生物（CRO / 生物制品）/ 贵金属（山东黄金）/ 新能源 / 粮食</p>
+        <div class="cond" data-i18n="rc2_cond">条件框架：反弹初期不追日内领涨题材；新主线需量价持续确认，严禁把单日医药 / 资源反弹当反转。</div>
+      </div>
+      <div class="rc green">
+        <span class="tag" data-i18n="rc3_tag">绿线区 · 低位资源 + 红利防御（相对）</span>
+        <h3 data-i18n="rc3_t">低位资源 + 红利防御</h3>
+        <p data-i18n="rc3_d">紫金矿业（资源避险，5日主力 +226.98亿）、农业银行（红利，+95.99亿）、赤峰黄金（+84.33亿）、山东黄金（+8.59%）相对抗跌，资金避险去处；但本质是弱市下的避险与去风险，而非新周期主线。</p>
+        <p class="rep" data-i18n="rc3_rep">代表：紫金矿业 / 农业银行 / 赤峰黄金 / 山东黄金</p>
+        <div class="cond" data-i18n="rc3_cond">条件框架：仅作避险对冲与仓位保护；若仅为题材接力不可视作安全垫，整体风险预算应显著收缩。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sources -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_source">数据来源与日期口径</span><span class="en">Data Sources & Time Caliber</span></h2>
+    <div class="card">
+      <ul class="src">
+        <li><b data-i18n="s_breadth">涨跌分布 / 总览</b><span data-i18n="s_breadth_v">westock · data_changedist；2026-08-20 收盘</span></li>
+        <li><b data-i18n="s_portrait">市场画像 summary</b><span data-i18n="s_portrait_v">westock · data_market_overview(type=summary)；2026-08-19（T-1 当日快照，其情绪评分基于平滑窗口仍显示「中性」，与实时广度 73% 背离）</span></li>
+        <li><b data-i18n="s_index">指数表现</b><span data-i18n="s_index_v">westock · data_quote(sh000001,sz399001,sz399006)；2026-08-20 收盘</span></li>
+        <li><b data-i18n="s_sector">板块排行</b><span data-i18n="s_sector_v">westock · data_sector(mode=ranking)；2026-08-20</span></li>
+        <li><b data-i18n="s_hot">热搜股票</b><span data-i18n="s_hot_v">westock · data_hot(kind=stock)；2026-08-20</span></li>
+        <li><b data-i18n="s_macro">核心宏观</b><span data-i18n="s_macro_v">westock · data_macro(cn_pmi, cn_capacity_utilization, cn_financing 等)；PMI/产能/社融为 08-20 复核（无新发布，月频），CPI/M1-M2/10Y/LPR 沿用 08-17/18/19 值</span></li>
+        <li><b data-i18n="s_margin">两融（个股）</b><span data-i18n="s_margin_v">westock · tool_ranking(metric=margin_chg_d)；2026-08-20</span></li>
+        <li><b data-i18n="s_main">主力5日净流入</b><span data-i18n="s_main_v">westock · tool_ranking(metric=cap_main_5d)；2026-08-20（当日排行榜）</span></li>
+        <li><b data-i18n="s_board">连板高度</b><span data-i18n="s_board_v">westock · tool_ranking(metric=limitup_days)；2026-08-20（当日排行榜）</span></li>
+        <li><b data-i18n="s_gap">数据缺口</b><span data-i18n="s_gap_v">市场两融余额聚合值（data_market_overview type=margin）数据源返回空，已用个股融资变动替代，未编造。</span></li>
+      </ul>
+      <div class="note" data-i18n="t_src_note">时间口径：所有时点按北京时间。宏观为月频 / 季频，与日频行情不可直接对齐，已分别标注。排行榜类指标（连板 / 主力5日 / 融资单日）本次均为 2026-08-20 当日值。</div>
+    </div>
+  </section>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    <p data-i18n="disc1"><b>免责声明：</b>以上内容基于公开数据和量化分析，仅供参考，不构成投资建议。市场有风险，投资需谨慎。任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往表现不预示未来收益。</p>
+    <p style="margin-top:8px" data-i18n="disc2">本研判为「群体心理 / 条件框架」分析，非买卖指令；风险读数与偏差严重度为模型综合映射，须与价格结构、估值、资金流向交叉验证，不可单独作为交易依据。</p>
+  </div>
+
+  <div class="foot" data-i18n="t_foot">群体心理风险雷达 · 由 westock 官方行情数据生成 · 仅供研究参考</div>
+</div>
+
+<script>
+  var I18N = {
+    zh:{
+      t_kicker:"A股 · 群体行为金融研判",
+      t_title:"群体心理风险雷达",
+      t_sub:"行为金融偏差 · 拥挤度 · 融资 · 热度 — 综合风险雷达。基于 westock 官方行情数据的真实查询结果。",
+      t_date:"数据截至", t_path:"分析路径：群体心理分析（路径 C）",
+      t_tldr:"一句话结论",
+      t_tldr_text:"A股 08-20 由「恐慌 / 退潮」（08-19）进入「超跌反弹 / 修复」：实时涨跌分布强劲修复——涨股比由 8%→73%、涨停 38→84、跌停 130→13，但指数仅小幅回升（上证 +0.24% / 深成 +0.59% / 创业板 +0.64%），且 5日（创业板 −2.52%）、60日（创业板 −13.6%）仍为负，反弹幅度远未收复 08-19 暴跌；两市成交 ¥2.08 万亿（较前日 −4317亿，缩量反弹）。连板高度仅 4板（金健米业，粮食防御延续），退潮后高度未恢复、防御股领涨，风险偏好仍低。资金出现关键变化：主力5日净流入榜首由 AI 切换为紫金矿业 +226.98亿（资源避险），农业银行 +95.99亿（红利）紧随，长鑫 / 太辰光 / 天孚仍在前十但今日单日已净流出（长鑫 T0 −7.86亿）；融资单日加仓榜（金风科技 +8.17亿 / 云南锗业 +5.95亿 / 宁德时代 +2.32亿）已无 AI 硬件身影，杠杆由 AI 高低切至新能源 / 资源 / 卫星——去风险信号。板块层面，反弹先锋为医药生物（生物制品 +7.85% / 细胞免疫治疗 +7.16% / 创新药 +4.52%）与贵金属 +5.50%（山东黄金 +8.59%），而 AI 硬件（半导体 −0.36% 但净流出 −699.82亿、芯片概念 20日 −1042亿）仍是净流出最大方向。热搜由 AI 转向医药生物（沃森 +20% / 神奇制药 +10%）与消费 / 粮食防御。官方画像（T-1 08-19 快照）情绪仍「中性」、板块宽度「全面下跌」，与 08-20 实时 73% 广度背离，快照滞后预警持续。基本面（PMI 49.2 / 产能利用率 73% 环比 −1pct / 社融同比 −7.25%）依旧未跟上。群体心理由焦虑转入怀疑（修复中），但高估值（PE分位≥90%）+ 中期弱势 + 缩量弱反弹 = 反弹质量是核心风险，等级维持高。",
+      t_risk:"风险等级", t_risk_hi:"高",
+      c_upratio:"涨股比", c_limitup:"涨停", c_board:"连板高度", c_pe:"估值 PE分位", c_pmi:"制造业PMI", c_turn:"两市成交",
+      t_sec_bias:"行为偏差热力图", t_cycle:"情绪周期定位（六阶段）",
+      r1:"绝望",r2:"怀疑",r3:"乐观",r4:"狂热",r5:"焦虑",r6:"自满",
+      t_cycle_note:"注：上方「怀疑」为实时群体心理定位——08-20 涨跌分布（涨股比 73%、跌停 13 只、指数 +0.2%~0.6%）显示群体由 08-19 的恐慌 / 退潮进入超跌反弹后的犹豫与怀疑：广度从 8% 修复至 73%，但连板高度仅 4板（防御股）、指数涨幅微弱，群体对反弹持续性存疑。官方市场画像（data_market_overview type=summary，2026-08-19 当日 T-1 快照）情绪评分仍为「中性」（score 3，平滑窗口滞后），与实时 73% 广度背离，属快照滞后预警；反弹若因量能不足 / 估值高悬而夭折，情绪将回摆至焦虑 / 绝望。",
+      t_leg:"严重度（由数据综合映射）", t_bias_note:"注：偏差严重度为基于下方真实数据的模型映射（1=低，5=高），用于呈现群体心理的脆弱点分布，并非对个股的买卖建议。",
+      t_sec_radar:"风险雷达", t_radar_note:"六维风险读数（0–100，由下方真实数据综合映射）：拥挤度 60 / 融资 70 / 换手 55 / 广度 75 / 媒体情绪 55 / 估值 90。读数越高代表该维度群体脆弱性越强。广度由 18 修复至 75（08-20 涨股比 73%），拥挤度由 88 降至 60（AI 硬件踩踏后资金分散、主线不清），融资由 92 降至 70（杠杆仍加但由 AI 高低切、极端背离缓和），媒体由 88 降至 55（热搜由暴跌 / IPO 转向医药 / 消费，注意力扩散）；估值仍高悬 90（PE分位≥90%）。",
+      ax_crowd:"拥挤度",ax_margin:"融资",ax_turn:"换手",ax_breadth:"广度",ax_media:"媒体情绪",ax_val:"估值",
+      t_breadth:"市场涨跌分布（2026-08-20 收盘）", b_up:"上涨",b_down:"下跌",b_flat:"平盘",b_limitup:"涨停",b_limitdn:"跌停",b_amt:"成交额",
+      t_breadth_note:"涨股比由 8%→73% 呈 V 型修复、跌停由 130→13：恐慌缓和、超跌反弹确认。但指数仅微涨（上证 +0.24% / 深成 +0.59% / 创业板 +0.64%），5日（创业板 −2.52%）、60日（创业板 −13.6%）仍为负，反弹幅度远未收复 08-19 暴跌；成交 ¥2.08 万亿较前日 −4317亿（缩量反弹），承接力待验证。官方画像情绪评分仍「中性」，与实时 73% 广度背离，须警惕快照欺骗。",
+      t_sec_evidence:"关键证据表", th_metric:"指标",th_read:"真实读数",th_interp:"行为金融解读",
+      ev_market:"一、市场广度与总览", ev_upratio:"涨股比",ev_upratio_i:"由 78%→38%→8%→73%，V型修复但指数涨幅微弱，属超跌反弹非反转",
+      ev_limit:"涨停 / 跌停",ev_limit_i:"涨停回升（38→84）、跌停骤降（130→13），恐慌缓和；但连板高度仅 4板，风险偏好仍低",
+      ev_amount:"两市成交额",ev_amount_i:"量能较 08-19（¥2.51万亿）缩减，缩量反弹，承接力与持续性待验证",
+      ev_index:"二、核心指数表现（2026-08-20 收盘）", ev_sh:"上证指数",ev_sh_i:"微涨修复，PE 17.99（估值相对合理），但 5日 −0.59%、60日 −4.64% 仍弱",
+      ev_sz:"深证成指",ev_sz_i:"弱反弹，PE 44.48，5日 −2.22%、60日 −11.21% 中期仍弱", ev_cyb:"创业板指",ev_cyb_i:"弱反弹，但 5日 −2.52%、60日 −13.6%，高估值高弹性主线套牢盘未解",
+      ev_sector:"三、板块排行与主线", ev_secup:"领涨行业",ev_secup_i:"医药生物（创新药 / CRO）+ 贵金属（避险资源）成反弹先锋，资金由 AI 高低切至医药 / 资源 / 防御",
+      ev_secdn:"净流出居前",ev_secdn_i:"AI 硬件仍是净流出最大方向（半导体 20日 −837亿 / 芯片 20日 −1042亿），反弹中资金仍撤离高位科技", ev_board:"极端题材",ev_board_i:"连板由 3板→4板（仍低、防御股），热点由科技切至医药 / 粮食 / 资源，主线混乱、持续性差",
+      ev_flow:"四、资金：连板 / 主力 / 两融", ev_height:"连板高度",ev_height_i:"高度仅 4板且为防御股，退潮后风险偏好仍低，无清晰领涨主线",
+      ev_main:"主力5日净流入TOP",ev_main_i:"聪明钱5日聚资源避险（紫金 +227亿）、红利（农行 +96亿）与医药（药明 +92亿）；AI（长鑫 / 太辰光 / 天孚）仍在前十但今日单日已净流出（长鑫 T0 −7.86亿）",
+      ev_margin:"融资单日变动TOP",ev_margin_i:"杠杆单日加仓榜已无 AI 硬件，转向新能源（金风 / 宁德）/ 材料（云南锗业 / 东材）/ 卫星（中国卫星）/ 电子（立讯）——去风险信号明显",
+      ev_hot:"热搜TOP",ev_hot_i:"热搜由 AI 转向医药生物 / 消费 / 粮食防御；C宇树-W 次新 −18.70% 回落，注意力扩散而非聚焦",
+      ev_margintotal:"市场两融余额",ev_margintotal_i:"缺口：聚合两融余额为空，以个股融资变动替代观察（见上）",
+      ev_macro:"五、核心宏观指标", ev_pmi:"制造业PMI（7月）",ev_pmi_i:"基本面收缩，与「高估值 + 中期弱势」明显背离；非制造业新订单 44.4",
+      ev_capu:"产能利用率（Q2）",ev_capu_i:"实物经济动能走弱，价格缺乏业绩支撑；煤炭 61.2%（−8.1pct）", ev_cpi:"CPI（7月）",ev_cpi_i:"低通胀、需求偏弱，难证景气全面复苏",
+      ev_social:"社融（7月）",ev_social_i:"信用需求弱（增量累计 22.25 万亿），资金绕道股市 = 流动性驱动特征", ev_m1m2:"M1-M2 剪刀差",ev_m1m2_i:"活钱偏弱，资金空转，典型后周期现象",
+      ev_yield:"10Y 国债收益率",ev_yield_i:"极低无风险利率，既支撑估值也反映增长担忧", ev_lpr:"LPR",ev_lpr_i:"宽松基调未变；8-20 报价待公布",
+      t_ev_note:"数据口径：宏观指标多截至 2026-07（月频）或 2026-08-19/20（日频）；PMI/产能/社融为 08-20 复核最新月频值（无新发布），CPI/M1-M2/10Y/LPR 为 08-17/18/19 已查询月频/日频值（未更新）。财新PMI数据源覆盖仅至 2025-08（49.2），不作为主要依据。详见末尾「数据来源与日期口径」。",
+      t_sec_risk:"风险分层",
+      rc1_tag:"红线区 · 高估值 + 弱反弹 + 杠杆未降",rc1_t:"高估值 + 弱反弹 + 杠杆未降",rc1_d:"估值 PE分位≥90% 高悬，中期趋势弱势下跌（创业板 60日 −13.6%），而反弹缩量（¥2.08万亿，较前日 −4317亿）、涨幅微弱（指数仅 +0.2%~0.6%）；融资仍在加（金风科技 +8.17亿 / 宁德时代 +2.32亿），杠杆未随退潮降敞口。反弹若因量能不足 / 估值高悬而夭折，套牢盘与融资盘二次杀跌风险高。",rc1_rep:"代表：创业板高位、抱团防御（金健米业 4板）、融资加仓新能源（金风 / 宁德）",rc1_cond:"条件框架：反弹期不追高、不加杠杆；以量能回升 + 指数站回短期均线上方为右侧确认条件，破位即减。",
+      rc2_tag:"黄线区 · 主线切换混乱",rc2_t:"AI硬件退潮 + 主线切换混乱",rc2_d:"AI 硬件仍是净流出最大方向（半导体 −699.82亿、芯片概念 20日 −1042亿），反弹中资金乱切至医药生物（生物制品 +7.85% / 细胞免疫 +7.16% / 创新药 +4.52%）、贵金属 +5.50%、新能源（金风 / 宁德）与粮食防御；连板高度仅 4板（金健米业防御），无清晰领涨主线，轮动加快、持续性差。",rc2_rep:"代表：医药生物（CRO / 生物制品）/ 贵金属（山东黄金）/ 新能源 / 粮食",rc2_cond:"条件框架：反弹初期不追日内领涨题材；新主线需量价持续确认，严禁把单日医药 / 资源反弹当反转。",
+      rc3_tag:"绿线区 · 低位资源 + 红利防御（相对）",rc3_t:"低位资源 + 红利防御",rc3_d:"紫金矿业（资源避险，5日主力 +226.98亿）、农业银行（红利，+95.99亿）、赤峰黄金（+84.33亿）、山东黄金（+8.59%）相对抗跌，资金避险去处；但本质是弱市下的避险与去风险，而非新周期主线。",rc3_rep:"代表：紫金矿业 / 农业银行 / 赤峰黄金 / 山东黄金",rc3_cond:"条件框架：仅作避险对冲与仓位保护；若仅为题材接力不可视作安全垫，整体风险预算应显著收缩。",
+      t_sec_source:"数据来源与日期口径",
+      s_breadth:"涨跌分布 / 总览",s_breadth_v:"westock · data_changedist；2026-08-20 收盘",
+      s_portrait:"市场画像 summary",s_portrait_v:"westock · data_market_overview(type=summary)；2026-08-19（T-1 当日快照，其情绪评分基于平滑窗口仍显示「中性」，与实时广度 73% 背离）",
+      s_index:"指数表现",s_index_v:"westock · data_quote(sh000001,sz399001,sz399006)；2026-08-20 收盘",
+      s_sector:"板块排行",s_sector_v:"westock · data_sector(mode=ranking)；2026-08-20",
+      s_hot:"热搜股票",s_hot_v:"westock · data_hot(kind=stock)；2026-08-20",
+      s_macro:"核心宏观",s_macro_v:"westock · data_macro(cn_pmi, cn_capacity_utilization, cn_financing 等)；PMI/产能/社融为 08-20 复核（无新发布，月频），CPI/M1-M2/10Y/LPR 沿用 08-17/18/19 值",
+      s_margin:"两融（个股）",s_margin_v:"westock · tool_ranking(metric=margin_chg_d)；2026-08-20",
+      s_main:"主力5日净流入",s_main_v:"westock · tool_ranking(metric=cap_main_5d)；2026-08-20（当日排行榜）",
+      s_board:"连板高度",s_board_v:"westock · tool_ranking(metric=limitup_days)；2026-08-20（当日排行榜）",
+      s_gap:"数据缺口",s_gap_v:"市场两融余额聚合值（data_market_overview type=margin）数据源返回空，已用个股融资变动替代，未编造。",
+      t_src_note:"时间口径：所有时点按北京时间。宏观为月频 / 季频，与日频行情不可直接对齐，已分别标注。排行榜类指标（连板 / 主力5日 / 融资单日）本次均为 2026-08-20 当日值。",
+      disc1:"免责声明：以上内容基于公开数据和量化分析，仅供参考，不构成投资建议。市场有风险，投资需谨慎。任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往表现不预示未来收益。",
+      disc2:"本研判为「群体心理 / 条件框架」分析，非买卖指令；风险读数与偏差严重度为模型综合映射，须与价格结构、估值、资金流向交叉验证，不可单独作为交易依据。",
+      t_foot:"群体心理风险雷达 · 由 westock 官方行情数据生成 · 仅供研究参考"
+    },
+    en:{
+      t_kicker:"A-share · Crowd Behavioral Finance",
+      t_title:"Crowd Psychology Risk Radar",
+      t_sub:"Behavioral bias · crowding · margin · heat — an integrated risk radar. Built on real queries via westock official market data.",
+      t_date:"Data as of", t_path:"Path: Crowd Psychology Analysis (Path C)",
+      t_tldr:"Bottom Line",
+      t_tldr_text:"On 2026-08-20 A-shares moved from 'panic / retreat' (08-19) into an 'oversold bounce / repair': live breadth strongly repaired — up-stock ratio 8%->73%, limit-up 38->84, limit-down 130->13, yet indices only ticked up (SSE +0.24% / SZSE +0.59% / ChiNext +0.64%); 5d (ChiNext -2.52%) and 60d (ChiNext -13.6%) still negative, the bounce far from reclaiming the 08-19 crash; turnover ¥2.08tn (vs prior -431.7bn, volume-shrinking rebound). Streak height is only 4 boards (Jinjian, grain defense continuing) — height not restored post-retreat, defensives leading, risk appetite still low. Key flow shift: main-force 5d net-inflow leader switched from AI to Zijin Mining +22.70bn (resource safe-haven), with Agri Bank +9.60bn (dividend) next; ChangXin / TaiChenGuang / Tianfu still top-10 but intraday already net-out (ChangXin T0 -0.79bn); margin daily-add list (Goldwind +0.82bn / Yunnan Germanium +0.60bn / CATL +0.23bn) now shows no AI hardware — leverage de-risked from AI into new-energy / resources / satellite. At sector level the bounce leaders are biopharma (biologics +7.85% / cell-immune +7.16% / innovative-drugs +4.52%) and precious metals +5.50% (Shandong Gold +8.59%), while AI hardware (semis -0.36% but net outflow -69.98bn, chip concept 20d -104.21bn) remains the largest net-outflow direction. Hot-search pivoted from AI to biopharma (Walvax +20% / Shenqi Pharma +10%) and consumer / grain defense. The official portrait (T-1 08-19 snapshot) still reads 'neutral' / 'broad decline', diverging from the live 73% breadth — stale-snapshot warning persists. Fundamentals (PMI 49.2 / capacity 73% qoq -1ppt / TSF -7.25% yoy) still lag. Crowd psychology moved from anxiety into doubt (repairing), but high valuation (PE pctile ≥90%) + mid-term weakness + volume-shrinking weak bounce = bounce quality is the core risk; level stays High.",
+      t_risk:"Risk Level", t_risk_hi:"High",
+      c_upratio:"Up %", c_limitup:"Limit-up", c_board:"Streak", c_pe:"PE pctile", c_pmi:"Mfg PMI", c_turn:"Turnover",
+      t_sec_bias:"Behavioral Bias Heatmap", t_cycle:"Sentiment Cycle (six stages)",
+      r1:"Despair",r2:"Doubt",r3:"Optimism",r4:"Euphoria",r5:"Anxiety",r6:"Complacency",
+      t_cycle_note:"Note: 'Doubt' above is the live crowd positioning — the 08-20 breadth (73% up, 13 limit-down, indices +0.2%~0.6%) shows the crowd moving from 08-19 panic / retreat into hesitation and doubt after an oversold bounce: breadth repaired from 8% to 73%, but streak height is only 4 boards (defensive), index gains tiny, and the crowd doubts the bounce's durability. The official portrait (data_market_overview type=summary, 2026-08-19 T-1 snapshot) sentiment score still reads 'neutral' (score 3, smoothed window lag) and diverges from the live 73% breadth — a stale-snapshot warning; if the bounce fails on thin volume / high valuation, sentiment swings back to anxiety / despair.",
+      t_leg:"Severity (model-mapped from data)", t_bias_note:"Note: bias severity is a model mapping from the real data below (1=low, 5=high), used to surface where crowd psychology is most fragile. It is not a buy/sell call on any stock.",
+      t_sec_radar:"Risk Radar", t_radar_note:"Six-dimension risk readings (0–100, model-mapped): Crowding 60 / Margin 70 / Turnover 55 / Breadth 75 / Media 55 / Valuation 90. Higher = more crowd fragility. Breadth repaired 18->75 (08-20 up-ratio 73%); Crowding fell 88->60 (post-AI-stampede capital dispersed, no clear main line); Margin 92->70 (leverage still adding but de-risked from AI, extreme divergence eased); Media 88->55 (hot-search shifted from crash/IPO to pharma/consumer, attention diffused); Valuation still high at 90 (PE pctile ≥90%).",
+      ax_crowd:"Crowding",ax_margin:"Margin",ax_turn:"Turnover",ax_breadth:"Breadth",ax_media:"Media",ax_val:"Valuation",
+      t_breadth:"Market Breadth (2026-08-20 close)", b_up:"Up",b_down:"Down",b_flat:"Flat",b_limitup:"Limit-up",b_limitdn:"Limit-down",b_amt:"Amount",
+      t_breadth_note:"Up-stock ratio V-shaped repaired 8%->73% and limit-down fell 130->13: panic eased, oversold bounce confirmed. But indices only ticked up (SSE +0.24% / SZSE +0.59% / ChiNext +0.64%); 5d (ChiNext -2.52%) and 60d (ChiNext -13.6%) still negative — the bounce is far from reclaiming the 08-19 crash; turnover ¥2.08tn vs prior -431.7bn (volume-shrinking rebound), absorption to be verified. The official portrait sentiment still 'neutral' lags the live 73% breadth — beware the stale snapshot.",
+      t_sec_evidence:"Key Evidence", th_metric:"Metric",th_read:"Real Reading",th_interp:"Behavioral Interpretation",
+      ev_market:"I. Breadth & Overview", ev_upratio:"Up-stock ratio",ev_upratio_i:"V-shaped 78%->38%->8%->73%; repaired but index gains tiny — oversold bounce, not reversal",
+      ev_limit:"Limit-up / Limit-down",ev_limit_i:"Limit-up recovered (38->84); limit-down plunged (130->13); panic eased; but streak only 4 boards, risk appetite still low",
+      ev_amount:"Total turnover",ev_amount_i:"Volume shrank vs 08-19 (¥2.51tn); volume-shrinking rebound, absorption and durability to be verified",
+      ev_index:"II. Core Index Performance (2026-08-20 close)", ev_sh:"SSE Composite",ev_sh_i:"Tiny rebound, PE 17.99 (relatively fair), but 5d -0.59% / 60d -4.64% still weak",
+      ev_sz:"SZSE Component",ev_sz_i:"Weak rebound, PE 44.48, 5d -2.22% / 60d -11.21% mid-term still weak", ev_cyb:"ChiNext",ev_cyb_i:"Weak rebound, but 5d -2.52% / 60d -13.6%; rich-valuation high-beta trapped books unrelieved",
+      ev_sector:"III. Sector Ranking & Main Line", ev_secup:"Top sectors",ev_secup_i:"Biopharma (innovative-drugs / CRO) + precious metals (safe-haven resources) led the bounce; capital rotated from AI into pharma / resources / defensives",
+      ev_secdn:"Largest net outflow",ev_secdn_i:"AI hardware still the largest net-outflow (semis 20d -83.77bn / chip 20d -104.21bn); on the rebound capital still exits high-level tech", ev_board:"Extreme theme",ev_board_i:"Streak 3->4 boards (still low, defensive); hotspots rotated from tech to pharma / grain / resources; messy main line, poor persistence",
+      ev_flow:"IV. Flows: Streak / Main Force / Margin", ev_height:"Streak height",ev_height_i:"Only 4 boards and defensive; post-retreat risk appetite still low, no clear leading main line",
+      ev_main:"Main-force 5d net inflow TOP",ev_main_i:"Smart money 5d in resource safe-haven (Zijin +22.70bn), dividend (Agri Bank +9.60bn) and pharma (WuXi +9.20bn); AI (ChangXin / TaiChenGuang / Tianfu) still top-10 but intraday net-out (ChangXin T0 -0.79bn)",
+      ev_margin:"Margin daily change TOP",ev_margin_i:"Margin daily-add list shows no AI hardware; rotated to new-energy (Goldwind / CATL) / materials (Yunnan Germanium / Dongcai) / satellite / electronics — clear de-risking signal",
+      ev_hot:"Top hot-search",ev_hot_i:"Hot-search pivoted from AI to biopharma / consumer / grain defense; C Yushu-W sub-new -18.70% pulled back; attention diffused rather than focused",
+      ev_margintotal:"Market margin balance",ev_margintotal_i:"Gap: aggregate margin balance empty; proxied by per-stock margin changes (above)",
+      ev_macro:"V. Core Macro Indicators", ev_pmi:"Mfg PMI (Jul)",ev_pmi_i:"Fundamentals contracting, clear divergence from 'high-valuation + mid-term weakness'; non-mfg new orders 44.4",
+      ev_capu:"Capacity utilization (Q2)",ev_capu_i:"Real-economy momentum weakening, prices lack earnings support; coal 61.2% (-8.1ppt)", ev_cpi:"CPI (Jul)",ev_cpi_i:"Low inflation, weak demand, no proof of broad recovery",
+      ev_social:"Total social financing (Jul)",ev_social_i:"Weak credit demand (cum. 22.25tn), money bypassing into stocks = liquidity-driven feature", ev_m1m2:"M1-M2 scissors",ev_m1m2_i:"Weak active money, funds idling — typical late-cycle pattern",
+      ev_yield:"10Y gov bond yield",ev_yield_i:"Very low risk-free rate supports valuation yet signals growth worry", ev_lpr:"LPR",ev_lpr_i:"Easing stance unchanged; 8-20 fixing pending",
+      t_ev_note:"Time caliber: macro mostly as of 2026-07 (monthly) or 2026-08-19/20 (daily); PMI/capacity/financing re-checked 08-20 (no new release, monthly), CPI/M1-M2/10Y/LPR from 08-17/18/19 pulls (unchanged). Caixin PMI source coverage only to 2025-08 (49.2), not used as primary. See 'Data Sources & Time Caliber' at end.",
+      t_sec_risk:"Risk Stratification",
+      rc1_tag:"RED · High valuation + weak bounce + leverage up",rc1_t:"High valuation + weak bounce + leverage up",rc1_d:"PE pctile ≥90% still high; mid-term trend weak (ChiNext 60d -13.6%); yet the rebound is volume-shrinking (¥2.08tn, vs prior -431.7bn) with tiny index gains (+0.2%~0.6%); margin still adding (Goldwind +0.82bn / CATL +0.23bn), leverage not cut with the retreat. If the bounce fails on thin volume / high valuation, trapped and leveraged books face a second sell-off.",rc1_rep:"Names: ChiNext high-level, crowded defensives (Jinjian 4 boards), margin-added new-energy (Goldwind / CATL)",rc1_cond:"Conditional: no chasing highs, no adding leverage in a rebound; use volume recovery + index back above short-term moving average as right-side confirmation; cut on break.",
+      rc2_tag:"AMBER · Main line switching chaos",rc2_t:"AI-hardware fading + main line chaos",rc2_d:"AI hardware still the largest net-outflow (semis -69.98bn, chip concept 20d -104.21bn); on the rebound capital scatters into biopharma (biologics +7.85% / cell-immune +7.16% / innovative-drugs +4.52%), precious metals +5.50%, new-energy (Goldwind / CATL) and grain defense; streak only 4 boards (Jinjian defensive), no clear leading main line, faster rotation, poor persistence.",rc2_rep:"Names: biopharma (CRO / biologics) / precious metals (Shandong Gold) / new-energy / grain",rc2_cond:"Conditional: don't chase intraday leaders in early rebound; new main line needs sustained volume+price confirmation; never treat a single-day pharma / resource bounce as reversal.",
+      rc3_tag:"GREEN · Low-level resources + dividend defense (relative)",rc3_t:"Low-level resources + dividend defense",rc3_d:"Zijin Mining (resource safe-haven, 5d main +22.70bn), Agri Bank (dividend, +9.60bn), Chifeng Gold (+8.43bn), Shandong Gold (+8.59%) relatively held up — a safe-haven destination; but it is risk-off / de-risking in a weak market, not a new-cycle main line.",rc3_rep:"Names: Zijin Mining / Agri Bank / Chifeng Gold / Shandong Gold",rc3_cond:"Conditional: safe-haven hedge and book protection only; if merely thematic relay it is not a safety net; overall risk budget should shrink markedly.",
+      t_sec_source:"Data Sources & Time Caliber",
+      s_breadth:"Breadth / Overview",s_breadth_v:"westock · data_changedist; 2026-08-20 close",
+      s_portrait:"Market portrait summary",s_portrait_v:"westock · data_market_overview(type=summary); 2026-08-19 (T-1 snapshot, its sentiment score still 'neutral' from smoothed window, diverging from live 73% breadth)",
+      s_index:"Index performance",s_index_v:"westock · data_quote(sh000001,sz399001,sz399006); 2026-08-20 close",
+      s_sector:"Sector ranking",s_sector_v:"westock · data_sector(mode=ranking); 2026-08-20",
+      s_hot:"Hot-search stocks",s_hot_v:"westock · data_hot(kind=stock); 2026-08-20",
+      s_macro:"Core macro",s_macro_v:"westock · data_macro(cn_pmi, cn_capacity_utilization, cn_financing, etc.); PMI/capacity/financing re-checked 08-20 (no new release, monthly), CPI/M1-M2/10Y/LPR from 08-17/18/19",
+      s_margin:"Margin (per stock)",s_margin_v:"westock · tool_ranking(metric=margin_chg_d); 2026-08-20",
+      s_main:"Main-force 5d net inflow",s_main_v:"westock · tool_ranking(metric=cap_main_5d); 2026-08-20 (same-day ranking)",
+      s_board:"Streak height",s_board_v:"westock · tool_ranking(metric=limitup_days); 2026-08-20 (same-day ranking)",
+      s_gap:"Data gap",s_gap_v:"Aggregate margin balance (data_market_overview type=margin) returned empty by source; proxied by per-stock margin changes, not fabricated.",
+      t_src_note:"Time caliber: all timestamps in Beijing time. Macro is monthly/quarterly and not directly aligned with daily quotes; labeled separately. Ranking metrics (streak / main-force 5d / margin daily) are all 2026-08-20 same-day values this round.",
+      disc1:"Disclaimer: The above is based on public data and quantitative analysis for reference only and does not constitute investment advice. Markets are risky; invest with caution. Any investment decision should be made independently based on your own risk tolerance, financial situation and objectives, and consult a licensed professional when necessary. Past performance does not predict future returns.",
+      disc2:"This assessment is a 'crowd psychology / conditional-framework' analysis, not a buy/sell instruction; risk readings and bias severities are model mappings and must be cross-checked with price structure, valuation and fund flows — not used alone as a trade basis.",
+      t_foot:"Crowd Psychology Risk Radar · generated from westock official market data · for research reference only"
+    }
+  };
+
+  var BIAS = [
+    {zh:"羊群效应",en:"Herding",sev:4,zhd:"73% 个股反弹跟涨，但领涨为医药 / 资源防御抱团，非自主选股——跟涨而非共识。",end:"73% of stocks rebounded in a herd, but leadership was pharma/resource defensives — following, not conviction."},
+    {zh:"损失厌恶",en:"Loss Aversion",sev:4,zhd:"08-19 融资被套（金风 +8.17亿等今日仍加），套牢盘死扛，把浮亏当「已发生损失」回避止损。",end:"Margin books trapped from 08-19 (Goldwind +0.82bn still adding); holders anchor to loss avoidance, refusing to cut."},
+    {zh:"心理账户 / 赌徒谬误",en:"Mental Acct / Gambler",sev:4,zhd:"在 5日 −2.5% / 60日 −13.6% 背景下仍以融资博反弹（金风 / 宁德），把亏损仓当「赌资」。",end:"Amid 5d -2.5% / 60d -13.6% still margin-betting on a rebound (Goldwind / CATL); treating loss books as 'gambling capital'."},
+    {zh:"过度自信",en:"Overconfidence",sev:4,zhd:"把缩量弱反弹当反转前兆，自信「跌多了必反、技术底成立」。",end:"Treating the thin-volume weak bounce as a reversal prelude — overconfident 'oversold must rebound, bottom is in'."},
+    {zh:"处置效应",en:"Disposition",sev:4,zhd:"反弹中卖盈（医药 / 资源获利）持亏（AI 套牢未割），结构分化、调仓滞后。",end:"Selling winners (pharma/resources gains), holding losers (AI traps untrimmed) — structure split, lagging rotation."},
+    {zh:"锚定偏差",en:"Anchoring",sev:3,zhd:"锚定前高（上证 3990 / 创业板 3705）与 08-17 前连涨，难接受中期弱势（创业板 60日 −13.6%）。",end:"Anchored to prior highs (SSE 3990 / ChiNext 3705) and the pre-08-17 rally; rejecting the mid-term weakness."},
+    {zh:"确认偏误",en:"Confirmation Bias",sev:3,zhd:"只盯反弹 73% 广度 / 医药涨停，忽略中期弱势（创业板 60日 −13.6%）与高估值（PE分位≥90%）。",end:"Only watching the 73% rebound / pharma limit-ups, ignoring mid-term weakness and rich valuation."},
+    {zh:"近因偏差",en:"Recency",sev:3,zhd:"外推 08-17 前连涨与 08-20 单日反弹，对 08-19 暴跌反应钝化。",end:"Extrapolating the pre-08-17 rally and the 08-20 single-day bounce; blunted by the 08-19 crash."},
+    {zh:"叙事偏差",en:"Narrative",sev:3,zhd:"AI 硬件叙事退潮（净流出最大）但残留信仰（长鑫 5日 +164亿），故事未完全证伪。",end:"AI-hardware narrative fading (largest net-outflow) but residual belief (ChangXin 5d +16.4bn) — story not fully falsified."},
+    {zh:"代表性启发",en:"Representativeness",sev:3,zhd:"被沃森 +20% / 神奇制药 +10% 医药狂热代表，误以为市场全面转暖。",end:"Walvax +20% / Shenqi +10% pharma frenzy taken as representative; mistaking a sector bounce for a broad turn."}
+  ];
+
+  var HEATCOL = {1:"var(--h1)",2:"var(--h2)",3:"var(--h3)",4:"var(--h4)",5:"var(--h5)"};
+
+  function buildHeat(lang){
+    var box = document.getElementById('heat');
+    box.innerHTML = '';
+    BIAS.forEach(function(b){
+      var d = document.createElement('div');
+      d.className = 'cell';
+      d.style.background = HEATCOL[b.sev];
+      var name = lang==='en' ? b.en : b.zh;
+      var desc = lang==='en' ? b.end : b.zhd;
+      d.innerHTML = '<div class="bn">'+name+'</div><div class="bd">'+desc+'</div><span class="sev">'+b.sev+' / 5</span>';
+      box.appendChild(d);
+    });
+  }
+
+  function applyLang(lang){
+    var dic = I18N[lang] || I18N.zh;
+    document.documentElement.lang = (lang==='en' ? 'en' : 'zh-CN');
+    var nodes = document.querySelectorAll('[data-i18n]');
+    for(var i=0;i<nodes.length;i++){
+      var k = nodes[i].getAttribute('data-i18n');
+      if(dic[k]!==undefined){ nodes[i].textContent = dic[k]; }
+    }
+    buildHeat(lang);
+    document.getElementById('btnZh').className = (lang==='zh'?'active':'');
+    document.getElementById('btnEn').className = (lang==='en'?'active':'');
+    document.title = (lang==='en' ? I18N.en.t_title : I18N.zh.t_title);
+  }
+
+  function setLang(lang){
+    applyLang(lang);
+    var url = new URL(window.location.href);
+    url.searchParams.set('lang', lang);
+    window.history.replaceState({}, '', url.toString());
+  }
+
+  (function(){
+    var p = new URL(window.location.href).searchParams.get('lang');
+    var lang = (p==='en') ? 'en' : 'zh';
+    applyLang(lang);
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>群体心理风险雷达 · A股 · 日报索引</title>
+<style>
+  :root{
+    --bg:#f6f4ef; --card:#ffffff; --ink:#1c1b19; --muted:#6b675f; --line:#e7e2d8;
+    --accent:#b8332a; --accent2:#1f4e5f; --gold:#b8893b;
+    --up:#d8392b; --down:#1a9e5a;
+    --shadow:0 1px 3px rgba(28,27,25,.08),0 8px 24px rgba(28,27,25,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
+    line-height:1.62;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 18px 60px;}
+  /* Masthead */
+  .masthead{background:linear-gradient(135deg,#221f1c 0%,#3a3026 100%);color:#f7f3ea;
+    border-radius:0 0 18px 18px;padding:30px 26px 24px;position:relative;overflow:hidden;}
+  .masthead:before{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;
+    background:radial-gradient(circle,rgba(184,137,59,.35),transparent 70%);}
+  .kicker{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:700;}
+  .masthead h1{font-size:2.05rem;font-weight:800;letter-spacing:-.01em;margin:6px 0 4px;line-height:1.1;}
+  .masthead .sub{font-size:.92rem;color:#cfc6b6;max-width:680px;}
+  .mast-meta{margin-top:14px;font-size:.78rem;color:#bdb4a4;display:flex;gap:16px;flex-wrap:wrap;align-items:center;}
+  .toggle{position:absolute;top:22px;right:24px;display:inline-flex;border:1px solid rgba(247,243,234,.35);
+    border-radius:999px;overflow:hidden;background:rgba(0,0,0,.18);}
+  .toggle button{background:transparent;border:0;color:#e9e2d2;font-size:.82rem;font-weight:600;
+    padding:7px 16px;cursor:pointer;font-family:inherit;}
+  .toggle button.active{background:var(--gold);color:#221f1c;}
+  /* Stat strip */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0;}
+  @media(max-width:680px){.stats{grid-template-columns:1fr}}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);}
+  .stat .num{font-size:1.7rem;font-weight:800;color:var(--accent);line-height:1.1;}
+  .stat .num small{font-size:.9rem;color:var(--muted);font-weight:600;}
+  .stat .lbl{font-size:.78rem;color:var(--muted);margin-top:6px;letter-spacing:.02em;}
+  /* Sections */
+  .sec{margin-top:34px;}
+  .sec h2{font-size:1.28rem;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .sec h2 .bar{width:6px;height:22px;background:var(--accent);border-radius:2px;display:inline-block;}
+  .sec h2 .en{font-size:.78rem;font-weight:500;color:var(--muted);letter-spacing:.02em;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;box-shadow:var(--shadow);}
+  /* Trend chart */
+  .chartwrap{width:100%;overflow:hidden;}
+  .chartwrap svg{width:100%;height:auto;display:block;}
+  .axislab{font-size:11px;fill:var(--muted);font-family:inherit;}
+  .daylab{font-size:11px;fill:#3a352e;font-weight:600;font-family:inherit;}
+  .vallab{font-size:12px;fill:var(--accent);font-weight:800;font-family:inherit;}
+  /* Trajectory */
+  .traj{display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;}
+  .traj .t{flex:1;min-width:150px;text-align:center;background:#f3f0e8;border:1px solid var(--line);
+    border-radius:12px;padding:14px 10px;position:relative;}
+  .traj .t .d{font-size:.74rem;color:var(--muted);font-weight:600;}
+  .traj .t .e{font-size:.94rem;font-weight:800;margin:6px 0 4px;color:var(--ink);}
+  .traj .t .n{font-size:.72rem;color:var(--accent2);line-height:1.4;}
+  .traj .t:after{content:"→";position:absolute;right:-9px;top:50%;transform:translateY(-50%);
+    color:var(--gold);font-weight:800;font-size:1.1rem;z-index:2;}
+  .traj .t:last-child:after{content:"";}
+  .traj .t.holiday{background:#ece8df;border-style:dashed;opacity:.88;}
+  .traj .t.holiday .e{color:var(--muted);}
+  .traj .t.holiday .n{color:var(--muted);}
+  @media(max-width:680px){.traj .t:after{content:"";}}
+  /* Report cards */
+  .reports{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:680px){.reports{grid-template-columns:1fr}}
+  .rcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;
+    box-shadow:var(--shadow);text-decoration:none;color:inherit;display:flex;flex-direction:column;
+    transition:transform .12s ease,box-shadow .12s ease;border-top:4px solid var(--accent);}
+  .rcard:hover{transform:translateY(-3px);box-shadow:0 6px 18px rgba(28,27,25,.12);}
+  .rhead{display:flex;justify-content:space-between;align-items:center;}
+  .rdate{font-size:1.05rem;font-weight:800;letter-spacing:.01em;}
+  .rbadge{font-size:.72rem;font-weight:800;border-radius:999px;padding:3px 12px;letter-spacing:.04em;}
+  .rbadge.rhi{background:#f3c2bd;color:var(--accent);}
+  .rbadge.rmid{background:#f3e0b3;color:#8a6418;}
+  .rbadge.rlo{background:#bfe6cb;color:#14703a;}
+  .rcycle{margin:10px 0 12px;font-size:1.02rem;font-weight:800;color:var(--accent2);}
+  .rcycle .rnote{display:block;font-size:.76rem;font-weight:500;color:var(--muted);margin-top:2px;}
+  .rchips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;}
+  .rchip{background:#f3f0e8;border:1px solid var(--line);border-radius:8px;padding:4px 9px;font-size:.76rem;color:var(--muted);}
+  .rchip b{color:var(--ink);margin-left:5px;font-weight:700;}
+  .rsum{font-size:.84rem;line-height:1.6;color:#3a352e;flex:1;}
+  .rgo{margin-top:12px;font-size:.82rem;font-weight:700;color:var(--accent);}
+  /* source / disclaimer */
+  .src li{list-style:none;padding:8px 0;border-bottom:1px solid var(--line);font-size:.84rem;display:flex;gap:10px;flex-wrap:wrap;}
+  .src li b{color:var(--accent2);min-width:140px;display:inline-block;}
+  .disclaimer{background:#f3f0e8;border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-top:24px;font-size:.82rem;color:#4a453c;line-height:1.7;}
+  .disclaimer b{color:var(--accent);}
+  .foot{text-align:center;color:var(--muted);font-size:.74rem;margin-top:28px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div style="margin-bottom:14px"><a href="../index.html" style="color:var(--gold);text-decoration:none;font-size:12px">← 返回 A股分析中心总门户</a></div>
+
+  <header class="masthead">
+    <div class="toggle" role="group" aria-label="language">
+      <button id="btnZh" class="active" onclick="setLang('zh')">中文</button>
+      <button id="btnEn" onclick="setLang('en')">EN</button>
+    </div>
+    <div class="kicker" data-i18n="t_kicker">A股 · 群体行为金融研判</div>
+    <h1 data-i18n="t_title">群体心理风险雷达 · 日报索引</h1>
+    <div class="sub" data-i18n="t_sub">行为金融偏差 · 拥挤度 · 融资 · 热度 — 综合风险雷达系列。基于 westock 官方行情数据的真实查询结果，按交易日逐期归档。</div>
+    <div class="mast-meta">
+      <span data-i18n="t_updated">最近更新：2026-08-31（收录 08-17 ~ 08-31 共 10 期，08-22~08-23 与 08-29~08-30 周末休市）</span>
+    </div>
+  </header>
+
+  <!-- Stat strip -->
+  <section class="stats">
+    <div class="stat">
+      <div class="num">10 <small data-i18n="s_issues">期</small></div>
+      <div class="lbl" data-i18n="s_issues_lbl">已归档日报（每日独立保留）</div>
+    </div>
+    <div class="stat">
+      <div class="num" style="color:var(--accent)">高 <small data-i18n="s_all">全部</small></div>
+      <div class="lbl" data-i18n="s_risk_lbl">各期风险等级（10 期同为「高」）</div>
+    </div>
+    <div class="stat">
+      <div class="num">08-17<small> ~ 08-31</small></div>
+      <div class="lbl" data-i18n="s_span_lbl">覆盖交易日跨度（08-22~08-23 周末休市）</div>
+    </div>
+  </section>
+
+  <!-- 涨股比走势 -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_trend">涨股比走势（市场广度）</span><span class="en">Up-Stock Ratio Trend</span></h2>
+    <div class="card">
+      <div class="chartwrap">
+                        <svg viewBox="0 0 860 240" role="img" aria-label="up-stock ratio trend">
+          <defs>
+            <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#b8332a" stop-opacity="0.22"/>
+              <stop offset="100%" stop-color="#b8332a" stop-opacity="0.02"/>
+            </linearGradient>
+          </defs>
+          <!-- gridlines -->
+          <line x1="60" y1="40" x2="810" y2="40" stroke="#e7e2d8" stroke-width="1"/>
+          <line x1="60" y1="80" x2="810" y2="80" stroke="#e7e2d8" stroke-width="1"/>
+          <line x1="60" y1="120" x2="810" y2="120" stroke="#e7e2d8" stroke-width="1"/>
+          <line x1="60" y1="160" x2="810" y2="160" stroke="#e7e2d8" stroke-width="1"/>
+          <line x1="60" y1="200" x2="810" y2="200" stroke="#cfc9bd" stroke-width="1.5"/>
+          <!-- y labels -->
+          <text class="axislab" x="50" y="44" text-anchor="end">100</text>
+          <text class="axislab" x="50" y="84" text-anchor="end">75</text>
+          <text class="axislab" x="50" y="124" text-anchor="end">50</text>
+          <text class="axislab" x="50" y="164" text-anchor="end">25</text>
+          <text class="axislab" x="50" y="204" text-anchor="end">0</text>
+          <!-- weekend gap marker (08-22 / 08-23) -->
+          <line x1="431" y1="40" x2="431" y2="200" stroke="#b8893b" stroke-width="1.2" stroke-dasharray="5 4"/>
+          <text class="axislab" x="431" y="34" text-anchor="middle" fill="#b8893b">08-22/23 休市</text>
+          <!-- area -->
+          <polygon fill="url(#area)" points="60,75.2 142.5,139.2 225.0,187.2 307.5,83.2 390.0,128.0 472.5,158.4 555.0,78.4 637.5,115.2 720.0,102.4 802.5,108.8 810.0,200 60,200"/>
+          <!-- line -->
+          <polyline fill="none" stroke="#b8332a" stroke-width="2.5" stroke-linejoin="round"
+            points="60,75.2 142.5,139.2 225.0,187.2 307.5,83.2 390.0,128.0 472.5,158.4 555.0,78.4 637.5,115.2 720.0,102.4 802.5,108.8"/>
+          <!-- points + value labels -->
+          <circle cx="60" cy="75.2" r="5" fill="#b8332a"/>
+          <text class="vallab" x="60" y="62" text-anchor="middle">78%</text>
+          <circle cx="142.5" cy="139.2" r="5" fill="#b8332a"/>
+          <text class="vallab" x="142.5" y="156" text-anchor="middle">38%</text>
+          <circle cx="225.0" cy="187.2" r="6" fill="#8a1810"/>
+          <text class="vallab" x="225.0" y="204" text-anchor="middle" fill="#8a1810">8%</text>
+          <circle cx="307.5" cy="83.2" r="5" fill="#b8332a"/>
+          <text class="vallab" x="307.5" y="70" text-anchor="middle">73%</text>
+          <circle cx="390.0" cy="128.0" r="5" fill="#b8332a"/>
+          <text class="vallab" x="390.0" y="115" text-anchor="middle">45%</text>
+          <circle cx="472.5" cy="158.4" r="5" fill="#b8332a"/>
+          <text class="vallab" x="472.5" y="175" text-anchor="middle">26%</text>
+          <circle cx="555.0" cy="78.4" r="5" fill="#b8332a"/>
+          <text class="vallab" x="555.0" y="65" text-anchor="middle">76%</text>
+          <circle cx="637.5" cy="115.2" r="5" fill="#b8332a"/>
+          <text class="vallab" x="637.5" y="102" text-anchor="middle">53%</text>
+          <circle cx="720.0" cy="102.4" r="5" fill="#b8332a"/>
+          <text class="vallab" x="720.0" y="89" text-anchor="middle">61%</text>
+          <circle cx="802.5" cy="108.8" r="5" fill="#b8332a"/>
+          <text class="vallab" x="802.5" y="95" text-anchor="middle">57%</text>
+          <!-- day labels -->
+          <text class="daylab" x="60" y="222" text-anchor="middle">08-17</text>
+          <text class="daylab" x="142.5" y="222" text-anchor="middle">08-18</text>
+          <text class="daylab" x="225.0" y="222" text-anchor="middle">08-19</text>
+          <text class="daylab" x="307.5" y="222" text-anchor="middle">08-20</text>
+          <text class="daylab" x="390.0" y="222" text-anchor="middle">08-21</text>
+          <text class="daylab" x="472.5" y="222" text-anchor="middle">08-24</text>
+          <text class="daylab" x="555.0" y="222" text-anchor="middle">08-25</text>
+          <text class="daylab" x="637.5" y="222" text-anchor="middle">08-26</text>
+          <text class="daylab" x="720.0" y="222" text-anchor="middle">08-27</text>
+          <text class="daylab" x="802.5" y="222" text-anchor="middle">08-31</text>
+        </svg>
+      </div>
+      <div class="src" style="margin-top:8px">
+        <p class="note" data-i18n="t_trend_note" style="font-size:.8rem;color:var(--muted)">08-19 广度崩至 8%（恐慌/踩踏），08-20 修复至 73%，08-21 反弹后分化回落至 45%，08-24 放量普跌广度再崩至 26%，08-25 缩量普涨广度暴拉回 76%（官方「狂热」标签与真实广度共振向上，但量缩、技术极弱 = 低质量反弹），08-26 技术反包广度回落至 53%（无量反包、量价背离，官方「狂热」标签虚高），08-27 放量反包广度回升至 61%（成交放量 +3172亿 至 ¥2.1259万亿、涨停扩至 78、量价背离修复，官方「狂热」标签由涨停>50触发与真实 61% 广度略超前但量价已共振），08-31 缩量滞涨广度回落至 57%（成交 ¥2.131万亿 微增 +293亿、涨停 89、跌停 13、连板高度升至 6 板，但涨股比由 61% 回落、指数红而广度不济、结构分化加剧、估值高位 = 缩量滞涨 / 结构分化）。08-22~08-23 与 08-29~08-30 周末休市无交易；08-31 为最新一期。全线 10 期风险等级均为「高」。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 情绪周期轨迹 -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_traj">情绪周期轨迹（六阶段定位）</span><span class="en">Sentiment Cycle Path</span></h2>
+    <div class="card">
+      <div class="traj" id="traj"></div>
+      <div class="src" style="margin-top:10px">
+        <p class="note" data-i18n="t_traj_note" style="font-size:.8rem;color:var(--muted)">六阶段框架：绝望 → 怀疑 → 乐观 → 狂热 → 焦虑 → 自满。本序列由 08-17「狂热」经分歧、恐慌，08-21 回落至「怀疑（分歧加剧）」，08-24 转入「恐慌 / 退潮」（广度崩塌），08-25 由恐慌回「修复 / 分歧（弱反弹）」（缩量普涨、广度回暖至 76%，但量缩、技术极弱），08-26 转入「修复延续 / 量价背离」（技术反包、MACD金叉、三指齐涨、连板维持5板，但成交继续缩、广度回落至53%、官方「狂热」标签虚高），08-27 转入「修复确认 / 放量共振」（放量反包、成交放量至¥2.1259万亿、涨股比回升至61%、涨停扩至78、三指齐涨涨幅扩大、MACD金叉、量价背离修复，但趋势仍弱、估值偏高、结构分化），08-31 转入「缩量滞涨 / 结构分化」（指数红、涨股比由61%回落至57%、成交¥2.131万亿仅微增、涨停89但跌停13、连板高度升至6板、结构分化加剧——影视/数字媒体领涨而贵金属/光伏/白电/乘用车领跌、估值高位），风险由「修复」退向「滞涨」。08-22~08-23 与 08-29~08-30 周末休市。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 每日报告卡片 -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_reports">每日风险雷达</span><span class="en">Daily Risk Radars</span></h2>
+    <div class="reports" id="reports"></div>
+  </section>
+
+  <!-- 数据来源 -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_source">数据来源与口径</span><span class="en">Sources &amp; Notes</span></h2>
+    <div class="card">
+      <ul class="src">
+        <li><b data-i18n="src_mcp">行情数据源</b><span>westock（腾讯自选股）官方 MCP 工具，含涨跌分布、市场概览、行业资金流、个股报价、融资变动、排行与宏观指标。</span></li>
+        <li><b data-i18n="src_real">真实性约束</b><span>所有数字均来自官方工具真实查询，未做推断或编造；数据存在 T-1 滞后处已在各期报告内显式标注（如官方市场画像快照滞后于实时广度）。</span></li>
+        <li><b data-i18n="src_gap">口径缺口</b><span>两融余额聚合接口（`type=margin`）持续返回空，各期以个股融资单日变动替代；`data_hot` 在部分交易日不可用，以行业资金流领涨股 + 排行榜综合替代，并在证据表中标注。</span></li>
+        <li><b data-i18n="src_cycle">分析框架</b><span>「大盘走势研判」skill 路径 C（群体心理分析）：情绪周期六阶段 / 十种认知偏差 / 五大指标 / 风险等级 高·中·低。</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="disclaimer">
+    <b data-i18n="t_disclaimer_t">免责声明：</b><span data-i18n="t_disclaimer">
+      本报告基于公开市场数据的行为金融视角研判，仅供研究与学习参考，不构成任何投资建议或买卖要约。市场有风险，决策须独立，盈亏自负。报告中的情绪周期定位、认知偏差与风险等级为主观框架下的观察结论，可能随数据更新而调整。
+    </span>
+  </div>
+
+  <div class="foot" data-i18n="t_foot">群体心理风险雷达 · A股日报索引 · 单文件离线版 · 0 外部引用</div>
+</div>
+
+<script>
+  var I18N = {
+    zh:{
+      t_kicker:"A股 · 群体行为金融研判",
+      t_title:"群体心理风险雷达 · 日报索引",
+      t_sub:"行为金融偏差 · 拥挤度 · 融资 · 热度 — 综合风险雷达系列。基于 westock 官方行情数据的真实查询结果，按交易日逐期归档。",
+      t_updated:"最近更新：2026-08-31（收录 08-17 ~ 08-31 共 10 期，08-22~08-23 与 08-29~08-30 周末休市）",
+      s_issues:"期", s_issues_lbl:"已归档日报（每日独立保留）",
+      s_all:"全部", s_risk_lbl:"各期风险等级（10 期同为「高」）",
+      s_span_lbl:"覆盖交易日跨度（08-22~08-23 与 08-29~08-30 周末休市；最新 08-31）",
+      t_trend:"涨股比走势（市场广度）", t_trend_note:"08-19 广度崩至 8%（恐慌/踩踏），08-20 修复至 73%，08-21 反弹后分化回落至 45%，08-24 放量普跌广度再崩至 26%，08-25 缩量普涨广度暴拉回 76%（官方「狂热」标签与真实广度共振向上，但量缩、技术极弱 = 低质量反弹），08-26 技术反包广度回落至 53%（无量反包、量价背离，官方「狂热」标签虚高），08-27 放量反包广度回升至 61%（成交放量 +3172亿 至 ¥2.1259万亿、涨停扩至 78、量价背离修复，官方「狂热」标签由涨停>50触发与真实 61% 广度略超前但量价已共振），08-31 缩量滞涨广度回落至 57%（成交 ¥2.131万亿 微增 +293亿、涨停 89、跌停 13、连板高度升至 6 板，但涨股比由 61% 回落、指数红而广度不济、结构分化加剧、估值高位 = 缩量滞涨 / 结构分化）。08-22~08-23 与 08-29~08-30 周末休市无交易；08-31 为最新一期。全线 10 期风险等级均为「高」。",
+      t_traj:"情绪周期轨迹（六阶段定位）", t_traj_note:"六阶段框架：绝望 → 怀疑 → 乐观 → 狂热 → 焦虑 → 自满。本序列由 08-17「狂热」经分歧、恐慌，08-21 回落至「怀疑（分歧加剧）」，08-24 转入「恐慌 / 退潮」（广度崩塌），08-25 由恐慌回「修复 / 分歧（弱反弹）」（缩量普涨、广度回暖至 76%，但量缩、技术极弱），08-26 转入「修复延续 / 量价背离」（技术反包、MACD金叉、三指齐涨、连板维持5板，但成交继续缩、广度回落至53%、官方「狂热」标签虚高），08-27 转入「修复确认 / 放量共振」（放量反包、成交放量至¥2.1259万亿、涨股比回升至61%、涨停扩至78、三指齐涨涨幅扩大、MACD金叉、量价背离修复，但趋势仍弱、估值偏高、结构分化），08-31 转入「缩量滞涨 / 结构分化」（指数红、涨股比由61%回落至57%、成交¥2.131万亿仅微增、涨停89但跌停13、连板高度升至6板、结构分化加剧——影视/数字媒体领涨而贵金属/光伏/白电/乘用车领跌、估值高位），风险由「修复」退向「滞涨」。08-22~08-23 与 08-29~08-30 周末休市。",
+      t_reports:"每日风险雷达", t_source:"数据来源与口径",
+      src_mcp:"行情数据源", src_real:"真实性约束", src_gap:"口径缺口", src_cycle:"分析框架",
+      t_disclaimer_t:"免责声明：", t_disclaimer:"本报告基于公开市场数据的行为金融视角研判，仅供研究与学习参考，不构成任何投资建议或买卖要约。市场有风险，决策须独立，盈亏自负。报告中的情绪周期定位、认知偏差与风险等级为主观框架下的观察结论，可能随数据更新而调整。",
+      t_foot:"群体心理风险雷达 · A股日报索引 · 单文件离线版 · 0 外部引用",
+      c_upratio:"涨股比", c_limitup:"涨停", c_board:"连板", c_turn:"成交",
+      view:"查看完整报告 →"
+    },
+    en:{
+      t_kicker:"A-Share · Behavioral Finance",
+      t_title:"Crowd Psychology Risk Radar · Index",
+      t_sub:"Behavioral bias · Crowding · Margin · Heat — a serial risk radar. Real queries from westock official market data, archived per trading day.",
+      t_updated:"Last updated: 2026-08-31 (10 issues, 08-17 ~ 08-31; 08-22/23 & 08-29/30 weekend closed)",
+      s_issues:"issues", s_issues_lbl:"Archived daily reports (each day preserved)",
+      s_all:"all", s_risk_lbl:"Risk level per issue (all 10 = High)",
+      s_span_lbl:"Trading-day coverage span (08-22/23 & 08-29/30 weekend closed; latest 08-31)",
+      t_trend:"Up-Stock Ratio Trend (Breadth)", t_trend_note:"Breadth collapsed to 8% on 08-19 (panic), rebounded to 73% on 08-20, fell to 45% on 08-21, collapsed again to 26% on 08-24 amid broad sell-off, then roared back to 76% on 08-25 in a volume-shrinking rally (official 'Euphoria' tag now aligns upward with real breadth, yet volume-down & technics weak = low-quality bounce), then 08-26 technical rebound pulled breadth back to 53% (volume-less rebound / price-volume divergence, official 'Euphoria' tag overstated), then 08-27 volume-expanded rebound lifted breadth to 61% (turnover expands +317.2bn to ¥2.1259tn, limit-up widens to 78, divergence repaired; official 'Euphoria' tag triggered by limit-up>50 slightly ahead of real 61% breadth but price-volume now resonates), then 08-31 volume-flat stall pulled breadth back to 57% (turnover only +29.3bn to ¥2.131tn, 89 limit-up, 13 limit-down, board height rises to 6, yet up-ratio falls from 61%, indices red-but-breadth-thin, structure divergence deepens, valuation elevated = volume-flat stall / structural divergence). 08-22/23 & 08-29/30 weekend closed; 08-31 is the latest issue. All 10 issues rated High risk.",
+      t_traj:"Sentiment Cycle Path (6-stage)", t_traj_note:"Six-stage frame: Despair → Doubt → Optimism → Euphoria → Anxiety → Complacency. Path runs from 08-17 Euphoria through divergence & panic, to Doubt (divergence intensifying) on 08-21, into Panic / Washout (breadth collapse) on 08-24, then 08-25 shifts from panic back to Repair / Divergence (weak bounce) — volume-shrinking rally, breadth recovers to 76%, yet volume-down & technics weak; 08-26 moves to Repair continues / price-volume divergence (technical rebound, MACD golden cross, all three up, streak holds 5 boards, yet volume keeps shrinking, breadth falls to 53%, official 'Euphoria' tag overstated); 08-27 moves to Repair confirmed / volume resonance (volume-expanded rebound, turnover to ¥2.1259tn, breadth recovers to 61%, limit-up widens to 78, all three indices up with widening gains, MACD golden cross, divergence repaired, yet trend still weak, valuation elevated, structure diverged); 08-31 moves to Volume-flat stall / Structural divergence (indices red, up-ratio falls 61%→57%, turnover only +29.3bn to ¥2.131tn, 89 limit-up but 13 limit-down, board height rises to 6, structure divergence deepens — media/digital lead up while precious-metal/PV/white-goods lead down, valuation elevated), risk shifts from Repair back toward Stall. 08-22/23 & 08-29/30 weekend closed.",
+      t_reports:"Daily Risk Radars", t_source:"Sources & Notes",
+      src_mcp:"Market data", src_real:"Authenticity", src_gap:"Coverage gaps", src_cycle:"Framework",
+      t_disclaimer_t:"Disclaimer: ", t_disclaimer:"This report is a behavioral-finance read on public market data for research and study only — not investment advice or an offer. Markets carry risk; decide independently and own the outcome. Sentiment positioning, biases and risk grades are subjective observations under a fixed framework and may shift with new data.",
+      t_foot:"Crowd Psychology Risk Radar · A-Share Index · single-file offline · 0 external refs",
+      c_upratio:"Up-ratio", c_limitup:"Limit-up", c_board:"Board", c_turn:"Turnover",
+      view:"View full report →"
+    }
+  };
+
+  var REPORTS = [
+    {
+      file:"crowd-psychology-risk-radar-20260817.html", date:"2026-08-17",
+      risk:"高", riskEn:"High",
+      cycleZh:"狂热", cycleEn:"Euphoria",
+      cycleNoteZh:"情绪狂热 + 估值高估象限", cycleNoteEn:"Euphoria + overvaluation quadrant",
+      up:"78%", limitup:"110", board:"4板", turn:"¥2.39万亿",
+      summaryZh:"涨股比78%、涨停110、连板4板，两融周增触发狂热阈值；PMI 49.2 等基本面未跟上，逼近反身性末端高危区，下行风险大于上行弹性。",
+      summaryEn:"Up-ratio 78%, 110 limit-up, 4-board; margin surge triggers euphoria threshold. Fundamentals (PMI 49.2) lag — near reflexivity-end danger zone, downside > upside."
+    },
+    {
+      file:"crowd-psychology-risk-radar-20260818.html", date:"2026-08-18",
+      risk:"高", riskEn:"High",
+      cycleZh:"狂热末端 + 分歧", cycleEn:"Euphoria end + Divergence",
+      cycleNoteZh:"狂热→分歧降温", cycleNoteEn:"Cooling from euphoria to divergence",
+      up:"38%", limitup:"81", board:"4板", turn:"¥2.40万亿",
+      summaryZh:"涨股比骤降至38%、涨停81、跌停1→6；资金由AI硬件高低切至农业/消费，杠杆仍加仓AI而价格松动，杠杆-价格背离放大尾部风险。",
+      summaryEn:"Up-ratio plunges to 38%, 81 limit-up, limit-down 1→6; funds rotate from AI hardware to agriculture/consumer; margin still adds AI while price softens — divergence amplifies tail risk."
+    },
+    {
+      file:"crowd-psychology-risk-radar-20260819.html", date:"2026-08-19",
+      risk:"高", riskEn:"High",
+      cycleZh:"焦虑 / 恐慌", cycleEn:"Anxiety / Panic",
+      cycleNoteZh:"踩踏式退潮", cycleNoteEn:"Cascading sell-off",
+      up:"8%", limitup:"38", board:"3板", turn:"¥2.51万亿",
+      summaryZh:"涨股比崩至8%、涨停38、跌停130；创业板−6.26%，AI硬件踩踏出清；融资逆势加仓AI而价格暴跌，强平/多杀多风险积聚。",
+      summaryEn:"Up-ratio collapses to 8%, 38 limit-up, 130 limit-down; ChiNext −6.26%, AI hardware cascades; margin still buys AI into price crash — forced-liquidation risk builds."
+    },
+    {
+      file:"crowd-psychology-risk-radar-20260820.html", date:"2026-08-20",
+      risk:"高", riskEn:"High",
+      cycleZh:"怀疑（修复中）", cycleEn:"Doubt (recovering)",
+      cycleNoteZh:"超跌反弹", cycleNoteEn:"Oversold rebound",
+      up:"73%", limitup:"84", board:"4板", turn:"¥2.08万亿",
+      summaryZh:"涨股比修复至73%、涨停84、跌停13；但指数仅小幅回升、成交缩至¥2.08万亿；杠杆由AI切向新能源/资源/卫星，去风险信号。",
+      summaryEn:"Up-ratio recovers to 73%, 84 limit-up, 13 limit-down; indices only modestly up, turnover shrinks to ¥2.08tn; margin rotates from AI to new-energy/resources — de-risking signal."
+    },
+    {
+      file:"crowd-psychology-risk-radar-20260821.html", date:"2026-08-21",
+      risk:"高", riskEn:"High",
+      cycleZh:"怀疑（分歧加剧）", cycleEn:"Doubt (divergence intensifying)",
+      cycleNoteZh:"反弹后分化 / 轮动", cycleNoteEn:"Post-rebound divergence / rotation",
+      up:"45%", limitup:"58", board:"3板", turn:"¥1.879万亿",
+      summaryZh:"涨股比回落至45%、涨停58、跌停15、成交缩至¥1.879万亿；医药全面退潮，资金切贵金属/资源/硬件；官方「狂热」标签与真实广度背离=诱多陷阱。",
+      summaryEn:"Up-ratio falls to 45%, 58 limit-up, 15 limit-down, turnover ¥1.879tn; pharma rolls over, funds rotate to precious metals/resources/hardware; official 'euphoria' tag diverges from real breadth = bait trap."
+    }
+    ,
+    {
+      file:"crowd-psychology-risk-radar-20260824.html", date:"2026-08-24",
+      risk:"高", riskEn:"High",
+      cycleZh:"恐慌 / 退潮", cycleEn:"Panic / Washout",
+      cycleNoteZh:"广度崩塌", cycleNoteEn:"Breadth collapse",
+      up:"26%", limitup:"48", board:"4板", turn:"¥2.007万亿",
+      summaryZh:"涨股比崩塌至26%、涨停48、跌停14、成交放量至¥2.007万亿（+1282亿）；科技硬件开盘即兑现，资金切低位防御+贵金属；官方「中性」标签与真实26%广度背离=广度崩塌。",
+      summaryEn:"Up-ratio collapses to 26%, 48 limit-up, 14 limit-down, turnover expands to ¥2.007tn (+128.2bn); tech sold at open, funds rotate to low-level defensives + precious metals; official 'Neutral' tag diverges from real 26% breadth = breadth collapse."
+    }
+    ,
+    {
+      file:"crowd-psychology-risk-radar-20260825.html", date:"2026-08-25",
+      risk:"高", riskEn:"High",
+      cycleZh:"修复 / 分歧（弱反弹）", cycleEn:"Repair / Divergence (weak bounce)",
+      cycleNoteZh:"缩量普涨 / 低质量反弹", cycleNoteEn:"Volume-shrinking rally / low-quality bounce",
+      up:"76%", limitup:"70", board:"5板", turn:"¥1.8318万亿",
+      summaryZh:"涨股比暴拉至76%、涨停70、跌停4、成交缩至¥1.8318万亿（−1756亿）；官方「狂热」标签与真实76%广度共振向上，但量缩、小盘占优、技术极弱、估值偏高 = 缩量普涨 / 低质量反弹。",
+      summaryEn:"Up-ratio roars to 76%, 70 limit-up, 4 limit-down, turnover shrinks to ¥1.8318tn (−175.6bn); official 'Euphoria' tag aligns upward with real 76% breadth, yet volume-down, small-cap led, technics weak, valuation high = volume-shrinking rally / low-quality bounce."
+    }
+    ,
+    {
+      file:"crowd-psychology-risk-radar-20260826.html", date:"2026-08-26",
+      risk:"高", riskEn:"High",
+      cycleZh:"修复延续 / 量价背离", cycleEn:"Repair continues / price-volume divergence",
+      cycleNoteZh:"技术反包 / 无量反包", cycleNoteEn:"Technical rebound / volume-less rebound",
+      up:"53%", limitup:"56", board:"5板", turn:"¥1.8087万亿",
+      summaryZh:"涨股比由76%回落至53%、涨停56、跌停2、成交缩至¥1.8087万亿（−231亿）；技术面翻极强（MACD金叉）、三指齐涨、连板维持5板，但量能继续萎缩、趋势仍弱、估值偏高 = 无量反包 / 量价背离。官方「狂热」标签仅因涨停>50触发（真实53%<70%阈值）= 标签虚高。",
+      summaryEn:"Up-ratio falls 76%→53%, 56 limit-up, 2 limit-down, turnover ¥1.8087tn (−23.1bn); technics flip to extremely-strong (MACD golden cross), all three indices up, streak holds 5 boards, yet volume keeps shrinking, trend still weak, valuation elevated = volume-less rebound / price-volume divergence. Official 'Euphoria' tag triggered only by limit-up>50 (real 53%<70%) = tag overstated."
+    },
+    {
+      file:"crowd-psychology-risk-radar-20260827.html", date:"2026-08-27",
+      risk:"高", riskEn:"High",
+      cycleZh:"修复确认 / 放量共振", cycleEn:"Repair confirmed / volume resonance",
+      cycleNoteZh:"放量反包 / 量价违离修复", cycleNoteEn:"Volume-expanded rebound / divergence repaired",
+      up:"61%", limitup:"78", board:"5板", turn:"¥2.1259万亿",
+      summaryZh:"涨股比由 53% 回升至 61%、涨停 78、跌停 4、成交放量至 ¥2.1259万亿（+3172亿）；技术面极强（MACD金叉）、三指齐涨跌幅扩大（创业板+1.71%）、连板维持 5 板，量价违离修复 = 放量反包 / 量价共振。但趋势仍弱、估值偏高（PE分位 70-90% 且指数又涨）、结构分化（银行/光伏/白电领跌），官方「狂热」标签仅因涨停>50触发（真实 61%<70% 阈值）= 标签略超前广度。",
+      summaryEn:"Up-ratio recovers 53%→61%, 78 limit-up, 4 limit-down, turnover expands to ¥2.1259tn (+317.2bn); technics extremely-strong (MACD golden cross), all three indices up with widening gains (ChiNext +1.71%), streak holds 5 boards, price-volume divergence repaired = volume-expanded rebound / volume resonance. Yet trend still weak, valuation elevated (PE 70-90% pct while indices rise again), structure diverged (banks/PV/white-goods lead down), and official 'Euphoria' tag triggered only by limit-up>50 (real 61%<70%) = tag slightly ahead of breadth."
+    }
+    ,
+    {
+      file:"crowd-psychology-risk-radar-20260831.html", date:"2026-08-31",
+      risk:"高", riskEn:"High",
+      cycleZh:"缩量滞涨 / 结构分化", cycleEn:"Volume-flat stall / Structural divergence",
+      cycleNoteZh:"指数红而广度不济", cycleNoteEn:"Indices red yet breadth thin",
+      up:"57%", limitup:"89", board:"6板", turn:"¥2.131万亿",
+      summaryZh:"涨股比由61%回落至57%、涨停89、跌停13、成交¥2.131万亿（微增+293亿）；指数三红（上证+0.86%/深成+0.44%/创业板+0.42%）但广度不济、连板高度升至6板（海鸥住工），结构分化加剧——数字媒体+7.19%/影视院线+7.02%/出版+5.26%领涨，饰品−4.67%/乘用车−3.12%/光伏−2.82%领跌；估值高位、量能未有效放大 = 缩量滞涨 / 结构分化。",
+      summaryEn:"Up-ratio falls 61%→57%, 89 limit-up, 13 limit-down, turnover ¥2.131tn (+29.3bn); three indices up (SSE +0.86% / SZ +0.44% / ChiNext +0.42%) yet breadth thin, board height rises to 6 (Sea Gull Housing), structure divergence deepens — digital media +7.19% / cinema +7.02% / publishing +5.26% lead up, ornaments −4.67% / PV −3.12% / passenger cars −2.82% lead down; valuation elevated, volume not effectively expanded = volume-flat stall / structural divergence."
+    }
+  ];
+
+  var HOLIDAYS = [
+    {date:"2026-08-22", cycleZh:"周末休市", cycleEn:"Weekend closed", noteZh:"周六 · 无交易", noteEn:"Sat · no trading"},
+    {date:"2026-08-23", cycleZh:"周末休市", cycleEn:"Weekend closed", noteZh:"周日 · 无交易", noteEn:"Sun · no trading"}
+  ];
+  var TRAJ = REPORTS.concat(HOLIDAYS).sort(function(a,b){ return a.date < b.date ? -1 : 1; });
+
+  function chip(label, val){
+    return '<span class="rchip"><i>'+label+'</i><b>'+val+'</b></span>';
+  }
+
+  function renderReports(lang){
+    var box = document.getElementById('reports');
+    box.innerHTML = REPORTS.map(function(r){
+      var rc = (r.risk==='高')?'rhi':((r.risk==='中')?'rmid':'rlo');
+      return ''+
+      '<a class="rcard" href="'+r.file+'">'+
+        '<div class="rhead">'+
+          '<span class="rdate">'+r.date+'</span>'+
+          '<span class="rbadge '+rc+'">'+(lang==='en'?r.riskEn:r.risk)+'</span>'+
+        '</div>'+
+        '<div class="rcycle">'+(lang==='en'?r.cycleEn:r.cycleZh)+
+          '<span class="rnote">'+(lang==='en'?r.cycleNoteEn:r.cycleNoteZh)+'</span></div>'+
+        '<div class="rchips">'+
+          chip(I18N[lang].c_upratio, r.up)+
+          chip(I18N[lang].c_limitup, r.limitup)+
+          chip(I18N[lang].c_board, r.board)+
+          chip(I18N[lang].c_turn, r.turn)+
+        '</div>'+
+        '<p class="rsum">'+(lang==='en'?r.summaryEn:r.summaryZh)+'</p>'+
+        '<span class="rgo">'+I18N[lang].view+'</span>'+
+      '</a>';
+    }).join('');
+  }
+
+  function renderTraj(lang){
+    var box = document.getElementById('traj');
+    box.innerHTML = TRAJ.map(function(r){
+      var isHoliday = !!r.noteZh;
+      var note = lang==='en' ? (r.cycleNoteEn || r.noteEn) : (r.cycleNoteZh || r.noteZh);
+      return '<div class="t'+(isHoliday?' holiday':'')+'">'+
+        '<div class="d">'+r.date+'</div>'+
+        '<div class="e">'+(lang==='en'?r.cycleEn:r.cycleZh)+'</div>'+
+        '<div class="n">'+note+'</div>'+
+      '</div>';
+    }).join('');
+  }
+
+  function applyLang(lang){
+    document.documentElement.lang = (lang==='en'?'en':'zh-CN');
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if(I18N[lang][key]!=null) el.innerHTML = I18N[lang][key];
+    });
+    document.getElementById('btnZh').classList.toggle('active', lang==='zh');
+    document.getElementById('btnEn').classList.toggle('active', lang==='en');
+    renderTraj(lang);
+    renderReports(lang);
+    try{ history.replaceState(null,'', lang==='en'?'?lang=en':'?lang=zh'); }catch(e){}
+  }
+
+  function setLang(lang){ applyLang(lang); }
+
+  (function(){
+    var p = null;
+    try{ p = new URLSearchParams(location.search).get('lang'); }catch(e){}
+    applyLang((p==='en')?'en':'zh');
+  })();
+</script>
+</body>
+</html>
