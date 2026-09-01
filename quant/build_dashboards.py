@@ -152,7 +152,6 @@ NAV = (f"<div class='topnav'>"
        "<a href='hotmoney.html'>游资看板</a>"
        f"<a href='status_{DATE}.html'>状态报告</a>"
        "<a href='2026-q2-industry-elite.html'>行业最强榜</a>"
-       "<a href='2026-q2-shareholder-moves.html'>中报股东动向</a>"
        "<a href='../index.html'>总门户</a>"
        "</div>")
 
@@ -478,15 +477,16 @@ def lhb_all_table(rows, n=30):
     h = ("<table><tr><th>排名</th><th>名称</th><th class='num'>当日涨幅%</th>"
          "<th class='num'>净买入(亿)</th><th class='num'>买入(亿)</th><th class='num'>卖出(亿)</th></tr>")
     for r in rows[:n]:
-        net = float(r.get("netBuyAmount", 0)) / 1e8
-        buy = float(r.get("buyAmount", 0)) / 1e8
-        sell = float(r.get("sellAmount", 0)) / 1e8
+        # yi() 已自带 /1e8 → 元转亿，这里不要再预先除一次
+        net_raw = r.get("netBuyAmount", 0)
+        buy_raw = r.get("buyAmount", 0)
+        sell_raw = r.get("sellAmount", 0)
         h += (f"<tr><td class='num'>{r.get('rank')}</td>"
               f"<td><b>{r['name']}</b> <span class='note'>{r['code']}</span></td>"
               f"<td class='num {cls(r.get('changePct'))}'>{pct(r.get('changePct'))}</td>"
-              f"<td class='num {cls(net)}'>{yi(net)}</td>"
-              f"<td class='num'>{yi(buy)}</td>"
-              f"<td class='num'>{yi(sell)}</td></tr>")
+              f"<td class='num {cls(net_raw)}'>{yi(net_raw)}</td>"
+              f"<td class='num'>{yi(buy_raw)}</td>"
+              f"<td class='num'>{yi(sell_raw)}</td></tr>")
     h += "</table>"
     return h
 
@@ -638,10 +638,7 @@ index_body = (
     f"<div class='d'>本轮产出、文件清单与口径说明</div></a>"
     f"<a class='card' href='2026-q2-industry-elite.html'><div class='ic'>🏆</div>"
     f"<div class='t'>行业最强榜（全市场）</div>"
-    f"<div class='d'>全市场5544只中报股东全量解析：31个行业最强自然人/私募/公募各10名</div></a>"
-    f"<a class='card' href='2026-q2-shareholder-moves.html'><div class='ic'>📊</div>"
-    f"<div class='t'>中报股东动向</div>"
-    f"<div class='d'>2026中报：牛散 / 私募 / 大型公募 Q2 增持与减持梳理 + 三大准则评分</div></a>"
+    f"<div class='d'>全市场5544只中报股东全量解析：31个行业最强自然人/私募/公募各20名</div></a>"
     f"</div>"
     f"<div class='hist'><b>每日龙虎榜归档：</b>{lhb_archive_html}"
     f"<br><a href='../index.html'>← 返回 A股分析中心总门户</a></div>"
