@@ -94,7 +94,6 @@ NAV = """<div class='topnav'>
 <a href='../index.html'>总门户</a><a href='index.html'>看板首页</a>
 <a href='daily_overview.html'>每日总览</a><a href='lhb.html'>龙虎榜分析</a>
 <a href='sector-strength-index.html'>板块强度</a>
-<a href='2026-q2-shareholder-moves.html'>中报股东动向</a>
 </div>"""
 
 
