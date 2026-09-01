@@ -24,6 +24,8 @@ RAW_DIR = os.path.join(HERE, "q2_shareholder_raw")
 VAL_PATH = os.path.join(HERE, "q2_valuation.json")
 OUT_JSON = os.path.join(HERE, "q2_shareholder_processed.json")
 OUT_HTML = os.path.join(ROOT, "web", "2026-q2-shareholder-moves.html")
+# 2026-09-01 用户要求下架「中报股东动向」页面（保留数据 JSON，仅停 HTML 输出）
+SKIP_HTML = True
 
 # ============================================================
 # 1. 载入股东原始数据
@@ -536,5 +538,5 @@ HTML = f"""<!DOCTYPE html>
 </html>
 """
 
-open(OUT_HTML, "w", encoding="utf-8").write(HTML)
-print(f"HTML 页面已生成 -> {OUT_HTML}")
+open(OUT_HTML, "w", encoding="utf-8").write(HTML) if not SKIP_HTML else None
+print(f"HTML 页面已生成 -> {OUT_HTML}") if not SKIP_HTML else print("中报股东动向页面已下架（SKIP_HTML=True，仅产出数据 JSON）")
