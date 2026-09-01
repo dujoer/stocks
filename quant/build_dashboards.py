@@ -148,8 +148,6 @@ a.inlink:hover { background:rgba(201,166,107,.16); }
 
 NAV = (f"<div class='topnav'>"
        "<a href='daily_overview.html'>每日总览</a>"
-       "<a href='portfolio.html'>组合总看板</a>"
-       "<a href='portfolio_analysis.html'>组合分析</a>"
        "<a href='lhb.html'>龙虎榜分析</a>"
        "<a href='hotmoney.html'>游资看板</a>"
        f"<a href='status_{DATE}.html'>状态报告</a>"
@@ -198,14 +196,8 @@ LIMITUP_TOTAL = lu.get("totalStocks", LIMITUP_LISTED)
 # 实际列出数（受 tool_ranking limit=100 截断）与全市场总数可能不一致，据实标注
 LIMITUP_TOTAL_TXT = f"{LIMITUP_LISTED} 只" + (f"（全市场 {LIMITUP_TOTAL} 只）" if LIMITUP_TOTAL > LIMITUP_LISTED else "")
 # 持仓股连板情况（动态，避免硬编码）
-lu_days = {st["code"]: st["LimitUpDays"] for st in lu["stocks"]}
-held_codes = {s["market"].lower() + s["code"] for s in store["stocks"] if s["held"]}
-held_lu = [(s["name"], lu_days[s["market"].lower() + s["code"]])
-           for s in store["stocks"] if s["held"] and (s["market"].lower() + s["code"]) in lu_days]
-if held_lu:
-    held_lu_txt = "；其中 " + "、".join(f"{n}({d}板)" for n, d in held_lu) + " 为当前持仓股"
-else:
-    held_lu_txt = "；当前持仓股今日无连板"
+# 个人持仓不对外展示：连板梯队不标注持仓股
+held_lu_txt = ""
 # 连板高度（取实际最高板层）
 max_tier = max([t for t in TIERS if TIERS[t]], default=0)
 lhb_height = ("、".join(n for n, _ in TIERS[max_tier]) + f" {max_tier}板") if max_tier else "—"
@@ -517,9 +509,9 @@ lhb_summary = (
 # ---------- 每日总览页 ----------
 overview_body = (
     f"<header><h1>📊 A股量化助理 · 每日总览</h1>"
-    f"<p>大盘概览 / 板块热度 / 连板梯队 / 组合持仓 / 龙虎榜速览 — 数据口径 {DATE}（大盘概览快照 {SNAP_DATE} · 估值 {val_date}）</p></header>"
+    f"<p>大盘概览 / 板块热度 / 连板梯队 / 龙虎榜速览 — 数据口径 {DATE}（大盘概览快照 {SNAP_DATE} · 估值 {val_date}）</p></header>"
     f"<div class='meta'>数据来源：腾讯自选股 <b>westock-mcp</b>（data_market_overview / tool_ranking / data_hot / data_quote / data_lhb）。</div>"
-    f"{market_overview_html}{sector_html}{leader_html}{portfolio_html}{lhb_summary}"
+    f"{market_overview_html}{sector_html}{leader_html}{lhb_summary}"
     f"<footer>本报告由 A 股量化助理自动化生成 · 数据仅供参考，不构成投资建议 · 市场有风险，投资需谨慎</footer>")
 open(os.path.join(WEB, "daily_overview.html"), "w", encoding="utf-8").write(
     page("A股量化助理 · 每日总览", overview_body))
@@ -530,8 +522,9 @@ portfolio_body = (
     f"<div class='meta'>数据源：券商导出持仓（table.xls）→ _all_store.json + 腾讯自选股实时行情。</div>"
     f"{portfolio_html}"
     f"<footer>组合盈亏为浮动口径，以实时收盘价计；仓位% 按组合内实时市值占比重算。</footer>")
-open(os.path.join(WEB, "portfolio.html"), "w", encoding="utf-8").write(
-    page("组合总看板", portfolio_body))
+# 个人持仓不对外展示：跳过组合总看板页面生成
+# open(os.path.join(WEB, "portfolio.html"), "w", encoding="utf-8").write(
+#     page("组合总看板", portfolio_body))
 
 # ---------- 游资看板页 ----------
 _hotmoney_detail = (
@@ -598,12 +591,12 @@ status_body = (
        f"已渲染 lhb.html（机构榜/共振/胜率）与 hotmoney.html（席位净买榜/胜率）。")
     + f"<br>"
     f"2. <b>大盘/板块/连板刷新</b>：data_market_overview({DATE})、data_hot(board)、tool_ranking(limitup_days) 全部更新为 {DATE}（估值口径 {val_date}）。<br>"
-    f"3. <b>组合行情</b>：9 只持仓 {DATE} 实时市值 {fnum(tot_mv)} 元，浮动盈亏 {pct(tot_pnl_pct)}。<br>"
-    f"4. <b>推送</b>：本地已生成 8 个页面（含导航 index.html、龙虎榜归档页 lhb_{DATE}.html），待经 GitHub 连接器推送至 dujoer/stocks 的 web/ 目录（main 分支，需仓库写权限）。"
+    f""
+    f"4. <b>推送</b>：本地已生成 6 个页面（含导航 index.html、龙虎榜归档页 lhb_{DATE}.html），待经 GitHub 连接器推送至 dujoer/stocks 的 web/ 目录（main 分支，需仓库写权限）。"
     f"注：早期 08-14 窗口收益/共振/Alpha 回测为远程分析页，本地未保留，本系统以龙虎榜机构榜、共振、席位胜率为核心。</div></div>"
     f"<div class='section'><h2>📁 产出文件</h2>"
     f"<div class='chiprow'>"
-     f"<span class='pill'>index.html</span><span class='pill'>daily_overview.html</span><span class='pill'>portfolio.html</span><span class='pill'>portfolio_analysis.html</span>"
+     f"<span class='pill'>index.html</span><span class='pill'>daily_overview.html</span>"
      f"<span class='pill'>lhb.html</span><span class='pill'>hotmoney.html</span><span class='pill'>lhb_{DATE}.html</span>"
      f"<span class='pill'>status_{DATE}.html</span></div>"
     f"<div class='note'>数据落盘：quant/market_overview、board_hot、quotes、news.json、limitup、lhb（均为 {DATE}）。"
@@ -629,13 +622,12 @@ lhb_archive_html = "".join(f"<a href='{fn}'>{dt}</a>" for dt, fn in _lhb_files)
 
 index_body = (
     f"<header><h1>📊 A股量化助理 · 龙虎榜看板</h1>"
-    f"<p>大盘概览 · 组合持仓 · 龙虎榜 · 游资席位 · 状态报告</p></header>"
+    f"<p>大盘概览 · 龙虎榜 · 游资席位 · 状态报告</p></header>"
     f"<div class='date'>数据口径：{DATE}（大盘概览快照 {SNAP_DATE} · 估值快照 {val_date}）</div>"
     f"<div class='grid'>"
     f"<a class='card' href='daily_overview.html'><div class='ic'>📈</div><div class='t'>每日总览</div>"
-    f"<div class='d'>大盘 / 板块热度 / 连板梯队 / 组合持仓 / 龙虎榜速览</div></a>"
-    f"<a class='card' href='portfolio.html'><div class='ic'>💼</div><div class='t'>组合总看板</div>"
-    f"<div class='d'>9 只持仓实时市值、盈亏、仓位与持股天数</div></a>"
+    f"<div class='d'>大盘 / 板块热度 / 连板梯队 / 龙虎榜速览</div></a>"
+    f""
     f"<a class='card' href='lhb.html'><div class='ic'>🐉</div><div class='t'>龙虎榜分析</div>"
     f"<div class='d'>机构专用榜 / 机构+游资共振 / 席位胜率</div></a>"
     f"<a class='card' href='hotmoney.html'><div class='ic'>🏦</div><div class='t'>游资看板</div>"
