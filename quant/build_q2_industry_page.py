@@ -57,6 +57,7 @@ def slim(x):
             "pct": x["pct_sum"], "sc": x["score"],
             "b": x["s_breadth"], "p": x["s_power"], "d": x["s_depth"],
             "ind": x["ind"],
+            "win": x.get("win"), "avg": x.get("avg"), "n_valid": x.get("n_valid"),
             "st": [{"n": s["name"], "c": s["code"], "d": s["d"], "p": s["pct"]}
                    for s in x["stocks"][:6]]}
 
@@ -124,6 +125,14 @@ for r in sorted(ind_rows, key=lambda x: -x["net"]):
 IND_TABLE = "".join(rows_html)
 
 
+def _fmt_win(x):
+    return "—" if x.get("win") is None else f"{x['win']:.0f}%"
+
+
+def _fmt_avg(x):
+    return "—" if x.get("avg") is None else f"{'+' if x['avg'] > 0 else ''}{x['avg']:.1f}%"
+
+
 def top_table(lst, g):
     """全市场榜表格"""
     out = []
@@ -136,11 +145,14 @@ def top_table(lst, g):
             f"<td class='num up'>{x['inc']}</td>"
             f"<td class='num down'>{x['dec']}</td>"
             f"<td class='num'>{x['pct']:.2f}%</td>"
-            f"<td class='num sc'>{x['sc']:.2f}</td></tr>")
+            f"<td class='num sc'>{x['sc']:.2f}</td>"
+            f"<td class='num win'>{_fmt_win(x)}</td>"
+            f"<td class='num avg'>{_fmt_avg(x)}</td></tr>")
     head = ("<tr><th class='num'>#</th><th>"
             + ("自然人" if g == "个人" else "产品 · 管理人")
             + "</th><th class='num'>家数</th><th class='num'>增</th>"
-              "<th class='num'>减</th><th class='num'>合计持股</th><th class='num'>强度</th></tr>")
+              "<th class='num'>减</th><th class='num'>合计持股</th><th class='num'>强度</th>"
+              "<th class='num'>胜率*</th><th class='num'>均涨*</th></tr>")
     return f"<table class='rk3'>{head}{''.join(out)}</table>"
 
 
@@ -240,6 +252,12 @@ td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
 .rk3 { font-size:12px; }
 .rk3 th,.rk3 td { padding:5px 7px; }
 .rk3 tbody tr { cursor:pointer; }
+.win { color:#e9d8b8; font-weight:800; } .avg { color:#e9d8b8; font-weight:800; }
+.sortbar { display:flex; gap:6px; margin:7px 0 6px; }
+.sbtn { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); color:#c9c3b8;
+  font-size:11px; padding:3px 11px; border-radius:14px; cursor:pointer; font-family:inherit; transition:.2s; }
+.sbtn:hover { background:rgba(201,166,107,.14); }
+.sbtn.on { background:rgba(201,166,107,.26); border-color:rgba(201,166,107,.55); color:#f7f1ec; font-weight:700; }
 .rowdet { background:rgba(201,166,107,.06); font-size:11px; color:#c9c3b8; }
 .rowdet td { padding:7px 10px; }
 .sbadge { display:inline-block; margin:2px 4px 2px 0; padding:2px 7px; border-radius:8px;
@@ -253,6 +271,16 @@ td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
 JS = """
 const D = __DATA__;
 const GS = ['个人','私募','公募'];
+let sortKey='sc';
+let currentInd=null;
+function sortList(list){
+  const a=(list||[]).slice();
+  if(sortKey==='win')
+    a.sort((x,y)=> ((y.win==null?-1:y.win)-(x.win==null?-1:x.win)) || (y.sc-x.sc));
+  else
+    a.sort((x,y)=> (y.sc-x.sc) || ((y.win==null?-1:y.win)-(x.win==null?-1:x.win)));
+  return a;
+}
 
 /* --- 全市场榜 / 减持榜 tab --- */
 function bindTabs(tabSel, paneSel){
@@ -278,21 +306,33 @@ function fmtD(v){
         :Math.abs(v)>=1e4?(v/1e4).toFixed(1)+'万股':v+'股');
   return "<span class='"+(v>0?'up':'down')+"'>"+s+"</span>";
 }
+function fmtWin(x){
+  if(x.win==null) return "<span class='flat'>—</span>";
+  return Math.round(x.win)+"%";
+}
+function fmtAvg(x){
+  if(x.avg==null) return "<span class='flat'>—</span>";
+  const cls = x.avg>0?'up':x.avg<0?'down':'flat';
+  return "<span class='"+cls+"'>"+(x.avg>0?'+':'')+x.avg.toFixed(1)+"%</span>";
+}
 
 function rowsOf(list, g){
   if(!list||!list.length) return "<div class='empty'>本行业该类型无符合口径的股东记录</div>";
   let h="<table class='rk3'><tr><th class='num'>#</th><th>"
       +(g==='个人'?'自然人':'产品 · 管理人')
       +"</th><th class='num'>家数</th><th class='num'>增</th><th class='num'>减</th>"
-      +"<th class='num'>持股</th><th class='num'>强度</th></tr>";
+      +"<th class='num'>持股</th><th class='num'>强度</th>"
+      +"<th class='num'>胜率*</th><th class='num'>均涨*</th></tr>";
   list.forEach((x,i)=>{
     const mgr = x.mgr? "<span class='tiny'> · "+x.mgr+"</span>" : "";
     h+="<tr data-k='"+g+i+"'><td class='num rk'>"+(i+1)+"</td><td><b>"+x.nm+"</b>"+mgr+"</td>"
       +"<td class='num'>"+x.n+"</td><td class='num up'>"+x.inc+"</td>"
       +"<td class='num down'>"+x.dec+"</td><td class='num'>"+x.pct.toFixed(2)+"%</td>"
-      +"<td class='num sc'>"+x.sc.toFixed(2)+"</td></tr>";
+      +"<td class='num sc'>"+x.sc.toFixed(2)+"</td>"
+      +"<td class='num win'>"+fmtWin(x)+"</td>"
+      +"<td class='num avg'>"+fmtAvg(x)+"</td></tr>";
     const det = x.st.map(s=>"<span class='sbadge'>"+s.n+" "+s.p+"% "+fmtD(s.d)+"</span>").join('');
-    h+="<tr class='rowdet' data-p='"+g+i+"' style='display:none'><td></td><td colspan='6'>"
+    h+="<tr class='rowdet' data-p='"+g+i+"' style='display:none'><td></td><td colspan='8'>"
       +"持仓：" + det
       + "<br><span class='tiny'>强度拆解 → 广度 "+x.b.toFixed(2)+" ／ 加仓力度 "+x.p.toFixed(2)
       + " ／ 介入深度 "+x.d.toFixed(2)+"（持平 "+x.flat+" 家）</span></td></tr>";
@@ -301,6 +341,7 @@ function rowsOf(list, g){
 }
 
 function renderInd(ind){
+  currentInd = ind;
   const d=D.by_ind[ind]||{};
   const r=D.ind_rows.find(x=>x.ind===ind)||{};
   document.getElementById('indTitle').innerHTML =
@@ -309,12 +350,19 @@ function renderInd(ind){
     +" · 估值分位 "+(r.vr!=null?r.vr:'—')+" · 成分股 "+(r.n||'—')+" 只";
   document.getElementById('indBody').innerHTML = GS.map(g=>
     "<div class='gcard'><h3><span class='dot "+DOT[g]+"'></span>"+g+" Top10<em>"+CAP[g]+"</em></h3>"
-    + rowsOf(d[g], g) + "</div>").join('');
+    + "<div class='sortbar'>"
+    + "<button class='sbtn"+(sortKey==='sc'?' on':'')+"' data-sk='sc'>按强度</button>"
+    + "<button class='sbtn"+(sortKey==='win'?' on':'')+"' data-sk='win'>按胜率*</button>"
+    + "</div>"
+    + rowsOf(sortList(d[g]||[]), g) + "</div>").join('');
   document.querySelectorAll('#indBody tr[data-k]').forEach(tr=>{
     tr.onclick=()=>{
       const p=document.querySelector("#indBody tr[data-p='"+tr.dataset.k+"']");
       if(p) p.style.display = p.style.display==='none'? '' : 'none';
     };
+  });
+  document.querySelectorAll('#indBody .sbtn').forEach(b=>{
+    b.onclick=()=>{ sortKey=b.dataset.sk; renderInd(currentInd); };
   });
 }
 
@@ -409,7 +457,7 @@ HTML = f"""<!DOCTYPE html>
 <div class='section'>
 <h2>行业最强榜 · 各行业个人 / 私募 / 公募 Top10</h2>
 <div class='sub2'>点击行业标签切换。标签后的数字是该行业聪明钱净增持家次。
-表格里点任意一行可展开该股东的具体持仓与强度拆解。</div>
+表格里点任意一行可展开该股东的具体持仓与强度拆解。每卡可<b>按强度 / 按胜率*</b>切换排序，胜率* 为该股东中报全部持股在 2026-06-30 → 2026-09-01 窗口的上涨比例与平均涨幅（仅作历史参考）。</div>
 <div class='pills'>{PILLS}</div>
 <div class='amberbox' id='indTitle'></div>
 <div class='grid3' id='indBody'></div>
@@ -496,6 +544,9 @@ HTML = f"""<!DOCTYPE html>
 经全量校验：110,781 条记录中「变动量 = 持股量」的为 0 条，确认无法识别新进。本页增持家数为保守下限。</td></tr>
 <tr><td><b>估值口径</b></td><td>PE_TTM / PB_LF，基准日 {DATA['val_date']}，晚于中报基准日。
 行业中位数只用盈利公司计算 PE，亏损占比高的行业须结合 PB 与亏损占比列判断。</td></tr>
+<tr><td><b>胜率 / 均涨*</b></td><td>胜率 = 区间上涨家数 ÷ 该股东全部持股家数；均涨 = 全部持股区间涨跌幅的均值。
+区间取 <b>2026-06-30 收盘 → 2026-09-01 收盘</b>，价格来自腾讯自选股 data_quote 历史快照（共 1813 只成分股、1041 个股东主体的全持仓，缺失价格的记为「—」）。
+* 表示该指标仅反映其<b>中报时点历史持仓</b>在窗口内的表现，不等于其当前持仓，亦不构成收益承诺；用于辅助判断「这批资金过去选股准不准」，而非买卖信号。</td></tr>
 </table>
 <div class='note'>数据来源：腾讯自选股（股东数据 data_shareholder、行业成分 data_sector、估值 fin_valuation 排行）。
 本页仅为数据整理与统计，不构成投资建议。</div>
