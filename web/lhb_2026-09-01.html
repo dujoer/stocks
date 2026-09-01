@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>龙虎榜分析</title>
+<style>* { box-sizing: border-box; }
+body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:linear-gradient(135deg,#1a1f2e 0%,#232838 45%,#1a1f2e 100%); color:#f0e6dd; min-height:100vh; }
+.wrap { max-width:1040px; margin:0 auto; padding:40px 20px 60px; }
+.topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
+  border-bottom:1px solid rgba(255,255,255,.10); }
+.topnav a { color:#c9a66b; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(201,166,107,.30); transition:.2s; }
+.topnav a:hover { background:rgba(201,166,107,.14); }
+header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#c9a66b,#c98b7d,#a899b3);
+  -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
+header p { margin:4px 0; color:#9a9aa4; font-size:13px; line-height:1.6; }
+.meta { margin:14px 0 24px; font-size:12px; color:#c9c3b8; line-height:1.7; }
+.meta b { color:#c9a66b; }
+.section { background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.10); border-radius:20px; padding:18px 20px; margin:0 0 22px;
+  box-shadow:0 4px 20px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.05); backdrop-filter:blur(10px); }
+.section h2 { font-size:17px; margin:0 0 14px; color:#f7f1ec; display:flex; align-items:center; gap:8px; }
+.section h2:before { content:""; width:4px; height:16px; background:#c9a66b; border-radius:3px; }
+.idxrow { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px; }
+.idx { flex:1; min-width:200px; background:linear-gradient(135deg,rgba(185,116,104,.18),rgba(220,38,38,.06));
+  border:1px solid rgba(201,139,125,.36); border-radius:14px; padding:13px 10px; text-align:center;
+  box-shadow:0 4px 14px rgba(0,0,0,.18), 0 0 16px rgba(201,139,125,.12); }
+.idx .k { font-size:11px; color:#c9c3b8; letter-spacing:.3px; }
+.idx .v { font-size:22px; font-weight:800; color:#f7f1ec; margin:5px 0 2px; }
+.idx .c { font-size:13px; font-weight:700; }
+.idx .hl { font-size:10px; color:#9a9aa4; margin-top:4px; }
+.bar { display:flex; height:34px; border-radius:8px; overflow:hidden; margin:10px 0; font-size:12px;
+  color:#f7f1ec; text-align:center; line-height:34px; box-shadow:0 2px 6px rgba(0,0,0,.2); }
+.chiprow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+.chip { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:12px;
+  padding:10px 6px; text-align:center; min-width:74px; backdrop-filter:blur(6px); box-shadow:0 2px 10px rgba(0,0,0,.12); }
+.chip .ck { font-size:10px; color:#9a9aa4; }
+.chip .cv { font-size:16px; font-weight:800; margin-top:3px; }
+.tag { display:inline-block; border-radius:20px; padding:3px 11px; font-size:12px; margin:3px 4px 3px 0;
+  background:#eef2f8; color:#33414f; }
+.tag.hot { background:#fdeceb; color:#d8392b; }
+.tag.cold { background:#e9f6ef; color:#1a9e5a; }
+.pill { display:inline-block; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
+  border-radius:20px; padding:4px 11px; font-size:12px; color:#e6ded6; margin:3px 4px 3px 0; cursor:help; }
+.pill b { color:#c9a66b; font-weight:700; }
+table { width:100%; border-collapse:collapse; font-size:13px; background:rgba(26,31,46,.55);
+  border:1px solid rgba(255,255,255,.08); border-radius:12px; overflow:hidden; margin:10px 0; }
+th,td { padding:8px 10px; text-align:left; border-bottom:1px solid rgba(255,255,255,.07); }
+th { background:rgba(30,41,59,.8); color:#e6ded6; font-weight:600; font-size:12px; }
+td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+.up { color:#c98b7d; } .down { color:#8da894; }
+.note { color:#9a9aa4; font-size:12px; margin-top:8px; line-height:1.6; }
+.amberbox { font-size:13px; color:#c9a66b; background:linear-gradient(135deg,rgba(201,166,107,.13),rgba(201,166,107,.05));
+  border:1px solid rgba(201,166,107,.22); border-radius:12px; padding:12px 16px; margin:12px 0; line-height:1.6; }
+.ladder { margin:6px 0; padding:8px 10px; background:rgba(26,31,46,.55); border:1px solid rgba(255,255,255,.10);
+  border-radius:8px; font-size:13px; }
+.ladder .badge { display:inline-block; border-radius:6px; padding:1px 8px; margin-right:8px; font-weight:700; font-size:12px; }
+.ladder .b5 { background:rgba(220,38,38,.25); border:1px solid rgba(248,113,113,.5); color:#d6a89d; }
+.ladder .b4 { background:rgba(220,38,38,.18); border:1px solid rgba(248,113,113,.4); color:#d6a89d; }
+.ladder .b3 { background:rgba(201,166,107,.20); border:1px solid rgba(251,191,36,.45); color:#d8bd8a; }
+.ladder .b2 { background:rgba(201,166,107,.20); border:1px solid rgba(251,191,36,.45); color:#d8bd8a; }
+.ladder .b1 { background:rgba(120,137,162,.18); border:1px solid rgba(139,155,181,.45); color:#a7b4c9; }
+.namechip { display:inline-block; color:#e6ded6; margin:2px 6px 2px 0; font-size:13px; }
+.empty { color:#9a9aa4; text-align:center; padding:38px 0; font-size:14px; line-height:1.8; }
+.empty b { color:#c9a66b; }
+footer { margin-top:40px; padding-top:16px; border-top:1px solid rgba(255,255,255,.10);
+  font-size:12px; color:#9a9aa4; line-height:1.8; }
+a.inlink { color:#c9a66b; text-decoration:none; border:1px solid rgba(201,166,107,.5);
+  border-radius:10px; padding:6px 14px; font-size:13px; font-weight:700; display:inline-block; margin:4px 6px 4px 0; }
+a.inlink:hover { background:rgba(201,166,107,.16); }
+.wrap.landing { max-width:880px; text-align:center; }
+.landing header h1 { font-size:34px; }
+.landing header p { margin:6px 0; color:#9a9aa4; font-size:14px; }
+.date { margin:18px 0 30px; font-size:13px; color:#c9a66b; letter-spacing:.5px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; text-align:left; }
+.card { display:block; text-decoration:none; color:#f0e6dd; background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.10); border-radius:18px; padding:20px 18px;
+  box-shadow:0 4px 20px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.05); backdrop-filter:blur(10px); transition:.2s; }
+.card:hover { border-color:rgba(201,166,107,.45); transform:translateY(-2px); background:linear-gradient(135deg,rgba(201,166,107,.12),rgba(255,255,255,.03)); }
+.card .ic { font-size:26px; }
+.card .t { font-size:17px; font-weight:700; margin:10px 0 6px; color:#f7f1ec; }
+.card .d { font-size:12.5px; color:#9a9aa4; line-height:1.6; }
+.hist { margin-top:30px; font-size:12.5px; color:#c9c3b8; }
+.hist a { color:#c9a66b; text-decoration:none; border:1px solid rgba(201,166,107,.4); border-radius:10px; padding:5px 12px; display:inline-block; margin:4px; }
+.foot { margin-top:42px; font-size:12px; color:#9a9aa4; line-height:1.8; }
+</style>
+</head>
+<body>
+<div class='wrap'>
+<div class='topnav'>
+<a href='daily_overview.html'>每日总览</a>
+<a href='lhb.html'>龙虎榜分析</a>
+<a href='hotmoney.html'>游资看板</a>
+<a href='status_2026-09-01.html'>状态报告</a>
+<a href='../index.html'>总门户</a>
+</div>
+<header>
+<h1>🐉 龙虎榜分析</h1>
+<p>机构专用榜 / 机构+游资共振 / 席位胜率 — 2026-09-01</p>
+</header>
+<div class='meta'>数据来源：westock-mcp data_lhb（jg 机构专用榜 / gslmr 机构+游资共振买入 / gslxw 席位胜率 / all 龙虎榜全榜）。</div>
+<div class='section'>
+<h2>🐉 龙虎榜全榜上榜 59 只（按净买入额排序）</h2>
+<div class='note'>当日龙虎榜分项（机构专用榜 / 游资席位 / 机构+游资共振 / 席位胜率）数据源未披露（均为空）。下方为 data_lhb 返回的龙虎榜全榜上榜个股（共 59 只），含当日涨幅、净买入、买入、卖出额；净买入额单位：亿元。</div>
+<table>
+<tr>
+<th>排名</th>
+<th>名称</th>
+<th class='num'>当日涨幅%</th>
+<th class='num'>净买入(亿)</th>
+<th class='num'>买入(亿)</th>
+<th class='num'>卖出(亿)</th>
+</tr>
+<tr>
+<td class='num'>1</td>
+<td>
+<b>协鑫能科</b> <span class='note'>sz002015</span>
+</td>
+<td class='num up'>+9.97%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>2</td>
+<td>
+<b>神农种业</b> <span class='note'>sz300189</span>
+</td>
+<td class='num up'>+20.03%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>3</td>
+<td>
+<b>芒果超媒</b> <span class='note'>sz300413</span>
+</td>
+<td class='num up'>+20.02%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>4</td>
+<td>
+<b>江天化学</b> <span class='note'>sz300927</span>
+</td>
+<td class='num up'>+20.00%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>5</td>
+<td>
+<b>芒果超媒</b> <span class='note'>sz300413</span>
+</td>
+<td class='num up'>+20.02%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>6</td>
+<td>
+<b>亿田智能</b> <span class='note'>sz300911</span>
+</td>
+<td class='num up'>+8.82%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>7</td>
+<td>
+<b>贝特利</b> <span class='note'>sz301697</span>
+</td>
+<td class='num up'>+196.69%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>8</td>
+<td>
+<b>天娱数科</b> <span class='note'>sz002354</span>
+</td>
+<td class='num up'>+4.11%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>9</td>
+<td>
+<b>马矿股份</b> <span class='note'>sh601123</span>
+</td>
+<td class='num up'>+290.98%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>10</td>
+<td>
+<b>浙江世宝</b> <span class='note'>sz002703</span>
+</td>
+<td class='num up'>+10.01%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>11</td>
+<td>
+<b>博纳影业</b> <span class='note'>sz001330</span>
+</td>
+<td class='num up'>+9.98%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>12</td>
+<td>
+<b>掌阅科技</b> <span class='note'>sh603533</span>
+</td>
+<td class='num up'>+10.00%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>13</td>
+<td>
+<b>透景生命</b> <span class='note'>sz300642</span>
+</td>
+<td class='num up'>+19.99%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>14</td>
+<td>
+<b>沃特股份</b> <span class='note'>sz002886</span>
+</td>
+<td class='num down'>-3.44%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>15</td>
+<td>
+<b>百花医药</b> <span class='note'>sh600721</span>
+</td>
+<td class='num down'>-5.11%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>16</td>
+<td>
+<b>楚天龙</b> <span class='note'>sz003040</span>
+</td>
+<td class='num up'>+10.00%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>17</td>
+<td>
+<b>青山纸业</b> <span class='note'>sh600103</span>
+</td>
+<td class='num up'>+9.97%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>18</td>
+<td>
+<b>海鸥住工</b> <span class='note'>sz002084</span>
+</td>
+<td class='num up'>+10.03%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>19</td>
+<td>
+<b>欢瑞世纪</b> <span class='note'>sz000892</span>
+</td>
+<td class='num up'>+10.00%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>20</td>
+<td>
+<b>百花医药</b> <span class='note'>sh600721</span>
+</td>
+<td class='num down'>-5.11%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>21</td>
+<td>
+<b>大晟文化</b> <span class='note'>sh600892</span>
+</td>
+<td class='num up'>+9.95%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>22</td>
+<td>
+<b>红宝丽</b> <span class='note'>sz002165</span>
+</td>
+<td class='num up'>+6.05%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>23</td>
+<td>
+<b>新赛股份</b> <span class='note'>sh600540</span>
+</td>
+<td class='num up'>+10.07%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>24</td>
+<td>
+<b>博纳影业</b> <span class='note'>sz001330</span>
+</td>
+<td class='num up'>+9.98%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>25</td>
+<td>
+<b>新赛股份</b> <span class='note'>sh600540</span>
+</td>
+<td class='num up'>+10.07%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>26</td>
+<td>
+<b>红星发展</b> <span class='note'>sh600367</span>
+</td>
+<td class='num down'>-7.57%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>27</td>
+<td>
+<b>集泰股份</b> <span class='note'>sz002909</span>
+</td>
+<td class='num up'>+9.97%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>28</td>
+<td>
+<b>龙版传媒</b> <span class='note'>sh605577</span>
+</td>
+<td class='num up'>+9.98%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>29</td>
+<td>
+<b>九牧王</b> <span class='note'>sh601566</span>
+</td>
+<td class='num up'>+10.05%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+<tr>
+<td class='num'>30</td>
+<td>
+<b>茂业商业</b> <span class='note'>sh600828</span>
+</td>
+<td class='num up'>+10.08%</td>
+<td class='num up'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+</tr>
+</table>
+</div>
+<div class='section'>
+<h2>📐 窗口收益（alpha vs 大盘）</h2>
+<div class='empty'>1·3·5·10 交易日窗口收益回测属量化专题，需历史复权数据支撑，本页未内置；该专题为早期远程分析页，本地未保留，后续可单独建设。</div>
+</div>
+<footer>⚠️ 盘后滞后资金痕迹，仅提示概率优势方向，不构成投资建议。</footer>
+</div>
+</body>
+</html>
