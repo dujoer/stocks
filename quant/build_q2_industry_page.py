@@ -70,7 +70,7 @@ DATA = {
     "summary": R["summary"],
     "net_mid": NET_MID,
     "ind_rows": ind_rows,
-    "by_ind": {ind: {g: [slim(x) for x in R["by_ind"][ind][g][:10]] for g in GROUPS}
+    "by_ind": {ind: {g: [slim(x) for x in R["by_ind"][ind][g][:20]] for g in GROUPS}
                for ind in R["by_ind"]},
     "all_top": {g: [slim(x) for x in R["all_top"][g][:20]] for g in GROUPS},
     "all_dec": {g: [slim(x) for x in R["all_dec"][g][:12]] for g in GROUPS},
@@ -137,10 +137,13 @@ def top_table(lst, g):
     """全市场榜表格"""
     out = []
     for i, x in enumerate(lst, 1):
-        mgr = f"<span class='tiny'> · {x['mgr']}</span>" if x["mgr"] else ""
+        if x["mgr"]:
+            nm_cell = f"<b>{x['nm']}</b><br><span class='tiny'>· {x['mgr']}</span>"
+        else:
+            nm_cell = f"<b>{x['nm']}</b>"
         out.append(
             f"<tr><td class='num rk'>{i}</td>"
-            f"<td><b>{x['nm']}</b>{mgr}<br><span class='tiny'>{x['ind']}</span></td>"
+            f"<td class='nm'>{nm_cell}<br><span class='tiny'>{x['ind']}</span></td>"
             f"<td class='num'>{x['n']}</td>"
             f"<td class='num up'>{x['inc']}</td>"
             f"<td class='num down'>{x['dec']}</td>"
@@ -243,7 +246,7 @@ td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
 .pill:hover { background:rgba(201,166,107,.12); border-color:rgba(201,166,107,.35); }
 .pill.on { background:rgba(201,166,107,.26); border-color:rgba(201,166,107,.6); color:#f7f1ec; font-weight:700; }
 .pn { font-size:10px; }
-.grid3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:14px; margin-top:6px; }
+.grid3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(470px,1fr)); gap:14px; margin-top:6px; }
 .gcard { background:rgba(26,31,46,.5); border:1px solid rgba(255,255,255,.09); border-radius:14px; padding:12px 13px; }
 .gcard h3 { margin:0 0 3px; font-size:14px; color:#f7f1ec; display:flex; align-items:center; gap:7px; }
 .gcard h3 em { font-style:normal; font-size:11px; color:#9a9aa4; font-weight:400; }
@@ -252,6 +255,8 @@ td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
 .rk3 { font-size:12px; }
 .rk3 th,.rk3 td { padding:5px 7px; }
 .rk3 tbody tr { cursor:pointer; }
+.rk3 td.nm { min-width:140px; white-space:normal; word-break:break-word; line-height:1.35; }
+.rk3 td.nm b { display:inline-block; }
 .win { color:#e9d8b8; font-weight:800; } .avg { color:#e9d8b8; font-weight:800; }
 .sortbar { display:flex; gap:6px; margin:7px 0 6px; }
 .sbtn { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); color:#c9c3b8;
@@ -324,8 +329,10 @@ function rowsOf(list, g){
       +"<th class='num'>持股</th><th class='num'>强度</th>"
       +"<th class='num'>胜率*</th><th class='num'>均涨*</th></tr>";
   list.forEach((x,i)=>{
-    const mgr = x.mgr? "<span class='tiny'> · "+x.mgr+"</span>" : "";
-    h+="<tr data-k='"+g+i+"'><td class='num rk'>"+(i+1)+"</td><td><b>"+x.nm+"</b>"+mgr+"</td>"
+    const nm = x.mgr
+      ? "<b>"+x.nm+"</b><br><span class='tiny'>· "+x.mgr+"</span>"
+      : "<b>"+x.nm+"</b>";
+    h+="<tr data-k='"+g+i+"'><td class='num rk'>"+(i+1)+"</td><td class='nm'>"+nm+"</td>"
       +"<td class='num'>"+x.n+"</td><td class='num up'>"+x.inc+"</td>"
       +"<td class='num down'>"+x.dec+"</td><td class='num'>"+x.pct.toFixed(2)+"%</td>"
       +"<td class='num sc'>"+x.sc.toFixed(2)+"</td>"
@@ -349,7 +356,7 @@ function renderInd(ind){
     +(r.net>0?'+':'')+r.net+"</span> 家次 · PE中位 "+(r.pe||'—')
     +" · 估值分位 "+(r.vr!=null?r.vr:'—')+" · 成分股 "+(r.n||'—')+" 只";
   document.getElementById('indBody').innerHTML = GS.map(g=>
-    "<div class='gcard'><h3><span class='dot "+DOT[g]+"'></span>"+g+" Top10<em>"+CAP[g]+"</em></h3>"
+    "<div class='gcard'><h3><span class='dot "+DOT[g]+"'></span>"+g+" Top20<em>"+CAP[g]+"</em></h3>"
     + "<div class='sortbar'>"
     + "<button class='sbtn"+(sortKey==='sc'?' on':'')+"' data-sk='sc'>按强度</button>"
     + "<button class='sbtn"+(sortKey==='win'?' on':'')+"' data-sk='win'>按胜率*</button>"
@@ -391,7 +398,7 @@ HTML = f"""<!DOCTYPE html>
 <header>
 <h1>2026 中报 · 全市场行业最强「个人 / 私募 / 公募」榜</h1>
 <p>覆盖 <b>沪深北全部 {DATA['universe']} 只 A 股</b>的 2026-06-30 十大股东与十大流通股东，
-逐一分类后按申万一级行业聚合，输出 31 个行业各自的最强自然人、私募、公募各 10 名。</p>
+逐一分类后按申万一级行业聚合，输出 31 个行业各自的最强自然人、私募、公募各 20 名。</p>
 </header>
 
 <div class='meta'>
@@ -455,7 +462,7 @@ HTML = f"""<!DOCTYPE html>
 </div>
 
 <div class='section'>
-<h2>行业最强榜 · 各行业个人 / 私募 / 公募 Top10</h2>
+<h2>行业最强榜 · 各行业个人 / 私募 / 公募 Top20</h2>
 <div class='sub2'>点击行业标签切换。标签后的数字是该行业聪明钱净增持家次。
 表格里点任意一行可展开该股东的具体持仓与强度拆解。每卡可<b>按强度 / 按胜率*</b>切换排序，胜率* 为该股东中报全部持股在 2026-06-30 → 2026-09-01 窗口的上涨比例与平均涨幅（仅作历史参考）。</div>
 <div class='pills'>{PILLS}</div>
