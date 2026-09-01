@@ -88,13 +88,8 @@ cards = [
     },
     {
         "ic": "🏆", "t": "行业最强榜（全市场）", "href": "web/2026-q2-industry-elite.html",
-        "d": "全市场 5544 只 A 股中报股东全量解析：申万 31 个行业各自最强的自然人 / 私募 / 公募各 10 名 + 资金估值四象限",
+        "d": "全市场 5544 只 A 股中报股东全量解析：申万 31 个行业各自最强的自然人 / 私募 / 公募各 20 名 + 资金估值四象限 + 胜率/均涨",
         "date": "2026-06-30", "fresh": badge("warn", "全市场"),
-    },
-    {
-        "ic": "📊", "t": "中报股东动向", "href": "web/2026-q2-shareholder-moves.html",
-        "d": "2026中报十大股东：牛散 / 私募 / 大型公募 Q2 增持与减持梳理 + 三大准则评分",
-        "date": "2026-06-30", "fresh": badge("warn", "中报口径"),
     },
 ]
 
@@ -169,7 +164,7 @@ footer {{ margin-top:48px; padding-top:18px; border-top:1px solid #e3e7ec;
 <div class='wrap'>
 <header class='top'>
   <h1>A股分析中心 · 总门户</h1>
-  <div class='sub'>龙虎榜主看板 · 板块强度 · 群体心理风险雷达 · 中报股东动向</div>
+  <div class='sub'>龙虎榜主看板 · 板块强度 · 群体心理风险雷达 · 行业最强榜</div>
   <div class='updated'>门户重建于 {TODAY.strftime('%Y-%m-%d')} · 各卡片标注对应子系统的数据最新日期与新鲜度</div>
 </header>
 
