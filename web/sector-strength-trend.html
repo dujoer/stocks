@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>A股板块强度 · 趋势看板</title>
 <style>
-:root{--bg:#0b0f17;--panel:#121826;--panel2:#0e1420;--line:#1f2937;--txt:#e6edf3;
-  --mut:#8b98a9;--up:#e0483b;--down:#1a9e5a;--gold:#e8b339;--qc:#e0483b;--ch:#1a9e5a;
-  --jc:#e8b339;--xp:#5b8def}
+:root{--bg:#f5f6f8;--panel:#ffffff;--panel2:#f0f2f5;--line:#e3e6ea;--txt:#23262b;
+  --mut:#6b7280;--up:#b8332a;--down:#1a9e5a;--gold:#b8893b;--qc:#b8332a;--ch:#1a9e5a;
+  --jc:#b8893b;--xp:#3b6fd1}
 *{box-sizing:border-box}
-body{margin:0;background:linear-gradient(180deg,#0b0f17,#0a0d14);color:var(--txt);
+body{margin:0;background:linear-gradient(180deg,#f5f6f8,#eef0f3);color:var(--txt);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
   font-size:13px;padding:22px 26px 80px}
 h1{font-size:21px;margin:0 0 4px;letter-spacing:.5px;line-height:1.3}
@@ -17,7 +17,7 @@ h1{font-size:21px;margin:0 0 4px;letter-spacing:.5px;line-height:1.3}
 .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--panel2);
   border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:16px}
 .bar label{color:var(--mut);font-size:12px;margin-right:4px}
-.bar select{background:#0a0e16;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 10px;outline:none}
+.bar select{background:#f0f2f5;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 10px;outline:none}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .seg button{background:transparent;border:none;color:var(--mut);padding:7px 14px;cursor:pointer;font-size:12px}
 .seg button.on{background:var(--gold);color:#1a1300;font-weight:700}
@@ -28,10 +28,10 @@ h1{font-size:21px;margin:0 0 4px;letter-spacing:.5px;line-height:1.3}
 .chartbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 14px 14px;margin-bottom:18px;position:relative;overflow:visible}
 .chartbox h3{margin:0 0 14px;font-size:13.5px;color:var(--gold);font-weight:600;line-height:1.45;word-break:break-all}
 svg{display:block;width:100%;height:auto;overflow:visible}
-.daylink{fill:#8b98a9;cursor:default}
+.daylink{fill:#6b7280;cursor:default}
 .daylink.live{cursor:pointer}
 .daylink.live:hover{fill:var(--gold);text-decoration:underline}
-.tip{position:absolute;pointer-events:none;background:#0a0e16;border:1px solid var(--gold);
+.tip{position:absolute;pointer-events:none;background:#f0f2f5;border:1px solid var(--gold);
   border-radius:8px;padding:8px 12px;font-size:12px;color:var(--txt);opacity:0;transition:opacity .1s;z-index:10;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.35)}
 .tip b{color:var(--gold)}
 .legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--mut);font-size:11.5px;padding:6px 2px 4px}
@@ -40,14 +40,14 @@ svg{display:block;width:100%;height:auto;overflow:visible}
 .secbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--panel2);
   border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0 16px}
 .secbar label{color:var(--mut);font-size:12px;margin-right:2px}
-.secbar input{background:#0a0e16;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 12px;outline:none;min-width:240px}
-.secbar select{background:#0a0e16;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 10px;outline:none}
+.secbar input{background:#f0f2f5;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 12px;outline:none;min-width:240px}
+.secbar select{background:#f0f2f5;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 10px;outline:none}
 .secbar .now{color:var(--gold);font-size:12px;margin-left:auto}
 table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
 table th,table td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right}
 table th:first-child,table td:first-child{text-align:left}
 table th{color:var(--mut);font-weight:600;font-size:11.5px}
-table tr:hover td{background:#0e1420}
+table tr:hover td{background:#f0f2f5}
 .bh{font-weight:700}
 .ld{font-weight:600}
 .divider{height:1px;background:var(--line);margin:24px 0 6px}
@@ -59,11 +59,11 @@ table tr:hover td{background:#0e1420}
 .csel-right{flex:1 1 45%;display:flex;flex-direction:column;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}
 .csel-head{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
 .csel-head label{color:var(--mut);font-size:12px}
-.csel-head select{background:#0a0e16;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 10px;outline:none}
+.csel-head select{background:#f0f2f5;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 10px;outline:none}
 .csel-head button{background:var(--panel2);border:1px solid var(--line);color:var(--mut);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px}
 .csel-head button:hover{border-color:var(--gold);color:var(--gold)}
 .csel-head .hint{color:var(--mut);font-size:11.5px;margin-left:auto}
-#csearch{width:100%;background:#0a0e16;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:8px 12px;outline:none;margin-bottom:8px}
+#csearch{width:100%;background:#f0f2f5;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:8px 12px;outline:none;margin-bottom:8px}
 #csearch:focus{border-color:var(--gold)}
 .candidates{flex:1;overflow-y:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px;max-height:260px}
 .candidate{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:12px;color:var(--txt)}
@@ -201,7 +201,7 @@ const METRIC_LABEL={totalDarkY:'全市场暗盘资金净额(亿)',avgStrength:'�
 const SMETRIC_LABEL={pct:'涨跌幅(%)',dark:'暗盘资金(亿)',strength:'板块强度'};
 const BH_NAME={'qiangchou':'抢筹','jiancang':'建仓','xipan':'洗盘','chuhuo':'出货'};
 const BH_COLOR={'抢筹':'var(--qc)','建仓':'var(--jc)','洗盘':'var(--xp)','出货':'var(--ch)'};
-const COMPARE_COLORS=['#e0483b','#1a9e5a','#e8b339','#5b8def','#a855f7','#22d3ee','#f97316','#ec4899'];
+const COMPARE_COLORS=['#b8332a','#1a9e5a','#b8893b','#3b6fd1','#a855f7','#22d3ee','#f97316','#ec4899'];
 function goDay(date){ if(EXISTING_DAYS.indexOf(date)<0) return; const f='sector-strength-'+date.replace(/-/g,'')+'.html'; window.open(f,'_blank'); }
 let period='day', metric='totalDarkY';
 let sname=Object.keys(SECTORS).sort()[0], smetric='pct';
@@ -391,7 +391,7 @@ function renderSector(){
   const el=document.getElementById('schart');
   el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
     <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#5b8def" stop-opacity="0.30"/><stop offset="1" stop-color="#5b8def" stop-opacity="0"/>
+      <stop offset="0" stop-color="#3b6fd1" stop-opacity="0.30"/><stop offset="1" stop-color="#3b6fd1" stop-opacity="0"/>
     </linearGradient></defs>
     ${g}<path d="${area}" fill="url(#${gid})"/><path d="${path}" fill="none" stroke="var(--xp)" stroke-width="2"/>${dots}${leads}${labels}
     <line class="vline" x1="0" y1="${PT}" x2="0" y2="${H-PB}" stroke="var(--xp)" stroke-dasharray="3 3" opacity="0"/>
