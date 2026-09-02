@@ -6,12 +6,12 @@
 <title>A股板块强度 2026-08-28</title>
 <style>
 :root{
-  --bg:#0b0f17; --panel:#121826; --panel2:#0e1420; --line:#1f2937; --txt:#e6edf3;
-  --mut:#8b98a9; --up:#e0483b; --down:#1a9e5a; --gold:#e8b339; --qc:#e0483b; --ch:#1a9e5a;
-  --jc:#e8b339; --xp:#5b8def;
+  --bg:#f5f6f8; --panel:#ffffff; --panel2:#f0f2f5; --line:#e3e6ea; --txt:#23262b;
+  --mut:#6b7280; --up:#b8332a; --down:#1a9e5a; --gold:#b8893b; --qc:#b8332a; --ch:#1a9e5a;
+  --jc:#b8893b; --xp:#3b6fd1;
 }
 *{box-sizing:border-box}
-body{margin:0;background:linear-gradient(180deg,#0b0f17,#0a0d14);color:var(--txt);
+body{margin:0;background:linear-gradient(180deg,#f5f6f8,#eef0f3);color:var(--txt);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
   font-size:13px;padding:22px 26px 60px}
 h1{font-size:21px;margin:0 0 2px;letter-spacing:.5px}
@@ -31,28 +31,28 @@ h1{font-size:21px;margin:0 0 2px;letter-spacing:.5px}
 .trow{display:flex;justify-content:space-between;align-items:baseline;margin-top:9px;font-size:12px}
 .tname{color:var(--txt)} .tkind{font-style:normal;font-size:9.5px;color:var(--mut);border:1px solid var(--line);border-radius:4px;padding:0 4px;margin-left:5px}
 .tval{font-weight:600;font-variant-numeric:tabular-nums}
-.ttrack{height:5px;background:#0a0e16;border-radius:3px;overflow:hidden;margin:3px 0 2px}
+.ttrack{height:5px;background:#f0f2f5;border-radius:3px;overflow:hidden;margin:3px 0 2px}
 .tbar{border-radius:3px}
 .tbar.up{background:linear-gradient(90deg,#7a1d16,var(--up))}
 .tbar.down{background:linear-gradient(90deg,#0d4d2c,var(--down))}
 .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--panel2);
   border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px}
-.controls input[type=text]{background:#0a0e16;border:1px solid var(--line);color:var(--txt);
+.controls input[type=text]{background:#f0f2f5;border:1px solid var(--line);color:var(--txt);
   border-radius:8px;padding:7px 10px;width:200px;outline:none}
 .controls input[type=text]:focus{border-color:var(--gold)}
-.controls select{background:#0a0e16;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 8px;outline:none}
-.controls button{background:#1b2433;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 12px;cursor:pointer}
+.controls select{background:#f0f2f5;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 8px;outline:none}
+.controls button{background:#f3f4f6;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 12px;cursor:pointer}
 .controls button:hover{border-color:var(--gold)}
 .count{margin-left:auto;color:var(--mut);font-size:12px}
 .count b{color:var(--gold)}
 .tablewrap{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
 table{width:100%;border-collapse:collapse}
 th,td{padding:9px 12px;text-align:right;border-bottom:1px solid #161d2b;white-space:nowrap;font-variant-numeric:tabular-nums}
-th{background:#0f1622;color:var(--mut);font-weight:600;cursor:pointer;user-select:none;position:sticky;top:0;font-size:12px}
+th{background:#f3f4f6;color:var(--mut);font-weight:600;cursor:pointer;user-select:none;position:sticky;top:0;font-size:12px}
 th:hover{color:var(--gold)}
 th.sorted:after{content:" " attr(data-arrow);color:var(--gold)}
 td:first-child,th:first-child,td:nth-child(2),th:nth-child(2){text-align:left}
-tbody tr:hover{background:#0f1622}
+tbody tr:hover{background:#f3f4f6}
 .rank{color:#5f6b7a;width:42px}
 .sname{font-weight:600}
 .skind{font-size:9.5px;color:var(--mut);border:1px solid var(--line);border-radius:4px;padding:0 4px;margin-left:5px}
@@ -63,7 +63,7 @@ tbody tr:hover{background:#0f1622}
 .beh.c{background:rgba(26,158,90,.15);color:var(--ch)}
 .sbar{display:inline-block;height:6px;border-radius:3px;vertical-align:middle;margin-left:8px}
 .note{color:var(--mut);font-size:11px;margin-top:14px;line-height:1.7}
-.note code{background:#0a0e16;padding:1px 5px;border-radius:4px;color:var(--gold)}
+.note code{background:#f0f2f5;padding:1px 5px;border-radius:4px;color:var(--gold)}
 @media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}.strips{grid-template-columns:1fr}
   .hide-narrow{display:none}}
 </style>
