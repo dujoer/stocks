@@ -74,7 +74,7 @@ def badge(cls, txt):
 # ---- 卡片定义 ----
 cards = [
     {
-        "ic": "🐉", "t": "龙虎榜主看板", "href": "web/index.html",
+        "ic": "🐉", "t": "龙虎榜主看板", "href": "web/lhb.html",
         "d": "大盘概览 / 板块热度 / 连板梯队 / 龙虎榜机构榜·共振·席位胜率",
         "date": fmt(lhb_d), "fresh": badge(lhb_cls, lhb_txt),
     },
