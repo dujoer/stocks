@@ -65,106 +65,106 @@ def yi(x):
 # ---------- 配色 ----------
 CSS = """* { box-sizing: border-box; }
 body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
-  background:linear-gradient(135deg,#1a1f2e 0%,#232838 45%,#1a1f2e 100%); color:#f0e6dd; min-height:100vh; }
+  background:#f5f6f8; color:#23262b; min-height:100vh; }
 .wrap { max-width:1040px; margin:0 auto; padding:40px 20px 60px; }
 .topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
-  border-bottom:1px solid rgba(255,255,255,.10); }
-.topnav a { color:#c9a66b; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
-  border:1px solid rgba(201,166,107,.30); transition:.2s; }
-.topnav a:hover { background:rgba(201,166,107,.14); }
-header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#c9a66b,#c98b7d,#a899b3);
+  border-bottom:1px solid rgba(0,0,0,.08); }
+.topnav a { color:#b8893b; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(184,137,59,.35); transition:.2s; }
+.topnav a:hover { background:rgba(184,137,59,.10); }
+header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#b8893b,#b8332a,#6b5b95);
   -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
-header p { margin:4px 0; color:#9a9aa4; font-size:13px; line-height:1.6; }
-.meta { margin:14px 0 24px; font-size:12px; color:#c9c3b8; line-height:1.7; }
-.meta b { color:#c9a66b; }
-.section { background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
-  border:1px solid rgba(255,255,255,.10); border-radius:20px; padding:18px 20px; margin:0 0 22px;
-  box-shadow:0 4px 20px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.05); backdrop-filter:blur(10px); }
-.section h2 { font-size:17px; margin:0 0 14px; color:#f7f1ec; display:flex; align-items:center; gap:8px; }
-.section h2:before { content:""; width:4px; height:16px; background:#c9a66b; border-radius:3px; }
+header p { margin:4px 0; color:#8a929c; font-size:13px; line-height:1.6; }
+.meta { margin:14px 0 24px; font-size:12px; color:#6b7280; line-height:1.7; }
+.meta b { color:#b8893b; }
+.section { background:#ffffff;
+  border:1px solid rgba(0,0,0,.08); border-radius:20px; padding:18px 20px; margin:0 0 22px;
+  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); }
+.section h2 { font-size:17px; margin:0 0 14px; color:#1c2430; display:flex; align-items:center; gap:8px; }
+.section h2:before { content:""; width:4px; height:16px; background:#b8893b; border-radius:3px; }
 .idxrow { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px; }
-.idx { flex:1; min-width:200px; background:linear-gradient(135deg,rgba(185,116,104,.18),rgba(220,38,38,.06));
-  border:1px solid rgba(201,139,125,.36); border-radius:14px; padding:13px 10px; text-align:center;
-  box-shadow:0 4px 14px rgba(0,0,0,.18), 0 0 16px rgba(201,139,125,.12); }
-.idx .k { font-size:11px; color:#c9c3b8; letter-spacing:.3px; }
-.idx .v { font-size:22px; font-weight:800; color:#f7f1ec; margin:5px 0 2px; }
+.idx { flex:1; min-width:200px; background:linear-gradient(135deg,rgba(184,51,42,.08),rgba(184,51,42,.03));
+  border:1px solid rgba(184,51,42,.20); border-radius:14px; padding:13px 10px; text-align:center;
+  box-shadow:0 1px 3px rgba(184,51,42,.06); }
+.idx .k { font-size:11px; color:#6b7280; letter-spacing:.3px; }
+.idx .v { font-size:22px; font-weight:800; color:#1c2430; margin:5px 0 2px; }
 .idx .c { font-size:13px; font-weight:700; }
-.idx .hl { font-size:10px; color:#9a9aa4; margin-top:4px; }
+.idx .hl { font-size:10px; color:#8a929c; margin-top:4px; }
 .bar { display:flex; height:34px; border-radius:8px; overflow:hidden; margin:10px 0; font-size:12px;
-  color:#f7f1ec; text-align:center; line-height:34px; box-shadow:0 2px 6px rgba(0,0,0,.2); }
+  color:#ffffff; text-align:center; line-height:34px; box-shadow:0 2px 6px rgba(0,0,0,.12); }
 .chiprow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
-.chip { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:12px;
-  padding:10px 6px; text-align:center; min-width:74px; backdrop-filter:blur(6px); box-shadow:0 2px 10px rgba(0,0,0,.12); }
-.chip .ck { font-size:10px; color:#9a9aa4; }
+.chip { background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06); border-radius:12px;
+  padding:10px 6px; text-align:center; min-width:74px; backdrop-filter:blur(6px); box-shadow:0 1px 3px rgba(20,30,50,.04); }
+.chip .ck { font-size:10px; color:#8a929c; }
 .chip .cv { font-size:16px; font-weight:800; margin-top:3px; }
 .tag { display:inline-block; border-radius:20px; padding:3px 11px; font-size:12px; margin:3px 4px 3px 0;
   background:#eef2f8; color:#33414f; }
 .tag.hot { background:#fdeceb; color:#d8392b; }
 .tag.cold { background:#e9f6ef; color:#1a9e5a; }
-.pill { display:inline-block; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
-  border-radius:20px; padding:4px 11px; font-size:12px; color:#e6ded6; margin:3px 4px 3px 0; cursor:help; }
-.pill b { color:#c9a66b; font-weight:700; }
-table { width:100%; border-collapse:collapse; font-size:13px; background:rgba(26,31,46,.55);
-  border:1px solid rgba(255,255,255,.08); border-radius:12px; overflow:hidden; margin:10px 0; }
-th,td { padding:8px 10px; text-align:left; border-bottom:1px solid rgba(255,255,255,.07); }
-th { background:rgba(30,41,59,.8); color:#e6ded6; font-weight:600; font-size:12px; }
+.pill { display:inline-block; background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06);
+  border-radius:20px; padding:4px 11px; font-size:12px; color:#3a4048; margin:3px 4px 3px 0; cursor:help; }
+.pill b { color:#b8893b; font-weight:700; }
+table { width:100%; border-collapse:collapse; font-size:13px; background:rgba(0,0,0,.03);
+  border:1px solid rgba(0,0,0,.05); border-radius:12px; overflow:hidden; margin:10px 0; }
+th,td { padding:8px 10px; text-align:left; border-bottom:1px solid rgba(0,0,0,.04); }
+th { background:rgba(20,30,50,.06); color:#3a4048; font-weight:600; font-size:12px; }
 td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
-.up { color:#c98b7d; } .down { color:#8da894; }
-.note { color:#9a9aa4; font-size:12px; margin-top:8px; line-height:1.6; }
-.amberbox { font-size:13px; color:#c9a66b; background:linear-gradient(135deg,rgba(201,166,107,.13),rgba(201,166,107,.05));
-  border:1px solid rgba(201,166,107,.22); border-radius:12px; padding:12px 16px; margin:12px 0; line-height:1.6; }
-.ladder { margin:6px 0; padding:8px 10px; background:rgba(26,31,46,.55); border:1px solid rgba(255,255,255,.10);
+.up { color:#b8332a; } .down { color:#1a9e5a; }
+.note { color:#8a929c; font-size:12px; margin-top:8px; line-height:1.6; }
+.amberbox { font-size:13px; color:#b8893b; background:linear-gradient(135deg,rgba(184,137,59,.10),rgba(184,137,59,.04));
+  border:1px solid rgba(184,137,59,.18); border-radius:12px; padding:12px 16px; margin:12px 0; line-height:1.6; }
+.ladder { margin:6px 0; padding:8px 10px; background:rgba(0,0,0,.03); border:1px solid rgba(0,0,0,.08);
   border-radius:8px; font-size:13px; }
 .ladder .badge { display:inline-block; border-radius:6px; padding:1px 8px; margin-right:8px; font-weight:700; font-size:12px; }
-.ladder .b5 { background:rgba(220,38,38,.25); border:1px solid rgba(248,113,113,.5); color:#d6a89d; }
-.ladder .b4 { background:rgba(220,38,38,.18); border:1px solid rgba(248,113,113,.4); color:#d6a89d; }
-.ladder .b3 { background:rgba(201,166,107,.20); border:1px solid rgba(251,191,36,.45); color:#d8bd8a; }
-.ladder .b2 { background:rgba(201,166,107,.20); border:1px solid rgba(251,191,36,.45); color:#d8bd8a; }
-.ladder .b1 { background:rgba(120,137,162,.18); border:1px solid rgba(139,155,181,.45); color:#a7b4c9; }
-.namechip { display:inline-block; color:#e6ded6; margin:2px 6px 2px 0; font-size:13px; }
-.empty { color:#9a9aa4; text-align:center; padding:38px 0; font-size:14px; line-height:1.8; }
-.empty b { color:#c9a66b; }
-footer { margin-top:40px; padding-top:16px; border-top:1px solid rgba(255,255,255,.10);
-  font-size:12px; color:#9a9aa4; line-height:1.8; }
-a.inlink { color:#c9a66b; text-decoration:none; border:1px solid rgba(201,166,107,.5);
+.ladder .b5 { background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.35); color:#b8332a; }
+.ladder .b4 { background:rgba(184,51,42,.08); border:1px solid rgba(184,51,42,.30); color:#b8332a; }
+.ladder .b3 { background:rgba(184,137,59,.14); border:1px solid rgba(184,137,59,.40); color:#d8bd8a; }
+.ladder .b2 { background:rgba(184,137,59,.14); border:1px solid rgba(184,137,59,.40); color:#d8bd8a; }
+.ladder .b1 { background:rgba(90,107,128,.12); border:1px solid rgba(90,107,128,.35); color:#a7b4c9; }
+.namechip { display:inline-block; color:#3a4048; margin:2px 6px 2px 0; font-size:13px; }
+.empty { color:#8a929c; text-align:center; padding:38px 0; font-size:14px; line-height:1.8; }
+.empty b { color:#b8893b; }
+footer { margin-top:40px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08);
+  font-size:12px; color:#8a929c; line-height:1.8; }
+a.inlink { color:#b8893b; text-decoration:none; border:1px solid rgba(201,166,107,.5);
   border-radius:10px; padding:6px 14px; font-size:13px; font-weight:700; display:inline-block; margin:4px 6px 4px 0; }
 a.inlink:hover { background:rgba(201,166,107,.16); }
 .wrap.landing { max-width:880px; text-align:center; }
 .landing header h1 { font-size:34px; }
-.landing header p { margin:6px 0; color:#9a9aa4; font-size:14px; }
-.date { margin:18px 0 30px; font-size:13px; color:#c9a66b; letter-spacing:.5px; }
+.landing header p { margin:6px 0; color:#8a929c; font-size:14px; }
+.date { margin:18px 0 30px; font-size:13px; color:#b8893b; letter-spacing:.5px; }
 .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; text-align:left; }
-.card { display:block; text-decoration:none; color:#f0e6dd; background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
-  border:1px solid rgba(255,255,255,.10); border-radius:18px; padding:20px 18px;
-  box-shadow:0 4px 20px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.05); backdrop-filter:blur(10px); transition:.2s; }
-.card:hover { border-color:rgba(201,166,107,.45); transform:translateY(-2px); background:linear-gradient(135deg,rgba(201,166,107,.12),rgba(255,255,255,.03)); }
+.card { display:block; text-decoration:none; color:#23262b; background:#ffffff;
+  border:1px solid rgba(0,0,0,.08); border-radius:18px; padding:20px 18px;
+  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); transition:.2s; }
+.card:hover { border-color:rgba(184,137,59,.50); transform:translateY(-2px); background:linear-gradient(135deg,rgba(184,137,59,.08),rgba(255,255,255,.03)); }
 .card .ic { font-size:26px; }
-.card .t { font-size:17px; font-weight:700; margin:10px 0 6px; color:#f7f1ec; }
-.card .d { font-size:12.5px; color:#9a9aa4; line-height:1.6; }
-.hist { margin-top:30px; font-size:12.5px; color:#c9c3b8; }
-.hist a { color:#c9a66b; text-decoration:none; border:1px solid rgba(201,166,107,.4); border-radius:10px; padding:5px 12px; display:inline-block; margin:4px; }
-.foot { margin-top:42px; font-size:12px; color:#9a9aa4; line-height:1.8; }
+.card .t { font-size:17px; font-weight:700; margin:10px 0 6px; color:#1c2430; }
+.card .d { font-size:12.5px; color:#8a929c; line-height:1.6; }
+.hist { margin-top:30px; font-size:12.5px; color:#6b7280; }
+.hist a { color:#b8893b; text-decoration:none; border:1px solid rgba(201,166,107,.4); border-radius:10px; padding:5px 12px; display:inline-block; margin:4px; }
+.foot { margin-top:42px; font-size:12px; color:#8a929c; line-height:1.8; }
 .lhb { table-layout:fixed; }
 .lhb th, .lhb td { font-size:12.5px; vertical-align:top; }
-.lhb td.reason { color:#c9c3b8; width:150px; font-size:11.5px; line-height:1.4; }
+.lhb td.reason { color:#6b7280; width:150px; font-size:11.5px; line-height:1.4; }
 .lhb td.sec { font-size:12px; white-space:nowrap; }
 .hm { text-align:center; }
 .hm-high { color:#f2a65a; font-weight:800; }
-.hm-mid { color:#c9a66b; font-weight:700; }
+.hm-mid { color:#b8893b; font-weight:700; }
 .hm-low { color:#8a93a3; }
 .hmtags { margin-top:3px; }
-.hmtag { display:inline-block; background:rgba(201,139,125,.18); border:1px solid rgba(201,139,125,.4); color:#d6a89d; border-radius:10px; padding:1px 7px; font-size:10.5px; margin:2px 2px 0 0; }
-.toggle { color:#c9a66b; cursor:pointer; font-size:12px; user-select:none; }
+.hmtag { display:inline-block; background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.30); color:#b8332a; border-radius:10px; padding:1px 7px; font-size:10.5px; margin:2px 2px 0 0; }
+.toggle { color:#b8893b; cursor:pointer; font-size:12px; user-select:none; }
 .toggle:hover { text-decoration:underline; }
 .seats { display:flex; gap:24px; flex-wrap:wrap; padding:6px 4px; }
 .seats .buys, .seats .sells { flex:1; min-width:260px; }
 .seat-h { font-weight:700; margin-bottom:6px; font-size:13px; }
-.seat-h.up { color:#c98b7d; } .seat-h.down { color:#8da894; }
+.seat-h.up { color:#b8332a; } .seat-h.down { color:#1a9e5a; }
 .seats ul { list-style:none; margin:0; padding:0; }
-.seats li { display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px dashed rgba(255,255,255,.07); font-size:12px; }
-.seats li .nm { flex:1; color:#e6ded6; }
+.seats li { display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px dashed rgba(0,0,0,.04); font-size:12px; }
+.seats li .nm { flex:1; color:#3a4048; }
 .seats li .amt { font-variant-numeric:tabular-nums; font-weight:700; }
-tr.detail td { background:rgba(20,25,38,.85); }
+tr.detail td { background:rgba(0,0,0,.03); }
 """
 
 NAV = (f"<div class='topnav'>"
@@ -251,18 +251,18 @@ red = updown.get("CNT_RED", 0); grn = updown.get("CNT_GREEN", 0)
 zero = updown.get("CNT_ZERO", 0); tot = updown.get("CNT_TOTAL", 0)
 rp = lambda n: (n / tot * 100) if tot else 0
 bar_html = (f"<div class='bar'>"
-            f"<div style='background:linear-gradient(90deg,#b87064,#c98b7d);width:{rp(red):.1f}%'>"
+            f"<div style='background:linear-gradient(90deg,#b87064,#b8332a);width:{rp(red):.1f}%'>"
             f"涨 {red}<br><span style='font-size:10px;opacity:.9'>{rp(red):.1f}%</span></div>"
             f"<div style='background:linear-gradient(90deg,rgba(154,154,164,.7),rgba(154,154,164,.55));width:{rp(zero):.1f}%'>平 {zero}</div>"
-            f"<div style='background:linear-gradient(90deg,#7d9682,#8da894);width:{rp(grn):.1f}%'>"
+            f"<div style='background:linear-gradient(90deg,#7d9682,#1a9e5a);width:{rp(grn):.1f}%'>"
             f"跌 {grn}<br><span style='font-size:10px;opacity:.9'>{rp(grn):.1f}%</span></div></div>")
 
 chip_html = (f"<div class='chiprow'>"
              f"<div class='chip'><div class='ck'>涨停</div><div class='cv up'>{updown.get('CNT_REACH_UPLIMIT')}</div></div>"
              f"<div class='chip'><div class='ck'>跌停</div><div class='cv down'>{updown.get('CNT_REACH_DNLIMIT')}</div></div>"
-             f"<div class='chip'><div class='ck'>涨跌比</div><div class='cv' style='color:#c9a66b'>{updown.get('RATIO_UPDOWN')}</div></div>"
+             f"<div class='chip'><div class='ck'>涨跌比</div><div class='cv' style='color:#b8893b'>{updown.get('RATIO_UPDOWN')}</div></div>"
              f"<div class='chip'><div class='ck'>5日新高/低</div><div class='cv' style='color:#8b9bb5'>{updown.get('CNT_HIGH5')}/{updown.get('CNT_LOW5')}</div></div>"
-             f"<div class='chip'><div class='ck'>20日新高/低</div><div class='cv' style='color:#a899b3'>{updown.get('CNT_HIGH20')}/{updown.get('CNT_LOW20')}</div></div>"
+             f"<div class='chip'><div class='ck'>20日新高/低</div><div class='cv' style='color:#6b5b95'>{updown.get('CNT_HIGH20')}/{updown.get('CNT_LOW20')}</div></div>"
              f"<div class='chip'><div class='ck'>60日新高/低</div><div class='cv' style='color:#8aaab3'>{updown.get('CNT_HIGH60')}/{updown.get('CNT_LOW60')}</div></div>"
              f"</div>")
 
@@ -270,11 +270,11 @@ money = trade.get("MONEY"); avg5 = trade.get("MONEY_5DAVG"); avg20 = trade.get("
 ratio5 = trade.get("MONEY_5DAVG_RATIO")
 vol_label = "放量" if (ratio5 and float(ratio5) >= 100) else "缩量"
 vol_cls = "up" if (ratio5 and float(ratio5) >= 100) else "down"
-money_html = (f"<div class='amberbox' style='color:#f7f1ec'>"
-              f"<span style='font-size:13px;color:#e6ded6'>沪深京成交额</span> "
+money_html = (f"<div class='amberbox' style='color:#1c2430'>"
+              f"<span style='font-size:13px;color:#3a4048'>沪深京成交额</span> "
               f"<span style='font-size:20px;font-weight:700'>{fnum(money)} 亿</span> "
               f"<span class='{vol_cls}' style='font-weight:700'>{vol_label}</span>"
-              f"<div style='font-size:12px;color:#c9c3b8;margin-top:6px'>"
+              f"<div style='font-size:12px;color:#6b7280;margin-top:6px'>"
               f"5日均 {fnum(avg5)} 亿 ({ratio5}%) · "
               f"10日均 {fnum(trade.get('MONEY_10DAVG'))} 亿 ({trade.get('MONEY_10DAVG_RATIO')}%) · "
               f"20日均 {fnum(avg20)} 亿 ({trade.get('MONEY_20DAVG_RATIO')}%)</div></div>")
@@ -309,19 +309,19 @@ for n, a, b in rot_rows:
 rot_html += "</table>"
 
 # val_date 已在文件顶部按 --val-date / (DATE - 1) 计算
-val_html = (f"<div class='amberbox' style='color:#f7f1ec'><b style='color:#f7f1ec'>中证全指估值</b>（口径 {val_date}）："
+val_html = (f"<div class='amberbox' style='color:#1c2430'><b style='color:#1c2430'>中证全指估值</b>（口径 {val_date}）："
             f"PE_TTM <span style='font-size:16px;font-weight:700'>{val.get('PE_TTM')}</span> · "
             f"3年分位 <span class='up'>{val.get('PE_TTM_PCT_3Y')}%</span> · "
             f"5年分位 <span class='up'>{val.get('PE_TTM_PCT_5Y')}%</span> · "
             f"10年分位 <span class='up'>{val.get('PE_TTM_PCT_10Y')}%</span> "
-            f"<span style='color:#9a9aa4;font-size:12px'>(PB {val.get('PB_LF')} · 股息率 {val.get('DIV_TTM')}%)</span></div>")
+            f"<span style='color:#8a929c;font-size:12px'>(PB {val.get('PB_LF')} · 股息率 {val.get('DIV_TTM')}%)</span></div>")
 
-news_html = "<ul style='margin:0;padding-left:18px;color:#c9c3b8'>"
+news_html = "<ul style='margin:0;padding-left:18px;color:#6b7280'>"
 for it in news:
     impact = it.get("impact") or ""
     news_html += (f"<li style='margin:8px 0;line-height:1.55'>"
-                  f"<span style='color:#c9a66b;font-weight:700'>[{it.get('source','')}]</span> <b>{it.get('title','')}</b>"
-                  + (f"<br><span style='color:#9a9aa4;font-size:12px'>▸ 影响：{impact}</span>" if impact else "") + "</li>")
+                  f"<span style='color:#b8893b;font-weight:700'>[{it.get('source','')}]</span> <b>{it.get('title','')}</b>"
+                  + (f"<br><span style='color:#8a929c;font-size:12px'>▸ 影响：{impact}</span>" if impact else "") + "</li>")
 news_html += "</ul>"
 
 tech_defs = [
@@ -341,7 +341,7 @@ tech_defs = [
 ]
 tech_html = "<table><tr><th>指标</th><th class='num'>数值</th><th>专业解读</th></tr>"
 for n, v, d in tech_defs:
-    tech_html += f"<tr><td style='color:#9a9aa4;font-size:12px'>{n}</td><td class='num' style='font-weight:700;color:#f7f1ec'>{fnum(v)}</td><td style='color:#c9c3b8;font-size:12px'>{d}</td></tr>"
+    tech_html += f"<tr><td style='color:#8a929c;font-size:12px'>{n}</td><td class='num' style='font-weight:700;color:#1c2430'>{fnum(v)}</td><td style='color:#6b7280;font-size:12px'>{d}</td></tr>"
 tech_html += "</table>"
 
 review = (f"{vol_label}，{short_status(summ.get('SENTIMENT_STATUS'))}，{short_status(summ.get('STOCK_WIDTH_STATUS'))}，"
@@ -359,12 +359,12 @@ review_html = (f"<div class='amberbox'><div style='margin-bottom:8px'><b>📌 �
 market_overview_html = (
     f"<div class='section'><h2>📈 当日大盘概览 — {SNAP_DATE}（快照）</h2>"
     f"{idx_html}{bar_html}{chip_html}{money_html}"
-    f"<div class='note' style='color:#9a9aa4'>以上标签由 westock-mcp data_market_overview 按全市场量价/估值/风格自动生成（聚合/收盘口径 {SNAP_DATE}；估值口径滞后至 {val_date}）。</div>"
+    f"<div class='note' style='color:#8a929c'>以上标签由 westock-mcp data_market_overview 按全市场量价/估值/风格自动生成（聚合/收盘口径 {SNAP_DATE}；估值口径滞后至 {val_date}）。</div>"
     f"{tag_html}"
-    f"<div style='font-size:13px;font-weight:700;color:#f7f1ec;margin:14px 0 8px'>风格 / 规模</div>{rot_html}"
+    f"<div style='font-size:13px;font-weight:700;color:#1c2430;margin:14px 0 8px'>风格 / 规模</div>{rot_html}"
     f"{val_html}"
-    f"<div style='font-size:14px;font-weight:700;color:#f7f1ec;margin:14px 0 8px'>📰 当日要闻（{DATE}）</div>{news_html}"
-    f"<div style='font-size:14px;font-weight:700;color:#f7f1ec;margin:14px 0 8px'>🔧 技术摘要与解读</div>{tech_html}"
+    f"<div style='font-size:14px;font-weight:700;color:#1c2430;margin:14px 0 8px'>📰 当日要闻（{DATE}）</div>{news_html}"
+    f"<div style='font-size:14px;font-weight:700;color:#1c2430;margin:14px 0 8px'>🔧 技术摘要与解读</div>{tech_html}"
     f"{review_html}</div>")
 
 # ---------- 板块热度 ----------
@@ -392,9 +392,9 @@ for t in [4, 3, 2, 1]:
     else:
         names_html = "".join(f"<span class='namechip'>{n}</span>" for n, _ in names)
     ladder_html += (f"<div class='ladder'><span class='badge {tier_cls[t]}'>{tier_label[t]}</span>"
-                     f"<span style='color:#9a9aa4;font-size:11px'>({len(names)}只)</span>：{names_html}</div>")
+                     f"<span style='color:#8a929c;font-size:11px'>({len(names)}只)</span>：{names_html}</div>")
 leader_html = (f"<div class='section'><h2>👑 当日连板梯队（多口径）— {DATE}</h2>"
-               f"<div class='note' style='color:#9a9aa4'>口径：全市场连续涨停天数（westock-mcp tool_ranking limitup_days）。"
+               f"<div class='note' style='color:#8a929c'>口径：全市场连续涨停天数（westock-mcp tool_ranking limitup_days）。"
                f"共 {LIMITUP_TOTAL_TXT}{held_lu_txt}。</div>"
                f"{ladder_html}"
                f"<div class='note'>资金龙头 / 板块龙头（按龙虎榜净买排序）见下方龙虎榜速览与龙虎榜分析页。</div></div>")
@@ -438,7 +438,7 @@ portfolio_table = (f"<table><tr><th>名称</th><th class='num'>持仓</th><th cl
                    f"<th class='num'>天数</th></tr>{port_rows}</table>")
 portfolio_html = (f"<div class='section'><h2>💼 组合快照 — 实时市值 {fnum(tot_mv)} 元</h2>"
                   f"{portfolio_table}"
-                  f"<div class='amberbox' style='color:#f7f1ec'>组合浮动盈亏合计 "
+                  f"<div class='amberbox' style='color:#1c2430'>组合浮动盈亏合计 "
                   f"<b class='{'up' if tot_pnl>=0 else 'down'}'>{fnum(tot_pnl)} 元（{pct(tot_pnl_pct)}）</b>。"
                   f"重仓顺序：{top_holdings}。</div></div>")
 
@@ -487,7 +487,7 @@ def yyb_table(rows, n=25):
     h = ("<table><tr><th>游资席位</th><th>涉及个股</th><th class='num'>净买额(亿)</th></tr>")
     for r in rows[:n]:
         h += (f"<tr><td>{r['name']}</td>"
-              f"<td style='color:#c9c3b8;font-size:12px'>{r.get('stockName','')}</td>"
+              f"<td style='color:#6b7280;font-size:12px'>{r.get('stockName','')}</td>"
               f"<td class='num {cls(r.get('buyAmt'))}'>{yi(r.get('buyAmt'))}</td></tr>")
     h += "</table>"
     return h
@@ -497,9 +497,9 @@ def gslxw_table(rows, n=20):
     for r in rows[:n]:
         stocks = "、".join(s.get("name", "") for s in r.get("stockList", []))
         h += (f"<tr><td>{r['name']}</td>"
-              f"<td class='num' style='color:#c9a66b;font-weight:700'>{fnum(float(r.get('winRate',0))*100,1)}</td>"
+              f"<td class='num' style='color:#b8893b;font-weight:700'>{fnum(float(r.get('winRate',0))*100,1)}</td>"
               f"<td class='num {cls(r.get('netAmt'))}'>{yi(r.get('netAmt'))}</td>"
-              f"<td style='color:#c9c3b8;font-size:12px'>{stocks}</td></tr>")
+              f"<td style='color:#6b7280;font-size:12px'>{stocks}</td></tr>")
     h += "</table>"
     return h
 
@@ -577,7 +577,7 @@ gslmr_txt = (f"{gslmr[0]['name']}({yi(gslmr[0]['netAmt'])}亿) 等 {len(gslmr)} 
             f"当日龙虎榜细分（机构榜/共振/席位胜率）数据源未披露；龙虎榜全榜共 {len(lhb_all)} 只，见 lhb.html")
 lhb_summary = (
     f"<div class='section'><h2>🐉 龙虎榜速览 — {DATE}</h2>"
-    f"<div class='amberbox' style='color:#f7f1ec'>"
+    f"<div class='amberbox' style='color:#1c2430'>"
     f"<b>机构净买 TOP3</b>：{jg_top3}<br>"
     f"<b>游资净买 TOP 席位</b>：{yyb_top3}<br>"
     f"<b>连板高度</b>：{lhb_height}，共 {LIMITUP_TOTAL_TXT}<br>"
@@ -669,7 +669,7 @@ open(os.path.join(WEB, f"lhb_{DATE}.html"), "w", encoding="utf-8").write(
 status_body = (
     f"<header><h1>📋 状态报告</h1><p>{DATE} · 龙虎榜手动更新 + 全量数据刷新</p></header>"
     f"<div class='section'><h2>✅ 本轮完成情况</h2>"
-    f"<div class='amberbox' style='color:#f7f1ec'>"
+    f"<div class='amberbox' style='color:#1c2430'>"
     f"1. <b>龙虎榜数据</b>：通过 westock-mcp data_lhb 拉取 {DATE} 真实龙虎榜（机构榜 {len(jg)} 只、游资席位 {len(yyb)} 个、机构+游资共振 {len(gslmr)} 只、席位胜率 {len(gslxw)} 条；龙虎榜全榜上榜 {len(lhb_all)} 只）。"
     + (f"分项（机构榜/游资席位/共振/胜率）数据源当日未披露（均为空），已以龙虎榜全榜 {len(lhb_all)} 只兜底渲染 lhb.html / hotmoney.html。"
        if LHB_DETAIL_EMPTY else
@@ -706,22 +706,18 @@ _lhb_files.sort(reverse=True)
 lhb_archive_html = "".join(f"<a href='{fn}'>{dt}</a>" for dt, fn in _lhb_files)
 
 index_body = (
-    f"<header><h1>📊 A股量化助理 · 龙虎榜看板</h1>"
-    f"<p>大盘概览 · 龙虎榜 · 游资席位 · 状态报告</p></header>"
+    f"<header><h1>📊 龙虎榜 · 入口与归档</h1>"
+    f"<p>本页为龙虎榜板块的辅助入口，主看板请点击下方按钮。</p></header>"
     f"<div class='date'>数据口径：{DATE}（大盘概览快照 {SNAP_DATE} · 估值快照 {val_date}）</div>"
     f"<div class='grid'>"
+    f"<a class='card' href='lhb.html'><div class='ic'>🐉</div><div class='t'>龙虎榜主看板</div>"
+    f"<div class='d'>机构专用榜 / 机构+游资共振 / 席位胜率 / 申万一·二级板块与涨跌幅</div></a>"
     f"<a class='card' href='daily_overview.html'><div class='ic'>📈</div><div class='t'>每日总览</div>"
     f"<div class='d'>大盘 / 板块热度 / 连板梯队 / 龙虎榜速览</div></a>"
-    f""
-    f"<a class='card' href='lhb.html'><div class='ic'>🐉</div><div class='t'>龙虎榜分析</div>"
-    f"<div class='d'>机构专用榜 / 机构+游资共振 / 席位胜率</div></a>"
     f"<a class='card' href='hotmoney.html'><div class='ic'>🏦</div><div class='t'>游资看板</div>"
     f"<div class='d'>游资席位净买榜 TOP25 / 营业部胜率聚合</div></a>"
     f"<a class='card' href='status_{DATE}.html'><div class='ic'>📋</div><div class='t'>状态报告</div>"
     f"<div class='d'>本轮产出、文件清单与口径说明</div></a>"
-    f"<a class='card' href='2026-q2-industry-elite.html'><div class='ic'>🏆</div>"
-    f"<div class='t'>行业最强榜（全市场）</div>"
-    f"<div class='d'>全市场5544只中报股东全量解析：31个行业最强自然人/私募/公募各20名</div></a>"
     f"</div>"
     f"<div class='hist'><b>每日龙虎榜归档：</b>{lhb_archive_html}"
     f"<br><a href='../index.html'>← 返回 A股分析中心总门户</a></div>"
