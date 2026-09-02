@@ -40,10 +40,10 @@ def build_html(trend):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>A股板块强度 · 首页</title>
 <style>
-:root{--bg:#0b0f17;--panel:#121826;--panel2:#0e1420;--line:#1f2937;--txt:#e6edf3;
-  --mut:#8b98a9;--up:#e0483b;--down:#1a9e5a;--gold:#e8b339;--qc:#e0483b;--ch:#1a9e5a;--jc:#e8b339;--xp:#5b8def}
+:root{--bg:#f5f6f8;--panel:#ffffff;--panel2:#f0f2f5;--line:#e3e6ea;--txt:#23262b;
+  --mut:#6b7280;--up:#b8332a;--down:#1a9e5a;--gold:#b8893b;--qc:#b8332a;--ch:#1a9e5a;--jc:#b8893b;--xp:#3b6fd1}
 *{box-sizing:border-box}
-body{margin:0;background:linear-gradient(180deg,#0b0f17,#0a0d14);color:var(--txt);
+body{margin:0;background:linear-gradient(180deg,#f5f6f8,#eef0f3);color:var(--txt);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
   font-size:13px;padding:26px 30px 60px}
 h1{font-size:23px;margin:0 0 2px;letter-spacing:.5px}
