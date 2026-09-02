@@ -6,93 +6,93 @@
 <title>状态报告</title>
 <style>* { box-sizing: border-box; }
 body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
-  background:linear-gradient(135deg,#1a1f2e 0%,#232838 45%,#1a1f2e 100%); color:#f0e6dd; min-height:100vh; }
+  background:#f5f6f8; color:#23262b; min-height:100vh; }
 .wrap { max-width:1040px; margin:0 auto; padding:40px 20px 60px; }
 .topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
-  border-bottom:1px solid rgba(255,255,255,.10); }
-.topnav a { color:#c9a66b; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
-  border:1px solid rgba(201,166,107,.30); transition:.2s; }
-.topnav a:hover { background:rgba(201,166,107,.14); }
-header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#c9a66b,#c98b7d,#a899b3);
+  border-bottom:1px solid rgba(0,0,0,.08); }
+.topnav a { color:#b8893b; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(184,137,59,.35); transition:.2s; }
+.topnav a:hover { background:rgba(184,137,59,.10); }
+header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#b8893b,#b8332a,#6b5b95);
   -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
-header p { margin:4px 0; color:#9a9aa4; font-size:13px; line-height:1.6; }
-.meta { margin:14px 0 24px; font-size:12px; color:#c9c3b8; line-height:1.7; }
-.meta b { color:#c9a66b; }
-.section { background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
-  border:1px solid rgba(255,255,255,.10); border-radius:20px; padding:18px 20px; margin:0 0 22px;
-  box-shadow:0 4px 20px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.05); backdrop-filter:blur(10px); }
-.section h2 { font-size:17px; margin:0 0 14px; color:#f7f1ec; display:flex; align-items:center; gap:8px; }
-.section h2:before { content:""; width:4px; height:16px; background:#c9a66b; border-radius:3px; }
+header p { margin:4px 0; color:#8a929c; font-size:13px; line-height:1.6; }
+.meta { margin:14px 0 24px; font-size:12px; color:#6b7280; line-height:1.7; }
+.meta b { color:#b8893b; }
+.section { background:#ffffff;
+  border:1px solid rgba(0,0,0,.08); border-radius:20px; padding:18px 20px; margin:0 0 22px;
+  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); }
+.section h2 { font-size:17px; margin:0 0 14px; color:#1c2430; display:flex; align-items:center; gap:8px; }
+.section h2:before { content:""; width:4px; height:16px; background:#b8893b; border-radius:3px; }
 .idxrow { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px; }
-.idx { flex:1; min-width:200px; background:linear-gradient(135deg,rgba(185,116,104,.18),rgba(220,38,38,.06));
-  border:1px solid rgba(201,139,125,.36); border-radius:14px; padding:13px 10px; text-align:center;
-  box-shadow:0 4px 14px rgba(0,0,0,.18), 0 0 16px rgba(201,139,125,.12); }
-.idx .k { font-size:11px; color:#c9c3b8; letter-spacing:.3px; }
-.idx .v { font-size:22px; font-weight:800; color:#f7f1ec; margin:5px 0 2px; }
+.idx { flex:1; min-width:200px; background:linear-gradient(135deg,rgba(184,51,42,.08),rgba(184,51,42,.03));
+  border:1px solid rgba(184,51,42,.20); border-radius:14px; padding:13px 10px; text-align:center;
+  box-shadow:0 1px 3px rgba(184,51,42,.06); }
+.idx .k { font-size:11px; color:#6b7280; letter-spacing:.3px; }
+.idx .v { font-size:22px; font-weight:800; color:#1c2430; margin:5px 0 2px; }
 .idx .c { font-size:13px; font-weight:700; }
-.idx .hl { font-size:10px; color:#9a9aa4; margin-top:4px; }
+.idx .hl { font-size:10px; color:#8a929c; margin-top:4px; }
 .bar { display:flex; height:34px; border-radius:8px; overflow:hidden; margin:10px 0; font-size:12px;
-  color:#f7f1ec; text-align:center; line-height:34px; box-shadow:0 2px 6px rgba(0,0,0,.2); }
+  color:#ffffff; text-align:center; line-height:34px; box-shadow:0 2px 6px rgba(0,0,0,.12); }
 .chiprow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
-.chip { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:12px;
-  padding:10px 6px; text-align:center; min-width:74px; backdrop-filter:blur(6px); box-shadow:0 2px 10px rgba(0,0,0,.12); }
-.chip .ck { font-size:10px; color:#9a9aa4; }
+.chip { background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06); border-radius:12px;
+  padding:10px 6px; text-align:center; min-width:74px; backdrop-filter:blur(6px); box-shadow:0 1px 3px rgba(20,30,50,.04); }
+.chip .ck { font-size:10px; color:#8a929c; }
 .chip .cv { font-size:16px; font-weight:800; margin-top:3px; }
 .tag { display:inline-block; border-radius:20px; padding:3px 11px; font-size:12px; margin:3px 4px 3px 0;
   background:#eef2f8; color:#33414f; }
 .tag.hot { background:#fdeceb; color:#d8392b; }
 .tag.cold { background:#e9f6ef; color:#1a9e5a; }
-.pill { display:inline-block; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
-  border-radius:20px; padding:4px 11px; font-size:12px; color:#e6ded6; margin:3px 4px 3px 0; cursor:help; }
-.pill b { color:#c9a66b; font-weight:700; }
-table { width:100%; border-collapse:collapse; font-size:13px; background:rgba(26,31,46,.55);
-  border:1px solid rgba(255,255,255,.08); border-radius:12px; overflow:hidden; margin:10px 0; }
-th,td { padding:8px 10px; text-align:left; border-bottom:1px solid rgba(255,255,255,.07); }
-th { background:rgba(30,41,59,.8); color:#e6ded6; font-weight:600; font-size:12px; }
+.pill { display:inline-block; background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06);
+  border-radius:20px; padding:4px 11px; font-size:12px; color:#3a4048; margin:3px 4px 3px 0; cursor:help; }
+.pill b { color:#b8893b; font-weight:700; }
+table { width:100%; border-collapse:collapse; font-size:13px; background:rgba(0,0,0,.03);
+  border:1px solid rgba(0,0,0,.05); border-radius:12px; overflow:hidden; margin:10px 0; }
+th,td { padding:8px 10px; text-align:left; border-bottom:1px solid rgba(0,0,0,.04); }
+th { background:rgba(20,30,50,.06); color:#3a4048; font-weight:600; font-size:12px; }
 td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
-.up { color:#c98b7d; } .down { color:#8da894; }
-.note { color:#9a9aa4; font-size:12px; margin-top:8px; line-height:1.6; }
-.amberbox { font-size:13px; color:#c9a66b; background:linear-gradient(135deg,rgba(201,166,107,.13),rgba(201,166,107,.05));
-  border:1px solid rgba(201,166,107,.22); border-radius:12px; padding:12px 16px; margin:12px 0; line-height:1.6; }
-.ladder { margin:6px 0; padding:8px 10px; background:rgba(26,31,46,.55); border:1px solid rgba(255,255,255,.10);
+.up { color:#b8332a; } .down { color:#1a9e5a; }
+.note { color:#8a929c; font-size:12px; margin-top:8px; line-height:1.6; }
+.amberbox { font-size:13px; color:#b8893b; background:linear-gradient(135deg,rgba(184,137,59,.10),rgba(184,137,59,.04));
+  border:1px solid rgba(184,137,59,.18); border-radius:12px; padding:12px 16px; margin:12px 0; line-height:1.6; }
+.ladder { margin:6px 0; padding:8px 10px; background:rgba(0,0,0,.03); border:1px solid rgba(0,0,0,.08);
   border-radius:8px; font-size:13px; }
 .ladder .badge { display:inline-block; border-radius:6px; padding:1px 8px; margin-right:8px; font-weight:700; font-size:12px; }
-.ladder .b5 { background:rgba(220,38,38,.25); border:1px solid rgba(248,113,113,.5); color:#d6a89d; }
-.ladder .b4 { background:rgba(220,38,38,.18); border:1px solid rgba(248,113,113,.4); color:#d6a89d; }
-.ladder .b3 { background:rgba(201,166,107,.20); border:1px solid rgba(251,191,36,.45); color:#d8bd8a; }
-.ladder .b2 { background:rgba(201,166,107,.20); border:1px solid rgba(251,191,36,.45); color:#d8bd8a; }
-.ladder .b1 { background:rgba(120,137,162,.18); border:1px solid rgba(139,155,181,.45); color:#a7b4c9; }
-.namechip { display:inline-block; color:#e6ded6; margin:2px 6px 2px 0; font-size:13px; }
-.empty { color:#9a9aa4; text-align:center; padding:38px 0; font-size:14px; line-height:1.8; }
-.empty b { color:#c9a66b; }
-footer { margin-top:40px; padding-top:16px; border-top:1px solid rgba(255,255,255,.10);
-  font-size:12px; color:#9a9aa4; line-height:1.8; }
-a.inlink { color:#c9a66b; text-decoration:none; border:1px solid rgba(201,166,107,.5);
+.ladder .b5 { background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.35); color:#b8332a; }
+.ladder .b4 { background:rgba(184,51,42,.08); border:1px solid rgba(184,51,42,.30); color:#b8332a; }
+.ladder .b3 { background:rgba(184,137,59,.14); border:1px solid rgba(184,137,59,.40); color:#d8bd8a; }
+.ladder .b2 { background:rgba(184,137,59,.14); border:1px solid rgba(184,137,59,.40); color:#d8bd8a; }
+.ladder .b1 { background:rgba(90,107,128,.12); border:1px solid rgba(90,107,128,.35); color:#a7b4c9; }
+.namechip { display:inline-block; color:#3a4048; margin:2px 6px 2px 0; font-size:13px; }
+.empty { color:#8a929c; text-align:center; padding:38px 0; font-size:14px; line-height:1.8; }
+.empty b { color:#b8893b; }
+footer { margin-top:40px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08);
+  font-size:12px; color:#8a929c; line-height:1.8; }
+a.inlink { color:#b8893b; text-decoration:none; border:1px solid rgba(201,166,107,.5);
   border-radius:10px; padding:6px 14px; font-size:13px; font-weight:700; display:inline-block; margin:4px 6px 4px 0; }
 a.inlink:hover { background:rgba(201,166,107,.16); }
 .wrap.landing { max-width:880px; text-align:center; }
 .landing header h1 { font-size:34px; }
-.landing header p { margin:6px 0; color:#9a9aa4; font-size:14px; }
-.date { margin:18px 0 30px; font-size:13px; color:#c9a66b; letter-spacing:.5px; }
+.landing header p { margin:6px 0; color:#8a929c; font-size:14px; }
+.date { margin:18px 0 30px; font-size:13px; color:#b8893b; letter-spacing:.5px; }
 .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; text-align:left; }
-.card { display:block; text-decoration:none; color:#f0e6dd; background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
-  border:1px solid rgba(255,255,255,.10); border-radius:18px; padding:20px 18px;
-  box-shadow:0 4px 20px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.05); backdrop-filter:blur(10px); transition:.2s; }
-.card:hover { border-color:rgba(201,166,107,.45); transform:translateY(-2px); background:linear-gradient(135deg,rgba(201,166,107,.12),rgba(255,255,255,.03)); }
+.card { display:block; text-decoration:none; color:#23262b; background:#ffffff;
+  border:1px solid rgba(0,0,0,.08); border-radius:18px; padding:20px 18px;
+  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); transition:.2s; }
+.card:hover { border-color:rgba(184,137,59,.50); transform:translateY(-2px); background:linear-gradient(135deg,rgba(184,137,59,.08),rgba(255,255,255,.03)); }
 .card .ic { font-size:26px; }
-.card .t { font-size:17px; font-weight:700; margin:10px 0 6px; color:#f7f1ec; }
-.card .d { font-size:12.5px; color:#9a9aa4; line-height:1.6; }
-.hist { margin-top:30px; font-size:12.5px; color:#c9c3b8; }
-.hist a { color:#c9a66b; text-decoration:none; border:1px solid rgba(201,166,107,.4); border-radius:10px; padding:5px 12px; display:inline-block; margin:4px; }
-.foot { margin-top:42px; font-size:12px; color:#9a9aa4; line-height:1.8; }
+.card .t { font-size:17px; font-weight:700; margin:10px 0 6px; color:#1c2430; }
+.card .d { font-size:12.5px; color:#8a929c; line-height:1.6; }
+.hist { margin-top:30px; font-size:12.5px; color:#6b7280; }
+.hist a { color:#b8893b; text-decoration:none; border:1px solid rgba(201,166,107,.4); border-radius:10px; padding:5px 12px; display:inline-block; margin:4px; }
+.foot { margin-top:42px; font-size:12px; color:#8a929c; line-height:1.8; }
 </style>
 </head>
 <body>
 <div class='wrap'>
 <div class='topnav'>
 <a href='daily_overview.html'>每日总览</a>
-<a href='portfolio.html'>组合总看板</a>
-<a href='portfolio_analysis.html'>组合分析</a>
+
+
 <a href='lhb.html'>龙虎榜分析</a>
 <a href='hotmoney.html'>游资看板</a>
 <a href='status_2026-08-27.html'>状态报告</a>
@@ -104,15 +104,15 @@ a.inlink:hover { background:rgba(201,166,107,.16); }
 </header>
 <div class='section'>
 <h2>✅ 本轮完成情况</h2>
-<div class='amberbox' style='color:#f7f1ec'>1. <b>龙虎榜数据</b>：通过 westock-mcp data_lhb 拉取 2026-08-27 真实龙虎榜（机构榜 37 只、游资席位 99 个、机构+游资共振 31 只、席位胜率 22 条），已渲染 lhb.html（机构榜/共振/胜率）与 hotmoney.html（席位净买榜/胜率）。<br>2. <b>大盘/板块/连板刷新</b>：data_market_overview(2026-08-27)、data_hot(board)、tool_ranking(limitup_days) 全部更新为 2026-08-27（估值口径 2026-08-26）。<br>3. <b>组合行情</b>：9 只持仓 2026-08-27 实时市值 335,403.00 元，浮动盈亏 -7.75%。<br>4. <b>推送</b>：本地已生成 8 个页面（含导航 index.html、龙虎榜归档页 lhb_2026-08-27.html），待经 GitHub 连接器推送至 dujoer/stocks 的 web/ 目录（main 分支，需仓库写权限）。注：早期 08-14 窗口收益/共振/Alpha 回测为远程分析页，本地未保留，本系统以龙虎榜机构榜、共振、席位胜率为核心。</div>
+<div class='amberbox' style='color:#1c2430'>1. <b>龙虎榜数据</b>：通过 westock-mcp data_lhb 拉取 2026-08-27 真实龙虎榜（机构榜 37 只、游资席位 99 个、机构+游资共振 31 只、席位胜率 22 条），已渲染 lhb.html（机构榜/共振/胜率）与 hotmoney.html（席位净买榜/胜率）。<br>2. <b>大盘/板块/连板刷新</b>：data_market_overview(2026-08-27)、data_hot(board)、tool_ranking(limitup_days) 全部更新为 2026-08-27（估值口径 2026-08-26）。<br>4. <b>推送</b>：本地已生成 8 个页面（含导航 index.html、龙虎榜归档页 lhb_2026-08-27.html），待经 GitHub 连接器推送至 dujoer/stocks 的 web/ 目录（main 分支，需仓库写权限）。注：早期 08-14 窗口收益/共振/Alpha 回测为远程分析页，本地未保留，本系统以龙虎榜机构榜、共振、席位胜率为核心。</div>
 </div>
 <div class='section'>
 <h2>📁 产出文件</h2>
 <div class='chiprow'>
 <span class='pill'>index.html</span>
 <span class='pill'>daily_overview.html</span>
-<span class='pill'>portfolio.html</span>
-<span class='pill'>portfolio_analysis.html</span>
+
+
 <span class='pill'>lhb.html</span>
 <span class='pill'>hotmoney.html</span>
 <span class='pill'>lhb_2026-08-27.html</span>
