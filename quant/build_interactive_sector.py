@@ -22,17 +22,17 @@ HTML = """<!DOCTYPE html>
   <title>A股板块强度表 - __DATE__</title>
   <style>
     :root {
-      --bg: #0d1117; --panel: #161b22; --border: #30363d;
-      --text: #c9d1d9; --muted: #8b949e;
-      --up: #d8392b; --down: #1a9e5a; --accent: #f0883e;
-      --jc: #ff7b72; --xp: #79c0ff; --qz: #d2a8ff; --ch: #ffa657;
+      --bg: #f6f8fa; --panel: #ffffff; --border: #d0d7de;
+      --text: #1f2328; --muted: #656d76;
+      --up: #b8332a; --down: #1a9e5a; --accent: #b8893b;
+      --jc: #b8332a; --xp: #0969da; --qz: #8250df; --ch: #b8893b;
       --row-hover: rgba(240,136,62,0.06);
     }
     * { box-sizing: border-box; }
     body { margin:0; padding:24px; background:var(--bg); color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; font-size:13px; }
     .container { max-width:1240px; margin:0 auto; }
-    h1 { font-size:20px; margin:0 0 6px; color:#f0f6fc; }
+    h1 { font-size:20px; margin:0 0 6px; color:#1f2328; }
     .subtitle { color:var(--muted); margin-bottom:16px; }
     .rule { background:var(--panel); border:1px solid var(--border); border-radius:8px;
       padding:12px 16px; margin-bottom:16px; line-height:1.8; }
@@ -45,7 +45,7 @@ HTML = """<!DOCTYPE html>
     .toolbar .grp { display:flex; align-items:center; gap:6px; }
     .toolbar label { color:var(--muted); font-size:12px; white-space:nowrap; }
     .toolbar input, .toolbar select {
-      background:#0d1117; color:var(--text); border:1px solid var(--border);
+      background:#f6f8fa; color:var(--text); border:1px solid var(--border);
       border-radius:6px; padding:6px 9px; font-size:13px; outline:none; }
     .toolbar input:focus, .toolbar select:focus { border-color:var(--accent); }
     .toolbar #search { min-width:180px; }
@@ -58,9 +58,9 @@ HTML = """<!DOCTYPE html>
     .tablewrap { background:var(--panel); border:1px solid var(--border); border-radius:8px; overflow:auto; max-height:74vh; }
     table { width:100%; border-collapse:collapse; }
     th, td { padding:8px 10px; text-align:right; border-bottom:1px solid var(--border); white-space:nowrap; }
-    thead th { background:#21262d; color:#f0f6fc; font-weight:600; position:sticky; top:0; z-index:2;
+    thead th { background:#f6f8fa; color:#1f2328; font-weight:600; position:sticky; top:0; z-index:2;
       cursor:pointer; user-select:none; }
-    thead th:hover { background:#2d333b; }
+    thead th:hover { background:#eaeef2; }
     thead th .arrow { color:var(--accent); font-size:11px; margin-left:3px; }
     thead th.nosort { cursor:default; }
     th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align:left; }
@@ -68,7 +68,7 @@ HTML = """<!DOCTYPE html>
     .idx { color:var(--muted); width:42px; }
     .name { font-weight:500; }
     .kind { display:inline-block; margin-left:6px; padding:1px 5px; border-radius:3px;
-      background:#30363d; color:var(--muted); font-size:11px; font-weight:normal; }
+      background:#d0d7de; color:var(--muted); font-size:11px; font-weight:normal; }
     .money { color:var(--text); }
     .up { color:var(--up); } .down { color:var(--down); }
     .strength { font-weight:700; position:relative; }
