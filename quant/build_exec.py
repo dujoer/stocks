@@ -24,61 +24,61 @@ WEB = os.path.join(ROOT, "web")
 
 CSS = """* { box-sizing: border-box; }
 body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
-  background:linear-gradient(135deg,#1a1f2e 0%,#232838 45%,#1a1f2e 100%); color:#f0e6dd; min-height:100vh; }
+  background:#f5f6f8; color:#23262b; min-height:100vh; }
 .wrap { max-width:1180px; margin:0 auto; padding:40px 20px 60px; }
 .topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
-  border-bottom:1px solid rgba(255,255,255,.10); }
-.topnav a { color:#c9a66b; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
-  border:1px solid rgba(201,166,107,.30); transition:.2s; }
-.topnav a:hover { background:rgba(201,166,107,.14); }
-header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#c9a66b,#c98b7d,#a899b3);
+  border-bottom:1px solid rgba(0,0,0,.08); }
+.topnav a { color:#b8893b; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(184,137,59,.35); transition:.2s; }
+.topnav a:hover { background:rgba(184,137,59,.10); }
+header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#b8893b,#b8332a,#6b5b95);
   -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
-header p { margin:4px 0; color:#9a9aa4; font-size:13px; line-height:1.6; }
-.meta { margin:14px 0 24px; font-size:12px; color:#c9c3b8; line-height:1.7; }
-.meta b { color:#c9a66b; }
-.section { background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
-  border:1px solid rgba(255,255,255,.10); border-radius:20px; padding:18px 20px; margin:0 0 22px;
-  box-shadow:0 4px 20px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.05); backdrop-filter:blur(10px); }
-.section h2 { font-size:17px; margin:0 0 14px; color:#f7f1ec; display:flex; align-items:center; gap:8px; }
-.section h2:before { content:""; width:4px; height:16px; background:#c9a66b; border-radius:3px; }
+header p { margin:4px 0; color:#8a929c; font-size:13px; line-height:1.6; }
+.meta { margin:14px 0 24px; font-size:12px; color:#6b7280; line-height:1.7; }
+.meta b { color:#b8893b; }
+.section { background:#ffffff;
+  border:1px solid rgba(0,0,0,.08); border-radius:20px; padding:18px 20px; margin:0 0 22px;
+  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); }
+.section h2 { font-size:17px; margin:0 0 14px; color:#1c2430; display:flex; align-items:center; gap:8px; }
+.section h2:before { content:""; width:4px; height:16px; background:#b8893b; border-radius:3px; }
 .idxrow { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px; }
-.idx { flex:1; min-width:168px; background:linear-gradient(135deg,rgba(185,116,104,.18),rgba(220,38,38,.06));
-  border:1px solid rgba(201,139,125,.36); border-radius:14px; padding:13px 10px; text-align:center;
-  box-shadow:0 4px 14px rgba(0,0,0,.18), 0 0 16px rgba(201,139,125,.12); }
-.idx .k { font-size:11px; color:#c9c3b8; letter-spacing:.3px; }
-.idx .v { font-size:22px; font-weight:800; color:#f7f1ec; margin:5px 0 2px; }
-.idx .hl { font-size:10px; color:#9a9aa4; margin-top:4px; }
+.idx { flex:1; min-width:168px; background:linear-gradient(135deg,rgba(184,51,42,.08),rgba(184,51,42,.03));
+  border:1px solid rgba(184,51,42,.20); border-radius:14px; padding:13px 10px; text-align:center;
+  box-shadow:0 1px 3px rgba(184,51,42,.06); }
+.idx .k { font-size:11px; color:#6b7280; letter-spacing:.3px; }
+.idx .v { font-size:22px; font-weight:800; color:#1c2430; margin:5px 0 2px; }
+.idx .hl { font-size:10px; color:#8a929c; margin-top:4px; }
 .chiprow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
-.chip { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:12px;
-  padding:10px 8px; text-align:center; min-width:96px; backdrop-filter:blur(6px); box-shadow:0 2px 10px rgba(0,0,0,.12); }
-.chip .ck { font-size:10px; color:#9a9aa4; }
+.chip { background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06); border-radius:12px;
+  padding:10px 8px; text-align:center; min-width:96px; backdrop-filter:blur(6px); box-shadow:0 1px 3px rgba(20,30,50,.04); }
+.chip .ck { font-size:10px; color:#8a929c; }
 .chip .cv { font-size:15px; font-weight:800; margin-top:3px; }
 .chip .cs { font-size:10px; margin-top:2px; }
-table { width:100%; border-collapse:collapse; font-size:13px; background:rgba(26,31,46,.55);
-  border:1px solid rgba(255,255,255,.08); border-radius:12px; overflow:hidden; margin:10px 0; }
-th,td { padding:8px 10px; text-align:left; border-bottom:1px solid rgba(255,255,255,.07); }
-th { background:rgba(30,41,59,.8); color:#e6ded6; font-weight:600; font-size:12px; }
+table { width:100%; border-collapse:collapse; font-size:13px; background:rgba(0,0,0,.03);
+  border:1px solid rgba(0,0,0,.05); border-radius:12px; overflow:hidden; margin:10px 0; }
+th,td { padding:8px 10px; text-align:left; border-bottom:1px solid rgba(0,0,0,.04); }
+th { background:rgba(20,30,50,.06); color:#3a4048; font-weight:600; font-size:12px; }
 td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
 tr:last-child td { border-bottom:none; }
-.up { color:#e0705f; } .down { color:#7fb894; }
-.buy { color:#e0705f; font-weight:700; } .sell { color:#7fb894; font-weight:700; }
+.up { color:#d8392b; } .down { color:#1a9e5a; }
+.buy { color:#d8392b; font-weight:700; } .sell { color:#1a9e5a; font-weight:700; }
 .badge-b { display:inline-block; background:rgba(224,112,95,.16); border:1px solid rgba(224,112,95,.4);
-  color:#e0705f; border-radius:20px; padding:2px 9px; font-size:11px; font-weight:700; }
+  color:#d8392b; border-radius:20px; padding:2px 9px; font-size:11px; font-weight:700; }
 .badge-s { display:inline-block; background:rgba(127,184,148,.16); border:1px solid rgba(127,184,148,.4);
-  color:#7fb894; border-radius:20px; padding:2px 9px; font-size:11px; font-weight:700; }
+  color:#1a9e5a; border-radius:20px; padding:2px 9px; font-size:11px; font-weight:700; }
 .tabs { display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px; }
-.tab { cursor:pointer; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
-  color:#c9c3b8; border-radius:20px; padding:6px 14px; font-size:12.5px; transition:.18s; user-select:none; }
-.tab:hover { background:rgba(201,166,107,.14); color:#f0e6dd; }
-.tab.on { background:rgba(201,166,107,.22); border-color:rgba(201,166,107,.55); color:#f7f1ec; font-weight:700; }
+.tab { cursor:pointer; background:rgba(0,0,0,.04); border:1px solid rgba(0,0,0,.06);
+  color:#6b7280; border-radius:20px; padding:6px 14px; font-size:12.5px; transition:.18s; user-select:none; }
+.tab:hover { background:rgba(184,137,59,.10); color:#23262b; }
+.tab.on { background:rgba(184,137,59,.18); border-color:rgba(184,137,59,.50); color:#1c2430; font-weight:700; }
 .filters { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 10px; align-items:center; }
-.filters .lb { font-size:12px; color:#9a9aa4; margin-right:2px; }
-.note { color:#9a9aa4; font-size:12px; margin-top:8px; line-height:1.65; }
+.filters .lb { font-size:12px; color:#8a929c; margin-right:2px; }
+.note { color:#8a929c; font-size:12px; margin-top:8px; line-height:1.65; }
 .scroll { max-height:620px; overflow:auto; border-radius:12px; }
 .scroll table { margin:0; }
 .scroll thead th { position:sticky; top:0; z-index:2; }
 .hide { display:none; }
-footer { margin-top:34px; padding-top:16px; border-top:1px solid rgba(255,255,255,.10);
+footer { margin-top:34px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08);
   font-size:12px; color:#7b8794; line-height:1.8; }"""
 
 JS = """
@@ -162,7 +162,7 @@ def main():
 
     chips = "\n".join(
         f"<div class='chip'><div class='ck'>{k}</div>"
-        f"<div class='cv'>{wan(v['b']+v['s'])}<span style='font-size:10px;color:#9a9aa4'> 万</span></div>"
+        f"<div class='cv'>{wan(v['b']+v['s'])}<span style='font-size:10px;color:#8a929c'> 万</span></div>"
         f"<div class='cs'><span class='buy'>+{wan(v['b'])}</span> / <span class='sell'>-{wan(v['s'])}</span></div></div>"
         for k, v in sw1_sorted
     )
@@ -195,15 +195,15 @@ def main():
             mgr = f"<td>{r['manager']}</td>" if show_manager else ""
             out.append(
                 f"<tr data-dir='{'b' if r['dir']=='增持' else 's'}'>"
-                f"<td><b>{r['name']}</b></td><td style='color:#9a9aa4;font-size:12px'>{r['code']}</td>"
+                f"<td><b>{r['name']}</b></td><td style='color:#8a929c;font-size:12px'>{r['code']}</td>"
                 f"<td>{r.get('sw1') or '—'}</td>"
-                f"<td style='color:#c9c3b8;font-size:12px'>{r.get('sw2') or '—'}</td>"
+                f"<td style='color:#6b7280;font-size:12px'>{r.get('sw2') or '—'}</td>"
                 f"{mgr}"
                 f"<td style='text-align:center'>{dirb}</td>"
                 f"<td class='num {('buy' if r['dir']=='增持' else 'sell')}'>{shares_wan(r['shares'])}</td>"
                 f"<td class='num'>{r['price']:.2f}</td>"
                 f"<td class='num {('buy' if r['dir']=='增持' else 'sell')}'>{wan(r['amount'])}</td>"
-                f"<td style='color:#c9c3b8;font-size:12px'>{fmt_date(r['declare'])}</td>"
+                f"<td style='color:#6b7280;font-size:12px'>{fmt_date(r['declare'])}</td>"
                 f"<td class='num {pct_cls(r.get('chgPct'))}'>{pct_txt(r.get('chgPct'))}</td></tr>")
         return "\n".join(out)
 
@@ -228,13 +228,13 @@ def main():
         net_cls = "buy" if a["net"] > 0 else ("sell" if a["net"] < 0 else "")
         agg_rows.append(
             f"<tr data-dir='{'b' if a['net']>0 else 's'}'>"
-            f"<td><b>{a['name']}</b></td><td style='color:#9a9aa4;font-size:12px'>{a['code']}</td>"
+            f"<td><b>{a['name']}</b></td><td style='color:#8a929c;font-size:12px'>{a['code']}</td>"
             f"<td>{a['sw1'] or '—'}</td>"
-            f"<td style='color:#c9c3b8;font-size:12px'>{a['sw2'] or '—'}</td>"
+            f"<td style='color:#6b7280;font-size:12px'>{a['sw2'] or '—'}</td>"
             f"<td class='num'>{a['n']}</td>"
             f"<td class='num buy'>{a['b']}</td><td class='num sell'>{a['s']}</td>"
             f"<td class='num {net_cls}'>{wan(a['net'])}</td>"
-            f"<td style='color:#c9c3b8;font-size:12px'>{fmt_date(a['last'])}</td>"
+            f"<td style='color:#6b7280;font-size:12px'>{fmt_date(a['last'])}</td>"
             f"<td class='num {pct_cls(a['chgPct'])}'>{pct_txt(a['chgPct'])}</td></tr>")
     t_agg = "\n".join(agg_rows)
 
