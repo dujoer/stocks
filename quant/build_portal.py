@@ -58,10 +58,12 @@ def freshness(d):
 lhb_d, lhb_f = latest(r"^lhb_(\d{4}-\d{2}-\d{2})\.html$", WEB)
 sec_d, sec_f = latest(r"^sector-strength-(\d{8})\.html$", WEB)
 psy_d, psy_f = latest(r"^crowd-psychology-risk-radar-(\d{8})\.html$", MT)
+exec_d, exec_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "exec_chg"))
 
 lhb_txt, lhb_cls = freshness(lhb_d)
 sec_txt, sec_cls = freshness(sec_d)
 psy_txt, psy_cls = freshness(psy_d)
+exec_txt, exec_cls = freshness(exec_d)
 
 def fmt(d):
     return d.strftime("%Y-%m-%d") if d else "—"
@@ -75,6 +77,11 @@ cards = [
         "ic": "🐉", "t": "龙虎榜主看板", "href": "web/index.html",
         "d": "大盘概览 / 板块热度 / 连板梯队 / 龙虎榜机构榜·共振·席位胜率",
         "date": fmt(lhb_d), "fresh": badge(lhb_cls, lhb_txt),
+    },
+    {
+        "ic": "💼", "t": "高管增减持（董监高）", "href": "web/exec.html",
+        "d": "全市场董监高持股变动：增持/减持明细与金额、申万行业分布、个股聚合净额",
+        "date": fmt(exec_d), "fresh": badge(exec_cls, exec_txt),
     },
     {
         "ic": "🔥", "t": "板块强度", "href": "web/sector-strength-index.html",
@@ -164,7 +171,7 @@ footer {{ margin-top:48px; padding-top:18px; border-top:1px solid #e3e7ec;
 <div class='wrap'>
 <header class='top'>
   <h1>A股分析中心 · 总门户</h1>
-  <div class='sub'>龙虎榜主看板 · 板块强度 · 群体心理风险雷达 · 行业最强榜</div>
+  <div class='sub'>龙虎榜主看板 · 高管增减持 · 板块强度 · 群体心理风险雷达 · 行业最强榜</div>
   <div class='updated'>门户重建于 {TODAY.strftime('%Y-%m-%d')} · 各卡片标注对应子系统的数据最新日期与新鲜度</div>
 </header>
 
@@ -192,4 +199,4 @@ footer {{ margin-top:48px; padding-top:18px; border-top:1px solid #e3e7ec;
 with open(OUT, "w", encoding="utf-8") as f:
     f.write(html)
 print(f"OK: 总门户已生成 -> {OUT}")
-print(f"    龙虎榜={fmt(lhb_d)} | 板块强度={fmt(sec_d)} | 心理雷达={fmt(psy_d)}")
+print(f"    龙虎榜={fmt(lhb_d)} | 高管增减持={fmt(exec_d)} | 板块强度={fmt(sec_d)} | 心理雷达={fmt(psy_d)}")
