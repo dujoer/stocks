@@ -144,6 +144,27 @@ a.inlink:hover { background:rgba(201,166,107,.16); }
 .hist { margin-top:30px; font-size:12.5px; color:#c9c3b8; }
 .hist a { color:#c9a66b; text-decoration:none; border:1px solid rgba(201,166,107,.4); border-radius:10px; padding:5px 12px; display:inline-block; margin:4px; }
 .foot { margin-top:42px; font-size:12px; color:#9a9aa4; line-height:1.8; }
+.lhb { table-layout:fixed; }
+.lhb th, .lhb td { font-size:12.5px; vertical-align:top; }
+.lhb td.reason { color:#c9c3b8; width:150px; font-size:11.5px; line-height:1.4; }
+.lhb td.sec { font-size:12px; white-space:nowrap; }
+.hm { text-align:center; }
+.hm-high { color:#f2a65a; font-weight:800; }
+.hm-mid { color:#c9a66b; font-weight:700; }
+.hm-low { color:#8a93a3; }
+.hmtags { margin-top:3px; }
+.hmtag { display:inline-block; background:rgba(201,139,125,.18); border:1px solid rgba(201,139,125,.4); color:#d6a89d; border-radius:10px; padding:1px 7px; font-size:10.5px; margin:2px 2px 0 0; }
+.toggle { color:#c9a66b; cursor:pointer; font-size:12px; user-select:none; }
+.toggle:hover { text-decoration:underline; }
+.seats { display:flex; gap:24px; flex-wrap:wrap; padding:6px 4px; }
+.seats .buys, .seats .sells { flex:1; min-width:260px; }
+.seat-h { font-weight:700; margin-bottom:6px; font-size:13px; }
+.seat-h.up { color:#c98b7d; } .seat-h.down { color:#8da894; }
+.seats ul { list-style:none; margin:0; padding:0; }
+.seats li { display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px dashed rgba(255,255,255,.07); font-size:12px; }
+.seats li .nm { flex:1; color:#e6ded6; }
+.seats li .amt { font-variant-numeric:tabular-nums; font-weight:700; }
+tr.detail td { background:rgba(20,25,38,.85); }
 """
 
 NAV = (f"<div class='topnav'>"
@@ -185,6 +206,15 @@ lu = load(os.path.join(QUANT, "limitup", f"{DATE}.json"))["data"]
 lhb = load(os.path.join(QUANT, "lhb", f"{DATE}.json"))
 if isinstance(lhb, dict) and "data" in lhb:
     lhb = lhb["data"]
+
+# 富集数据（申万一/二级板块+涨跌幅、游资介入度、席位明细），由 build_lhb_enriched.py 生成
+ENRICH = {}
+try:
+    ENRICH = load(os.path.join(QUANT, f"lhb_enriched_{DATE}.json")).get("stocks", {})
+except Exception:
+    ENRICH = {}
+SCRIPT = ("<script>function toggle(id){var e=document.getElementById(id);"
+          "if(e){e.style.display=(e.style.display==='none')?'table-row':'none';}}</script>")
 
 # ---------- 连板梯队(2026-08-27, 来自 tool_ranking limitup_days) ----------
 TIERS = {4: [], 3: [], 2: [], 1: []}
@@ -490,6 +520,55 @@ def lhb_all_table(rows, n=30):
     h += "</table>"
     return h
 
+def _seat_li(s, kind):
+    amt = s.get("buy" if kind == "buy" else "sell", 0)
+    tag = f" <span class='hmtag'>{s['tag']}</span>" if s.get("tag") else ""
+    return (f"<li><span class='nm'>{s['name']}</span>"
+            f"<span class='amt {cls(amt)}'>{yi(amt)}亿</span>{tag}</li>")
+
+def lhb_enriched_table(enr, sort_by="net"):
+    """富化龙虎榜表：一级/二级板块+涨跌幅、游资介入度、可展开买卖方席位。"""
+    if not enr:
+        return "<div class='empty'>无富集数据</div>"
+    items = list(enr.values())
+    if sort_by == "hot":
+        order = {"高": 0, "中": 1, "低": 2}
+        items.sort(key=lambda d: (order.get(d["hotmoneyLevel"], 3), -(d.get("hotmoneyNet") or 0)))
+    else:
+        items.sort(key=lambda d: -(d.get("netBuy") or 0))
+    h = ("<table class='lhb'><thead><tr>"
+         "<th>排名</th><th>名称</th><th class='num'>涨幅%</th><th class='num'>净买入(亿)</th>"
+         "<th>上榜原因</th><th>一级行业</th><th>二级行业</th><th>游资介入度</th><th>席位</th></tr></thead><tbody>")
+    for i, d in enumerate(items, 1):
+        code = d["code"]; name = d["name"]
+        ipo = " (推测)" if d.get("ipo") else ""
+        sw1 = f"{d['sw1']}{ipo} <span class='{cls(d['sw1Chg'])}'>{pct(d['sw1Chg'])}</span>" if d["sw1"] else "—"
+        sw2 = f"{d['sw2']}{ipo} <span class='{cls(d['sw2Chg'])}'>{pct(d['sw2Chg'])}</span>" if d["sw2"] else "—"
+        lvl = d["hotmoneyLevel"]
+        lvlcls = {"高": "hm-high", "中": "hm-mid", "低": "hm-low"}.get(lvl, "hm-low")
+        tags = "".join(f"<span class='hmtag'>{t}</span>" for t in d["hotmoneyTags"]) or "<span class='note'>—</span>"
+        reason = d["reason"] or "—"
+        h += (f"<tr class='r' onclick=\"toggle('d{code}')\" style='cursor:pointer'>"
+              f"<td class='num'>{i}</td>"
+              f"<td><b>{name}</b> <span class='note'>{code}</span></td>"
+              f"<td class='num {cls(d['changePct'])}'>{pct(d['changePct'])}</td>"
+              f"<td class='num {cls(d['netBuy'])}'>{yi(d['netBuy'])}</td>"
+              f"<td class='reason'>{reason}</td>"
+              f"<td class='sec'>{sw1}</td>"
+              f"<td class='sec'>{sw2}</td>"
+              f"<td class='hm {lvlcls}'>{lvl}<div class='hmtags'>{tags}</div></td>"
+              f"<td><span class='toggle'>▸ 席位</span></td></tr>")
+        buys = "".join(_seat_li(s, "buy") for s in d["buySeats"]) or "<li class='note'>—</li>"
+        sells = "".join(_seat_li(s, "sell") for s in d["sellSeats"]) or "<li class='note'>—</li>"
+        netcls = cls(d.get("hotmoneyNet"))
+        h += (f"<tr id='d{code}' class='detail' style='display:none'><td colspan='9'>"
+              f"<div class='seats'><div class='buys'><div class='seat-h up'>买方席位 Top5</div><ul>{buys}</ul></div>"
+              f"<div class='sells'><div class='seat-h down'>卖方席位 Top5</div><ul>{sells}</ul></div></div>"
+              f"<div class='note'>游资净买合计：<b class='{netcls}'>{yi(d.get('hotmoneyNet'))}亿</b>"
+              f"（仅统计带游资标签席位；共 {d['hotmoneyCount']} 个标签席位）</div></td></tr>")
+    h += "</tbody></table>"
+    return h
+
 # 速览卡(嵌入总览)
 jg_top3 = "、".join(f"{r['name']}({yi(r['netBuyAmt'])}亿)" for r in jg[:3])
 yyb_top3 = "、".join(f"{r['name']}({yi(r['buyAmt'])}亿)" for r in yyb_sorted[:3])
@@ -528,38 +607,41 @@ portfolio_body = (
 # open(os.path.join(WEB, "portfolio.html"), "w", encoding="utf-8").write(
 #     page("组合总看板", portfolio_body))
 
-# ---------- 游资看板页 ----------
-_hotmoney_detail = (
-    f"<div class='section'><h2>🏦 游资席位净买榜 TOP25</h2>"
-    f"<div class='note'>按当日净买入额排序（单位：亿元）；席位覆盖深股通、瑞银、国君海通、高盛、华鑫、东财拉萨等。"
-    f"共统计 {len(yyb)} 个上榜营业部席位。</div>"
-    f"{yyb_table(yyb_sorted)}</div>"
-    f"<div class='section'><h2>🎯 营业部席位胜率聚合 TOP20</h2>"
-    f"<div class='note'>基于近 1·3·5·10 日窗口的营业部胜率（数据口径来自 data_lhb gslxw）；胜率仅供参考，非未来收益承诺。</div>"
-    f"{gslxw_table(gslxw)}</div>")
-if LHB_DETAIL_EMPTY:
-    _hotmoney_detail = (
-        f"<div class='section'><h2>🐉 龙虎榜净买入 TOP25（全榜口径）</h2>"
-        f"<div class='note'>当日游资席位（yyb）与席位胜率（gslxw）数据源未披露（均为空）。"
-        f"下方以龙虎榜全榜按净买入额排序 TOP25 替代呈现资金合力方向（净买入额单位：亿元）。</div>"
-        f"{lhb_all_table(_lhb_sorted_all, 25)}</div>")
+# ---------- 游资看板页（游资介入度 + 席位 + 板块） ----------
+_hotmoney_detail = ""
+if yyb_sorted:
+    _hotmoney_detail += (
+        f"<div class='section'><h2>🏦 游资席位净买榜 TOP25</h2>"
+        f"<div class='note'>按当日净买入额排序（单位：亿元）；共统计 {len(yyb)} 个上榜营业部席位。</div>"
+        f"{yyb_table(yyb_sorted)}</div>")
+if gslxw:
+    _hotmoney_detail += (
+        f"<div class='section'><h2>🎯 营业部席位胜率聚合 TOP20</h2>"
+        f"<div class='note'>基于近 1·3·5·10 日窗口的营业部胜率（数据口径来自 data_lhb gslxw）；胜率仅供参考。</div>"
+        f"{gslxw_table(gslxw)}</div>")
+_hotmoney_detail += (
+    f"<div class='section'><h2>🐉 龙虎榜个股 · 游资介入度与席位（{len(ENRICH) if ENRICH else len(lhb_all)} 只，按介入度）</h2>"
+    f"<div class='note'>按游资介入度（高→中→低）排序；点击行展开买卖方席位 Top5 与游资标签。"
+    f"游资净买合计仅统计带标签席位（净买入额单位：亿元）。板块为申万一级/二级（名称+当日涨跌幅）。</div>"
+    f"{lhb_enriched_table(ENRICH, sort_by='hot') if ENRICH else lhb_all_table(_lhb_sorted_all, 25)}</div>")
 hotmoney_body = (
-    f"<header><h1>🐉 游资看板</h1><p>游资席位活跃度 / 净买榜 / 营业部胜率聚合 — {DATE}</p></header>"
-    f"<div class='meta'>数据来源：westock-mcp data_lhb（yyb 营业部榜 / gslxw 席位胜率 / all 龙虎榜全榜）。</div>"
+    f"<header><h1>🐉 游资看板</h1><p>游资介入度 / 席位明细 / 板块(一级·二级) / 板块涨跌幅 — {DATE}</p></header>"
+    f"<div class='meta'>数据来源：westock-mcp data_lhb（yyb 营业部榜 / gslxw 席位胜率 / all 龙虎榜全榜）+ data_sector（申万一/二级涨跌幅）。</div>"
     f"{_hotmoney_detail}"
-    f"<footer>⚠️ 盘后滞后资金痕迹，仅提示概率优势方向，不构成投资建议。</footer>")
+    f"<footer>⚠️ 盘后滞后资金痕迹，仅提示概率优势方向，不构成投资建议。</footer>{SCRIPT}")
 open(os.path.join(WEB, "hotmoney.html"), "w", encoding="utf-8").write(
     page("游资看板", hotmoney_body))
 
-# ---------- 龙虎榜分析页 ----------
-if LHB_DETAIL_EMPTY:
-    lhb_detail_html = (
-        f"<div class='section'><h2>🐉 龙虎榜全榜上榜 {len(lhb_all)} 只（按净买入额排序）</h2>"
-        f"<div class='note'>当日龙虎榜分项（机构专用榜 / 游资席位 / 机构+游资共振 / 席位胜率）数据源未披露（均为空）。"
-        f"下方为 data_lhb 返回的龙虎榜全榜上榜个股（共 {len(lhb_all)} 只），含当日涨幅、净买入、买入、卖出额；净买入额单位：亿元。</div>"
-        f"{lhb_all_table(_lhb_sorted_all)}</div>")
-else:
-    lhb_detail_html = (
+# ---------- 龙虎榜分析页（含一级/二级板块、涨跌幅、游资介入度、席位） ----------
+_lhb_enr_section = (
+    f"<div class='section'><h2>🐉 龙虎榜全榜 {len(ENRICH) if ENRICH else len(lhb_all)} 只（按净买入额排序）</h2>"
+    f"<div class='note'>每行可点击展开查看买方/卖方席位 Top5 与游资标签。板块为申万一级 / 二级（名称+当日涨跌幅）；"
+    f"游资介入度按带标签席位数量分高/中/低，游资净买合计仅统计带标签席位。净买入额单位：亿元。</div>"
+    f"{lhb_enriched_table(ENRICH) if ENRICH else lhb_all_table(_lhb_sorted_all)}</div>")
+
+_lhb_inst_section = ""
+if not LHB_DETAIL_EMPTY:
+    _lhb_inst_section = (
         f"<div class='section'><h2>🏛️ 机构专用榜 TOP20（按净买额）</h2>"
         f"<div class='note'>机构专用席位净买入口径；净买额为净流入（买入−卖出）。共 {len(jg)} 只个股上榜机构榜。</div>"
         f"{jg_table(jg)}</div>"
@@ -570,13 +652,14 @@ else:
         f"{gslxw_table(gslxw)}</div>")
 
 lhb_body = (
-    f"<header><h1>🐉 龙虎榜分析</h1><p>机构专用榜 / 机构+游资共振 / 席位胜率 — {DATE}</p></header>"
-    f"<div class='meta'>数据来源：westock-mcp data_lhb（jg 机构专用榜 / gslmr 机构+游资共振买入 / gslxw 席位胜率 / all 龙虎榜全榜）。</div>"
-    f"{lhb_detail_html}"
+    f"<header><h1>🐉 龙虎榜分析</h1><p>个股板块(一级/二级) · 涨跌幅 · 游资介入度 · 席位明细 — {DATE}</p></header>"
+    f"<div class='meta'>数据来源：westock-mcp data_lhb（全榜 / 机构榜 / 共振 / 席位胜率）+ data_sector（申万一/二级涨跌幅）。"
+    f"一级涨跌幅为成分二级均值（{DATE} 实时）。</div>"
+    f"{_lhb_enr_section}{_lhb_inst_section}"
     f"<div class='section'><h2>📐 窗口收益（alpha vs 大盘）</h2>"
     f"<div class='empty'>1·3·5·10 交易日窗口收益回测属量化专题，需历史复权数据支撑，本页未内置；"
     f"该专题为早期远程分析页，本地未保留，后续可单独建设。</div></div>"
-    f"<footer>⚠️ 盘后滞后资金痕迹，仅提示概率优势方向，不构成投资建议。</footer>")
+    f"<footer>⚠️ 盘后滞后资金痕迹，仅提示概率优势方向，不构成投资建议。</footer>{SCRIPT}")
 open(os.path.join(WEB, "lhb.html"), "w", encoding="utf-8").write(
     page("龙虎榜分析", lhb_body))
 open(os.path.join(WEB, f"lhb_{DATE}.html"), "w", encoding="utf-8").write(
