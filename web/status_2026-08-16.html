@@ -132,10 +132,10 @@
   <div class="card">
     <h2>阻塞与下一步</h2>
     <div class="block"><b>① 流水线脚本缺失</b>：prefetch_westock.py、quant/hotmoney_scanner.py、quant/lhb_inst_analysis.py、quant/build_lhb_index.py、quant/refresh_analysis.py、quant/apply_overrides.py、quant/market_overview_lib.py 在本工作区均不存在（已全盘检索确认）。这导致游资看板、龙虎榜分析页、总看板、首页无法生成。</div>
-    <div class="block"><b>② 组合宇宙缺失</b>：deliverables/trading-agent/_all_store.json（约 26 只持仓股）不存在，全量刷新 / 总看板（all-stocks.html）无刷新标的，无法生成。</div>
+    <div class="block"><b>② 组合宇宙缺失</b>：deliverables/trading-agent/内部持仓数据文件不存在，全量刷新 / 总看板（all-stocks.html）无刷新标的，无法生成。</div>
     <div class="block"><b>③ GitHub 克隆缺失</b>：stocks_repo 本地克隆不存在（含 Bearer 鉴权的 .git/config 未配置），index.html 无法同步至 dujoer/stocks。</div>
     <div class="block"><b>④ 今日非交易日</b>：龙虎榜 / 游资榜四类数据为空（已验证），属正常「无数据」分支；连板天梯、板块、要闻、大盘概览均取最近交易日（2026-08-14）。</div>
-    <div class="note">恢复路径（任选）：A. 主理人将现有脚本 / _all_store.json / 已配置鉴权的 stocks_repo 放入本工作区；B. 由我按本自动化详细 spec 从零搭建 7 个流水线脚本（设计语言「通用、高级」），并请在搭建前提供约 26 只持仓股清单（或 _all_store.json）；C. 在桌面端克隆 stocks_repo 并配置 Bearer 鉴权。补齐后次日 18:00 自动运行即可产出完整交付物。本状态页即为当前可执行产出的视图化汇总。</div>
+    <div class="note">恢复路径（任选）：A. 主理人将现有脚本 / 内部持仓数据文件 / 已配置鉴权的 stocks_repo 放入本工作区；B. 由我按本自动化详细 spec 从零搭建 7 个流水线脚本（设计语言「通用、高级」），并请在搭建前提供约 26 只标的清单（或内部持仓数据文件）；C. 在桌面端克隆 stocks_repo 并配置 Bearer 鉴权。补齐后次日 18:00 自动运行即可产出完整交付物。本状态页即为当前可执行产出的视图化汇总。</div>
   </div>
 
   <div class="foot">本报告由 A 股量化助理自动化生成 · 数据仅供参考，不构成投资建议 · 市场有风险，投资需谨慎</div>
