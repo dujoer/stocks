@@ -17,6 +17,7 @@
 硬规矩：只展示公开披露的高管增减持，不输出任何个人持仓、组合、选股内容。
 """
 import os, sys, json, argparse, collections, datetime
+from _nav import topnav
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 Q = os.path.join(ROOT, "quant")
@@ -255,11 +256,7 @@ def main():
 <body>
 <div class='wrap'>
 
-<div class='topnav'>
-  <a href='../index.html'>← 返回 A股分析中心总门户</a>
-  <a href='lhb.html'>龙虎榜主看板</a>
-  <a href='index.html'>龙虎榜日期索引</a>
-</div>
+{topnav()}
 
 <header>
   <h1>高管增减持（董监高）</h1>
