@@ -15,6 +15,7 @@ import os
 import re
 import json
 import datetime
+from _nav import topnav
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB = os.path.join(ROOT, "web")
@@ -437,16 +438,13 @@ h2 {{ font-size:20px; margin:38px 0 14px; padding-left:12px; border-left:5px sol
 footer {{ margin-top:46px; padding-top:18px; border-top:1px solid #e3e7ec;
   font-size:12px; color:#7b8794; }}
 .topnav {{ font-size:13px; margin-bottom:14px; }}
-.topnav a {{ color:#1f4e79; text-decoration:none; margin-right:14px; }}
-.topnav a:hover {{ text-decoration:underline; }}
+.topnav a {{ color:#b8893b; text-decoration:none; margin-right:14px; padding:4px 12px; border:1px solid rgba(184,137,59,.35); border-radius:20px; }}
+.topnav a:hover {{ background:rgba(184,137,59,.10); }}
 </style>
 </head>
 <body>
 <div class='wrap'>
-<div class='topnav'>
-  <a href='../index.html'>← 返回 A股分析中心总门户</a>
-  <a href='index.html'>龙虎榜日期索引</a>
-</div>
+{topnav()}
 
 <header class='top'>
   <h1>📦 版块总览</h1>
