@@ -9,6 +9,7 @@
   quant/lhb/2026-08-27.json              (龙虎榜: 机构榜/游资席位/共振/胜率)
 """
 import json, os, re, argparse, datetime
+from _nav import topnav
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB = os.path.join(ROOT, "web")
@@ -167,14 +168,7 @@ a.inlink:hover { background:rgba(201,166,107,.16); }
 tr.detail td { background:rgba(0,0,0,.03); }
 """
 
-NAV = (f"<div class='topnav'>"
-       "<a href='daily_overview.html'>每日总览</a>"
-       "<a href='lhb.html'>龙虎榜分析</a>"
-       "<a href='hotmoney.html'>游资看板</a>"
-       f"<a href='status_{DATE}.html'>状态报告</a>"
-       "<a href='2026-q2-industry-elite.html'>行业最强榜</a>"
-       "<a href='../index.html'>总门户</a>"
-       "</div>")
+NAV = topnav()
 
 def page(title, body):
     html = ("<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'>"
@@ -459,6 +453,78 @@ if LHB_DETAIL_EMPTY:
           file=sys.stderr)
 _lhb_sorted_all = sorted(lhb_all, key=lambda x: float(x.get("netBuyAmount", 0)), reverse=True)
 
+# ---------- 次日回测（净买入股票 T+1 表现） ----------
+def load_backtest(D):
+    p = os.path.join(QUANT, "lhb_nextday_backtest", f"{D}.json")
+    if os.path.exists(p):
+        try:
+            return json.load(open(p, encoding="utf-8"))
+        except Exception:
+            return None
+    return None
+
+bt = load_backtest(DATE)
+_backtest_section = ""
+if bt:
+    g = bt["groups"]
+    def _grp_card(label, gg):
+        if gg["count"] == 0:
+            return (f"<div class='idx'><div class='k'>{label}</div>"
+                    f"<div class='v' style='font-size:15px'>样本不足</div><div class='c'>—</div></div>")
+        wr = gg["win_rate"]; av = gg["avg_return"]
+        cr = "up" if (wr or 0) >= 50 else "down"
+        ca = "up" if (av or 0) > 0 else "down"
+        return (f"<div class='idx'><div class='k'>{label}</div>"
+                f"<div class='v' style='font-size:18px'>{gg['count']}只</div>"
+                f"<div class='c {cr}'>次日胜率 {wr}%</div>"
+                f"<div class='c {ca}'>均次日 {av}%</div></div>")
+    _cards = ("<div class='idxrow'>"
+              + _grp_card("机构净买入", g["inst"])
+              + _grp_card("游资净买入", g["hot"])
+              + _grp_card("全体净买入", g["all"]) + "</div>")
+    def _grp_table(label, gg):
+        if gg["count"] == 0:
+            return ""
+        rows = "".join(
+            f"<tr><td><b>{s['name']}</b> <span class='note'>{s['code']}</span></td>"
+            f"<td class='num'>{yi(s['net_amt'])}</td>"
+            f"<td class='num {cls(s['next_chg'])}'>{pct(s['next_chg'])}</td>"
+            f"<td class='num'>{'涨' if s['win'] else '跌'}</td></tr>"
+            for s in gg["stocks"])
+        return (f"<div class='section'><h2>📊 {label} · 次日明细（{gg['count']}只 · 回测日 {bt['next_date']}）</h2>"
+                f"<table><tr><th>名称</th><th class='num'>净买入(亿)</th><th class='num'>次日涨幅%</th><th>结果</th></tr>"
+                f"{rows}</table></div>")
+    _backtest_section = (
+        f"<div class='section'><h2>🎯 净买入股票 · 次日表现回溯（回测于 {bt['next_date']}）</h2>"
+        f"<div class='note'>统计口径：龙虎榜当日净买入个股，取其下一交易日收盘涨跌幅（data_quote 快照 {bt['next_date']}）计算胜率与平均收益；仅反映历史资金痕迹，非未来收益承诺。</div>"
+        f"{_cards}{_grp_table('机构净买入', g['inst'])}{_grp_table('游资净买入', g['hot'])}{_grp_table('全体净买入', g['all'])}"
+        f"<div class='note'>以上为各分组次日明细；全体净买入含全部龙虎榜净买个股。</div></div>")
+else:
+    _backtest_section = (
+        f"<div class='section'><h2>🎯 净买入股票 · 次日表现回溯</h2>"
+        f"<div class='amberbox' style='color:#1c2430'>次日回测数据尚未生成（需待下一交易日收盘后）。"
+        f"运行 <code>python quant/gen_lhb_nextday_backtest.py --date {DATE} --quotes &lt;次日行情落盘&gt;</code> "
+        f"后重跑本生成器即可回填本区块。</div></div>")
+
+# 日期前后导航（仅 lhb_YYYY-MM-DD.html 用）
+_lhb_dates = []
+for _fn in os.listdir(WEB):
+    _m = re.match(r"^lhb_(\d{4}-\d{2}-\d{2})\.html$", _fn)
+    if _m:
+        _lhb_dates.append(_m.group(1))
+_lhb_dates.sort()
+_prev_d = next((d for d in reversed(_lhb_dates) if d < DATE), None)
+_next_d = next((d for d in _lhb_dates if d > DATE), None)
+_datenav = "<div class='chiprow'>"
+if _prev_d:
+    _datenav += f"<a class='inlink' href='lhb_{_prev_d}.html'>← 前一日（{_prev_d}）</a>"
+_datenav += f"<span class='pill'>当前 {DATE}</span>"
+if _next_d:
+    _datenav += f"<a class='inlink' href='lhb_{_next_d}.html'>后一日（{_next_d}）→</a>"
+_datenav += "<a class='inlink' href='../index.html'>返回总门户 →</a></div>"
+_latest_lhb_date = max(_lhb_dates + [DATE])
+
+
 def jg_table(rows, n=20):
     h = ("<table><tr><th>名称</th><th class='num'>上榜</th><th class='num'>机构买入(亿)</th>"
          "<th class='num'>机构净买(亿)</th><th class='num'>净买率%</th><th class='num'>席位</th>"
@@ -662,15 +728,18 @@ lhb_body = (
     f"<header><h1>🐉 龙虎榜分析</h1><p>个股板块(一级/二级) · 涨跌幅 · 游资介入度 · 席位明细 — {DATE}</p></header>"
     f"<div class='meta'>数据来源：westock-mcp data_lhb（全榜 / 机构榜 / 共振 / 席位胜率）+ data_sector（申万一/二级涨跌幅）。"
     f"一级涨跌幅为成分二级均值（{DATE} 实时）。</div>"
-    f"{_lhb_enr_section}{_lhb_inst_section}"
+    f"{_datenav}"
+    f"{_lhb_enr_section}{_lhb_inst_section}{_backtest_section}"
     f"<div class='section'><h2>📐 窗口收益（alpha vs 大盘）</h2>"
     f"<div class='empty'>1·3·5·10 交易日窗口收益回测属量化专题，需历史复权数据支撑，本页未内置；"
     f"该专题为早期远程分析页，本地未保留，后续可单独建设。</div></div>"
     f"<footer>⚠️ 盘后滞后资金痕迹，仅提示概率优势方向，不构成投资建议。</footer>{SCRIPT}")
-open(os.path.join(WEB, "lhb.html"), "w", encoding="utf-8").write(
-    page("龙虎榜分析", lhb_body))
 open(os.path.join(WEB, f"lhb_{DATE}.html"), "w", encoding="utf-8").write(
     page("龙虎榜分析", lhb_body))
+# 仅当 DATE 为最新龙虎榜日才覆盖 lhb.html，避免对历史日期做次日回测时冲掉最新主看板
+if DATE >= _latest_lhb_date:
+    open(os.path.join(WEB, "lhb.html"), "w", encoding="utf-8").write(
+        page("龙虎榜分析", lhb_body))
 
 # ---------- 状态报告 ----------
 status_body = (
