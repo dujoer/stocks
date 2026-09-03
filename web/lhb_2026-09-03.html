@@ -114,15 +114,21 @@ tr.detail td { background:rgba(0,0,0,.03); }
 <a href='daily_overview.html'>每日总览</a>
 <a href='lhb.html'>龙虎榜分析</a>
 <a href='hotmoney.html'>游资看板</a>
-<a href='status_2026-09-03.html'>状态报告</a>
-<a href='2026-q2-industry-elite.html'>行业最强榜</a>
-<a href='../index.html'>总门户</a>
+<a href='sector-strength-index.html'>板块强度</a>
+<a href='exec.html'>高管增减持</a>
+<a href='sections.html'>版块总览</a>
+<a href='../index.html'>返回主页</a>
 </div>
 <header>
 <h1>🐉 龙虎榜分析</h1>
 <p>个股板块(一级/二级) · 涨跌幅 · 游资介入度 · 席位明细 — 2026-09-03</p>
 </header>
 <div class='meta'>数据来源：westock-mcp data_lhb（全榜 / 机构榜 / 共振 / 席位胜率）+ data_sector（申万一/二级涨跌幅）。一级涨跌幅为成分二级均值（2026-09-03 实时）。</div>
+<div class='chiprow'>
+<a class='inlink' href='lhb_2026-09-02.html'>← 前一日（2026-09-02）</a>
+<span class='pill'>当前 2026-09-03</span>
+<a class='inlink' href='../index.html'>返回总门户 →</a>
+</div>
 <div class='section'>
 <h2>🐉 龙虎榜全榜 52 只（按净买入额排序）</h2>
 <div class='note'>每行可点击展开查看买方/卖方席位 Top5 与游资标签。板块为申万一级 / 二级（名称+当日涨跌幅）；游资介入度按带标签席位数量分高/中/低，游资净买合计仅统计带标签席位。净买入额单位：亿元。</div>
@@ -1124,6 +1130,10 @@ tr.detail td { background:rgba(0,0,0,.03); }
 <td style='color:#6b7280;font-size:12px'>爱丽家居</td>
 </tr>
 </table>
+</div>
+<div class='section'>
+<h2>🎯 净买入股票 · 次日表现回溯</h2>
+<div class='amberbox' style='color:#1c2430'>次日回测数据尚未生成（需待下一交易日收盘后）。运行 <code>python quant/gen_lhb_nextday_backtest.py --date 2026-09-03 --quotes &lt;次日行情落盘&gt;</code> 后重跑本生成器即可回填本区块。</div>
 </div>
 <div class='section'>
 <h2>📐 窗口收益（alpha vs 大盘）</h2>
