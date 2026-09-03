@@ -449,7 +449,14 @@ yyb_sorted = sorted(yyb, key=lambda x: float(x.get("buyAmt", 0)), reverse=True)
 gslmr = sorted(lhb.get("gslmr", []), key=lambda x: float(x.get("netAmt", 0)), reverse=True)
 gslxw = sorted(lhb.get("gslxw", []), key=lambda x: float(x.get("netAmt", 0)), reverse=True)
 lhb_all = lhb.get("all", [])  # 龙虎榜全榜上榜个股（rank/code/name/changePct/netBuyAmount/buyAmount/sellAmount）
-LHB_DETAIL_EMPTY = not (jg or yyb or gslmr or gslxw)  # 分项榜是否全空（数据源未披露）
+LHB_DETAIL_EMPTY = not (jg or yyb or gslmr or gslxw)  # 分项榜是否全空
+if LHB_DETAIL_EMPTY:
+    # 根因：data_lhb 默认"全部"调用只回 all 全榜，jg/yyb/gslmr/gslxw 四项需 type 显式分 4 次拉取后合并进 lhb/{DATE}.json；
+    # 若此处仍为空，说明分项数据未拉取/未合并，看板将只剩全榜、缺机构/游资购买比例与分析。
+    import sys
+    print("[WARN] LHB 分项(jg/yyb/gslmr/gslxw)全空 → 看板将缺机构/游资分析。"
+          "请确认已用 data_lhb(type=jg/yyb/gslmr/gslxw) 分 4 次拉取并用 _merge_lhb_subtabs.py 合并。",
+          file=sys.stderr)
 _lhb_sorted_all = sorted(lhb_all, key=lambda x: float(x.get("netBuyAmount", 0)), reverse=True)
 
 def jg_table(rows, n=20):
