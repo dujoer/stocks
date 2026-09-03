@@ -10,12 +10,16 @@
   3) 群体心理风险雷达 market-trend/index.html        最新 = max(market-trend/crowd-psychology-risk-radar-YYYYMMDD.html)
 """
 import os, re, datetime
+from _nav import selfcontained_nav
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB = os.path.join(ROOT, "web")
 MT = os.path.join(ROOT, "market-trend")
 OUT = os.path.join(ROOT, "index.html")
 TODAY = datetime.date.today()
+
+# 根门户置于仓库根目录，统一导航的链接需带 web/ 前缀，主页指向自身
+PORTAL_NAV = selfcontained_nav(rel="web/", home="index.html")
 
 def parse_date(s):
     s = s.strip()
@@ -176,6 +180,7 @@ footer {{ margin-top:48px; padding-top:18px; border-top:1px solid #e3e7ec;
 </head>
 <body>
 <div class='wrap'>
+{PORTAL_NAV}
 <header class='top'>
   <h1>A股分析中心 · 总门户</h1>
   <div class='sub'>龙虎榜主看板 · 高管增减持 · 板块强度 · 群体心理风险雷达 · 行业最强榜 · 版块总览</div>
