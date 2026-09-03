@@ -803,7 +803,7 @@ open(os.path.join(WEB, "index.html"), "w", encoding="utf-8").write(
     ("<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'>"
      "<meta name='viewport' content='width=device-width,initial-scale=1.0'>"
      f"<title>A股量化助理 · 龙虎榜看板</title><style>{CSS}</style></head><body><div class='wrap landing'>"
-     f"{index_body}</div></body></html>").replace("><", ">\n<"))
+     f"{NAV}{index_body}</div></body></html>").replace("><", ">\n<"))
 
 print("OK: daily_overview / portfolio / lhb / hotmoney / status / index 已生成")
 print(f"组合实时市值={tot_mv:.2f} 浮动盈亏={tot_pnl:.2f} ({tot_pnl_pct:.2f}%)")
