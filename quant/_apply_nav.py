@@ -28,6 +28,9 @@ for fn in sorted(os.listdir(WEB)):
 for fn in sorted(os.listdir(MT)):
     if fn.endswith(".html"):
         targets.append((os.path.join(MT, fn), "../web/"))
+for fn in sorted(os.listdir(ROOT)):
+    if fn.endswith(".html") and fn != "index.html":
+        targets.append((os.path.join(ROOT, fn), "web/"))
 
 done = skipped = 0
 for path, rel in targets:
