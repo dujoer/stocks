@@ -113,14 +113,14 @@
     <h1 data-i18n="t_title">群体心理风险雷达 · 日报索引</h1>
     <div class="sub" data-i18n="t_sub">行为金融偏差 · 拥挤度 · 融资 · 热度 — 综合风险雷达系列。基于 westock 官方行情数据的真实查询结果，按交易日逐期归档。</div>
     <div class="mast-meta">
-      <span data-i18n="t_updated">最近更新：2026-09-02（收录 08-17 ~ 09-02 共 11 期，08-22~08-23 与 08-29~08-30 周末休市）</span>
+      <span data-i18n="t_updated">最近更新：2026-09-03（收录 08-17 ~ 09-03 共 13 期，08-22~08-23 与 08-29~08-30 周末休市）</span>
     </div>
   </header>
 
   <!-- Stat strip -->
   <section class="stats">
     <div class="stat">
-      <div class="num">11 <small data-i18n="s_issues">期</small></div>
+      <div class="num">13 <small data-i18n="s_issues">期</small></div>
       <div class="lbl" data-i18n="s_issues_lbl">已归档日报（每日独立保留）</div>
     </div>
     <div class="stat">
@@ -128,7 +128,7 @@
       <div class="lbl" data-i18n="s_risk_lbl">各期风险等级（10 期同为「高」）</div>
     </div>
     <div class="stat">
-      <div class="num">08-17<small> ~ 09-02</small></div>
+      <div class="num">08-17<small> ~ 09-03</small></div>
       <div class="lbl" data-i18n="s_span_lbl">覆盖交易日跨度（08-22~08-23 周末休市）</div>
     </div>
   </section>
@@ -138,7 +138,7 @@
     <h2><span class="bar"></span><span data-i18n="t_trend">涨股比走势（市场广度）</span><span class="en">Up-Stock Ratio Trend</span></h2>
     <div class="card">
       <div class="chartwrap">
-                        <svg viewBox="0 0 860 240" role="img" aria-label="up-stock ratio trend">
+                                                <svg viewBox="0 0 860 240" role="img" aria-label="up-stock ratio trend">
           <defs>
             <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#b8332a" stop-opacity="0.22"/>
@@ -158,48 +158,54 @@
           <text class="axislab" x="50" y="164" text-anchor="end">25</text>
           <text class="axislab" x="50" y="204" text-anchor="end">0</text>
           <!-- weekend gap marker (08-22 / 08-23) -->
-          <line x1="472.5" y1="40" x2="472.5" y2="200" stroke="#b8893b" stroke-width="1.2" stroke-dasharray="5 4"/>
-          <text class="axislab" x="431" y="34" text-anchor="middle" fill="#b8893b">08-22/23 休市</text>
+          <line x1="528.75" y1="40" x2="528.75" y2="200" stroke="#b8893b" stroke-width="1.2" stroke-dasharray="5 4"/>
+          <text class="axislab" x="487.5" y="34" text-anchor="middle" fill="#b8893b">08-22/23 休市</text>
           <!-- area -->
-          <polygon fill="url(#area)" points="60,155.2 135,108.8 210,102.4 285,115.2 360,78.4 435,158.4 510,128.0 585,83.2 660,187.2 735,139.2 810,75.2 810,200 60,200"/>
+          <polygon fill="url(#area)" points="60.0,147.2 122.5,155.2 185.0,102.4 247.5,108.8 310.0,102.4 372.5,115.2 435.0,78.4 497.5,158.4 560.0,128.0 622.5,83.2 685.0,187.2 747.5,139.2 810.0,75.2 810,200 60,200"/>
           <!-- line (newest -> oldest) -->
           <polyline fill="none" stroke="#b8332a" stroke-width="2.5" stroke-linejoin="round"
-            points="60,155.2 135,108.8 210,102.4 285,115.2 360,78.4 435,158.4 510,128.0 585,83.2 660,187.2 735,139.2 810,75.2"/>
-          <!-- points + value labels (09-02 left -> 08-17 right) -->
-          <circle cx="60" cy="155.2" r="6" fill="#8a1810"/>
-          <text class="vallab" x="60" y="142" text-anchor="middle" fill="#8a1810">28%</text>
-          <circle cx="135" cy="108.8" r="5" fill="#b8332a"/>
-          <text class="vallab" x="135" y="95" text-anchor="middle">57%</text>
-          <circle cx="210" cy="102.4" r="5" fill="#b8332a"/>
-          <text class="vallab" x="210" y="89" text-anchor="middle">61%</text>
-          <circle cx="285" cy="115.2" r="5" fill="#b8332a"/>
-          <text class="vallab" x="285" y="102" text-anchor="middle">53%</text>
-          <circle cx="360" cy="78.4" r="5" fill="#b8332a"/>
-          <text class="vallab" x="360" y="65" text-anchor="middle">76%</text>
-          <circle cx="435" cy="158.4" r="5" fill="#b8332a"/>
-          <text class="vallab" x="435" y="175" text-anchor="middle">26%</text>
-          <circle cx="510" cy="128.0" r="5" fill="#b8332a"/>
-          <text class="vallab" x="510" y="115" text-anchor="middle">45%</text>
-          <circle cx="585" cy="83.2" r="5" fill="#b8332a"/>
-          <text class="vallab" x="585" y="70" text-anchor="middle">73%</text>
-          <circle cx="660" cy="187.2" r="6" fill="#8a1810"/>
-          <text class="vallab" x="660" y="204" text-anchor="middle" fill="#8a1810">8%</text>
-          <circle cx="735" cy="139.2" r="5" fill="#b8332a"/>
-          <text class="vallab" x="735" y="156" text-anchor="middle">38%</text>
-          <circle cx="810" cy="75.2" r="5" fill="#b8332a"/>
-          <text class="vallab" x="810" y="62" text-anchor="middle">78%</text>
+            points="60.0,147.2 122.5,155.2 185.0,102.4 247.5,108.8 310.0,102.4 372.5,115.2 435.0,78.4 497.5,158.4 560.0,128.0 622.5,83.2 685.0,187.2 747.5,139.2 810.0,75.2"/>
+          <!-- points + value labels (09-03 left -> 08-17 right) -->
+          <circle cx="60.0" cy="147.2" r="5" fill="#b8332a"/>
+          <text class="vallab" x="60.0" y="134.2" text-anchor="middle">33%</text>
+          <circle cx="122.5" cy="155.2" r="6" fill="#8a1810"/>
+          <text class="vallab" x="122.5" y="142.2" text-anchor="middle" fill="#8a1810">28%</text>
+          <circle cx="185.0" cy="102.4" r="5" fill="#b8332a"/>
+          <text class="vallab" x="185.0" y="89.4" text-anchor="middle">61%</text>
+          <circle cx="247.5" cy="108.8" r="5" fill="#b8332a"/>
+          <text class="vallab" x="247.5" y="95.8" text-anchor="middle">57%</text>
+          <circle cx="310.0" cy="102.4" r="5" fill="#b8332a"/>
+          <text class="vallab" x="310.0" y="89.4" text-anchor="middle">61%</text>
+          <circle cx="372.5" cy="115.2" r="5" fill="#b8332a"/>
+          <text class="vallab" x="372.5" y="102.2" text-anchor="middle">53%</text>
+          <circle cx="435.0" cy="78.4" r="5" fill="#b8332a"/>
+          <text class="vallab" x="435.0" y="65.4" text-anchor="middle">76%</text>
+          <circle cx="497.5" cy="158.4" r="5" fill="#b8332a"/>
+          <text class="vallab" x="497.5" y="145.4" text-anchor="middle">26%</text>
+          <circle cx="560.0" cy="128.0" r="5" fill="#b8332a"/>
+          <text class="vallab" x="560.0" y="115.0" text-anchor="middle">45%</text>
+          <circle cx="622.5" cy="83.2" r="5" fill="#b8332a"/>
+          <text class="vallab" x="622.5" y="70.2" text-anchor="middle">73%</text>
+          <circle cx="685.0" cy="187.2" r="6" fill="#8a1810"/>
+          <text class="vallab" x="685.0" y="204.2" text-anchor="middle" fill="#8a1810">8%</text>
+          <circle cx="747.5" cy="139.2" r="5" fill="#b8332a"/>
+          <text class="vallab" x="747.5" y="126.19999999999999" text-anchor="middle">38%</text>
+          <circle cx="810.0" cy="75.2" r="5" fill="#b8332a"/>
+          <text class="vallab" x="810.0" y="62.2" text-anchor="middle">78%</text>
           <!-- day labels (newest -> oldest) -->
-          <text class="daylab" x="60" y="222" text-anchor="middle">09-02</text>
-          <text class="daylab" x="135" y="222" text-anchor="middle">08-31</text>
-          <text class="daylab" x="210" y="222" text-anchor="middle">08-27</text>
-          <text class="daylab" x="285" y="222" text-anchor="middle">08-26</text>
-          <text class="daylab" x="360" y="222" text-anchor="middle">08-25</text>
-          <text class="daylab" x="435" y="222" text-anchor="middle">08-24</text>
-          <text class="daylab" x="510" y="222" text-anchor="middle">08-21</text>
-          <text class="daylab" x="585" y="222" text-anchor="middle">08-20</text>
-          <text class="daylab" x="660" y="222" text-anchor="middle">08-19</text>
-          <text class="daylab" x="735" y="222" text-anchor="middle">08-18</text>
-          <text class="daylab" x="810" y="222" text-anchor="middle">08-17</text>
+          <text class="daylab" x="60.0" y="222" text-anchor="middle">09-03</text>
+          <text class="daylab" x="122.5" y="222" text-anchor="middle">09-02</text>
+          <text class="daylab" x="185.0" y="222" text-anchor="middle">09-01</text>
+          <text class="daylab" x="247.5" y="222" text-anchor="middle">08-31</text>
+          <text class="daylab" x="310.0" y="222" text-anchor="middle">08-27</text>
+          <text class="daylab" x="372.5" y="222" text-anchor="middle">08-26</text>
+          <text class="daylab" x="435.0" y="222" text-anchor="middle">08-25</text>
+          <text class="daylab" x="497.5" y="222" text-anchor="middle">08-24</text>
+          <text class="daylab" x="560.0" y="222" text-anchor="middle">08-21</text>
+          <text class="daylab" x="622.5" y="222" text-anchor="middle">08-20</text>
+          <text class="daylab" x="685.0" y="222" text-anchor="middle">08-19</text>
+          <text class="daylab" x="747.5" y="222" text-anchor="middle">08-18</text>
+          <text class="daylab" x="810.0" y="222" text-anchor="middle">08-17</text>
         </svg>
       </div>
       <div class="src" style="margin-top:8px">
@@ -426,6 +432,16 @@
     }
     ,
     {
+      file:"crowd-psychology-risk-radar-20260901.html", date:"2026-09-01",
+      risk:"高", riskEn:"High",
+      cycleZh:"高位震荡 / 结构分化", cycleEn:"High-level oscillation / Structural divergence",
+      cycleNoteZh:"指数微跌而个股普涨", cycleNoteEn:"Indices dip while stocks broadly up",
+      up:"61%", limitup:"80", board:"7板", turn:"¥2.03万亿",
+      summaryZh:"涨股比由57%回升至61%、涨停80、跌停0、成交¥2.03万亿（缩量震荡）；指数微跌（上证−0.16%/深成−1.02%/创业板−1.32%）但个股普涨（3386涨/2040跌/平127），连板高度升至7板（海鸥住工），KDJ J105超买、估值偏高（PE 81.71%分位）= 高位震荡 / 结构分化 / 指数-个股背离。结构领涨集中于影视院线+5.3%/出版+4.1%/数字媒体+3.8%，饰品−3.9%/乘用车−2.7%领跌；官方「狂热」标签仅因涨停>50触发（真实61%<70%阈值）= 标签虚高。",
+      summaryEn:"Up-ratio recovers 57%→61%, 80 limit-up, 0 limit-down, turnover ¥2.03tn (volume-shake); indices dip (SSE −0.16% / SZ −1.02% / ChiNext −1.32%) yet stocks broadly up (3386 up / 2040 down / 127 flat), board height rises to 7 (Sea Gull Housing), KDJ J105 overbought, valuation elevated (PE 81.71% pct) = high-level oscillation / structural divergence / index-vs-stock divergence. Leaders cluster in cinema +5.3% / publishing +4.1% / digital media +3.8%, ornaments −3.9% / passenger cars −2.7% lead down; official 'Euphoria' tag triggered only by limit-up>50 (real 61%<70%) = tag overstated."
+    }
+    ,
+    {
       file:"crowd-psychology-risk-radar-20260902.html", date:"2026-09-02",
       risk:"高", riskEn:"High",
       cycleZh:"缩量普跌 / 情绪退潮", cycleEn:"Volume-shrink selloff / sentiment ebb",
@@ -433,6 +449,15 @@
       up:"28%", limitup:"51", board:"5板", turn:"¥1.79万亿",
       summaryZh:"涨股比由57%骤降至28%、涨停51、跌停3、成交缩至¥1.79万亿（−3420亿）；三指齐跌（上证−0.97%/深成−1.88%/创业板−2.39%），MACD红柱与指数背离=顶背离，仅地面兵装Ⅱ逆势独涨+6.48%（长城军工+10.04%）；融资单日逆势加仓（中国巨石+3.9986亿居首），杠杆与市场背离，追涨与踩踏风险并存 = 缩量普跌 / 情绪退潮。",
       summaryEn:"Up-ratio crashes 57%→28%, 51 limit-up, 3 limit-down, turnover shrinks to ¥1.79tn (−342bn); all three indices down (SSE −0.97% / SZ −1.88% / ChiNext −2.39%), MACD red vs index-down = top divergence, only Ground-arm EquipmentⅡ rises alone +6.48% (Great Wall Military +10.04%); margin daily adds against the tide (China Jushi +¥0.3999bn leads), leverage diverges from market, chase & stampede risks coexist = volume-shrink selloff / sentiment ebb."
+    },
+    {
+      file:"crowd-psychology-risk-radar-20260903.html", date:"2026-09-03",
+      risk:"高", riskEn:"High",
+      cycleZh:"低位弱修复 / 主线散乱", cycleEn:"Low-level weak recovery / Scattered leaders",
+      cycleNoteZh:"涨股比低位回升", cycleNoteEn:"Up-ratio rebounds from low",
+      up:"33%", limitup:"46", board:"5板", turn:"¥1.76万亿",
+      summaryZh:"涨股比由28%低位回升至33%、涨停46、跌停17、成交¥1.76万亿（环比−322亿）；指数近乎平（上证+0.02%/深成+0.1%/创业板+0.01%），连板回落至5板（国芳集团），跌停扩大至17家 = 低位弱修复 / 主线散乱。结构分散，仅航运港口+2.99%/保险Ⅱ+2.58%/贵金属+2.18%逆势活跃；量能持续萎缩、风险偏好仍低，追涨仍需谨慎。",
+      summaryEn:"Up-ratio rebounds from low 28%→33%, 46 limit-up, 17 limit-down, turnover ¥1.76tn (−32.2bn); indices nearly flat (SSE +0.02% / SZ +0.1% / ChiNext +0.01%), streak falls to 5 boards (Guofang Group), limit-down widens to 17 = low-level weak recovery / scattered leaders. Structure dispersed; only shipping +2.99% / insuranceⅡ +2.58% / precious metals +2.18% active; volume keeps shrinking, risk appetite still low, chase with caution."
     }
   ];
   REPORTS.reverse();
