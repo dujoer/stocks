@@ -21,7 +21,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB = os.path.join(ROOT, "web")
 MT = os.path.join(ROOT, "market-trend")
 QUANT = os.path.join(ROOT, "quant")
-OUT = os.path.join(WEB, "sections.html")
+OUT = os.path.join(WEB, "sections", "index.html")
 TODAY = datetime.date.today()
 
 
@@ -86,9 +86,9 @@ def yi(x):
 
 
 # ---------------- 扫描各版块最新日期 ----------------
-lhb_d, _ = latest(r"^lhb_(\d{4}-\d{2}-\d{2})\.html$", WEB)
-sec_d, _ = latest(r"^sector-strength-(\d{8})\.html$", WEB)
-psy_d, _ = latest(r"^crowd-psychology-risk-radar-(\d{8})\.html$", MT)
+lhb_d, _ = latest(r"^lhb_(\d{4}-\d{2}-\d{2})\.html$", os.path.join(WEB, "lhb"))
+sec_d, _ = latest(r"^sector-strength-(\d{8})\.html$", os.path.join(WEB, "sector"))
+psy_d, _ = latest(r"^crowd-psychology-risk-radar-(\d{8})\.html$", os.path.join(WEB, "psychology"))
 exec_d, _ = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(QUANT, "exec_chg"))
 blk_d, _ = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(QUANT, "block_chg"))
 
@@ -264,7 +264,7 @@ sec_stats = stat_line([
 
 SECTIONS = [
     {
-        "ic": "🐉", "name": "龙虎榜主看板", "href": "index.html",
+        "ic": "🐉", "name": "龙虎榜主看板", "href": "../lhb/lhb.html",
         "date": fmt(lhb_d), "badge": freshness(lhb_d),
         "desc": "当日盘后龙虎榜全景：从大盘环境一路下钻到每只上榜个股的席位与游资标签。",
         "modules": chips([
@@ -279,12 +279,12 @@ SECTIONS = [
         "cadence": "每个交易日必跑",
         "cadence_cls": "must",
         "notes": "支持 date 参数回溯，漏跑可补建。估值口径天然滞后 1 个交易日（接口特性）。",
-        "files": ["web/daily_overview.html", "web/lhb.html", "web/hotmoney.html",
-                  f"web/lhb_{fmt(lhb_d)}.html", f"web/status_{fmt(lhb_d)}.html"],
+        "files": ["web/market/index.html", "web/lhb/lhb.html", "web/market/hotmoney.html",
+                  f"web/lhb/lhb_{fmt(lhb_d)}.html", f"web/market/status_{fmt(lhb_d)}.html"],
         "stats": lhb_stats,
     },
     {
-        "ic": "💼", "name": "高管增减持（董监高）", "href": "exec.html",
+        "ic": "💼", "name": "高管增减持（董监高）", "href": "../exec/index.html",
         "date": fmt(exec_d), "badge": freshness(exec_d),
         "desc": "全市场董监高持股变动的窗口扫描（近 1 个月），按金额排序看谁在真金白银买、谁在跑。",
         "modules": chips([
@@ -296,11 +296,11 @@ SECTIONS = [
         "cadence": "每个交易日必跑",
         "cadence_cls": "must",
         "notes": "T+1 口径：接口快照日为前一交易日，公司晚间公告次日才纳入。按 DeclareDate 可切严格每日口径。",
-        "files": ["web/exec.html", f"quant/exec_chg/{fmt(exec_d)}.json"],
+        "files": ["web/exec/index.html", f"quant/exec_chg/{fmt(exec_d)}.json"],
         "stats": exec_stats,
     },
     {
-        "ic": "🧾", "name": "大宗交易", "href": "block_archive.html",
+        "ic": "🧾", "name": "大宗交易", "href": "../block/archive.html",
         "date": fmt(blk_d), "badge": freshness(blk_d),
         "desc": "全市场大宗交易逐笔扫描（T 日口径）：看谁在折价出货、谁在溢价接盘、机构席位在买还是在卖。",
         "modules": chips([
@@ -313,12 +313,12 @@ SECTIONS = [
         "cadence_cls": "must",
         "notes": "⚠ <code>limit</code> 必须给足：默认 500 会截断当日数据（实测 09-04 当日 500 档仅 32 条、3000 档 158 条）。"
                  "折溢价相对当日收盘价，正=折价、负=溢价。",
-        "files": ["web/block_archive.html", "web/block.html", f"web/block_{fmt(blk_d)}.html",
+        "files": ["web/block/archive.html", "web/block/index.html", f"web/block/block_{fmt(blk_d)}.html",
                   f"quant/block_chg/{fmt(blk_d)}.json"],
         "stats": blk_stats,
     },
     {
-        "ic": "🔥", "name": "板块强度", "href": "sector-strength-index.html",
+        "ic": "🔥", "name": "板块强度", "href": "../sector/index.html",
         "date": fmt(sec_d), "badge": freshness(sec_d),
         "desc": "行业 + 概念全板块的主力资金画像，用「强度」和「主力行为」判断资金在抢筹还是在出货。",
         "modules": chips([
@@ -329,12 +329,12 @@ SECTIONS = [
         "cadence": "每个交易日必跑 · 不可回溯",
         "cadence_cls": "danger",
         "notes": "⚠ date 参数被接口忽略，只返回最新快照。次日开盘即被覆盖，漏跑一天永久断档，趋势看板会留真空。",
-        "files": ["web/sector-strength-index.html", "web/sector-strength-trend.html",
-                  f"web/sector-strength-{sec_d.strftime('%Y%m%d') if sec_d else ''}.html"],
+        "files": ["web/sector/index.html", "web/sector/trend.html",
+                  f"web/sector/sector-strength-{sec_d.strftime('%Y%m%d') if sec_d else ''}.html"],
         "stats": sec_stats,
     },
     {
-        "ic": "🧠", "name": "群体心理风险雷达", "href": "../market-trend/index.html",
+        "ic": "🧠", "name": "群体心理风险雷达", "href": "../psychology/index.html",
         "date": fmt(psy_d), "badge": freshness(psy_d),
         "desc": "从群体行为角度给市场做「心理体检」：情绪处在周期哪一段、哪些认知偏差正在发酵、风险怎么分层。",
         "modules": chips([
@@ -345,11 +345,11 @@ SECTIONS = [
         "cadence": "按需更新（独立子系统）",
         "cadence_cls": "opt",
         "notes": "每个交易日一份单篇 HTML，数据内嵌在 market-trend/_build_MMDD.py 脚本里，非从落盘 JSON 读取，故需逐日新建脚本。",
-        "files": ["market-trend/index.html", f"market-trend/crowd-psychology-risk-radar-{psy_d.strftime('%Y%m%d') if psy_d else ''}.html"],
+        "files": ["web/psychology/index.html", f"web/psychology/crowd-psychology-risk-radar-{psy_d.strftime('%Y%m%d') if psy_d else ''}.html"],
         "stats": "",
     },
     {
-        "ic": "🏆", "name": "行业最强榜（全市场）", "href": "2026-q2-industry-elite.html",
+        "ic": "🏆", "name": "行业最强榜（全市场）", "href": "../shareholder/2026-q2-industry-elite.html",
         "date": "2026-06-30", "badge": ("定期", "warn"),
         "desc": "全市场 5500+ 只 A 股定期报告股东全量解析，按申万行业找出各自最强的自然人 / 私募 / 公募。",
         "modules": chips([
@@ -361,7 +361,7 @@ SECTIONS = [
         "cadence": "定期报告发布后重跑（非每日）",
         "cadence_cls": "opt",
         "notes": "当前为中报口径（截至 2026-06-30）。季报/年报披露季需全量重跑，日常更新不涉及。",
-        "files": ["web/2026-q2-industry-elite.html"],
+        "files": ["web/shareholder/2026-q2-industry-elite.html"],
         "stats": "",
     },
 ]
@@ -491,7 +491,7 @@ footer {{ margin-top:46px; padding-top:18px; border-top:1px solid #e3e7ec;
 </head>
 <body>
 <div class='wrap'>
-{topnav()}
+{topnav("sections")}
 
 <header class='top'>
   <h1>📦 版块总览</h1>
@@ -524,24 +524,8 @@ footer {{ margin-top:46px; padding-top:18px; border-top:1px solid #e3e7ec;
 </html>
 """
 
-os.makedirs(WEB, exist_ok=True)
+os.makedirs(os.path.dirname(OUT), exist_ok=True)
 with open(OUT, "w", encoding="utf-8") as f:
     f.write(html)
 print(f"OK -> {OUT}")
 print(f"    龙虎榜={fmt(lhb_d)} | 高管增减持={fmt(exec_d)} | 大宗交易={fmt(blk_d)} | 板块强度={fmt(sec_d)} | 心理雷达={fmt(psy_d)}")
-
-# ---- 幂等注入：龙虎榜索引页加入口 ----
-idx = os.path.join(WEB, "index.html")
-if os.path.exists(idx):
-    s = open(idx, encoding="utf-8").read()
-    if "sections.html" not in s:
-        anchor = "← 返回 A股分析中心总门户</a>"
-        if anchor in s:
-            s = s.replace(anchor, anchor + "\n<a href='sections.html'>版块总览</a>", 1)
-            with open(idx, "w", encoding="utf-8") as f:
-                f.write(s)
-            print("    导航注入 -> web/index.html（版块总览）")
-        else:
-            print("    ⚠ web/index.html 未找到导航锚点，跳过注入")
-    else:
-        print("    导航已存在，跳过注入")
