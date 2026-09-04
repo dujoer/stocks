@@ -91,7 +91,7 @@ D_inds = sorted([r for r in ind_rows if r["quad"] == "D"], key=lambda r: r["net"
 reso = [r for r in ind_rows if r["p_net"] > 0 and r["s_net"] > 0 and r["f_net"] > 0]
 reso.sort(key=lambda r: -(r["p_net"] + r["s_net"] * 3 + r["f_net"] * 3))
 
-NAV = topnav()
+NAV = topnav("shareholder")
 
 
 def cls(v):
@@ -560,7 +560,7 @@ HTML = f"""<!DOCTYPE html>
 </body>
 </html>"""
 
-out = os.path.join(ROOT, "web", "2026-q2-industry-elite.html")
+out = os.path.join(ROOT, "web", "shareholder", "2026-q2-industry-elite.html")
 open(out, "w", encoding="utf-8").write(HTML)
 print("已生成", out, f"{len(HTML)/1024:.0f} KB")
 print("A象限行业:", [r["ind"] for r in A_inds])
