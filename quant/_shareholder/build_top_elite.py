@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""生成「行业内知名 Top20 私募 / Top20 牛散」页面（基于行业知名度与历史业绩的策划清单，非短期收益胜率）。
+"""生成「行业内知名 Top20 私募 / Top20 牛散 · 玩家图谱 + 机会扫描器」。
+基于行业知名度与历史业绩的策划清单（非短期收益胜率）；叠加 2026-Q2 中报十大流通股东
+真实持仓变动（增持/减持/不变）、参考价与参考市值，并按"增持信号"做聚合排序，便于快速发现机会。
 输出: web/shareholder/top-elite.html
 """
 import json, os, datetime
@@ -8,19 +10,40 @@ import json, os, datetime
 OUT = os.path.join(os.path.dirname(__file__), "..", "..", "web", "shareholder", "top-elite.html")
 OUT = os.path.abspath(OUT)
 
-# 真实现身统计：扫描全市场 Q2 中报十大股东（优先用 q2_full/_merged_shareholder.json 的 5544 只全样本）
-# 由 scan_elite_coverage.py 生成，按实体名索引；0 表示全市场前十大均未现身。
+# 全市场 Q2 中报真实现身统计（scan_elite_coverage.py 产出）
 COV_PATH = os.path.join(os.path.dirname(__file__), "elite_coverage.json")
+# 参考价（data_quote 最新价，_quotes_elite.json）
+QUOTE_PATH = os.path.join(os.path.dirname(__file__), "_quotes_elite.json")
+# 中报后高管增减持共现（exec_elite_xref.json）
+XREF_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "quant", "exec_elite_xref.json")
+
 try:
     COVERAGE = json.load(open(COV_PATH, encoding="utf-8"))
 except Exception:
     COVERAGE = {"meta": {}, "entities": {}}
+try:
+    QUOTES = json.load(open(QUOTE_PATH, encoding="utf-8"))
+except Exception:
+    QUOTES = {}
+
+def load_xref():
+    try:
+        d = json.load(open(XREF_PATH, encoding="utf-8"))
+        # 反查：股票名 -> [主体]
+        m = {}
+        for it in d.get("items", []):
+            for st in it.get("stocks", []):
+                m.setdefault(st, []).append(it["name"])
+        return m
+    except Exception:
+        return {}
+
+XREF = load_xref()
 _META = COVERAGE.get("meta") or {}
 SAMPLE = _META.get("sample", "全市场")
 RDATE = _META.get("date", "2026-06-30")
 
 def build_evidence(name):
-    """返回 (text, is_zero) —— 用真实现身统计替换原部分样本佐证。"""
     cov = (COVERAGE.get("entities") or {}).get(name)
     meta = COVERAGE.get("meta") or {}
     sample = meta.get("sample")
@@ -35,7 +58,63 @@ def build_evidence(name):
     more = f" 等 {n} 只" if n > len(names) else f"（共 {n} 只）"
     return (f"{date} Q2 中报现身 {n} 只：{shown}{more}", False)
 
-# ============ 私募 Top20（按行业知名度与历史业绩策划，非收益胜率） ============
+def price_of(code):
+    q = QUOTES.get(code)
+    return q.get("price") if isinstance(q, dict) else None
+
+def entity_positions(name):
+    """返回该主体的全部 Q2 十大流通股东持仓行（含变动与市值）。"""
+    cov = (COVERAGE.get("entities") or {}).get(name) or {}
+    rows = []
+    for s in cov.get("stocks", []):
+        code = s.get("code", "")
+        hs = s.get("holdShares") or 0
+        hc = s.get("holdChange") or 0
+        pct = s.get("holdPct") or 0
+        px = price_of(code)
+        mv = (hs * px / 1e8) if px else None  # 亿元
+        if hc > 0:
+            typ = "增持"
+        elif hc < 0:
+            typ = "减持"
+        else:
+            typ = "不变"
+        rows.append({
+            "name": s.get("name", ""), "code": code, "holder": s.get("holder", ""),
+            "hold_w": round(hs / 1e4, 1), "pct": round(pct, 2),
+            "chg_w": round(hc / 1e4, 1), "typ": typ,
+            "price": px, "mv": round(mv, 2) if mv is not None else None,
+            "chg_pct": (QUOTES.get(code) or {}).get("chg"),
+        })
+    rows.sort(key=lambda r: -(r["hold_w"] or 0))
+    return rows
+
+def entity_table(name):
+    rows = entity_positions(name)
+    if not rows:
+        return ""
+    trs = []
+    for r in rows:
+        mv = f'{r["mv"]:.2f}' if r["mv"] is not None else "—"
+        px = f'{r["price"]:.2f}' if r["price"] else "—"
+        chg = f'+{r["chg_w"]}' if r["chg_w"] > 0 else (str(r["chg_w"]) if r["chg_w"] < 0 else "0")
+        tcls = {"增持": "up", "减持": "down", "不变": "flat"}[r["typ"]]
+        trs.append(
+            f'<tr><td class="stk">{esc(r["name"])}</td>'
+            f'<td class="num">{r["hold_w"]}</td>'
+            f'<td class="num">{r["pct"]}</td>'
+            f'<td class="num {tcls}">{chg}</td>'
+            f'<td class="num {tcls}">{r["typ"]}</td>'
+            f'<td class="num">{px}</td>'
+            f'<td class="num">{mv}</td></tr>')
+    return f'''<div class="posbox">
+      <div class="poscap">中报十大流通股东持仓（{len(rows)} 只 · 按持股排序）</div>
+      <table class="ptbl">
+        <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
+        <tbody>{"".join(trs)}</tbody>
+      </table></div>'''
+
+# ============ 私募 Top20 ============
 PRIVATE = [
     {"name":"高毅资产","people":"邱国鹭(创始人) / 邓晓峰 / 冯柳 / 卓利伟 / 孙庆瑞","type":"平台型·主观多头","scale":"千亿级（国内最大主观多头平台之一）",
      "sectors":["消费","医药","先进制造","周期","金融"],"style":"基金经理制、价值成长、长期持股，冯柳逆向+邓晓峰制造业深耕为标签。",
@@ -99,7 +178,7 @@ PRIVATE = [
      "tag":"老牌量化头部"},
 ]
 
-# ============ 牛散 Top20（按市场知名度与公开持仓策划） ============
+# ============ 牛散 Top20 ============
 RETAIL = [
     {"name":"葛卫东","type":"牛散+私募双栖","sectors":["科技","有色","消费","医美"],
      "style":"期货起家，股期联动、长期持有+顺势，单票格局大。","tag":"牛散天花板，混沌投资创始人"},
@@ -153,6 +232,10 @@ def card(idx, d, kind):
         dt_html = f'<div class="{cls}">📌 {esc(etext)}</div>'
     else:
         dt_html = ''
+    xref_stocks = [st for st, names in XREF.items() if d["name"] in names]
+    xref_html = ''
+    if xref_stocks:
+        xref_html = f'<div class="xref">🔗 中报后关联（高管增减持）：{"、".join(esc(s) for s in xref_stocks)}</div>'
     sectors = " · ".join(esc(s) for s in d["sectors"])
     if kind == "private":
         meta = f'<div class="meta"><span class="chip">{esc(d["type"])}</span><span class="chip gold">{esc(d["scale"])}</span></div>'
@@ -171,6 +254,8 @@ def card(idx, d, kind):
         <div class="style">{esc(d["style"])}</div>
         <div class="tagline">★ {esc(d["tag"])}</div>
         {dt_html}
+        {xref_html}
+        {entity_table(d["name"])}
       </div>
     </div>'''
 
@@ -183,12 +268,69 @@ def grid(title, subtitle, items, kind):
       <div class="grid">{cards}</div>
     </div>'''
 
+def opportunity_scan():
+    """聚合 40 家主体的全部 Q2 持仓，按'增持信号'排序，便于快速发现机会。"""
+    rows = []
+    all_entities = [(p["name"], "私募") for p in PRIVATE] + [(r["name"], "牛散") for r in RETAIL]
+    for name, kind in all_entities:
+        for r in entity_positions(name):
+            rows.append({
+                "entity": name, "kind": kind, "name": r["name"], "code": r["code"],
+                "hold_w": r["hold_w"], "pct": r["pct"], "chg_w": r["chg_w"], "typ": r["typ"],
+                "price": r["price"], "mv": r["mv"], "chg_pct": r["chg_pct"],
+            })
+    # 默认按 参考市值 降序
+    rows.sort(key=lambda x: -(x["mv"] if x["mv"] is not None else -1))
+    trs = []
+    for i, r in enumerate(rows, 1):
+        mv = f'{r["mv"]:.2f}' if r["mv"] is not None else "—"
+        px = f'{r["price"]:.2f}' if r["price"] else "—"
+        chg = f'+{r["chg_w"]}' if r["chg_w"] > 0 else (str(r["chg_w"]) if r["chg_w"] < 0 else "0")
+        tcls = {"增持": "up", "减持": "down", "不变": "flat"}[r["typ"]]
+        kcls = "k-p" if r["kind"] == "私募" else "k-r"
+        # 加 data-* 便于排序
+        trs.append(
+            f'<tr data-mv="{r["mv"] if r["mv"] is not None else -1}" data-chg="{r["chg_w"]}" '
+            f'data-pct="{r["pct"]}" data-hold="{r["hold_w"]}" '
+            f'data-px="{r["price"] if r["price"] is not None else -1}">'
+            f'<td class="num">{i}</td>'
+            f'<td><span class="ent {kcls}">{esc(r["entity"])}</span></td>'
+            f'<td class="num">{esc(r["kind"])}</td>'
+            f'<td class="stk">{esc(r["name"])}</td>'
+            f'<td class="num">{esc(r["code"])}</td>'
+            f'<td class="num">{r["hold_w"]}</td>'
+            f'<td class="num">{r["pct"]}</td>'
+            f'<td class="num {tcls}">{chg}</td>'
+            f'<td class="num {tcls}">{r["typ"]}</td>'
+            f'<td class="num">{px}</td>'
+            f'<td class="num">{mv}</td></tr>')
+    return f'''<div class="block scan">
+      <h2>机会扫描 · 增持/减持信号总榜</h2>
+      <div class="sub">40 家主体全部 Q2 中报十大流通股东持仓聚合（{len(rows)} 条）· 默认按「参考市值」降序 · 点击表头可重排 · 红色=增持/买入信号，绿色=减持</div>
+      <div class="scanhint">用法：先看「增持」行（红），按市值或季度增持量排序，圈出有实力主体重仓且本季加仓的票，再回看下方主体卡片的详细持仓与中报后关联。</div>
+      <table class="ptbl scan-tbl" id="scantbl">
+        <thead><tr>
+          <th onclick="sortScan(0)">#</th>
+          <th onclick="sortScan(1)">主体</th>
+          <th onclick="sortScan(2)">类别</th>
+          <th onclick="sortScan(3)">股票</th>
+          <th onclick="sortScan(4)">代码</th>
+          <th onclick="sortScan(5)">持股(万)</th>
+          <th onclick="sortScan(6)">占比%</th>
+          <th onclick="sortScan(7)">季度变动(万)</th>
+          <th onclick="sortScan(8)">类型</th>
+          <th onclick="sortScan(9)">参考价</th>
+          <th onclick="sortScan(10)">市值(亿)</th>
+        </tr></thead>
+        <tbody>{"".join(trs)}</tbody>
+      </table></div>'''
+
 def build():
     today = datetime.date.today().isoformat()
     html = f'''<!DOCTYPE html>
 <html lang="zh-CN"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>行业知名 Top20 私募 / 牛散 · 玩家图谱</title>
+<title>行业知名 Top20 私募 / 牛散 · 玩家图谱 + 机会扫描</title>
 <style>
 *{{box-sizing:border-box;margin:0;padding:0}}
 body{{background:#f5f6f8;color:#23262b;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6}}
@@ -203,7 +345,8 @@ header h1{{font-size:24px;margin-bottom:6px}}
 .block h2{{font-size:19px;display:flex;align-items:center;gap:8px}}
 .block h2:before{{content:"";width:4px;height:18px;background:#b8893b;border-radius:3px}}
 .sub{{color:#8a929c;font-size:13px;margin:4px 0 16px}}
-.grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}}
+.scanhint{{background:#fbf6ea;border:1px dashed #d9c79a;border-radius:8px;padding:8px 12px;font-size:12px;color:#8a6a2e;margin-bottom:12px}}
+.grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px}}
 .card{{background:#fff;border:1px solid #ecedf1;border-radius:12px;padding:14px 16px;display:flex;gap:12px;transition:.15s}}
 .card:hover{{box-shadow:0 4px 18px rgba(0,0,0,.06);border-color:#d9c79a}}
 .rank{{flex:0 0 30px;height:30px;border-radius:50%;background:#b8893b;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}}
@@ -218,6 +361,23 @@ header h1{{font-size:24px;margin-bottom:6px}}
 .tagline{{font-size:12px;color:#b8893b;margin-top:6px;font-weight:600}}
 .dt{{font-size:11.5px;color:#1a9e5a;margin-top:6px;background:#eef8f1;padding:3px 8px;border-radius:6px;display:inline-block}}
 .dt.zero{{color:#9aa1ab;background:#f1f2f5}}
+.xref{{font-size:11.5px;color:#b8332a;margin-top:6px;background:#fdeeee;padding:3px 8px;border-radius:6px;display:inline-block}}
+.posbox{{margin-top:8px}}
+.poscap{{font-size:11px;color:#8a929c;margin:4px 0 4px}}
+.ptbl{{width:100%;border-collapse:collapse;font-size:11.5px}}
+.ptbl th{{background:#f3f4f7;color:#5a6270;text-align:right;padding:4px 6px;font-weight:600;cursor:pointer;white-space:nowrap}}
+.ptbl th:hover{{color:#b8893b}}
+.ptbl td{{padding:3px 6px;border-top:1px solid #f0f1f4;text-align:right;white-space:nowrap}}
+.ptbl td.stk{{text-align:left;color:#23262b;font-weight:600}}
+.ptbl td.num{{color:#4a515c}}
+.up{{color:#b8332a;font-weight:600}}
+.down{{color:#1a9e5a;font-weight:600}}
+.flat{{color:#8a929c}}
+.scan-tbl td.num{{text-align:right}}
+.scan-tbl td.stk{{text-align:left}}
+.scan-tbl td .ent{{font-weight:700}}
+.k-p{{color:#b8893b}}
+.k-r{{color:#5a6270}}
 footer{{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}}
 .disc{{background:#fff;border:1px dashed #d9c79a;border-radius:10px;padding:12px 16px;font-size:12px;color:#6b7280;margin-top:26px}}
 </style></head>
@@ -235,21 +395,46 @@ footer{{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}}
 </div>
 <div class="wrap">
   <header>
-    <h1>行业知名 Top20 私募 / Top20 牛散 · 玩家图谱</h1>
-    <div style="color:#8a929c;font-size:13px">A股市场上被广泛讨论、行业地位突出的私募与牛散清单（按行业知名度与历史业绩策划，非短期收益胜率）</div>
+    <h1>行业知名 Top20 私募 / Top20 牛散 · 玩家图谱 + 机会扫描</h1>
+    <div style="color:#8a929c;font-size:13px">A股市场上被广泛讨论、行业地位突出的私募与牛散清单（按行业知名度与历史业绩策划，非短期收益胜率）；叠加 2026-Q2 中报十大流通股东真实持仓变动，辅助快速发现机会。</div>
   </header>
   <div class="note">
     <b>口径说明：</b>应需求调整 —— 短期的“区间收益胜率”样本太短、噪声太大，不足以排名；本页改为<b>行业内知名度与历史业绩</b>视角的策划清单。
-    排序为「行业地位/代表性」而非收益胜率，<b>不构成任何投资建议，也不对个股做任何推荐</b>。名称旁“📌”为<b>真实持仓佐证</b>：基于已合并的 <b>{SAMPLE} 只全市场个股 {RDATE} Q2 中报十大股东</b>数据扫描，出现即“现身于前十大”，未出现即“全市场前十大均未现身”（仅反映中报披露时点，不代表当前是否仍持有）。
+    名称旁“📌”为<b>真实持仓佐证</b>：基于已合并的 <b>{SAMPLE} 只全市场个股 {RDATE} Q2 中报十大股东</b>数据扫描。每张卡片下方为<b>中报十大流通股东持仓明细</b>（持股/占比/季度变动/参考价/市值），顶部“机会扫描”为 40 家主体的<b>增持/减持信号聚合总榜</b>。
+    <b>新进说明：</b>单季快照的 <code>holdChange</code> 仅区分增持/减持/不变，<b>未单列“新进”标志</b>（新进主体被并入“不变”项），故本页以“增持”作为可检测的买入信号；若需严格新进，需对比 Q1 十大股东（当前数据源仅返回最新一期）。
+    <b>中报后变化：</b>Q3 十大股东尚未披露（约 10–11 月），中报后增量信息以“高管增减持”共现呈现（见卡片🔗标记，来自 exec 页交叉验证的 9 例）。
+    本页<b>不构成任何投资建议</b>。
   </div>
+  {opportunity_scan()}
   {grid("私募 Top20（行业头部）", "平台型、主观多头、量化、宏观对冲中具有代表性的头部机构", PRIVATE, "private")}
   {grid("牛散 Top20（知名大户）", "长期现身前十大流通股东、市场关注度高的个人/家族账户", RETAIL, "retail")}
   <div class="disc">
     ⚠️ 免责声明：本页为<b>行业玩家格局</b>的公开信息整理，所有名称、规模、风格均来自公开报道与历史持仓，存在时效与认知偏差；
-    所列主体仅为市场讨论中的知名代表，<b>不代表其当前业绩或未来表现</b>，更不构成买卖任何证券的建议。请勿据此直接交易。
+    所列主体仅为市场讨论中的知名代表，<b>不代表其当前业绩或未来表现</b>，更不构成买卖任何证券的建议。持仓/市值基于中报披露股数 × 最新参考价估算，仅供参考。
   </div>
-  <footer>生成日期 {today} · 数据维度：公开信息整理 + 全市场 {SAMPLE} 只 {RDATE} Q2 中报十大股东真实现身统计</footer>
+  <footer>生成日期 {today} · 数据维度：公开信息整理 + 全市场 {SAMPLE} 只 {RDATE} Q2 中报十大股东真实现身统计 + 最新参考价</footer>
 </div>
+<script>
+function sortScan(col) {{
+  var tbl=document.getElementById('scantbl');
+  var tb=tbl.tBodies[0];
+  var rows=Array.from(tb.rows);
+  var asc=tbl.getAttribute('data-asc')!=='1';
+  var numCols={{5:'hold',6:'pct',7:'chg',9:'px',10:'mv'}};
+  var keyf=function(r){{
+    if(numCols[col]){{ return parseFloat(r.getAttribute('data-'+numCols[col]))||0; }}
+    return r.children[col].textContent;
+  }};
+  rows.sort(function(a,b){{
+    var x=keyf(a), y=keyf(b);
+    if(typeof x==='number'){{ return asc? x-y : y-x; }}
+    x=String(x); y=String(y);
+    return asc? (x<y?-1:x>y?1:0) : (x<y?1:x>y?-1:0);
+  }});
+  rows.forEach(function(r){{tb.appendChild(r);}});
+  tbl.setAttribute('data-asc', asc?'1':'0');
+}}
+</script>
 </body></html>'''
     with open(OUT, "w", encoding="utf-8") as f:
         f.write(html)
