@@ -14,9 +14,11 @@
   - 数据内联(JSON),完全离线可用
 """
 import argparse, json, os
+from _nav import selfcontained_nav
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 WEB = os.path.normpath(os.path.join(ROOT, "..", "web"))
+WEB_SECTOR = os.path.join(WEB, "sector")
 
 
 def fmt_yi(v):
@@ -30,6 +32,7 @@ def build_html(daily):
     s = daily["summary"]
     records = daily["records"]
     beh = s["behavior"]
+    NAV = selfcontained_nav("sector", home="../../index.html")
 
     # KPI
     dark_cls = "up" if s["totalDarkY"] >= 0 else "down"
@@ -134,6 +137,7 @@ tbody tr:hover{background:#f3f4f6}
 </style>
 </head>
 <body>
+""" + NAV + """
 <h1>A股板块强度 <span style="color:var(--gold)">""" + date + """</span></h1>
 <div class="sub">暗盘资金 = 主力资金 − 散户资金 ｜ 板块强度 = 暗盘资金 ÷ 总成交额 × 100 ｜ 主力行为:
   <b>抢筹</b>(≥3) <b>建仓</b>(1~3) <b>洗盘</b>(−1~1) <b>出货</b>(≤−1) ｜ 数据: westock 实时板块(最新快照)</div>
@@ -285,7 +289,7 @@ def main():
     args = ap.parse_args()
     daily = json.load(open(args.daily, encoding="utf-8"))
     date = daily["date"]
-    out = args.output or os.path.join(WEB, "sector-strength-" + date.replace("-", "") + ".html")
+    out = args.output or os.path.join(WEB_SECTOR, "sector-strength-" + date.replace("-", "") + ".html")
     os.makedirs(os.path.dirname(out), exist_ok=True)
     open(out, "w", encoding="utf-8").write(build_html(daily))
     print(f"[ok] 每日页 -> {out} ({len(daily['records'])} 板块)")
