@@ -65,6 +65,8 @@ tr:last-child td { border-bottom:none; }
 .scroll table { margin:0; }
 .scroll thead th { position:sticky; top:0; z-index:2; }
 .hide { display:none; }
+.filterbar b { color:#b8893b; }
+.filterbar .warn { color:#b8332a; font-weight:600; }
 footer { margin-top:34px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08);
   font-size:12px; color:#7b8794; line-height:1.8; }</style>
 </head>
@@ -132,12 +134,16 @@ footer { margin-top:34px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08)
 <div class='chip chip-ind' data-industry='轻工制造' onclick='filterIndustry(this.dataset.industry)' title='点击仅看「轻工制造」行业'><div class='ck'>轻工制造</div><div class='cv'>639.4<span style='font-size:10px;color:#8a929c'> 万</span></div><div class='cs'><span class='buy'>+20.0</span> / <span class='sell'>-619.4</span></div></div>
 <div class='chip chip-ind' data-industry='纺织服饰' onclick='filterIndustry(this.dataset.industry)' title='点击仅看「纺织服饰」行业'><div class='ck'>纺织服饰</div><div class='cv'>550.8<span style='font-size:10px;color:#8a929c'> 万</span></div><div class='cs'><span class='buy'>+0.0</span> / <span class='sell'>-550.8</span></div></div>
   </div>
-  <div class='note'>每格：行业 ｜ 增减持金额合计（万元）｜ <span class='buy'>增持</span> / <span class='sell'>减持</span> 分项（万元）。
-  <b>点击任一行业卡片</b>可仅看该行业记录；点「全部行业」或再次点击同一卡片可重置。仅列金额合计最高的 18 个行业。</div>
+  <div class='note'>
+    <b>口径对齐</b>：卡片金额 = <b>近 1 月全部 700 条变动</b>按 sw1 累计（与上方「meta」中的窗口一致）。
+    <b>点击任一行业卡片</b>会自动把下方明细切换到「全部明细（700 条·近 1 月窗口）」并按该行业过滤——这样卡片金额与明细口径完全一致。
+    若停留在「最新披露日（仅当日 20 条）」则卡片金额与明细不可直接比较（口径不同）。
+  </div>
 </div>
 
 <div class='section'>
   <h2>明细</h2>
+  <div id='filterbar' class='filterbar' style='margin:8px 0 12px;padding:8px 12px;background:rgba(184,137,59,.08);border:1px dashed rgba(184,137,59,.35);border-radius:8px;font-size:12px;color:#5a4630'></div>
   <div class='tabs'>
     <div class='tab' data-tab='p_latest' onclick='switchTab("p_latest")'>最新披露日（2026-09-01 · 20 条）</div>
     <div class='tab' data-tab='p_buy' onclick='switchTab("p_buy")'>增持榜 Top60</div>
@@ -1096,28 +1102,33 @@ footer { margin-top:34px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08)
 function switchTab(id){
   document.querySelectorAll('.tab[data-tab]').forEach(function(t){ t.classList.toggle('on', t.dataset.tab===id); });
   document.querySelectorAll('.pane').forEach(function(p){ p.classList.toggle('hide', p.id!==id); });
+  refreshFilterBar();
 }
 function setDir(v){
   window.__dir = v;
   document.querySelectorAll('.fbtn').forEach(function(b){ b.classList.toggle('on', b.dataset.dir===v); });
-  document.querySelectorAll('tr[data-dir]').forEach(function(tr){
-    tr.classList.toggle('hide', !(v==='all' || tr.dataset.dir===v));
-  });
-  // 方向变化时也要尊重行业筛选（已选行业时，非该行业行继续隐藏）
-  if (window.__ind) applyIndustry();
+  applyFilter();
+  refreshFilterBar();
 }
 function filterIndustry(name){
+  // 切换行业时如果切到新行业，把明细口径切到「全部明细 700 条」与卡片金额对齐
+  var changed = (window.__ind !== name);
   window.__ind = (window.__ind===name ? null : name);
-  applyIndustry();
+  // 只有真正选中一个行业（或切换行业）且明细不在「全部明细」时，自动切到 p_all 与卡片口径对齐
+  if (window.__ind && changed){
+    var cur = document.querySelector('.pane:not(.hide)');
+    if (!cur || cur.id !== 'p_all') switchTab('p_all');
+  }
+  applyFilter();
+  refreshFilterBar();
 }
 function clearIndustry(){
   window.__ind = null;
   document.querySelectorAll('.chip-ind').forEach(function(c){ c.classList.toggle('on', false); });
-  document.querySelectorAll('tr[data-sw1]').forEach(function(tr){ tr.classList.remove('hide'); });
-  // 行业重置后仍尊重方向筛选
-  if (window.__dir && window.__dir!=='all') setDir(window.__dir);
+  applyFilter();
+  refreshFilterBar();
 }
-function applyIndustry(){
+function applyFilter(){
   var ind = window.__ind;
   document.querySelectorAll('.chip-ind').forEach(function(c){ c.classList.toggle('on', c.dataset.industry===ind); });
   document.querySelectorAll('tr[data-sw1]').forEach(function(tr){
@@ -1127,9 +1138,31 @@ function applyIndustry(){
     tr.classList.toggle('hide', !(dirMatch && indMatch));
   });
 }
+// 兼容旧名（applyIndustry → applyFilter），保留对外语义
+function applyIndustry(){ applyFilter(); }
+function refreshFilterBar(){
+  var bar = document.getElementById('filterbar'); if(!bar) return;
+  var parts = [];
+  var cur = document.querySelector('.pane:not(.hide)');
+  var scopeName = cur ? (cur.id==='p_all' ? '全部明细（700 条·近 1 月窗口）'
+                                  : cur.id==='p_latest' ? '最新披露日（仅当日 20 条）'
+                                  : cur.id==='p_buy'    ? '增持榜 Top60'
+                                  : cur.id==='p_sell'   ? '减持榜 Top60'
+                                  : cur.id==='p_agg'    ? '个股聚合 Top80'
+                                  : '全部明细') : '—';
+  parts.push('<span>明细口径：<b>'+scopeName+'</b></span>');
+  if (window.__ind) parts.push('<span>行业筛选：<b>'+window.__ind+'</b></span>');
+  if (window.__dir && window.__dir!=='all') parts.push('<span>方向：<b>'+(window.__dir==='b'?'仅增持':'仅减持')+'</b></span>');
+  // 警示：行业卡片金额口径与默认最新披露日 tab 不一致时给提示
+  if (window.__ind && cur && cur.id!=='p_all'){
+    parts.push('<span class="warn">⚠️ 卡片金额口径为「近 1 月全部 700 条」，当前明细不在此口径下；金额与明细不可比。</span>');
+  }
+  bar.innerHTML = parts.join(' &nbsp;·&nbsp; ');
+}
 document.addEventListener('DOMContentLoaded', function(){
   var t0 = document.querySelector('.tab[data-tab]'); if(t0) switchTab(t0.dataset.tab);
   var f0 = document.querySelector('.fbtn'); if(f0) setDir('all');
+  refreshFilterBar();
 });
 </script>
 </body>
