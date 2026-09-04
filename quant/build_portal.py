@@ -63,11 +63,13 @@ lhb_d, lhb_f = latest(r"^lhb_(\d{4}-\d{2}-\d{2})\.html$", WEB)
 sec_d, sec_f = latest(r"^sector-strength-(\d{8})\.html$", WEB)
 psy_d, psy_f = latest(r"^crowd-psychology-risk-radar-(\d{8})\.html$", MT)
 exec_d, exec_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "exec_chg"))
+blk_d, blk_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "block_chg"))
 
 lhb_txt, lhb_cls = freshness(lhb_d)
 sec_txt, sec_cls = freshness(sec_d)
 psy_txt, psy_cls = freshness(psy_d)
 exec_txt, exec_cls = freshness(exec_d)
+blk_txt, blk_cls = freshness(blk_d)
 
 def fmt(d):
     return d.strftime("%Y-%m-%d") if d else "—"
@@ -86,6 +88,11 @@ cards = [
         "ic": "💼", "t": "高管增减持（董监高）", "href": "web/exec.html",
         "d": "全市场董监高持股变动：增持/减持明细与金额、申万行业分布、个股聚合净额",
         "date": fmt(exec_d), "fresh": badge(exec_cls, exec_txt),
+    },
+    {
+        "ic": "🧾", "t": "大宗交易", "href": "web/block.html",
+        "d": "全市场大宗交易逐笔：折溢价、成交额、买卖营业部与机构席位动向，每日归档",
+        "date": fmt(blk_d), "fresh": badge(blk_cls, blk_txt),
     },
     {
         "ic": "🔥", "t": "板块强度", "href": "web/sector-strength-index.html",
@@ -123,11 +130,12 @@ cards_html = "\n".join(
 update_steps = [
     ("① 拉取当日快照", "用 westock-mcp 拉取 market_overview / board_hot / quotes / limitup / lhb / news，分别落盘到 quant 对应子目录的 <b>{DATE}.json</b>；再补 lhb 个股明细（分 3 批）。"),
     ("② 高管增减持", "<code>tool_event(manager_sharechg)</code> + <code>data_quote</code> → <code>python quant\\gen_exec.py --date {DATE}</code> → <code>python quant\\build_exec.py --date {DATE}</code>。T+1 口径，接口快照日为前一交易日。"),
-    ("③ 生成龙虎榜主看板", "<code>python quant\\build_dashboards.py --date {DATE}</code> → 重写 web/ 下各页面（<b>会重建 web/index.html</b>）。"),
-    ("④ 板块强度（必做 · 不可回溯）", "拉 industry + concept 快照 → <code>python quant\\gen_sector_raw.py</code> → <code>python quant\\run_daily_sector.py --date {DATE} --industry &lt;绝对路径&gt; --concept &lt;绝对路径&gt;</code>。<b>漏跑一天该交易日永久断档</b>。"),
-    ("⑤ 心理风险雷达（按需）", "按 market-trend 既有 _build 范式生成 crowd-psychology-risk-radar-{DATE}.html 并入 market-trend/index.html。数据内嵌在 _build 脚本内。"),
-    ("⑥ 刷新门户与总览", "<code>python quant\\build_portal.py</code> → <code>python quant\\build_sections.py</code> → 各卡片自动带出最新日期与新鲜度。"),
-    ("⑦ 校验与推送", "合规扫描（产物内不得出现个人持有信息、账户盈亏、自下而上选股等敏感内容，关键词清单见项目约定）；经 GitHub Contents API 推送（<code>python quant\\_push_lhb.py</code>）。"),
+    ("③ 大宗交易", "<code>tool_event(names=block_past_30, limit=3000)</code>（<b>limit 必须给足</b>，默认 500 会截断当日数据）→ <code>data_quote</code> 补涨跌幅 → <code>python quant\\gen_block.py --date {DATE} --src &lt;事件落盘&gt; --quotes &lt;行情落盘&gt;</code> → <code>python quant\\build_block.py --date {DATE}</code>。"),
+    ("④ 生成龙虎榜主看板", "<code>python quant\\build_dashboards.py --date {DATE}</code> → 重写 web/ 下各页面（<b>会重建 web/index.html</b>）。"),
+    ("⑤ 板块强度（必做 · 不可回溯）", "拉 industry + concept 快照 → <code>python quant\\gen_sector_raw.py</code> → <code>python quant\\run_daily_sector.py --date {DATE} --industry &lt;绝对路径&gt; --concept &lt;绝对路径&gt;</code>。<b>漏跑一天该交易日永久断档</b>。"),
+    ("⑥ 心理风险雷达（按需）", "按 market-trend 既有 _build 范式生成 crowd-psychology-risk-radar-{DATE}.html 并入 market-trend/index.html。数据内嵌在 _build 脚本内。"),
+    ("⑦ 刷新门户与总览", "<code>python quant\\build_portal.py</code> → <code>python quant\\build_sections.py</code> → <code>python quant\\_apply_nav.py</code>（统一导航自愈）→ 各卡片自动带出最新日期与新鲜度。"),
+    ("⑧ 校验与推送", "合规扫描（产物内不得出现个人持有信息、账户盈亏、自下而上选股等敏感内容，关键词清单见项目约定）；<code>python quant\\_link_check.py</code> 须 0 断链；经 GitHub Contents API 推送（<code>python quant\\_push_lhb.py</code>）。"),
 ]
 
 steps_html = "\n".join(
@@ -211,5 +219,5 @@ footer {{ margin-top:48px; padding-top:18px; border-top:1px solid #e3e7ec;
 with open(OUT, "w", encoding="utf-8") as f:
     f.write(html)
 print(f"OK: 总门户已生成 -> {OUT}")
-print(f"    龙虎榜={fmt(lhb_d)} | 高管增减持={fmt(exec_d)} | 板块强度={fmt(sec_d)} | 心理雷达={fmt(psy_d)}")
+print(f"    龙虎榜={fmt(lhb_d)} | 高管增减持={fmt(exec_d)} | 大宗交易={fmt(blk_d)} | 板块强度={fmt(sec_d)} | 心理雷达={fmt(psy_d)}")
 print("    下一步：python quant\\build_sections.py（版块总览 / 自检页）")
