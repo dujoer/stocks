@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re, sys, subprocess
 
-BASE = "G:/ai/股票/market-trend/index.html"
+BASE = "G:/ai/股票/web/psychology/index.html"
 with open(BASE, encoding="utf-8") as f:
     html = f.read()
 
@@ -152,8 +152,8 @@ src = re.findall(r'<script[^>]*\ssrc=', html)
 print("external http(s):", len(ext), "script src:", len(src))
 if ext or src: print("FAIL external"); sys.exit(1)
 blocks = re.findall(r'<script>(.*?)</script>', html, flags=re.S)
-open("G:/ai/股票/market-trend/_check_idx.js","w",encoding="utf-8").write("\n".join(blocks))
-r = subprocess.run(["C:/Users/nonoy/.workbuddy/binaries/node/versions/22.22.2/node.exe","--check","G:/ai/股票/market-trend/_check_idx.js"],capture_output=True,text=True)
+open("G:/ai/股票/web/psychology/_check_idx.js","w",encoding="utf-8").write("\n".join(blocks))
+r = subprocess.run(["C:/Users/nonoy/.workbuddy/binaries/node/versions/22.22.2/node.exe","--check","G:/ai/股票/web/psychology/_check_idx.js"],capture_output=True,text=True)
 print("node --check rc=", r.returncode)
 if r.returncode!=0: print(r.stdout,r.stderr); sys.exit(1)
 print("JS syntax OK")
