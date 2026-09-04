@@ -313,9 +313,23 @@ val_html = (f"<div class='amberbox' style='color:#1c2430'><b style='color:#1c243
 news_html = "<ul style='margin:0;padding-left:18px;color:#6b7280'>"
 for it in news:
     impact = it.get("impact") or ""
+    title = (it.get('title') or '').replace('<', '&lt;').replace('>', '&gt;')
+    source = (it.get('source') or '').replace('<', '&lt;').replace('>', '&gt;')
+    # 链接策略：有 news_id 用腾讯新闻 rain/a URL；否则用 news.qq.com 站内搜索（命中率高、永远可达）
+    nid = (it.get('news_id') or '').strip()
+    if nid:
+        link = f"https://new.qq.com/rain/a/{nid}"
+    else:
+        from urllib.parse import quote
+        link = f"https://news.qq.com/search?query={quote(title)}"
     news_html += (f"<li style='margin:8px 0;line-height:1.55'>"
-                  f"<span style='color:#b8893b;font-weight:700'>[{it.get('source','')}]</span> <b>{it.get('title','')}</b>"
-                  + (f"<br><span style='color:#8a929c;font-size:12px'>▸ 影响：{impact}</span>" if impact else "") + "</li>")
+                  f"<span style='color:#b8893b;font-weight:700'>[{source}]</span> "
+                  f"<a href='{link}' target='_blank' rel='noopener' "
+                  f"style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>"
+                  f"<b>{title}</b></a>"
+                  + (f"<br><span style='color:#8a929c;font-size:12px'>▸ 影响：{impact}</span>" if impact else "") +
+                  f" <a href='{link}' target='_blank' rel='noopener' "
+                  f"style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a></li>")
 news_html += "</ul>"
 
 tech_defs = [
@@ -405,13 +419,14 @@ for s in held:
         price = s.get("price"); chg = None
     tot_mv += s["qty"] * price
 for s in held:
-    q = quotes.get(s["market"].lower() + s["code"])
-    price = q["price"]; chg = q["change_percent"]
+    q = quotes.get(s["market"].lower() + s["code"]) or {}
+    price = q.get("price") or s.get("cost") or 0
+    chg = q.get("change_percent")
     mv = s["qty"] * price
     cost = s["cost"]
     pnl = (price - cost) * s["qty"]
-    pnl_pct = (price - cost) / cost * 100
-    w = mv / tot_mv * 100
+    pnl_pct = (price - cost) / cost * 100 if cost else 0
+    w = mv / tot_mv * 100 if tot_mv else 0
     rows_p.append((s, price, chg, mv, pnl, pnl_pct, w))
 tot_pnl = sum(r[4] for r in rows_p)
 tot_pnl_pct = tot_pnl / tot_mv * 100 if tot_mv else 0
