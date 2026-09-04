@@ -17,9 +17,11 @@
   python build_sector_trend.py --trend quant/sector_trend.json --output ../web/sector-strength-trend.html
 """
 import argparse, json, os, glob
+from _nav import selfcontained_nav
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 WEB = os.path.normpath(os.path.join(ROOT, "..", "web"))
+WEB_SECTOR = os.path.join(WEB, "sector")
 
 
 def load_sectors(daily_dir):
@@ -60,7 +62,7 @@ def existing_day_pages():
     """扫描 web/ 下已生成的每日页, 返回存在的日期列表 (YYYY-MM-DD), 用于日期链接点亮"""
     import re as _re
     days = []
-    for f in glob.glob(os.path.join(WEB, "sector-strength-*.html")):
+    for f in glob.glob(os.path.join(WEB_SECTOR, "sector-strength-*.html")):
         m = _re.search(r"sector-strength-(\d{8})\.html$", f)
         if m:
             d = m.group(1)
@@ -70,6 +72,7 @@ def existing_day_pages():
 
 def build_html(trend, sectors):
     trend_json = json.dumps(trend, ensure_ascii=False)
+    NAV = selfcontained_nav("sector", home="../../index.html")
     sectors_json = json.dumps(sectors, ensure_ascii=False)
     existing_json = json.dumps(existing_day_pages(), ensure_ascii=False)
     html = """<!DOCTYPE html>
@@ -167,6 +170,7 @@ table tr:hover td{background:#f0f2f5}
 </style>
 </head>
 <body>
+""" + NAV + """
 <h1>A股板块强度 · <span style="color:var(--gold)">趋势看板</span></h1>
 <div class="sub">每日盘后真实板块快照累积而成 ｜ 全市场聚合 + 单板块下钻 + 多板块对比 ｜ 数据随交易日自动变长（westock 最新快照）</div>
 
@@ -648,7 +652,7 @@ def main():
     trend = json.load(open(args.trend, encoding="utf-8"))
     daily_dir = os.path.join(os.path.dirname(os.path.abspath(args.trend)), "sector_daily")
     sectors = load_sectors(daily_dir)
-    out = args.output or os.path.join(WEB, "sector-strength-trend.html")
+    out = args.output or os.path.join(WEB_SECTOR, "sector-strength-trend.html")
     os.makedirs(os.path.dirname(out), exist_ok=True)
     open(out, "w", encoding="utf-8").write(build_html(trend, sectors))
     print(f"[ok] 趋势看板 -> {out} ({len(trend)} 交易日 | {len(sectors)} 板块可下钻)")
