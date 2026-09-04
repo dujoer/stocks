@@ -7,7 +7,11 @@
 import json, os
 
 BASE = os.path.dirname(__file__)
-SRC = os.path.join(BASE, "_merged_shareholder.json")
+# 优先用全市场股东数据（a-share-full-market-shareholder-elite 技能产出，5544 只 / 2026-06-30），
+# 回退到本项目合并的 1375 只样本。两者结构一致（code/date/name/top10FloatShareholders...）。
+_FULL = os.path.join(BASE, "..", "q2_full", "_merged_shareholder.json")
+_PARTIAL = os.path.join(BASE, "_merged_shareholder.json")
+SRC = _FULL if os.path.exists(_FULL) else _PARTIAL
 OUT = os.path.join(BASE, "elite_coverage.json")
 
 # 40 家主体 → 匹配关键词（私募用产品/公司名前缀；牛散用自然人姓名）
