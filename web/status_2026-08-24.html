@@ -85,34 +85,64 @@ a.inlink:hover { background:rgba(201,166,107,.16); }
 .hist { margin-top:30px; font-size:12.5px; color:#6b7280; }
 .hist a { color:#b8893b; text-decoration:none; border:1px solid rgba(201,166,107,.4); border-radius:10px; padding:5px 12px; display:inline-block; margin:4px; }
 .foot { margin-top:42px; font-size:12px; color:#8a929c; line-height:1.8; }
+.lhb { table-layout:fixed; }
+.lhb th, .lhb td { font-size:12.5px; vertical-align:top; }
+.lhb td.reason { color:#6b7280; width:150px; font-size:11.5px; line-height:1.4; }
+.lhb td.sec { font-size:12px; white-space:nowrap; }
+.hm { text-align:center; }
+.hm-high { color:#f2a65a; font-weight:800; }
+.hm-mid { color:#b8893b; font-weight:700; }
+.hm-low { color:#8a93a3; }
+.hmtags { margin-top:3px; }
+.hmtag { display:inline-block; background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.30); color:#b8332a; border-radius:10px; padding:1px 7px; font-size:10.5px; margin:2px 2px 0 0; }
+.toggle { color:#b8893b; cursor:pointer; font-size:12px; user-select:none; }
+.toggle:hover { text-decoration:underline; }
+.seats { display:flex; gap:24px; flex-wrap:wrap; padding:6px 4px; }
+.seats .buys, .seats .sells { flex:1; min-width:260px; }
+.seat-h { font-weight:700; margin-bottom:6px; font-size:13px; }
+.seat-h.up { color:#b8332a; } .seat-h.down { color:#1a9e5a; }
+.seats ul { list-style:none; margin:0; padding:0; }
+.seats li { display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px dashed rgba(0,0,0,.04); font-size:12px; }
+.seats li .nm { flex:1; color:#3a4048; }
+.seats li .amt { font-variant-numeric:tabular-nums; font-weight:700; }
+tr.detail td { background:rgba(0,0,0,.03); }
 </style>
 </head>
 <body>
 <div class='wrap'>
-<div class='topnav'><a href='daily_overview.html'>每日总览</a><a href='lhb.html'>龙虎榜分析</a><a href='hotmoney.html'>游资看板</a><a href='sector-strength-index.html'>板块强度</a><a href='exec.html'>高管增减持</a><a href='block.html'>大宗交易</a><a href='sections.html'>版块总览</a><a href='../index.html'>返回主页</a></div>
+<div class='topnav'>
+<a href='daily_overview.html'>每日总览</a>
+<a href='lhb.html'>龙虎榜分析</a>
+<a href='hotmoney.html'>游资看板</a>
+<a href='sector-strength-index.html'>板块强度</a>
+<a href='exec.html'>高管增减持</a>
+<a href='block.html'>大宗交易</a>
+<a href='sections.html'>版块总览</a>
+<a href='../index.html'>返回主页</a>
+</div>
 <header>
 <h1>📋 状态报告</h1>
 <p>2026-08-24 · 龙虎榜手动更新 + 全量数据刷新</p>
 </header>
 <div class='section'>
 <h2>✅ 本轮完成情况</h2>
-<div class='amberbox' style='color:#1c2430'>1. <b>龙虎榜数据</b>：通过 westock-mcp data_lhb 拉取 2026-08-24 真实龙虎榜（机构榜 36 只、游资席位 88 个、机构+游资共振 33 只、席位胜率 35 条），已渲染 lhb.html（机构榜/共振/胜率）与 hotmoney.html（席位净买榜/胜率）。<br>2. <b>大盘/板块/连板刷新</b>：data_market_overview(2026-08-24)、data_hot(board)、tool_ranking(limitup_days) 全部更新为 2026-08-24（估值口径 2026-08-20）。<br>4. <b>推送</b>：7 个页面（含导航 index.html、龙虎榜归档页 lhb_2026-08-24.html）已生成并推送至 GitHub 仓库 dujoer/stocks 的 web/ 目录（main 分支，2026-08-24 提交）。远程保留的历史页：08-14 龙虎榜分析页（lhb_institution_analysis_2026-08-14.html、lhb_resonance_dashboard.html 等）。</div>
+<div class='amberbox' style='color:#1c2430'>1. <b>龙虎榜数据</b>：通过 westock-mcp data_lhb 拉取 2026-08-24 真实龙虎榜（机构榜 36 只、游资席位 88 个、机构+游资共振 33 只、席位胜率 35 条；龙虎榜全榜上榜 0 只）。已渲染 lhb.html（机构榜/共振/胜率）与 hotmoney.html（席位净买榜/胜率）。<br>2. <b>大盘/板块/连板刷新</b>：data_market_overview(2026-08-24)、data_hot(board)、tool_ranking(limitup_days) 全部更新为 2026-08-24（估值口径 2026-08-24）。<br>4. <b>推送</b>：本地已生成 6 个页面（含导航 index.html、龙虎榜归档页 lhb_2026-08-24.html），待经 GitHub 连接器推送至 dujoer/stocks 的 web/ 目录（main 分支，需仓库写权限）。注：早期 08-14 窗口收益/共振/Alpha 回测为远程分析页，本地未保留，本系统以龙虎榜机构榜、共振、席位胜率为核心。</div>
 </div>
 <div class='section'>
 <h2>📁 产出文件</h2>
 <div class='chiprow'>
 <span class='pill'>index.html</span>
 <span class='pill'>daily_overview.html</span>
-
 <span class='pill'>lhb.html</span>
 <span class='pill'>hotmoney.html</span>
+<span class='pill'>lhb_2026-08-24.html</span>
 <span class='pill'>status_2026-08-24.html</span>
 </div>
 <div class='note'>数据落盘：quant/market_overview、board_hot、quotes、news.json、limitup、lhb（均为 2026-08-24）。生成脚本：quant/build_dashboards.py。</div>
 </div>
 <div class='section'>
 <h2>⚠️ 口径说明</h2>
-<div class='empty' style='text-align:left'>· 估值（PE 分位）接口最新快照为 2026-08-20，其余均为 2026-08-24。<br>· 窗口收益(alpha)回测未内置，链接至远程历史分析页。<br>· 所有资金数据为盘后公开龙虎榜，滞后且非未来收益承诺。</div>
+<div class='empty' style='text-align:left'>· 估值（PE 分位）接口最新快照为 2026-08-24，其余均为 2026-08-24。<br>· 窗口收益(alpha)回测未内置，链接至远程历史分析页。<br>· 所有资金数据为盘后公开龙虎榜，滞后且非未来收益承诺。</div>
 </div>
 <footer>由 A 股量化助理生成 · 仅供参考，不构成投资建议。</footer>
 </div>
