@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>大宗交易 · 归档总览</title>
+<style>* { box-sizing: border-box; }
+body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:#f5f6f8; color:#23262b; min-height:100vh; }
+.wrap { max-width:1180px; margin:0 auto; padding:40px 20px 60px; }
+.topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
+  border-bottom:1px solid rgba(0,0,0,.08); }
+.topnav a { color:#b8893b; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(184,137,59,.35); transition:.2s; }
+.topnav a:hover { background:rgba(184,137,59,.10); }
+header { display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#b8893b,#b8332a,#6b5b95);
+  -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
+header p { margin:4px 0; color:#8a929c; font-size:13px; line-height:1.6; }
+.datebadge { display:inline-block; font-size:22px; font-weight:800; color:#fff;
+  background:linear-gradient(135deg,#b8893b,#b8332a); padding:10px 20px; border-radius:14px;
+  letter-spacing:.5px; box-shadow:0 6px 18px rgba(184,137,59,.25); white-space:nowrap; }
+.datebadge small { display:block; font-size:11px; font-weight:600; opacity:.85; letter-spacing:1px; }
+.meta { margin:14px 0 24px; font-size:12px; color:#6b7280; line-height:1.7; }
+.meta b { color:#b8893b; }
+.section { background:#ffffff; border:1px solid rgba(0,0,0,.08); border-radius:20px;
+  padding:18px 20px; margin:0 0 22px; }
+.section h2 { font-size:19px; margin:0 0 14px; padding-left:12px; border-left:5px solid #b8893b; }
+.idxrow { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; }
+.idx { background:#fafbfc; border:1px solid #eef1f4; border-radius:14px; padding:14px 16px; }
+.idx .k { font-size:12px; color:#7b8794; }
+.idx .v { font-size:24px; font-weight:800; margin-top:4px; color:#23262b; }
+.idx .v.buy { color:#b8332a; } .idx .v.sell { color:#1a9e5a; } .idx .v.gold { color:#b8893b; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { text-align:left; padding:9px 10px; background:#f7f8fa; color:#5a6573; font-weight:700;
+  border-bottom:2px solid #e3e7ec; white-space:nowrap; }
+td { padding:9px 10px; border-bottom:1px solid #f0f2f5; }
+tr:hover td { background:#fcfbf8; }
+.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.up { color:#b8332a; font-weight:700; } .down { color:#1a9e5a; font-weight:700; } .flat { color:#8a929c; }
+.disc { color:#b8893b; font-weight:600; } .prem { color:#6b5b95; font-weight:600; }
+.seat { font-size:12px; color:#6b7280; }
+.inst { display:inline-block; font-size:11px; padding:1px 7px; border-radius:10px;
+  background:#eef4fa; color:#1f4e79; margin-left:6px; white-space:nowrap; }
+.tabs { margin-bottom:12px; }
+.tab { display:inline-block; padding:5px 14px; margin-right:8px; border-radius:18px; cursor:pointer;
+  font-size:13px; border:1px solid rgba(184,137,59,.35); color:#b8893b; background:#fff; }
+.tab.on { background:#b8893b; color:#fff; }
+.empty { padding:26px; text-align:center; color:#8a929c; font-size:13px; }
+.datenav { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 18px; font-size:13px; align-items:center; }
+.datenav a { color:#1f4e79; text-decoration:none; padding:5px 13px; border-radius:18px;
+  background:#eef4fa; border:1px solid #dbe6f2; }
+.datenav a:hover { background:#dbe6f2; }
+.datenav .cur { background:#b8893b !important; color:#fff !important; border-color:#b8893b !important; }
+.datenav .arch { background:#fbf3e6; color:#b8893b; border-color:#ecd9b8; }
+th.sort { cursor:pointer; user-select:none; position:relative; }
+th.sort:hover { background:#eef0f3; color:#3b4453; }
+th.sort.sorted { color:#b8893b; }
+th.sort.sorted[data-asc="1"]::after { content:" \25B2"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after { content:" \25BC"; font-size:10px; }
+th.sort:not(.sorted)::after { content:" \2195"; font-size:10px; color:#c2c9d1; }
+footer { margin-top:40px; padding-top:18px; border-top:1px solid #e3e7ec;
+  font-size:12px; color:#7b8794; line-height:1.8; }
+</style>
+</head>
+<body>
+<div class='wrap'>
+<div class='topnav'><a href='../market/index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='../market/hotmoney.html'>游资看板</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='index.html'>大宗交易</a><a href='../sections/index.html'>版块总览</a><a href='../../index.html'>返回主页</a></div>
+<div class='datenav'>
+  <a class='cur' href='archive.html'>归档总览</a>
+  <a href='index.html'>最新一期（2026-09-04）</a>
+  <a href='../../index.html'>返回总门户</a>
+  <span style='align-self:center;color:#8a929c'>共 8 期</span>
+</div>
+<header>
+  <div>
+    <h1>大宗交易 · 归档总览</h1>
+    <p>每日大宗交易快照存档，点击任意日期查看当日完整明细。</p>
+  </div>
+</header>
+<div class='section'>
+  <h2>全部交易日（按日期倒序）</h2>
+  <table id='arch'>
+    <thead><tr>
+      <th class='sort' data-c='0'>交易日</th>
+      <th class='num sort' data-c='1'>笔数</th>
+      <th class='num sort' data-c='2'>股票数</th>
+      <th class='num sort' data-c='3'>成交额(亿元)</th>
+      <th class='num sort' data-c='4'>平均折溢价</th>
+      <th class='num sort' data-c='5'>折价/溢价</th>
+      <th class='num sort' data-c='6'>机构买入</th>
+    </tr></thead>
+    <tbody><tr><td><a href='block_2026-09-04.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-04</a></td><td class='num'>158</td><td class='num'>40</td><td class='num'>18.4241</td><td class='num disc'>+8.34%</td><td class='num'><span class='down'>145</span> / <span class='up'>4</span></td><td class='num'>58</td></tr><tr><td><a href='block_2026-09-03.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-03</a></td><td class='num'>135</td><td class='num'>30</td><td class='num'>8.4756</td><td class='num disc'>+7.70%</td><td class='num'><span class='down'>124</span> / <span class='up'>0</span></td><td class='num'>53</td></tr><tr><td><a href='block_2026-09-02.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-02</a></td><td class='num'>79</td><td class='num'>40</td><td class='num'>7.2080</td><td class='num disc'>+5.52%</td><td class='num'><span class='down'>60</span> / <span class='up'>0</span></td><td class='num'>40</td></tr><tr><td><a href='block_2026-09-01.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-01</a></td><td class='num'>127</td><td class='num'>47</td><td class='num'>12.9904</td><td class='num disc'>+7.17%</td><td class='num'><span class='down'>102</span> / <span class='up'>5</span></td><td class='num'>57</td></tr><tr><td><a href='block_2026-08-31.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-08-31</a></td><td class='num'>175</td><td class='num'>44</td><td class='num'>11.6555</td><td class='num disc'>+8.33%</td><td class='num'><span class='down'>165</span> / <span class='up'>1</span></td><td class='num'>90</td></tr><tr><td><a href='block_2026-08-28.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-08-28</a></td><td class='num'>46</td><td class='num'>26</td><td class='num'>9.2811</td><td class='num disc'>+6.38%</td><td class='num'><span class='down'>42</span> / <span class='up'>2</span></td><td class='num'>20</td></tr><tr><td><a href='block_2026-08-27.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-08-27</a></td><td class='num'>152</td><td class='num'>47</td><td class='num'>13.4369</td><td class='num disc'>+6.57%</td><td class='num'><span class='down'>123</span> / <span class='up'>0</span></td><td class='num'>81</td></tr><tr><td><a href='block_2026-08-26.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-08-26</a></td><td class='num'>64</td><td class='num'>27</td><td class='num'>8.8159</td><td class='num disc'>+5.95%</td><td class='num'><span class='down'>51</span> / <span class='up'>0</span></td><td class='num'>20</td></tr></tbody>
+  </table>
+  <div class='empty' style='padding:8px;color:#9aa2ad'>提示：点击表头可排序</div>
+</div>
+<footer>
+数据来源：腾讯自选股 <b>westock-mcp</b>（盘后公开数据）。<br>
+本页面由 A股量化助理自动生成 · 仅供参考，<b>不构成投资建议</b> · 市场有风险，投资需谨慎。
+</footer>
+</div>
+<script>
+var curMode='all';
+function applyFilter(){
+  var rows=document.querySelectorAll('#bt tbody tr');
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i], show=true;
+    if(curMode==='inst') show=r.getAttribute('data-inst')==='1';
+    else if(curMode==='prem') show=r.getAttribute('data-prem')==='1';
+    r.style.display=show?'':'none';
+  }
+  var tabs=document.querySelectorAll('.tab');
+  for(var j=0;j<tabs.length;j++) tabs[j].className='tab'+(tabs[j].getAttribute('data-m')===curMode?' on':'');
+}
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click',function(){ curMode=t.getAttribute('data-m'); applyFilter(); });
+});
+function sortTable(id, th){
+  var table=document.getElementById(id);
+  var tbody=table.tBodies[0];
+  var rows=Array.prototype.slice.call(tbody.rows);
+  var idx=parseInt(th.getAttribute('data-c'),10);
+  var asc=th.getAttribute('data-asc')!=='1';
+  rows.sort(function(a,b){
+    var x=a.cells[idx].getAttribute('data-val');
+    var y=b.cells[idx].getAttribute('data-val');
+    var nx=parseFloat(x), ny=parseFloat(y);
+    if(!isNaN(nx)&&!isNaN(ny)){ return asc?nx-ny:ny-nx; }
+    x=(x==null?'':x); y=(y==null?'':y);
+    return asc?(x<y?-1:(x>y?1:0)):(x<y?1:(x>y?-1:0));
+  });
+  for(var i=0;i<rows.length;i++) tbody.appendChild(rows[i]);
+  var ths=table.querySelectorAll('th.sort');
+  for(var k=0;k<ths.length;k++){ ths[k].removeAttribute('data-asc'); ths[k].classList.remove('sorted'); }
+  th.setAttribute('data-asc', asc?'1':'0');
+  th.classList.add('sorted');
+  if(id==='bt') applyFilter();
+}
+document.querySelectorAll('th.sort').forEach(function(t){
+  t.addEventListener('click',function(){ sortTable(t.parentNode.parentNode.parentNode.id, t); });
+});
+</script>
+</body>
+</html>
