@@ -2,9 +2,9 @@
 """大宗交易 · 看板生成
 --------------------------------
 读取 quant/block_chg/{DATE}.json，生成自包含 HTML：
-  - web/block.html        （最新一期）
-  - web/block_{DATE}.html （每日归档，长期保留，带前后日导航 + 表头排序）
-  - web/block_archive.html（全部交易日归档索引，链接备查）
+  - web/block/index.html        （最新一期）
+  - web/block/block_{DATE}.html （每日归档，长期保留，带前后日导航 + 表头排序）
+  - web/block/archive.html      （全部交易日归档索引，链接备查）
 
 版块内容：
   1) 概览卡：成交笔数 / 涉及股票 / 合计成交额 / 平均折溢价 / 折价·溢价 / 机构买方
@@ -23,6 +23,7 @@ from _nav import topnav
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 Q = os.path.join(ROOT, "quant")
 WEB = os.path.join(ROOT, "web")
+WEB_BLOCK = os.path.join(WEB, "block")
 OUT_DIR = os.path.join(Q, "block_chg")
 
 CSS = """* { box-sizing: border-box; }
@@ -170,8 +171,8 @@ def seat_html(s):
 
 def list_dated_pages():
     dates = []
-    if os.path.isdir(WEB):
-        for fn in os.listdir(WEB):
+    if os.path.isdir(WEB_BLOCK):
+        for fn in os.listdir(WEB_BLOCK):
             m = re.match(r"^block_(\d{4}-\d{2}-\d{2})\.html$", fn)
             if m:
                 dates.append(m.group(1))
@@ -203,8 +204,8 @@ def main():
     datenav += f"<a class='cur' href='block_{DATE}.html'>{DATE}</a>"
     if next_d:
         datenav += f"<a href='block_{next_d}.html'>{next_d} →</a>"
-    datenav += "<a class='arch' href='block_archive.html'>归档总览</a>"
-    datenav += "<a href='../index.html'>返回总门户</a>"
+    datenav += "<a class='arch' href='archive.html'>归档总览</a>"
+    datenav += "<a href='../../index.html'>返回总门户</a>"
     if len(dates) > 1:
         datenav += f"<span style='align-self:center;color:#8a929c'>共 {len(dates)} 期</span>"
     datenav += "</div>"
@@ -278,7 +279,7 @@ def main():
 </head>
 <body>
 <div class='wrap'>
-{topnav()}
+{topnav("block")}
 {datenav}
 <header>
   <div>
@@ -321,18 +322,18 @@ def main():
 </html>
 """
 
-    os.makedirs(WEB, exist_ok=True)
+    os.makedirs(WEB_BLOCK, exist_ok=True)
     page_bytes = html.encode("utf-8")
-    dst_dated = os.path.join(WEB, f"block_{DATE}.html")
+    dst_dated = os.path.join(WEB_BLOCK, f"block_{DATE}.html")
     with open(dst_dated, "w", encoding="utf-8") as f:
         f.write(html)
     latest = max(dates)
     if DATE >= latest:
-        with open(os.path.join(WEB, "block.html"), "w", encoding="utf-8") as f:
+        with open(os.path.join(WEB_BLOCK, "index.html"), "w", encoding="utf-8") as f:
             f.write(html)
-        print(f"OK -> {dst_dated}（并更新最新版 web/block.html）")
+        print(f"OK -> {dst_dated}（并更新最新版 web/block/index.html）")
     else:
-        print(f"OK -> {dst_dated}（历史归档，未覆盖 web/block.html 最新={latest}）")
+        print(f"OK -> {dst_dated}（历史归档，未覆盖 web/block/index.html 最新={latest}）")
     print(f"    笔数 {d['count']}｜股票 {d['stockCount']}｜成交额 {yi(d['totalValue'])} 亿元")
 
     # 每次构建都刷新归档索引，保证链接齐全
@@ -378,11 +379,11 @@ def build_index():
 </head>
 <body>
 <div class='wrap'>
-{topnav()}
+{topnav("block")}
 <div class='datenav'>
-  <a class='cur' href='block_archive.html'>归档总览</a>
-  <a href='block.html'>最新一期（{latest_date}）</a>
-  <a href='../index.html'>返回总门户</a>
+  <a class='cur' href='archive.html'>归档总览</a>
+  <a href='index.html'>最新一期（{latest_date}）</a>
+  <a href='../../index.html'>返回总门户</a>
   <span style='align-self:center;color:#8a929c'>共 {len(recs)} 期</span>
 </div>
 <header>
@@ -416,7 +417,7 @@ def build_index():
 </body>
 </html>
 """
-    dst = os.path.join(WEB, "block_archive.html")
+    dst = os.path.join(WEB_BLOCK, "archive.html")
     with open(dst, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"OK -> {dst}（{len(recs)} 期归档索引）")
