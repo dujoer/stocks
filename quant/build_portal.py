@@ -9,12 +9,13 @@
   2) 板块强度       web/sector-strength-index.html  最新 = max(web/sector-strength-YYYYMMDD.html)
   3) 群体心理风险雷达 market-trend/index.html        最新 = max(market-trend/crowd-psychology-risk-radar-YYYYMMDD.html)
 """
-import os, re, datetime
+import os, re, datetime, json
 from _nav import selfcontained_nav
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB = os.path.join(ROOT, "web")
 MT = os.path.join(ROOT, "market-trend")
+QUANT = os.path.join(ROOT, "quant")
 OUT = os.path.join(ROOT, "index.html")
 TODAY = datetime.date.today()
 
@@ -65,6 +66,136 @@ psy_d, psy_f = latest(r"^crowd-psychology-risk-radar-(\d{8})\.html$", MT)
 exec_d, exec_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "exec_chg"))
 blk_d, blk_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "block_chg"))
 
+
+# ---- 各模块内联数据快照（让总门户一眼看全所有版块的核心数据，不只是链接列表）----
+def _load_json(path):
+    try:
+        return json.load(open(path, encoding="utf-8"))
+    except Exception:
+        return None
+
+
+def stat_lhb():
+    """龙虎榜：机构上榜 / 共振 / 胜率（从 web/lhb_YYYY-MM-DD.html 标题与 HTML 抓取）"""
+    if not lhb_d or not lhb_f:
+        return ""
+    p = os.path.join(WEB, lhb_f)
+    try:
+        h = open(p, encoding="utf-8").read()
+    except Exception:
+        return ""
+    import re as _re
+    inst = _re.search(r"共\s*(\d+)\s*只个股上榜机构榜", h)
+    res = _re.search(r"共振买入（(\d+)\s*只）", h)
+    return (f"机构上榜 <b>{inst.group(1) if inst else '—'}</b> 只 ｜ "
+            f"机构+游资共振 <b>{res.group(1) if res else '—'}</b> 只 ｜ "
+            f"席位胜率 Top20")
+
+
+def stat_exec():
+    """高管增减持：笔数 / 增持 : 减持 / 覆盖股票"""
+    if not exec_d:
+        return ""
+    p = os.path.join(QUANT, "exec_chg", exec_f)
+    d = _load_json(p)
+    if not d:
+        return ""
+    return (f"近 1 月共 <b>{d.get('count', '—')}</b> 条 ｜ "
+            f"<span style='color:#b8332a'>增持 {d.get('buyCount', '—')}</span> : "
+            f"<span style='color:#1a9e5a'>减持 {d.get('sellCount', '—')}</span> ｜ "
+            f"覆盖 <b>{d.get('stockCount', '—')}</b> 只股票")
+
+
+def stat_block():
+    """大宗交易：当日笔数 / 成交额 / 折溢价均值"""
+    if not blk_d:
+        return ""
+    p = os.path.join(QUANT, "block_chg", blk_f)
+    d = _load_json(p)
+    if not d:
+        return ""
+    n = d.get('count', 0)
+    amt = d.get('totalValue', 0) / 1e8  # 元 → 亿元
+    disc = d.get('avgDiscount', 0)
+    inst = d.get('instBuyCount', 0)
+    return (f"当日 <b>{n}</b> 笔 ｜ 成交额 <b>{amt:.2f}</b> 亿 ｜ "
+            f"折溢价均值 <b>{disc:+.2f}%</b> ｜ 机构买入 <b>{inst}</b> 笔")
+
+
+def stat_sector():
+    """板块强度：当日抢筹 / 建仓 / 洗盘 / 出货（从 sector_daily/JSON 的 summary.behavior 拿）"""
+    if not sec_d:
+        return ""
+    snap = sec_d.strftime("%Y-%m-%d")
+    p = os.path.join(QUANT, "sector_daily", f"{snap}.json")
+    d = _load_json(p)
+    if not d:
+        return ""
+    s = d.get('summary') or {}
+    bh = s.get('behavior') or {}
+    return (f"板块 <b>{s.get('sectorCount', '—')}</b> 个 ｜ "
+            f"抢筹 <b>{bh.get('抢筹', 0)}</b> ｜ 建仓 <b>{bh.get('建仓', 0)}</b> ｜ "
+            f"洗盘 <b>{bh.get('洗盘', 0)}</b> ｜ 出货 <b>{bh.get('出货', 0)}</b>")
+
+
+def stat_psy():
+    """群体心理雷达：从最近一期 HTML 抓「标题 + 关键定性词」"""
+    if not psy_f:
+        return ""
+    p = os.path.join(MT, psy_f)
+    try:
+        h = open(p, encoding="utf-8").read()
+    except Exception:
+        return ""
+    import re as _re
+    # 情绪定性（找一个风险/情绪相关词）
+    m = _re.search(r"id=\"grade[^\"]*\"[^>]*>([^<]{2,12})<", h) \
+        or _re.search(r"<span[^>]*class=\"grade[^\"]*\"[^>]*>([^<]{2,12})<", h)
+    title_m = _re.search(r"<title>([^<]+)</title>", h)
+    if m:
+        return f"情绪定性 <b>{m.group(1).strip()}</b>"
+    if title_m:
+        return f"近期：<b>{title_m.group(1).strip()[:24]}</b>"
+    return ""
+
+
+def stat_industry_elite():
+    """行业最强榜：行业数 / 标的数"""
+    p = os.path.join(WEB, "2026-q2-industry-elite.html")
+    if not os.path.exists(p):
+        return ""
+    import re as _re
+    try:
+        h = open(p, encoding="utf-8").read()
+    except Exception:
+        return ""
+    sw = _re.search(r"申万\s*<[^>]*>\s*(\d+)\s*<[^>]*>\s*个行业", h)
+    if sw:
+        return f"申万 <b>{sw.group(1)}</b> 个行业 ｜ 全市场 <b>5544</b> 只全量解析"
+    return "全市场 <b>5544</b> 只中报股东解析"
+
+
+def stat_sections():
+    """版块总览：所有子系统最新日期一览"""
+    parts = []
+    if lhb_d: parts.append(f"龙虎榜 {lhb_d.strftime('%m-%d')}")
+    if sec_d: parts.append(f"板块 {sec_d.strftime('%m-%d')}")
+    if exec_d: parts.append(f"增减持 {exec_d.strftime('%m-%d')}")
+    if blk_d: parts.append(f"大宗 {blk_d.strftime('%m-%d')}")
+    if psy_d: parts.append(f"心理 {psy_d.strftime('%m-%d')}")
+    return " ｜ ".join(parts) if parts else ""
+
+
+STAT = {
+    "lhb": stat_lhb(),
+    "exec": stat_exec(),
+    "block": stat_block(),
+    "sec": stat_sector(),
+    "psy": stat_psy(),
+    "elite": stat_industry_elite(),
+    "sec2": stat_sections(),
+}
+
 lhb_txt, lhb_cls = freshness(lhb_d)
 sec_txt, sec_cls = freshness(sec_d)
 psy_txt, psy_cls = freshness(psy_d)
@@ -82,37 +213,37 @@ cards = [
     {
         "ic": "🐉", "t": "龙虎榜主看板", "href": "web/lhb.html",
         "d": "大盘概览 / 板块热度 / 连板梯队 / 龙虎榜机构榜·共振·席位胜率",
-        "date": fmt(lhb_d), "fresh": badge(lhb_cls, lhb_txt),
+        "stat": STAT["lhb"], "date": fmt(lhb_d), "fresh": badge(lhb_cls, lhb_txt),
     },
     {
         "ic": "💼", "t": "高管增减持（董监高）", "href": "web/exec.html",
         "d": "全市场董监高持股变动：增持/减持明细与金额、申万行业分布、个股聚合净额",
-        "date": fmt(exec_d), "fresh": badge(exec_cls, exec_txt),
+        "stat": STAT["exec"], "date": fmt(exec_d), "fresh": badge(exec_cls, exec_txt),
     },
     {
-        "ic": "🧾", "t": "大宗交易", "href": "web/block.html",
-        "d": "全市场大宗交易逐笔：折溢价、成交额、买卖营业部与机构席位动向，每日归档",
-        "date": fmt(blk_d), "fresh": badge(blk_cls, blk_txt),
+        "ic": "🧾", "t": "大宗交易", "href": "web/block_archive.html",
+        "d": "全市场大宗交易逐笔：折溢价、成交额、买卖营业部与机构席位动向；每日归档总览（含最新一期与全部交易日）",
+        "stat": STAT["block"], "date": fmt(blk_d), "fresh": badge(blk_cls, blk_txt),
     },
     {
         "ic": "🔥", "t": "板块强度", "href": "web/sector-strength-index.html",
         "d": "行业/概念板块主力资金、强度与主力行为（抢筹/建仓/洗盘/出货）日更与趋势",
-        "date": fmt(sec_d), "fresh": badge(sec_cls, sec_txt),
+        "stat": STAT["sec"], "date": fmt(sec_d), "fresh": badge(sec_cls, sec_txt),
     },
     {
         "ic": "🧠", "t": "群体心理风险雷达", "href": "market-trend/index.html",
         "d": "情绪周期 / 认知偏差热力 / 风险分层，每日单篇 + 跨日趋势索引",
-        "date": fmt(psy_d), "fresh": badge(psy_cls, psy_txt),
+        "stat": STAT["psy"], "date": fmt(psy_d), "fresh": badge(psy_cls, psy_txt),
     },
     {
         "ic": "🏆", "t": "行业最强榜（全市场）", "href": "web/2026-q2-industry-elite.html",
         "d": "全市场 5544 只 A 股中报股东全量解析：申万 31 个行业各自最强的自然人 / 私募 / 公募各 20 名 + 资金估值四象限 + 胜率/均涨",
-        "date": "2026-06-30", "fresh": badge("warn", "定期"),
+        "stat": STAT["elite"], "date": "2026-06-30", "fresh": badge("warn", "定期"),
     },
     {
         "ic": "📦", "t": "版块总览", "href": "web/sections.html",
         "d": "所有版块的内容清单 / 数据来源 / 更新节奏 / 更新时间建议 · 每日更新后一眼看出哪个版块落后",
-        "date": fmt(max([d for d in [lhb_d, exec_d, sec_d, psy_d] if d], default=None)),
+        "stat": STAT["sec2"], "date": fmt(max([d for d in [lhb_d, exec_d, sec_d, psy_d] if d], default=None)),
         "fresh": badge("fresh", "自检页"),
     },
 ]
@@ -122,7 +253,8 @@ cards_html = "\n".join(
     f"<div class='cardtop'><span class='ic'>{c['ic']}</span>{c['fresh']}</div>"
     f"<div class='t'>{c['t']}</div>"
     f"<div class='d'>{c['d']}</div>"
-    f"<div class='meta'>数据截至 {c['date']}</div>"
+    + (f"<div class='stat'>{c['stat']}</div>" if c.get('stat') else "")
+    + f"<div class='meta'>数据截至 {c['date']}</div>"
     f"</a>" for c in cards
 )
 
@@ -167,6 +299,9 @@ h1 {{ font-size:30px; margin:0 0 6px; letter-spacing:.5px; }}
 .t {{ font-size:18px; font-weight:700; margin:12px 0 8px; color:#1c2430; }}
 .d {{ font-size:13px; color:#5a6573; line-height:1.65; min-height:62px; }}
 .meta {{ font-size:12px; color:#7b8794; margin-top:12px; padding-top:10px; border-top:1px dashed #e3e7ec; }}
+.stat {{ font-size:12.5px; color:#3a4048; margin-top:10px; padding:8px 10px; background:rgba(184,137,59,.06);
+  border-radius:1px; line-height:1.7; }}
+.stat b {{ color:#1c2430; font-weight:700; }}
 .badge {{ font-size:11px; padding:3px 10px; border-radius:20px; font-weight:700; }}
 .badge.fresh {{ background:#e6f6ee; color:#128a52; }}
 .badge.warn {{ background:#fdf3e0; color:#b7791f; }}
