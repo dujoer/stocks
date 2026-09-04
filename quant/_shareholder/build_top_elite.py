@@ -8,13 +8,16 @@ import json, os, datetime
 OUT = os.path.join(os.path.dirname(__file__), "..", "..", "web", "shareholder", "top-elite.html")
 OUT = os.path.abspath(OUT)
 
-# 真实现身统计：扫描已合并的 1375 只 Q2 中报十大股东（_merged_shareholder.json）
-# 由 scan_elite_coverage.py 生成，按实体名索引；0 表示本样本前十大未现身。
+# 真实现身统计：扫描全市场 Q2 中报十大股东（优先用 q2_full/_merged_shareholder.json 的 5544 只全样本）
+# 由 scan_elite_coverage.py 生成，按实体名索引；0 表示全市场前十大均未现身。
 COV_PATH = os.path.join(os.path.dirname(__file__), "elite_coverage.json")
 try:
     COVERAGE = json.load(open(COV_PATH, encoding="utf-8"))
 except Exception:
     COVERAGE = {"meta": {}, "entities": {}}
+_META = COVERAGE.get("meta") or {}
+SAMPLE = _META.get("sample", "全市场")
+RDATE = _META.get("date", "2026-06-30")
 
 def build_evidence(name):
     """返回 (text, is_zero) —— 用真实现身统计替换原部分样本佐证。"""
@@ -26,7 +29,7 @@ def build_evidence(name):
         return ("", False)
     n = cov.get("count", 0)
     if n == 0:
-        return (f"本样本（{sample} 只 · {date} Q2 中报）前十大未现身", True)
+        return (f"全市场（{sample} 只 · {date} Q2 中报）前十大均未现身", True)
     names = [s["name"] for s in cov.get("stocks", [])[:4]]
     shown = "、".join(names)
     more = f" 等 {n} 只" if n > len(names) else f"（共 {n} 只）"
@@ -237,7 +240,7 @@ footer{{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}}
   </header>
   <div class="note">
     <b>口径说明：</b>应需求调整 —— 短期的“区间收益胜率”样本太短、噪声太大，不足以排名；本页改为<b>行业内知名度与历史业绩</b>视角的策划清单。
-    排序为「行业地位/代表性」而非收益胜率，<b>不构成任何投资建议，也不对个股做任何推荐</b>。名称旁“📌”为<b>真实持仓佐证</b>：基于已合并的 <b>1375 只个股 2026-Q2 中报十大股东</b>数据扫描，出现即“现身于前十大”，未出现即“本样本前十大未现身”（样本非全市场，仅作佐证，不代表当前是否仍持有）。
+    排序为「行业地位/代表性」而非收益胜率，<b>不构成任何投资建议，也不对个股做任何推荐</b>。名称旁“📌”为<b>真实持仓佐证</b>：基于已合并的 <b>{SAMPLE} 只全市场个股 {RDATE} Q2 中报十大股东</b>数据扫描，出现即“现身于前十大”，未出现即“全市场前十大均未现身”（仅反映中报披露时点，不代表当前是否仍持有）。
   </div>
   {grid("私募 Top20（行业头部）", "平台型、主观多头、量化、宏观对冲中具有代表性的头部机构", PRIVATE, "private")}
   {grid("牛散 Top20（知名大户）", "长期现身前十大流通股东、市场关注度高的个人/家族账户", RETAIL, "retail")}
@@ -245,7 +248,7 @@ footer{{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}}
     ⚠️ 免责声明：本页为<b>行业玩家格局</b>的公开信息整理，所有名称、规模、风格均来自公开报道与历史持仓，存在时效与认知偏差；
     所列主体仅为市场讨论中的知名代表，<b>不代表其当前业绩或未来表现</b>，更不构成买卖任何证券的建议。请勿据此直接交易。
   </div>
-  <footer>生成日期 {today} · 数据维度：公开信息整理 + 1375 只 Q2 中报十大股东真实现身统计</footer>
+  <footer>生成日期 {today} · 数据维度：公开信息整理 + 全市场 {SAMPLE} 只 {RDATE} Q2 中报十大股东真实现身统计</footer>
 </div>
 </body></html>'''
     with open(OUT, "w", encoding="utf-8") as f:
