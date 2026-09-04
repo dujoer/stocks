@@ -256,6 +256,11 @@ cards = [
         "stat": STAT["elite"], "date": "2026-06-30", "fresh": badge("warn", "定期"),
     },
     {
+        "ic": "🌟", "t": "行业知名 Top20 私募 / 牛散", "href": "web/shareholder/top-elite.html",
+        "d": "按行业知名度与历史业绩策划的私募 / 牛散 Top20 玩家图谱（非短期收益胜率），并交叉标注与高管增减持共现的知名主体。",
+        "stat": "", "date": "2026-09-04", "fresh": badge("warn", "策划"),
+    },
+    {
         "ic": "🔍", "t": "个股调研（三周期）", "href": "web/research/index.html",
         "d": "单只 A 股「短线 / 中线 / 长线」三周期调研：单季拆分、内部人行为对照、板块资金确认与七条标准打分",
         "stat": STAT["research"], "date": fmt(research_d), "fresh": badge(research_cls, research_txt),
