@@ -225,7 +225,7 @@
 
   <!-- 情绪周期轨迹 -->
   <section class="sec">
-    <h2><span class="bar"></span><span data-i18n="t_traj">情绪周期轨迹（六阶段定位）</span><span class="en">Sentiment Cycle Path</span></h2>
+    <h2><span class="bar"></span><span data-i18n="t_traj">情绪周期轨迹（六阶段定位）</span><span class="en">Sentiment Cycle Path</span><span class="t_sub" style="font-size:.74rem;color:var(--muted);font-weight:500;margin-left:10px;">· 近期 6 期（与下方「每日风险雷达」前 6 行一一对应）</span></h2>
     <div class="card">
       <div class="traj" id="traj"></div>
       <div class="src" style="margin-top:10px">
@@ -475,7 +475,8 @@
     {date:"2026-08-22", cycleZh:"周末休市", cycleEn:"Weekend closed", noteZh:"周六 · 无交易", noteEn:"Sat · no trading"},
     {date:"2026-08-23", cycleZh:"周末休市", cycleEn:"Weekend closed", noteZh:"周日 · 无交易", noteEn:"Sun · no trading"}
   ];
-  var TRAJ = REPORTS.concat(HOLIDAYS).sort(function(a,b){ return a.date > b.date ? -1 : 1; });
+  // 顶部"六阶段定位"只展示最近 6 个交易日，与下方「每日风险雷达」前 6 行一一对应
+  var TRAJ = REPORTS.slice(0, 6);
 
   function chip(label, val){
     return '<span class="rchip"><i>'+label+'</i><b>'+val+'</b></span>';
