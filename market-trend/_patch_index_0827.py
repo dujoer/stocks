@@ -2,7 +2,7 @@
 """Patch index.html to fold in the 2026-08-27 issue (9th report)."""
 import re
 
-P = "G:/ai/股票/market-trend/index.html"
+P = "G:/ai/股票/web/psychology/index.html"
 s = open(P, encoding="utf-8").read()
 fails = []
 
