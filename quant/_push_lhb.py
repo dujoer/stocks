@@ -65,6 +65,7 @@ FILES = [
     # —— 高管增减持（董监高）——
     "quant/gen_exec.py",
     "quant/build_exec.py",
+    "quant/exec_elite_xref.json",
     # —— 板块强度子系统 ——
     "quant/gen_sector_raw.py",
     "quant/run_daily_sector.py",
