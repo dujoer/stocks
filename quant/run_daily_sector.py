@@ -65,7 +65,7 @@ def main():
 
     strength_data = os.path.join(ROOT, f"sector_strength_data_{compact}.json")
     daily_json = os.path.join(ROOT, "sector_daily", f"{date}.json")
-    web_daily = os.path.join(ROOT, "..", "web", f"sector-strength-{compact}.html")
+    web_daily = os.path.join(ROOT, "..", "web", "sector", f"sector-strength-{compact}.html")
 
     t0 = datetime.datetime.now()
     # 1. 合成
@@ -81,9 +81,9 @@ def main():
 
     dt = datetime.datetime.now() - t0
     print(f"\n[done] {date} 板块强度全链路完成, 耗时 {dt.total_seconds():.1f}s")
-    print(f"   每日页 : web/sector-strength-{compact}.html")
-    print(f"   趋势看板: web/sector-strength-trend.html")
-    print(f"   首页索引: web/sector-strength-index.html")
+    print(f"   每日页 : web/sector/sector-strength-{compact}.html")
+    print(f"   趋势看板: web/sector/sector-strength-trend.html")
+    print(f"   首页索引: web/sector/sector-strength-index.html")
 
 
 if __name__ == "__main__":
