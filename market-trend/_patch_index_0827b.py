@@ -3,7 +3,7 @@
 Uses robust anchors independent of arrow/tilde glyphs."""
 import re
 
-P = "G:/ai/股票/market-trend/index.html"
+P = "G:/ai/股票/web/psychology/index.html"
 s = open(P, encoding="utf-8").read()
 fails = []
 
