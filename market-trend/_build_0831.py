@@ -7,7 +7,7 @@ import re, os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, "crowd-psychology-risk-radar-20260827.html")
-OUT = os.path.join(HERE, "crowd-psychology-risk-radar-20260831.html")
+OUT = os.path.join(HERE, "..", "web", "psychology", "crowd-psychology-risk-radar-20260831.html")
 html = open(SRC, encoding="utf-8").read()
 
 # ============================================================
