@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>青木科技（301110）三周期调研 · 2026-09-03 收盘口径</title>
+<style>
+:root{
+  --bg:#f5f6f8; --card:#ffffff; --ink:#1c2430; --ink2:#23262b; --sub:#6b7280;
+  --line:#e5e7eb; --gold:#b8893b; --red:#b8332a; --green:#1a9e5a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink2);
+  font:15px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 20px 64px}
+header{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:24px 26px;margin-bottom:18px}
+h1{margin:0 0 4px;font-size:24px;color:var(--ink);letter-spacing:-.2px}
+.sub{color:var(--sub);font-size:13px}
+.px{display:flex;align-items:baseline;gap:12px;margin:14px 0 4px}
+.px b{font-size:38px;color:var(--ink);font-weight:700;letter-spacing:-1px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+  gap:10px;margin-top:16px}
+.kv div{background:#fafbfc;border:1px solid var(--line);border-radius:9px;
+  padding:9px 12px}
+.kv span{display:block;color:var(--sub);font-size:11.5px}
+.kv b{font-size:16px;color:var(--ink);font-weight:600}
+section{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:22px 26px;margin-bottom:18px}
+h2{margin:0 0 6px;font-size:18px;color:var(--ink);
+  border-left:3px solid var(--gold);padding-left:10px}
+h3{margin:22px 0 8px;font-size:15px;color:var(--ink)}
+p{margin:8px 0}
+.lead{color:var(--sub);font-size:13.5px;margin:0 0 16px;padding-left:13px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right}
+th{background:#fafbfc;color:var(--sub);font-weight:600;font-size:12.5px;
+  text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td.k{color:var(--ink);font-weight:600;white-space:nowrap}
+td.desc{text-align:left;color:#4b5563;font-size:13px;line-height:1.65}
+td.num{font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink)}
+tr:last-child td{border-bottom:none}
+.up{color:var(--red);font-weight:600} .dn{color:var(--green);font-weight:600}
+.fl{color:var(--sub)}
+.chart{width:100%;height:auto;display:block;margin:14px 0 6px}
+.bar{display:inline-block;width:120px;height:7px;background:#eef0f3;
+  border-radius:4px;overflow:hidden;vertical-align:middle}
+.bar i{display:block;height:100%;border-radius:4px}
+.tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;
+  font-weight:600;white-space:nowrap}
+.tag.ok{background:#e8f5ee;color:#127a45}
+.tag.bad{background:#fbeceb;color:#a02b23}
+.tag.mid{background:#fdf3e3;color:#9a6c25}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:14px;margin:14px 0}
+.card{border:1px solid var(--line);border-radius:11px;padding:16px 17px;
+  background:#fafbfc}
+.card .t{font-size:12.5px;color:var(--sub);margin-bottom:6px}
+.card .v{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.card .d{font-size:12.5px;color:#4b5563;line-height:1.6}
+.card.hot{border-color:#e6c9a3;background:#fdfaf5}
+.card.warn{border-color:#f0cdc9;background:#fdf6f5}
+.note{background:#fdfaf5;border:1px solid #ecd9bb;border-radius:10px;
+  padding:14px 17px;margin:14px 0;font-size:13.5px;color:#5b4526}
+.note b{color:#8a6420}
+.alert{background:#fdf5f4;border:1px solid #f0cdc9;border-radius:10px;
+  padding:14px 17px;margin:14px 0;font-size:13.5px;color:#7d2f28}
+.alert b{color:#a02b23}
+ul{margin:8px 0;padding-left:20px} li{margin:5px 0}
+.legend{font-size:12px;color:var(--sub);margin-top:2px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;
+  margin:0 4px 0 12px;vertical-align:-1px}
+footer{color:var(--sub);font-size:12px;text-align:center;padding:22px 10px;
+  line-height:1.8}
+.lvl{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:10px;margin:12px 0}
+.lvl div{border:1px solid var(--line);border-radius:9px;padding:11px 13px;
+  background:#fafbfc;font-size:13px}
+.lvl b{display:block;font-size:15px;color:var(--ink)}
+.lvl s{display:block;color:var(--sub);font-size:11.5px;text-decoration:none}
+</style>
+</head>
+<body>
+<!-- UNIFIED_NAV -->
+<div style='display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:12px 4px;border-bottom:1px solid rgba(184,137,59,.3);font-size:13px;'><a href='../market/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>每日总览</a><a href='../lhb/lhb.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>龙虎榜分析</a><a href='../market/hotmoney.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>游资看板</a><a href='../sector/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>板块强度</a><a href='../exec/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>高管增减持</a><a href='../block/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>大宗交易</a><a href='../psychology/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>群体心理</a><a href='index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>行业最强</a><a href='../sections/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>版块总览</a><a href='../../index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>返回主页</a></div>
+
+
+
+
+
+<div class="wrap">
+
+<header>
+  <h1>青木科技 · 301110</h1>
+  <div class="sub">全域电商代运营 + AI 智能营销 · 商贸零售 · 创业板 · 数据口径 2026-09-03 收盘</div>
+  <div class="px"><b>36.25</b><span class="dn">-1.63%</span><span class="sub">前收 36.85</span></div>
+  <div class="kv">
+    <div><span>市盈率（TTM）</span><b>29.70</b></div>
+    <div><span>市净率</span><b>3.03</b></div>
+    <div><span>总市值</span><b>46.96 亿</b></div>
+    <div><span>流通市值</span><b>33.03 亿</b></div>
+    <div><span>股息率</span><b>0.79%</b></div>
+    <div><span>换手率</span><b>3.64%</b></div>
+    <div><span>量比</span><b>0.76</b></div>
+    <div><span>年内涨跌</span><b class="dn">−22.85%</b></div>
+    <div><span>52 周区间</span><b>31.20 – 75.36</b></div>
+    <div><span>距 52 周高点</span><b class="dn">−51.9%</b></div>
+  </div>
+</header>
+
+<section>
+  <h2>三周期结论</h2>
+  <p class="lead">同一家公司在不同持有周期下的结论完全不同，核心分歧点在于「二季度增长熄火」与「董事长顶部套现」两条事实。</p>
+  <div class="cards">
+    <div class="card hot">
+      <div class="t">短线 · 数日至数周</div>
+      <div class="v">可参与，但只做回踩不追高</div>
+      <div class="d">技术面刚完成零轴下方金叉 + 放量突破后缩量回踩，形态健康；但主力已连续两日净流出、散户在接盘，缺乏板块共振。属于「形态可做、资金不配合」的博弈型机会。</div>
+    </div>
+    <div class="card">
+      <div class="t">中线 · 数周至数月</div>
+      <div class="v">有条件持有，三季报是唯一裁判</div>
+      <div class="d">毛利率 57.59%、净利率 11.53% 双创新高是真实改善；但二季度单季营收同比 −2.04%。中线成立的前提是 10 月底三季报营收增速回正、AI 业务继续放量。</div>
+    </div>
+    <div class="card warn">
+      <div class="t">长线 · 数年</div>
+      <div class="v">不适合作为「增值持有」核心仓位</div>
+      <div class="d">三条硬伤：董事长在历史最高区精准套现约 1.80 亿；全市场仅 1 家机构覆盖；代运营模式夹在品牌与平台之间、缺乏议价权。可作小仓位成长股观察，不宜重仓长拿。</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>一、价格结构与关键位</h2>
+  <p class="lead">1 月高点 75.36 起算跌幅 −58.6%，7/24 见底 31.59，8/24 回落至 33.65 未破前低 —— 低点被抬高，双底雏形成立，但颈线尚未突破。</p>
+  <svg viewBox="0 0 1000 220" class="chart" role="img" aria-label="近三个月收盘走势">
+<defs><linearGradient id="gp" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="#b8893b" stop-opacity=".22"/>
+<stop offset="100%" stop-color="#b8893b" stop-opacity="0"/></linearGradient></defs>
+<polygon points="28,192 28.0,54.1 44.3,32.9 60.6,31.8 76.8,49.6 93.1,44.1 109.4,28.0 125.7,52.8 141.9,41.9 158.2,69.7 174.5,101.0 190.8,77.7 207.0,74.3 223.3,59.9 239.6,44.5 255.9,43.2 272.1,66.8 288.4,59.5 304.7,77.4 321.0,81.7 337.2,96.7 353.5,141.1 369.8,139.3 386.1,119.6 402.3,104.6 418.6,121.4 434.9,140.8 451.2,149.6 467.4,165.0 483.7,167.8 500.0,192.0 516.3,169.1 532.6,128.2 548.8,122.0 565.1,135.1 581.4,98.0 597.7,105.5 613.9,81.1 630.2,63.7 646.5,71.5 662.8,78.9 679.0,71.7 695.3,80.2 711.6,85.0 727.9,85.2 744.1,81.5 760.4,71.7 776.7,94.1 793.0,144.0 809.2,126.7 825.5,129.9 841.8,153.3 858.1,137.2 874.3,136.8 890.6,136.8 906.9,128.0 923.2,121.1 939.4,74.0 955.7,93.3 972.0,104.6 972,192" fill="url(#gp)"/>
+<line x1="28" y1="62.3" x2="972" y2="62.3" stroke="#b8332a" stroke-width="1" stroke-dasharray="5 4" opacity=".55"/><text x="968" y="57.3" text-anchor="end" font-size="11" fill="#b8332a">颈线 38.50</text><line x1="28" y1="106.6" x2="972" y2="106.6" stroke="#b8893b" stroke-width="1" stroke-dasharray="5 4" opacity=".55"/><text x="968" y="101.6" text-anchor="end" font-size="11" fill="#b8893b">20日线 36.14</text><line x1="28" y1="153.3" x2="972" y2="153.3" stroke="#1a9e5a" stroke-width="1" stroke-dasharray="5 4" opacity=".55"/><text x="968" y="148.3" text-anchor="end" font-size="11" fill="#1a9e5a">8/24低 33.65</text>
+<polyline points="28.0,54.1 44.3,32.9 60.6,31.8 76.8,49.6 93.1,44.1 109.4,28.0 125.7,52.8 141.9,41.9 158.2,69.7 174.5,101.0 190.8,77.7 207.0,74.3 223.3,59.9 239.6,44.5 255.9,43.2 272.1,66.8 288.4,59.5 304.7,77.4 321.0,81.7 337.2,96.7 353.5,141.1 369.8,139.3 386.1,119.6 402.3,104.6 418.6,121.4 434.9,140.8 451.2,149.6 467.4,165.0 483.7,167.8 500.0,192.0 516.3,169.1 532.6,128.2 548.8,122.0 565.1,135.1 581.4,98.0 597.7,105.5 613.9,81.1 630.2,63.7 646.5,71.5 662.8,78.9 679.0,71.7 695.3,80.2 711.6,85.0 727.9,85.2 744.1,81.5 760.4,71.7 776.7,94.1 793.0,144.0 809.2,126.7 825.5,129.9 841.8,153.3 858.1,137.2 874.3,136.8 890.6,136.8 906.9,128.0 923.2,121.1 939.4,74.0 955.7,93.3 972.0,104.6" fill="none" stroke="#b8893b" stroke-width="2.2"
+ stroke-linejoin="round"/>
+<circle cx="500.0" cy="192.0" r="4" fill="#fff" stroke="#1c2430" stroke-width="2"/><text x="500.0" y="181.0" text-anchor="middle" font-size="11" fill="#1c2430" font-weight="600">31.59</text><circle cx="841.8" cy="153.3" r="4" fill="#fff" stroke="#1c2430" stroke-width="2"/><text x="841.8" y="142.3" text-anchor="middle" font-size="11" fill="#1c2430" font-weight="600">33.65</text><circle cx="939.4" cy="74.0" r="4" fill="#fff" stroke="#1c2430" stroke-width="2"/><text x="939.4" y="63.0" text-anchor="middle" font-size="11" fill="#1c2430" font-weight="600">37.88</text><circle cx="972.0" cy="104.6" r="4" fill="#fff" stroke="#1c2430" stroke-width="2"/><text x="972.0" y="93.6" text-anchor="middle" font-size="11" fill="#1c2430" font-weight="600">36.25</text>
+<text x="28" y="212" font-size="11" fill="#6b7280">06-12</text>
+<text x="972" y="212" text-anchor="end" font-size="11" fill="#6b7280">09-03</text>
+</svg>
+  <div class="legend">标注点为 7/24 阶段低、8/24 抬高低点、9/1 放量突破高点、9/3 缩量回踩收盘</div>
+  <h3>关键价位（按强弱排序）</h3>
+  <div class="lvl">
+    <div><s>第一阻力</s><b>37.88</b>9/1 突破日最高收盘</div>
+    <div><s>颈线 · 关键</s><b>38.47 – 38.56</b>突破才确认双底成立</div>
+    <div><s>第二阻力</s><b>40.50</b>7 月初平台</div>
+    <div><s>近端支撑</s><b>36.14</b>20 日线 / 布林中轨</div>
+    <div><s>次级支撑</s><b>35.37</b>8/31 起涨点</div>
+    <div><s>止损位</s><b>33.65</b>8/24 抬高低点，破位形态失效</div>
+    <div><s>生命线</s><b>31.20</b>7 月低点，跌破则趋势重启</div>
+  </div>
+  <h3>技术指标（9/3）</h3>
+  <table>
+    <tr><th>指标</th><th>数值</th><th>状态</th></tr>
+    <tr><td class="k">MACD</td><td>DIF −0.1219 / DEA −0.3089 / 柱 +0.374</td>
+        <td class="desc">9/1 零轴下方金叉，柱体连续三日为正，DIF 上攻零轴</td></tr>
+    <tr><td class="k">KDJ</td><td>K 61.30 / D 52.45 / J 79.00</td>
+        <td class="desc">金叉延续，J 值未进超买区</td></tr>
+    <tr><td class="k">RSI</td><td>6 日 53.82 / 12 日 51.53 / 24 日 48.54</td>
+        <td class="desc">中性区，2 日 RSI 已回落至 38.80，短线过热消化完毕</td></tr>
+    <tr><td class="k">布林带</td><td>上 39.04 / 中 36.14 / 下 33.23</td>
+        <td class="desc">现价 36.25 刚站上中轨，中轨得失是短线分水岭</td></tr>
+    <tr><td class="k">量能</td><td>9/1 换手 9.33% → 9/2 5.19% → 9/3 3.64%</td>
+        <td class="desc">放量突破后缩量回踩，未见放量派发，形态偏健康</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>二、基本面：漂亮的半年报，熄火的二季度</h2>
+  <p class="lead">中报归母净利同比 +67.90% 看似强劲，但增量全部来自去年一季度的低基数；把单季拆开，二季度营收已经同比转负。</p>
+  <table>
+    <tr><th>报告期</th><th>营业收入（亿）</th><th>同比</th><th>归母净利（亿）</th>
+        <th>同比</th><th>毛利率</th><th>净利率</th><th>净资产收益率</th></tr>
+    <tr><td class='k'>2025Q1</td><td>2.745</td><td><span class="up">+21.28%</span></td><td>0.100</td><td><span class="dn">-58.56%</span></td><td>52.25%</td><td>3.55%</td><td>0.70%</td></tr><tr><td class='k'>2025中报</td><td>6.681</td><td><span class="up">+22.75%</span></td><td>0.517</td><td><span class="dn">-22.96%</span></td><td>57.03%</td><td>7.17%</td><td>3.61%</td></tr><tr><td class='k'>2025三季</td><td>10.207</td><td><span class="up">+26.34%</span></td><td>0.796</td><td><span class="up">+10.22%</span></td><td>56.33%</td><td>7.28%</td><td>5.46%</td></tr><tr><td class='k'>2025年报</td><td>14.148</td><td><span class="up">+22.69%</span></td><td>1.230</td><td><span class="up">+35.90%</span></td><td>55.27%</td><td>8.39%</td><td>8.19%</td></tr><tr><td class='k'>2026Q1</td><td>3.433</td><td><span class="up">+25.07%</span></td><td>0.421</td><td><span class="up">+320.53%</span></td><td>54.65%</td><td>12.32%</td><td>2.73%</td></tr><tr><td class='k'>2026中报</td><td>7.289</td><td><span class="up">+9.10%</span></td><td>0.867</td><td><span class="up">+67.90%</span></td><td>57.59%</td><td>11.53%</td><td>5.59%</td></tr>
+  </table>
+  <h3>单季拆分 —— 核心矛盾所在</h3>
+  <table>
+    <tr><th>单季</th><th>营业收入（亿）</th><th>同比</th><th>归母净利（亿）</th><th>同比</th></tr>
+    <tr><td class='k'>2025年二季度</td><td>3.936</td><td>—</td><td>0.416</td><td>—</td></tr><tr><td class='k'>2026年一季度</td><td>3.433</td><td><span class="up">+25.07%</span></td><td>0.421</td><td><span class="up">+320.53%</span></td></tr><tr><td class='k'>2026年二季度</td><td>3.856</td><td><span class="dn">-2.04%</span></td><td>0.446</td><td><span class="up">+7.13%</span></td></tr>
+  </table>
+  <div class="alert">
+    <b>关键结论：</b>2025 年一季度净利仅 1002 万元（同比 −58.56%），造成 2026 年一季度 +320.53% 的失真高增速。剔除基数效应后，2026 年二季度营收 3.856 亿、同比 <b>−2.04%</b>，净利同比仅 <b>+7.13%</b> —— 收入端增长已经停滞，利润增长完全靠毛利率与费用率改善支撑，而这条路的空间是有限的。
+  </div>
+  <h3>盈利质量</h3>
+  <div class="cards">
+    <div class="card"><div class="t">毛利率</div><div class="v">57.59%</div>
+      <div class="d">历史高位。对代运营行业而言异常之高，说明收入结构偏「服务 + 技术」而非低毛利的经销分销，是这家公司最扎实的一项优势。</div></div>
+    <div class="card"><div class="t">净利率</div><div class="v">11.53%</div>
+      <div class="d">去年同期 7.17%，提升 4.36 个百分点。降本增效真实有效，但也意味着未来利润弹性将更依赖收入增长。</div></div>
+    <div class="card"><div class="t">净资产收益率（TTM）</div><div class="v">10.19%</div>
+      <div class="d">总资产收益率 8.39%、投入资本回报率 5.11%。三年净利复合增速 28.06%，三年营收复合增速 17.03%。</div></div>
+    <div class="card warn"><div class="t">经营现金流转化率</div><div class="v">中报 27% / 滚动年 89%</div>
+      <div class="d">滚动一年经营现金流 1.406 亿对应净利 1.581 亿，属健康；但中报单期仅 2344 万，一季度甚至为 −1539 万。存在季节性，须以三季报验证。</div></div>
+  </div>
+  <div class="note">
+    <b>AI 转型进度：</b>2026 年上半年「AI 智能营销与技术服务」收入 <b>4543.44 万元</b>，占总营收 <b>6.23%</b>。这是市场给它挂上 AI 概念的依据，方向正确、有真实收入落地，但当前占比还不足以改变基本盘。观察阈值：占比突破 15%–20% 才构成第二增长曲线。
+  </div>
+</section>
+
+<section>
+  <h2>三、内部人行为：最强的一记警告</h2>
+  <p class="lead">董事长吕斌在 2025-12-29 至 2026-01-20 期间连续十笔减持，时间窗口精准覆盖股价历史最高区间。</p>
+  <svg viewBox="0 0 1000 250" class="chart" role="img" aria-label="董事长减持价格与金额"><rect x="67.6" y="96.0" width="26" height="96.0" fill="#1a9e5a" opacity=".30" rx="2"/><text x="80.6" y="91.0" text-anchor="middle" font-size="10" fill="#127a45">2769万</text><text x="80.6" y="218.0" text-anchor="middle" font-size="10" fill="#6b7280">12-29</text><rect x="160.8" y="110.6" width="26" height="81.4" fill="#1a9e5a" opacity=".30" rx="2"/><text x="173.8" y="105.6" text-anchor="middle" font-size="10" fill="#127a45">2347万</text><text x="173.8" y="218.0" text-anchor="middle" font-size="10" fill="#6b7280">01-07</text><rect x="254.0" y="136.7" width="26" height="55.3" fill="#1a9e5a" opacity=".30" rx="2"/><text x="267.0" y="131.7" text-anchor="middle" font-size="10" fill="#127a45">1594万</text><text x="267.0" y="218.0" text-anchor="middle" font-size="10" fill="#6b7280">01-08</text><rect x="347.2" y="63.3" width="26" height="128.7" fill="#1a9e5a" opacity=".30" rx="2"/><text x="360.2" y="58.3" text-anchor="middle" font-size="10" fill="#127a45">3710万</text><text x="360.2" y="218.0" text-anchor="middle" font-size="10" fill="#6b7280">01-09</text><rect x="440.4" y="50.0" width="26" height="142.0" fill="#1a9e5a" opacity=".30" rx="2"/><text x="453.4" y="45.0" text-anchor="middle" font-size="10" fill="#127a45">4094万</text><text x="453.4" y="218.0" text-anchor="middle" font-size="10" fill="#6b7280">01-12</text><rect x="533.6" y="117.8" width="26" height="74.2" fill="#1a9e5a" opacity=".30" rx="2"/><text x="546.6" y="112.8" text-anchor="middle" font-size="10" fill="#127a45">2140万</text><text x="546.6" y="218.0" text-anchor="middle" font-size="10" fill="#6b7280">01-13</text><rect x="626.8" y="163.0" width="26" height="29.0" fill="#1a9e5a" opacity=".30" rx="2"/><text x="639.8" y="158.0" text-anchor="middle" font-size="10" fill="#127a45">837万</text><text x="639.8" y="218.0" text-anchor="middle" font-size="10" fill="#6b7280">01-14</text><rect x="720.0" y="181.4" width="26" height="10.6" fill="#1a9e5a" opacity=".30" rx="2"/><text x="733.0" y="176.4" text-anchor="middle" font-size="10" fill="#127a45">304万</text><text x="733.0" y="218.0" text-anchor="middle" font-size="10" fill="#6b7280">01-16</text><rect x="813.2" y="187.7" width="26" height="4.3" fill="#1a9e5a" opacity=".30" rx="2"/><text x="826.2" y="182.7" text-anchor="middle" font-size="10" fill="#127a45">124万</text><text x="826.2" y="218.0" text-anchor="middle" font-size="10" fill="#6b7280">01-19</text><rect x="906.4" y="190.1" width="26" height="1.9" fill="#1a9e5a" opacity=".30" rx="2"/><text x="919.4" y="185.1" text-anchor="middle" font-size="10" fill="#127a45">55万</text><text x="919.4" y="218.0" text-anchor="middle" font-size="10" fill="#6b7280">01-20</text><polyline points="80.6,170.7 173.8,166.2 267.0,166.2 360.2,141.0 453.4,71.2 546.6,46.5 639.8,66.7 733.0,109.5 826.2,121.2 919.4,115.4" fill="none" stroke="#b8332a" stroke-width="2.2"/><circle cx="80.6" cy="170.7" r="3.4" fill="#b8332a"/><text x="80.6" y="161.7" text-anchor="middle" font-size="10.5" fill="#b8332a" font-weight="600">59.68</text><circle cx="173.8" cy="166.2" r="3.4" fill="#b8332a"/><circle cx="267.0" cy="166.2" r="3.4" fill="#b8332a"/><circle cx="360.2" cy="141.0" r="3.4" fill="#b8332a"/><circle cx="453.4" cy="71.2" r="3.4" fill="#b8332a"/><circle cx="546.6" cy="46.5" r="3.4" fill="#b8332a"/><text x="546.6" y="37.5" text-anchor="middle" font-size="10.5" fill="#b8332a" font-weight="600">98.87</text><circle cx="639.8" cy="66.7" r="3.4" fill="#b8332a"/><circle cx="733.0" cy="109.5" r="3.4" fill="#b8332a"/><circle cx="826.2" cy="121.2" r="3.4" fill="#b8332a"/><circle cx="919.4" cy="115.4" r="3.4" fill="#b8332a"/></svg>
+  <div class="legend">红线为各笔减持成交价（未复权，1 月未复权高点 98.87 对应前复权 75.36 顶部）<i style="background:#1a9e5a;opacity:.3"></i>绿柱为单笔套现金额</div>
+  <div class="alert">
+    <b>合计减持 246.55 万股，套现约 1.80 亿元。</b>
+    最后三笔的成交价 98.87 / 92.50 / 79.00 恰好落在 1 月 13 日历史大顶及其右侧。内部人在这个价位大规模离场，是对当时估值最直接的否定。这条记录不会因为现在股价腰斩而消失 —— 它定义了管理层的估值锚。
+  </div>
+  <h3>对冲信号（三条偏正面）</h3>
+  <table>
+    <tr><th>事项</th><th>内容</th><th>解读</th></tr>
+    <tr><td class="k">高管底部增持</td><td>王广翠 7/14 增持 4.5 万股 @33.87、7/15 增持 3.0 万股 @35.24</td>
+        <td class="desc">合计约 258 万元，金额小但方向为正，且买在阶段底部区域</td></tr>
+    <tr><td class="k">公司回购</td><td>截至 9/1 累计回购约 44 万股，均价 34.30 元</td>
+        <td class="desc">回购均价低于现价 5.4%，为 34 元一带提供了心理支撑位</td></tr>
+    <tr><td class="k">连续分红</td><td>2023 年报 10 派 6 转 4、2024 中报 10 派 4、2024 年报 10 派 4、2025 年报 10 派 4 转 4</td>
+        <td class="desc">四期连续现金分红，年度分红 3701 万元约占净利 23.4%，回报意愿明确</td></tr>
+  </table>
+  <h3>股东结构与风险项</h3>
+  <table>
+    <tr><th>项目</th><th>数据</th><th>评估</th></tr>
+    <tr><td class="k">前两大股东</td><td>吕斌 18.78% / 卢彬 14.98%</td>
+        <td class="desc">控制权集中稳定，无控制权争夺风险</td></tr>
+    <tr><td class="k">社保资金</td><td>基本养老保险基金一六〇三二组合持 471.87 万股（3.64%）</td>
+        <td class="desc">按 10 转 4 被动增幅应为 +40%，实际仅 +20.9%，<b>推算期内减持约 13.7%</b></td></tr>
+    <tr><td class="k">股东户数</td><td>6/30 为 1.54 万户，较上期 +9.64%</td>
+        <td class="desc">筹码趋于分散，通常对应散户化，略偏负面</td></tr>
+    <tr><td class="k">股权质押</td><td>质押 275.8 万股，质押比例 2.13%</td>
+        <td class="desc">极低，无平仓风险</td></tr>
+    <tr><td class="k">限售解禁</td><td>2025-09-08 已完成解禁，近期无新增解禁</td>
+        <td class="desc">无解禁抛压</td></tr>
+    <tr><td class="k">诉讼 / 再融资</td><td>无诉讼记录，无增发计划</td>
+        <td class="desc">无额外风险项</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>四、资金面：主力在撤，散户在接</h2>
+  <p class="lead">9/1 的放量突破由大单主导，但随后两个交易日资金结构立刻反转 —— 这是短线最需要警惕的信号。</p>
+  <svg viewBox="0 0 1000 210" class="chart" role="img" aria-label="主力与散户资金流"><line x1="30" y1="105.0" x2="970" y2="105.0" stroke="#d8dbe0" stroke-width="1"/><rect x="45.0" y="105.0" width="30.0" height="6.1" fill="#1a9e5a" rx="1.5"/><rect x="77.0" y="105.0" width="30.0" height="0.8" fill="#7fbf9a" rx="1.5"/><text x="77.0" y="202" text-anchor="middle" font-size="10.5" fill="#6b7280">08-21</text><text x="77.0" y="124.1" text-anchor="middle" font-size="9.5" fill="#4b5563">-182</text><rect x="139.0" y="105.0" width="30.0" height="10.6" fill="#1a9e5a" rx="1.5"/><rect x="171.0" y="89.3" width="30.0" height="15.7" fill="#c9a06a" rx="1.5"/><text x="171.0" y="202" text-anchor="middle" font-size="10.5" fill="#6b7280">08-24</text><text x="171.0" y="128.6" text-anchor="middle" font-size="9.5" fill="#4b5563">-316</text><rect x="233.0" y="104.4" width="30.0" height="0.6" fill="#b8332a" rx="1.5"/><rect x="265.0" y="96.9" width="30.0" height="8.1" fill="#c9a06a" rx="1.5"/><text x="265.0" y="202" text-anchor="middle" font-size="10.5" fill="#6b7280">08-25</text><text x="265.0" y="98.4" text-anchor="middle" font-size="9.5" fill="#4b5563">19</text><rect x="327.0" y="86.6" width="30.0" height="18.4" fill="#b8332a" rx="1.5"/><rect x="359.0" y="105.0" width="30.0" height="15.1" fill="#7fbf9a" rx="1.5"/><text x="359.0" y="202" text-anchor="middle" font-size="10.5" fill="#6b7280">08-26</text><text x="359.0" y="80.6" text-anchor="middle" font-size="9.5" fill="#4b5563">550</text><rect x="421.0" y="105.0" width="30.0" height="0.7" fill="#1a9e5a" rx="1.5"/><rect x="453.0" y="105.0" width="30.0" height="0.7" fill="#7fbf9a" rx="1.5"/><text x="453.0" y="202" text-anchor="middle" font-size="10.5" fill="#6b7280">08-27</text><text x="453.0" y="118.7" text-anchor="middle" font-size="9.5" fill="#4b5563">-20</text><rect x="515.0" y="45.1" width="30.0" height="59.9" fill="#b8332a" rx="1.5"/><rect x="547.0" y="105.0" width="30.0" height="75.0" fill="#7fbf9a" rx="1.5"/><text x="547.0" y="202" text-anchor="middle" font-size="10.5" fill="#6b7280">08-28</text><text x="547.0" y="39.1" text-anchor="middle" font-size="9.5" fill="#4b5563">1792</text><rect x="609.0" y="105.0" width="30.0" height="11.5" fill="#1a9e5a" rx="1.5"/><rect x="641.0" y="105.0" width="30.0" height="1.9" fill="#7fbf9a" rx="1.5"/><text x="641.0" y="202" text-anchor="middle" font-size="10.5" fill="#6b7280">08-31</text><text x="641.0" y="129.5" text-anchor="middle" font-size="9.5" fill="#4b5563">-345</text><rect x="703.0" y="57.4" width="30.0" height="47.6" fill="#b8332a" rx="1.5"/><rect x="735.0" y="105.0" width="30.0" height="65.1" fill="#7fbf9a" rx="1.5"/><text x="735.0" y="202" text-anchor="middle" font-size="10.5" fill="#6b7280">09-01</text><text x="735.0" y="51.4" text-anchor="middle" font-size="9.5" fill="#4b5563">1423</text><rect x="797.0" y="105.0" width="30.0" height="50.6" fill="#1a9e5a" rx="1.5"/><rect x="829.0" y="51.8" width="30.0" height="53.2" fill="#c9a06a" rx="1.5"/><text x="829.0" y="202" text-anchor="middle" font-size="10.5" fill="#6b7280">09-02</text><text x="829.0" y="168.6" text-anchor="middle" font-size="9.5" fill="#4b5563">-1513</text><rect x="891.0" y="105.0" width="30.0" height="31.7" fill="#1a9e5a" rx="1.5"/><rect x="923.0" y="69.0" width="30.0" height="36.0" fill="#c9a06a" rx="1.5"/><text x="923.0" y="202" text-anchor="middle" font-size="10.5" fill="#6b7280">09-03</text><text x="923.0" y="149.7" text-anchor="middle" font-size="9.5" fill="#4b5563">-948</text></svg>
+  <div class="legend"><i style="background:#b8332a"></i>主力净流入<i style="background:#1a9e5a"></i>主力净流出<i style="background:#c9a06a"></i>散户净流入<i style="background:#7fbf9a"></i>散户净流出　单位：万元</div>
+  <ul>
+    <li><b>9/1 突破日：</b>主力净流入 1422.6 万，大单 +603 万、机构席位 +820 万，散户净流出 1946 万 —— 大资金买、散户卖，是健康结构。</li>
+    <li><b>9/2 至 9/3：</b>主力连续净流出 1513.4 万与 947.7 万，散户反而净流入 1590 万与 1077 万 —— <b>结构反转，主力派发给散户</b>。</li>
+    <li><b>近 19 个交易日累计：</b>主力净流出约 830 万元，整体中性偏弱，无持续建仓迹象。</li>
+    <li><b>杠杆水位：</b>融资余额 1.697 亿元，占流通市值 <b>5.14%</b>（创业板均值约 2%–3%），偏高。9/1 单日融资买入 3273 万元骤增，说明这波反弹有明显杠杆推动，回调时存在被动平仓压力。融券余额仅 23.6 万元，可忽略。</li>
+  </ul>
+  <h3>诊股五维评分</h3>
+  <table>
+    <tr><th>维度</th><th>分值</th><th>相对水平</th><th>近一月变动</th></tr>
+    <tr><td class='k'>基本面</td><td class='num'>85.18</td><td><span class="bar"><i style="width:85%;background:#b8893b"></i></span></td><td><span class="dn">-3.11</span></td></tr><tr><td class='k'>技术面</td><td class='num'>83.22</td><td><span class="bar"><i style="width:83%;background:#b8893b"></i></span></td><td><span class="up">+38.30</span></td></tr><tr><td class='k'>综合</td><td class='num'>77.64</td><td><span class="bar"><i style="width:78%;background:#b8893b"></i></span></td><td><span class="up">+3.97</span></td></tr><tr><td class='k'>风险</td><td class='num'>67.41</td><td><span class="bar"><i style="width:67%;background:#c98b3b"></i></span></td><td><span class="up">+0.12</span></td></tr><tr><td class='k'>资金面</td><td class='num'>58.99</td><td><span class="bar"><i style="width:59%;background:#8a9099"></i></span></td><td><span class="up">+7.95</span></td></tr>
+  </table>
+  <div class="note">
+    评分结构印证了上面的判断：<b>基本面 85.18 分最强、资金面 58.99 分最弱</b>。技术面一个月内急升 38.30 分，说明这是一次由技术形态与业绩预期驱动、而非资金推动的修复。同时基本面评分月度小幅下滑 3.11 分，与二季度增速回落方向一致。
+  </div>
+</section>
+
+<section>
+  <h2>五、板块背景：没有主线级支撑</h2>
+  <p class="lead">青木科技对应的概念群当日全线主力净流出，20 日口径全部大幅失血 —— 这轮上涨是个股行为，不是板块共振。</p>
+  <table>
+    <tr><th>概念板块</th><th>当日涨跌</th><th>主力净流入（亿）</th><th>5 日（亿）</th>
+        <th>20 日（亿）</th><th>上涨家数 / 成分</th></tr>
+    <tr><td class='k'>AI营销</td><td><span class="dn">-1.19%</span></td><td class='dn'>-14.15</td><td class='dn'>-1.03</td><td class='dn'>-89.41</td><td>2/36</td></tr><tr><td class='k'>AI智能体</td><td><span class="dn">-0.50%</span></td><td class='up'>+0.03</td><td class='up'>+24.63</td><td class='dn'>-7.45</td><td>7/26</td></tr><tr><td class='k'>电商概念</td><td><span class="dn">-0.66%</span></td><td class='dn'>-5.25</td><td class='up'>+33.09</td><td class='dn'>-57.65</td><td>100/352</td></tr><tr><td class='k'>跨境电商概念</td><td><span class="dn">-0.60%</span></td><td class='dn'>-7.93</td><td class='up'>+36.67</td><td class='dn'>-131.45</td><td>94/314</td></tr><tr><td class='k'>AI应用</td><td><span class="dn">-0.84%</span></td><td class='dn'>-7.87</td><td class='dn'>-5.05</td><td class='dn'>-89.95</td><td>14/49</td></tr>
+  </table>
+  <ul>
+    <li><b>AI 营销</b>是贴合度最高的概念，但当日 −1.19%、20 日主力净流出 89.41 亿、板块内仅 2/36 家上涨 —— 板块极弱，无法提供助力。</li>
+    <li><b>AI 智能体</b>是唯一 5 日资金转正的（+24.63 亿），9/1 工信部相关表态曾带动板块走高，可作为短线情绪触发点观察。</li>
+    <li><b>电商与跨境电商</b>概念 5 日资金转正（+33.09 亿、+36.67 亿），但 20 日仍分别失血 57.65 亿与 131.45 亿 —— 属于超跌后的短期回流，尚未形成趋势性资金进入。</li>
+  </ul>
+</section>
+
+<section>
+  <h2>六、对照个股筛选七条标准</h2>
+  <p class="lead">用既有的选股框架逐条打分，避免主观印象干扰判断。</p>
+  <table>
+    <tr><th>标准</th><th>判定</th><th>依据</th></tr>
+    <tr><td class='k'>1. 强趋势</td><td><span class='tag bad'>不符合</span></td><td class='desc'>年线级下跌未反转，年内 −22.85%，距 1 月高点 −51.9%，仅日线级反弹</td></tr><tr><td class='k'>2. 相对低位</td><td><span class='tag ok'>符合</span></td><td class='desc'>52 周区间 31.20–75.36，现价处于下半区，回购均价 34.30 形成参考底</td></tr><tr><td class='k'>3. 量价健康</td><td><span class='tag ok'>符合</span></td><td class='desc'>9/1 放量突破（换手 9.33%）后连续两日缩量回踩，量比 0.76，未见放量派发</td></tr><tr><td class='k'>4. 机构主导</td><td><span class='tag bad'>不符合</span></td><td class='desc'>仅 1 家机构覆盖；养老金组合推算减持约 13.7%；9/2–9/3 主力净流出、散户接盘</td></tr><tr><td class='k'>5. 订单/业绩可验证</td><td><span class='tag mid'>部分符合</span></td><td class='desc'>毛利率 57.59%、净利率 11.53% 改善为真；但二季度营收同比 −2.04%，增长动能待三季报验证</td></tr><tr><td class='k'>6. 瓶颈环节</td><td><span class='tag bad'>不符合</span></td><td class='desc'>电商代运营处于品牌与平台之间，议价权弱，非产业链瓶颈；AI 业务占比仅 6.23%</td></tr><tr><td class='k'>7. 换手适中</td><td><span class='tag ok'>符合</span></td><td class='desc'>换手 3.64%，处于 3%–15% 健康区间，无爆量特征</td></tr>
+  </table>
+  <div class="alert">
+    <b>七条中符合 3 条、部分符合 1 条、不符合 3 条。</b>按既定框架，这不是一只「高胜率标的」，而是一只「业绩改善 + 相对低位 + 待验证」的<b>观察级标的</b>。三条不符合项中，「强趋势」与「机构主导」两条恰恰是决定胜率的核心权重项。
+  </div>
+</section>
+
+<section>
+  <h2>七、估值与机构预期</h2>
+  <p class="lead">静态估值已回落至上市以来偏低区域，但覆盖机构数量少到无法形成有效共识。</p>
+  <table>
+    <tr><th>预测年度</th><th>每股收益（元）</th><th>营业收入（亿）</th><th>同比</th>
+        <th>归母净利（亿）</th><th>同比</th><th>对应市盈率</th></tr>
+    <tr><td class='k'>2026 年预测</td><td>1.40</td><td>16.995</td><td><span class="up">+20.12%</span></td><td>1.812</td><td><span class="up">+47.22%</span></td><td>26.36</td></tr><tr><td class='k'>2027 年预测</td><td>1.83</td><td>20.121</td><td><span class="up">+18.39%</span></td><td>2.370</td><td><span class="up">+30.86%</span></td><td>20.16</td></tr><tr><td class='k'>2028 年预测</td><td>2.28</td><td>23.351</td><td><span class="up">+16.05%</span></td><td>2.958</td><td><span class="up">+24.78%</span></td><td>16.15</td></tr>
+  </table>
+  <div class="cards">
+    <div class="card"><div class="t">机构目标价</div><div class="v">47.25 元</div>
+      <div class="d">较现价 36.25 有 +30.3% 空间</div></div>
+    <div class="card warn"><div class="t">覆盖机构数量</div><div class="v">仅 1 家</div>
+      <div class="d">评级家数 1、上调家数 1。样本量过小，上述预测无法视为市场共识，任何一次业绩不达预期都会导致预测被整体推翻</div></div>
+    <div class="card"><div class="t">市盈率水位</div><div class="v">滚动 29.70 / 静态 38.17</div>
+      <div class="d">动态市盈率 27.07。年内下跌 22.85% 已消化大部分估值泡沫</div></div>
+    <div class="card"><div class="t">发行价对比</div><div class="v">发行价 63.10 元</div>
+      <div class="d">现价较发行价折让 42.6%（未考虑两次转增与分红的复权影响）</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>八、操作规则与风险控制</h2>
+  <p class="lead">以下为条件化的交易规则，不是买入指令；每一条都带可观测的触发与失效条件。</p>
+  <h3>短线（数日至数周）</h3>
+  <ul>
+    <li><b>不追高：</b>现价 36.25 位于 9/1 突破后的回踩过程中，且主力已连续两日净流出，直接追进的风险收益比不佳。</li>
+    <li><b>观察买区：</b>36.14（20 日线 / 布林中轨）至 35.37 区间，需要满足<b>缩量止跌</b>（换手降至 3% 以下且不破中轨收盘）。</li>
+    <li><b>加仓条件：</b>放量突破颈线 <b>38.56</b> 并站稳，才确认双底成立，届时才具备加仓依据。</li>
+    <li><b>止损：</b>收盘跌破 <b>33.65</b>（8/24 抬高低点）即形态失效离场，从 36.25 计约 −7.2%。</li>
+    <li><b>失效信号：</b>放量跌破 20 日线、或主力单日净流出超 2000 万元同时股价收阴。</li>
+  </ul>
+  <h3>中线（数周至数月）</h3>
+  <ul>
+    <li><b>持有前提（必须同时满足）：</b>① 10 月底三季报单季营收同比<b>回正</b>；② AI 智能营销收入环比继续放量；③ 经营现金流转化率修复至 50% 以上。</li>
+    <li><b>目标区间：</b>42–47 元（对应 2026 年预测每股收益 1.40 元的 30–34 倍市盈率），机构目标价 47.25 位于该区间上沿。</li>
+    <li><b>证伪条件：</b>三季报单季营收继续负增长，或毛利率跌破 55% —— 出现任一即降级为纯短线交易品种。</li>
+  </ul>
+  <h3>长线（数年）</h3>
+  <ul>
+    <li><b>不建议作为增值持有的核心仓位。</b>理由不在于估值，而在于：管理层已在高位用真金白银表达了对估值的态度；商业模式缺乏议价权；利润增长当前依赖降本而非规模扩张。</li>
+    <li><b>重新评估的触发条件：</b>AI 智能营销收入占比突破 15%–20%、覆盖机构增至 5 家以上、连续两个季度营收与净利同步双位数增长。三条同时满足才值得讨论长期配置。</li>
+  </ul>
+  <h3>仓位纪律</h3>
+  <div class="note">
+    结合 15 万元总资金与 15% 最大回撤预算：本标的属于<b>小市值 + 杠杆盘偏高 + 有减持history的高波动品种</b>，单一标的建议控制在 <b>8%–12%（约 1.2 万 – 1.8 万元）</b>。以 33.65 止损计，单笔最大亏损对总账户影响约 −0.6% 至 −0.9%，处于安全范围。禁止无止损持仓，禁止在颈线未突破前加仓。
+  </div>
+</section>
+
+<section>
+  <h2>九、每日验证清单</h2>
+  <p class="lead">这五项是判断上述结论是否仍然成立的可观测指标。</p>
+  <table>
+    <tr><th>观察项</th><th>当前值</th><th>看多确认</th><th>看空警示</th></tr>
+    <tr><td class="k">20 日线 / 布林中轨</td><td>36.14（现价上方站住）</td>
+        <td class="desc">连续收盘站稳中轨</td><td class="desc">放量收于中轨之下</td></tr>
+    <tr><td class="k">颈线 38.47–38.56</td><td>未突破</td>
+        <td class="desc">放量突破并回踩不破</td><td class="desc">二次冲击失败形成双头</td></tr>
+    <tr><td class="k">主力资金净额</td><td>9/2、9/3 连续净流出</td>
+        <td class="desc">连续两日净流入且散户净流出</td>
+        <td class="desc">继续流出且散户持续净流入</td></tr>
+    <tr><td class="k">融资余额占流通市值</td><td>5.14%（偏高）</td>
+        <td class="desc">回落至 4% 以下且股价不跌</td>
+        <td class="desc">突破 6% 后股价滞涨</td></tr>
+    <tr><td class="k">三季报（10 月底）</td><td>待披露</td>
+        <td class="desc">单季营收同比回正 + AI 收入放量</td>
+        <td class="desc">营收继续负增长或毛利率跌破 55%</td></tr>
+  </table>
+</section>
+
+<footer>
+  数据来源：腾讯自选股（行情 / K 线 / 技术指标 / 财报 / 诊股 / 一致预期 / 股东 / 资金流 / 两融 / 风险事件 / 分红送转 / 板块），口径日 2026-09-03 收盘。<br>
+  本页为基于公开数据的条件框架分析，所有结论均附带可观测的验证与失效条件，<b>不构成投资建议</b>。<br>
+  生成时间 2026-09-04 · 青木科技（301110）三周期调研
+</footer>
+
+</div></body></html>
