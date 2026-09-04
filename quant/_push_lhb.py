@@ -79,10 +79,13 @@ FILES = [
     "quant/build_research_301110.py",
     "quant/build_research_600838.py",
     "quant/build_q2_industry_page.py",
-    # —— 行业知名 Top20 私募/牛散 策划清单 + 1375 只 Q2 中报真实现身佐证 ——
+    # —— 行业知名 Top20 私募/牛散 策划清单 + 5544 只全市场 Q2 中报真实现身佐证 + 机会扫描器 + 股票增持扫描 ——
     "quant/_shareholder/build_top_elite.py",
     "quant/_shareholder/scan_elite_coverage.py",
+    "quant/_shareholder/build_stock_accumulation.py",
     "quant/_shareholder/elite_coverage.json",
+    "quant/_shareholder/_quotes_elite.json",
+    "quant/_shareholder/_elite_codes.json",
     # —— 重构/自检辅助脚本（记录本次分层过程，便于复现）——
     "quant/_cleanup_flat.py",
     "quant/_verify_dupes.py",
