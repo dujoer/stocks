@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>群体心理风险雷达 · A股</title>
+<style>
+  :root{
+    --bg:#f6f4ef; --card:#ffffff; --ink:#1c1b19; --muted:#6b675f; --line:#e7e2d8;
+    --accent:#b8332a; --accent2:#1f4e5f; --gold:#b8893b;
+    --up:#d8392b; --down:#1a9e5a;
+    --h1:#a5d6a7; --h2:#fff59d; --h3:#ffcc80; --h4:#ef9a9a; --h5:#e53935;
+    --shadow:0 1px 3px rgba(28,27,25,.08),0 8px 24px rgba(28,27,25,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
+    line-height:1.62;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 18px 60px;}
+  /* Masthead */
+  .masthead{background:linear-gradient(135deg,#221f1c 0%,#3a3026 100%);color:#f7f3ea;
+    border-radius:0 0 18px 18px;padding:30px 26px 24px;position:relative;overflow:hidden;}
+  .masthead:before{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;
+    background:radial-gradient(circle,rgba(184,137,59,.35),transparent 70%);}
+  .kicker{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:700;}
+  .masthead h1{font-size:2.05rem;font-weight:800;letter-spacing:-.01em;margin:6px 0 4px;line-height:1.1;}
+  .masthead .sub{font-size:.92rem;color:#cfc6b6;max-width:640px;}
+  .mast-meta{margin-top:14px;font-size:.78rem;color:#bdb4a4;display:flex;gap:16px;flex-wrap:wrap;align-items:center;}
+  .toggle{position:absolute;top:22px;right:24px;display:inline-flex;border:1px solid rgba(247,243,234,.35);
+    border-radius:999px;overflow:hidden;background:rgba(0,0,0,.18);}
+  .toggle button{background:transparent;border:0;color:#e9e2d2;font-size:.82rem;font-weight:600;
+    padding:7px 16px;cursor:pointer;font-family:inherit;}
+  .toggle button.active{background:var(--gold);color:#221f1c;}
+  /* TLDR */
+  .tldr{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--accent);
+    border-radius:14px;padding:22px 24px;margin:22px 0;box-shadow:var(--shadow);}
+  .tldr .lbl{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.14em;color:var(--accent);
+    text-transform:uppercase;margin-bottom:8px;}
+  .tldr p{font-size:1.04rem;line-height:1.7;font-weight:500;}
+  .grade{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-weight:700;
+    background:#fdecea;color:var(--accent);border:1px solid #f3c2bd;border-radius:999px;padding:6px 16px;font-size:.92rem;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+.chip{background:#f3f0e8;border:1px solid var(--line);border-radius:8px;padding:5px 11px;font-size:.8rem;color:var(--muted);}
+.chip b{color:var(--ink);}
+/* Headline (one-line summary banner — list-style) */
+.headline{background:linear-gradient(135deg,#2a2520 0%,#3d332a 100%);color:#f7f3ea;border-radius:14px;
+  padding:18px 22px;margin:18px 0 0;box-shadow:var(--shadow);border-left:5px solid var(--accent);}
+.hl-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(247,243,234,.18);}
+.hl-lbl{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:800;
+  background:rgba(184,137,59,.18);border:1px solid rgba(184,137,59,.35);border-radius:6px;
+  padding:5px 12px;white-space:nowrap;}
+.hl-sub{font-size:.72rem;color:#c8bfb0;letter-spacing:.04em;}
+.hl-table{display:grid;grid-template-columns:96px 1fr;gap:6px 14px;margin:0;padding:0;list-style:none;}
+.hl-table li{display:contents;}
+.hl-table .k{font-size:.78rem;color:#c8bfb0;text-align:right;padding:5px 0;border-bottom:1px dashed rgba(247,243,234,.12);font-weight:500;}
+.hl-table .v{font-size:.92rem;color:#f7f3ea;padding:5px 0;border-bottom:1px dashed rgba(247,243,234,.12);font-weight:600;}
+.hl-table .v b{color:#fff;font-weight:800;}
+.hl-table .v .hl-down{color:#7dd8a3;}
+.hl-table .v .hl-up{color:#ff9a8a;}
+.hl-table .v .hl-risk{color:#ff8a7a;font-size:1rem;letter-spacing:.04em;}
+.hl-table li:last-child .k,.hl-table li:last-child .v{border-bottom:0;}
+@media(max-width:580px){.hl-table{grid-template-columns:80px 1fr;}}
+/* TL;DR — list of one-line keypoints */
+.tldr-lines{display:grid;gap:8px;margin:14px 0 8px;}
+.tldr-line{display:grid;grid-template-columns:6px 96px 1fr;gap:10px;align-items:start;
+  padding:8px 0;border-bottom:1px dashed var(--line);}
+.tldr-line:last-child{border-bottom:0;}
+.tldr-line::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);
+  margin-top:9px;box-shadow:0 0 0 3px rgba(216,57,43,.15);}
+.tldr-line.warn::before{background:var(--gold);box-shadow:0 0 0 3px rgba(184,137,59,.18);}
+.tldr-line.danger::before{background:#1a9e5a;box-shadow:0 0 0 3px rgba(26,158,90,.18);}
+.tldr-line .k{font-size:.78rem;color:var(--accent2);font-weight:800;letter-spacing:.02em;white-space:nowrap;}
+.tldr-line .v{font-size:.92rem;color:var(--ink);line-height:1.6;}
+.tldr-line .v b{color:var(--accent);font-weight:700;}
+  /* sections */
+  .sec{margin-top:34px;}
+  .sec h2{font-size:1.28rem;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .sec h2 .bar{width:6px;height:22px;background:var(--accent);border-radius:2px;display:inline-block;}
+  .sec h2 .en{font-size:.78rem;font-weight:500;color:var(--muted);letter-spacing:.02em;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;box-shadow:var(--shadow);}
+  .note{font-size:.78rem;color:var(--muted);margin-top:10px;}
+  /* sentiment rail */
+  .rail{display:flex;gap:6px;margin:6px 0 4px;flex-wrap:wrap;}
+  .rail .s{flex:1;min-width:78px;text-align:center;padding:10px 4px;border-radius:10px;background:#eef0ea;
+    color:#5b5a55;font-weight:700;font-size:.86rem;border:1px solid #e2e4dc;}
+  .rail .s small{display:block;font-weight:500;font-size:.62rem;color:#8a877f;margin-top:2px;}
+  .rail .s.on{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 4px 14px rgba(184,51,42,.3);}
+  .rail .s.on small{color:#ffe2df;}
+  /* heatmap */
+  .heat{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+  .heat .cell{border-radius:12px;padding:13px 12px;min-height:118px;display:flex;flex-direction:column;
+    justify-content:space-between;border:1px solid rgba(0,0,0,.06);}
+  .heat .cell .bn{font-weight:800;font-size:.92rem;line-height:1.2;color:#241f18;}
+  .heat .cell .bd{font-size:.72rem;line-height:1.4;color:#3c362e;margin-top:6px;}
+  .heat .cell .sev{display:inline-flex;align-items:center;justify-content:center;align-self:flex-start;
+    margin-top:8px;font-size:.7rem;font-weight:800;border-radius:999px;padding:2px 9px;background:rgba(0,0,0,.16);color:#1c1b19;}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:.76rem;color:var(--muted);align-items:center;}
+  .legend i{width:14px;height:14px;border-radius:4px;display:inline-block;margin-right:5px;vertical-align:-2px;}
+  /* radar + breadth layout */
+  .duo{display:grid;grid-template-columns:340px 1fr;gap:18px;align-items:stretch;}
+  @media(max-width:760px){.duo{grid-template-columns:1fr}.heat{grid-template-columns:repeat(2,1fr)}}
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:.86rem;}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{font-size:.74rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#faf8f3;}
+  td .val{font-weight:700;font-variant-numeric:tabular-nums;}
+  .cat{font-size:.74rem;font-weight:800;letter-spacing:.06em;color:var(--accent2);text-transform:uppercase;
+    padding:14px 12px 6px;}
+  .up{color:var(--up);} .down{color:var(--down);}
+  /* risk cards */
+  .risk3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media(max-width:760px){.risk3{grid-template-columns:1fr}}
+  .rc{border-radius:14px;padding:18px 18px;box-shadow:var(--shadow);border:1px solid var(--line);}
+  .rc.red{background:linear-gradient(180deg,#fdecea,#fff);border-top:4px solid var(--accent);}
+  .rc.amber{background:linear-gradient(180deg,#fff8e8,#fff);border-top:4px solid var(--gold);}
+  .rc.green{background:linear-gradient(180deg,#eef7f0,#fff);border-top:4px solid var(--down);}
+  .rc h3{font-size:1.02rem;font-weight:800;margin-bottom:4px;}
+  .rc .tag{font-size:.7rem;font-weight:700;letter-spacing:.04em;padding:2px 9px;border-radius:999px;display:inline-block;margin-bottom:10px;}
+  .rc.red .tag{background:#f3c2bd;color:var(--accent);}
+  .rc.amber .tag{background:#f3e0b3;color:#8a6418;}
+  .rc.green .tag{background:#bfe6cb;color:#14703a;}
+  .rc p{font-size:.82rem;line-height:1.55;color:#3a352e;margin:6px 0;}
+  .rc .rep{font-size:.8rem;color:var(--muted);}
+  .rc .cond{font-size:.8rem;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-weight:600;color:var(--ink);}
+  /* source / disclaimer */
+  .src li{list-style:none;padding:8px 0;border-bottom:1px solid var(--line);font-size:.84rem;display:flex;gap:10px;flex-wrap:wrap;}
+  .src li b{color:var(--accent2);min-width:150px;display:inline-block;}
+  /* Outlook cards */
+  .outlook-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:10px;}
+  @media(max-width:760px){.outlook-grid{grid-template-columns:1fr}}
+  .oc{border-radius:12px;padding:16px 18px;border:1px solid var(--line);}
+  .oc.up{background:linear-gradient(180deg,#eef7f0,#fff);border-top:4px solid var(--down);}
+  .oc.amber{background:linear-gradient(180deg,#fff8e8,#fff);border-top:4px solid var(--gold);}
+  .oc.red{background:linear-gradient(180deg,#fdecea,#fff);border-top:4px solid var(--accent);}
+  .oc .oc-tag{font-size:.68rem;font-weight:800;letter-spacing:.04em;padding:3px 10px;border-radius:999px;display:inline-block;margin-bottom:8px;}
+  .oc.up .oc-tag{background:#bfe6cb;color:#14703a;}
+  .oc.amber .oc-tag{background:#f3e0b3;color:#8a6418;}
+  .oc.red .oc-tag{background:#f3c2bd;color:var(--accent);}
+  .oc h3{font-size:.98rem;font-weight:800;margin-bottom:6px;}
+  .oc p{font-size:.82rem;line-height:1.55;color:#3a352e;margin:4px 0;}
+  .oc-cond{font-size:.78rem;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-weight:600;color:var(--ink);line-height:1.55;}
+  /* Trading rules */
+  .rules{list-style:none;margin-top:8px;padding:0;}
+  .rules li{padding:9px 0;border-bottom:1px solid var(--line);font-size:.86rem;line-height:1.6;}
+  .rules li:last-child{border-bottom:0;}
+  .rules li b{color:var(--accent2);font-weight:800;margin-right:6px;}
+  .disclaimer{background:#f3f0e8;border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-top:24px;font-size:.82rem;color:#4a453c;line-height:1.7;}
+  .disclaimer b{color:var(--accent);}
+  .foot{text-align:center;color:var(--muted);font-size:.74rem;margin-top:28px;}
+</style>
+</head>
+<body>
+<!-- UNIFIED_NAV -->
+<div style='display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:12px 4px;border-bottom:1px solid rgba(184,137,59,.3);font-size:13px;'><a href='../market/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>每日总览</a><a href='../lhb/lhb.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>龙虎榜分析</a><a href='../market/hotmoney.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>游资看板</a><a href='../sector/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>板块强度</a><a href='../exec/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>高管增减持</a><a href='../block/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>大宗交易</a><a href='index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>群体心理</a><a href='../research/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>行业最强</a><a href='../sections/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>版块总览</a><a href='../../index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>返回主页</a></div>
+
+
+
+
+
+
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="toggle" role="group" aria-label="language">
+      <button id="btnZh" class="active" onclick="setLang('zh')">中文</button>
+      <button id="btnEn" onclick="setLang('en')">EN</button>
+    </div>
+    <div class="kicker" data-i18n="t_kicker">A股 · 群体行为金融研判</div>
+    <h1 data-i18n="t_title">群体心理风险雷达</h1>
+    <div class="sub" data-i18n="t_sub">行为金融偏差 · 拥挤度 · 融资 · 热度 — 综合风险雷达。基于 westock 官方行情数据的真实查询结果。</div>
+    <div class="mast-meta">
+      <span><span data-i18n="t_date">数据截至</span>：<b>2026-09-02 收盘（北京时间，盘后）</b></span>
+      <span data-i18n="t_path">分析路径：群体心理分析（路径 C）</span>
+    </div>
+  </header>
+
+  <!-- 一句话结论（表格式，每行一指标） -->
+  <div class="headline">
+    <div class="hl-head">
+      <span class="hl-lbl" data-i18n="t_headline">一句话</span>
+      <span class="hl-sub" data-i18n="t_headline_sub">2026-09-02 · 收盘</span>
+    </div>
+    <ul class="hl-table">
+      <li><span class="k" data-i18n="hk_stage">阶段定性</span><span class="v" data-i18n="hv_stage"><b>缩量普跌 / 情绪退潮</b>（09-02）</span></li>
+      <li><span class="k" data-i18n="hk_upratio">涨股比</span><span class="v" data-i18n="hv_upratio"><b>28%</b>（前次 08-31 57% · ↓ 29pct，急转直下）</span></li>
+      <li><span class="k" data-i18n="hk_lim">涨停 / 跌停</span><span class="v" data-i18n="hv_lim"><b>51</b> / <b>3</b></span></li>
+      <li><span class="k" data-i18n="hk_amt">成交额</span><span class="v" data-i18n="hv_amt"><b>¥1.79万亿</b>（缩量普跌，较前日 −3420亿）</span></li>
+      <li><span class="k" data-i18n="hk_cycle">情绪周期</span><span class="v" data-i18n="hv_cycle"><b>缩量普跌 / 情绪退潮</b></span></li>
+      <li><span class="k" data-i18n="hk_risk">风险等级</span><span class="v" data-i18n="hv_risk"><b class="hl-risk">高</b></span></li>
+      <li><span class="k" data-i18n="hk_flag">关键提示</span><span class="v" data-i18n="hv_flag">涨股比由 57% 骤降至 <b>28%</b>（广度崩塌），但连板高度仍有 <b>5板</b>、融资在下跌中<b>逆势加仓</b>——局部投机未退、杠杆与市场背离，追涨与踩踏风险并存</span></li>
+    </ul>
+  </div>
+
+  <!-- TL;DR — 一行一行的关键点 -->
+  <section class="tldr">
+    <span class="lbl" data-i18n="t_tldr">一句话结论</span>
+    <ul class="tldr-lines" style="list-style:none;padding:0;">
+      <li class="tldr-line"><span class="k" data-i18n="tk1">阶段定性</span><span class="v" data-i18n="tv1">A 股 09-02 由 08-31「缩量滞涨 / 结构分化」急转为「缩量普跌 / 情绪退潮」：成交缩至 ¥1.79万亿（环比 −3420亿），涨股比仅 <b>28%</b>（1541涨 / 3901跌 / 平112），涨停 51、跌停 3，三指齐跌（上证 −0.97% / 深成 −1.88% / 创业板 −2.39%），创业板领跌；技术面 MACD 仍红柱但指数下跌 = <b>顶背离</b>，KDJ 高位钝化（K72/D65/J85）；仅地面兵装（军工）逆势 +6.48% 独涨，种植业 −5.93%、能源金属 −3.44% 等普跌。风险等级维持 <b>高</b>。</span></li>
+      <li class="tldr-line warn"><span class="k" data-i18n="tk2">广度崩塌</span><span class="v" data-i18n="tv2">涨股比 <b>28%</b>（前次 57% ↓ 29pct）· 涨停 <b>51</b>（89→51）· 跌停 <b>3</b> · 成交 <b>¥1.79万亿</b>（缩量 −3420亿）——普跌格局，参与度断崖式回落。</span></li>
+      <li class="tldr-line"><span class="k" data-i18n="tk3">指数齐跌</span><span class="v" data-i18n="tv3">上证 <b>−0.97%</b> / 深成 <b>−1.88%</b> / 创业板 <b>−2.39%</b>；三指齐跌、创业板领跌，MACD 红柱与指数下跌背离，中期弱势未改（创业板 60日 −14% 级别）。</span></li>
+      <li class="tldr-line"><span class="k" data-i18n="tk4">板块分化</span><span class="v" data-i18n="tv4"><b>地面兵装Ⅱ 逆势独涨 +6.48%</b>（长城军工 +10.04%）领涨，玻璃玻纤 +1.23% / 航空装备Ⅱ +0.93% / 教育 +0.82% / 旅游及景区 +0.72% / 国有大型银行 +0.57% 微红；<b>种植业 −5.93%、焦炭Ⅱ −3.71%、能源金属 −3.44%、渔业 −3.29%、农产品加工 −3.16%、影视院线 −3.10% 普跌</b>——仅军工单点活跃，其余板块大面积下挫，结构极端分化。</span></li>
+      <li class="tldr-line"><span class="k" data-i18n="tk5">连板结构</span><span class="v" data-i18n="tv5">连板高度 <b>5 板</b>（新赛股份），国芳集团 / 竞业达 4板，龙版传媒 / 欢瑞世纪 / 大晟文化 / 集泰股份 3板；投机热度仍在但主线偏军工 / 农业题材，持续性待验。</span></li>
+      <li class="tldr-line warn"><span class="k" data-i18n="tk6">杠杆逆势</span><span class="v" data-i18n="tv6">融资单日加仓榜 <b>中国巨石 +3.9986亿 居首</b>，中际旭创 +3.9119亿、长川科技 +3.8637亿、芒果超媒 +3.0549亿、同花顺 +2.3907亿——<b>大盘普跌中杠杆逆势加仓</b>，与市场走向背离，拥挤度与回补风险上升。</span></li>
+      <li class="tldr-line danger"><span class="k" data-i18n="tk7">估值 / 基本面背离</span><span class="v" data-i18n="tv7">PE_TTM <b>20.62</b>（10年分位 <b>81.23%</b> 仍高）+ PMI <b>49.2</b>（枯荣线下）——指数虽仅小跌但估值分位偏高，股价位阶仍贵，基本面接不住。</span></li>
+      <li class="tldr-line danger"><span class="k" data-i18n="tk8">情绪周期</span><span class="v" data-i18n="tv8">由 08-31「缩量滞涨 / 结构分化」急转「缩量普跌 / 情绪退潮」：涨股比由 57% 骤降至 28%（广度崩塌），三指齐跌、创业板领跌，MACD 红柱与指数背离；连板高度仍 5板、融资逆势加仓，说明局部投机未退、杠杆与市场背离，追涨与踩踏风险并存。风险等级维持 <b>高</b>。</span></li>
+    </ul>
+    <div class="grade"><span data-i18n="t_risk">风险等级</span>：<span data-i18n="t_risk_hi">高</span></div>
+    <div class="chips">
+      <span class="chip"><span data-i18n="c_upratio">涨股比</span> <b>28%</b></span>
+      <span class="chip"><span data-i18n="c_limitup">涨停</span> <b>51</b></span>
+      <span class="chip"><span data-i18n="c_board">连板高度</span> <b>5板</b></span>
+      <span class="chip"><span data-i18n="c_pe">估值 PE分位</span> <b>70-90%</b></span>
+      <span class="chip"><span data-i18n="c_pmi">制造业PMI</span> <b>49.2</b></span>
+      <span class="chip"><span data-i18n="c_turn">两市成交</span> <b>¥1.79万亿</b></span>
+    </div>
+  </section>
+
+  <!-- Sentiment cycle + Bias heatmap -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_bias">行为偏差热力图</span><span class="en">Behavioral Bias Heatmap</span></h2>
+    <div class="card">
+      <div class="cat" style="padding-left:0" data-i18n="t_cycle">情绪周期定位（六阶段）</div>
+      <div class="rail">
+        <div class="s"><span data-i18n="r1">绝望</span><small>Despair</small></div>
+        <div class="s"><span data-i18n="r2">怀疑</span><small>Doubt</small></div>
+        <div class="s on"><span data-i18n="r3">乐观</span><small>Optimism</small></div>
+        <div class="s"><span data-i18n="r4">狂热</span><small>Euphoria</small></div>
+        <div class="s"><span data-i18n="r5">焦虑</span><small>Anxiety</small></div>
+        <div class="s"><span data-i18n="r6">自满</span><small>Complacency</small></div>
+      </div>
+      <div class="note" data-i18n="t_cycle_note">注：上方「悲观」为实时群体心理定位（缩量普跌 / 情绪退潮）——09-02 涨跌分布（涨股比 28%、涨停 51 只、跌停 3 只、成交 ¥1.79万亿）显示广度断崖式回落（由 57% 降至 28%），普跌、创业板领跌、MACD 顶背离；连板高度仍 5板、融资逆势加仓，说明局部投机未退、杠杆与市场背离。若量能继续萎缩、指数下破短期均线，情绪将进一步滑向恐慌 / 分歧加剧。</div>
+      <div class="heat" id="heat"></div>
+      <div class="legend">
+        <span data-i18n="t_leg">严重度（由数据综合映射）</span>：
+        <span><i style="background:var(--h1)"></i>1</span>
+        <span><i style="background:var(--h2)"></i>2</span>
+        <span><i style="background:var(--h3)"></i>3</span>
+        <span><i style="background:var(--h4)"></i>4</span>
+        <span><i style="background:var(--h5)"></i>5（高危）</span>
+      </div>
+      <div class="note" data-i18n="t_bias_note">注：偏差严重度为基于下方真实数据的模型映射（1=低，5=高），用于呈现群体心理的脆弱点分布，并非对个股的买卖建议。</div>
+    </div>
+  </section>
+
+  <!-- Radar + Breadth -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_radar">风险雷达</span><span class="en">Risk Radar</span></h2>
+    <div class="duo">
+      <div class="card">
+        <svg viewBox="0 0 320 320" width="100%" role="img" aria-label="risk radar">
+          <!-- grid -->
+          <g fill="none" stroke="#e2ddd1">
+            <polygon points="160,40 277,110 237,230 83,230 43,110" stroke-width="1"/>
+            <polygon points="160,75 240,121 211,199 109,199 79,121" stroke-width="1"/>
+            <polygon points="160,110 203,133 183,169 137,169 117,133" stroke-width="1"/>
+            <line x1="160" y1="150" x2="160" y2="40" stroke-width="1"/>
+            <line x1="160" y1="150" x2="277" y2="110" stroke-width="1"/>
+            <line x1="160" y1="150" x2="237" y2="230" stroke-width="1"/>
+            <line x1="160" y1="150" x2="83" y2="230" stroke-width="1"/>
+            <line x1="160" y1="150" x2="43" y2="110" stroke-width="1"/>
+          </g>
+          <!-- data polygon -->
+          <polygon points="160,72 218,107 206,167 160,189 104,172 88,98"
+            fill="rgba(184,51,42,.28)" stroke="#b8332a" stroke-width="2.2"/>
+          <g fill="#b8332a">
+            <circle cx="160" cy="72" r="3.2"/><circle cx="218" cy="107" r="3.2"/>
+            <circle cx="206" cy="167" r="3.2"/><circle cx="160" cy="189" r="3.2"/>
+            <circle cx="104" cy="172" r="3.2"/><circle cx="88" cy="98" r="3.2"/>
+          </g>
+          <g font-size="11" font-weight="700" fill="#3a352e" text-anchor="middle">
+            <text x="160" y="30" data-i18n="ax_crowd">拥挤度</text>
+            <text x="292" y="106" data-i18n="ax_margin">融资</text>
+            <text x="250" y="212" data-i18n="ax_turn">换手</text>
+            <text x="160" y="248" data-i18n="ax_breadth">广度</text>
+            <text x="70" y="212" data-i18n="ax_media">媒体情绪</text>
+            <text x="30" y="106" data-i18n="ax_val">估值</text>
+          </g>
+          <g font-size="10" fill="#b8332a" text-anchor="middle" font-weight="800">
+            <text x="160" y="71">62</text><text x="237" y="120">68</text><text x="209" y="194">54</text>
+            <text x="160" y="167">78</text><text x="109" y="201">65</text><text x="55" y="118">88</text>
+          </g>
+        </svg>
+        <div class="note" data-i18n="t_radar_note">六维风险读数（0–100，由下方真实数据综合映射，越高代表该维度群体脆弱性越强）：拥挤度 62 / 融资 68 / 换手 54 / 广度 78 / 媒体 65 / 估值 88。广度由 52 升至 78（09-02 涨股比 28%，由 57% 崩塌、参与度断崖 = 脆弱性骤升）；换手由 56 降至 54（成交缩至 ¥1.79万亿，活跃换手回落）；融资由 70 降至 68（融资单日中国巨石 +3.9986亿 / 中际旭创 +3.9119亿 逆势加仓，杠杆背离但金额较 08-31 收敛）；拥挤度由 72 降至 62（地面兵装单点独涨 + 连板 5板，集中度偏中）；媒体由 68 降至 65（涨停 51、连板 5板，但普跌，情绪温度回落）；估值仍高悬 88（PE_TTM 20.62、10年分位 81.23% 偏高）。整体呈「缩量普跌 / 情绪退潮」结构——广度崩塌、估值高悬、杠杆逆势，追涨与踩踏风险并存，脆弱性显著。</div>
+      </div>
+      <div class="card">
+        <div class="cat" style="padding-left:0" data-i18n="t_breadth">市场涨跌分布（2026-09-02 收盘）</div>
+        <svg viewBox="0 0 560 200" width="100%" role="img" aria-label="breadth distribution">
+          <!-- Stacked proportion bar (single row, clean) -->
+          <rect x="14" y="14" width="500" height="26" fill="#f3f0e8" stroke="#e7e2d8"/>
+          <rect x="14" y="14" width="139" height="26" fill="#d8392b"/>
+          <rect x="153" y="14" width="351" height="26" fill="#1a9e5a"/>
+          <text x="167" y="33" fill="#fff" font-size="14" font-weight="800" text-anchor="middle">28%</text>
+          <text x="407" y="33" fill="#fff" font-size="14" font-weight="800" text-anchor="middle">70%</text>
+          <text x="514" y="33" fill="#6b675f" font-size="11" font-weight="700" text-anchor="end">2% 平盘</text>
+
+          <!-- Stat rows: label / number / change -->
+          <g font-size="13" font-weight="700" fill="#3a352e">
+            <text x="14" y="72" data-i18n="b_up">上涨</text>
+            <text x="14" y="92" data-i18n="b_down">下跌</text>
+            <text x="14" y="112" data-i18n="b_flat">平盘</text>
+            <text x="14" y="138" data-i18n="b_limitup">涨停</text>
+            <text x="14" y="158" data-i18n="b_limitdn">跌停</text>
+            <text x="14" y="184" data-i18n="b_amt">成交额</text>
+          </g>
+          <g font-size="14" font-weight="800" text-anchor="end">
+            <text x="340" y="72" fill="#d8392b">1541</text>
+            <text x="340" y="92" fill="#1a9e5a">3901</text>
+            <text x="340" y="112" fill="#6b675f">112</text>
+            <text x="340" y="138" fill="#d8392b">51</text>
+            <text x="340" y="158" fill="#1a9e5a">3</text>
+            <text x="340" y="184" fill="#1c1b19">¥1.79万亿</text>
+          </g>
+          <g font-size="11" fill="#6b675f" text-anchor="start">
+            <text x="355" y="72">（占 28%，较上一报告日（08-31） −29pct）</text>
+            <text x="355" y="92">（占 70%，较上一报告日（08-31） +30pct）</text>
+            <text x="355" y="112">（占 3%）</text>
+            <text x="355" y="138">（较前日 −38 只，连板高度 5板）</text>
+            <text x="355" y="158">（较前日 −48 只）</text>
+            <text x="355" y="184">（环比 −3420亿，缩量普跌）</text>
+          </g>
+        </svg>
+        <div class="note" data-i18n="t_breadth_note">涨股比由 57% 骤降至 28%、跌停 3（仍低）、涨停 51（由 89 回落）；缩量普跌、广度崩塌，参与度断崖。指数齐跌（上证 −0.97% / 深成 −1.88% / 创业板 −2.39%，创业板领跌），MACD 红柱与指数背离 = 顶背离；成交 ¥1.79万亿环比 −3420亿（缩量），仅地面兵装 +6.48% 独涨，其余大面积下挫，结构极端分化。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key evidence -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_evidence">关键证据表</span><span class="en">Key Evidence</span></h2>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table>
+        <thead><tr><th data-i18n="th_metric">指标</th><th data-i18n="th_read">真实读数</th><th data-i18n="th_interp">行为金融解读</th></tr></thead>
+        <tbody>
+          <tr><td class="cat" colspan="3" data-i18n="ev_market">一、市场广度与总览</td></tr>
+          <tr><td data-i18n="ev_upratio">涨股比</td><td><span class="val up">28%</span>（涨1541 / 跌3901 / 平112）</td><td data-i18n="ev_upratio_i">由 57% 骤降至 28%，参与度断崖式回落，广度崩塌，缩量普跌下风险偏好急转保守</td></tr>
+          <tr><td data-i18n="ev_limit">涨停 / 跌停</td><td><span class="val up">51</span> / <span class="val down">3</span></td><td data-i18n="ev_limit_i">涨停 51（由 89 回落）、跌停仅 3，连板高度仍 5板（新赛股份）——投机热度收敛但未熄，局部题材仍有承接</td></tr>
+          <tr><td data-i18n="ev_amount">两市成交额</td><td><span class="val">¥1.79万亿</span>（较前日 −3420亿，缩量普跌）</td><td data-i18n="ev_amount_i">量能缩至 ¥1.79万亿（环比 −3420亿），缩量普跌 = 承接力转弱、观望情绪升温，缩量下挫需警惕惯性</td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_index">二、核心指数表现（2026-09-02 收盘）</td></tr>
+          <tr><td data-i18n="ev_sh">上证指数</td><td><span class="val up">3941.39　−0.97%</span></td><td data-i18n="ev_sh_i">小跌 −0.97%，MACD 红柱但指数跌 = 顶背离，PE_TTM 20.62（10年分位 81.23% 偏高），短期均线承压</td></tr>
+          <tr><td data-i18n="ev_sz">深证成指</td><td><span class="val up">13611.55　−1.88%</span></td><td data-i18n="ev_sz_i">中盘承压 −1.88%，PE 约 35，中期弱势未改，缩量下挫</td></tr>
+          <tr><td data-i18n="ev_cyb">创业板指</td><td><span class="val up">3312.24　−2.39%</span></td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_sector">三、板块排行与主线</td></tr>
+          <tr><td data-i18n="ev_secup">领涨行业</td><td><span class="val up">地面兵装Ⅱ +6.48%</span>（长城军工 +10.04%）<br>玻璃玻纤 +1.23% / 航空装备Ⅱ +0.93% / 教育 +0.82%<br>旅游及景区 +0.72% / 国有大型银行 +0.57%</td><td data-i18n="ev_secup_i">地面兵装Ⅱ 逆势独涨 +6.48%（长城军工 +10.04%）领涨，玻璃玻纤 +1.23% / 航空装备Ⅱ +0.93% / 教育 +0.82% / 旅游及景区 +0.72% / 国有大型银行 +0.57% 微红——结构极端分化，仅军工单点活跃</td></tr>
+          <tr><td data-i18n="ev_secdn">领跌行业</td><td><span class="val down">种植业 −5.93%</span> / 焦炭Ⅱ −3.71% / 能源金属 −3.44% / 渔业 −3.29% / 农产品加工 −3.16% / 影视院线 −3.10%</td><td data-i18n="ev_secdn_i">种植业 −5.93% 领跌 / 焦炭Ⅱ −3.71% / 能源金属 −3.44% / 渔业 −3.29% / 农产品加工 −3.16% / 影视院线 −3.10%——普跌，前期强势与周期资源同步补跌，风险偏好全面转弱</td></tr>
+          <tr><td data-i18n="ev_board">极端题材</td><td><span class="val up">连板高度 5 板</span>（新赛股份）<br>4板：国芳集团 / 竞业达；3板：龙版传媒 / 欢瑞世纪 / 大晟文化 / 集泰股份<br>新热点：长城军工 +10.04%（地面兵装Ⅱ）/ 新赛股份 5板（农业题材）</td><td data-i18n="ev_board_i">连板 5板（新赛股份），国芳集团 / 竞业达 4板；热点由军工 / 农业题材主导（长城军工 +10.04% / 新赛股份 5板），主线偏题材博弈，持续性待验</td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_flow">四、资金：连板 / 主力 / 两融</td></tr>
+          <tr><td data-i18n="ev_height">连板高度</td><td><span class="val up">新赛股份 5板</span>（2026-09-02）</td><td data-i18n="ev_height_i">高度 5板（新赛股份，2026-09-02 收盘），投机热度收敛但未熄，主线偏军工 / 农业题材，风险偏好急转保守但连板仍在</td></tr>
+          <tr><td data-i18n="ev_main">融资单日净流入TOP</td><td>中国巨石 <span class="val up">+3.9986亿</span>（玻纤）<br>中际旭创 +3.9119亿 / 长川科技 +3.8637亿 / 芒果超媒 +3.0549亿 / 同花顺 +2.3907亿<br>协创数据 +2.0724亿 / 中文在线 +1.8915亿 / 菲利华 +1.5591亿 / 亨通光电 +1.4834亿</td><td data-i18n="ev_main_i">杠杆资金当日集中于玻纤 / 光模块 / 半导体与传媒（中国巨石 +3.9986亿 / 中际旭创 +3.9119亿 / 长川科技 +3.8637亿 / 芒果超媒 +3.0549亿 / 同花顺 +2.3907亿）——普跌中逆势加仓，杠杆与市场背离</td></tr>
+          <tr><td data-i18n="ev_margin">融资单日变动TOP</td><td>中国巨石 <span class="val up">+3.9986亿</span>（玻纤）<br>中际旭创 +3.9119亿 / 长川科技 +3.8637亿 / 芒果超媒 +3.0549亿 / 同花顺 +2.3907亿<br>协创数据 +2.0724亿 / 中文在线 +1.8915亿 / 菲利华 +1.5591亿 / 亨通光电 +1.4834亿</td><td data-i18n="ev_margin_i">融资单日加仓榜中国巨石居首（+3.9986亿），中际旭创 +3.9119亿、长川科技 +3.8637亿、芒果超媒 +3.0549亿、同花顺 +2.3907亿、协创数据 +2.0724亿、中文在线 +1.8915亿——下跌中杠杆逆势加仓，背离明显</td></tr>
+          <tr><td data-i18n="ev_hot">热搜 / 领涨TOP</td><td>长城军工 +10.04%（地面兵装Ⅱ）<br>新赛股份 5板（农业题材）/ 国芳集团 4板 / 竞业达 4板<br>龙版传媒 3板 / 欢瑞世纪 3板 / 大晟文化 3板 / 集泰股份 3板</td><td data-i18n="ev_hot_i">热搜由军工 / 农业题材 + 连板主导（长城军工 / 新赛股份 / 国芳集团 / 竞业达 / 龙版传媒）；data_hot 本次未返回，以板块领涨股 + 排行榜综合替代（见来源口径）</td></tr>
+          <tr><td data-i18n="ev_margintotal">市场两融余额</td><td><span class="val">数据源未返回聚合值</span></td><td data-i18n="ev_margintotal_i">缺口：聚合两融余额为空，以个股融资变动替代观察（见上）；连板高度 / 融资单日均 2026-09-02 真实数据</td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_macro">五、核心宏观指标</td></tr>
+          <tr><td data-i18n="ev_pmi">制造业PMI（7月）</td><td><span class="val down">49.2</span>（<50，景气收缩）</td><td data-i18n="ev_pmi_i">基本面收缩，与「高估值 + 中期弱势」明显背离；非制造业新订单偏弱</td></tr>
+          <tr><td data-i18n="ev_capu">产能利用率（Q2）</td><td><span class="val down">73.6%</span>（环比 −0.5pct）</td><td data-i18n="ev_capu_i">实物经济动能走弱，价格缺乏业绩支撑</td></tr>
+          <tr><td data-i18n="ev_cpi">CPI（7月）</td><td><span class="val">0.5%</span></td><td data-i18n="ev_cpi_i">低通胀、需求偏弱，难证景气全面复苏</td></tr>
+          <tr><td data-i18n="ev_social">社融（7月）</td><td><span class="val down">累计同比 −7.25%</span>（存量同比 +7.4%）</td><td data-i18n="ev_social_i">信用需求弱，资金绕道股市 = 流动性驱动特征</td></tr>
+          <tr><td data-i18n="ev_m1m2">M1-M2 剪刀差</td><td><span class="val down">−3.7%</span></td><td data-i18n="ev_m1m2_i">活钱偏弱，资金空转，典型后周期现象</td></tr>
+          <tr><td data-i18n="ev_yield">10Y 国债收益率</td><td><span class="val down">1.70%</span></td><td data-i18n="ev_yield_i">极低无风险利率，既支撑估值也反映增长担忧</td></tr>
+          <tr><td data-i18n="ev_lpr">LPR</td><td>1Y <span class="val">3.0%</span> / 5Y <span class="val">3.5%</span></td><td data-i18n="ev_lpr_i">宽松基调未变</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note" data-i18n="t_ev_note">数据口径：宏观指标多截至 2026-07（月频）或 2026-09-02（日频）；PMI/产能/社融为 08-21 复核最新月频值（无新发布），CPI / M1-M2 / 10Y / LPR 沿用前期已查询月频 / 日频值（未更新）。涨跌分布 / 指数 / 成交额 / 板块 / 融资单日均为 2026-09-02 真实收盘；官方综合画像、连板梯队、融资单日均已更新至 2026-09-02，相关字段已标注。财新PMI数据源覆盖仅至 2025-08（49.2），不作为主要依据。详见末尾「数据来源与日期口径」。</div>
+  </section>
+
+  <!-- Risk stratification -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_risk">风险分层</span><span class="en">Risk Stratification</span></h2>
+    <div class="risk3">
+      <div class="rc red">
+        <span class="tag" data-i18n="rc1_tag">红线区 · 缩量普跌 + 高估值 + 杠杆逆势 + 顶背离</span>
+        <h3 data-i18n="rc1_t">缩量普跌 + 高估值 + 杠杆逆势 + 顶背离</h3>
+        <p data-i18n="rc1_d">估值 PE_TTM 20.62、10年分位 81.23% 仍高（指数仅小跌但分位贵），MACD 红柱与指数下跌 = 顶背离，三指齐跌、创业板 −2.39% 领跌；缩量普跌（成交 ¥1.79万亿，环比 −3420亿）下技术面背离、广度崩塌（涨股比 28%），而融资单日逆势加仓（中国巨石 +3.9986亿 / 中际旭创 +3.9119亿），拥挤度（62）与融资（68）读数仍高 = 杠杆背离、二次杀跌风险积聚。</p>
+        <p class="rep" data-i18n="rc1_rep">代表：高估值创业板 / 军工题材高位 / 融资逆势加仓标的</p>
+        <div class="cond" data-i18n="rc1_cond">条件框架：高位主线不追涨、不加杠杆；以量能持续 + 指数站回短期均线上方为右侧确认，破位即减，杠杆仓位优先降。</div>
+      </div>
+      <div class="rc amber">
+        <span class="tag" data-i18n="rc2_tag">黄线区 · 军工单点独涨 + 其余普跌（极端分化）</span>
+        <h3 data-i18n="rc2_t">军工单点独涨 + 其余普跌</h3>
+        <p data-i18n="rc2_d">09-02 仅地面兵装Ⅱ +6.48%（长城军工 +10.04%）逆势独涨，玻璃玻纤 +1.23% / 航空装备Ⅱ +0.93% 微红；种植业 −5.93% / 焦炭Ⅱ −3.71% / 能源金属 −3.44% / 渔业 −3.29% 普跌，结构极端分化。连板仍 5板（新赛股份），主线由军工 / 农业题材主导，轮动快、持续性差。</p>
+        <p class="rep" data-i18n="rc2_rep">代表：地面兵装Ⅱ（长城军工）/ 玻璃玻纤（中国巨石）/ 航空装备Ⅱ</p>
+        <div class="cond" data-i18n="rc2_cond">条件框架：不追日内领涨题材；新主线（电子硬件）需量价持续确认，严禁把单日轮动当反转，警惕「狂热」标签下高位放量追涨。</div>
+      </div>
+      <div class="rc green">
+        <span class="tag" data-i18n="rc3_tag">绿线区 · 连板投机 + 普跌补跌（相对）</span>
+        <h3 data-i18n="rc3_t">连板投机 + 普跌补跌</h3>
+        <p data-i18n="rc3_d">新赛股份（连板 5板）、国芳集团 / 竞业达（4板）代表连板梯队，但种植业 −5.93% / 能源金属 −3.44% / 农产品加工 −3.16% 补跌，资金向军工 / 农业题材集中，本质仍是弱市下的结构分化而非新周期主线，连板越高、补跌风险越大。</p>
+        <p class="rep" data-i18n="rc3_rep">代表：新赛股份 / 国芳集团 / 竞业达 / 龙版传媒</p>
+        <div class="cond" data-i18n="rc3_cond">条件框架：仅作避险对冲与仓位保护；资源已转弱段不宜视为安全垫，整体风险预算应显著收缩。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Outlook (next-session) -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_outlook">下个交易日（09-03 周四）展望</span><span class="en">Next-Session Outlook (09-02 Tue)</span></h2>
+    <div class="card">
+      <div class="cat" style="padding-left:0" data-i18n="o_logic">研判逻辑（基于 09-02 收盘 + 群体心理定位）</div>
+      <p class="note" data-i18n="o_logic_text">由 09-02 的「缩量普跌 / 情绪退潮」延伸：情绪周期定位「缩量普跌 / 情绪退潮」，涨股比 28%、涨停 51，广度崩塌（由 57% 降至 28%），成交缩至 ¥1.79万亿（环比 −3420亿）、技术面 MACD 顶背离（红柱但指数跌）、三指齐跌、创业板 −2.39% 领跌、估值偏高（PE_TTM 20.62、10年分位 81.23%）、趋势方向仍弱势下跌。基于此推演 09-03 的板块方向与交易规则（<b>不涉及具体个股推荐</b>）。</p>
+
+      <div class="outlook-grid">
+        <div class="oc up">
+          <span class="oc-tag" data-i18n="o1_tag">军工 / 地面兵装（观察）</span>
+          <h3 data-i18n="o1_t">地面兵装Ⅱ / 航空装备Ⅱ / 玻璃玻纤</h3>
+          <p data-i18n="o1_d">09-02 唯一逆势独涨方向：地面兵装Ⅱ +6.48%（长城军工 +10.04%）/ 玻璃玻纤 +1.23% / 航空装备Ⅱ +0.93%。军工单点活跃，若量能配合有望延续，但需警惕缩量普跌下高位追涨与补跌。</p>
+          <div class="oc-cond" data-i18n="o1_cond">注意：单点题材持续性需验证；严禁把单日轮动当反转，量能不放大则谨慎，不追涨停潮。</div>
+        </div>
+
+        <div class="oc amber">
+          <span class="oc-tag" data-i18n="o2_tag">农业 / 周期资源（观望）</span>
+          <h3 data-i18n="o2_t">种植业 / 能源金属 / 焦炭</h3>
+          <p data-i18n="o2_d">09-02 种植业 −5.93%、能源金属 −3.44%、焦炭Ⅱ −3.71% 领跌，前期强势与周期资源同步补跌，资金撤离，进入退潮观察。</p>
+          <div class="oc-cond" data-i18n="o2_cond">注意：普跌中补跌未止；不抄底、不加杠杆；右侧需量价持续确认。</div>
+        </div>
+
+        <div class="oc red">
+          <span class="oc-tag" data-i18n="o3_tag">高估值创业板 / 题材高位（回避）</span>
+          <h3 data-i18n="o3_t">创业板高位 / 融资逆势加仓标的</h3>
+          <p data-i18n="o3_d">09-02 创业板 −2.39% 领跌，MACD 顶背离，融资逆势加仓（中国巨石 / 中际旭创）显示杠杆背离——高估值与杠杆标的在缩量普跌中回撤风险最大，短期回避。</p>
+          <div class="oc-cond" data-i18n="o3_cond">注意：等缩量止跌 + 龙头先于板块企稳再考虑右侧；破位即减。</div>
+        </div>
+      </div>
+
+      <div class="cat" style="padding-left:0;margin-top:18px;" data-i18n="o_rules_t">交易规则（09-03）</div>
+      <ul class="rules">
+        <li data-i18n="o_r1"><b>仓位</b>：维持低仓位，不加杠杆。情绪转入「缩量普跌 / 情绪退潮」，广度崩塌、成交萎缩、趋势仍弱，整体风险预算显著收缩。</li>
+        <li data-i18n="o_r2"><b>高位主线</b>：不追涨、不加杠杆；以量能持续 + 指数站回短期均线上方为右侧确认，破位即减。</li>
+        <li data-i18n="o_r3"><b>新主线</b>：需量价持续确认（≥2 日连续放量 + 龙头未切换）才能跟进；严禁把单日轮动当反转。</li>
+        <li data-i18n="o_r4"><b>缩量普跌</b>：成交缩至 ¥1.79万亿（环比 −3420亿），若 09-03 继续缩量但指数惯性下挫、涨股比仍<30%，则广度脆弱、需警惕恐慌 / 踩踏。</li>
+        <li data-i18n="o_r5"><b>风控</b>：成交 ¥1.79万亿（环比 −3420亿，缩量普跌），若 09-03 继续缩量且指数下破短期均线则降仓至 ≤3 成；若放量跌破则进一步降仓。</li>
+      </ul>
+
+      <p class="note" style="margin-top:14px;font-size:.76rem;color:var(--muted)" data-i18n="o_compliance"><b>合规说明：</b>本展望仅给出板块方向与交易规则，不涉及具体个股推荐；群体心理定位与板块推断基于 2026-09-02 真实行情数据，市场有风险，决策须独立。</p>
+    </div>
+  </section>
+
+  <!-- Sources -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_source">数据来源与日期口径</span><span class="en">Data Sources & Time Caliber</span></h2>
+    <div class="card">
+      <ul class="src">
+        <li><b data-i18n="s_breadth">涨跌分布 / 总览</b><span data-i18n="s_breadth_v">westock · data_changedist；2026-09-02 收盘</span></li>
+        <li><b data-i18n="s_portrait">市场画像 summary</b><span data-i18n="s_portrait_v">westock · data_market_overview(type=summary)；2026-09-02（涨股比 28% 真实广度崩塌，缩量普跌）</span></li>
+        <li><b data-i18n="s_index">指数表现</b><span data-i18n="s_index_v">westock · data_quote(sh000001,sz399001,sz399006)；2026-09-02 收盘</span></li>
+        <li><b data-i18n="s_sector">板块排行 / 资金流</b><span data-i18n="s_sector_v">westock · data_sector(mode=ranking)；2026-09-02（fundflow 含行业/概念/地区排行与领涨股）</span></li>
+        <li><b data-i18n="s_hot">热搜股票</b><span data-i18n="s_hot_v">westock · data_hot 本次未返回；热搜以 data_sector(fundflow 领涨股) + tool_ranking(limitup_days / margin_chg_d) 综合替代；涨跌分布/指数/板块/融资单日为 2026-09-02</span></li>
+        <li><b data-i18n="s_macro">核心宏观</b><span data-i18n="s_macro_v">westock · data_macro(cn_pmi, cn_capacity_utilization, cn_financing 等)；PMI/产能/社融为 08-21 复核（无新发布，月频），CPI/M1-M2/10Y/LPR 沿用前期值</span></li>
+        <li><b data-i18n="s_margin">两融（个股）</b><span data-i18n="s_margin_v">westock · tool_ranking(metric=margin_chg_d)；2026-09-02</span></li>
+        <li><b data-i18n="s_main">主力5日净流入</b><span data-i18n="s_main_v">westock · tool_ranking(metric=cap_main_5d)；2026-09-02（板块暗盘视角，以主力5日替代观察）</span></li>
+        <li><b data-i18n="s_board">连板高度</b><span data-i18n="s_board_v">westock · tool_ranking(metric=limitup_days)；2026-09-02（当日排行榜已刷新）</span></li>
+        <li><b data-i18n="s_gap">数据缺口</b><span data-i18n="s_gap_v">市场两融余额聚合值（data_market_overview type=margin）数据源返回空，已用个股融资变动替代，未编造；data_hot 本次未返回，已用板块领涨股 + 排行榜综合替代；连板高度 / 融资单日均为 2026-09-02 真实数据。</span></li>
+      </ul>
+      <div class="note" data-i18n="t_src_note">时间口径：所有时点按北京时间。宏观为月频 / 季频，与日频行情不可直接对齐，已分别标注。涨跌分布 / 指数 / 板块 / 融资单日 / 连板高度均为 2026-09-02 当日真实数据。</div>
+    </div>
+  </section>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    <p data-i18n="disc1">免责声明：以上内容基于公开数据和量化分析，仅供参考，不构成投资建议。市场有风险，投资需谨慎。任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往表现不预示未来收益。</p>
+    <p style="margin-top:8px" data-i18n="disc2">本研判为「群体心理 / 条件框架」分析，非买卖指令；风险读数与偏差严重度为模型综合映射，须与价格结构、估值、资金流向交叉验证，不可单独作为交易依据。</p>
+  </div>
+
+  <div class="foot" data-i18n="t_foot">群体心理风险雷达 · 由 westock 官方行情数据生成 · 仅供研究参考</div>
+</div>
+
+<script>
+  var I18N = {
+    zh:{
+      t_kicker:"A股 · 群体行为金融研判",
+      t_title:"群体心理风险雷达",
+      t_sub:"行为金融偏差 · 拥挤度 · 融资 · 热度 — 综合风险雷达。基于 westock 官方行情数据的真实查询结果。",
+      t_date:"数据截至",
+      t_path:"分析路径：群体心理分析（路径 C）",
+      t_tldr:"一句话结论",
+      t_headline:"一句话",
+      t_headline_sub:"2026-09-02 · 收盘",
+      hk_stage:"阶段定性",
+      hv_stage:"<b>缩量普跌 / 情绪退潮</b>（09-02）",
+      hk_upratio:"涨股比",
+      hv_upratio:"<b>28%</b>（前次 08-31 57% · ↓ 29pct，急转直下）",
+      hk_lim:"涨停 / 跌停",
+      hv_lim:"<b>51</b> / <b>3</b>",
+      hk_amt:"成交额",
+      hv_amt:"<b>¥1.79万亿</b>（缩量普跌，较前日 −3420亿）",
+      hk_cycle:"情绪周期",
+      hv_cycle:"<b>缩量普跌 / 情绪退潮</b>",
+      hk_risk:"风险等级",
+      hv_risk:"<b class=\"hl-risk\">高</b>",
+      hk_flag:"关键提示",
+      hv_flag:"涨股比由 57% 骤降至 <b>28%</b>（广度崩塌），但连板高度仍有 <b>5板</b>、融资在下跌中<b>逆势加仓</b>——局部投机未退、杠杆与市场背离，追涨与踩踏风险并存",
+      tk1:"阶段定性",
+      tv1:"A 股 09-02 由 08-31「缩量滞涨 / 结构分化」急转为「缩量普跌 / 情绪退潮」：成交缩至 ¥1.79万亿（环比 −3420亿），涨股比仅 <b>28%</b>（1541涨 / 3901跌 / 平112），涨停 51、跌停 3，三指齐跌（上证 −0.97% / 深成 −1.88% / 创业板 −2.39%），创业板领跌；技术面 MACD 仍红柱但指数下跌 = <b>顶背离</b>，KDJ 高位钝化（K72/D65/J85）；仅地面兵装（军工）逆势 +6.48% 独涨，种植业 −5.93%、能源金属 −3.44% 等普跌。风险等级维持 <b>高</b>。",
+      tk2:"广度崩塌",
+      tv2:"涨股比 <b>28%</b>（前次 57% ↓ 29pct）· 涨停 <b>51</b>（89→51）· 跌停 <b>3</b> · 成交 <b>¥1.79万亿</b>（缩量 −3420亿）——普跌格局，参与度断崖式回落。",
+      tk3:"指数齐跌",
+      tv3:"上证 <b>−0.97%</b> / 深成 <b>−1.88%</b> / 创业板 <b>−2.39%</b>；三指齐跌、创业板领跌，MACD 红柱与指数下跌背离，中期弱势未改（创业板 60日 −14% 级别）。",
+      tk4:"板块分化",
+      tv4:"<b>地面兵装Ⅱ 逆势独涨 +6.48%</b>（长城军工 +10.04%）领涨，玻璃玻纤 +1.23% / 航空装备Ⅱ +0.93% / 教育 +0.82% / 旅游及景区 +0.72% / 国有大型银行 +0.57% 微红；<b>种植业 −5.93%、焦炭Ⅱ −3.71%、能源金属 −3.44%、渔业 −3.29%、农产品加工 −3.16%、影视院线 −3.10% 普跌</b>——仅军工单点活跃，其余板块大面积下挫，结构极端分化。",
+      tk5:"连板结构",
+      tv5:"连板高度 <b>5 板</b>（新赛股份），国芳集团 / 竞业达 4板，龙版传媒 / 欢瑞世纪 / 大晟文化 / 集泰股份 3板；投机热度仍在但主线偏军工 / 农业题材，持续性待验。",
+      tk6:"杠杆逆势",
+      tv6:"融资单日加仓榜 <b>中国巨石 +3.9986亿 居首</b>，中际旭创 +3.9119亿、长川科技 +3.8637亿、芒果超媒 +3.0549亿、同花顺 +2.3907亿——<b>大盘普跌中杠杆逆势加仓</b>，与市场走向背离，拥挤度与回补风险上升。",
+      tk7:"估值 / 基本面背离",
+      tv7:"PE_TTM <b>20.62</b>（10年分位 <b>81.23%</b> 仍高）+ PMI <b>49.2</b>（枯荣线下）——指数虽仅小跌但估值分位偏高，股价位阶仍贵，基本面接不住。",
+      tk8:"情绪周期",
+      tv8:"由 08-31「缩量滞涨 / 结构分化」急转「缩量普跌 / 情绪退潮」：涨股比由 57% 骤降至 28%（广度崩塌），三指齐跌、创业板领跌，MACD 红柱与指数背离；连板高度仍 5板、融资逆势加仓，说明局部投机未退、杠杆与市场背离，追涨与踩踏风险并存。风险等级维持 <b>高</b>。",
+      t_tldr_text:"A股 09-02 呈现「缩量普跌 / 情绪退潮」：成交缩至 ¥1.79万亿（环比 −3420亿），涨股比仅 28%（1541涨 / 3901跌 / 平112），涨停 51、跌停 3，三大指数齐跌（上证 −0.97% / 深成 −1.88% / 创业板 −2.39%，创业板领跌）；技术面 MACD 仍红柱但指数下跌 = 顶背离，KDJ 高位钝化。板块层面「地面兵装Ⅱ 逆势独涨 +6.48%（长城军工 +10.04%）」领涨，玻璃玻纤 +1.23% / 航空装备Ⅱ +0.93% / 教育 +0.82% / 旅游及景区 +0.72% / 国有大型银行 +0.57% 微红；种植业 −5.93%、焦炭Ⅱ −3.71%、能源金属 −3.44%、渔业 −3.29%、农产品加工 −3.16%、影视院线 −3.10% 普跌——仅军工单点活跃、其余大面积下挫，结构极端分化。连板高度 5板（新赛股份），国芳集团 / 竞业达 4板，龙版传媒 / 欢瑞世纪 / 大晟文化 / 集泰股份 3板。关键资金信号：融资单日加仓榜中国巨石 +3.9986亿居首，中际旭创 +3.9119亿、长川科技 +3.8637亿、芒果超媒 +3.0549亿、同花顺 +2.3907亿——大盘普跌中杠杆逆势加仓、与市场背离。群体心理由「缩量滞涨 / 结构分化」急转「缩量普跌 / 情绪退潮」——涨股比 28%、三指齐跌、创业板领跌、MACD 顶背离，广度崩塌但连板仍 5板、融资逆势加仓，局部投机未退、杠杆背离，追涨与踩踏风险并存，风险等级高。",
+      t_risk:"风险等级",
+      t_risk_hi:"高",
+      c_upratio:"涨股比",
+      c_limitup:"涨停",
+      c_board:"连板高度",
+      c_pe:"估值 PE分位",
+      c_pmi:"制造业PMI",
+      c_turn:"两市成交",
+      t_sec_bias:"行为偏差热力图",
+      t_cycle:"情绪周期定位（六阶段）",
+      r1:"绝望",
+      r2:"怀疑",
+      r3:"乐观",
+      r4:"狂热",
+      r5:"焦虑",
+      r6:"自满",
+      t_cycle_note:"注：上方「悲观」为实时群体心理定位（缩量普跌 / 情绪退潮）——09-02 涨跌分布（涨股比 28%、涨停 51 只、跌停 3 只、成交 ¥1.79万亿）显示广度断崖式回落（由 57% 降至 28%），普跌、创业板领跌、MACD 顶背离；连板高度仍 5板、融资逆势加仓，说明局部投机未退、杠杆与市场背离。若量能继续萎缩、指数下破短期均线，情绪将进一步滑向恐慌 / 分歧加剧。",
+      t_leg:"严重度（由数据综合映射）",
+      t_bias_note:"注：偏差严重度为基于下方真实数据的模型映射（1=低，5=高），用于呈现群体心理的脆弱点分布，并非对个股的买卖建议。",
+      t_sec_radar:"风险雷达",
+      t_radar_note:"六维风险读数（0–100，由下方真实数据综合映射，越高代表该维度群体脆弱性越强）：拥挤度 62 / 融资 68 / 换手 54 / 广度 78 / 媒体 65 / 估值 88。广度由 52 升至 78（09-02 涨股比 28%，由 57% 崩塌、参与度断崖 = 脆弱性骤升）；换手由 56 降至 54（成交缩至 ¥1.79万亿，活跃换手回落）；融资由 70 降至 68（融资单日中国巨石 +3.9986亿 / 中际旭创 +3.9119亿 逆势加仓，杠杆背离但金额较 08-31 收敛）；拥挤度由 72 降至 62（地面兵装单点独涨 + 连板 5板，集中度偏中）；媒体由 68 降至 65（涨停 51、连板 5板，但普跌，情绪温度回落）；估值仍高悬 88（PE_TTM 20.62、10年分位 81.23% 偏高）。整体呈「缩量普跌 / 情绪退潮」结构——广度崩塌、估值高悬、杠杆逆势，追涨与踩踏风险并存，脆弱性显著。",
+      ax_crowd:"拥挤度",
+      ax_margin:"融资",
+      ax_turn:"换手",
+      ax_breadth:"广度",
+      ax_media:"媒体情绪",
+      ax_val:"估值",
+      t_breadth:"市场涨跌分布（2026-09-02 收盘）",
+      b_up:"上涨",
+      b_down:"下跌",
+      b_flat:"平盘",
+      b_limitup:"涨停",
+      b_limitdn:"跌停",
+      b_amt:"成交额",
+      t_breadth_note:"涨股比由 57% 骤降至 28%、跌停 3（仍低）、涨停 51（由 89 回落）；缩量普跌、广度崩塌，参与度断崖。指数齐跌（上证 −0.97% / 深成 −1.88% / 创业板 −2.39%，创业板领跌），MACD 红柱与指数背离 = 顶背离；成交 ¥1.79万亿环比 −3420亿（缩量），仅地面兵装 +6.48% 独涨，其余大面积下挫，结构极端分化。",
+      t_sec_evidence:"关键证据表",
+      th_metric:"指标",
+      th_read:"真实读数",
+      th_interp:"行为金融解读",
+      ev_market:"一、市场广度与总览",
+      ev_upratio:"涨股比",
+      ev_upratio_i:"由 57% 骤降至 28%，参与度断崖式回落，广度崩塌，缩量普跌下风险偏好急转保守",
+      ev_limit:"涨停 / 跌停",
+      ev_limit_i:"涨停 51（由 89 回落）、跌停仅 3，连板高度仍 5板（新赛股份）——投机热度收敛但未熄，局部题材仍有承接",
+      ev_amount:"两市成交额",
+      ev_amount_i:"量能缩至 ¥1.79万亿（环比 −3420亿），缩量普跌 = 承接力转弱、观望情绪升温，缩量下挫需警惕惯性",
+      ev_index:"二、核心指数表现（2026-09-02 收盘）",
+      ev_sh:"上证指数",
+      ev_sh_i:"小跌 −0.97%，MACD 红柱但指数跌 = 顶背离，PE_TTM 20.62（10年分位 81.23% 偏高），短期均线承压",
+      ev_sz:"深证成指",
+      ev_sz_i:"中盘承压 −1.88%，PE 约 35，中期弱势未改，缩量下挫",
+      ev_cyb:"创业板指",
+      ev_cyb_i:"高弹性领跌 −2.39%，高估值高弹性主线中期深套未解，缩量普跌中冲击最大",
+      ev_sector:"三、板块排行与主线",
+      ev_secup:"领涨行业",
+      ev_secup_i:"地面兵装Ⅱ 逆势独涨 +6.48%（长城军工 +10.04%）领涨，玻璃玻纤 +1.23% / 航空装备Ⅱ +0.93% / 教育 +0.82% / 旅游及景区 +0.72% / 国有大型银行 +0.57% 微红——结构极端分化，仅军工单点活跃",
+      ev_secdn:"领跌行业",
+      ev_secdn_i:"种植业 −5.93% 领跌 / 焦炭Ⅱ −3.71% / 能源金属 −3.44% / 渔业 −3.29% / 农产品加工 −3.16% / 影视院线 −3.10%——普跌，前期强势与周期资源同步补跌，风险偏好全面转弱",
+      ev_board:"极端题材",
+      ev_board_i:"连板 5板（新赛股份），国芳集团 / 竞业达 4板；热点由军工 / 农业题材主导（长城军工 +10.04% / 新赛股份 5板），主线偏题材博弈，持续性待验",
+      ev_flow:"四、资金：连板 / 主力 / 两融",
+      ev_height:"连板高度",
+      ev_height_i:"高度 5板（新赛股份，2026-09-02 收盘），投机热度收敛但未熄，主线偏军工 / 农业题材，风险偏好急转保守但连板仍在",
+      ev_main:"融资单日净流入TOP",
+      ev_main_i:"杠杆资金当日集中于玻纤 / 光模块 / 半导体与传媒（中国巨石 +3.9986亿 / 中际旭创 +3.9119亿 / 长川科技 +3.8637亿 / 芒果超媒 +3.0549亿 / 同花顺 +2.3907亿）——普跌中逆势加仓，杠杆与市场背离",
+      ev_margin:"融资单日变动TOP",
+      ev_margin_i:"融资单日加仓榜中国巨石居首（+3.9986亿），中际旭创 +3.9119亿、长川科技 +3.8637亿、芒果超媒 +3.0549亿、同花顺 +2.3907亿、协创数据 +2.0724亿、中文在线 +1.8915亿——下跌中杠杆逆势加仓，背离明显",
+      ev_hot:"热搜 / 领涨TOP",
+      ev_hot_i:"热搜由军工 / 农业题材 + 连板主导（长城军工 / 新赛股份 / 国芳集团 / 竞业达 / 龙版传媒）；data_hot 本次未返回，以板块领涨股 + 排行榜综合替代（见来源口径）",
+      ev_margintotal:"市场两融余额",
+      ev_margintotal_i:"缺口：聚合两融余额为空，以个股融资变动替代观察（见上）；连板高度 / 融资单日均 2026-09-02 真实数据",
+      ev_macro:"五、核心宏观指标",
+      ev_pmi:"制造业PMI（7月）",
+      ev_pmi_i:"基本面收缩，与「高估值 + 中期弱势」明显背离；非制造业新订单偏弱",
+      ev_capu:"产能利用率（Q2）",
+      ev_capu_i:"实物经济动能走弱，价格缺乏业绩支撑",
+      ev_cpi:"CPI（7月）",
+      ev_cpi_i:"低通胀、需求偏弱，难证景气全面复苏",
+      ev_social:"社融（7月）",
+      ev_social_i:"信用需求弱，资金绕道股市 = 流动性驱动特征",
+      ev_m1m2:"M1-M2 剪刀差",
+      ev_m1m2_i:"活钱偏弱，资金空转，典型后周期现象",
+      ev_yield:"10Y 国债收益率",
+      ev_yield_i:"极低无风险利率，既支撑估值也反映增长担忧",
+      ev_lpr:"LPR",
+      ev_lpr_i:"宽松基调未变",
+      t_ev_note:"数据口径：宏观指标多截至 2026-07（月频）或 2026-09-02（日频）；PMI/产能/社融为 08-21 复核最新月频值（无新发布），CPI / M1-M2 / 10Y / LPR 沿用前期已查询月频 / 日频值（未更新）。涨跌分布 / 指数 / 成交额 / 板块 / 融资单日均为 2026-09-02 真实收盘；官方综合画像、连板梯队、融资单日均已更新至 2026-09-02，相关字段已标注。财新PMI数据源覆盖仅至 2025-08（49.2），不作为主要依据。详见末尾「数据来源与日期口径」。",
+      t_sec_risk:"风险分层",
+      rc1_tag:"红线区 · 缩量普跌 + 高估值 + 杠杆逆势 + 顶背离",
+      rc1_t:"缩量普跌 + 高估值 + 杠杆逆势 + 顶背离",
+      rc1_d:"估值 PE_TTM 20.62、10年分位 81.23% 仍高（指数仅小跌但分位贵），MACD 红柱与指数下跌 = 顶背离，三指齐跌、创业板 −2.39% 领跌；缩量普跌（成交 ¥1.79万亿，环比 −3420亿）下技术面背离、广度崩塌（涨股比 28%），而融资单日逆势加仓（中国巨石 +3.9986亿 / 中际旭创 +3.9119亿），拥挤度（62）与融资（68）读数仍高 = 杠杆背离、二次杀跌风险积聚。",
+      rc1_rep:"代表：高估值创业板 / 军工题材高位 / 融资逆势加仓标的",
+      rc1_cond:"条件框架：高位主线不追涨、不加杠杆；以量能持续 + 指数站回短期均线上方为右侧确认，破位即减，杠杆仓位优先降。",
+      rc2_tag:"黄线区 · 军工单点独涨 + 其余普跌（极端分化）",
+      rc2_t:"军工单点独涨 + 其余普跌",
+      rc2_d:"09-02 仅地面兵装Ⅱ +6.48%（长城军工 +10.04%）逆势独涨，玻璃玻纤 +1.23% / 航空装备Ⅱ +0.93% 微红；种植业 −5.93% / 焦炭Ⅱ −3.71% / 能源金属 −3.44% / 渔业 −3.29% 普跌，结构极端分化。连板仍 5板（新赛股份），主线由军工 / 农业题材主导，轮动快、持续性差。",
+      rc2_rep:"代表：地面兵装Ⅱ（长城军工）/ 玻璃玻纤（中国巨石）/ 航空装备Ⅱ",
+      rc2_cond:"条件框架：不追日内领涨题材；新主线（电子硬件）需量价持续确认，严禁把单日轮动当反转，警惕「狂热」标签下高位放量追涨。",
+      rc3_tag:"绿线区 · 连板投机 + 普跌补跌（相对）",
+      rc3_t:"连板投机 + 普跌补跌",
+      rc3_d:"新赛股份（连板 5板）、国芳集团 / 竞业达（4板）代表连板梯队，但种植业 −5.93% / 能源金属 −3.44% / 农产品加工 −3.16% 补跌，资金向军工 / 农业题材集中，本质仍是弱市下的结构分化而非新周期主线，连板越高、补跌风险越大。",
+      rc3_rep:"代表：新赛股份 / 国芳集团 / 竞业达 / 龙版传媒",
+      rc3_cond:"条件框架：仅作避险对冲与仓位保护；资源已转弱段不宜视为安全垫，整体风险预算应显著收缩。",
+      t_sec_outlook:"下个交易日（09-03 周四）展望",
+      o_logic:"研判逻辑（基于 09-02 收盘 + 群体心理定位）",
+      o_logic_text:"由 09-02 的「缩量普跌 / 情绪退潮」延伸：情绪周期定位「缩量普跌 / 情绪退潮」，涨股比 28%、涨停 51，广度崩塌（由 57% 降至 28%），成交缩至 ¥1.79万亿（环比 −3420亿）、技术面 MACD 顶背离（红柱但指数跌）、三指齐跌、创业板 −2.39% 领跌、估值偏高（PE_TTM 20.62、10年分位 81.23%）、趋势方向仍弱势下跌。基于此推演 09-03 的板块方向与交易规则（<b>不涉及具体个股推荐</b>）。",
+      o1_tag:"军工 / 地面兵装（观察）",
+      o1_t:"地面兵装Ⅱ / 航空装备Ⅱ / 玻璃玻纤",
+      o1_d:"09-02 唯一逆势独涨方向：地面兵装Ⅱ +6.48%（长城军工 +10.04%）/ 玻璃玻纤 +1.23% / 航空装备Ⅱ +0.93%。军工单点活跃，若量能配合有望延续，但需警惕缩量普跌下高位追涨与补跌。",
+      o1_cond:"注意：单点题材持续性需验证；严禁把单日轮动当反转，量能不放大则谨慎，不追涨停潮。",
+      o2_tag:"农业 / 周期资源（观望）",
+      o2_t:"种植业 / 能源金属 / 焦炭",
+      o2_d:"09-02 种植业 −5.93%、能源金属 −3.44%、焦炭Ⅱ −3.71% 领跌，前期强势与周期资源同步补跌，资金撤离，进入退潮观察。",
+      o2_cond:"注意：普跌中补跌未止；不抄底、不加杠杆；右侧需量价持续确认。",
+      o3_tag:"高估值创业板 / 题材高位（回避）",
+      o3_t:"创业板高位 / 融资逆势加仓标的",
+      o3_d:"09-02 创业板 −2.39% 领跌，MACD 顶背离，融资逆势加仓（中国巨石 / 中际旭创）显示杠杆背离——高估值与杠杆标的在缩量普跌中回撤风险最大，短期回避。",
+      o3_cond:"注意：等缩量止跌 + 龙头先于板块企稳再考虑右侧；破位即减。",
+      o_rules_t:"交易规则（09-03）",
+      o_r1:"<b>仓位</b>：维持低仓位，不加杠杆。情绪转入「缩量普跌 / 情绪退潮」，广度崩塌、成交萎缩、趋势仍弱，整体风险预算显著收缩。",
+      o_r2:"<b>高位主线</b>：不追涨、不加杠杆；以量能持续 + 指数站回短期均线上方为右侧确认，破位即减。",
+      o_r3:"<b>新主线</b>：需量价持续确认（≥2 日连续放量 + 龙头未切换）才能跟进；严禁把单日轮动当反转。",
+      o_r4:"<b>缩量普跌</b>：成交缩至 ¥1.79万亿（环比 −3420亿），若 09-03 继续缩量但指数惯性下挫、涨股比仍<30%，则广度脆弱、需警惕恐慌 / 踩踏。",
+      o_r5:"<b>风控</b>：成交 ¥1.79万亿（环比 −3420亿，缩量普跌），若 09-03 继续缩量且指数下破短期均线则降仓至 ≤3 成；若放量跌破则进一步降仓。",
+      o_compliance:"<b>合规说明：</b>本展望仅给出板块方向与交易规则，不涉及具体个股推荐；群体心理定位与板块推断基于 2026-09-02 真实行情数据，市场有风险，决策须独立。",
+      t_sec_source:"数据来源与日期口径",
+      s_breadth:"涨跌分布 / 总览",
+      s_breadth_v:"westock · data_changedist；2026-09-02 收盘",
+      s_portrait:"市场画像 summary",
+      s_portrait_v:"westock · data_market_overview(type=summary)；2026-09-02（涨股比 28% 真实广度崩塌，缩量普跌）",
+      s_index:"指数表现",
+      s_index_v:"westock · data_quote(sh000001,sz399001,sz399006)；2026-09-02 收盘",
+      s_sector:"板块排行 / 资金流",
+      s_sector_v:"westock · data_sector(mode=ranking)；2026-09-02（fundflow 含行业/概念/地区排行与领涨股）",
+      s_hot:"热搜股票",
+      s_hot_v:"westock · data_hot 本次未返回；热搜以 data_sector(fundflow 领涨股) + tool_ranking(limitup_days / margin_chg_d) 综合替代；涨跌分布/指数/板块/融资单日为 2026-09-02",
+      s_macro:"核心宏观",
+      s_macro_v:"westock · data_macro(cn_pmi, cn_capacity_utilization, cn_financing 等)；PMI/产能/社融为 08-21 复核（无新发布，月频），CPI/M1-M2/10Y/LPR 沿用前期值",
+      s_margin:"两融（个股）",
+      s_margin_v:"westock · tool_ranking(metric=margin_chg_d)；2026-09-02",
+      s_main:"主力5日净流入",
+      s_main_v:"westock · tool_ranking(metric=cap_main_5d)；2026-09-02（板块暗盘视角，以主力5日替代观察）",
+      s_board:"连板高度",
+      s_board_v:"westock · tool_ranking(metric=limitup_days)；2026-09-02（当日排行榜已刷新）",
+      s_gap:"数据缺口",
+      s_gap_v:"市场两融余额聚合值（data_market_overview type=margin）数据源返回空，已用个股融资变动替代，未编造；data_hot 本次未返回，已用板块领涨股 + 排行榜综合替代；连板高度 / 融资单日均为 2026-09-02 真实数据。",
+      t_src_note:"时间口径：所有时点按北京时间。宏观为月频 / 季频，与日频行情不可直接对齐，已分别标注。涨跌分布 / 指数 / 板块 / 融资单日 / 连板高度均为 2026-09-02 当日真实数据。",
+      disc1:"免责声明：以上内容基于公开数据和量化分析，仅供参考，不构成投资建议。市场有风险，投资需谨慎。任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往表现不预示未来收益。",
+      disc2:"本研判为「群体心理 / 条件框架」分析，非买卖指令；风险读数与偏差严重度为模型综合映射，须与价格结构、估值、资金流向交叉验证，不可单独作为交易依据。",
+      t_foot:"群体心理风险雷达 · 由 westock 官方行情数据生成 · 仅供研究参考",
+    },
+    en:{
+      t_kicker:"A-share · Crowd Behavioral Finance",
+      t_title:"Crowd Psychology Risk Radar",
+      t_sub:"Behavioral bias · crowding · margin · heat — an integrated risk radar. Built on real queries via westock official market data.",
+      t_date:"Data as of",
+      t_path:"Path: Crowd Psychology Analysis (Path C)",
+      t_tldr:"Bottom Line",
+      t_headline:"Headline",
+      t_headline_sub:"2026-09-02 · Close",
+      hk_stage:"Stage",
+      hv_stage:"<b>Volume-shrink selloff / sentiment ebb</b> (09-02)",
+      hk_upratio:"Up-ratio",
+      hv_upratio:"<b>28%</b> (prior 57% · ↓ 29pct, sharp drop)",
+      hk_lim:"Limit-up / Down",
+      hv_lim:"<b>51</b> / <b>3</b>",
+      hk_amt:"Turnover",
+      hv_amt:"<b>¥1.79tn</b> (volume-shrink selloff, −342bn vs prior)",
+      hk_cycle:"Sentiment cycle",
+      hv_cycle:"<b>Volume-shrink selloff / sentiment ebb</b>",
+      hk_risk:"Risk level",
+      hv_risk:"<b class=\"hl-risk\">High</b>",
+      hk_flag:"Key flag",
+      hv_flag:"Up-ratio collapsed from 57% to <b>28%</b> (breadth crash), yet streak height still <b>5 boards</b> and margin <b>added against the tide</b> — local speculation persists, leverage diverges from market, chase & stampede risks coexist",
+      tk1:"Stage",
+      tv1:"On 09-02 A-shares snapped from 08-31's 'volume-stall / structural divergence' into 'volume-shrink selloff / sentiment ebb': turnover shrank to ¥1.79tn (−342bn vs prior), up-ratio only <b>28%</b> (1541 up / 3901 down / 112 flat), limit-up 51, limit-down 3, all three indices down (SSE −0.97% / SZSE −1.88% / ChiNext −2.39%) with ChiNext leading the drop; technics MACD still red but indices fell = <b>top divergence</b>, KDJ high-level staleness (K72/D65/J85); only ground-arm Equipment (military) rose alone +6.48%, planting −5.93% / energy-metals −3.44% broadly down. Risk stays <b>High</b>.",
+      tk2:"Breadth crash",
+      tv2:"Up-ratio <b>28%</b> (prior 57% ↓ 29pct) · Limit-up <b>51</b> (89→51) · Limit-down <b>3</b> · Turnover <b>¥1.79tn</b> (volume-shrink −342bn) — broad selloff, participation cliff-drop.",
+      tk3:"All indices down",
+      tv3:"SSE <b>−0.97%</b> / SZSE <b>−1.88%</b> / ChiNext <b>−2.39%</b>; all three down, ChiNext leads; MACD red vs index-down divergence, mid-term weakness unchanged.",
+      tk4:"Sector split",
+      tv4:"<b>Ground-arm EquipmentⅡ alone +6.48%</b> (Great Wall Military +10.04%) led, glass-fiber +1.23% / aviation-equip Ⅱ +0.93% / education +0.82% / travel +0.72% / state-big-banks +0.57% faint-green; <b>planting −5.93%, coke Ⅱ −3.71%, energy-metals −3.44%, fishery −3.29%, farm-products −3.16%, film-TV −3.10% broadly down</b> — only military single-point active, most sectors plunged, extreme divergence.",
+      tk5:"Streak structure",
+      tv5:"Top board height <b>5 boards</b> (Xinsai Shares), Guofang Group / Jingye Da 4 boards, Longban Media / Huarui Century / Dasheng Culture / Jitai 3 boards; heat persists but main line skewed to military / agriculture themes, persistence unproven.",
+      tk6:"Leverage against tide",
+      tv6:"Margin daily-add led by <b>China Jushi +¥0.3999bn (#1)</b>, Zhongji +0.3912bn, Changchuan +0.3864bn, Mango +0.3055bn, Tonghuashun +0.2391bn — <b>margin added against the tide in a broad selloff</b>, diverging from market, crowding & refill risk up.",
+      tk7:"Valuation / fundamentals",
+      tv7:"PE_TTM <b>20.62</b> (10y pctile <b>81.23%</b> still high) + PMI <b>49.2</b> (below 50) — indices only mildly down but valuation pctile rich, fundamentals cannot support the level.",
+      tk8:"Sentiment cycle",
+      tv8:"From 'volume-stall / structural divergence' into <b>volume-shrink selloff / sentiment ebb</b>: up-ratio crashed 57%→28% (breadth collapse), all three down, ChiNext leads, MACD divergence; streak still 5 boards, margin against tide — local speculation persists, leverage diverges, chase & stampede risks coexist. Risk stays <b>High</b>.",
+      t_tldr_text:"On 2026-09-02 A-shares showed 'volume-shrink selloff / sentiment ebb': turnover shrank to ¥1.79tn (−342bn vs prior), up-ratio only 28% (1541 up / 3901 down / 112 flat), limit-up 51, limit-down 3, all three indices down (SSE −0.97% / SZSE −1.88% / ChiNext −2.39%, ChiNext leads); technics MACD red but index-down = top divergence, KDJ high staleness. Sector-wise 'Ground-arm EquipmentⅡ alone +6.48% (Great Wall Military +10.04%)' led, glass-fiber +1.23% / aviation-equip Ⅱ +0.93% / education +0.82% / travel +0.72% / state-big-banks +0.57% faint-green; planting −5.93%, coke Ⅱ −3.71%, energy-metals −3.44%, fishery −3.29%, farm-products −3.16%, film-TV −3.10% broadly down — only military single-point active, most sectors plunged, extreme divergence. Streak 5 boards (Xinsai Shares), Guofang / Jingye Da 4 boards, Longban / Huarui / Dasheng / Jitai 3 boards. Key flow: margin daily-add led by China Jushi +0.3999bn, Zhongji +0.3912bn, Changchuan +0.3864bn, Mango +0.3055bn, Tonghuashun +0.2391bn — margin added against the tide in a broad selloff. Crowd psychology snapped from 'volume-stall / structural divergence' into 'volume-shrink selloff / sentiment ebb' — up-ratio 28%, all three down, ChiNext leads, MACD divergence; breadth collapse but streak still 5 boards, margin against tide, chase & stampede risks coexist, risk High.",
+      t_risk:"Risk Level",
+      t_risk_hi:"High",
+      c_upratio:"Up %",
+      c_limitup:"Limit-up",
+      c_board:"Streak",
+      c_pe:"PE pctile",
+      c_pmi:"Mfg PMI",
+      c_turn:"Turnover",
+      t_sec_bias:"Behavioral Bias Heatmap",
+      t_cycle:"Sentiment Cycle (six stages)",
+      r1:"Despair",
+      r2:"Doubt",
+      r3:"Optimism",
+      r4:"Euphoria",
+      r5:"Anxiety",
+      r6:"Complacency",
+      t_cycle_note:"Note: 'Pessimism' above is the live crowd positioning (Volume-shrink selloff / sentiment ebb) — the 09-02 breadth (up-ratio 28%, limit-up 51, limit-down 3, turnover ¥1.79tn) shows participation cliff-drop (57%→28%), broad selloff, ChiNext leads, MACD divergence; streak still 5 boards, margin against tide. If volume keeps shrinking and indices break below short-term MAs, sentiment slides further to panic / widening divergence.",
+      t_leg:"Severity (model-mapped from data)",
+      t_bias_note:"Note: bias severity is a model mapping from the real data below (1=low, 5=high), used to surface where crowd psychology is most fragile. It is not a buy/sell call on any stock.",
+      t_sec_radar:"Risk Radar",
+      t_radar_note:"Six-dimension risk readings (0–100, model-mapped, higher = more fragility): Crowding 62 / Margin 68 / Turnover 54 / Breadth 78 / Media 65 / Valuation 88. Breadth 52→78 (09-02 up-ratio 28%, crashed from 57%, participation cliff = fragility surged); Turnover 56→54 (turnover shrank to ¥1.79tn, active turnover fell); Margin 70→68 (margin daily China Jushi +0.3999bn / Zhongji +0.3912bn against tide, leverage diverges but amount smaller than 08-31); Crowding 72→62 (ground-arm single-point + 5-board streak, concentration mid); Media 68→65 (limit-up 51, 5-board streak, but broad selloff, sentiment cooler); Valuation still high at 88 (PE_TTM 20.62, 10y pctile 81.23% elevated). Overall a 'volume-shrink selloff / sentiment ebb' structure — breadth collapse, valuation high, leverage against tide, chase & stampede risks coexist, fragility significant.",
+      ax_crowd:"Crowding",
+      ax_margin:"Margin",
+      ax_turn:"Turnover",
+      ax_breadth:"Breadth",
+      ax_media:"Media",
+      ax_val:"Valuation",
+      t_breadth:"Market Breadth (2026-09-02 close)",
+      b_up:"Up",
+      b_down:"Down",
+      b_flat:"Flat",
+      b_limitup:"Limit-up",
+      b_limitdn:"Limit-down",
+      b_amt:"Amount",
+      t_breadth_note:"Up-stock ratio crashed 57%->28%, limit-down only 3, limit-up 51 (from 89); volume-shrink selloff, breadth collapse, participation cliff. All three down (SSE −0.97% / SZSE −1.88% / ChiNext −2.39%, ChiNext leads), MACD red vs index-down = divergence; turnover ¥1.79tn −342bn (volume-shrink), only ground-arm +6.48% alone up, rest broadly down, extreme divergence.",
+      t_sec_evidence:"Key Evidence",
+      th_metric:"Metric",
+      th_read:"Real Reading",
+      th_interp:"Behavioral Interpretation",
+      ev_market:"I. Breadth & Overview",
+      ev_upratio:"Up-stock ratio",
+      ev_upratio_i:"Crashed 57%->28%, participation cliff-drop, breadth collapse, risk appetite snapped conservative under volume-shrink selloff",
+      ev_limit:"Limit-up / Limit-down",
+      ev_limit_i:"Limit-up 51 (from 89), limit-down only 3, streak still 5 boards (Xinsai) — speculative heat收敛 but not out, local themes still bid",
+      ev_amount:"Total turnover",
+      ev_amount_i:"Turnover shrank to ¥1.79tn (−342bn vs prior); volume-shrink selloff = weaker absorption, caution rising, beware inertia on shrinking volume",
+      ev_index:"II. Core Index Performance (2026-09-02 close)",
+      ev_sh:"SSE Composite",
+      ev_sh_i:"Mild −0.97%, MACD red but index down = top divergence, PE_TTM 20.62 (10y pctile 81.23% rich), short-term MAs pressured",
+      ev_sz:"SZSE Component",
+      ev_sz_i:"Mid-cap −1.88%, PE ~35, mid-term weakness unchanged, volume-shrink down",
+      ev_cyb:"ChiNext",
+      ev_cyb_i:"High-beta leads down −2.39%, rich-valuation high-beta mid-term trap unrelieved, hit hardest in volume-shrink selloff",
+      ev_sector:"III. Sector Ranking & Main Line",
+      ev_secup:"Top sectors",
+      ev_secup_i:"Ground-arm EquipmentⅡ alone +6.48% (Great Wall Military +10.04%) led, glass-fiber +1.23% / aviation-equip Ⅱ +0.93% / education +0.82% / travel +0.72% / state-big-banks +0.57% faint-green — extreme divergence, only military single-point active",
+      ev_secdn:"Top laggards",
+      ev_secdn_i:"Planting −5.93% led / coke Ⅱ −3.71% / energy-metals −3.44% / fishery −3.29% / farm-products −3.16% / film-TV −3.10% — broad selloff, prior-strong & cycle resources correct together, risk appetite fully weak",
+      ev_board:"Extreme theme",
+      ev_board_i:"Streak 5 boards (Xinsai Shares), Guofang / Jingye Da 4 boards; hotspots led by military / agriculture themes (Great Wall Military +10.04% / Xinsai 5 boards), main line skewed to thematic betting, persistence unproven",
+      ev_flow:"IV. Flows: Streak / Main Force / Margin",
+      ev_height:"Streak height",
+      ev_height_i:"Rose to 5 boards (Xinsai Shares, 2026-09-02 close), speculative heat收敛 but not out, main line skewed to military / agriculture, appetite snapped conservative but streak persists",
+      ev_main:"Margin daily net-inflow TOP",
+      ev_main_i:"Margin capital concentrated that day in fiberglass / optical-module / semi & media (China Jushi +0.3999bn / Zhongji +0.3912bn / Changchuan +0.3864bn / Mango +0.3055bn / Tonghuashun +0.2391bn) — added against the tide in a selloff, leverage diverges from market",
+      ev_margin:"Margin daily change TOP",
+      ev_margin_i:"Margin daily-add led by China Jushi (+0.3999bn), Zhongji +0.3912bn, Changchuan +0.3864bn, Mango +0.3055bn, Tonghuashun +0.2391bn, Xiechuang +0.2072bn, Chinese All +0.1892bn — leverage added against the tide on a down day, clear divergence",
+      ev_hot:"Top hot-search / leaders",
+      ev_hot_i:"Hot-search led by military / agriculture themes + streak (Great Wall Military / Xinsai / Guofang / Jingye Da / Longban); data_hot unavailable this round, proxied by sector leaders + rankings (see Sources)",
+      ev_margintotal:"Market margin balance",
+      ev_margintotal_i:"Gap: aggregate margin balance empty; proxied by per-stock margin changes (above); streak height / margin daily are all 2026-09-02 real data",
+      ev_macro:"V. Core Macro Indicators",
+      ev_pmi:"Mfg PMI (Jul)",
+      ev_pmi_i:"Fundamentals contracting, clear divergence from 'high-valuation + mid-term weakness'; non-mfg new orders weak",
+      ev_capu:"Capacity utilization (Q2)",
+      ev_capu_i:"Real-economy momentum weakening, prices lack earnings support",
+      ev_cpi:"CPI (Jul)",
+      ev_cpi_i:"Low inflation, weak demand, no proof of broad recovery",
+      ev_social:"Total social financing (Jul)",
+      ev_social_i:"Weak credit demand, money bypassing into stocks = liquidity-driven feature",
+      ev_m1m2:"M1-M2 scissors",
+      ev_m1m2_i:"Weak active money, funds idling — typical late-cycle pattern",
+      ev_yield:"10Y gov bond yield",
+      ev_yield_i:"Very low risk-free rate supports valuation yet signals growth worry",
+      ev_lpr:"LPR",
+      ev_lpr_i:"Easing stance unchanged",
+      t_ev_note:"Time caliber: macro mostly as of 2026-07 (monthly) or 2026-09-02 (daily); PMI/capacity/financing re-checked 08-21 (no new release, monthly), CPI/M1-M2/10Y/LPR from prior pulls (unchanged). Breadth / indices / turnover / sectors / margin daily are all 2026-09-02 real close; official portrait, streak, margin daily all updated to 2026-09-02 and labeled. Caixin PMI source only to 2025-08 (49.2), not primary. See 'Data Sources & Time Caliber' at end.",
+      t_sec_risk:"Risk Stratification",
+      rc1_tag:"RED · Volume-shrink selloff + high valuation + margin against tide + top divergence",
+      rc1_t:"Volume-shrink selloff + high valuation + margin against tide + top divergence",
+      rc1_d:"PE_TTM 20.62, 10y pctile 81.23% still high (indices only mildly down but pctile rich), MACD red vs index-down = top divergence, all three down, ChiNext −2.39% leads; volume-shrink selloff (¥1.79tn, −342bn) with technics divergence, breadth collapse (up-ratio 28%), yet margin added against tide (China Jushi +0.3999bn / Zhongji +0.3912bn), Crowding (62) and Margin (68) still elevated = leverage divergence, second sell-off risk accumulates.",
+      rc1_rep:"Names: high-valuation ChiNext / military-theme highs / margin-against-tide names",
+      rc1_cond:"Conditional: no chasing highs, no adding leverage on high-level lines; use sustained volume + index above short-term MA as right-side confirmation; cut on break, lever positions first.",
+      rc2_tag:"AMBER · Military single-point up + rest broadly down (extreme divergence)",
+      rc2_t:"Military single-point up + rest broadly down",
+      rc2_d:"09-02 only Ground-arm EquipmentⅡ +6.48% (Great Wall Military +10.04%) rose alone, glass-fiber +1.23% / aviation-equip Ⅱ +0.93% faint-green; planting −5.93% / energy-metals −3.44% / coke Ⅱ −3.71% broadly down, extreme divergence. Streak still 5 boards (Xinsai), main line led by military / agriculture, fast rotation, poor persistence.",
+      rc2_rep:"Names: Ground-arm EquipmentⅡ (Great Wall Military) / glass-fiber (China Jushi) / aviation-equip Ⅱ",
+      rc2_cond:"Conditional: don't chase intraday leaders; new main line (electronics) needs sustained volume+price confirmation; never treat a single-day rotation as reversal; beware high-level chase under the 'Euphoria' tag.",
+      rc3_tag:"GREEN · Streak speculation + broad-selloff correction (relative)",
+      rc3_t:"Streak speculation + broad-selloff correction",
+      rc3_d:"Xinsai (5-board streak leader), Guofang / Jingye Da (4 boards) represent the streak ladder, but planting −5.93% / energy-metals −3.44% / farm-products −3.16% correct, capital centralized to military / agriculture — still risk-off / structural divergence, not a new-cycle main line; higher streak = higher correction risk.",
+      rc3_rep:"Names: Xinsai / Guofang / Jingye Da / Longban",
+      rc3_cond:"Conditional: safe-haven hedge and book protection only; weakened resources no longer a safety net; overall risk budget should shrink markedly.",
+      t_sec_outlook:"Next-Session Outlook (09-03 Thu)",
+      o_logic:"Inference logic (based on 09-02 close + crowd positioning)",
+      o_logic_text:"Extending 09-02's 'volume-shrink selloff / sentiment ebb': crowd cycle at 'Volume-shrink selloff / sentiment ebb', up-ratio 28%, 51 limit-ups, breadth crashed (57%→28%), turnover shrank to ¥1.79tn (−342bn), technics MACD top divergence (red but index down), all three down, ChiNext −2.39% leads, valuation elevated (PE_TTM 20.62, 10y pctile 81.23%), trend still weak-down. Projecting 09-03 sector direction and trading rules (<b>no individual stock picks</b>).",
+      o1_tag:"Military / Ground-arm (watch)",
+      o1_t:"Ground-arm EquipmentⅡ / Aviation-equip Ⅱ / Glass-fiber",
+      o1_d:"09-02 the only against-tide direction: Ground-arm EquipmentⅡ +6.48% (Great Wall Military +10.04%) / glass-fiber +1.23% / aviation-equip Ⅱ +0.93%. Military single-point active; may extend if volume supports, but beware high-level chase & correction under volume-shrink selloff.",
+      o1_cond:"Note: persistence after a one-day burst must be verified; never treat a single-day rotation as reversal; cautious if volume doesn't expand, don't chase the limit-up wave.",
+      o2_tag:"Agriculture / cycle resources (stand aside)",
+      o2_t:"Planting / Energy-metals / Coke",
+      o2_d:"09-02 planting −5.93%, energy-metals −3.44%, coke Ⅱ −3.71% led the drop, prior-strong & cycle resources correct together, capital withdrawing, enter fade-watch.",
+      o2_cond:"Note: correction unstopped in selloff; no bottom-fishing, no leverage; right-side needs sustained volume+price confirmation.",
+      o3_tag:"High-valuation ChiNext / thematic highs (avoid)",
+      o3_t:"ChiNext highs / margin-against-tide names",
+      o3_d:"09-02 ChiNext −2.39% leads, MACD top divergence, margin against tide (China Jushi / Zhongji) shows leverage divergence — high-valuation & leverage names most exposed to pullback in volume-shrink selloff, avoid near term.",
+      o3_cond:"Note: wait for volume-dry stabilization + leaders stabilizing before sector itself, then consider right-side.",
+      o_rules_t:"Trading rules (09-03)",
+      o_r1:"<b>Book</b>: stay low exposure, no leverage. Cycle moved to 'Volume-shrink selloff / sentiment ebb', breadth collapsed, volume shrank, trend still weak — overall risk budget shrinks markedly.",
+      o_r2:"<b>High-level main line</b>: no chasing, no leverage; right-side requires sustained volume + index above short-term MA; break down -> cut.",
+      o_r3:"<b>New main line</b>: needs sustained volume+price confirmation (>=2 sessions of volume expansion + leader unchanged) to follow; never treat a single-day rotation as reversal.",
+      o_r4:"<b>Volume-shrink selloff</b>: turnover ¥1.79tn (−342bn); if 09-03 keeps shrinking but indices fall inertially, up-ratio still <30%, breadth fragile — watch panic / stampede.",
+      o_r5:"<b>Risk gate</b>: turnover ¥1.79tn (−342bn, volume-shrink selloff); if 09-03 keeps shrinking and indices break short-term MAs cut overall to <=30% exposure; if it breaks on shrinking volume, cut further.",
+      o_compliance:"<b>Compliance note:</b> this outlook provides sector direction and trading rules only — no individual stock recommendations. Crowd positioning and sector inference are based on 2026-09-02 live market data; markets carry risk, decide independently.",
+      t_sec_source:"Data Sources & Time Caliber",
+      s_breadth:"Breadth / Overview",
+      s_breadth_v:"westock · data_changedist; 2026-09-02 close",
+      s_portrait:"Market portrait summary",
+      s_portrait_v:"westock · data_market_overview(type=summary); 2026-09-02 (up-ratio 28% real breadth crash, volume-shrink selloff)",
+      s_index:"Index performance",
+      s_index_v:"westock · data_quote(sh000001,sz399001,sz399006); 2026-09-02 close",
+      s_sector:"Sector ranking / flows",
+      s_sector_v:"westock · data_sector(mode=ranking); 2026-09-02 (fundflow includes industry/concept/region rankings and leaders)",
+      s_hot:"Hot-search stocks",
+      s_hot_v:"westock · data_hot unavailable this round; proxied by data_sector(fundflow leaders) + tool_ranking(limitup_days / margin_chg_d); breadth/index/sector/margin daily are 2026-09-02",
+      s_macro:"Core macro",
+      s_macro_v:"westock · data_macro(cn_pmi, cn_capacity_utilization, cn_financing, etc.); PMI/capacity/financing re-checked 08-21 (no new release, monthly), CPI/M1-M2/10Y/LPR from prior pulls",
+      s_margin:"Margin (per stock)",
+      s_margin_v:"westock · tool_ranking(metric=margin_chg_d); 2026-09-02",
+      s_main:"Main-force 5d net inflow",
+      s_main_v:"westock · tool_ranking(metric=cap_main_5d); 2026-09-02 (sector dark-pool view, proxied by main-5d)",
+      s_board:"Streak height",
+      s_board_v:"westock · tool_ranking(metric=limitup_days); 2026-09-02 (same-day ranking refreshed)",
+      s_gap:"Data gap",
+      s_gap_v:"Aggregate margin balance (data_market_overview type=margin) returned empty by source; proxied by per-stock margin changes, not fabricated. data_hot unavailable this round; proxied by sector leaders + rankings. Streak height / margin daily are all 2026-09-02 real data.",
+      t_src_note:"Time caliber: all timestamps in Beijing time. Macro is monthly/quarterly and not directly aligned with daily quotes; labeled separately. Breadth / index / sector / margin daily / streak height are all 2026-09-02 same-day real data.",
+      disc1:"Disclaimer: The above is based on public data and quantitative analysis for reference only and does not constitute investment advice. Markets are risky; invest with caution. Any investment decision should be made independently based on your own risk tolerance, financial situation and objectives, and consult a licensed professional when necessary. Past performance does not predict future returns.",
+      disc2:"This assessment is a 'crowd psychology / conditional-framework' analysis, not a buy/sell instruction; risk readings and bias severities are model mappings and must be cross-checked with price structure, valuation and fund flows — not used alone as a trade basis.",
+      t_foot:"Crowd Psychology Risk Radar · generated from westock official market data · for research reference only",
+    }
+  };
+
+  var BIAS = [
+    {zh:"羊群效应",en:"Herding",sev:4,zhd:"涨股比28%偏低、成交缩至¥1.79万亿普跌、三指齐跌（创业板−2.39%领跌），但资金扎堆地面兵装（地面兵装Ⅱ+6.48%/长城军工+10.04%）与连板（新赛股份5板），跟随军工涨停潮而非独立判断。",end:"Up-ratio 28% low, turnover shrank to ¥1.79tn on broad selloff, all three down (ChiNext −2.39% leads); capital crowds ground-arm (Ground-arm EquipmentⅡ +6.48%/Great Wall Military +10.04%) and streaks (Xinsai 5 boards) — following the limit-up wave, not conviction."},
+    {zh:"损失厌恶",en:"Loss Aversion",sev:3,zhd:"在缩量普跌中融资逆势加仓玻纤/光模块（中国巨石+3.9986亿/中际旭创+3.9119亿），把前期浮亏当已发生损失回避止损、在高位科技缩量下挫中反手加仓，忽视量能萎缩与顶背离。",end:"In volume-shrink selloff, margin adds against tide to fiberglass/optical-module (China Jushi +0.3999bn/Zhongji +0.3912bn) — avoiding realized loss, doubling down on high-level tech on shrinking volume, ignoring fading turnover & top divergence."},
+    {zh:"心理账户/赌徒谬误",en:"Mental Acct / Gambler",sev:3,zhd:"创业板−2.39%下仍在缩量普跌中博弈军工/农业反弹（长城军工+10.04%/新赛股份5板），把亏损仓当赌资、博「军工刚需」回本。",end:"Amid ChiNext −2.39% still margin-betting on military/agriculture rebound (Great Wall Military +10.04%/Xinsai 5 boards) in a volume-shrink selloff; treating loss books as gambling capital."},
+    {zh:"过度自信",en:"Overconfidence",sev:4,zhd:"只看连板5板（新赛股份）与军工涨停潮，误判「结构性机会」，把单日军工独涨当趋势恢复、追地面兵装，忽视涨股比仅28%（广度崩塌）、三指齐跌、估值偏高（PE分位81.23%）、MACD顶背离。",end:"Watching only the 5-board streak (Xinsai) and military limit-up wave as 'structural opportunity', treating a single-day military spike as trend recovery, chasing ground-arm — ignoring up-ratio only 28% (breadth crash), all-three-down, valuation elevated (PE pctile 81.23%), MACD top divergence."},
+    {zh:"处置效应",en:"Disposition",sev:3,zhd:"反弹中卖盈（地面兵装+6.48%中长城军工+10.04%获利了结）持亏（创业板高位套牢未割），结构分化、调仓滞后。",end:"Selling winners (ground-arm +6.48% with Great Wall Military +10.04% profit-taking) while holding losers (ChiNext high-level traps untrimmed) — split structure, lagging rotation."},
+    {zh:"锚定偏差",en:"Anchoring",sev:3,zhd:"锚定前期高点与08-31「涨股比57%」余温，难接受涨股比已塌至28%（广度崩塌）、三指齐跌（创业板−2.39%）与缩量普跌的现实。",end:"Anchored to prior highs and 08-31's 'up-ratio 57%' afterglow, rejecting the up-ratio already crashed to 28% (breadth collapse), all-three-down (ChiNext −2.39%) and the volume-shrink selloff reality."},
+    {zh:"确认偏误",en:"Confirmation Bias",sev:4,zhd:"只看连板5板+军工涨停+融资加仓，忽略涨股比仅28%（广度崩塌）、三指齐跌、估值偏高（PE分位81.23%）、MACD顶背离、其余板块普跌（种植业−5.93%/能源金属−3.44%）。",end:"Only watching 5-board streak + military limit-ups + margin add, ignoring up-ratio only 28% (breadth crash), all-three-down, valuation elevated (PE pctile 81.23%), MACD top divergence, rest broadly down (planting −5.93%/energy-metals −3.44%)."},
+    {zh:"近因偏差",en:"Recency",sev:3,zhd:"外推08-31涨停89的「热度」与军工题材惯性，对涨股比塌至28%、三指齐跌（创业板−2.39%）反应钝化。",end:"Extrapolating 08-31's 89 limit-ups 'heat' and military-theme inertia; blunted by up-ratio crash to 28%, all-three-down (ChiNext −2.39%)."},
+    {zh:"叙事偏差",en:"Narrative",sev:4,zhd:"「军工/地面兵装刚需」叙事在缩量普跌中仍被资金强化（地面兵装Ⅱ+6.48%/长城军工+10.04%/融资逆势加仓中国巨石），故事未证伪且被加仓自我实现，但估值偏高（PE分位81.23%）下叙事脆弱。",end:"The 'military/ground-arm must-have' narrative reinforced by capital even in a volume-shrink selloff (Ground-arm EquipmentⅡ +6.48%/Great Wall Military +10.04%/margin against tide China Jushi), story un-falsified, self-reinforced by buying, but fragile under elevated valuation (PE pctile 81.23%)."},
+    {zh:"代表性启发",en:"Representativeness",sev:3,zhd:"被地面兵装Ⅱ+6.48%（长城军工+10.04%）单日赚钱效应代表，误判市场全面转暖、忽视缩量普跌下的极端分化（种植业−5.93%/能源金属−3.44%/创业板−2.39%）与涨股比仅28%。",end:"Ground-arm EquipmentⅡ +6.48% (Great Wall Military +10.04%) profit taken as representative; mistaking a sector spike for a broad turn, ignoring the volume-shrink selloff's extreme divergence (planting −5.93%/energy-metals −3.44%/ChiNext −2.39%) and up-ratio only 28%."}
+  ];
+
+  var HEATCOL = {1:"var(--h1)",2:"var(--h2)",3:"var(--h3)",4:"var(--h4)",5:"var(--h5)"};
+
+  function buildHeat(lang){
+    var box = document.getElementById('heat');
+    box.innerHTML = '';
+    BIAS.forEach(function(b){
+      var d = document.createElement('div');
+      d.className = 'cell';
+      d.style.background = HEATCOL[b.sev];
+      var name = lang==='en' ? b.en : b.zh;
+      var desc = lang==='en' ? b.end : b.zhd;
+      d.innerHTML = '<div class="bn">'+name+'</div><div class="bd">'+desc+'</div><span class="sev">'+b.sev+' / 5</span>';
+      box.appendChild(d);
+    });
+  }
+
+  function applyLang(lang){
+    var dic = I18N[lang] || I18N.zh;
+    document.documentElement.lang = (lang==='en' ? 'en' : 'zh-CN');
+    var nodes = document.querySelectorAll('[data-i18n]');
+    for(var i=0;i<nodes.length;i++){
+      var k = nodes[i].getAttribute('data-i18n');
+      if(dic[k]!==undefined){ nodes[i].innerHTML = dic[k]; }
+    }
+    buildHeat(lang);
+    document.getElementById('btnZh').className = (lang==='zh'?'active':'');
+    document.getElementById('btnEn').className = (lang==='en'?'active':'');
+    document.title = (lang==='en' ? I18N.en.t_title : I18N.zh.t_title);
+  }
+
+  function setLang(lang){
+    applyLang(lang);
+    var url = new URL(window.location.href);
+    url.searchParams.set('lang', lang);
+    window.history.replaceState({}, '', url.toString());
+  }
+
+  (function(){
+    var p = new URL(window.location.href).searchParams.get('lang');
+    var lang = (p==='en') ? 'en' : 'zh';
+    applyLang(lang);
+  })();
+</script>
+</body>
+</html>
