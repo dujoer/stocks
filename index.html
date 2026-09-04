@@ -22,6 +22,9 @@ h1 { font-size:30px; margin:0 0 6px; letter-spacing:.5px; }
 .t { font-size:18px; font-weight:700; margin:12px 0 8px; color:#1c2430; }
 .d { font-size:13px; color:#5a6573; line-height:1.65; min-height:62px; }
 .meta { font-size:12px; color:#7b8794; margin-top:12px; padding-top:10px; border-top:1px dashed #e3e7ec; }
+.stat { font-size:12.5px; color:#3a4048; margin-top:10px; padding:8px 10px; background:rgba(184,137,59,.06);
+  border-radius:1px; line-height:1.7; }
+.stat b { color:#1c2430; font-weight:700; }
 .badge { font-size:11px; padding:3px 10px; border-radius:20px; font-weight:700; }
 .badge.fresh { background:#e6f6ee; color:#128a52; }
 .badge.warn { background:#fdf3e0; color:#b7791f; }
@@ -51,13 +54,13 @@ footer { margin-top:48px; padding-top:18px; border-top:1px solid #e3e7ec;
 </header>
 
 <div class='grid'>
-<a class='card' href='web/lhb.html'><div class='cardtop'><span class='ic'>🐉</span><span class='badge fresh'>昨日</span></div><div class='t'>龙虎榜主看板</div><div class='d'>大盘概览 / 板块热度 / 连板梯队 / 龙虎榜机构榜·共振·席位胜率</div><div class='meta'>数据截至 2026-09-03</div></a>
-<a class='card' href='web/exec.html'><div class='cardtop'><span class='ic'>💼</span><span class='badge fresh'>昨日</span></div><div class='t'>高管增减持（董监高）</div><div class='d'>全市场董监高持股变动：增持/减持明细与金额、申万行业分布、个股聚合净额</div><div class='meta'>数据截至 2026-09-03</div></a>
-<a class='card' href='web/block_archive.html'><div class='cardtop'><span class='ic'>🧾</span><span class='badge fresh'>今日</span></div><div class='t'>大宗交易</div><div class='d'>全市场大宗交易逐笔：折溢价、成交额、买卖营业部与机构席位动向；每日归档总览（含最新一期与全部交易日）</div><div class='meta'>数据截至 2026-09-04</div></a>
-<a class='card' href='web/sector-strength-index.html'><div class='cardtop'><span class='ic'>🔥</span><span class='badge fresh'>昨日</span></div><div class='t'>板块强度</div><div class='d'>行业/概念板块主力资金、强度与主力行为（抢筹/建仓/洗盘/出货）日更与趋势</div><div class='meta'>数据截至 2026-09-03</div></a>
-<a class='card' href='market-trend/index.html'><div class='cardtop'><span class='ic'>🧠</span><span class='badge fresh'>昨日</span></div><div class='t'>群体心理风险雷达</div><div class='d'>情绪周期 / 认知偏差热力 / 风险分层，每日单篇 + 跨日趋势索引</div><div class='meta'>数据截至 2026-09-03</div></a>
-<a class='card' href='web/2026-q2-industry-elite.html'><div class='cardtop'><span class='ic'>🏆</span><span class='badge warn'>定期</span></div><div class='t'>行业最强榜（全市场）</div><div class='d'>全市场 5544 只 A 股中报股东全量解析：申万 31 个行业各自最强的自然人 / 私募 / 公募各 20 名 + 资金估值四象限 + 胜率/均涨</div><div class='meta'>数据截至 2026-06-30</div></a>
-<a class='card' href='web/sections.html'><div class='cardtop'><span class='ic'>📦</span><span class='badge fresh'>自检页</span></div><div class='t'>版块总览</div><div class='d'>所有版块的内容清单 / 数据来源 / 更新节奏 / 更新时间建议 · 每日更新后一眼看出哪个版块落后</div><div class='meta'>数据截至 2026-09-03</div></a>
+<a class='card' href='web/lhb.html'><div class='cardtop'><span class='ic'>🐉</span><span class='badge fresh'>昨日</span></div><div class='t'>龙虎榜主看板</div><div class='d'>大盘概览 / 板块热度 / 连板梯队 / 龙虎榜机构榜·共振·席位胜率</div><div class='stat'>机构上榜 <b>30</b> 只 ｜ 机构+游资共振 <b>26</b> 只 ｜ 席位胜率 Top20</div><div class='meta'>数据截至 2026-09-03</div></a>
+<a class='card' href='web/exec.html'><div class='cardtop'><span class='ic'>💼</span><span class='badge fresh'>昨日</span></div><div class='t'>高管增减持（董监高）</div><div class='d'>全市场董监高持股变动：增持/减持明细与金额、申万行业分布、个股聚合净额</div><div class='stat'>近 1 月共 <b>700</b> 条 ｜ <span style='color:#b8332a'>增持 260</span> : <span style='color:#1a9e5a'>减持 440</span> ｜ 覆盖 <b>223</b> 只股票</div><div class='meta'>数据截至 2026-09-03</div></a>
+<a class='card' href='web/block_archive.html'><div class='cardtop'><span class='ic'>🧾</span><span class='badge fresh'>今日</span></div><div class='t'>大宗交易</div><div class='d'>全市场大宗交易逐笔：折溢价、成交额、买卖营业部与机构席位动向；每日归档总览（含最新一期与全部交易日）</div><div class='stat'>当日 <b>158</b> 笔 ｜ 成交额 <b>18.42</b> 亿 ｜ 折溢价均值 <b>+8.34%</b> ｜ 机构买入 <b>58</b> 笔</div><div class='meta'>数据截至 2026-09-04</div></a>
+<a class='card' href='web/sector-strength-index.html'><div class='cardtop'><span class='ic'>🔥</span><span class='badge fresh'>昨日</span></div><div class='t'>板块强度</div><div class='d'>行业/概念板块主力资金、强度与主力行为（抢筹/建仓/洗盘/出货）日更与趋势</div><div class='stat'>板块 <b>926</b> 个 ｜ 抢筹 <b>98</b> ｜ 建仓 <b>111</b> ｜ 洗盘 <b>214</b> ｜ 出货 <b>503</b></div><div class='meta'>数据截至 2026-09-03</div></a>
+<a class='card' href='market-trend/index.html'><div class='cardtop'><span class='ic'>🧠</span><span class='badge fresh'>昨日</span></div><div class='t'>群体心理风险雷达</div><div class='d'>情绪周期 / 认知偏差热力 / 风险分层，每日单篇 + 跨日趋势索引</div><div class='stat'>近期：<b>群体心理风险雷达 · A股</b></div><div class='meta'>数据截至 2026-09-03</div></a>
+<a class='card' href='web/2026-q2-industry-elite.html'><div class='cardtop'><span class='ic'>🏆</span><span class='badge warn'>定期</span></div><div class='t'>行业最强榜（全市场）</div><div class='d'>全市场 5544 只 A 股中报股东全量解析：申万 31 个行业各自最强的自然人 / 私募 / 公募各 20 名 + 资金估值四象限 + 胜率/均涨</div><div class='stat'>全市场 <b>5544</b> 只中报股东解析</div><div class='meta'>数据截至 2026-06-30</div></a>
+<a class='card' href='web/sections.html'><div class='cardtop'><span class='ic'>📦</span><span class='badge fresh'>自检页</span></div><div class='t'>版块总览</div><div class='d'>所有版块的内容清单 / 数据来源 / 更新节奏 / 更新时间建议 · 每日更新后一眼看出哪个版块落后</div><div class='stat'>龙虎榜 09-03 ｜ 板块 09-03 ｜ 增减持 09-03 ｜ 大宗 09-04 ｜ 心理 09-03</div><div class='meta'>数据截至 2026-09-03</div></a>
 </div>
 
 <div class='note'><b>⏰ 建议更新时间：交易日当晚 20:00–21:00</b>（龙虎榜已公布、大盘统计已聚合）。<b>板块强度必须在次日 09:15 前跑完</b>——接口只返回最新快照，开盘后即被覆盖且不可回溯。完整版块说明与自检清单见 <a href='web/sections.html'>版块总览</a>。</div>
