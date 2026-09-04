@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A股每日更新 SOP · 操作手册</title>
+<style>
+* { box-sizing:border-box; }
+body { margin:0; background:#f5f6f8; color:#1c2430;
+  font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif; line-height:1.75; font-size:15px; }
+.wrap { max-width:1080px; margin:0 auto; padding:36px 22px 70px; }
+header.top { border-bottom:3px solid #1f4e79; padding-bottom:18px; margin-bottom:26px; }
+h1 { font-size:28px; margin:0 0 6px; }
+.sub { color:#5a6573; font-size:14px; }
+h2 { font-size:21px; margin:40px 0 14px; padding-left:12px; border-left:5px solid #1f4e79; }
+h3 { font-size:17px; margin:24px 0 8px; color:#1f4e79; }
+p { margin:9px 0; }
+code { background:#eef4fa; color:#1f4e79; padding:1px 6px; border-radius:5px; font-size:13px; }
+pre { background:#0e1420; color:#e6edf3; padding:14px 16px; border-radius:10px; overflow:auto; font-size:12.5px; line-height:1.6; }
+.card { background:#fff; border:1px solid #e3e7ec; border-radius:14px; padding:18px 20px; margin:14px 0; box-shadow:0 1px 4px rgba(20,30,50,.04); }
+.kicker { color:#7b8794; font-size:12px; letter-spacing:.2em; text-transform:uppercase; }
+table { width:100%; border-collapse:collapse; font-size:13.5px; margin:10px 0; }
+th,td { border:1px solid #e3e7ec; padding:8px 10px; text-align:left; vertical-align:top; }
+th { background:#f0f3f7; }
+.note { background:#fffaf0; border-left:4px solid #b7791f; padding:12px 16px; margin:14px 0; border-radius:0 8px 8px 0; font-size:14px; }
+.danger { background:#fdecea; border-left:4px solid #c0392b; padding:12px 16px; margin:14px 0; border-radius:0 8px 8px 0; font-size:14px; }
+.ok { background:#e6f6ee; border-left:4px solid #128a52; padding:12px 16px; margin:14px 0; border-radius:0 8px 8px 0; font-size:14px; }
+a { color:#1f4e79; }
+footer { margin-top:48px; padding-top:18px; border-top:1px solid #e3e7ec; font-size:12px; color:#7b8794; line-height:1.8; }
+ul { margin:8px 0; padding-left:22px; } li { margin:5px 0; }
+</style>
+</head>
+<body>
+<!-- UNIFIED_NAV -->
+<div style='display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:12px 4px;border-bottom:1px solid rgba(184,137,59,.3);font-size:13px;'><a href='../market/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>每日总览</a><a href='../lhb/lhb.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>龙虎榜分析</a><a href='../market/hotmoney.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>游资看板</a><a href='../sector/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>板块强度</a><a href='../exec/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>高管增减持</a><a href='../block/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>大宗交易</a><a href='../psychology/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>群体心理</a><a href='../research/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>行业最强</a><a href='../sections/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>版块总览</a><a href='../../index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>返回主页</a></div>
+
+
+
+
+
+
+
+<div class="wrap">
+<header class="top">
+  <div class="kicker">A股量化助理 · 每日盘后</div>
+  <h1>每日更新 SOP · 操作手册</h1>
+  <div class="sub">所有数字来自腾讯自选股 <b>westock-mcp</b> 真实查询 · 0 外部引用 · 0 编造</div>
+</header>
+
+<div class="note">本手册与「总门户」(index.html) 搭配使用：总门户显示各子系统最新数据日期与新鲜度；本手册说明「如何把最新一天做出来」。每次盘后按子系统依次完成数据落盘 → 生成 → 校验。</div>
+
+<h2>一、系统总览与依赖</h2>
+<div class="card">
+<p><b>4 个子系统，统一由 <code>G:\ai\股票\index.html</code>（总门户）入口：</b></p>
+<table>
+<tr><th>子系统</th><th>入口页</th><th>数据最新</th><th>生成器</th><th>数据来源</th></tr>
+<tr><td>① 龙虎榜主看板</td><td><code>web/lhb/index.html</code></td><td id="d1">—</td><td><code>quant/build_dashboards.py</code></td><td>market_overview / board_hot / quotes / limitup / lhb / news.json</td></tr>
+<tr><td>② 板块强度</td><td><code>web/sector/index.html</code></td><td id="d2">—</td><td><code>quant/run_daily_sector.py</code></td><td>data_sector（industry+concept 最新快照）</td></tr>
+<tr><td>③ 群体心理风险雷达</td><td><code>web/psychology/index.html</code></td><td id="d3">—</td><td><code>market-trend/_build_*.py</code></td><td>data_market_overview / data_changedist / data_sector / tool_ranking</td></tr>
+<tr><td>④ 自下而上选股</td><td><code>web/bottom-up-stock-picks-YYYYMMDD.html</code></td><td id="d4">—</td><td>选股范式（手动）</td><td>data_finance / data_consensus / data_technical 等</td></tr>
+</table>
+<p style="margin-top:10px;color:#5a6573;font-size:13px">总门户本身由 <code>quant/build_portal.py</code> 扫描上述各子系统最新文件自动生成，无需手写。</p>
+</div>
+
+<h2>二、每日盘后标准流程</h2>
+
+<h3>① 龙虎榜主看板（必做，自动化）</h3>
+<div class="card">
+<p><b>1. 拉取并落盘</b>（收盘后 ≥15:30，交易日）：用 westock-mcp 拉取并写文件到 <code>quant/</code> 对应子目录，文件名用 <code>{DATE}.json</code>：</p>
+<pre># 数据落盘目录约定
+quant/market_overview/{DATE}.json   # data_market_overview(type=summary|trade)
+quant/board_hot/{DATE}.json         # data_sector / data_hot(kind=board)
+quant/quotes/{DATE}.json            # data_quote(持仓 codes)
+quant/limitup/{DATE}.json           # tool_ranking(metric=limitup_days)
+quant/lhb/{DATE}.json               # data_lhb
+quant/news.json                     # 要闻，按 DATE 作 key 写入</pre>
+<p><b>2. 生成</b>：</p>
+<pre>cd G:\ai\股票\quant
+python build_dashboards.py --date {DATE}</pre>
+<p>产出 7 个页面：<code>daily_overview / portfolio / hotmoney / lhb / lhb_{DATE}（归档）/ status_{DATE} / index</code>（均在 <code>web/</code>）。</p>
+</div>
+
+<h3>② 板块强度（可选，前瞻累积）</h3>
+<div class="card">
+<p>接口 <code>data_sector</code> 的 <code>date</code> 参数被忽略、只返「最新一个交易日」快照，故<b>不回溯历史、不编造</b>，走「前瞻累积」管道：</p>
+<pre>cd G:\ai\股票\quant
+python collect_sector.py            # industry+concept 原始 JSON -> sector_strength_data_{DATE}.json
+python run_daily_sector.py --date {DATE} --industry &lt;file&gt; --concept &lt;file&gt;
+# 生成 web/sector-strength-{YYYYMMDD}.html(增强每日页) + sector-strength-trend.html + sector-strength-index.html</pre>
+<p class="note">⚠️ 固化后务必 <code>cat sector_trend.json</code> 校验两天值<strong>不同</strong>；若雷同说明当日页用了旧数据，需重拉当日 industry+concept 重建。</p>
+</div>
+
+<h3>③ 群体心理风险雷达（可选，单篇 + 索引）</h3>
+<div class="card">
+<p>采用 <code>market-trend/_build_*.py</code> 模板复制法：</p>
+<pre># 以最近一期为模板，复制为新日期文件后定向改写静态值
+cp market-trend/crowd-psychology-risk-radar-{PREV}.html \
+   market-trend/crowd-psychology-risk-radar-{DATE}.html
+# 用 _build_{DATE}.py 整块替换 I18N、BIAS 数组，并对 30+ 处静态值做断言替换
+python market-trend/_build_{DATE}.py
+# 同步更新 web/psychology/index.html（REPORTS 追加、stats、趋势图加第 N 点、notes）</pre>
+<p>硬性约束：所有数字来自真实查询、单文件离线 0 外链、右上角中英切换 + <code>?lang=</code>、<code>applyLang</code> 用 <code>innerHTML</code>。</p>
+</div>
+
+<h3>④ 自下而上选股（可选，每日一期）</h3>
+<div class="card">
+<p>依选股方法论（财务硬门槛 → 剔除周期顶点/低基数暴增/现金含量&lt;0.5 → 逐只核 <code>data_consensus</code> 看 2027E/2028E 能否延续）：</p>
+<pre>python build_picks.py --date {DATE}   # 或手动产出 web/bottom-up-stock-picks-{YYYYMMDD}.html</pre>
+</div>
+
+<h3>⑥ 刷新总门户 + 校验</h3>
+<div class="card">
+<pre>python build_portal.py    # 重建总门户，自动带出各子系统最新日期与新鲜度</pre>
+<p>随后做 <a href="#check">第四节校验清单</a>。</p>
+</div>
+
+<h2>三、已知坑（务必先看，避免重蹈覆辙）</h2>
+
+<div class="danger"><b>⚠️ 收盘后指数 provisional 滞后</b>：<code>data_market_overview</code> 收盘后 1~2 小时拉到的指数聚合是<b>未定稿</b>快照，晚间才定稿并可能显著上修（曾 18:20 拉到 3912.52，20:03 复拉定稿 3956.57）。<b>硬性规则</b>：指数必须晚间(20:00+)复拉确认，或对照已知锚点校验，绝不可收盘后即时拉一次就当最终指数发布。</p></div>
+
+<div class="danger"><b>⚠️ 聚合类接口滞后一个交易日</b>：<code>data_market_overview</code>(summary/updown) 与 <code>data_sector(mode=valuation)</code> 返回的 <code>date</code> 是<b>上一交易日</b>；而 <code>data_quote</code> / <code>data_technical</code> 返回<b>当日</b>。报告里必须分别标注两类数据日期，不能统一写"当日"。</div>
+
+<div class="note"><b>⚠️ 估值(PE 分位)接口滞后</b>：最新快照常比主数据晚 1~2 天，生成器中用 <code>--val-date</code> 单独指定并在页面标注。</div>
+
+<div class="note"><b>⚠️ data_sector 的 date 参数被忽略</b>：只返最新一个交易日快照，无法按 date 回溯；整月历史回溯不可行，必须前瞻累积。</div>
+
+<div class="note"><b>⚠️ I18N 键覆盖校验</b>：用 <code>re.finditer(r'([A-Za-z0-9_]+)\s*:')</code> 抓取每行全部键；若用 <code>re.match</code> 只抓首键会误报大量"missing"。</div>
+
+<div class="note"><b>⚠️ 模板复制法的共享尾串</b>：同一叙事串（如「官方「狂热」标签虚高）。08-22~08-23 周末休市。」可能同时出现在 HTML 默认文本与 I18N 对象两处、字符微差；单次全局 <code>str.replace</code> 只命中其一、会静默吞掉另一处整句。须对两处分别用唯一上下文替换。</div>
+
+<div class="ok"><b>✅ 离线规则</b>：单文件 HTML 必须 <code>grep -c 'https\?://'</code> = 0 且 <code>&lt;script src=</code> = 0（选股报告用 echarts CDN 属例外，已确认）；涨=红、跌=绿（CSS <code>.up/.down</code>）。</div>
+
+<h2 id="check">四、校验清单（每期必过）</h2>
+<div class="card">
+<ul>
+<li><b>外链</b>：<code>grep -c 'https\?://' 文件</code> 应为 0（选股报告除外）</li>
+<li><b>脚本外引</b>：无 <code>&lt;script src=</code>（除非有意 CDN）</li>
+<li><b>JS 语法</b>：抽出 <code>&lt;script&gt;</code> 块，<code>node --check</code> 通过</li>
+<li><b>I18N 覆盖</b>：所有 <code>data-i18n</code> 键在 zh 与 en 块中均存在（缺失列表为空）</li>
+<li><b>趋势图</b>：点数 = 期数；末点日期 = 最新</li>
+<li><b>无残留旧值</b>：must_present / must_gone 断言通过（旧日期、旧数值不得残留）</li>
+<li><b>回链</b>：各子系统页均有「← 返回总门户」指向 <code>../index.html</code></li>
+</ul>
+</div>
+
+<h2>五、推送</h2>
+<div class="danger"><b>⚠️ 当前 GitHub 推送被两处鉴权阻塞（需你侧处理）：</b>
+<ul>
+<li>旧 PAT 已撤销 → REST 脚本推送 401；</li>
+<li>GitHub MCP 连接器 <code>push_files</code> 返回 403（App 未获授权访问 dujoer/stocks）。</li>
+</ul>
+<p>解法（任选）：① 在 dujoer 账号重新授权 GitHub MCP 连接器 App 后重试；② 提供具备 repo 权限的新 PAT，用 stdlib REST 脚本推送；③ 本地 git / 网页手动上传 <code>web/</code> 与 <code>market-trend/</code>。</p></div>
+
+<footer>
+数据来源：腾讯自选股 westock-mcp（盘后公开数据，滞后且非未来收益承诺）。<br>
+本手册由 A股量化助理维护 · 仅供参考，不构成投资建议 · 市场有风险，投资需谨慎。
+</footer>
+</div>
+<script>
+// 用 build_portal 检测到的日期动态填充总览表（与总门户保持一致）
+const dates = (window.location.search.match(/d=([\d\-]+)/) || []);
+</script>
+</body>
+</html>
