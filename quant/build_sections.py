@@ -300,7 +300,7 @@ SECTIONS = [
         "stats": exec_stats,
     },
     {
-        "ic": "🧾", "name": "大宗交易", "href": "block.html",
+        "ic": "🧾", "name": "大宗交易", "href": "block_archive.html",
         "date": fmt(blk_d), "badge": freshness(blk_d),
         "desc": "全市场大宗交易逐笔扫描（T 日口径）：看谁在折价出货、谁在溢价接盘、机构席位在买还是在卖。",
         "modules": chips([
@@ -313,7 +313,7 @@ SECTIONS = [
         "cadence_cls": "must",
         "notes": "⚠ <code>limit</code> 必须给足：默认 500 会截断当日数据（实测 09-04 当日 500 档仅 32 条、3000 档 158 条）。"
                  "折溢价相对当日收盘价，正=折价、负=溢价。",
-        "files": ["web/block.html", f"web/block_{fmt(blk_d)}.html",
+        "files": ["web/block_archive.html", "web/block.html", f"web/block_{fmt(blk_d)}.html",
                   f"quant/block_chg/{fmt(blk_d)}.json"],
         "stats": blk_stats,
     },
