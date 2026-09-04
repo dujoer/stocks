@@ -168,13 +168,14 @@ a.inlink:hover { background:rgba(201,166,107,.16); }
 tr.detail td { background:rgba(0,0,0,.03); }
 """
 
-NAV = topnav()
+NAV_MARKET = topnav("market")
+NAV_LHB = topnav("lhb")
 
-def page(title, body):
+def page(title, body, nav=NAV_MARKET):
     html = ("<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'>"
             "<meta name='viewport' content='width=device-width,initial-scale=1.0'>"
             f"<title>{title}</title><style>{CSS}</style></head><body><div class='wrap'>"
-            f"{NAV}{body}</div></body></html>")
+            f"{nav}{body}</div></body></html>")
     # 在相邻标签边界换行，便于版本控制 diff 与逐行读取（HTML 标签间空白无害）
     return html.replace("><", ">\n<")
 
@@ -523,7 +524,7 @@ else:
 
 # 日期前后导航（仅 lhb_YYYY-MM-DD.html 用）
 _lhb_dates = []
-for _fn in os.listdir(WEB):
+for _fn in os.listdir(os.path.join(WEB, "lhb")):
     _m = re.match(r"^lhb_(\d{4}-\d{2}-\d{2})\.html$", _fn)
     if _m:
         _lhb_dates.append(_m.group(1))
@@ -536,7 +537,7 @@ if _prev_d:
 _datenav += f"<span class='pill'>当前 {DATE}</span>"
 if _next_d:
     _datenav += f"<a class='inlink' href='lhb_{_next_d}.html'>后一日（{_next_d}）→</a>"
-_datenav += "<a class='inlink' href='../index.html'>返回总门户 →</a></div>"
+_datenav += "<a class='inlink' href='../../index.html'>返回总门户 →</a></div>"
 _latest_lhb_date = max(_lhb_dates + [DATE])
 
 
@@ -671,9 +672,9 @@ lhb_summary = (
     f"<b>连板高度</b>：{lhb_height}，共 {LIMITUP_TOTAL_TXT}<br>"
     f"<b>机构+游资共振</b>：{gslmr_txt}</div>"
     f"<div style='margin-top:6px'>"
-    f"<a class='inlink' href='lhb.html'>龙虎榜分析页(机构榜/共振/胜率) →</a>"
+    f"<a class='inlink' href='../lhb/lhb.html'>龙虎榜分析页(机构榜/共振/胜率) →</a>"
     f"<a class='inlink' href='hotmoney.html'>游资看板(席位净买/胜率) →</a>"
-    f"<a class='inlink' href='../index.html'>返回总门户 →</a></div></div>")
+    f"<a class='inlink' href='../../index.html'>返回总门户 →</a></div></div>")
 
 # ---------- 每日总览页 ----------
 overview_body = (
@@ -682,8 +683,8 @@ overview_body = (
     f"<div class='meta'>数据来源：腾讯自选股 <b>westock-mcp</b>（data_market_overview / tool_ranking / data_hot / data_quote / data_lhb）。</div>"
     f"{market_overview_html}{sector_html}{leader_html}{lhb_summary}"
     f"<footer>本报告由 A 股量化助理自动化生成 · 数据仅供参考，不构成投资建议 · 市场有风险，投资需谨慎</footer>")
-open(os.path.join(WEB, "daily_overview.html"), "w", encoding="utf-8").write(
-    page("A股量化助理 · 每日总览", overview_body))
+open(os.path.join(WEB, "market", "index.html"), "w", encoding="utf-8").write(
+    page("A股量化助理 · 每日总览", overview_body, NAV_MARKET))
 
 # ---------- 组合总看板页 ----------
 portfolio_body = (
@@ -717,8 +718,8 @@ hotmoney_body = (
     f"<div class='meta'>数据来源：westock-mcp data_lhb（yyb 营业部榜 / gslxw 席位胜率 / all 龙虎榜全榜）+ data_sector（申万一/二级涨跌幅）。</div>"
     f"{_hotmoney_detail}"
     f"<footer>⚠️ 盘后滞后资金痕迹，仅提示概率优势方向，不构成投资建议。</footer>{SCRIPT}")
-open(os.path.join(WEB, "hotmoney.html"), "w", encoding="utf-8").write(
-    page("游资看板", hotmoney_body))
+open(os.path.join(WEB, "market", "hotmoney.html"), "w", encoding="utf-8").write(
+    page("游资看板", hotmoney_body, NAV_MARKET))
 
 # ---------- 龙虎榜分析页（含一级/二级板块、涨跌幅、游资介入度、席位） ----------
 _lhb_enr_section = (
@@ -749,12 +750,12 @@ lhb_body = (
     f"<div class='empty'>1·3·5·10 交易日窗口收益回测属量化专题，需历史复权数据支撑，本页未内置；"
     f"该专题为早期远程分析页，本地未保留，后续可单独建设。</div></div>"
     f"<footer>⚠️ 盘后滞后资金痕迹，仅提示概率优势方向，不构成投资建议。</footer>{SCRIPT}")
-open(os.path.join(WEB, f"lhb_{DATE}.html"), "w", encoding="utf-8").write(
-    page("龙虎榜分析", lhb_body))
+open(os.path.join(WEB, "lhb", f"lhb_{DATE}.html"), "w", encoding="utf-8").write(
+    page("龙虎榜分析", lhb_body, NAV_LHB))
 # 仅当 DATE 为最新龙虎榜日才覆盖 lhb.html，避免对历史日期做次日回测时冲掉最新主看板
 if DATE >= _latest_lhb_date:
-    open(os.path.join(WEB, "lhb.html"), "w", encoding="utf-8").write(
-        page("龙虎榜分析", lhb_body))
+    open(os.path.join(WEB, "lhb", "lhb.html"), "w", encoding="utf-8").write(
+        page("龙虎榜分析", lhb_body, NAV_LHB))
 
 # ---------- 状态报告 ----------
 status_body = (
@@ -783,13 +784,13 @@ status_body = (
     f"· 窗口收益(alpha)回测未内置，链接至远程历史分析页。<br>"
     f"· 所有资金数据为盘后公开龙虎榜，滞后且非未来收益承诺。</div></div>"
     f"<footer>由 A 股量化助理生成 · 仅供参考，不构成投资建议。</footer>")
-open(os.path.join(WEB, f"status_{DATE}.html"), "w", encoding="utf-8").write(
-    page("状态报告", status_body))
+open(os.path.join(WEB, "market", f"status_{DATE}.html"), "w", encoding="utf-8").write(
+    page("状态报告", status_body, NAV_MARKET))
 
 # ---------- 导航首页 ----------
 # 动态扫描每日龙虎榜归档页（lhb_YYYY-MM-DD.html）
 _lhb_files = []
-for _fn in os.listdir(WEB):
+for _fn in os.listdir(os.path.join(WEB, "lhb")):
     _m = re.match(r"^lhb_(\d{4}-\d{2}-\d{2})\.html$", _fn)
     if _m:
         _lhb_files.append((_m.group(1), _fn))
@@ -803,22 +804,22 @@ index_body = (
     f"<div class='grid'>"
     f"<a class='card' href='lhb.html'><div class='ic'>🐉</div><div class='t'>龙虎榜主看板</div>"
     f"<div class='d'>机构专用榜 / 机构+游资共振 / 席位胜率 / 申万一·二级板块与涨跌幅</div></a>"
-    f"<a class='card' href='daily_overview.html'><div class='ic'>📈</div><div class='t'>每日总览</div>"
+    f"<a class='card' href='../market/index.html'><div class='ic'>📈</div><div class='t'>每日总览</div>"
     f"<div class='d'>大盘 / 板块热度 / 连板梯队 / 龙虎榜速览</div></a>"
-    f"<a class='card' href='hotmoney.html'><div class='ic'>🏦</div><div class='t'>游资看板</div>"
+    f"<a class='card' href='../market/hotmoney.html'><div class='ic'>🏦</div><div class='t'>游资看板</div>"
     f"<div class='d'>游资席位净买榜 TOP25 / 营业部胜率聚合</div></a>"
-    f"<a class='card' href='status_{DATE}.html'><div class='ic'>📋</div><div class='t'>状态报告</div>"
+    f"<a class='card' href='../market/status_{DATE}.html'><div class='ic'>📋</div><div class='t'>状态报告</div>"
     f"<div class='d'>本轮产出、文件清单与口径说明</div></a>"
     f"</div>"
     f"<div class='hist'><b>每日龙虎榜归档：</b>{lhb_archive_html}"
-    f"<br><a href='../index.html'>← 返回 A股分析中心总门户</a></div>"
+    f"<br><a href='../../index.html'>← 返回 A股分析中心总门户</a></div>"
     f"<div class='foot'>数据来源：腾讯自选股 westock-mcp（盘后公开数据，滞后且非未来收益承诺）。<br>"
     f"由 A 股量化助理生成 · 仅供参考，不构成投资建议。</div>")
-open(os.path.join(WEB, "index.html"), "w", encoding="utf-8").write(
+open(os.path.join(WEB, "lhb", "index.html"), "w", encoding="utf-8").write(
     ("<!DOCTYPE html><html lang='zh-CN'><head><meta charset='UTF-8'>"
      "<meta name='viewport' content='width=device-width,initial-scale=1.0'>"
      f"<title>A股量化助理 · 龙虎榜看板</title><style>{CSS}</style></head><body><div class='wrap landing'>"
-     f"{NAV}{index_body}</div></body></html>").replace("><", ">\n<"))
+     f"{NAV_LHB}{index_body}</div></body></html>").replace("><", ">\n<"))
 
 print("OK: daily_overview / portfolio / lhb / hotmoney / status / index 已生成")
 print(f"组合实时市值={tot_mv:.2f} 浮动盈亏={tot_pnl:.2f} ({tot_pnl_pct:.2f}%)")
