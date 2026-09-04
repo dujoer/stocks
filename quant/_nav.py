@@ -14,6 +14,7 @@ _LINKS = [
     ("游资看板", "hotmoney.html"),
     ("板块强度", "sector-strength-index.html"),
     ("高管增减持", "exec.html"),
+    ("大宗交易", "block.html"),
     ("版块总览", "sections.html"),
 ]
 
