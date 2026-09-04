@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>龙虎榜分析</title>
+<style>* { box-sizing: border-box; }
+body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:#f5f6f8; color:#23262b; min-height:100vh; }
+.wrap { max-width:1040px; margin:0 auto; padding:40px 20px 60px; }
+.topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
+  border-bottom:1px solid rgba(0,0,0,.08); }
+.topnav a { color:#b8893b; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(184,137,59,.35); transition:.2s; }
+.topnav a:hover { background:rgba(184,137,59,.10); }
+header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#b8893b,#b8332a,#6b5b95);
+  -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
+header p { margin:4px 0; color:#8a929c; font-size:13px; line-height:1.6; }
+.meta { margin:14px 0 24px; font-size:12px; color:#6b7280; line-height:1.7; }
+.meta b { color:#b8893b; }
+.section { background:#ffffff;
+  border:1px solid rgba(0,0,0,.08); border-radius:20px; padding:18px 20px; margin:0 0 22px;
+  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); }
+.section h2 { font-size:17px; margin:0 0 14px; color:#1c2430; display:flex; align-items:center; gap:8px; }
+.section h2:before { content:""; width:4px; height:16px; background:#b8893b; border-radius:3px; }
+.idxrow { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px; }
+.idx { flex:1; min-width:200px; background:linear-gradient(135deg,rgba(184,51,42,.08),rgba(184,51,42,.03));
+  border:1px solid rgba(184,51,42,.20); border-radius:14px; padding:13px 10px; text-align:center;
+  box-shadow:0 1px 3px rgba(184,51,42,.06); }
+.idx .k { font-size:11px; color:#6b7280; letter-spacing:.3px; }
+.idx .v { font-size:22px; font-weight:800; color:#1c2430; margin:5px 0 2px; }
+.idx .c { font-size:13px; font-weight:700; }
+.idx .hl { font-size:10px; color:#8a929c; margin-top:4px; }
+.bar { display:flex; height:34px; border-radius:8px; overflow:hidden; margin:10px 0; font-size:12px;
+  color:#ffffff; text-align:center; line-height:34px; box-shadow:0 2px 6px rgba(0,0,0,.12); }
+.chiprow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+.chip { background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06); border-radius:12px;
+  padding:10px 6px; text-align:center; min-width:74px; backdrop-filter:blur(6px); box-shadow:0 1px 3px rgba(20,30,50,.04); }
+.chip .ck { font-size:10px; color:#8a929c; }
+.chip .cv { font-size:16px; font-weight:800; margin-top:3px; }
+.tag { display:inline-block; border-radius:20px; padding:3px 11px; font-size:12px; margin:3px 4px 3px 0;
+  background:#eef2f8; color:#33414f; }
+.tag.hot { background:#fdeceb; color:#d8392b; }
+.tag.cold { background:#e9f6ef; color:#1a9e5a; }
+.pill { display:inline-block; background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06);
+  border-radius:20px; padding:4px 11px; font-size:12px; color:#3a4048; margin:3px 4px 3px 0; cursor:help; }
+.pill b { color:#b8893b; font-weight:700; }
+table { width:100%; border-collapse:collapse; font-size:13px; background:rgba(0,0,0,.03);
+  border:1px solid rgba(0,0,0,.05); border-radius:12px; overflow:hidden; margin:10px 0; }
+th,td { padding:8px 10px; text-align:left; border-bottom:1px solid rgba(0,0,0,.04); }
+th { background:rgba(20,30,50,.06); color:#3a4048; font-weight:600; font-size:12px; }
+td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+.up { color:#b8332a; } .down { color:#1a9e5a; }
+.note { color:#8a929c; font-size:12px; margin-top:8px; line-height:1.6; }
+.amberbox { font-size:13px; color:#b8893b; background:linear-gradient(135deg,rgba(184,137,59,.10),rgba(184,137,59,.04));
+  border:1px solid rgba(184,137,59,.18); border-radius:12px; padding:12px 16px; margin:12px 0; line-height:1.6; }
+.ladder { margin:6px 0; padding:8px 10px; background:rgba(0,0,0,.03); border:1px solid rgba(0,0,0,.08);
+  border-radius:8px; font-size:13px; }
+.ladder .badge { display:inline-block; border-radius:6px; padding:1px 8px; margin-right:8px; font-weight:700; font-size:12px; }
+.ladder .b5 { background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.35); color:#b8332a; }
+.ladder .b4 { background:rgba(184,51,42,.08); border:1px solid rgba(184,51,42,.30); color:#b8332a; }
+.ladder .b3 { background:rgba(184,137,59,.14); border:1px solid rgba(184,137,59,.40); color:#d8bd8a; }
+.ladder .b2 { background:rgba(184,137,59,.14); border:1px solid rgba(184,137,59,.40); color:#d8bd8a; }
+.ladder .b1 { background:rgba(90,107,128,.12); border:1px solid rgba(90,107,128,.35); color:#a7b4c9; }
+.namechip { display:inline-block; color:#3a4048; margin:2px 6px 2px 0; font-size:13px; }
+.empty { color:#8a929c; text-align:center; padding:38px 0; font-size:14px; line-height:1.8; }
+.empty b { color:#b8893b; }
+footer { margin-top:40px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08);
+  font-size:12px; color:#8a929c; line-height:1.8; }
+a.inlink { color:#b8893b; text-decoration:none; border:1px solid rgba(201,166,107,.5);
+  border-radius:10px; padding:6px 14px; font-size:13px; font-weight:700; display:inline-block; margin:4px 6px 4px 0; }
+a.inlink:hover { background:rgba(201,166,107,.16); }
+.wrap.landing { max-width:880px; text-align:center; }
+.landing header h1 { font-size:34px; }
+.landing header p { margin:6px 0; color:#8a929c; font-size:14px; }
+.date { margin:18px 0 30px; font-size:13px; color:#b8893b; letter-spacing:.5px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; text-align:left; }
+.card { display:block; text-decoration:none; color:#23262b; background:#ffffff;
+  border:1px solid rgba(0,0,0,.08); border-radius:18px; padding:20px 18px;
+  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); transition:.2s; }
+.card:hover { border-color:rgba(184,137,59,.50); transform:translateY(-2px); background:linear-gradient(135deg,rgba(184,137,59,.08),rgba(255,255,255,.03)); }
+.card .ic { font-size:26px; }
+.card .t { font-size:17px; font-weight:700; margin:10px 0 6px; color:#1c2430; }
+.card .d { font-size:12.5px; color:#8a929c; line-height:1.6; }
+.hist { margin-top:30px; font-size:12.5px; color:#6b7280; }
+.hist a { color:#b8893b; text-decoration:none; border:1px solid rgba(201,166,107,.4); border-radius:10px; padding:5px 12px; display:inline-block; margin:4px; }
+.foot { margin-top:42px; font-size:12px; color:#8a929c; line-height:1.8; }
+.lhb { table-layout:fixed; }
+.lhb th, .lhb td { font-size:12.5px; vertical-align:top; }
+.lhb td.reason { color:#6b7280; width:150px; font-size:11.5px; line-height:1.4; }
+.lhb td.sec { font-size:12px; white-space:nowrap; }
+.hm { text-align:center; }
+.hm-high { color:#f2a65a; font-weight:800; }
+.hm-mid { color:#b8893b; font-weight:700; }
+.hm-low { color:#8a93a3; }
+.hmtags { margin-top:3px; }
+.hmtag { display:inline-block; background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.30); color:#b8332a; border-radius:10px; padding:1px 7px; font-size:10.5px; margin:2px 2px 0 0; }
+.toggle { color:#b8893b; cursor:pointer; font-size:12px; user-select:none; }
+.toggle:hover { text-decoration:underline; }
+.seats { display:flex; gap:24px; flex-wrap:wrap; padding:6px 4px; }
+.seats .buys, .seats .sells { flex:1; min-width:260px; }
+.seat-h { font-weight:700; margin-bottom:6px; font-size:13px; }
+.seat-h.up { color:#b8332a; } .seat-h.down { color:#1a9e5a; }
+.seats ul { list-style:none; margin:0; padding:0; }
+.seats li { display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px dashed rgba(0,0,0,.04); font-size:12px; }
+.seats li .nm { flex:1; color:#3a4048; }
+.seats li .amt { font-variant-numeric:tabular-nums; font-weight:700; }
+tr.detail td { background:rgba(0,0,0,.03); }
+</style>
+</head>
+<body>
+<div class='wrap'>
+<div class='topnav'>
+<a href='../market/index.html'>每日总览</a>
+<a href='lhb.html'>龙虎榜分析</a>
+<a href='../market/hotmoney.html'>游资看板</a>
+<a href='../sector/index.html'>板块强度</a>
+<a href='../exec/index.html'>高管增减持</a>
+<a href='../block/index.html'>大宗交易</a>
+<a href='../sections/index.html'>版块总览</a>
+<a href='../../index.html'>返回主页</a>
+</div>
+<header>
+<h1>🐉 龙虎榜分析</h1>
+<p>个股板块(一级/二级) · 涨跌幅 · 游资介入度 · 席位明细 — 2026-09-04</p>
+</header>
+<div class='meta'>数据来源：westock-mcp data_lhb（全榜 / 机构榜 / 共振 / 席位胜率）+ data_sector（申万一/二级涨跌幅）。一级涨跌幅为成分二级均值（2026-09-04 实时）。</div>
+<div class='chiprow'>
+<a class='inlink' href='lhb_2026-09-03.html'>← 前一日（2026-09-03）</a>
+<span class='pill'>当前 2026-09-04</span>
+<a class='inlink' href='../../index.html'>返回总门户 →</a>
+</div>
+<div class='section'>
+<h2>🐉 龙虎榜全榜 50 只（按净买入额排序）</h2>
+<div class='note'>每行可点击展开查看买方/卖方席位 Top5 与游资标签。板块为申万一级 / 二级（名称+当日涨跌幅）；游资介入度按带标签席位数量分高/中/低，游资净买合计仅统计带标签席位。净买入额单位：亿元。</div>
+<table>
+<tr>
+<th>排名</th>
+<th>名称</th>
+<th class='num'>当日涨幅%</th>
+<th class='num'>净买入(亿)</th>
+<th class='num'>买入(亿)</th>
+<th class='num'>卖出(亿)</th>
+</tr>
+<tr>
+<td class='num'>1</td>
+<td>
+<b>楚天龙</b> <span class='note'>sz003040</span>
+</td>
+<td class='num up'>+10.00%</td>
+<td class='num up'>6.71</td>
+<td class='num'>7.56</td>
+<td class='num'>0.85</td>
+</tr>
+<tr>
+<td class='num'>2</td>
+<td>
+<b>平潭发展</b> <span class='note'>sz000592</span>
+</td>
+<td class='num up'>+9.99%</td>
+<td class='num up'>4.84</td>
+<td class='num'>7.07</td>
+<td class='num'>2.23</td>
+</tr>
+<tr>
+<td class='num'>3</td>
+<td>
+<b>远东股份</b> <span class='note'>sh600869</span>
+</td>
+<td class='num up'>+0.71%</td>
+<td class='num up'>4.73</td>
+<td class='num'>26.17</td>
+<td class='num'>21.43</td>
+</tr>
+<tr>
+<td class='num'>4</td>
+<td>
+<b>天娱数科</b> <span class='note'>sz002354</span>
+</td>
+<td class='num up'>+8.75%</td>
+<td class='num up'>4.51</td>
+<td class='num'>8.61</td>
+<td class='num'>4.10</td>
+</tr>
+<tr>
+<td class='num'>5</td>
+<td>
+<b>易点天下</b> <span class='note'>sz301171</span>
+</td>
+<td class='num up'>+11.12%</td>
+<td class='num up'>2.87</td>
+<td class='num'>8.42</td>
+<td class='num'>5.55</td>
+</tr>
+<tr>
+<td class='num'>6</td>
+<td>
+<b>恒宝股份</b> <span class='note'>sz002104</span>
+</td>
+<td class='num up'>+7.66%</td>
+<td class='num up'>2.10</td>
+<td class='num'>5.07</td>
+<td class='num'>2.97</td>
+</tr>
+<tr>
+<td class='num'>7</td>
+<td>
+<b>我爱我家</b> <span class='note'>sz000560</span>
+</td>
+<td class='num up'>+10.14%</td>
+<td class='num up'>1.94</td>
+<td class='num'>3.64</td>
+<td class='num'>1.69</td>
+</tr>
+<tr>
+<td class='num'>8</td>
+<td>
+<b>敦煌种业</b> <span class='note'>sh600354</span>
+</td>
+<td class='num up'>+10.04%</td>
+<td class='num up'>1.67</td>
+<td class='num'>2.21</td>
+<td class='num'>0.54</td>
+</tr>
+<tr>
+<td class='num'>9</td>
+<td>
+<b>德龙激光</b> <span class='note'>sh688170</span>
+</td>
+<td class='num up'>+17.50%</td>
+<td class='num up'>1.36</td>
+<td class='num'>2.78</td>
+<td class='num'>1.42</td>
+</tr>
+<tr>
+<td class='num'>10</td>
+<td>
+<b>海峡创新</b> <span class='note'>sz300300</span>
+</td>
+<td class='num up'>+16.01%</td>
+<td class='num up'>1.35</td>
+<td class='num'>2.90</td>
+<td class='num'>1.54</td>
+</tr>
+<tr>
+<td class='num'>11</td>
+<td>
+<b>亚盛集团</b> <span class='note'>sh600108</span>
+</td>
+<td class='num up'>+10.10%</td>
+<td class='num up'>1.22</td>
+<td class='num'>2.64</td>
+<td class='num'>1.41</td>
+</tr>
+<tr>
+<td class='num'>12</td>
+<td>
+<b>翠微股份</b> <span class='note'>sh603123</span>
+</td>
+<td class='num up'>+10.04%</td>
+<td class='num up'>1.07</td>
+<td class='num'>1.29</td>
+<td class='num'>0.23</td>
+</tr>
+<tr>
+<td class='num'>13</td>
+<td>
+<b>欢瑞世纪</b> <span class='note'>sz000892</span>
+</td>
+<td class='num up'>+10.04%</td>
+<td class='num up'>0.66</td>
+<td class='num'>1.94</td>
+<td class='num'>1.27</td>
+</tr>
+<tr>
+<td class='num'>14</td>
+<td>
+<b>肯特股份</b> <span class='note'>sz301591</span>
+</td>
+<td class='num down'>-0.09%</td>
+<td class='num up'>0.59</td>
+<td class='num'>1.24</td>
+<td class='num'>0.65</td>
+</tr>
+<tr>
+<td class='num'>15</td>
+<td>
+<b>百花医药</b> <span class='note'>sh600721</span>
+</td>
+<td class='num up'>+1.19%</td>
+<td class='num up'>0.59</td>
+<td class='num'>1.33</td>
+<td class='num'>0.74</td>
+</tr>
+<tr>
+<td class='num'>16</td>
+<td>
+<b>爱仕达</b> <span class='note'>sz002403</span>
+</td>
+<td class='num up'>+10.05%</td>
+<td class='num up'>0.54</td>
+<td class='num'>0.81</td>
+<td class='num'>0.27</td>
+</tr>
+<tr>
+<td class='num'>17</td>
+<td>
+<b>恒盛能源</b> <span class='note'>sh605580</span>
+</td>
+<td class='num up'>+9.99%</td>
+<td class='num up'>0.50</td>
+<td class='num'>0.85</td>
+<td class='num'>0.35</td>
+</tr>
+<tr>
+<td class='num'>18</td>
+<td>
+<b>开开实业</b> <span class='note'>sh600272</span>
+</td>
+<td class='num up'>+7.66%</td>
+<td class='num up'>0.45</td>
+<td class='num'>1.14</td>
+<td class='num'>0.69</td>
+</tr>
+<tr>
+<td class='num'>19</td>
+<td>
+<b>传智教育</b> <span class='note'>sz003032</span>
+</td>
+<td class='num down'>-10.00%</td>
+<td class='num up'>0.43</td>
+<td class='num'>0.91</td>
+<td class='num'>0.48</td>
+</tr>
+<tr>
+<td class='num'>20</td>
+<td>
+<b>金帝股份</b> <span class='note'>sh603270</span>
+</td>
+<td class='num down'>-4.52%</td>
+<td class='num up'>0.41</td>
+<td class='num'>1.83</td>
+<td class='num'>1.42</td>
+</tr>
+<tr>
+<td class='num'>21</td>
+<td>
+<b>强达转债</b> <span class='note'>sz123284</span>
+</td>
+<td class='num up'>+20.00%</td>
+<td class='num up'>0.40</td>
+<td class='num'>0.47</td>
+<td class='num'>0.07</td>
+</tr>
+<tr>
+<td class='num'>22</td>
+<td>
+<b>新赛股份</b> <span class='note'>sh600540</span>
+</td>
+<td class='num up'>+0.83%</td>
+<td class='num up'>0.36</td>
+<td class='num'>1.31</td>
+<td class='num'>0.95</td>
+</tr>
+<tr>
+<td class='num'>23</td>
+<td>
+<b>新希望</b> <span class='note'>sz000876</span>
+</td>
+<td class='num up'>+10.00%</td>
+<td class='num up'>0.35</td>
+<td class='num'>2.67</td>
+<td class='num'>2.32</td>
+</tr>
+<tr>
+<td class='num'>24</td>
+<td>
+<b>古越龙山</b> <span class='note'>sh600059</span>
+</td>
+<td class='num up'>+10.06%</td>
+<td class='num up'>0.35</td>
+<td class='num'>0.98</td>
+<td class='num'>0.63</td>
+</tr>
+<tr>
+<td class='num'>25</td>
+<td>
+<b>国芳集团</b> <span class='note'>sh601086</span>
+</td>
+<td class='num up'>+3.60%</td>
+<td class='num up'>0.34</td>
+<td class='num'>1.25</td>
+<td class='num'>0.92</td>
+</tr>
+<tr>
+<td class='num'>26</td>
+<td>
+<b>新五丰</b> <span class='note'>sh600975</span>
+</td>
+<td class='num up'>+10.04%</td>
+<td class='num up'>0.29</td>
+<td class='num'>0.65</td>
+<td class='num'>0.35</td>
+</tr>
+<tr>
+<td class='num'>27</td>
+<td>
+<b>大晟文化</b> <span class='note'>sh600892</span>
+</td>
+<td class='num down'>-9.91%</td>
+<td class='num up'>0.21</td>
+<td class='num'>1.25</td>
+<td class='num'>1.05</td>
+</tr>
+<tr>
+<td class='num'>28</td>
+<td>
+<b>新炬网络</b> <span class='note'>sh605398</span>
+</td>
+<td class='num up'>+9.98%</td>
+<td class='num up'>0.13</td>
+<td class='num'>0.42</td>
+<td class='num'>0.29</td>
+</tr>
+<tr>
+<td class='num'>29</td>
+<td>
+<b>百大集团</b> <span class='note'>sh600865</span>
+</td>
+<td class='num up'>+9.98%</td>
+<td class='num up'>0.12</td>
+<td class='num'>0.94</td>
+<td class='num'>0.82</td>
+</tr>
+<tr>
+<td class='num'>30</td>
+<td>
+<b>茂业商业</b> <span class='note'>sh600828</span>
+</td>
+<td class='num down'>-2.55%</td>
+<td class='num up'>0.08</td>
+<td class='num'>0.77</td>
+<td class='num'>0.68</td>
+</tr>
+</table>
+</div>
+<div class='section'>
+<h2>🏛️ 机构专用榜 TOP20（按净买额）</h2>
+<div class='note'>机构专用席位净买入口径；净买额为净流入（买入−卖出）。共 20 只个股上榜机构榜。</div>
+<table>
+<tr>
+<th>名称</th>
+<th class='num'>上榜</th>
+<th class='num'>机构买入(亿)</th>
+<th class='num'>机构净买(亿)</th>
+<th class='num'>净买率%</th>
+<th class='num'>席位</th>
+<th class='num'>总买入(亿)</th>
+<th class='num'>排名</th>
+</tr>
+<tr>
+<td>
+<b>浪潮信息</b> <span class='note'>sz000977</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-7.74</td>
+<td class='num up'>12.55</td>
+<td class='num up'>11.65</td>
+<td class='num'>5</td>
+<td class='num'>4.82</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>宏和科技</b> <span class='note'>sh603256</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-3.13</td>
+<td class='num up'>3.13</td>
+<td class='num up'>2.95</td>
+<td class='num'>2</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>易点天下</b> <span class='note'>sz301171</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.16</td>
+<td class='num up'>3.07</td>
+<td class='num up'>31.80</td>
+<td class='num'>5</td>
+<td class='num'>2.91</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>雪人集团</b> <span class='note'>sz002639</span>
+</td>
+<td class='num'>3</td>
+<td class='num'>0.35</td>
+<td class='num up'>1.60</td>
+<td class='num up'>24.19</td>
+<td class='num'>3</td>
+<td class='num'>1.95</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>天娱数科</b> <span class='note'>sz002354</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>1.41</td>
+<td class='num up'>0.93</td>
+<td class='num up'>38.09</td>
+<td class='num'>2</td>
+<td class='num'>2.34</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>恒宝股份</b> <span class='note'>sz002104</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.38</td>
+<td class='num up'>0.78</td>
+<td class='num up'>33.70</td>
+<td class='num'>2</td>
+<td class='num'>0.40</td>
+<td class='num'>3</td>
+</tr>
+<tr>
+<td>
+<b>海峡创新</b> <span class='note'>sz300300</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>0.41</td>
+<td class='num up'>0.73</td>
+<td class='num up'>23.44</td>
+<td class='num'>4</td>
+<td class='num'>1.14</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>集泰股份</b> <span class='note'>sz002909</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.47</td>
+<td class='num up'>0.60</td>
+<td class='num up'>37.84</td>
+<td class='num'>3</td>
+<td class='num'>0.12</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>肯特股份</b> <span class='note'>sz301591</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>0.52</td>
+<td class='num up'>0.46</td>
+<td class='num up'>36.50</td>
+<td class='num'>4</td>
+<td class='num'>0.97</td>
+<td class='num'>11</td>
+</tr>
+<tr>
+<td>
+<b>欢瑞世纪</b> <span class='note'>sz000892</span>
+</td>
+<td class='num'>3</td>
+<td class='num'>-0.22</td>
+<td class='num up'>0.37</td>
+<td class='num up'>43.85</td>
+<td class='num'>1</td>
+<td class='num'>0.15</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>平潭发展</b> <span class='note'>sz000592</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>0.85</td>
+<td class='num up'>0.35</td>
+<td class='num up'>17.80</td>
+<td class='num'>2</td>
+<td class='num'>1.20</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>新希望</b> <span class='note'>sz000876</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>1.26</td>
+<td class='num up'>0.29</td>
+<td class='num up'>4.02</td>
+<td class='num'>4</td>
+<td class='num'>1.55</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>深中华A</b> <span class='note'>sz000017</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.25</td>
+<td class='num up'>0.25</td>
+<td class='num up'>24.11</td>
+<td class='num'>1</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>竞业达</b> <span class='note'>sz003005</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.07</td>
+<td class='num up'>0.23</td>
+<td class='num up'>35.21</td>
+<td class='num'>3</td>
+<td class='num'>0.16</td>
+<td class='num'>3</td>
+</tr>
+<tr>
+<td>
+<b>古越龙山</b> <span class='note'>sh600059</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.21</td>
+<td class='num up'>0.21</td>
+<td class='num up'>7.91</td>
+<td class='num'>2</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>恒盛能源</b> <span class='note'>sh605580</span>
+</td>
+<td class='num'>3</td>
+<td class='num'>-0.20</td>
+<td class='num up'>0.20</td>
+<td class='num up'>1.29</td>
+<td class='num'>1</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>神农种业</b> <span class='note'>sz300189</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>0.07</td>
+<td class='num up'>0.18</td>
+<td class='num up'>35.90</td>
+<td class='num'>1</td>
+<td class='num'>0.24</td>
+<td class='num'>7</td>
+</tr>
+<tr>
+<td>
+<b>爱仕达</b> <span class='note'>sz002403</span>
+</td>
+<td class='num'>3</td>
+<td class='num'>-0.07</td>
+<td class='num up'>0.13</td>
+<td class='num up'>4.09</td>
+<td class='num'>2</td>
+<td class='num'>0.07</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>新五丰</b> <span class='note'>sh600975</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.04</td>
+<td class='num up'>0.04</td>
+<td class='num up'>4.61</td>
+<td class='num'>1</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>传智教育</b> <span class='note'>sz003032</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>0.27</td>
+<td class='num up'>0.01</td>
+<td class='num up'>32.55</td>
+<td class='num'>2</td>
+<td class='num'>0.28</td>
+<td class='num'>2</td>
+</tr>
+</table>
+</div>
+<div class='section'>
+<h2>🔗 机构 + 游资共振买入（9 只）</h2>
+<div class='note'>同时出现机构与活跃游资席位合力的个股；netAmt 为共振净流入，upRate 为当日涨幅，winNum 为龙虎榜上榜席位家数。</div>
+<table>
+<tr>
+<th>名称</th>
+<th class='num'>上榜天数</th>
+<th class='num'>共振净买(亿)</th>
+<th class='num'>当日涨幅%</th>
+<th class='num'>买入(亿)</th>
+<th class='num'>卖出(亿)</th>
+<th class='num'>席位家数</th>
+</tr>
+<tr>
+<td>
+<b>楚天龙</b> <span class='note'>sz003040</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>2.46</td>
+<td class='num up'>+10.00%</td>
+<td class='num'>2.46</td>
+<td class='num'>0.00</td>
+<td class='num'>4</td>
+</tr>
+<tr>
+<td>
+<b>平潭发展</b> <span class='note'>sz000592</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>2.43</td>
+<td class='num up'>+9.99%</td>
+<td class='num'>2.44</td>
+<td class='num'>0.01</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>亚盛集团</b> <span class='note'>sh600108</span>
+</td>
+<td class='num'>3</td>
+<td class='num up'>1.92</td>
+<td class='num up'>+10.10%</td>
+<td class='num'>1.92</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>恒宝股份</b> <span class='note'>sz002104</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>1.61</td>
+<td class='num up'>+7.66%</td>
+<td class='num'>1.62</td>
+<td class='num'>0.01</td>
+<td class='num'>3</td>
+</tr>
+<tr>
+<td>
+<b>我爱我家</b> <span class='note'>sz000560</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>1.28</td>
+<td class='num up'>+10.14%</td>
+<td class='num'>1.29</td>
+<td class='num'>0.01</td>
+<td class='num'>5</td>
+</tr>
+<tr>
+<td>
+<b>天娱数科</b> <span class='note'>sz002354</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>1.09</td>
+<td class='num up'>+8.75%</td>
+<td class='num'>1.10</td>
+<td class='num'>0.01</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>易点天下</b> <span class='note'>sz301171</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.92</td>
+<td class='num up'>+11.12%</td>
+<td class='num'>0.92</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>翠微股份</b> <span class='note'>sh603123</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.70</td>
+<td class='num up'>+10.04%</td>
+<td class='num'>0.70</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>欢瑞世纪</b> <span class='note'>sz000892</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.46</td>
+<td class='num up'>+10.04%</td>
+<td class='num'>0.47</td>
+<td class='num'>0.00</td>
+<td class='num'>2</td>
+</tr>
+</table>
+</div>
+<div class='section'>
+<h2>🎯 营业部席位胜率聚合 TOP20</h2>
+<table>
+<tr>
+<th>营业部席位</th>
+<th class='num'>胜率%</th>
+<th class='num'>净买额(亿)</th>
+<th>涉及个股</th>
+</tr>
+<tr>
+<td>国新证券股份有限公司北京分公司</td>
+<td class='num' style='color:#b8893b;font-weight:700'>50.8</td>
+<td class='num up'>2.86</td>
+<td style='color:#6b7280;font-size:12px'>我爱我家、恒宝股份、爱仕达、易点天下</td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司武汉紫阳东路证券营业部</td>
+<td class='num' style='color:#b8893b;font-weight:700'>52.0</td>
+<td class='num up'>2.51</td>
+<td style='color:#6b7280;font-size:12px'>平潭发展、天娱数科</td>
+</tr>
+<tr>
+<td>甬兴证券有限公司宁波和源路证券营业部</td>
+<td class='num' style='color:#b8893b;font-weight:700'>55.6</td>
+<td class='num up'>1.93</td>
+<td style='color:#6b7280;font-size:12px'>楚天龙</td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司上海松江区中山东路证券营业部</td>
+<td class='num' style='color:#b8893b;font-weight:700'>55.4</td>
+<td class='num up'>0.41</td>
+<td style='color:#6b7280;font-size:12px'>亚盛集团</td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司宁波广福街证券营业部</td>
+<td class='num' style='color:#b8893b;font-weight:700'>50.0</td>
+<td class='num up'>0.23</td>
+<td style='color:#6b7280;font-size:12px'>欢瑞世纪</td>
+</tr>
+</table>
+</div>
+<div class='section'>
+<h2>🎯 净买入股票 · 次日表现回溯</h2>
+<div class='amberbox' style='color:#1c2430'>次日回测数据尚未生成（需待下一交易日收盘后）。运行 <code>python quant/gen_lhb_nextday_backtest.py --date 2026-09-04 --quotes &lt;次日行情落盘&gt;</code> 后重跑本生成器即可回填本区块。</div>
+</div>
+<div class='section'>
+<h2>📐 窗口收益（alpha vs 大盘）</h2>
+<div class='empty'>1·3·5·10 交易日窗口收益回测属量化专题，需历史复权数据支撑，本页未内置；该专题为早期远程分析页，本地未保留，后续可单独建设。</div>
+</div>
+<footer>⚠️ 盘后滞后资金痕迹，仅提示概率优势方向，不构成投资建议。</footer>
+<script>function toggle(id){var e=document.getElementById(id);if(e){e.style.display=(e.style.display==='none')?'table-row':'none';}}</script>
+</div>
+</body>
+</html>
