@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>A股量化助理 · 每日总览</title>
+<style>* { box-sizing: border-box; }
+body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:#f5f6f8; color:#23262b; min-height:100vh; }
+.wrap { max-width:1040px; margin:0 auto; padding:40px 20px 60px; }
+.topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
+  border-bottom:1px solid rgba(0,0,0,.08); }
+.topnav a { color:#b8893b; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(184,137,59,.35); transition:.2s; }
+.topnav a:hover { background:rgba(184,137,59,.10); }
+header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#b8893b,#b8332a,#6b5b95);
+  -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
+header p { margin:4px 0; color:#8a929c; font-size:13px; line-height:1.6; }
+.meta { margin:14px 0 24px; font-size:12px; color:#6b7280; line-height:1.7; }
+.meta b { color:#b8893b; }
+.section { background:#ffffff;
+  border:1px solid rgba(0,0,0,.08); border-radius:20px; padding:18px 20px; margin:0 0 22px;
+  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); }
+.section h2 { font-size:17px; margin:0 0 14px; color:#1c2430; display:flex; align-items:center; gap:8px; }
+.section h2:before { content:""; width:4px; height:16px; background:#b8893b; border-radius:3px; }
+.idxrow { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px; }
+.idx { flex:1; min-width:200px; background:linear-gradient(135deg,rgba(184,51,42,.08),rgba(184,51,42,.03));
+  border:1px solid rgba(184,51,42,.20); border-radius:14px; padding:13px 10px; text-align:center;
+  box-shadow:0 1px 3px rgba(184,51,42,.06); }
+.idx .k { font-size:11px; color:#6b7280; letter-spacing:.3px; }
+.idx .v { font-size:22px; font-weight:800; color:#1c2430; margin:5px 0 2px; }
+.idx .c { font-size:13px; font-weight:700; }
+.idx .hl { font-size:10px; color:#8a929c; margin-top:4px; }
+.bar { display:flex; height:34px; border-radius:8px; overflow:hidden; margin:10px 0; font-size:12px;
+  color:#ffffff; text-align:center; line-height:34px; box-shadow:0 2px 6px rgba(0,0,0,.12); }
+.chiprow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+.chip { background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06); border-radius:12px;
+  padding:10px 6px; text-align:center; min-width:74px; backdrop-filter:blur(6px); box-shadow:0 1px 3px rgba(20,30,50,.04); }
+.chip .ck { font-size:10px; color:#8a929c; }
+.chip .cv { font-size:16px; font-weight:800; margin-top:3px; }
+.tag { display:inline-block; border-radius:20px; padding:3px 11px; font-size:12px; margin:3px 4px 3px 0;
+  background:#eef2f8; color:#33414f; }
+.tag.hot { background:#fdeceb; color:#d8392b; }
+.tag.cold { background:#e9f6ef; color:#1a9e5a; }
+.pill { display:inline-block; background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06);
+  border-radius:20px; padding:4px 11px; font-size:12px; color:#3a4048; margin:3px 4px 3px 0; cursor:help; }
+.pill b { color:#b8893b; font-weight:700; }
+table { width:100%; border-collapse:collapse; font-size:13px; background:rgba(0,0,0,.03);
+  border:1px solid rgba(0,0,0,.05); border-radius:12px; overflow:hidden; margin:10px 0; }
+th,td { padding:8px 10px; text-align:left; border-bottom:1px solid rgba(0,0,0,.04); }
+th { background:rgba(20,30,50,.06); color:#3a4048; font-weight:600; font-size:12px; }
+td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+.up { color:#b8332a; } .down { color:#1a9e5a; }
+.note { color:#8a929c; font-size:12px; margin-top:8px; line-height:1.6; }
+.amberbox { font-size:13px; color:#b8893b; background:linear-gradient(135deg,rgba(184,137,59,.10),rgba(184,137,59,.04));
+  border:1px solid rgba(184,137,59,.18); border-radius:12px; padding:12px 16px; margin:12px 0; line-height:1.6; }
+.ladder { margin:6px 0; padding:8px 10px; background:rgba(0,0,0,.03); border:1px solid rgba(0,0,0,.08);
+  border-radius:8px; font-size:13px; }
+.ladder .badge { display:inline-block; border-radius:6px; padding:1px 8px; margin-right:8px; font-weight:700; font-size:12px; }
+.ladder .b5 { background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.35); color:#b8332a; }
+.ladder .b4 { background:rgba(184,51,42,.08); border:1px solid rgba(184,51,42,.30); color:#b8332a; }
+.ladder .b3 { background:rgba(184,137,59,.14); border:1px solid rgba(184,137,59,.40); color:#d8bd8a; }
+.ladder .b2 { background:rgba(184,137,59,.14); border:1px solid rgba(184,137,59,.40); color:#d8bd8a; }
+.ladder .b1 { background:rgba(90,107,128,.12); border:1px solid rgba(90,107,128,.35); color:#a7b4c9; }
+.namechip { display:inline-block; color:#3a4048; margin:2px 6px 2px 0; font-size:13px; }
+.empty { color:#8a929c; text-align:center; padding:38px 0; font-size:14px; line-height:1.8; }
+.empty b { color:#b8893b; }
+footer { margin-top:40px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08);
+  font-size:12px; color:#8a929c; line-height:1.8; }
+a.inlink { color:#b8893b; text-decoration:none; border:1px solid rgba(201,166,107,.5);
+  border-radius:10px; padding:6px 14px; font-size:13px; font-weight:700; display:inline-block; margin:4px 6px 4px 0; }
+a.inlink:hover { background:rgba(201,166,107,.16); }
+.wrap.landing { max-width:880px; text-align:center; }
+.landing header h1 { font-size:34px; }
+.landing header p { margin:6px 0; color:#8a929c; font-size:14px; }
+.date { margin:18px 0 30px; font-size:13px; color:#b8893b; letter-spacing:.5px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; text-align:left; }
+.card { display:block; text-decoration:none; color:#23262b; background:#ffffff;
+  border:1px solid rgba(0,0,0,.08); border-radius:18px; padding:20px 18px;
+  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); transition:.2s; }
+.card:hover { border-color:rgba(184,137,59,.50); transform:translateY(-2px); background:linear-gradient(135deg,rgba(184,137,59,.08),rgba(255,255,255,.03)); }
+.card .ic { font-size:26px; }
+.card .t { font-size:17px; font-weight:700; margin:10px 0 6px; color:#1c2430; }
+.card .d { font-size:12.5px; color:#8a929c; line-height:1.6; }
+.hist { margin-top:30px; font-size:12.5px; color:#6b7280; }
+.hist a { color:#b8893b; text-decoration:none; border:1px solid rgba(201,166,107,.4); border-radius:10px; padding:5px 12px; display:inline-block; margin:4px; }
+.foot { margin-top:42px; font-size:12px; color:#8a929c; line-height:1.8; }
+.lhb { table-layout:fixed; }
+.lhb th, .lhb td { font-size:12.5px; vertical-align:top; }
+.lhb td.reason { color:#6b7280; width:150px; font-size:11.5px; line-height:1.4; }
+.lhb td.sec { font-size:12px; white-space:nowrap; }
+.hm { text-align:center; }
+.hm-high { color:#f2a65a; font-weight:800; }
+.hm-mid { color:#b8893b; font-weight:700; }
+.hm-low { color:#8a93a3; }
+.hmtags { margin-top:3px; }
+.hmtag { display:inline-block; background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.30); color:#b8332a; border-radius:10px; padding:1px 7px; font-size:10.5px; margin:2px 2px 0 0; }
+.toggle { color:#b8893b; cursor:pointer; font-size:12px; user-select:none; }
+.toggle:hover { text-decoration:underline; }
+.seats { display:flex; gap:24px; flex-wrap:wrap; padding:6px 4px; }
+.seats .buys, .seats .sells { flex:1; min-width:260px; }
+.seat-h { font-weight:700; margin-bottom:6px; font-size:13px; }
+.seat-h.up { color:#b8332a; } .seat-h.down { color:#1a9e5a; }
+.seats ul { list-style:none; margin:0; padding:0; }
+.seats li { display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px dashed rgba(0,0,0,.04); font-size:12px; }
+.seats li .nm { flex:1; color:#3a4048; }
+.seats li .amt { font-variant-numeric:tabular-nums; font-weight:700; }
+tr.detail td { background:rgba(0,0,0,.03); }
+</style>
+</head>
+<body>
+<div class='wrap'>
+<div class='topnav'>
+<a href='daily_overview.html'>每日总览</a>
+<a href='lhb.html'>龙虎榜分析</a>
+<a href='hotmoney.html'>游资看板</a>
+<a href='sector-strength-index.html'>板块强度</a>
+<a href='exec.html'>高管增减持</a>
+<a href='block.html'>大宗交易</a>
+<a href='sections.html'>版块总览</a>
+<a href='../index.html'>返回主页</a>
+</div>
+<header>
+<h1>📊 A股量化助理 · 每日总览</h1>
+<p>大盘概览 / 板块热度 / 连板梯队 / 龙虎榜速览 — 数据口径 2026-08-21（大盘概览快照 2026-08-21 · 估值 2026-08-21）</p>
+</header>
+<div class='meta'>数据来源：腾讯自选股 <b>westock-mcp</b>（data_market_overview / tool_ranking / data_hot / data_quote / data_lhb）。</div>
+<div class='section'>
+<h2>📈 当日大盘概览 — 2026-08-21（快照）</h2>
+<div class='idxrow'>
+<div class='idx'>
+<div class='k'>上证指数</div>
+<div class='v'>3,905.20</div>
+<div class='c up'>+0.04%</div>
+<div class='hl'>H 3,912.13 · L 3,883.79</div>
+</div>
+<div class='idx'>
+<div class='k'>深证成指</div>
+<div class='v'>14,094.17</div>
+<div class='c up'>+0.87%</div>
+<div class='hl'>H 14,132.04 · L 13,866.39</div>
+</div>
+<div class='idx'>
+<div class='k'>创业板指</div>
+<div class='v'>3,545.58</div>
+<div class='c up'>+1.43%</div>
+<div class='hl'>H 3,563.06 · L 3,478.52</div>
+</div>
+</div>
+<div class='bar'>
+<div style='background:linear-gradient(90deg,#b87064,#b8332a);width:45.1%'>涨 2505<br>
+<span style='font-size:10px;opacity:.9'>45.1%</span>
+</div>
+<div style='background:linear-gradient(90deg,rgba(154,154,164,.7),rgba(154,154,164,.55));width:3.3%'>平 182</div>
+<div style='background:linear-gradient(90deg,#7d9682,#1a9e5a);width:51.6%'>跌 2862<br>
+<span style='font-size:10px;opacity:.9'>51.6%</span>
+</div>
+</div>
+<div class='chiprow'>
+<div class='chip'>
+<div class='ck'>涨停</div>
+<div class='cv up'>54</div>
+</div>
+<div class='chip'>
+<div class='ck'>跌停</div>
+<div class='cv down'>1</div>
+</div>
+<div class='chip'>
+<div class='ck'>涨跌比</div>
+<div class='cv' style='color:#b8893b'>0.88</div>
+</div>
+<div class='chip'>
+<div class='ck'>5日新高/低</div>
+<div class='cv' style='color:#8b9bb5'>500/2729</div>
+</div>
+<div class='chip'>
+<div class='ck'>20日新高/低</div>
+<div class='cv' style='color:#6b5b95'>287/371</div>
+</div>
+<div class='chip'>
+<div class='ck'>60日新高/低</div>
+<div class='cv' style='color:#8aaab3'>92/46</div>
+</div>
+</div>
+<div class='amberbox' style='color:#1c2430'>
+<span style='font-size:13px;color:#3a4048'>沪深京成交额</span> <span style='font-size:20px;font-weight:700'>18,792.64 亿</span> <span class='down' style='font-weight:700'>缩量</span>
+<div style='font-size:12px;color:#6b7280;margin-top:6px'>5日均 22,515.80 亿 (83.46%) · 10日均 22,948.17 亿 (81.89%) · 20日均 23,147.86 亿 (81.19%)</div>
+</div>
+<div class='note' style='color:#8a929c'>以上标签由 westock-mcp data_market_overview 按全市场量价/估值/风格自动生成（聚合/收盘口径 2026-08-21；估值口径滞后至 2026-08-21）。</div>
+<div class='chiprow'>
+<span class='pill' title='情绪：情绪狂热(涨停>50只，或者涨股比>70%，两融周增>2% )'>
+<b>情绪</b> 情绪狂热</span>
+<span class='pill' title='技术：中性(MACD缠绕，或者RSI中性，或者布林中轨附近)'>
+<b>技术</b> 中性</span>
+<span class='pill' title='估值：偏高区间(PE分位数70%~90%)'>
+<b>估值</b> 偏高区间</span>
+<span class='pill' title='量能：缩量震荡(成交额90~110%均值)'>
+<b>量能</b> 缩量震荡</span>
+<span class='pill' title='大小盘：小盘主导(中证1000 > 沪深300 +8%)'>
+<b>大小盘</b> 小盘主导</span>
+<span class='pill' title='风格：均衡(成长/价值差异 < ±2%)'>
+<b>风格</b> 均衡</span>
+<span class='pill' title='行业轮动：温和分化(头部在涨,尾部在跌,头部尾部相差在2%~5%)'>
+<b>行业轮动</b> 温和分化</span>
+<span class='pill' title='个股宽度：普涨(创新高>200只，或者破位<10只)'>
+<b>个股宽度</b> 普涨</span>
+<span class='pill' title='中长期趋势：弱势下跌(均线空头排列,或者短线下穿中线且距离中线以下距离较小)'>
+<b>中长期趋势</b> 弱势下跌</span>
+</div>
+<div style='font-size:13px;font-weight:700;color:#1c2430;margin:14px 0 8px'>风格 / 规模</div>
+<table>
+<tr>
+<th>风格/规模</th>
+<th class='num'>5日</th>
+<th class='num'>20日</th>
+</tr>
+<tr>
+<td>沪深300</td>
+<td class='num down'>-1.01%</td>
+<td class='num down'>-0.65%</td>
+</tr>
+<tr>
+<td>中证1000</td>
+<td class='num down'>-2.16%</td>
+<td class='num up'>+8.66%</td>
+</tr>
+<tr>
+<td>全指成长</td>
+<td class='num down'>-1.24%</td>
+<td class='num up'>+0.90%</td>
+</tr>
+<tr>
+<td>全指价值</td>
+<td class='num up'>+1.23%</td>
+<td class='num down'>-0.28%</td>
+</tr>
+</table>
+<div class='amberbox' style='color:#1c2430'>
+<b style='color:#1c2430'>中证全指估值</b>（口径 2026-08-21）：PE_TTM <span style='font-size:16px;font-weight:700'>21.26</span> · 3年分位 <span class='up'>73.28%</span> · 5年分位 <span class='up'>83.97%</span> · 10年分位 <span class='up'>88.53%</span> <span style='color:#8a929c;font-size:12px'>(PB 1.77 · 股息率 1.84%)</span>
+</div>
+<div style='font-size:14px;font-weight:700;color:#1c2430;margin:14px 0 8px'>📰 当日要闻（2026-08-21）</div>
+<ul style='margin:0;padding-left:18px;color:#6b7280'>
+<li style='margin:8px 0;line-height:1.55'>
+<span style='color:#b8893b;font-weight:700'>[腾讯自选股]</span> <a href='https://news.qq.com/search?query=%E5%88%A9%E5%A5%BD%E5%88%A9%E7%A9%BA%E6%99%9A%E6%8A%A5%7C%E9%AB%98%E5%B1%82%E5%AE%9A%E8%B0%83%EF%BC%8C%E9%80%9A%E4%BF%A1%E8%BF%8E%E9%87%8D%E7%A3%85%E5%88%A9%E5%A5%BD%EF%BC%81%E8%A7%84%E6%A8%A1%E6%88%96%E8%BE%BE7%E4%B8%87%E4%BA%BF' target='_blank' rel='noopener' style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>
+<b>利好利空晚报|高层定调，通信迎重磅利好！规模或达7万亿</b>
+</a> <a href='https://news.qq.com/search?query=%E5%88%A9%E5%A5%BD%E5%88%A9%E7%A9%BA%E6%99%9A%E6%8A%A5%7C%E9%AB%98%E5%B1%82%E5%AE%9A%E8%B0%83%EF%BC%8C%E9%80%9A%E4%BF%A1%E8%BF%8E%E9%87%8D%E7%A3%85%E5%88%A9%E5%A5%BD%EF%BC%81%E8%A7%84%E6%A8%A1%E6%88%96%E8%BE%BE7%E4%B8%87%E4%BA%BF' target='_blank' rel='noopener' style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a>
+</li>
+<li style='margin:8px 0;line-height:1.55'>
+<span style='color:#b8893b;font-weight:700'>[腾讯自选股综合]</span> <a href='https://news.qq.com/search?query=%E4%B8%80%E5%AD%A3%E5%BA%A6%E5%A4%A7%E8%B5%9A333%E4%BA%BF%E5%85%83%EF%BC%81%E9%95%BF%E6%B1%9F%E5%AD%98%E5%82%A8IPO%E8%8E%B7%E5%8F%97%E7%90%86%EF%BC%8C%E5%8F%97%E7%9B%8A%E6%A0%87%E7%9A%84%E6%9B%9D%E5%85%89' target='_blank' rel='noopener' style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>
+<b>一季度大赚333亿元！长江存储IPO获受理，受益标的曝光</b>
+</a> <a href='https://news.qq.com/search?query=%E4%B8%80%E5%AD%A3%E5%BA%A6%E5%A4%A7%E8%B5%9A333%E4%BA%BF%E5%85%83%EF%BC%81%E9%95%BF%E6%B1%9F%E5%AD%98%E5%82%A8IPO%E8%8E%B7%E5%8F%97%E7%90%86%EF%BC%8C%E5%8F%97%E7%9B%8A%E6%A0%87%E7%9A%84%E6%9B%9D%E5%85%89' target='_blank' rel='noopener' style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a>
+</li>
+<li style='margin:8px 0;line-height:1.55'>
+<span style='color:#b8893b;font-weight:700'>[腾讯自选股综合]</span> <a href='https://news.qq.com/search?query=888.88%25%EF%BC%81%E5%85%89%E7%BA%A4%E9%BE%99%E5%A4%B4%E4%B8%AD%E6%8A%A5%E5%87%80%E5%88%A9%E6%9A%B4%E5%A2%9E%20%E6%9C%BA%E6%9E%84%E9%AB%98%E5%96%8A%E6%8A%8A%E6%8F%A1%E5%A4%B4%E9%83%A8%E4%BC%81%E4%B8%9A%E6%9C%BA%E4%BC%9A' target='_blank' rel='noopener' style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>
+<b>888.88%！光纤龙头中报净利暴增 机构高喊把握头部企业机会</b>
+</a> <a href='https://news.qq.com/search?query=888.88%25%EF%BC%81%E5%85%89%E7%BA%A4%E9%BE%99%E5%A4%B4%E4%B8%AD%E6%8A%A5%E5%87%80%E5%88%A9%E6%9A%B4%E5%A2%9E%20%E6%9C%BA%E6%9E%84%E9%AB%98%E5%96%8A%E6%8A%8A%E6%8F%A1%E5%A4%B4%E9%83%A8%E4%BC%81%E4%B8%9A%E6%9C%BA%E4%BC%9A' target='_blank' rel='noopener' style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a>
+</li>
+<li style='margin:8px 0;line-height:1.55'>
+<span style='color:#b8893b;font-weight:700'>[华尔街见闻]</span> <a href='https://news.qq.com/search?query=%E4%B8%AD%E9%99%85%E6%97%AD%E5%88%9B%E4%B8%8A%E5%8D%8A%E5%B9%B4%E5%87%80%E5%88%A9%E5%A4%A7%E5%A2%9E%E9%80%BE%E4%B8%A4%E5%80%8D%20%E2%80%9C%E8%B6%85%E7%BA%A7%E7%89%9B%E6%95%A3%E2%80%9D%E7%AB%A0%E5%BB%BA%E5%B9%B3%E5%A4%A7%E4%B8%BE%E4%B9%B0%E5%85%A5' target='_blank' rel='noopener' style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>
+<b>中际旭创上半年净利大增逾两倍 “超级牛散”章建平大举买入</b>
+</a> <a href='https://news.qq.com/search?query=%E4%B8%AD%E9%99%85%E6%97%AD%E5%88%9B%E4%B8%8A%E5%8D%8A%E5%B9%B4%E5%87%80%E5%88%A9%E5%A4%A7%E5%A2%9E%E9%80%BE%E4%B8%A4%E5%80%8D%20%E2%80%9C%E8%B6%85%E7%BA%A7%E7%89%9B%E6%95%A3%E2%80%9D%E7%AB%A0%E5%BB%BA%E5%B9%B3%E5%A4%A7%E4%B8%BE%E4%B9%B0%E5%85%A5' target='_blank' rel='noopener' style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a>
+</li>
+<li style='margin:8px 0;line-height:1.55'>
+<span style='color:#b8893b;font-weight:700'>[财联社]</span> <a href='https://news.qq.com/search?query=%E7%BE%8E%E8%82%A1%E4%B8%89%E5%A4%A7%E6%8C%87%E6%95%B0%E7%BA%A2%E7%9B%98%E9%9C%87%E8%8D%A1%EF%BC%8C%E5%8A%A0%E5%AF%86%E8%B4%A7%E5%B8%81%E6%A6%82%E5%BF%B5%E5%85%A8%E7%BA%BF%E8%B5%B0%E5%BC%BA' target='_blank' rel='noopener' style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>
+<b>美股三大指数红盘震荡，加密货币概念全线走强</b>
+</a> <a href='https://news.qq.com/search?query=%E7%BE%8E%E8%82%A1%E4%B8%89%E5%A4%A7%E6%8C%87%E6%95%B0%E7%BA%A2%E7%9B%98%E9%9C%87%E8%8D%A1%EF%BC%8C%E5%8A%A0%E5%AF%86%E8%B4%A7%E5%B8%81%E6%A6%82%E5%BF%B5%E5%85%A8%E7%BA%BF%E8%B5%B0%E5%BC%BA' target='_blank' rel='noopener' style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a>
+</li>
+<li style='margin:8px 0;line-height:1.55'>
+<span style='color:#b8893b;font-weight:700'>[腾讯自选股]</span> <a href='https://news.qq.com/search?query=%E5%85%AC%E5%91%8A%E7%B2%BE%E9%80%89%7C5%E8%BF%9E%E6%9D%BF%E7%BF%BB%E5%80%8D%E5%A4%A7%E7%89%9B%E8%82%A1%E4%B8%8B%E5%91%A8%E4%B8%80%E5%A4%8D%E7%89%8C' target='_blank' rel='noopener' style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>
+<b>公告精选|5连板翻倍大牛股下周一复牌</b>
+</a> <a href='https://news.qq.com/search?query=%E5%85%AC%E5%91%8A%E7%B2%BE%E9%80%89%7C5%E8%BF%9E%E6%9D%BF%E7%BF%BB%E5%80%8D%E5%A4%A7%E7%89%9B%E8%82%A1%E4%B8%8B%E5%91%A8%E4%B8%80%E5%A4%8D%E7%89%8C' target='_blank' rel='noopener' style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a>
+</li>
+<li style='margin:8px 0;line-height:1.55'>
+<span style='color:#b8893b;font-weight:700'>[大河财立方]</span> <a href='https://news.qq.com/search?query=%E9%95%BF%E6%B1%9F%E5%AD%98%E5%82%A8%E9%80%92%E4%BA%A4A%E8%82%A1%E4%B8%8A%E5%B8%82%E7%94%B3%E8%AF%B7%EF%BC%81%E6%8B%9F%E8%9E%8D%E8%B5%84330%E4%BA%BF%EF%BC%8C%E5%87%BA%E8%B4%A7%E9%87%8F%E5%B1%85%E5%9B%BD%E5%86%85%E7%AC%AC%E4%B8%80' target='_blank' rel='noopener' style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>
+<b>长江存储递交A股上市申请！拟融资330亿，出货量居国内第一</b>
+</a> <a href='https://news.qq.com/search?query=%E9%95%BF%E6%B1%9F%E5%AD%98%E5%82%A8%E9%80%92%E4%BA%A4A%E8%82%A1%E4%B8%8A%E5%B8%82%E7%94%B3%E8%AF%B7%EF%BC%81%E6%8B%9F%E8%9E%8D%E8%B5%84330%E4%BA%BF%EF%BC%8C%E5%87%BA%E8%B4%A7%E9%87%8F%E5%B1%85%E5%9B%BD%E5%86%85%E7%AC%AC%E4%B8%80' target='_blank' rel='noopener' style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a>
+</li>
+<li style='margin:8px 0;line-height:1.55'>
+<span style='color:#b8893b;font-weight:700'>[21世纪经济报道]</span> <a href='https://news.qq.com/search?query=%E7%83%AD%E9%97%A8%E4%B8%AD%E6%A6%82%E8%82%A1%E5%86%B0%E7%81%AB%E4%B8%A4%E9%87%8D%E5%A4%A9%EF%BC%8C%E7%BE%8E%E8%82%A1%E5%AD%98%E5%82%A8%E8%8A%AF%E7%89%87%E3%80%81%E5%85%89%E9%80%9A%E4%BF%A1%E8%82%A1%E8%B5%B0%E5%BC%BA' target='_blank' rel='noopener' style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>
+<b>热门中概股冰火两重天，美股存储芯片、光通信股走强</b>
+</a> <a href='https://news.qq.com/search?query=%E7%83%AD%E9%97%A8%E4%B8%AD%E6%A6%82%E8%82%A1%E5%86%B0%E7%81%AB%E4%B8%A4%E9%87%8D%E5%A4%A9%EF%BC%8C%E7%BE%8E%E8%82%A1%E5%AD%98%E5%82%A8%E8%8A%AF%E7%89%87%E3%80%81%E5%85%89%E9%80%9A%E4%BF%A1%E8%82%A1%E8%B5%B0%E5%BC%BA' target='_blank' rel='noopener' style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a>
+</li>
+<li style='margin:8px 0;line-height:1.55'>
+<span style='color:#b8893b;font-weight:700'>[央视新闻]</span> <a href='https://news.qq.com/search?query=%E5%9B%BD%E5%B8%B8%E4%BC%9A%EF%BC%9A%E7%A7%AF%E6%9E%81%E9%A1%BA%E5%BA%94%E6%96%B0%E4%B8%80%E8%BD%AE%E7%A7%91%E6%8A%80%E9%9D%A9%E5%91%BD%E8%B6%8B%E5%8A%BF%20%E6%8A%8A%E6%8F%A1%E6%96%B0%E4%B8%80%E4%BB%A3%E9%80%9A%E4%BF%A1%E7%BD%91%E5%BB%BA%E8%AE%BE%E6%9C%BA%E9%81%87' target='_blank' rel='noopener' style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>
+<b>国常会：积极顺应新一轮科技革命趋势 把握新一代通信网建设机遇</b>
+</a> <a href='https://news.qq.com/search?query=%E5%9B%BD%E5%B8%B8%E4%BC%9A%EF%BC%9A%E7%A7%AF%E6%9E%81%E9%A1%BA%E5%BA%94%E6%96%B0%E4%B8%80%E8%BD%AE%E7%A7%91%E6%8A%80%E9%9D%A9%E5%91%BD%E8%B6%8B%E5%8A%BF%20%E6%8A%8A%E6%8F%A1%E6%96%B0%E4%B8%80%E4%BB%A3%E9%80%9A%E4%BF%A1%E7%BD%91%E5%BB%BA%E8%AE%BE%E6%9C%BA%E9%81%87' target='_blank' rel='noopener' style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a>
+</li>
+<li style='margin:8px 0;line-height:1.55'>
+<span style='color:#b8893b;font-weight:700'>[环球市场播报]</span> <a href='https://news.qq.com/search?query=%E7%89%B9%E6%96%AF%E6%8B%89%E3%80%81%E4%BC%98%E6%AD%A5%E3%80%81Waymo%E8%8E%B7%E5%87%86%E5%9C%A8%E6%8B%89%E6%96%AF%E7%BB%B4%E5%8A%A0%E6%96%AF%E6%9C%80%E5%A4%9A%E6%8A%95%E6%94%BE8000%E5%8F%B0%E6%97%A0%E4%BA%BA%E5%87%BA%E7%A7%9F%E8%BD%A6' target='_blank' rel='noopener' style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>
+<b>特斯拉、优步、Waymo获准在拉斯维加斯最多投放8000台无人出租车</b>
+</a> <a href='https://news.qq.com/search?query=%E7%89%B9%E6%96%AF%E6%8B%89%E3%80%81%E4%BC%98%E6%AD%A5%E3%80%81Waymo%E8%8E%B7%E5%87%86%E5%9C%A8%E6%8B%89%E6%96%AF%E7%BB%B4%E5%8A%A0%E6%96%AF%E6%9C%80%E5%A4%9A%E6%8A%95%E6%94%BE8000%E5%8F%B0%E6%97%A0%E4%BA%BA%E5%87%BA%E7%A7%9F%E8%BD%A6' target='_blank' rel='noopener' style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a>
+</li>
+<li style='margin:8px 0;line-height:1.55'>
+<span style='color:#b8893b;font-weight:700'>[格隆汇]</span> <a href='https://news.qq.com/search?query=%E5%8D%83%E4%BA%BF%E7%BE%8E%E9%87%91%E7%9C%9F%E9%87%91%E7%99%BD%E9%93%B6%E7%A0%B8%E5%90%91%E8%82%A1%E4%B8%9C%EF%BC%8C%E5%AD%98%E5%82%A8%E8%8A%AF%E7%89%87%E6%AD%A3%E5%9C%A8%E5%8F%98%E6%88%90%E2%80%9C%E7%A7%91%E6%8A%80%E8%93%9D%E7%AD%B9%E2%80%9D' target='_blank' rel='noopener' style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>
+<b>千亿美金真金白银砸向股东，存储芯片正在变成“科技蓝筹”</b>
+</a> <a href='https://news.qq.com/search?query=%E5%8D%83%E4%BA%BF%E7%BE%8E%E9%87%91%E7%9C%9F%E9%87%91%E7%99%BD%E9%93%B6%E7%A0%B8%E5%90%91%E8%82%A1%E4%B8%9C%EF%BC%8C%E5%AD%98%E5%82%A8%E8%8A%AF%E7%89%87%E6%AD%A3%E5%9C%A8%E5%8F%98%E6%88%90%E2%80%9C%E7%A7%91%E6%8A%80%E8%93%9D%E7%AD%B9%E2%80%9D' target='_blank' rel='noopener' style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a>
+</li>
+<li style='margin:8px 0;line-height:1.55'>
+<span style='color:#b8893b;font-weight:700'>[中新经纬]</span> <a href='https://news.qq.com/search?query=%E7%BE%8E%E8%82%A1%E5%BC%80%E7%9B%98%EF%BC%9A%E4%B8%89%E5%A4%A7%E6%8C%87%E6%95%B0%E9%9B%86%E4%BD%93%E9%AB%98%E5%BC%80%EF%BC%8C%E5%AD%98%E5%82%A8%E8%8A%AF%E7%89%87%E8%82%A1%E3%80%81%E4%B8%AD%E6%A6%82%E8%82%A1%E5%A4%A7%E6%B6%A8' target='_blank' rel='noopener' style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>
+<b>美股开盘：三大指数集体高开，存储芯片股、中概股大涨</b>
+</a> <a href='https://news.qq.com/search?query=%E7%BE%8E%E8%82%A1%E5%BC%80%E7%9B%98%EF%BC%9A%E4%B8%89%E5%A4%A7%E6%8C%87%E6%95%B0%E9%9B%86%E4%BD%93%E9%AB%98%E5%BC%80%EF%BC%8C%E5%AD%98%E5%82%A8%E8%8A%AF%E7%89%87%E8%82%A1%E3%80%81%E4%B8%AD%E6%A6%82%E8%82%A1%E5%A4%A7%E6%B6%A8' target='_blank' rel='noopener' style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a>
+</li>
+<li style='margin:8px 0;line-height:1.55'>
+<span style='color:#b8893b;font-weight:700'>[财联社]</span> <a href='https://news.qq.com/search?query=%E7%AA%81%E7%A0%B44600%E7%BE%8E%E5%85%83%EF%BC%8C%E9%BB%84%E9%87%91%E7%89%9B%E5%B8%82%E8%A6%81%E5%9B%9E%E5%BD%92%EF%BC%9F%E7%9F%BF%E4%B8%9A%E5%A4%A7%E4%BD%AC%E5%96%8A%E5%87%BA5%E4%B8%87%E7%BE%8E%E5%85%83%E7%9B%AE%E6%A0%87%E4%BB%B7' target='_blank' rel='noopener' style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>
+<b>突破4600美元，黄金牛市要回归？矿业大佬喊出5万美元目标价</b>
+</a> <a href='https://news.qq.com/search?query=%E7%AA%81%E7%A0%B44600%E7%BE%8E%E5%85%83%EF%BC%8C%E9%BB%84%E9%87%91%E7%89%9B%E5%B8%82%E8%A6%81%E5%9B%9E%E5%BD%92%EF%BC%9F%E7%9F%BF%E4%B8%9A%E5%A4%A7%E4%BD%AC%E5%96%8A%E5%87%BA5%E4%B8%87%E7%BE%8E%E5%85%83%E7%9B%AE%E6%A0%87%E4%BB%B7' target='_blank' rel='noopener' style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a>
+</li>
+<li style='margin:8px 0;line-height:1.55'>
+<span style='color:#b8893b;font-weight:700'>[上交所]</span> <a href='https://news.qq.com/search?query=%E4%B8%8A%E4%BA%A4%E6%89%80%EF%BC%9A%E9%95%BF%E5%AD%98%E6%8E%A7%E8%82%A1%E7%A7%91%E5%88%9B%E6%9D%BFIPO%E5%AE%A1%E6%A0%B8%E7%8A%B6%E6%80%81%E5%8F%98%E6%9B%B4%E4%B8%BA%E2%80%9C%E5%B7%B2%E5%8F%97%E7%90%86%E2%80%9D' target='_blank' rel='noopener' style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>
+<b>上交所：长存控股科创板IPO审核状态变更为“已受理”</b>
+</a> <a href='https://news.qq.com/search?query=%E4%B8%8A%E4%BA%A4%E6%89%80%EF%BC%9A%E9%95%BF%E5%AD%98%E6%8E%A7%E8%82%A1%E7%A7%91%E5%88%9B%E6%9D%BFIPO%E5%AE%A1%E6%A0%B8%E7%8A%B6%E6%80%81%E5%8F%98%E6%9B%B4%E4%B8%BA%E2%80%9C%E5%B7%B2%E5%8F%97%E7%90%86%E2%80%9D' target='_blank' rel='noopener' style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a>
+</li>
+<li style='margin:8px 0;line-height:1.55'>
+<span style='color:#b8893b;font-weight:700'>[证券时报]</span> <a href='https://news.qq.com/search?query=%E9%87%8D%E5%A4%A7%E8%AD%A6%E6%8A%A5%EF%BC%8C%E7%BE%8E%E5%9B%BD%E5%9B%BD%E5%80%BA%E5%8F%98%E6%95%B0%E5%86%8D%E8%B5%B7%EF%BC%8C%E4%BA%94%E5%A4%A7%E9%A3%8E%E9%99%A9%E4%BF%A1%E5%8F%B7%E6%B5%AE%E7%8E%B0' target='_blank' rel='noopener' style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>
+<b>重大警报，美国国债变数再起，五大风险信号浮现</b>
+</a> <a href='https://news.qq.com/search?query=%E9%87%8D%E5%A4%A7%E8%AD%A6%E6%8A%A5%EF%BC%8C%E7%BE%8E%E5%9B%BD%E5%9B%BD%E5%80%BA%E5%8F%98%E6%95%B0%E5%86%8D%E8%B5%B7%EF%BC%8C%E4%BA%94%E5%A4%A7%E9%A3%8E%E9%99%A9%E4%BF%A1%E5%8F%B7%E6%B5%AE%E7%8E%B0' target='_blank' rel='noopener' style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a>
+</li>
+<li style='margin:8px 0;line-height:1.55'>
+<span style='color:#b8893b;font-weight:700'>[中国证券报]</span> <a href='https://news.qq.com/search?query=%E7%BE%8E%E8%82%A1%E9%AB%98%E5%BC%80%EF%BC%8C%E9%87%91%E4%BB%B7%E5%A4%A7%E6%B6%A8' target='_blank' rel='noopener' style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>
+<b>美股高开，金价大涨</b>
+</a> <a href='https://news.qq.com/search?query=%E7%BE%8E%E8%82%A1%E9%AB%98%E5%BC%80%EF%BC%8C%E9%87%91%E4%BB%B7%E5%A4%A7%E6%B6%A8' target='_blank' rel='noopener' style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a>
+</li>
+<li style='margin:8px 0;line-height:1.55'>
+<span style='color:#b8893b;font-weight:700'>[同花顺]</span> <a href='https://news.qq.com/search?query=%E6%88%91%E5%9B%BD%E7%89%B5%E5%A4%B4%E5%9B%BA%E6%80%81%E7%94%B5%E6%B1%A0%E9%A6%96%E9%A1%B9%E5%9B%BD%E9%99%85%E6%A0%87%E5%87%86%E6%AD%A3%E5%BC%8F%E7%AB%8B%E9%A1%B9%20%E6%8E%A8%E5%8A%A8%E6%96%B0%E8%83%BD%E6%BA%90%E4%BA%A7%E4%B8%9A%E5%BF%AB%E9%80%9F%E5%8F%91%E5%B1%95' target='_blank' rel='noopener' style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>
+<b>我国牵头固态电池首项国际标准正式立项 推动新能源产业快速发展</b>
+</a> <a href='https://news.qq.com/search?query=%E6%88%91%E5%9B%BD%E7%89%B5%E5%A4%B4%E5%9B%BA%E6%80%81%E7%94%B5%E6%B1%A0%E9%A6%96%E9%A1%B9%E5%9B%BD%E9%99%85%E6%A0%87%E5%87%86%E6%AD%A3%E5%BC%8F%E7%AB%8B%E9%A1%B9%20%E6%8E%A8%E5%8A%A8%E6%96%B0%E8%83%BD%E6%BA%90%E4%BA%A7%E4%B8%9A%E5%BF%AB%E9%80%9F%E5%8F%91%E5%B1%95' target='_blank' rel='noopener' style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a>
+</li>
+<li style='margin:8px 0;line-height:1.55'>
+<span style='color:#b8893b;font-weight:700'>[独角兽智库]</span> <a href='https://news.qq.com/search?query=%E4%B8%87%E4%BA%BF%E7%BA%A7%E4%BA%A7%E4%B8%9A%E5%90%AF%E8%88%AA%EF%BC%81%E9%83%A8%E7%9C%81%E8%AF%95%E7%82%B9%E8%90%BD%E5%9C%B0%EF%BC%8C6G%20%E8%BF%8E%E6%9D%A5%E6%94%BF%E7%AD%96%E6%8A%80%E6%9C%AF%E8%AE%A2%E5%8D%95%E4%B8%89%E7%BB%B4%E5%85%B1%E6%8C%AF' target='_blank' rel='noopener' style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>
+<b>万亿级产业启航！部省试点落地，6G 迎来政策技术订单三维共振</b>
+</a> <a href='https://news.qq.com/search?query=%E4%B8%87%E4%BA%BF%E7%BA%A7%E4%BA%A7%E4%B8%9A%E5%90%AF%E8%88%AA%EF%BC%81%E9%83%A8%E7%9C%81%E8%AF%95%E7%82%B9%E8%90%BD%E5%9C%B0%EF%BC%8C6G%20%E8%BF%8E%E6%9D%A5%E6%94%BF%E7%AD%96%E6%8A%80%E6%9C%AF%E8%AE%A2%E5%8D%95%E4%B8%89%E7%BB%B4%E5%85%B1%E6%8C%AF' target='_blank' rel='noopener' style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a>
+</li>
+<li style='margin:8px 0;line-height:1.55'>
+<span style='color:#b8893b;font-weight:700'>[第一财经]</span> <a href='https://news.qq.com/search?query=%E4%B8%AD%E9%99%85%E6%97%AD%E5%88%9B%E4%B8%8A%E5%8D%8A%E5%B9%B4%E5%87%80%E5%88%A9%E5%A2%9E%E8%B6%85200%25%EF%BC%8C%E2%80%9C%E6%98%93%E4%B8%AD%E5%A4%A9%E2%80%9D%E4%BA%8C%E5%AD%A3%E5%BA%A6%E4%B8%9A%E7%BB%A9%E5%88%86%E5%8C%96' target='_blank' rel='noopener' style='color:#1c2430;text-decoration:none;border-bottom:1px solid rgba(184,137,59,.35)'>
+<b>中际旭创上半年净利增超200%，“易中天”二季度业绩分化</b>
+</a> <a href='https://news.qq.com/search?query=%E4%B8%AD%E9%99%85%E6%97%AD%E5%88%9B%E4%B8%8A%E5%8D%8A%E5%B9%B4%E5%87%80%E5%88%A9%E5%A2%9E%E8%B6%85200%25%EF%BC%8C%E2%80%9C%E6%98%93%E4%B8%AD%E5%A4%A9%E2%80%9D%E4%BA%8C%E5%AD%A3%E5%BA%A6%E4%B8%9A%E7%BB%A9%E5%88%86%E5%8C%96' target='_blank' rel='noopener' style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a>
+</li>
+</ul>
+<div style='font-size:14px;font-weight:700;color:#1c2430;margin:14px 0 8px'>🔧 技术摘要与解读</div>
+<table>
+<tr>
+<th>指标</th>
+<th class='num'>数值</th>
+<th>专业解读</th>
+</tr>
+<tr>
+<td style='color:#8a929c;font-size:12px'>MACD</td>
+<td class='num' style='font-weight:700;color:#1c2430'>11.94</td>
+<td style='color:#6b7280;font-size:12px'>MACD>0，多头动能占优</td>
+</tr>
+<tr>
+<td style='color:#8a929c;font-size:12px'>DIF</td>
+<td class='num' style='font-weight:700;color:#1c2430'>0.36</td>
+<td style='color:#6b7280;font-size:12px'>DIF>DEA，金叉多头信号</td>
+</tr>
+<tr>
+<td style='color:#8a929c;font-size:12px'>DEA</td>
+<td class='num' style='font-weight:700;color:#1c2430'>-5.61</td>
+<td style='color:#6b7280;font-size:12px'>DEA 为 DIF 的 9 日平滑，中期趋势</td>
+</tr>
+<tr>
+<td style='color:#8a929c;font-size:12px'>KDJ-K</td>
+<td class='num' style='font-weight:700;color:#1c2430'>40.81</td>
+<td style='color:#6b7280;font-size:12px'>K>80 超买区，警惕回调</td>
+</tr>
+<tr>
+<td style='color:#8a929c;font-size:12px'>KDJ-D</td>
+<td class='num' style='font-weight:700;color:#1c2430'>59.68</td>
+<td style='color:#6b7280;font-size:12px'>D 线为 K 线平滑，慢速随机</td>
+</tr>
+<tr>
+<td style='color:#8a929c;font-size:12px'>KDJ-J</td>
+<td class='num' style='font-weight:700;color:#1c2430'>3.08</td>
+<td style='color:#6b7280;font-size:12px'>J 线放大 K/D 乖离，极端值提示转折</td>
+</tr>
+<tr>
+<td style='color:#8a929c;font-size:12px'>RSI6</td>
+<td class='num' style='font-weight:700;color:#1c2430'>44.51</td>
+<td style='color:#6b7280;font-size:12px'>RSI6 中性区域</td>
+</tr>
+<tr>
+<td style='color:#8a929c;font-size:12px'>MA5</td>
+<td class='num' style='font-weight:700;color:#1c2430'>3,935.26</td>
+<td style='color:#6b7280;font-size:12px'>短周期在 MA20 上方，短期偏多</td>
+</tr>
+<tr>
+<td style='color:#8a929c;font-size:12px'>MA20</td>
+<td class='num' style='font-weight:700;color:#1c2430'>3,893.28</td>
+<td style='color:#6b7280;font-size:12px'>20 日均线，中期趋势参考</td>
+</tr>
+<tr>
+<td style='color:#8a929c;font-size:12px'>MA60</td>
+<td class='num' style='font-weight:700;color:#1c2430'>3,970.37</td>
+<td style='color:#6b7280;font-size:12px'>60 日均线，中长期趋势参考</td>
+</tr>
+<tr>
+<td style='color:#8a929c;font-size:12px'>布林下轨</td>
+<td class='num' style='font-weight:700;color:#1c2430'>3,773.88</td>
+<td style='color:#6b7280;font-size:12px'>弱势支撑位</td>
+</tr>
+<tr>
+<td style='color:#8a929c;font-size:12px'>布林中轨</td>
+<td class='num' style='font-weight:700;color:#1c2430'>3,893.28</td>
+<td style='color:#6b7280;font-size:12px'>多空分水岭</td>
+</tr>
+<tr>
+<td style='color:#8a929c;font-size:12px'>布林上轨</td>
+<td class='num' style='font-weight:700;color:#1c2430'>4,012.67</td>
+<td style='color:#6b7280;font-size:12px'>强势压力位</td>
+</tr>
+</table>
+<div class='amberbox'>
+<div style='margin-bottom:8px'>
+<b>📌 专业点评：</b>缩量，情绪狂热，普涨，小盘主导，均衡，偏高区间，涨跌比 0.88，短期。</div>
+<div style='border-top:1px dashed rgba(201,166,107,.25);padding-top:8px'>
+<b>🔮 次日展望：</b>量能收窄，明日大概率维持震荡；MACD 红柱/正值；DIF 上穿 DEA，短期偏多；KDJ 超买，短线有回调压力；MA5 在 MA20 上方；情绪偏高，次日分歧可能加大；估值处于历史高位，追高风险大。</div>
+</div>
+</div>
+<div class='section'>
+<h2>🔥 板块热度 — 2026-08-21 收盘</h2>
+<div>
+<span class='tag hot'>铜 +6.63%</span>
+<span class='tag hot'>肿瘤疫苗 +6.24%</span>
+<span class='tag hot'>焦练煤 +5.90%</span>
+<span class='tag hot'>汽车制造 +4.66%</span>
+<span class='tag hot'>贵金属 +4.64%</span>
+<span class='tag hot'>能源金属 +4.60%</span>
+<span class='tag hot'>铀 +4.35%</span>
+<span class='tag hot'>其他贵金属与采矿 +4.30%</span>
+<span class='tag hot'>医疗设施 +3.77%</span>
+<span class='tag hot'>通信设备 +2.98%</span>
+<span class='tag hot'>元件 +2.80%</span>
+<span class='tag hot'>有色金属 +2.72%</span>
+<span class='tag hot'>通信 +2.47%</span>
+<span class='tag hot'>工业金属 +2.42%</span>
+<span class='tag hot'>航运港口 +2.42%</span>
+<span class='tag hot'>黄金概念 +2.33%</span>
+<span class='tag hot'>铜概念 +2.24%</span>
+<span class='tag hot'>MLCC +1.90%</span>
+</div>
+<div class='note'>共 48 个板块入选排行；领涨：铜 +6.63%、肿瘤疫苗 +6.24%、焦练煤 +5.90%；领跌：创新药 -3.78%、化学制药 -4.33%、种植业 -4.81%（数据来源：腾讯自选股板块排行）。</div>
+</div>
+<div class='section'>
+<h2>👑 当日连板梯队（多口径）— 2026-08-21</h2>
+<div class='note' style='color:#8a929c'>口径：全市场连续涨停天数（westock-mcp tool_ranking limitup_days）。共 58 只。</div>
+<div class='ladder'>
+<span class='badge b4'>4连板</span>
+<span style='color:#8a929c;font-size:11px'>(0只)</span>：</div>
+<div class='ladder'>
+<span class='badge b3'>3连板</span>
+<span style='color:#8a929c;font-size:11px'>(2只)</span>：<span class='namechip'>*ST威领</span>
+<span class='namechip'>汉森制药</span>
+</div>
+<div class='ladder'>
+<span class='badge b2'>2连板</span>
+<span style='color:#8a929c;font-size:11px'>(11只)</span>：<span class='namechip'>键凯科技</span>
+<span class='namechip'>深中华A</span>
+<span class='namechip'>贝瑞基因</span>
+<span class='namechip'>康希诺</span>
+<span class='namechip'>宇环数控</span>
+<span class='namechip'>近岸蛋白</span>
+<span class='namechip'>双鹭药业</span>
+<span class='namechip'>科森科技</span>
+<span class='namechip'>通鼎互联</span>
+<span class='namechip'>哈森股份</span>
+<span class='namechip'>中 关 村</span>
+</div>
+<div class='ladder'>
+<span class='badge b1'>首板</span>
+<span style='color:#8a929c;font-size:11px'>(45只)</span>：<span class='namechip'>中瓷电子</span>
+<span class='namechip'>飞龙股份</span>
+<span class='namechip'>新华百货</span>
+<span class='namechip'>精达股份</span>
+<span class='namechip'>*ST四通</span>
+<span class='namechip'>国光电器</span>
+<span class='namechip'>可川科技</span>
+<span class='namechip'>共达电声</span>
+<span class='namechip'>圣达生物</span>
+<span class='namechip'>沃特股份</span>
+<span class='namechip'>达 意 隆</span>
+<span class='namechip'>湖南白银</span>
+<span class='namechip'>豪美新材</span>
+<span class='namechip'>博汇股份</span>
+<span class='namechip'>勤上股份</span>
+<span class='namechip'>高新发展</span> …等共 45 只</div>
+<div class='note'>资金龙头 / 板块龙头（按龙虎榜净买排序）见下方龙虎榜速览与龙虎榜分析页。</div>
+</div>
+<div class='section'>
+<h2>🐉 龙虎榜速览 — 2026-08-21</h2>
+<div class='amberbox' style='color:#1c2430'>
+<b>机构净买 TOP3</b>：山东黄金(4.11亿)、中瓷电子(3.06亿)、沃森生物(2.75亿)<br>
+<b>游资净买 TOP 席位</b>：深股通专用(9.01亿)、国泰海通证券北京知春路(2.75亿)、中国银河证券北京学院南路(2.17亿)<br>
+<b>连板高度</b>：*ST威领、汉森制药 3板，共 58 只<br>
+<b>机构+游资共振</b>：山东黄金(5.85亿) 等 36 只</div>
+<div style='margin-top:6px'>
+<a class='inlink' href='lhb.html'>龙虎榜分析页(机构榜/共振/胜率) →</a>
+<a class='inlink' href='hotmoney.html'>游资看板(席位净买/胜率) →</a>
+<a class='inlink' href='../index.html'>返回总门户 →</a>
+</div>
+</div>
+<footer>本报告由 A 股量化助理自动化生成 · 数据仅供参考，不构成投资建议 · 市场有风险，投资需谨慎</footer>
+</div>
+</body>
+</html>
