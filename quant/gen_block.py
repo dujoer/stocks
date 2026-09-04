@@ -26,12 +26,29 @@ INST_FLAG = "机构专用"  # 买方/卖方营业部含此字样即视为机构�
 
 
 def load_quotes(path):
-    """data_quote 落盘文件：{date, code: {name, price, change_percent}, ...}"""
+    """data_quote 落盘文件，支持两种格式：
+       A) {code: {name, price, change_percent}, ...}
+       B) westock data_quote 原始返回 {ok:true, data:{code:{name,price,change_percent,...}}}
+    只抽取 name / price / change_percent 三字段。"""
     if not path or not os.path.exists(path):
         return {}
     d = json.load(open(path, encoding="utf-8"))
-    d.pop("date", None)
-    return d
+    inner = d
+    if isinstance(d, dict):
+        if isinstance(d.get("data"), dict):
+            inner = d["data"]
+    if not isinstance(inner, dict):
+        return {}
+    out = {}
+    for code, info in inner.items():
+        if not isinstance(info, dict):
+            continue
+        out[code] = {
+            "name": info.get("name"),
+            "price": info.get("price"),
+            "change_percent": info.get("change_percent"),
+        }
+    return out
 
 
 def main():
