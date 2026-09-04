@@ -90,6 +90,7 @@ lhb_d, _ = latest(r"^lhb_(\d{4}-\d{2}-\d{2})\.html$", WEB)
 sec_d, _ = latest(r"^sector-strength-(\d{8})\.html$", WEB)
 psy_d, _ = latest(r"^crowd-psychology-risk-radar-(\d{8})\.html$", MT)
 exec_d, _ = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(QUANT, "exec_chg"))
+blk_d, _ = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(QUANT, "block_chg"))
 
 
 # ---------------- 各版块实时统计 ----------------
@@ -134,6 +135,24 @@ def stat_exec():
         "sell": sell,
         "net": net,
         "days": len(d.get("byDate", {})) if isinstance(d.get("byDate"), dict) else None,
+    }
+
+
+def stat_block():
+    """大宗交易：笔数、股票数、成交额、平均折溢价、折价/溢价、机构买方"""
+    if not blk_d:
+        return {}
+    d = load_json(os.path.join(QUANT, "block_chg", f"{blk_d}.json"))
+    if not d:
+        return {}
+    return {
+        "recs": d.get("count"),
+        "stocks": d.get("stockCount"),
+        "total": d.get("totalValue"),
+        "avg": d.get("avgDiscount"),
+        "disc": d.get("discCount"),
+        "prem": d.get("premCount"),
+        "inst": d.get("instBuyCount"),
     }
 
 
@@ -189,6 +208,7 @@ def stat_sector():
 
 s_lhb = stat_lhb()
 s_exec = stat_exec()
+s_blk = stat_block()
 s_sec = stat_sector()
 
 
@@ -221,6 +241,15 @@ exec_stats = stat_line([
     ("增持 / 减持", f"{s_exec.get('buy', '—')} / {s_exec.get('sell', '—')} 笔"),
     ("合计净额", (f"{yi(s_exec['net'])} 亿元" if s_exec.get("net") is not None else "—")),
     ("披露日跨度", f"{s_exec.get('days', '—')} 个" if s_exec.get("days") else "—"),
+])
+
+blk_stats = stat_line([
+    ("成交笔数", f"{s_blk.get('recs', '—')} 笔"),
+    ("涉及股票", f"{s_blk.get('stocks', '—')} 只"),
+    ("合计成交额", (f"{yi(s_blk['total'])} 亿元" if s_blk.get("total") else "—")),
+    ("平均折溢价", (f"{s_blk['avg']}%" if s_blk.get("avg") is not None else "—")),
+    ("折价 / 溢价", f"{s_blk.get('disc', '—')} / {s_blk.get('prem', '—')} 笔"),
+    ("机构买入", f"{s_blk.get('inst', '—')} 笔"),
 ])
 
 sec_act = s_sec.get("act", {})
@@ -269,6 +298,24 @@ SECTIONS = [
         "notes": "T+1 口径：接口快照日为前一交易日，公司晚间公告次日才纳入。按 DeclareDate 可切严格每日口径。",
         "files": ["web/exec.html", f"quant/exec_chg/{fmt(exec_d)}.json"],
         "stats": exec_stats,
+    },
+    {
+        "ic": "🧾", "name": "大宗交易", "href": "block.html",
+        "date": fmt(blk_d), "badge": freshness(blk_d),
+        "desc": "全市场大宗交易逐笔扫描（T 日口径）：看谁在折价出货、谁在溢价接盘、机构席位在买还是在卖。",
+        "modules": chips([
+            "概览（笔数/股票数/成交额/平均折溢价/折价·溢价/机构买入）",
+            "个股聚合（按成交额）", "逐笔明细（按成交额）",
+            "筛选：全部 / 机构买入 / 溢价成交", "每日归档 + 日期导航",
+        ]),
+        "sources": chips(["tool_event(block_past_30)", "data_quote(补涨跌幅)"]),
+        "cadence": "每个交易日必跑",
+        "cadence_cls": "must",
+        "notes": "⚠ <code>limit</code> 必须给足：默认 500 会截断当日数据（实测 09-04 当日 500 档仅 32 条、3000 档 158 条）。"
+                 "折溢价相对当日收盘价，正=折价、负=溢价。",
+        "files": ["web/block.html", f"web/block_{fmt(blk_d)}.html",
+                  f"quant/block_chg/{fmt(blk_d)}.json"],
+        "stats": blk_stats,
     },
     {
         "ic": "🔥", "name": "板块强度", "href": "sector-strength-index.html",
@@ -481,7 +528,7 @@ os.makedirs(WEB, exist_ok=True)
 with open(OUT, "w", encoding="utf-8") as f:
     f.write(html)
 print(f"OK -> {OUT}")
-print(f"    龙虎榜={fmt(lhb_d)} | 高管增减持={fmt(exec_d)} | 板块强度={fmt(sec_d)} | 心理雷达={fmt(psy_d)}")
+print(f"    龙虎榜={fmt(lhb_d)} | 高管增减持={fmt(exec_d)} | 大宗交易={fmt(blk_d)} | 板块强度={fmt(sec_d)} | 心理雷达={fmt(psy_d)}")
 
 # ---- 幂等注入：龙虎榜索引页加入口 ----
 idx = os.path.join(WEB, "index.html")
