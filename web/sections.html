@@ -71,7 +71,7 @@ footer { margin-top:46px; padding-top:18px; border-top:1px solid #e3e7ec;
 </head>
 <body>
 <div class='wrap'>
-<div class='topnav'><a href='daily_overview.html'>每日总览</a><a href='lhb.html'>龙虎榜分析</a><a href='hotmoney.html'>游资看板</a><a href='sector-strength-index.html'>板块强度</a><a href='exec.html'>高管增减持</a><a href='sections.html'>版块总览</a><a href='../index.html'>返回主页</a></div>
+<div class='topnav'><a href='daily_overview.html'>每日总览</a><a href='lhb.html'>龙虎榜分析</a><a href='hotmoney.html'>游资看板</a><a href='sector-strength-index.html'>板块强度</a><a href='exec.html'>高管增减持</a><a href='block.html'>大宗交易</a><a href='sections.html'>版块总览</a><a href='../index.html'>返回主页</a></div>
 
 <header class='top'>
   <h1>📦 版块总览</h1>
@@ -125,6 +125,24 @@ footer { margin-top:46px; padding-top:18px; border-top:1px solid #e3e7ec;
     <span class='cad must'>每个交易日必跑</span></div></div>
   <div class='row'><div class='lab'>口径要点</div><div class='val note2'>T+1 口径：接口快照日为前一交易日，公司晚间公告次日才纳入。按 DeclareDate 可切严格每日口径。</div></div>
   <div class='row'><div class='lab'>产出文件</div><div class='val files'><code>web/exec.html</code><code>quant/exec_chg/2026-09-03.json</code></div></div>
+</div>
+<div class='sec'>
+  <div class='sechead'>
+    <span class='sic'>🧾</span>
+    <div class='stitle'>
+      <a href='block.html'>大宗交易</a>
+    </div>
+    <span class='badge fresh'>今日</span>
+    <span class='bdate'>数据截至 2026-09-04</span>
+  </div>
+  <div class='sdesc'>全市场大宗交易逐笔扫描（T 日口径）：看谁在折价出货、谁在溢价接盘、机构席位在买还是在卖。</div>
+  <div class='kvs'><div class='kv'><span class='k'>成交笔数</span><span class='v'>158 笔</span></div><div class='kv'><span class='k'>涉及股票</span><span class='v'>40 只</span></div><div class='kv'><span class='k'>合计成交额</span><span class='v'>18.42 亿元</span></div><div class='kv'><span class='k'>平均折溢价</span><span class='v'>8.338%</span></div><div class='kv'><span class='k'>折价 / 溢价</span><span class='v'>145 / 4 笔</span></div><div class='kv'><span class='k'>机构买入</span><span class='v'>58 笔</span></div></div>
+  <div class='row'><div class='lab'>内容模块</div><div class='val'><span class='chip'>概览（笔数/股票数/成交额/平均折溢价/折价·溢价/机构买入）</span><span class='chip'>个股聚合（按成交额）</span><span class='chip'>逐笔明细（按成交额）</span><span class='chip'>筛选：全部 / 机构买入 / 溢价成交</span><span class='chip'>每日归档 + 日期导航</span></div></div>
+  <div class='row'><div class='lab'>数据来源</div><div class='val'><span class='chip'>tool_event(block_past_30)</span><span class='chip'>data_quote(补涨跌幅)</span></div></div>
+  <div class='row'><div class='lab'>更新节奏</div><div class='val'>
+    <span class='cad must'>每个交易日必跑</span></div></div>
+  <div class='row'><div class='lab'>口径要点</div><div class='val note2'>⚠ <code>limit</code> 必须给足：默认 500 会截断当日数据（实测 09-04 当日 500 档仅 32 条、3000 档 158 条）。折溢价相对当日收盘价，正=折价、负=溢价。</div></div>
+  <div class='row'><div class='lab'>产出文件</div><div class='val files'><code>web/block.html</code><code>web/block_2026-09-04.html</code><code>quant/block_chg/2026-09-04.json</code></div></div>
 </div>
 <div class='sec'>
   <div class='sechead'>
