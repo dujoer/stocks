@@ -7,12 +7,15 @@
   python build_sector_index.py --trend quant/sector_trend.json --output ../web/sector-strength-index.html
 """
 import argparse, json, os, glob
+from _nav import selfcontained_nav
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 WEB = os.path.normpath(os.path.join(ROOT, "..", "web"))
+WEB_SECTOR = os.path.join(WEB, "sector")
 
 
 def build_html(trend):
+    NAV = selfcontained_nav("sector", home="../../index.html")
     trend_sorted = sorted(trend, key=lambda t: t["date"], reverse=True)
     latest = trend_sorted[0] if trend_sorted else None
     cards = []
@@ -75,6 +78,7 @@ h1{font-size:23px;margin:0 0 2px;letter-spacing:.5px}
 </style>
 </head>
 <body>
+""" + NAV + """
 <h1>A股板块强度 <span style="color:var(--gold)">看板中心</span></h1>
 <div class="sub">暗盘资金 = 主力 − 散户 ｜ 板块强度 = 暗盘 ÷ 总成交额 × 100 ｜ 每日盘后真实快照累积</div>
 <div class="hero">
@@ -108,7 +112,7 @@ def main():
     ap.add_argument("--output", default=None)
     args = ap.parse_args()
     trend = json.load(open(args.trend, encoding="utf-8"))
-    out = args.output or os.path.join(WEB, "sector-strength-index.html")
+    out = args.output or os.path.join(WEB_SECTOR, "sector-strength-index.html")
     os.makedirs(os.path.dirname(out), exist_ok=True)
     open(out, "w", encoding="utf-8").write(build_html(trend))
     print(f"[ok] 首页索引 -> {out} ({len(trend)} 个每日入口)")
