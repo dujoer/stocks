@@ -310,6 +310,35 @@ def main():
     net_cls = "buy" if net > 0 else "sell"
     net_txt = ("净增持" if net > 0 else "净减持")
 
+    # ---- 知名牛散/私募 与高管增减持 共现重点标注（来自 Q2 十大股东快照交叉核对）----
+    xref_section = ""
+    xref_path = os.path.join(Q, "exec_elite_xref.json")
+    if os.path.exists(xref_path):
+        try:
+            _xr = json.load(open(xref_path, encoding="utf-8"))
+            _rows = []
+            for _it in _xr.get("items", []):
+                _cls = "badge-b" if "私募" in (_it.get("type") or "") else "badge-s"
+                _rows.append(
+                    f"<tr><td style='padding:8px;border-bottom:1px solid #eef0f3'><b>{_it['name']}</b></td>"
+                    f"<td style='padding:8px;border-bottom:1px solid #eef0f3'>{'、'.join(_it['stocks'])}</td>"
+                    f"<td style='padding:8px;border-bottom:1px solid #eef0f3'><span class='{_cls}'>{_it['type']}</span></td></tr>"
+                )
+            if _rows:
+                xref_section = (
+                    "<div class='section'>\n"
+                    "  <h2>知名牛散 / 私募 · 关联重点标注</h2>\n"
+                    "  <div class='note'>以下知名主体同时现身于「近 1 月高管增减持」个股的<b>前十大流通股东</b>（交叉核对自 Q2 十大股东快照）。按需求，与高管增持有关系的主体在此重点标注；完整「行业知名 Top20 私募 / 牛散」玩家图谱见 <a href='../shareholder/top-elite.html'>行业知名 Top20 页面</a>。</div>\n"
+                    "  <table style='width:100%;border-collapse:collapse;margin-top:8px;font-size:13px'>\n"
+                    "    <thead><tr><th style='text-align:left;padding:8px;border-bottom:2px solid #e7e9ee'>知名主体</th><th style='text-align:left;padding:8px;border-bottom:2px solid #e7e9ee'>关联个股（亦现高管增减持）</th><th style='text-align:left;padding:8px;border-bottom:2px solid #e7e9ee'>类型</th></tr></thead>\n"
+                    "    <tbody>" + "".join(_rows) + "</tbody>\n"
+                    "  </table>\n"
+                    "  <div class='note' style='margin-top:10px'>说明：本表仅列出「与高管增减持个股存在共现」的知名主体；其余 Top20 主体（无直接共现）统一收录于上方链接的玩家图谱页。以上为公开信息交叉核对，<b>不构成任何投资建议</b>。</div>\n"
+                    "</div>\n"
+                )
+        except Exception:
+            xref_section = ""
+
     html = f"""<!DOCTYPE html>
 <html lang='zh-CN'>
 <head>
@@ -409,7 +438,7 @@ def main():
     <thead><tr>{base_th}</tr></thead><tbody>{t_all}</tbody></table></div></div>
 </div>
 
-<footer>
+{xref_section}<footer>
 数据来源：腾讯自选股 <b>westock-mcp</b>（上市公司公开披露的董监高持股变动，盘后数据、存在披露滞后）。<br>
 本页面由 A股量化助理自动生成 · 仅供参考，<b>不构成投资建议</b> · 市场有风险，投资需谨慎。
 </footer>
