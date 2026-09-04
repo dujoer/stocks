@@ -2,7 +2,7 @@
 """
 高管（董监高）增减持 · 看板生成
 --------------------------------
-读取 quant/exec_chg/{DATE}.json，生成自包含 HTML：web/exec.html
+读取 quant/exec_chg/{DATE}.json，生成自包含 HTML：web/exec/index.html
 风格与 web/lhb.html 保持一致（深色 + 金色点缀，涨红跌绿）。
 
 版块内容：
@@ -22,6 +22,7 @@ from _nav import topnav
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 Q = os.path.join(ROOT, "quant")
 WEB = os.path.join(ROOT, "web")
+WEB_EXEC = os.path.join(WEB, "exec")
 
 CSS = """* { box-sizing: border-box; }
 body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
@@ -320,7 +321,7 @@ def main():
 <body>
 <div class='wrap'>
 
-{topnav()}
+{topnav("exec")}
 
 <header>
   <h1>高管增减持（董监高）</h1>
@@ -418,28 +419,12 @@ def main():
 </html>
 """
 
-    os.makedirs(WEB, exist_ok=True)
-    dst = os.path.join(WEB, "exec.html")
+    os.makedirs(WEB_EXEC, exist_ok=True)
+    dst = os.path.join(WEB_EXEC, "index.html")
     with open(dst, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"OK -> {dst}")
     print(f"    记录 {len(recs)}（增持 {len(buy)} / 减持 {len(sell)}）｜股票 {d['stockCount']} 只｜净额 {wan(net)} 万元")
-
-    # ---- 幂等注入导航：龙虎榜索引页加入口（build_dashboards 重建后重跑本脚本即可补回）----
-    idx = os.path.join(WEB, "index.html")
-    if os.path.exists(idx):
-        s = open(idx, encoding="utf-8").read()
-        if "exec.html" not in s:
-            anchor = "← 返回 A股分析中心总门户</a>"
-            if anchor in s:
-                s = s.replace(anchor, anchor + "\n<a href='exec.html'>高管增减持</a>", 1)
-                with open(idx, "w", encoding="utf-8") as f:
-                    f.write(s)
-                print("    导航注入 -> web/index.html（高管增减持）")
-            else:
-                print("    ⚠ web/index.html 未找到导航锚点，跳过注入")
-        else:
-            print("    导航已存在，跳过注入")
 
 
 if __name__ == "__main__":
