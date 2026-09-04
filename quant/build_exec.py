@@ -52,6 +52,11 @@ header p { margin:4px 0; color:#8a929c; font-size:13px; line-height:1.6; }
 .chiprow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
 .chip { background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06); border-radius:12px;
   padding:10px 8px; text-align:center; min-width:96px; backdrop-filter:blur(6px); box-shadow:0 1px 3px rgba(20,30,50,.04); }
+.chip-ind { cursor:pointer; transition:.18s; }
+.chip-ind:hover { background:rgba(184,137,59,.10); transform:translateY(-1px); }
+.chip-ind.on { background:rgba(184,137,59,.18); border-color:rgba(184,137,59,.50); box-shadow:0 2px 6px rgba(184,137,59,.18); }
+.chip-all { background:rgba(184,137,59,.10); border-color:rgba(184,137,59,.30); }
+.chip-all:hover { background:rgba(184,137,59,.18); }
 .chip .ck { font-size:10px; color:#8a929c; }
 .chip .cv { font-size:15px; font-weight:800; margin-top:3px; }
 .chip .cs { font-size:10px; margin-top:2px; }
@@ -84,7 +89,7 @@ footer { margin-top:34px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08)
 
 JS = """
 function switchTab(id){
-  document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('on', t.dataset.tab===id); });
+  document.querySelectorAll('.tab[data-tab]').forEach(function(t){ t.classList.toggle('on', t.dataset.tab===id); });
   document.querySelectorAll('.pane').forEach(function(p){ p.classList.toggle('hide', p.id!==id); });
 }
 function setDir(v){
@@ -93,9 +98,32 @@ function setDir(v){
   document.querySelectorAll('tr[data-dir]').forEach(function(tr){
     tr.classList.toggle('hide', !(v==='all' || tr.dataset.dir===v));
   });
+  // 方向变化时也要尊重行业筛选（已选行业时，非该行业行继续隐藏）
+  if (window.__ind) applyIndustry();
+}
+function filterIndustry(name){
+  window.__ind = (window.__ind===name ? null : name);
+  applyIndustry();
+}
+function clearIndustry(){
+  window.__ind = null;
+  document.querySelectorAll('.chip-ind').forEach(function(c){ c.classList.toggle('on', false); });
+  document.querySelectorAll('tr[data-sw1]').forEach(function(tr){ tr.classList.remove('hide'); });
+  // 行业重置后仍尊重方向筛选
+  if (window.__dir && window.__dir!=='all') setDir(window.__dir);
+}
+function applyIndustry(){
+  var ind = window.__ind;
+  document.querySelectorAll('.chip-ind').forEach(function(c){ c.classList.toggle('on', c.dataset.industry===ind); });
+  document.querySelectorAll('tr[data-sw1]').forEach(function(tr){
+    var sw = tr.dataset.sw1;
+    var dirMatch = (!window.__dir || window.__dir==='all' || tr.dataset.dir===window.__dir);
+    var indMatch = (!ind || sw===ind);
+    tr.classList.toggle('hide', !(dirMatch && indMatch));
+  });
 }
 document.addEventListener('DOMContentLoaded', function(){
-  var t0 = document.querySelector('.tab'); if(t0) switchTab(t0.dataset.tab);
+  var t0 = document.querySelector('.tab[data-tab]'); if(t0) switchTab(t0.dataset.tab);
   var f0 = document.querySelector('.fbtn'); if(f0) setDir('all');
 });
 """
@@ -162,7 +190,8 @@ def main():
     sw1_sorted = sorted(by_sw1.items(), key=lambda kv: -(kv[1]["b"] + kv[1]["s"]))[:18]
 
     chips = "\n".join(
-        f"<div class='chip'><div class='ck'>{k}</div>"
+        f"<div class='chip chip-ind' data-industry='{k}' onclick='filterIndustry(this.dataset.industry)' title='点击仅看「{k}」行业'>"
+        f"<div class='ck'>{k}</div>"
         f"<div class='cv'>{wan(v['b']+v['s'])}<span style='font-size:10px;color:#8a929c'> 万</span></div>"
         f"<div class='cs'><span class='buy'>+{wan(v['b'])}</span> / <span class='sell'>-{wan(v['s'])}</span></div></div>"
         for k, v in sw1_sorted
@@ -195,7 +224,7 @@ def main():
                     else "<span class='badge-s'>减持</span>")
             mgr = f"<td>{r['manager']}</td>" if show_manager else ""
             out.append(
-                f"<tr data-dir='{'b' if r['dir']=='增持' else 's'}'>"
+                f"<tr data-dir='{'b' if r['dir']=='增持' else 's'}' data-sw1='{r.get('sw1') or '其他'}'>"
                 f"<td><b>{r['name']}</b></td><td style='color:#8a929c;font-size:12px'>{r['code']}</td>"
                 f"<td>{r.get('sw1') or '—'}</td>"
                 f"<td style='color:#6b7280;font-size:12px'>{r.get('sw2') or '—'}</td>"
@@ -214,6 +243,12 @@ def main():
                "<th class='num'>变动股数(万股)</th><th class='num'>均价(元)</th>"
                "<th class='num'>变动金额(万元)</th><th>披露日</th><th class='num'>当日涨跌</th>")
 
+    # 披露日范围（辅助 meta 显示；2026-08-01/08-02 为周末无变动）
+    decl_dates = sorted(set(r["declare"] for r in recs))
+    date_range_txt = (f"{fmt_date(decl_dates[0])} → {fmt_date(decl_dates[-1])}"
+                      if decl_dates else "—")
+    date_window_days = len(decl_dates)
+
     # 最新披露日
     latest_recs = [r for r in recs if r["declare"] == latest]
     latest_recs.sort(key=lambda r: -r["amount"])
@@ -228,7 +263,7 @@ def main():
     for a in agg[:80]:
         net_cls = "buy" if a["net"] > 0 else ("sell" if a["net"] < 0 else "")
         agg_rows.append(
-            f"<tr data-dir='{'b' if a['net']>0 else 's'}'>"
+            f"<tr data-dir='{'b' if a['net']>0 else 's'}' data-sw1='{a['sw1'] or '其他'}'>"
             f"<td><b>{a['name']}</b></td><td style='color:#8a929c;font-size:12px'>{a['code']}</td>"
             f"<td>{a['sw1'] or '—'}</td>"
             f"<td style='color:#6b7280;font-size:12px'>{a['sw2'] or '—'}</td>"
@@ -266,8 +301,9 @@ def main():
 <div class='meta'>
 采集日 <b>{DATE}</b> ｜ 接口快照日 <b>{d.get('snapDate')}</b> ｜ 最新披露日 <b>{fmt_date(latest)}</b><br>
 数据口径：westock 事件 <b>董监高增减持（近 1 个月窗口）</b>，共 <b>{d['count']}</b> 条变动记录，
-覆盖 <b>{d['stockCount']}</b> 只股票、<b>{len(d['byDate'])}</b> 个披露交易日；行业取自申万一/二级分类。
-「当日涨跌」为采集日行情快照，非变动当日涨跌。
+覆盖 <b>{d['stockCount']}</b> 只股票、<b>{date_window_days}</b> 个披露交易日（<b>{date_range_txt}</b>）；行业取自申万一/二级分类。
+「当日涨跌」为采集日行情快照，非变动当日涨跌。<br>
+<b>8.1 起的增减持已完整收录</b>（08-01/08-02 为周末无变动披露，最早一笔自 08-03 起）；如需查询更早，需补一次更早的快照。
 </div>
 
 <div class='section'>
@@ -291,25 +327,32 @@ def main():
 
 <div class='section'>
   <h2>行业分布（申万一级 · 按增减持金额合计）</h2>
-  <div class='chiprow'>{chips}</div>
+  <div class='chiprow'>
+    <div class='chip chip-ind chip-all' data-industry='__all__' onclick='clearIndustry()' title='清除行业筛选'>
+      <div class='ck'>全部行业</div>
+      <div class='cv' style='font-size:13px'>{len(set(r.get('sw1') or '其他' for r in recs))} 个</div>
+      <div class='cs'><span style='color:#8a929c'>点击重置</span></div>
+    </div>
+    {chips}
+  </div>
   <div class='note'>每格：行业 ｜ 增减持金额合计（万元）｜ <span class='buy'>增持</span> / <span class='sell'>减持</span> 分项（万元）。
-仅列金额合计最高的 18 个行业。</div>
+  <b>点击任一行业卡片</b>可仅看该行业记录；点「全部行业」或再次点击同一卡片可重置。仅列金额合计最高的 18 个行业。</div>
 </div>
 
 <div class='section'>
   <h2>明细</h2>
   <div class='tabs'>
-    <div class='tab' data-tab='p_latest'>最新披露日（{fmt_date(latest)} · {len(latest_recs)} 条）</div>
-    <div class='tab' data-tab='p_buy'>增持榜 Top60</div>
-    <div class='tab' data-tab='p_sell'>减持榜 Top60</div>
-    <div class='tab' data-tab='p_agg'>个股聚合 Top80</div>
-    <div class='tab' data-tab='p_all'>全部明细（{len(recs)} 条）</div>
+    <div class='tab' data-tab='p_latest' onclick='switchTab("p_latest")'>最新披露日（{fmt_date(latest)} · {len(latest_recs)} 条）</div>
+    <div class='tab' data-tab='p_buy' onclick='switchTab("p_buy")'>增持榜 Top60</div>
+    <div class='tab' data-tab='p_sell' onclick='switchTab("p_sell")'>减持榜 Top60</div>
+    <div class='tab' data-tab='p_agg' onclick='switchTab("p_agg")'>个股聚合 Top80</div>
+    <div class='tab' data-tab='p_all' onclick='switchTab("p_all")'>全部明细（{len(recs)} 条）</div>
   </div>
   <div class='filters'>
     <span class='lb'>方向筛选：</span>
-    <div class='tab fbtn' data-dir='all'>全部</div>
-    <div class='tab fbtn' data-dir='b'>仅增持</div>
-    <div class='tab fbtn' data-dir='s'>仅减持</div>
+    <div class='tab fbtn' data-dir='all' onclick='setDir("all")'>全部</div>
+    <div class='tab fbtn' data-dir='b' onclick='setDir("b")'>仅增持</div>
+    <div class='tab fbtn' data-dir='s' onclick='setDir("s")'>仅减持</div>
   </div>
 
   <div class='pane' id='p_latest'><div class='scroll'><table>
