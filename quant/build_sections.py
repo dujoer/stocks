@@ -364,6 +364,21 @@ SECTIONS = [
         "files": ["web/shareholder/2026-q2-industry-elite.html"],
         "stats": "",
     },
+    {
+        "ic": "🌟", "name": "行业知名 Top20 私募 / 牛散", "href": "../shareholder/top-elite.html",
+        "date": "2026-09-04", "badge": ("策划", "warn"),
+        "desc": "按行业知名度与历史业绩策划的私募 / 牛散 Top20 玩家图谱（非短期收益胜率），并交叉标注与高管增减持共现的知名主体。",
+        "modules": chips([
+            "私募 Top20（头部机构）", "牛散 Top20（知名大户）",
+            "行业聚焦 / 投资风格", "高管增减持共现重点标注",
+        ]),
+        "sources": chips(["公开信息整理", "Q2 十大股东 + 高管增减持交叉核对"]),
+        "cadence": "按需更新",
+        "cadence_cls": "opt",
+        "notes": "口径为行业知名度与公开业绩，非收益胜率；不构成投资建议。",
+        "files": ["web/shareholder/top-elite.html"],
+        "stats": "",
+    },
 ]
 
 sec_html = ""
