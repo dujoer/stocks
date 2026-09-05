@@ -189,7 +189,7 @@ footer{{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}}
 .legend b{{color:#23262b}}
 </style></head>
 <body>
-<div class="topnav">
+<div class='topnav'>
   <a href="../market/index.html">每日总览</a>
   <a href="../lhb/lhb.html">龙虎榜分析</a>
   <a href="../market/hotmoney.html">游资看板</a>
