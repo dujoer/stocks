@@ -382,12 +382,13 @@ footer{{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}}
 .disc{{background:#fff;border:1px dashed #d9c79a;border-radius:10px;padding:12px 16px;font-size:12px;color:#6b7280;margin-top:26px}}
 </style></head>
 <body>
-<div class="topnav">
+<div class='topnav'>
   <a href="../market/index.html">每日总览</a>
   <a href="../lhb/lhb.html">龙虎榜分析</a>
   <a href="../market/hotmoney.html">游资看板</a>
   <a href="../sector/index.html">板块强度</a>
   <a href="2026-q2-industry-elite.html">股东动向</a>
+  <a href="stock-accumulation.html">增持扫描</a>
   <a href="../exec/index.html">高管增减持</a>
   <a href="../block/index.html">大宗交易</a>
   <a href="../sections/index.html">版块总览</a>
