@@ -1,124 +1,134 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang='zh-CN'>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>A股板块强度 · 首页</title>
-<style>
-:root{--bg:#f5f6f8;--panel:#ffffff;--panel2:#f0f2f5;--line:#e3e6ea;--txt:#23262b;
-  --mut:#6b7280;--up:#b8332a;--down:#1a9e5a;--gold:#b8893b;--qc:#b8332a;--ch:#1a9e5a;--jc:#b8893b;--xp:#3b6fd1}
-*{box-sizing:border-box}
-body{margin:0;background:linear-gradient(180deg,#f5f6f8,#eef0f3);color:var(--txt);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
-  font-size:13px;padding:26px 30px 60px}
-h1{font-size:23px;margin:0 0 2px;letter-spacing:.5px}
-.sub{color:var(--mut);font-size:12px;margin-bottom:22px}
-.up{color:var(--up)}.down{color:var(--down)}
-.hero{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;margin-bottom:22px}
-.big{background:linear-gradient(135deg,#161d2b,#10161f);border:1px solid var(--line);border-radius:14px;padding:20px;position:relative;overflow:hidden;text-decoration:none;color:var(--txt)}
-.big:before{content:"";position:absolute;right:-30px;top:-30px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(232,179,57,.22),transparent 70%)}
-.big .tag{color:var(--gold);font-size:12px;letter-spacing:1px}
-.big h2{margin:8px 0 4px;font-size:19px}
-.big p{color:var(--mut);font-size:12px;margin:6px 0 0;line-height:1.6}
-.big .go{display:inline-block;margin-top:14px;background:var(--gold);color:#1a1300;font-weight:700;padding:8px 16px;border-radius:8px;font-size:13px}
-.latest .lv{font-size:30px;font-weight:800;margin-top:6px}
-.latest .ls{color:var(--mut);font-size:12px;margin-top:2px}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.day{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 14px;text-decoration:none;color:var(--txt);transition:.15s;display:flex;flex-direction:column}
-.day:hover{border-color:var(--gold);transform:translateY(-2px)}
-.d-date{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:8px}
-.d-row{display:flex;justify-content:space-between;font-size:12px;color:var(--mut);padding:3px 0}
-.d-row b{color:var(--txt);font-variant-numeric:tabular-nums}
-.d-beh{display:flex;gap:5px;margin:8px 0 4px;font-size:10.5px}
-.d-beh span{padding:2px 6px;border-radius:5px}
-.bq{background:rgba(224,72,59,.16);color:var(--qc)}.bj{background:rgba(232,179,57,.16);color:var(--jc)}
-.bx{background:rgba(91,141,239,.16);color:var(--xp)}.bc{background:rgba(26,158,90,.16);color:var(--ch)}
-.d-go{margin-top:auto;color:var(--mut);font-size:11px;padding-top:8px}
-.sectit{color:var(--gold);font-size:13px;margin:24px 0 12px;font-weight:600;letter-spacing:.5px}
-.note{color:var(--mut);font-size:11px;margin-top:22px;line-height:1.7}
-@media(max-width:1100px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}}
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>A股板块强度 · 看板中心</title>
+<style>* { box-sizing: border-box; }
+body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:#f5f6f8; color:#23262b; min-height:100vh; }
+.wrap { max-width:1180px; margin:0 auto; padding:40px 20px 60px; }
+.topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
+  border-bottom:1px solid rgba(0,0,0,.08); }
+.topnav a { color:#b8893b; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(184,137,59,.35); transition:.2s; }
+.topnav a:hover { background:rgba(184,137,59,.10); }
+.topnav a.cur { background:#b8893b; color:#fff; border-color:#b8893b; }
+header { display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#b8893b,#b8332a,#6b5b95);
+  -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
+header p { margin:4px 0; color:#8a929c; font-size:13px; line-height:1.6; }
+.datebadge { display:inline-block; font-size:22px; font-weight:800; color:#fff;
+  background:linear-gradient(135deg,#b8893b,#b8332a); padding:10px 20px; border-radius:14px;
+  letter-spacing:.5px; box-shadow:0 6px 18px rgba(184,137,59,.25); white-space:nowrap; }
+.datebadge small { display:block; font-size:11px; font-weight:600; opacity:.85; letter-spacing:1px; }
+.meta { margin:14px 0 24px; font-size:12px; color:#6b7280; line-height:1.7; }
+.meta b { color:#b8893b; }
+.section { background:#ffffff; border:1px solid rgba(0,0,0,.08); border-radius:20px;
+  padding:18px 20px; margin:0 0 22px; }
+.section h2 { font-size:19px; margin:0 0 14px; padding-left:12px; border-left:5px solid #b8893b; }
+.idxrow { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; }
+.idx { background:#fafbfc; border:1px solid #eef1f4; border-radius:14px; padding:14px 16px; }
+.idx .k { font-size:12px; color:#7b8794; }
+.idx .v { font-size:24px; font-weight:800; margin-top:4px; color:#23262b; }
+.idx .v.up { color:#b8332a; } .idx .v.down { color:#1a9e5a; } .idx .v.gold { color:#b8893b; }
+.idx a { color:#23262b; text-decoration:none; display:block; }
+.idx a:hover .v { color:#b8893b; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { text-align:left; padding:9px 10px; background:#f7f8fa; color:#5a6573; font-weight:700;
+  border-bottom:2px solid #e3e7ec; white-space:nowrap; }
+td { padding:9px 10px; border-bottom:1px solid #f0f2f5; }
+tr:hover td { background:#fcfbf8; }
+.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.up { color:#b8332a; font-weight:700; } .down { color:#1a9e5a; font-weight:700; } .flat { color:#8a929c; }
+.beh-qiang { color:#b8332a; font-weight:700; }
+.beh-jian  { color:#b8893b; font-weight:700; }
+.beh-xi    { color:#3b6fd1; font-weight:700; }
+.beh-chu   { color:#1a9e5a; font-weight:700; }
+.empty { padding:8px; color:#9aa2ad; font-size:12px; }
+footer { margin-top:40px; padding-top:18px; border-top:1px solid #e3e7ec;
+  font-size:12px; color:#7b8794; line-height:1.8; }
+th.sort { cursor:pointer; user-select:none; position:relative; }
+th.sort:hover { background:#eef0f3; color:#3b4453; }
+th.sort.sorted { color:#b8893b; }
+th.sort.sorted[data-asc="1"]::after { content:" \25B2"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after { content:" \25BC"; font-size:10px; }
+th.sort:not(.sorted)::after { content:" \2195"; font-size:10px; color:#c2c9d1; }
 </style>
 </head>
 <body>
-<!-- UNIFIED_NAV -->
-<div style='display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:12px 4px;border-bottom:1px solid rgba(184,137,59,.3);font-size:13px;'><a href='../market/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>每日总览</a><a href='../lhb/lhb.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>龙虎榜分析</a><a href='../market/hotmoney.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>游资看板</a><a href='index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>板块强度</a><a href='../exec/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>高管增减持</a><a href='../block/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>大宗交易</a><a href='../psychology/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>群体心理</a><a href='../research/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>行业最强</a><a href='../sections/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>版块总览</a><a href='../../index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>返回主页</a></div>
-
-
-
-<h1>A股板块强度 <span style="color:var(--gold)">看板中心</span></h1>
-<div class="sub">暗盘资金 = 主力 − 散户 ｜ 板块强度 = 暗盘 ÷ 总成交额 × 100 ｜ 每日盘后真实快照累积</div>
-<div class="hero">
-  <a class="big" href="trend.html">
-    <div class="tag">趋势</div>
-    <h2>趋势看板（日 / 周 / 月）</h2>
-    <p>全市场暗盘资金净额、平均强度、上涨占比、抢筹/出货板块数随交易日演变；叠加主力行为分布堆叠图。数据自动累积、曲线随交易日延长。</p>
-    <span class="go">打开趋势看板 →</span>
-  </a>
-  
-  <a class="big latest" href="sector-strength-20260904.html">
-    <div class="tag">最新 · 2026-09-04</div>
-    <h2>最新一日板块强度</h2>
-    <div class="lv down">-13765.0<span style="font-size:14px;color:var(--mut)">亿</span></div>
-    <div class="ls">全市场暗盘资金净额 ｜ 均强 -1.354 ｜ 涨 46.5%</div>
-    <span class="go">查看 2026-09-04 明细 →</span>
-  </a>
+<div class='wrap'>
+<div class='topnav'><a href='../market/index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='../market/hotmoney.html'>游资看板</a><a href='index.html' class='cur'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../research/index.html'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../sections/index.html'>版块总览</a><a href='../../index.html'>返回主页</a></div>
+<header>
+  <div>
+    <h1>📊 板块强度 · 看板中心</h1>
+    <p>暗盘资金 = 主力净流入 − 散户净流入 ｜ 板块强度 = 暗盘 ÷ 板块总成交额 × 100 ｜ 每日盘后真实快照累积（因 westock 接口 date 无效，按拉取日固化、不回溯不编造）。</p>
+  </div>
+  <div class='datebadge'><small>最新交易日</small>2026-09-04</div>
+</header>
+<div class='meta'>
+最新一日 <b>2026-09-04</b> ｜ 全市场暗盘净额 <b>-13765.0亿</b> ｜ 均强 <b>-1.354</b> ｜ 上涨占比 <b>46.5%</b><br>
+区间累计：暗盘净额 <b>-48647.5亿</b> ｜ 主力抢筹板块 <b>661</b> / 出货板块 <b>3119</b> ｜ 共 <b>6</b> 个数据点。
 </div>
-<div class="sectit">每日板块强度页（点击查看当日完整明细）</div>
-<div class="grid">
-        <a class="day" href="sector-strength-20260904.html">
-          <div class="d-date">2026-09-04</div>
-          <div class="d-row"><span>板块</span><b>926</b></div>
-          <div class="d-row"><span>暗盘净额</span><b class="down">-13765.0亿</b></div>
-          <div class="d-row"><span>均强</span><b>-1.354</b></div>
-          <div class="d-beh"><span class="bq">抢144</span><span class="bj">建106</span><span class="bx">洗157</span><span class="bc">出519</span></div>
-          <div class="d-go">查看明细 →</div>
-        </a>
-
-        <a class="day" href="sector-strength-20260903.html">
-          <div class="d-date">2026-09-03</div>
-          <div class="d-row"><span>板块</span><b>926</b></div>
-          <div class="d-row"><span>暗盘净额</span><b class="down">-5635.2亿</b></div>
-          <div class="d-row"><span>均强</span><b>-1.084</b></div>
-          <div class="d-beh"><span class="bq">抢98</span><span class="bj">建111</span><span class="bx">洗214</span><span class="bc">出503</span></div>
-          <div class="d-go">查看明细 →</div>
-        </a>
-
-        <a class="day" href="sector-strength-20260902.html">
-          <div class="d-date">2026-09-02</div>
-          <div class="d-row"><span>板块</span><b>925</b></div>
-          <div class="d-row"><span>暗盘净额</span><b class="down">-16297.7亿</b></div>
-          <div class="d-row"><span>均强</span><b>-3.484</b></div>
-          <div class="d-beh"><span class="bq">抢40</span><span class="bj">建41</span><span class="bx">洗103</span><span class="bc">出741</span></div>
-          <div class="d-go">查看明细 →</div>
-        </a>
-
-        <a class="day" href="sector-strength-20260831.html">
-          <div class="d-date">2026-08-31</div>
-          <div class="d-row"><span>板块</span><b>925</b></div>
-          <div class="d-row"><span>暗盘净额</span><b class="up">+1756.4亿</b></div>
-          <div class="d-row"><span>均强</span><b>0.085</b></div>
-          <div class="d-beh"><span class="bq">抢178</span><span class="bj">建160</span><span class="bx">洗224</span><span class="bc">出363</span></div>
-          <div class="d-go">查看明细 →</div>
-        </a>
-
-        <a class="day" href="sector-strength-20260828.html">
-          <div class="d-date">2026-08-28</div>
-          <div class="d-row"><span>板块</span><b>925</b></div>
-          <div class="d-row"><span>暗盘净额</span><b class="down">-10787.0亿</b></div>
-          <div class="d-row"><span>均强</span><b>-0.942</b></div>
-          <div class="d-beh"><span class="bq">抢89</span><span class="bj">建140</span><span class="bx">洗197</span><span class="bc">出499</span></div>
-          <div class="d-go">查看明细 →</div>
-        </a>
-
-        <a class="day" href="sector-strength-20260827.html">
-          <div class="d-date">2026-08-27</div>
-          <div class="d-row"><span>板块</span><b>925</b></div>
-          <div class="d-row"><span>暗盘净额</span><b class="down">-3919.0亿</b></div>
-          <div class="d-row"><span>均强</span><b>-0.948</b></div>
-          <div class="d-beh"><span class="bq">抢112</span><span class="bj">建103</span><span class="bx">洗216</span><span class="bc">出494</span></div>
-          <div class="d-go">查看明细 →</div>
-        </a></div>
-<div class="note">说明: 因 westock 板块接口 <code>date</code> 参数被忽略、仅返回最新快照，历史某日真实数据无法回溯；本看板按"每日拉取日期"真实累积，
-未来每个交易日运行自动化后将自动新增一页并在此列出。当前共 6 个数据点。</div>
+<div class='section'>
+  <h2>概览</h2>
+  <div class='idxrow'>
+    <div class='idx'><div class='k'>区间累计暗盘净额</div><div class='v down'>-48647.5<span style='font-size:13px;color:#7b8794'>亿</span></div></div>
+    <div class='idx'><div class='k'>数据点（交易日）</div><div class='v gold'>6</div></div>
+    <div class='idx'><div class='k'>日均板块数</div><div class='v'>925</div></div>
+    <div class='idx'><div class='k'>主力抢筹板块（累计）</div><div class='v up'>661</div></div>
+    <div class='idx'><div class='k'>主力出货板块（累计）</div><div class='v down'>3119</div></div>
+    <div class='idx'><div class='k'>最新一日均强</div><div class='v'>-1.354</div></div>
+    <div class='idx'><div class='k'>最新一日上涨占比</div><div class='v'>46.5%</div></div>
+    <div class='idx'><a href='trend.html'><div class='k'>趋势看板（日/周/月）</div><div class='v gold'>查看 →</div></a></div>
+  </div>
+</div>
+<div class='section'>
+  <h2>每日板块强度归档（按日期倒序）</h2>
+  <table id='arch'>
+    <thead><tr>
+      <th class='sort' data-c='0'>交易日</th>
+      <th class='num sort' data-c='1'>板块数</th>
+      <th class='num sort' data-c='2'>暗盘净额</th>
+      <th class='num sort' data-c='3'>均强</th>
+      <th class='num sort' data-c='4'>上涨占比</th>
+      <th class='num sort' data-c='5'>主力抢筹</th>
+      <th class='num sort' data-c='6'>主力建仓</th>
+      <th class='num sort' data-c='7'>主力洗盘</th>
+      <th class='num sort' data-c='8'>主力出货</th>
+    </tr></thead>
+    <tbody><tr><td data-val='2026-09-04'><a href='sector-strength-20260904.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-04</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='-13765.00'>-13765.0亿</td><td class='num' data-val='-1.354'>-1.354</td><td class='num' data-val='46.50'>46.5%</td><td class='num beh-qiang' data-val='144'>144</td><td class='num beh-jian'  data-val='106'>106</td><td class='num beh-xi'    data-val='157'>157</td><td class='num beh-chu'   data-val='519'>519</td></tr><tr><td data-val='2026-09-03'><a href='sector-strength-20260903.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-03</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='-5635.20'>-5635.2亿</td><td class='num' data-val='-1.084'>-1.084</td><td class='num' data-val='26.90'>26.9%</td><td class='num beh-qiang' data-val='98'>98</td><td class='num beh-jian'  data-val='111'>111</td><td class='num beh-xi'    data-val='214'>214</td><td class='num beh-chu'   data-val='503'>503</td></tr><tr><td data-val='2026-09-02'><a href='sector-strength-20260902.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-02</a></td><td class='num' data-val='925'>925</td><td class='num' data-val='-16297.70'>-16297.7亿</td><td class='num' data-val='-3.484'>-3.484</td><td class='num' data-val='6.90'>6.9%</td><td class='num beh-qiang' data-val='40'>40</td><td class='num beh-jian'  data-val='41'>41</td><td class='num beh-xi'    data-val='103'>103</td><td class='num beh-chu'   data-val='741'>741</td></tr><tr><td data-val='2026-08-31'><a href='sector-strength-20260831.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-08-31</a></td><td class='num' data-val='925'>925</td><td class='num' data-val='1756.40'>+1756.4亿</td><td class='num' data-val='0.085'>0.085</td><td class='num' data-val='70.30'>70.3%</td><td class='num beh-qiang' data-val='178'>178</td><td class='num beh-jian'  data-val='160'>160</td><td class='num beh-xi'    data-val='224'>224</td><td class='num beh-chu'   data-val='363'>363</td></tr><tr><td data-val='2026-08-28'><a href='sector-strength-20260828.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-08-28</a></td><td class='num' data-val='925'>925</td><td class='num' data-val='-10787.00'>-10787.0亿</td><td class='num' data-val='-0.942'>-0.942</td><td class='num' data-val='59.50'>59.5%</td><td class='num beh-qiang' data-val='89'>89</td><td class='num beh-jian'  data-val='140'>140</td><td class='num beh-xi'    data-val='197'>197</td><td class='num beh-chu'   data-val='499'>499</td></tr><tr><td data-val='2026-08-27'><a href='sector-strength-20260827.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-08-27</a></td><td class='num' data-val='925'>925</td><td class='num' data-val='-3919.00'>-3919.0亿</td><td class='num' data-val='-0.948'>-0.948</td><td class='num' data-val='68.00'>68.0%</td><td class='num beh-qiang' data-val='112'>112</td><td class='num beh-jian'  data-val='103'>103</td><td class='num beh-xi'    data-val='216'>216</td><td class='num beh-chu'   data-val='494'>494</td></tr></tbody>
+  </table>
+  <div class='empty'>提示：点击表头可排序；点击交易日可进入当日完整明细。</div>
+</div>
+<footer>
+数据来源：腾讯自选股 <b>westock-mcp</b>（盘后公开数据）。<br>
+本页面由 A股量化助理自动生成 · 仅供参考，<b>不构成投资建议</b> · 市场有风险，投资需谨慎。
+</footer>
+</div>
+<script>function sortTable(id, th){
+  var table=document.getElementById(id);
+  var tbody=table.tBodies[0];
+  var rows=Array.prototype.slice.call(tbody.rows);
+  var idx=parseInt(th.getAttribute('data-c'),10);
+  var asc=th.getAttribute('data-asc')!=='1';
+  rows.sort(function(a,b){
+    var x=a.cells[idx].getAttribute('data-val');
+    var y=b.cells[idx].getAttribute('data-val');
+    var nx=parseFloat(x), ny=parseFloat(y);
+    if(!isNaN(nx)&&!isNaN(ny)){ return asc?nx-ny:ny-nx; }
+    x=(x==null?'':x); y=(y==null?'':y);
+    return asc?(x<y?-1:(x>y?1:0)):(x<y?1:(x>y?-1:0));
+  });
+  for(var i=0;i<rows.length;i++) tbody.appendChild(rows[i]);
+  var ths=table.querySelectorAll('th.sort');
+  for(var k=0;k<ths.length;k++){ ths[k].removeAttribute('data-asc'); ths[k].classList.remove('sorted'); }
+  th.setAttribute('data-asc', asc?'1':'0');
+  th.classList.add('sorted');
+}
+document.querySelectorAll('th.sort').forEach(function(t){
+  t.addEventListener('click',function(){ sortTable(t.parentNode.parentNode.parentNode.id, t); });
+});
+</script>
 </body>
 </html>
