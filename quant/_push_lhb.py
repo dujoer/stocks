@@ -86,6 +86,14 @@ FILES = [
     "quant/_shareholder/elite_coverage.json",
     "quant/_shareholder/_quotes_elite.json",
     "quant/_shareholder/_elite_codes.json",
+    # —— 知名加仓股 量价健康度二次过滤（50 只样本 + 技术面/行情快照 + 生成器）——
+    "quant/_shareholder/extract_known_inc.py",
+    "quant/_shareholder/build_known_accumulation_health.py",
+    "quant/_shareholder/known_inc_50.json",
+    "quant/_shareholder/_tech_b1.json",
+    "quant/_shareholder/_tech_b2.json",
+    "quant/_shareholder/_quote_b1.json",
+    "quant/_shareholder/_quote_b2.json",
     # —— 重构/自检辅助脚本（记录本次分层过程，便于复现）——
     "quant/_cleanup_flat.py",
     "quant/_verify_dupes.py",
