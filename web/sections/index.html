@@ -216,6 +216,42 @@ footer { margin-top:46px; padding-top:18px; border-top:1px solid #e3e7ec;
   <div class='row'><div class='lab'>口径要点</div><div class='val note2'>口径为行业知名度与公开业绩，非收益胜率；不构成投资建议。</div></div>
   <div class='row'><div class='lab'>产出文件</div><div class='val files'><code>web/shareholder/top-elite.html</code></div></div>
 </div>
+<div class='sec'>
+  <div class='sechead'>
+    <span class='sic'>📈</span>
+    <div class='stitle'>
+      <a href='../shareholder/stock-accumulation.html'>股票增持信号扫描</a>
+    </div>
+    <span class='badge warn'>定期</span>
+    <span class='bdate'>数据截至 2026-06-30</span>
+  </div>
+  <div class='sdesc'>全市场 5544 只中报十大流通股东变动逐只扫描：统计增持 / 减持家数与股数，筛出「增持多于减持」并高亮知名私募 / 牛散加仓标的。</div>
+  
+  <div class='row'><div class='lab'>内容模块</div><div class='val'><span class='chip'>全市场 5544 只逐只扫描</span><span class='chip'>增持 / 减持家数与股数统计</span><span class='chip'>知名私募 / 牛散加仓高亮</span><span class='chip'>净增持额排序</span></div></div>
+  <div class='row'><div class='lab'>数据来源</div><div class='val'><span class='chip'>2026 中报十大流通股东</span><span class='chip'>知名主体名单匹配</span></div></div>
+  <div class='row'><div class='lab'>更新节奏</div><div class='val'>
+    <span class='cad opt'>定期报告发布后重跑（非每日）</span></div></div>
+  <div class='row'><div class='lab'>口径要点</div><div class='val note2'>单季股东数据无法单列「新进」，只能看增持 / 减持方向；不构成投资建议。</div></div>
+  <div class='row'><div class='lab'>产出文件</div><div class='val files'><code>web/shareholder/stock-accumulation.html</code></div></div>
+</div>
+<div class='sec'>
+  <div class='sechead'>
+    <span class='sic'>🩺</span>
+    <div class='stitle'>
+      <a href='../shareholder/known-accumulation-health.html'>知名加仓 · 量价健康度过滤</a>
+    </div>
+    <span class='badge warn'>定期</span>
+    <span class='bdate'>数据截至 2026-09-04</span>
+  </div>
+  <div class='sdesc'>在上游 50 只知名私募 / 牛散加仓股上叠加技术面二次过滤：趋势结构 30 + 动量健康 25 + 量价配合 20 + 相对位置 25，纯量价口径打分。</div>
+  
+  <div class='row'><div class='lab'>内容模块</div><div class='val'><span class='chip'>趋势结构 30（MA20/60/120）</span><span class='chip'>动量健康 25（RSI_12 + 60 日涨幅）</span><span class='chip'>量价配合 20（换手率 + 量比）</span><span class='chip'>相对位置 25（52 周位越低越高分）</span><span class='chip'>机构信号仅作排序加成</span><span class='chip'>✓ 矩阵 + 表头排序</span></div></div>
+  <div class='row'><div class='lab'>数据来源</div><div class='val'><span class='chip'>westock data_technical（MA / RSI）</span><span class='chip'>westock data_quote（换手 / 量比 / 52 周位）</span><span class='chip'>2026 中报十大流通股东</span></div></div>
+  <div class='row'><div class='lab'>更新节奏</div><div class='val'>
+    <span class='cad opt'>定期报告发布后重跑；量价快照随扫描日更新</span></div></div>
+  <div class='row'><div class='lab'>口径要点</div><div class='val note2'>规则打分、不荐个股；「行业订单 / 业绩可验证」「瓶颈环节」未纳入评分，需自行核验。技术面为单一时点快照。</div></div>
+  <div class='row'><div class='lab'>产出文件</div><div class='val files'><code>web/shareholder/known-accumulation-health.html</code></div></div>
+</div>
 
 <h2>✅ 每日手动更新自检清单</h2>
 <div class='sec'><div class='ck'><span class='box'></span>龙虎榜：market_overview / board_hot / quotes / limitup / lhb + news 全部落盘</div><div class='ck'><span class='box'></span>龙虎榜明细 3 批 + lhb_enriched_{DATE}.json + 申万涨跌幅映射刷新</div><div class='ck'><span class='box'></span><b>板块强度</b>（不可跳过）：industry + concept 快照 → gen_sector_raw.py → run_daily_sector.py</div><div class='ck'><span class='box'></span>高管增减持：tool_event + data_quote → gen_exec.py → build_exec.py</div><div class='ck'><span class='box'></span>心理雷达（按需）</div><div class='ck'><span class='box'></span>build_portal.py → build_sections.py（本页）→ _push_lhb.py 推送</div><div class='ck'><span class='box'></span>合规扫描：产物内不得出现个人持有信息、账户盈亏、自下而上选股等敏感内容（关键词清单见项目约定）</div></div>
