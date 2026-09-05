@@ -379,6 +379,37 @@ SECTIONS = [
         "files": ["web/shareholder/top-elite.html"],
         "stats": "",
     },
+    {
+        "ic": "📈", "name": "股票增持信号扫描", "href": "../shareholder/stock-accumulation.html",
+        "date": "2026-06-30", "badge": ("定期", "warn"),
+        "desc": "全市场 5544 只中报十大流通股东变动逐只扫描：统计增持 / 减持家数与股数，筛出「增持多于减持」并高亮知名私募 / 牛散加仓标的。",
+        "modules": chips([
+            "全市场 5544 只逐只扫描", "增持 / 减持家数与股数统计",
+            "知名私募 / 牛散加仓高亮", "净增持额排序",
+        ]),
+        "sources": chips(["2026 中报十大流通股东", "知名主体名单匹配"]),
+        "cadence": "定期报告发布后重跑（非每日）",
+        "cadence_cls": "opt",
+        "notes": "单季股东数据无法单列「新进」，只能看增持 / 减持方向；不构成投资建议。",
+        "files": ["web/shareholder/stock-accumulation.html"],
+        "stats": "",
+    },
+    {
+        "ic": "🩺", "name": "知名加仓 · 量价健康度过滤", "href": "../shareholder/known-accumulation-health.html",
+        "date": "2026-09-04", "badge": ("定期", "warn"),
+        "desc": "在上游 50 只知名私募 / 牛散加仓股上叠加技术面二次过滤：趋势结构 30 + 动量健康 25 + 量价配合 20 + 相对位置 25，纯量价口径打分。",
+        "modules": chips([
+            "趋势结构 30（MA20/60/120）", "动量健康 25（RSI_12 + 60 日涨幅）",
+            "量价配合 20（换手率 + 量比）", "相对位置 25（52 周位越低越高分）",
+            "机构信号仅作排序加成", "✓ 矩阵 + 表头排序",
+        ]),
+        "sources": chips(["westock data_technical（MA / RSI）", "westock data_quote（换手 / 量比 / 52 周位）", "2026 中报十大流通股东"]),
+        "cadence": "定期报告发布后重跑；量价快照随扫描日更新",
+        "cadence_cls": "opt",
+        "notes": "规则打分、不荐个股；「行业订单 / 业绩可验证」「瓶颈环节」未纳入评分，需自行核验。技术面为单一时点快照。",
+        "files": ["web/shareholder/known-accumulation-health.html"],
+        "stats": "",
+    },
 ]
 
 sec_html = ""
