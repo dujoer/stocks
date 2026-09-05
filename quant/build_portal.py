@@ -188,6 +188,54 @@ def stat_industry_elite():
     return "全市场 <b>5544</b> 只中报股东解析"
 
 
+def _box_val(h, label_prefix):
+    """从生成页的 stat 卡片抓数值（结构固定为「值在前、标签在后」）：
+    <div class="v">N</div><div class="l">标签..."""
+    import re as _re
+    m = _re.search(r'<div class="v">(\d+)</div><div class="l">' + _re.escape(label_prefix), h)
+    return m.group(1) if m else None
+
+
+def stat_stock_accumulation():
+    """股票增持信号扫描：全市场样本 / 有增持信号 / 知名主体加仓"""
+    p = os.path.join(WEB, "shareholder", "stock-accumulation.html")
+    if not os.path.exists(p):
+        return ""
+    try:
+        h = open(p, encoding="utf-8").read()
+    except Exception:
+        return ""
+    tot = _box_val(h, "全市场样本")
+    sig = _box_val(h, "有增持信号")
+    kn = _box_val(h, "知名主体加仓")
+    if not (tot and sig):
+        return ""
+    parts = [f"全市场 <b>{tot}</b> 只中报 ｜ 有增持信号 <b>{sig}</b> 只"]
+    if kn:
+        parts.append(f"其中知名私募 / 牛散加仓 <b>{kn}</b> 只")
+    return " ｜ ".join(parts)
+
+
+def stat_known_health():
+    """知名加仓股量价健康度：样本数 + 强/中/弱分布"""
+    p = os.path.join(WEB, "shareholder", "known-accumulation-health.html")
+    if not os.path.exists(p):
+        return ""
+    try:
+        h = open(p, encoding="utf-8").read()
+    except Exception:
+        return ""
+    n = _box_val(h, "知名加仓样本")
+    s = _box_val(h, "健康度·强")
+    m = _box_val(h, "健康度·中")
+    w = _box_val(h, "健康度·弱")
+    if not (n and s):
+        return ""
+    return (f"知名加仓 <b>{n}</b> 只 ｜ 健康度 "
+            f"<span style='color:#1a9e5a'>强 <b>{s}</b></span> ｜ "
+            f"中 <b>{m or '—'}</b> ｜ 弱 <b>{w or '—'}</b>")
+
+
 def stat_sections():
     """版块总览：所有子系统最新日期一览"""
     parts = []
@@ -206,6 +254,8 @@ STAT = {
     "sec": stat_sector(),
     "psy": stat_psy(),
     "elite": stat_industry_elite(),
+    "accum": stat_stock_accumulation(),
+    "khealth": stat_known_health(),
     "research": stat_research(),
     "sec2": stat_sections(),
 }
@@ -259,6 +309,16 @@ cards = [
         "ic": "🌟", "t": "行业知名 Top20 私募 / 牛散", "href": "web/shareholder/top-elite.html",
         "d": "按行业知名度与历史业绩策划的私募 / 牛散 Top20 玩家图谱（非短期收益胜率），并交叉标注与高管增减持共现的知名主体。",
         "stat": "", "date": "2026-09-04", "fresh": badge("warn", "策划"),
+    },
+    {
+        "ic": "📈", "t": "股票增持信号扫描", "href": "web/shareholder/stock-accumulation.html",
+        "d": "全市场 5544 只中报十大流通股东变动逐只扫描：统计增持 / 减持家数与股数，筛出「增持多于减持」并高亮知名私募 / 牛散加仓标的",
+        "stat": STAT["accum"], "date": "2026-06-30", "fresh": badge("warn", "定期"),
+    },
+    {
+        "ic": "🩺", "t": "知名加仓 · 量价健康度过滤", "href": "web/shareholder/known-accumulation-health.html",
+        "d": "在上游 50 只知名私募 / 牛散加仓股上叠加技术面二次过滤：趋势结构 30 + 动量健康 25 + 量价配合 20 + 相对位置 25，纯量价口径打分（规则透明、不荐个股）",
+        "stat": STAT["khealth"], "date": "2026-09-04", "fresh": badge("warn", "定期"),
     },
     {
         "ic": "🔍", "t": "个股调研（三周期）", "href": "web/research/index.html",
@@ -351,7 +411,7 @@ footer {{ margin-top:48px; padding-top:18px; border-top:1px solid #e3e7ec;
 {PORTAL_NAV}
 <header class='top'>
   <h1>A股分析中心 · 总门户</h1>
-  <div class='sub'>龙虎榜主看板 · 高管增减持 · 板块强度 · 群体心理风险雷达 · 行业最强榜 · 版块总览</div>
+  <div class='sub'>龙虎榜主看板 · 高管增减持 · 板块强度 · 群体心理风险雷达 · 行业最强榜 · 增持扫描 · 量价健康度 · 版块总览</div>
   <div class='updated'>门户重建于 {TODAY.strftime('%Y-%m-%d')} · 各卡片标注对应子系统的数据最新日期与新鲜度</div>
 </header>
 
