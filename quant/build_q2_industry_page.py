@@ -91,7 +91,13 @@ D_inds = sorted([r for r in ind_rows if r["quad"] == "D"], key=lambda r: r["net"
 reso = [r for r in ind_rows if r["p_net"] > 0 and r["s_net"] > 0 and r["f_net"] > 0]
 reso.sort(key=lambda r: -(r["p_net"] + r["s_net"] * 3 + r["f_net"] * 3))
 
-NAV = topnav("shareholder")
+# 股东板块内链路：行业最强榜（本页） → 玩家图谱 → 增持扫描 → 健康度过滤
+SHAREHOLDER_CHAIN = [
+    ("玩家图谱", "shareholder/top-elite.html"),
+    ("增持扫描", "shareholder/stock-accumulation.html"),
+    ("健康度过滤", "shareholder/known-accumulation-health.html"),
+]
+NAV = topnav("shareholder", extra=SHAREHOLDER_CHAIN)
 
 
 def cls(v):
@@ -184,6 +190,8 @@ body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-
 .topnav a { color:#b8893b; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
   border:1px solid rgba(184,137,59,.35); transition:.2s; }
 .topnav a:hover { background:rgba(184,137,59,.10); }
+.topnav a.xlink { color:#b8332a; border-color:rgba(184,51,42,.35); }
+.topnav a.xlink:hover { background:rgba(184,51,42,.08); }
 header h1 { font-size:29px; margin:0 0 6px; background:linear-gradient(90deg,#b8893b,#b8332a,#6b5b95);
   -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
 header p { margin:4px 0; color:#8a929c; font-size:13px; line-height:1.6; }
