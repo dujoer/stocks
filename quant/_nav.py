@@ -51,21 +51,33 @@ def _rel(link_web_path: str, from_web_dir: str) -> str:
     return (rel + "/" + base) if rel != "." else base
 
 
-def topnav(current_web_dir: str = "", home: str = "../../index.html", prefix: str = "") -> str:
-    """依赖调用方已定义的 .topnav / .topnav a CSS（金色主题）。"""
+def topnav(current_web_dir: str = "", home: str = "../../index.html", prefix: str = "",
+           extra: tuple = ()) -> str:
+    """依赖调用方已定义的 .topnav / .topnav a CSS（金色主题）。
+
+    extra: 追加的「板块内横链」[(标签, 相对 web/ 根的规范路径), ...]，
+    插在主导航之后、返回主页之前，用于串联同一板块下的多页链路（如股东四页）。
+    这些链接带 class='xlink'，调用方可自行加样式与主营导航区分。
+    """
     items = "".join(
         f"<a href='{prefix}{_rel(p, current_web_dir)}'>{t}</a>" for t, p in SECTIONS)
+    items += "".join(
+        f"<a href='{prefix}{_rel(p, current_web_dir)}' class='xlink'>{t}</a>" for t, p in extra)
     items += f"<a href='{home}'>返回主页</a>"
     return f"<div class='topnav'>{items}</div>"
 
 
-def selfcontained_nav(current_web_dir: str = "", home: str = "../../index.html", prefix: str = "") -> str:
-    """自带内联样式，不依赖外部 CSS，可注入任意页面顶部。"""
+def selfcontained_nav(current_web_dir: str = "", home: str = "../../index.html", prefix: str = "",
+                      extra: tuple = ()) -> str:
+    """自带内联样式，不依赖外部 CSS，可注入任意页面顶部。extra 语义同 topnav()。"""
     bar = ("display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:12px 4px;"
            "border-bottom:1px solid rgba(184,137,59,.3);font-size:13px;")
     a = ("color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);"
          "border-radius:20px;white-space:nowrap;")
     items = "".join(
         f"<a href='{prefix}{_rel(p, current_web_dir)}' style='{a}'>{t}</a>" for t, p in SECTIONS)
+    items += "".join(
+        f"<a href='{prefix}{_rel(p, current_web_dir)}' class='xlink' style='{a}'>{t}</a>"
+        for t, p in extra)
     items += f"<a href='{home}' style='{a}'>返回主页</a>"
     return f"{NAV_SENTINEL}\n<div style='{bar}'>{items}</div>"
