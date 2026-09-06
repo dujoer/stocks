@@ -71,7 +71,9 @@ tr:hover td { background:#fcfbf8; }
 .empty { padding:26px; text-align:center; color:#8a929c; font-size:13px; }
 .datenav { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 18px; font-size:13px; align-items:center; }
 .datenav a { color:#1f4e79; text-decoration:none; padding:5px 13px; border-radius:18px;
-  background:#eef4fa; border:1px solid #dbe6f2; }
+  background:#eef4fa; border:1px solid #dbe6f2; transition:.2s; }
+.slk { color:#b8893b; text-decoration:none; }
+.slk:hover { text-decoration:underline; }
 .datenav a:hover { background:#dbe6f2; }
 .datenav .cur { background:#b8893b !important; color:#fff !important; border-color:#b8893b !important; }
 .datenav .arch { background:#fbf3e6; color:#b8893b; border-color:#ecd9b8; }
@@ -212,6 +214,7 @@ def main():
     if next_d:
         datenav += f"<a href='block_{next_d}.html'>{next_d} →</a>"
     datenav += "<a class='arch' href='archive.html'>归档总览</a>"
+    datenav += "<a class='arch' href='stocks.html'>个股档案</a>"
     datenav += "<a href='../../index.html'>返回总门户</a>"
     if len(dates) > 1:
         datenav += f"<span style='align-self:center;color:#8a929c'>共 {len(dates)} 期</span>"
@@ -231,7 +234,7 @@ def main():
     # ---- 个股聚合 ----
     if by_stock:
         st_rows = "".join(
-            f"<tr><td data-val='{e['name']}'>{e['name']}</td>"
+            f"<tr><td data-val='{e['name']}'><a class='slk' href='stocks.html#{e['code']}'>{e['name']}</a></td>"
             f"<td class='num' data-val='{e['code']}'>{e['code']}</td>"
             f"<td class='num' data-val='{e['count']}'>{e['count']}</td>"
             f"<td class='num' data-val='{e['value']/1e4}'>{wan(e['value'])}</td>"
@@ -256,7 +259,7 @@ def main():
             is_prem = "1" if (disc is not None and disc < 0) else "0"
             det.append(
                 f"<tr data-inst='{is_inst}' data-prem='{is_prem}'>"
-                f"<td data-val='{r.get('name','')}'>{r.get('name','')}</td>"
+                f"<td data-val='{r.get('name','')}'><a class='slk' href='stocks.html#{r.get('code','')}'>{r.get('name','')}</a></td>"
                 f"<td class='num' data-val='{r.get('code','')}'>{r.get('code','')}</td>"
                 f"<td class='num' data-val='{r.get('tradePrice','')}'>{r.get('tradePrice','—')}</td>"
                 f"<td class='num {cls(r.get('changePercent'))}' data-val='{r.get('changePercent')}'>{fmt_pct(r.get('changePercent'))}</td>"
@@ -390,6 +393,7 @@ def build_index():
 {topnav("block")}
 <div class='datenav'>
   <a class='cur' href='archive.html'>归档总览</a>
+  <a class='arch' href='stocks.html'>个股档案</a>
   <a href='index.html'>最新一期（{latest_date}）</a>
   <a href='../../index.html'>返回总门户</a>
   <span style='align-self:center;color:#8a929c'>共 {len(recs)} 期</span>
