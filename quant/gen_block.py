@@ -51,27 +51,12 @@ def load_quotes(path):
     return out
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--date", required=True, help="交易日 YYYY-MM-DD")
-    ap.add_argument("--src", required=True, help="tool_event(block_past_30) 落盘 JSON")
-    ap.add_argument("--quotes", default="", help="data_quote 落盘 JSON（补涨跌幅/收盘价）")
-    a = ap.parse_args()
+def build_day(DATE, rows, quotes, snap=None):
+    """把某一交易日的原始大宗交易行落盘为 block_chg/{DATE}.json。
 
-    DATE = a.date
-    DAY = DATE.replace("-", "")
-
-    raw = json.load(open(a.src, encoding="utf-8"))
-    data = raw.get("data", {})
-    blk = data.get("evt_block_past_30") or data.get("block_past_30") or {}
-    stocks = blk.get("stocks", [])
-    if not stocks:
-        print(f"✗ 源文件中未找到大宗交易数据: {a.src}")
-        sys.exit(1)
-
-    quotes = load_quotes(a.quotes)
-    rows = [x for x in stocks if str(x.get("TradeDay")) == DAY]
-
+    quotes 可为空字典：此时收盘价由 Discount 反解（close=成交价/(1-折溢价/100)），
+    涨跌幅留空（页面显示 —）。
+    """
     out_rows = []
     for x in rows:
         code = x.get("code", "")
@@ -123,7 +108,7 @@ def main():
 
     result = {
         "date": DATE,
-        "snapDate": blk.get("date"),
+        "snapDate": snap,
         "source": "westock tool_event(block_past_30)",
         "count": len(out_rows),
         "stockCount": len(by_stock),
@@ -148,6 +133,54 @@ def main():
           f"｜平均折溢价 {result['avgDiscount']}%｜折价 {result['discCount']} 溢价 {result['premCount']}"
           f"｜机构买方 {result['instBuyCount']} 机构卖方 {result['instSellCount']}"
           f"｜行情补齐 {result['quoteMatched']}/{result['count']}")
+    return result
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--date", default="", help="交易日 YYYY-MM-DD（--all 时忽略）")
+    ap.add_argument("--src", required=True, help="tool_event(block_past_30) 落盘 JSON")
+    ap.add_argument("--quotes", default="", help="data_quote 落盘 JSON（补涨跌幅/收盘价）")
+    ap.add_argument("--all", action="store_true",
+                    help="回溯源文件内全部交易日（自动按日匹配 quant/quotes/block_{DATE}.json）")
+    ap.add_argument("--overwrite", action="store_true", help="--all 时覆盖已存在的日期")
+    a = ap.parse_args()
+
+    raw = json.load(open(a.src, encoding="utf-8"))
+    data = raw.get("data", {})
+    blk = data.get("evt_block_past_30") or data.get("block_past_30") or {}
+    stocks = blk.get("stocks", [])
+    if not stocks:
+        print(f"✗ 源文件中未找到大宗交易数据: {a.src}")
+        sys.exit(1)
+
+    if a.all:
+        byday = {}
+        for x in stocks:
+            byday.setdefault(str(x.get("TradeDay")), []).append(x)
+        made = skipped = 0
+        for day in sorted(byday):
+            DATE = f"{day[:4]}-{day[4:6]}-{day[6:]}"
+            if os.path.exists(os.path.join(OUT_DIR, f"{DATE}.json")) and not a.overwrite:
+                skipped += 1
+                continue
+            qf = os.path.join(Q, "quotes", f"block_{DATE}.json")
+            nq = len(load_quotes(qf)) if os.path.exists(qf) else 0
+            if nq == 0:
+                print(f"  ⚠ {DATE} 无行情文件，收盘价由折溢价反解、涨跌幅留空")
+            build_day(DATE, byday[day],
+                      load_quotes(qf) if os.path.exists(qf) else {},
+                      snap=blk.get("date"))
+            made += 1
+        print(f"\n回溯完成：新建 {made} 天 ｜ 跳过已存在 {skipped} 天")
+        return
+
+    if not a.date:
+        print("✗ 需要 --date，或使用 --all 回溯全部交易日")
+        sys.exit(1)
+    DAY = a.date.replace("-", "")
+    rows = [x for x in stocks if str(x.get("TradeDay")) == DAY]
+    build_day(a.date, rows, load_quotes(a.quotes), snap=blk.get("date"))
 
 
 if __name__ == "__main__":
