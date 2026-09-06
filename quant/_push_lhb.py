@@ -75,6 +75,7 @@ FILES = [
     # —— 大宗交易 ——
     "quant/gen_block.py",
     "quant/build_block.py",
+    "quant/build_block_stocks.py",
     # —— 个股调研 / 行业最强榜 ——
     "quant/build_research_301110.py",
     "quant/build_research_600838.py",
