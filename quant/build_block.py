@@ -127,9 +127,9 @@ document.querySelectorAll('th.sort').forEach(function(t){
 });
 """
 
-# 个股聚合表 可排序列：0股票(文本) 1代码(文本) 2笔数 3成交额万元 4平均折溢价 5当日涨跌
+# 个股聚合表 可排序列：0股票(文本) 1代码(文本) 2笔数 3成交额万元 4平均折溢价 5当日收盘价 6当日涨跌
 BS_HEAD = [(0,"股票",False),(1,"代码",False),(2,"笔数",True),(3,"成交额(万元)",True),
-           (4,"平均折溢价",True),(5,"当日涨跌",True)]
+           (4,"平均折溢价",True),(5,"当日收盘价",True),(6,"当日涨跌",True)]
 # 明细表 可排序列：0股票 1代码 2成交价 3当日涨跌 4成交额万元 5折溢价 6占比 7买方 8卖方 9类型
 BT_HEAD = [(0,"股票",False),(1,"代码",False),(2,"成交价",True),(3,"当日涨跌",True),
            (4,"成交额(万元)",True),(5,"折溢价",True),(6,"占比(%)",True),
@@ -150,6 +150,13 @@ def fmt_pct(v, digits=2):
     if v is None:
         return "—"
     return f"{v:+.{digits}f}%"
+
+def fmt_price(v):
+    """收盘价：两位小数千分位；无值显示 —"""
+    try:
+        return f"{float(v):,.2f}"
+    except Exception:
+        return "—"
 
 def wan(v):
     try:
@@ -230,6 +237,7 @@ def main():
             f"<td class='num' data-val='{e['value']/1e4}'>{wan(e['value'])}</td>"
             f"<td class='num {('disc' if (e['avgDiscount'] or 0)>0 else ('prem' if (e['avgDiscount'] or 0)<0 else ''))}' "
             f"data-val='{e['avgDiscount']}'>{fmt_pct(e['avgDiscount'])}</td>"
+            f"<td class='num' data-val='{e.get('price')}'>{fmt_price(e.get('price'))}</td>"
             f"<td class='num {cls(e.get('changePercent'))}' data-val='{e.get('changePercent')}'>{fmt_pct(e.get('changePercent'))}</td></tr>"
             for e in by_stock)
         stock_head = "".join(th_sort(c) for c in BS_HEAD)
