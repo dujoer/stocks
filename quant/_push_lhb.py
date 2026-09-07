@@ -16,7 +16,7 @@
 说明：本脚本仅做 Contents API 的 create/update；每个文件独立提交，失败不阻断其余。
       强制排除任何含 portfolio / bottom-up / portfolio_analysis 的文件（硬规矩：不对外展示持仓/选股）。
 """
-import os, sys, json, base64, glob as _glob, urllib.request, urllib.error
+import os, sys, json, base64, glob as _glob, re, urllib.request, urllib.error
 
 REPO = "dujoer/stocks"
 BRANCH = "main"
@@ -99,6 +99,10 @@ FILES = [
     "quant/_cleanup_flat.py",
     "quant/_verify_dupes.py",
     "quant/_fix_psy_paths.py",
+    # —— 本地数据库 + 静态数据切片（数据中心查询页）——
+    "quant/db.py",
+    "quant/db_export.py",
+    "quant/db_update.py",
 ]
 
 # 自动纳入「带日期/版块」的页面与数据源，保证每一页都带统一导航、且数据可复现。
@@ -131,6 +135,8 @@ _AUTO_PATTERNS = [
     "quant/news.json",
     # 心理雷达构建脚本（仍在 market-trend/，输出到 web/psychology/）
     "market-trend/*.py",
+    # 数据中心静态切片（查询页数据源，由 quant/db_export.py 生成）
+    "web/data/*.json",
 ]
 _AUTO_ADDED = []
 for _pat in _AUTO_PATTERNS:
@@ -181,7 +187,16 @@ def push_file(rel):
         print(f"  跳过(不存在): {rel}")
         return
     with open(local, "rb") as f:
-        content = base64.b64encode(f.read()).decode("ascii")
+        raw = f.read()
+    # 防御性清洗：剥离桌面预览注入的 data-page-node-id（污染），保证推送出去的 HTML 干净
+    if rel.endswith(".html"):
+        try:
+            txt = raw.decode("utf-8")
+            txt = re.sub(r' data-page-node-id="[^"]*"', "", txt)
+            raw = txt.encode("utf-8")
+        except Exception:
+            pass
+    content = base64.b64encode(raw).decode("ascii")
     sha = get_sha(rel)
     body = {
         "message": f"refactor: 全站 web/ 分层重构 + 统一导航与门户（{rel})",
