@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>群体心理风险雷达 · A股</title>
+<style>
+  :root{
+    --bg:#f6f4ef; --card:#ffffff; --ink:#1c1b19; --muted:#6b675f; --line:#e7e2d8;
+    --accent:#b8332a; --accent2:#1f4e5f; --gold:#b8893b;
+    --up:#d8392b; --down:#1a9e5a;
+    --h1:#a5d6a7; --h2:#fff59d; --h3:#ffcc80; --h4:#ef9a9a; --h5:#e53935;
+    --shadow:0 1px 3px rgba(28,27,25,.08),0 8px 24px rgba(28,27,25,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
+    line-height:1.62;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 18px 60px;}
+  /* Masthead */
+  .masthead{background:linear-gradient(135deg,#221f1c 0%,#3a3026 100%);color:#f7f3ea;
+    border-radius:0 0 18px 18px;padding:30px 26px 24px;position:relative;overflow:hidden;}
+  .masthead:before{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;
+    background:radial-gradient(circle,rgba(184,137,59,.35),transparent 70%);}
+  .kicker{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:700;}
+  .masthead h1{font-size:2.05rem;font-weight:800;letter-spacing:-.01em;margin:6px 0 4px;line-height:1.1;}
+  .masthead .sub{font-size:.92rem;color:#cfc6b6;max-width:640px;}
+  .mast-meta{margin-top:14px;font-size:.78rem;color:#bdb4a4;display:flex;gap:16px;flex-wrap:wrap;align-items:center;}
+  .toggle{position:absolute;top:22px;right:24px;display:inline-flex;border:1px solid rgba(247,243,234,.35);
+    border-radius:999px;overflow:hidden;background:rgba(0,0,0,.18);}
+  .toggle button{background:transparent;border:0;color:#e9e2d2;font-size:.82rem;font-weight:600;
+    padding:7px 16px;cursor:pointer;font-family:inherit;}
+  .toggle button.active{background:var(--gold);color:#221f1c;}
+  /* TLDR */
+  .tldr{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--accent);
+    border-radius:14px;padding:22px 24px;margin:22px 0;box-shadow:var(--shadow);}
+  .tldr .lbl{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.14em;color:var(--accent);
+    text-transform:uppercase;margin-bottom:8px;}
+  .tldr p{font-size:1.04rem;line-height:1.7;font-weight:500;}
+  .grade{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-weight:700;
+    background:#fdecea;color:var(--accent);border:1px solid #f3c2bd;border-radius:999px;padding:6px 16px;font-size:.92rem;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+.chip{background:#f3f0e8;border:1px solid var(--line);border-radius:8px;padding:5px 11px;font-size:.8rem;color:var(--muted);}
+.chip b{color:var(--ink);}
+/* Headline (one-line summary banner — list-style) */
+.headline{background:linear-gradient(135deg,#2a2520 0%,#3d332a 100%);color:#f7f3ea;border-radius:14px;
+  padding:18px 22px;margin:18px 0 0;box-shadow:var(--shadow);border-left:5px solid var(--accent);}
+.hl-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(247,243,234,.18);}
+.hl-lbl{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:800;
+  background:rgba(184,137,59,.18);border:1px solid rgba(184,137,59,.35);border-radius:6px;
+  padding:5px 12px;white-space:nowrap;}
+.hl-sub{font-size:.72rem;color:#c8bfb0;letter-spacing:.04em;}
+.hl-table{display:grid;grid-template-columns:96px 1fr;gap:6px 14px;margin:0;padding:0;list-style:none;}
+.hl-table li{display:contents;}
+.hl-table .k{font-size:.78rem;color:#c8bfb0;text-align:right;padding:5px 0;border-bottom:1px dashed rgba(247,243,234,.12);font-weight:500;}
+.hl-table .v{font-size:.92rem;color:#f7f3ea;padding:5px 0;border-bottom:1px dashed rgba(247,243,234,.12);font-weight:600;}
+.hl-table .v b{color:#fff;font-weight:800;}
+.hl-table .v .hl-down{color:#7dd8a3;}
+.hl-table .v .hl-up{color:#ff9a8a;}
+.hl-table .v .hl-risk{color:#ff8a7a;font-size:1rem;letter-spacing:.04em;}
+.hl-table li:last-child .k,.hl-table li:last-child .v{border-bottom:0;}
+@media(max-width:580px){.hl-table{grid-template-columns:80px 1fr;}}
+/* TL;DR — list of one-line keypoints */
+.tldr-lines{display:grid;gap:8px;margin:14px 0 8px;}
+.tldr-line{display:grid;grid-template-columns:6px 96px 1fr;gap:10px;align-items:start;
+  padding:8px 0;border-bottom:1px dashed var(--line);}
+.tldr-line:last-child{border-bottom:0;}
+.tldr-line::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);
+  margin-top:9px;box-shadow:0 0 0 3px rgba(216,57,43,.15);}
+.tldr-line.warn::before{background:var(--gold);box-shadow:0 0 0 3px rgba(184,137,59,.18);}
+.tldr-line.danger::before{background:#1a9e5a;box-shadow:0 0 0 3px rgba(26,158,90,.18);}
+.tldr-line .k{font-size:.78rem;color:var(--accent2);font-weight:800;letter-spacing:.02em;white-space:nowrap;}
+.tldr-line .v{font-size:.92rem;color:var(--ink);line-height:1.6;}
+.tldr-line .v b{color:var(--accent);font-weight:700;}
+  /* sections */
+  .sec{margin-top:34px;}
+  .sec h2{font-size:1.28rem;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .sec h2 .bar{width:6px;height:22px;background:var(--accent);border-radius:2px;display:inline-block;}
+  .sec h2 .en{font-size:.78rem;font-weight:500;color:var(--muted);letter-spacing:.02em;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;box-shadow:var(--shadow);}
+  .note{font-size:.78rem;color:var(--muted);margin-top:10px;}
+  /* sentiment rail */
+  .rail{display:flex;gap:6px;margin:6px 0 4px;flex-wrap:wrap;}
+  .rail .s{flex:1;min-width:78px;text-align:center;padding:10px 4px;border-radius:10px;background:#eef0ea;
+    color:#5b5a55;font-weight:700;font-size:.86rem;border:1px solid #e2e4dc;}
+  .rail .s small{display:block;font-weight:500;font-size:.62rem;color:#8a877f;margin-top:2px;}
+  .rail .s.on{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 4px 14px rgba(184,51,42,.3);}
+  .rail .s.on small{color:#ffe2df;}
+  /* heatmap */
+  .heat{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+  .heat .cell{border-radius:12px;padding:13px 12px;min-height:118px;display:flex;flex-direction:column;
+    justify-content:space-between;border:1px solid rgba(0,0,0,.06);}
+  .heat .cell .bn{font-weight:800;font-size:.92rem;line-height:1.2;color:#241f18;}
+  .heat .cell .bd{font-size:.72rem;line-height:1.4;color:#3c362e;margin-top:6px;}
+  .heat .cell .sev{display:inline-flex;align-items:center;justify-content:center;align-self:flex-start;
+    margin-top:8px;font-size:.7rem;font-weight:800;border-radius:999px;padding:2px 9px;background:rgba(0,0,0,.16);color:#1c1b19;}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:.76rem;color:var(--muted);align-items:center;}
+  .legend i{width:14px;height:14px;border-radius:4px;display:inline-block;margin-right:5px;vertical-align:-2px;}
+  /* radar + breadth layout */
+  .duo{display:grid;grid-template-columns:340px 1fr;gap:18px;align-items:stretch;}
+  @media(max-width:760px){.duo{grid-template-columns:1fr}.heat{grid-template-columns:repeat(2,1fr)}}
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:.86rem;}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{font-size:.74rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#faf8f3;}
+  td .val{font-weight:700;font-variant-numeric:tabular-nums;}
+  .cat{font-size:.74rem;font-weight:800;letter-spacing:.06em;color:var(--accent2);text-transform:uppercase;
+    padding:14px 12px 6px;}
+  .up{color:var(--up);} .down{color:var(--down);}
+  /* risk cards */
+  .risk3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media(max-width:760px){.risk3{grid-template-columns:1fr}}
+  .rc{border-radius:14px;padding:18px 18px;box-shadow:var(--shadow);border:1px solid var(--line);}
+  .rc.red{background:linear-gradient(180deg,#fdecea,#fff);border-top:4px solid var(--accent);}
+  .rc.amber{background:linear-gradient(180deg,#fff8e8,#fff);border-top:4px solid var(--gold);}
+  .rc.green{background:linear-gradient(180deg,#eef7f0,#fff);border-top:4px solid var(--down);}
+  .rc h3{font-size:1.02rem;font-weight:800;margin-bottom:4px;}
+  .rc .tag{font-size:.7rem;font-weight:700;letter-spacing:.04em;padding:2px 9px;border-radius:999px;display:inline-block;margin-bottom:10px;}
+  .rc.red .tag{background:#f3c2bd;color:var(--accent);}
+  .rc.amber .tag{background:#f3e0b3;color:#8a6418;}
+  .rc.green .tag{background:#bfe6cb;color:#14703a;}
+  .rc p{font-size:.82rem;line-height:1.55;color:#3a352e;margin:6px 0;}
+  .rc .rep{font-size:.8rem;color:var(--muted);}
+  .rc .cond{font-size:.8rem;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-weight:600;color:var(--ink);}
+  /* source / disclaimer */
+  .src li{list-style:none;padding:8px 0;border-bottom:1px solid var(--line);font-size:.84rem;display:flex;gap:10px;flex-wrap:wrap;}
+  .src li b{color:var(--accent2);min-width:150px;display:inline-block;}
+  /* Outlook cards */
+  .outlook-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:10px;}
+  @media(max-width:760px){.outlook-grid{grid-template-columns:1fr}}
+  .oc{border-radius:12px;padding:16px 18px;border:1px solid var(--line);}
+  .oc.up{background:linear-gradient(180deg,#eef7f0,#fff);border-top:4px solid var(--down);}
+  .oc.amber{background:linear-gradient(180deg,#fff8e8,#fff);border-top:4px solid var(--gold);}
+  .oc.red{background:linear-gradient(180deg,#fdecea,#fff);border-top:4px solid var(--accent);}
+  .oc .oc-tag{font-size:.68rem;font-weight:800;letter-spacing:.04em;padding:3px 10px;border-radius:999px;display:inline-block;margin-bottom:8px;}
+  .oc.up .oc-tag{background:#bfe6cb;color:#14703a;}
+  .oc.amber .oc-tag{background:#f3e0b3;color:#8a6418;}
+  .oc.red .oc-tag{background:#f3c2bd;color:var(--accent);}
+  .oc h3{font-size:.98rem;font-weight:800;margin-bottom:6px;}
+  .oc p{font-size:.82rem;line-height:1.55;color:#3a352e;margin:4px 0;}
+  .oc-cond{font-size:.78rem;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-weight:600;color:var(--ink);line-height:1.55;}
+  /* Trading rules */
+  .rules{list-style:none;margin-top:8px;padding:0;}
+  .rules li{padding:9px 0;border-bottom:1px solid var(--line);font-size:.86rem;line-height:1.6;}
+  .rules li:last-child{border-bottom:0;}
+  .rules li b{color:var(--accent2);font-weight:800;margin-right:6px;}
+  .disclaimer{background:#f3f0e8;border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-top:24px;font-size:.82rem;color:#4a453c;line-height:1.7;}
+  .disclaimer b{color:var(--accent);}
+  .foot{text-align:center;color:var(--muted);font-size:.74rem;margin-top:28px;}
+</style>
+</head>
+<body>
+<!-- UNIFIED_NAV -->
+<div style='display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:12px 4px;border-bottom:1px solid rgba(184,137,59,.3);font-size:13px;'><a href='../market/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>每日总览</a><a href='../lhb/lhb.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>龙虎榜分析</a><a href='../market/hotmoney.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>游资看板</a><a href='../sector/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>板块强度</a><a href='../exec/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>高管增减持</a><a href='../block/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>大宗交易</a><a href='index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>群体心理</a><a href='../research/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>行业最强</a><a href='../sections/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>版块总览</a><a href='../../index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>返回主页</a></div>
+
+
+
+
+
+
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="toggle" role="group" aria-label="language">
+      <button id="btnZh" class="active" onclick="setLang('zh')">中文</button>
+      <button id="btnEn" onclick="setLang('en')">EN</button>
+    </div>
+    <div class="kicker" data-i18n="t_kicker">A股 · 群体行为金融研判</div>
+    <h1 data-i18n="t_title">群体心理风险雷达</h1>
+    <div class="sub" data-i18n="t_sub">行为金融偏差 · 拥挤度 · 融资 · 热度 — 综合风险雷达。基于 westock 官方行情数据的真实查询结果。</div>
+    <div class="mast-meta">
+      <span><span data-i18n="t_date">数据截至</span>：<b>2026-09-07 收盘（北京时间，盘后）</b></span>
+      <span data-i18n="t_path">分析路径：群体心理分析（路径 C）</span>
+    </div>
+  </header>
+
+  <!-- 一句话结论（表格式，每行一指标） -->
+  <div class="headline">
+    <div class="hl-head">
+      <span class="hl-lbl" data-i18n="t_headline">一句话</span>
+      <span class="hl-sub" data-i18n="t_headline_sub">2026-09-07 · 收盘</span>
+    </div>
+    <ul class="hl-table">
+      <li><span class="k" data-i18n="hk_stage">阶段定性</span><span class="v" data-i18n="hv_stage"><b>科技反攻 / 普涨回暖</b>（09-07）</span></li>
+      <li><span class="k" data-i18n="hk_upratio">涨股比</span><span class="v" data-i18n="hv_upratio"><b>57%</b>（前次 09-04 46% · ↑ 11pct，广度显著修复）</span></li>
+      <li><span class="k" data-i18n="hk_lim">涨停 / 跌停</span><span class="v" data-i18n="hv_lim"><b>90</b> / <b>1</b>（涨停翻倍，跌停近乎清零）</span></li>
+      <li><span class="k" data-i18n="hk_amt">成交额</span><span class="v" data-i18n="hv_amt"><b>¥1.95万亿</b>（小幅缩量 −840亿，仍为 10 日均 99.5%）</span></li>
+      <li><span class="k" data-i18n="hk_cycle">情绪周期</span><span class="v" data-i18n="hv_cycle"><b>科技反攻 / 普涨回暖</b></span></li>
+      <li><span class="k" data-i18n="hk_risk">风险等级</span><span class="v" data-i18n="hv_risk"><b class="hl-risk">中</b>（维持）</span></li>
+      <li><span class="k" data-i18n="hk_flag">关键提示</span><span class="v" data-i18n="hv_flag">涨股比 46%→<b>57%</b>、涨停 42→<b>90</b>、创业板 <b>+3.41%</b>——广度与赚钱效应同步回暖；但成交小幅缩量 −840亿，且融资单日前五（天孚通信 +3.04亿 / 新易盛 +1.99亿 / 剑桥科技 +1.75亿 / 德科立 +1.48亿）与主力5日前八（中际旭创 +44.39亿起）高度集中于光模块/PCB，杠杆与主线拥挤度明显上升，估值 PE_TTM 20.39（10年分位 79.52%）仍偏高</span></li>
+    </ul>
+  </div>
+
+  <!-- TL;DR — 一行一行的关键点 -->
+  <section class="tldr">
+    <span class="lbl" data-i18n="t_tldr">一句话结论</span>
+    <ul class="tldr-lines" style="list-style:none;padding:0;">
+      <li class="tldr-line"><span class="k" data-i18n="tk1">阶段定性</span><span class="v" data-i18n="tv1">A 股 09-07 由 09-04「放量分化 / 修复反弹」升级为「<b>科技反攻 / 普涨回暖</b>」：涨股比升至 <b>57%</b>（3167涨 / 2196跌 / 平195，由 46% 再修复 +11pct），涨停 <b>90</b>（42→90，翻倍），跌停仅 1；创业板 <b>+3.41%</b>（3398.68）、深成 +1.91%（13774.91）、上证 +0.07%（3932.70）三指齐涨，成长风格大幅跑赢。成交 ¥1.95万亿（环比 <b>−840亿</b>，仍达 10 日均 99.5%）。风险等级维持<b>中</b>。</span></li>
+      <li class="tldr-line warn"><span class="k" data-i18n="tk2">广度显著修复</span><span class="v" data-i18n="tv2">涨股比 <b>57%</b>（前次 46% ↑ 11pct）· 涨停 <b>90</b>（42→90）· 跌停 <b>1</b>（近乎清零）· 成交 <b>¥1.95万亿</b>（小幅缩量 −840亿，10 日均 99.5%）——赚钱效应与参与度同步回升，指数与个股背离彻底收敛。</span></li>
+      <li class="tldr-line"><span class="k" data-i18n="tk3">指数转强</span><span class="v" data-i18n="tv3">上证 <b>+0.07%</b>（3932.70）几乎平收、深成 <b>+1.91%</b>（13774.91）、创业板 <b>+3.41%</b>（3398.68）——成长风格全面占优；上证收 3932.70 仍贴近 MA20（3935.82）与布林中轨，MACD 红柱 2.557（DIF 7.13 > DEA 5.85）但较前期收敛，KDJ 中位（K57.9/D63.3/J47.1），RSI_12 50.35 中性。</span></li>
+      <li class="tldr-line"><span class="k" data-i18n="tk4">板块结构</span><span class="v" data-i18n="tv4"><b>元件 +7.55%</b>（迅捷兴 +20%）与 <b>通信设备 +7.15%</b>（太辰光 +14.5%）领涨，非金属材料Ⅱ +4.72%（长江材料 +10%）/ 渔业 +4.59%（中水渔业 +9.96%）/ 电子化学品Ⅱ +4.51%（中石科技 +17.39%）/ 种植业 +4.48%（亚盛集团 +10.09%）/ 自动化设备 +4.12% 跟随——<b>光模块 / PCB / 元件 / 电子化学品构成 TMT 主线</b>；<b>保险Ⅱ −3.00%</b>（中国人保 −1.75%）领跌，贵金属 −2.91%（山金国际 −1.71%）/ 煤炭开采 −2.63% / 厨卫电器 −2.34% / 化学纤维 −1.97% / 国有大型银行Ⅱ −1.88%——红利与资源方向集体退潮。</span></li>
+      <li class="tldr-line"><span class="k" data-i18n="tk5">连板结构</span><span class="v" data-i18n="tv5">连板高度 <b>6 板</b>（龙版传媒，由 5 板晋级，但公司已公告 AI 视频业务营收占比不足 0.01%、上半年净利同比 −34.46%）；3板 3 只（亚盛集团 / 百大集团 / 爱仕达）、2板 9 只（安记食品 / 敦煌种业 / 中水渔业 / 天沃科技 / 播恩集团 / 华天酒店 / 海欣食品 / 罗牛山 / 中国出版）、首板 81 只——<b>高度上移但题材由农业食品/地产链切换至 TMT</b>。</span></li>
+      <li class="tldr-line warn"><span class="k" data-i18n="tk6">杠杆转向</span><span class="v" data-i18n="tv6">融资单日加仓榜 <b>天孚通信 +3.04亿 居首</b>，新易盛 +1.99亿、我爱我家 +1.85亿、剑桥科技 +1.75亿、德科立 +1.48亿、协创数据 +1.31亿——<b>杠杆由电池/玻纤全面转向光模块（前五占三席）</b>，方向高度集中；与 09-04「中国巨石加仓却被闷杀」不同，本次杠杆加仓方向与当日领涨主线一致，短期共振但拥挤度快速累积。</span></li>
+      <li class="tldr-line danger"><span class="k" data-i18n="tk7">估值 / 风格</span><span class="v" data-i18n="tv7">PE_TTM <b>20.39</b>（10年分位 <b>79.52%</b> 仍偏高）+ PB 1.75（估值口径 09-03）；风格 20 日口径<b>价值仍占优</b>（价值 +1.43% vs 成长 −3.48%），但当日成长大幅反攻（创业板 +3.41%）——属超跌成长的技术性修复，尚未扭转中期价值主导格局。</span></li>
+      <li class="tldr-line danger"><span class="k" data-i18n="tk8">情绪周期</span><span class="v" data-i18n="tv8">由 09-04「放量分化 / 修复反弹」转入「<b>科技反攻 / 普涨回暖</b>」：广度 57%、涨停翻倍至 90、跌停近乎清零、创业板 +3.41% 领涨，恐慌基本出清；但成交小幅缩量 −840亿、杠杆与主资金高度集中于光模块/PCB、估值分位 79.52% 仍高、连板 6 板龙头基本面已公告不匹配——<b>回暖确认但结构拥挤，风险等级维持中</b>。</span></li>
+    </ul>
+    <div class="grade"><span data-i18n="t_risk">风险等级</span>：<span data-i18n="t_risk_hi">中</span></div>
+    <div class="chips">
+      <span class="chip"><span data-i18n="c_upratio">涨股比</span> <b>57%</b></span>
+      <span class="chip"><span data-i18n="c_limitup">涨停</span> <b>90</b></span>
+      <span class="chip"><span data-i18n="c_board">连板高度</span> <b>5板</b></span>
+      <span class="chip"><span data-i18n="c_pe">估值 PE分位</span> <b>70-90%</b></span>
+      <span class="chip"><span data-i18n="c_pmi">制造业PMI</span> <b>49.2</b></span>
+      <span class="chip"><span data-i18n="c_turn">两市成交</span> <b>¥1.95万亿</b></span>
+    </div>
+  </section>
+
+  <!-- Sentiment cycle + Bias heatmap -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_bias">行为偏差热力图</span><span class="en">Behavioral Bias Heatmap</span></h2>
+    <div class="card">
+      <div class="cat" style="padding-left:0" data-i18n="t_cycle">情绪周期定位（六阶段）</div>
+      <div class="rail">
+        <div class="s"><span data-i18n="r1">绝望</span><small>Despair</small></div>
+        <div class="s"><span data-i18n="r2">怀疑</span><small>Doubt</small></div>
+        <div class="s on"><span data-i18n="r3">乐观</span><small>Optimism</small></div>
+        <div class="s"><span data-i18n="r4">狂热</span><small>Euphoria</small></div>
+        <div class="s"><span data-i18n="r5">焦虑</span><small>Anxiety</small></div>
+        <div class="s"><span data-i18n="r6">自满</span><small>Complacency</small></div>
+      </div>
+      <div class="note" data-i18n="t_cycle_note">注：上方「中性偏暖」为实时群体心理定位（科技反攻 / 普涨回暖）——09-07 涨跌分布（涨股比 57%、涨停 90、跌停 1、成交 ¥1.95万亿）显示广度显著修复、恐慌出清、赚钱效应回升；但成交小幅缩量、融资与主力资金高度集中于光模块/PCB、估值分位 79.52% 仍高。若 09-08 涨股比守住 50% 上方且成交不再缩量，回暖延续；若光模块主线放量滞涨或龙头断板，则视为情绪透支，回撤风险上升。</div>
+      <div class="heat" id="heat"></div>
+      <div class="legend">
+        <span data-i18n="t_leg">严重度（由数据综合映射）</span>：
+        <span><i style="background:var(--h1)"></i>1</span>
+        <span><i style="background:var(--h2)"></i>2</span>
+        <span><i style="background:var(--h3)"></i>3</span>
+        <span><i style="background:var(--h4)"></i>4</span>
+        <span><i style="background:var(--h5)"></i>5（高危）</span>
+      </div>
+      <div class="note" data-i18n="t_bias_note">注：偏差严重度为基于下方真实数据的模型映射（1=低，5=高），用于呈现群体心理的脆弱点分布，并非对个股的买卖建议。</div>
+    </div>
+  </section>
+
+  <!-- Radar + Breadth -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_radar">风险雷达</span><span class="en">Risk Radar</span></h2>
+    <div class="duo">
+      <div class="card">
+        <svg viewBox="0 0 320 320" width="100%" role="img" aria-label="risk radar">
+          <!-- grid -->
+          <g fill="none" stroke="#e2ddd1">
+            <polygon points="160,40 277,110 237,230 83,230 43,110" stroke-width="1"/>
+            <polygon points="160,75 240,121 211,199 109,199 79,121" stroke-width="1"/>
+            <polygon points="160,110 203,133 183,169 137,169 117,133" stroke-width="1"/>
+            <line x1="160" y1="150" x2="160" y2="40" stroke-width="1"/>
+            <line x1="160" y1="150" x2="277" y2="110" stroke-width="1"/>
+            <line x1="160" y1="150" x2="237" y2="230" stroke-width="1"/>
+            <line x1="160" y1="150" x2="83" y2="230" stroke-width="1"/>
+            <line x1="160" y1="150" x2="43" y2="110" stroke-width="1"/>
+          </g>
+          <!-- data polygon -->
+          <polygon points="160,72 218,107 206,167 160,189 104,172 88,98"
+            fill="rgba(184,51,42,.28)" stroke="#b8332a" stroke-width="2.2"/>
+          <g fill="#b8332a">
+            <circle cx="160" cy="72" r="3.2"/><circle cx="218" cy="107" r="3.2"/>
+            <circle cx="206" cy="167" r="3.2"/><circle cx="160" cy="189" r="3.2"/>
+            <circle cx="104" cy="172" r="3.2"/><circle cx="88" cy="98" r="3.2"/>
+          </g>
+          <g font-size="11" font-weight="700" fill="#3a352e" text-anchor="middle">
+            <text x="160" y="30" data-i18n="ax_crowd">拥挤度</text>
+            <text x="292" y="106" data-i18n="ax_margin">融资</text>
+            <text x="250" y="212" data-i18n="ax_turn">换手</text>
+            <text x="160" y="248" data-i18n="ax_breadth">广度</text>
+            <text x="70" y="212" data-i18n="ax_media">媒体情绪</text>
+            <text x="30" y="106" data-i18n="ax_val">估值</text>
+          </g>
+          <g font-size="10" fill="#b8332a" text-anchor="middle" font-weight="800">
+            <text x="160" y="71">58</text><text x="237" y="120">70</text><text x="209" y="194">54</text>
+            <text x="160" y="167">46</text><text x="109" y="201">62</text><text x="55" y="118">87</text>
+          </g>
+        </svg>
+        <div class="note" data-i18n="t_radar_note">六维风险读数（0–100，由下方真实数据综合映射，越高代表该维度群体脆弱性越强）：拥挤度 58 / 融资 70 / 换手 54 / 广度 46 / 媒体 62 / 估值 87。广度由 58 降至 46（09-07 涨股比升至 57%、跌停近乎清零，参与度实质改善）；换手由 56 降至 54（成交 ¥1.95万亿，10 日均 99.5%，量能小幅回落）；融资由 64 升至 70（单日加仓前五中光模块占三席：天孚通信 +3.04亿 / 新易盛 +1.99亿 / 剑桥科技 +1.75亿，杠杆方向高度集中）；拥挤度由 52 升至 58（主线收敛至光模块/PCB/元件，主力5日前十中 7 只为光通信或 PCB，赚钱效应集中）；媒体由 55 升至 62（涨停 90、6 板龙头、创业板 +3.41%，情绪温度明显升温）；估值 87 持平（PE_TTM 20.39、10年分位 79.52%，口径 09-03 未变）。整体脆弱性由「广度+估值」转向「融资+拥挤+媒体」——情绪回暖确认，但杠杆与主线集中度上升成为新的风险源。</div>
+      </div>
+      <div class="card">
+        <div class="cat" style="padding-left:0" data-i18n="t_breadth">市场涨跌分布（2026-09-07 收盘）</div>
+        <svg viewBox="0 0 560 200" width="100%" role="img" aria-label="breadth distribution">
+          <!-- Stacked proportion bar (single row, clean) -->
+          <rect x="14" y="14" width="500" height="26" fill="#f3f0e8" stroke="#e7e2d8"/>
+          <rect x="14" y="14" width="285" height="26" fill="#d8392b"/>
+          <rect x="299" y="14" width="215" height="26" fill="#1a9e5a"/>
+          <text x="167" y="33" fill="#fff" font-size="14" font-weight="800" text-anchor="middle">57%</text>
+          <text x="407" y="33" fill="#fff" font-size="14" font-weight="800" text-anchor="middle">43%</text>
+          <text x="514" y="33" fill="#6b675f" font-size="11" font-weight="700" text-anchor="end">4% 平盘</text>
+
+          <!-- Stat rows: label / number / change -->
+          <g font-size="13" font-weight="700" fill="#3a352e">
+            <text x="14" y="72" data-i18n="b_up">上涨</text>
+            <text x="14" y="92" data-i18n="b_down">下跌</text>
+            <text x="14" y="112" data-i18n="b_flat">平盘</text>
+            <text x="14" y="138" data-i18n="b_limitup">涨停</text>
+            <text x="14" y="158" data-i18n="b_limitdn">跌停</text>
+            <text x="14" y="184" data-i18n="b_amt">成交额</text>
+          </g>
+          <g font-size="14" font-weight="800" text-anchor="end">
+            <text x="340" y="72" fill="#d8392b">3167</text>
+            <text x="340" y="92" fill="#1a9e5a">2196</text>
+            <text x="340" y="112" fill="#6b675f">195</text>
+            <text x="340" y="138" fill="#d8392b">90</text>
+            <text x="340" y="158" fill="#1a9e5a">1</text>
+            <text x="340" y="184" fill="#1c1b19">¥1.95万亿</text>
+          </g>
+          <g font-size="11" fill="#6b675f" text-anchor="start">
+            <text x="355" y="72">（占 57%，较上一报告日（09-04） +11pct）</text>
+            <text x="355" y="92">（占 43%，较上一报告日（09-04） −11pct）</text>
+            <text x="355" y="112">（占 4%）</text>
+            <text x="355" y="138">（较前日 +48 只，连板高度 6板）</text>
+            <text x="355" y="158">（较前日 +1 只，跌停近乎清零）</text>
+            <text x="355" y="184">（环比 −840亿，小幅缩量）</text>
+          </g>
+        </svg>
+        <div class="note" data-i18n="t_breadth_note">涨股比由 46% 升至 57%、涨停 42→90 翻倍、跌停维持近零（1 只）；成交 ¥1.95万亿环比 −840亿（小幅缩量，仍为 10 日均 99.5%）。指数全面转强：创业板 +3.41% / 深成 +1.91% / 上证 +0.07%，上证收 3932.70 贴近 MA20（3935.82）与布林中轨；元件 +7.55% / 通信设备 +7.15% 领涨，保险Ⅱ −3.00% / 贵金属 −2.91% 领跌——TMT 主线成型、红利资源退潮。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key evidence -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_evidence">关键证据表</span><span class="en">Key Evidence</span></h2>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table>
+        <thead><tr><th data-i18n="th_metric">指标</th><th data-i18n="th_read">真实读数</th><th data-i18n="th_interp">行为金融解读</th></tr></thead>
+        <tbody>
+          <tr><td class="cat" colspan="3" data-i18n="ev_market">一、市场广度与总览</td></tr>
+          <tr><td data-i18n="ev_upratio">涨股比</td><td><span class="val up">57%</span>（涨3167 / 跌2196 / 平195）</td><td data-i18n="ev_upratio_i">由 46% 升至 57%（+11pct），涨 3167 / 跌 2196 / 平 195，参与度显著回升，跌停近乎清零显示恐慌盘彻底出清</td></tr>
+          <tr><td data-i18n="ev_limit">涨停 / 跌停</td><td><span class="val up">90</span> / <span class="val down">1</span></td><td data-i18n="ev_limit_i">涨停 90（42→90 翻倍）、跌停 1，连板高度升至 6板（龙版传媒）——投机热度明显升温，赚钱效应集中於 TMT</td></tr>
+          <tr><td data-i18n="ev_amount">两市成交额</td><td><span class="val">¥1.95万亿</span>（较前日 −840亿，小幅缩量）</td><td data-i18n="ev_amount_i">量能 ¥1.95万亿（环比 −840亿，10 日均的 99.5%），小幅缩量但仍在均位附近——回暖由存量资金再分配驱动，增量尚不显著</td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_index">二、核心指数表现（2026-09-07 收盘）</td></tr>
+          <tr><td data-i18n="ev_sh">上证指数</td><td><span class="val up">3932.70　+0.07%</span></td><td data-i18n="ev_sh_i">微涨 +0.07%（3932.70），收于 MA20 3935.82 与布林中轨略下方，MACD 红柱 2.557 收敛（DIF 7.13 > DEA 5.85），RSI_12 50.35 中性，PE_TTM 20.39（10年分位 79.52% 偏高）</td></tr>
+          <tr><td data-i18n="ev_sz">深证成指</td><td><span class="val up">13774.91　+1.91%</span></td><td data-i18n="ev_sz_i">深成 +1.91%（13774.91），跟随创业板走强，中期弱势边际改善，但仍需量能确认</td></tr>
+          <tr><td data-i18n="ev_cyb">创业板指</td><td><span class="val up">3398.68　+3.41%</span></td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_sector">三、板块排行与主线</td></tr>
+          <tr><td data-i18n="ev_secup">领涨行业</td><td><span class="val up">元件 +7.55%</span>（迅捷兴 +20%）<br>通信设备 +7.15%（太辰光 +14.5%）/ 非金属材料Ⅱ +4.72%（长江材料 +10%）<br>渔业 +4.59%（中水渔业 +9.96%）/ 电子化学品Ⅱ +4.51%（中石科技 +17.39%）/ 种植业 +4.48%（亚盛集团 +10.09%）</td><td data-i18n="ev_secup_i">元件 +7.55%（迅捷兴 +20%）/ 通信设备 +7.15%（太辰光 +14.5%）领涨，非金属材料Ⅱ +4.72%（长江材料 +10%）/ 渔业 +4.59%（中水渔业 +9.96%）/ 电子化学品Ⅱ +4.51%（中石科技 +17.39%）/ 种植业 +4.48%（亚盛集团 +10.09%）/ 自动化设备 +4.12%——光模块 / PCB / 元件 / 电子化学品构成 TMT 主线</td></tr>
+          <tr><td data-i18n="ev_secdn">领跌行业</td><td><span class="val down">保险Ⅱ −3.00%</span>（中国人保 −1.75%）/ 贵金属 −2.91%（山金国际 −1.71%）<br>煤炭开采 −2.63% / 厨卫电器 −2.34% / 化学纤维 −1.97% / 国有大型银行Ⅱ −1.88%</td><td data-i18n="ev_secdn_i">保险Ⅱ −3.00%（中国人保 −1.75%）领跌 / 贵金属 −2.91%（山金国际 −1.71%）/ 煤炭开采 −2.63% / 厨卫电器 −2.34% / 化学纤维 −1.97% / 国有大型银行Ⅱ −1.88%——红利、资源与前期防御方向集体退潮</td></tr>
+          <tr><td data-i18n="ev_board">极端题材</td><td><span class="val up">连板高度 6 板</span>（龙版传媒，已公告 AI 营收占比<0.01%）<br>3板 3 只：亚盛集团 / 百大集团 / 爱仕达；2板 9 只：安记食品 / 敦煌种业 / 中水渔业 / 天沃科技 / 播恩集团<br>新热点：迅捷兴 +20%（元件）/ 太辰光 +14.5%（通信设备）/ 中石科技 +17.39%（电子化学品Ⅱ）</td><td data-i18n="ev_board_i">连板 6板（龙版传媒），3板 3 只（亚盛集团 / 百大集团 / 爱仕达），2板 9 只（安记食品 / 敦煌种业 / 中水渔业 / 天沃科技 / 播恩集团 / 华天酒店 / 海欣食品 / 罗牛山 / 中国出版），首板 81 只；热点由农业食品 / 地产链切换至 TMT（迅捷兴 +20% / 太辰光 +14.5% / 中石科技 +17.39%）</td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_flow">四、资金：连板 / 主力 / 两融</td></tr>
+          <tr><td data-i18n="ev_height">连板高度</td><td><span class="val up">龙版传媒 6板</span>（2026-09-07）</td><td data-i18n="ev_height_i">高度 6板（龙版传媒，2026-09-07 收盘），由 5 板晋级；但公司已公告 AI 视频业务 6 月营收约 80 元、7 月约 7.5 万元，占 2025 年营收不足 0.01%，上半年归母净利同比 −34.46%——题材与基本面严重背离</td></tr>
+          <tr><td data-i18n="ev_main">主力5日净流入TOP</td><td>天孚通信 <span class="val up">+3.04亿</span>（光模块）<br>新易盛 +1.99亿（光模块） / 我爱我家 +1.85亿 / 剑桥科技 +1.75亿（光模块） / 德科立 +1.48亿<br>协创数据 +1.31亿 / 云铝股份 +1.21亿 / 精智达 +1.15亿</td><td data-i18n="ev_main_i">主力5日净流入高度集中于光模块 / PCB：中际旭创 +44.39亿 居首、新易盛 +33.80亿、工业富联 +22.25亿、剑桥科技 +19.61亿、光迅科技 +17.41亿、方正科技 +16.37亿、天孚通信 +13.24亿、德科立 +12.95亿；中国船舶 +12.89亿为前十中唯一非 TMT——主力定价权集中于单一赛道</td></tr>
+          <tr><td data-i18n="ev_margin">融资单日变动TOP</td><td>天孚通信 <span class="val up">+3.04亿</span>（光模块）<br>新易盛 +1.99亿（光模块） / 我爱我家 +1.85亿 / 剑桥科技 +1.75亿（光模块） / 德科立 +1.48亿<br>协创数据 +1.31亿 / 云铝股份 +1.21亿 / 精智达 +1.15亿</td><td data-i18n="ev_margin_i">融资单日加仓榜天孚通信居首（+3.04亿），新易盛 +1.99亿、我爱我家 +1.85亿、剑桥科技 +1.75亿、德科立 +1.48亿、协创数据 +1.31亿、云铝股份 +1.21亿、精智达 +1.15亿、宁德时代 +1.15亿、恒宝股份 +1.14亿——前五中光模块占三席，杠杆方向由电池/玻纤切换至光通信</td></tr>
+          <tr><td data-i18n="ev_hot">热搜 / 领涨TOP</td><td>龙版传媒 6板（文化传媒，AI 营收占比<0.01%）<br>迅捷兴 +20%（元件）/ 太辰光 +14.5%（通信设备）/ 中石科技 +17.39%（电子化学品Ⅱ）<br>中水渔业 +9.96%（渔业）/ 亚盛集团 +10.09%（种植业）/ 中国出版 +10.03%（出版）</td><td data-i18n="ev_hot_i">热点由 TMT 主导：龙版传媒 6板（文化传媒）/ 迅捷兴 +20%（元件）/ 太辰光 +14.5%（通信设备）/ 中石科技 +17.39%（电子化学品Ⅱ）/ 中水渔业 +9.96%（渔业）/ 亚盛集团 +10.09%（种植业）；data_hot 板块榜首位为通信设备、元件、共封装光模块(CPO)，与主力资金高度一致</td></tr>
+          <tr><td data-i18n="ev_margintotal">市场两融余额</td><td><span class="val">数据源未返回聚合值</span></td><td data-i18n="ev_margintotal_i">缺口：聚合两融余额（data_market_overview type=margin）返回空，以个股融资变动替代观察（见上）；连板高度 / 融资单日 / 主力5日均为 2026-09-07 真实数据</td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_macro">五、核心宏观指标</td></tr>
+          <tr><td data-i18n="ev_pmi">制造业PMI（7月）</td><td><span class="val down">49.2</span>（<50，景气收缩）</td><td data-i18n="ev_pmi_i">基本面收缩，与「高估值 + 中期弱势」明显背离；非制造业新订单偏弱</td></tr>
+          <tr><td data-i18n="ev_capu">产能利用率（Q2）</td><td><span class="val down">73.6%</span>（环比 −0.5pct）</td><td data-i18n="ev_capu_i">实物经济动能走弱，价格缺乏业绩支撑</td></tr>
+          <tr><td data-i18n="ev_cpi">CPI（7月）</td><td><span class="val">0.5%</span></td><td data-i18n="ev_cpi_i">低通胀、需求偏弱，难证景气全面复苏</td></tr>
+          <tr><td data-i18n="ev_social">社融（7月）</td><td><span class="val down">累计同比 −7.25%</span>（存量同比 +7.4%）</td><td data-i18n="ev_social_i">信用需求弱，资金绕道股市 = 流动性驱动特征</td></tr>
+          <tr><td data-i18n="ev_m1m2">M1-M2 剪刀差</td><td><span class="val down">−3.7%</span></td><td data-i18n="ev_m1m2_i">活钱偏弱，资金空转，典型后周期现象</td></tr>
+          <tr><td data-i18n="ev_yield">10Y 国债收益率</td><td><span class="val down">1.70%</span></td><td data-i18n="ev_yield_i">极低无风险利率，既支撑估值也反映增长担忧</td></tr>
+          <tr><td data-i18n="ev_lpr">LPR</td><td>1Y <span class="val">3.0%</span> / 5Y <span class="val">3.5%</span></td><td data-i18n="ev_lpr_i">宽松基调未变</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note" data-i18n="t_ev_note">数据口径：宏观指标多截至 2026-07（月频）或 2026-09-07（日频）；涨跌分布 / 指数 / 成交额 / 板块 / 融资单日 / 主力5日 / 连板梯队均为 2026-09-07 真实收盘。估值 PE_TTM 20.39 为 2026-09-03 口径（中证全指估值滞后发布），已在正文标注。详见末尾「数据来源与日期口径」。</div>
+  </section>
+
+  <!-- Risk stratification -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_risk">风险分层</span><span class="en">Risk Stratification</span></h2>
+    <div class="risk3">
+      <div class="rc red">
+        <span class="tag" data-i18n="rc1_tag">红线区 · 光模块杠杆与主力双集中 + 高估值</span>
+        <h3 data-i18n="rc1_t">光模块杠杆与主力双集中 + 高估值</h3>
+        <p data-i18n="rc1_d">融资单日前五中光模块占三席（天孚通信 +3.04亿 / 新易盛 +1.99亿 / 剑桥科技 +1.75亿），主力5日前十中 7 只为光通信或 PCB（中际旭创 +44.39亿起）——杠杆与主力定价权同时集中于同一赛道，一旦证伪回撤幅度大；叠加 PE_TTM 20.39、10年分位 79.52% 仍偏高，6 板龙头龙版传媒已公告 AI 业务营收占比不足 0.01%——题材与基本面严重背离。</p>
+        <p class="rep" data-i18n="rc1_rep">代表：光模块（中际旭创 / 新易盛 / 天孚通信）/ PCB（迅捷兴 / 兴森科技）/ 6板龙头（龙版传媒）</p>
+        <div class="cond" data-i18n="rc1_cond">条件框架：高位主线不追涨、不加杠杆；以量能持续 + 指数站回短期均线上方为右侧确认，破位即减，杠杆仓位优先降。</div>
+      </div>
+      <div class="rc amber">
+        <span class="tag" data-i18n="rc2_tag">黄线区 · 成交缩量下的普涨（量价背离）</span>
+        <h3 data-i18n="rc2_t">成交缩量下的普涨</h3>
+        <p data-i18n="rc2_d">涨停翻倍至 90、涨股比 57%、创业板 +3.41%，但成交环比 −840亿至 ¥1.95万亿（10 日均 99.5%）——回暖由存量资金再分配驱动而非增量入场，量价存在背离；上证 +0.07% 几乎平收、仍收于 MA20 与布林中轨略下方，权重股未跟进。</p>
+        <p class="rep" data-i18n="rc2_rep">代表：创业板 / 深成指（成长风格反攻）/ 上证权重（未同步）</p>
+        <div class="cond" data-i18n="rc2_cond">条件框架：不追日内领涨题材；新主线（电子硬件）需量价持续确认，严禁把单日轮动当反转，警惕「狂热」标签下高位放量追涨。</div>
+      </div>
+      <div class="rc green">
+        <span class="tag" data-i18n="rc3_tag">绿线区 · 红利与资源退潮（相对）</span>
+        <h3 data-i18n="rc3_t">红利 / 资源方向退潮</h3>
+        <p data-i18n="rc3_d">保险Ⅱ −3.00%（中国人保 −1.75%）领跌，贵金属 −2.91%（山金国际 −1.71%）/ 煤炭开采 −2.63% / 化学纤维 −1.97% / 国有大型银行Ⅱ −1.88% / 农商行Ⅱ −1.66%——前期防御与资源方向在风险偏好回升时被抛售，属资金再平衡而非基本面恶化，但提示高低切换仍在进行。</p>
+        <p class="rep" data-i18n="rc3_rep">代表：保险Ⅱ（中国人保）/ 贵金属（山金国际）/ 煤炭开采（上海能源）</p>
+        <div class="cond" data-i18n="rc3_cond">条件框架：仅作避险对冲与仓位保护；资源已转弱段不宜视为安全垫，整体风险预算应显著收缩。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Outlook (next-session) -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_outlook">下个交易日（09-08 周二）展望</span><span class="en">Next-Session Outlook (09-08 Tue)</span></h2>
+    <div class="card">
+      <div class="cat" style="padding-left:0" data-i18n="o_logic">研判逻辑（基于 09-07 收盘 + 群体心理定位）</div>
+      <p class="note" data-i18n="o_logic_text">由 09-07 的「科技反攻 / 普涨回暖」延伸：情绪周期定位「科技反攻 / 普涨回暖」，涨股比 57%、涨停 90、跌停 1、创业板 +3.41%，广度与赚钱效应同步修复；但成交小幅缩量 −840亿、融资与主力资金高度集中于光模块/PCB、估值分位 79.52% 仍高、6 板龙头基本面已公告不匹配。基于此推演 09-08 的板块方向与交易规则（<b>不涉及具体个股推荐</b>）。</p>
+
+      <div class="outlook-grid">
+        <div class="oc up">
+          <span class="oc-tag" data-i18n="o1_tag">光模块 / PCB（观察）</span>
+          <h3 data-i18n="o1_t">通信设备 / 元件 / 电子化学品Ⅱ</h3>
+          <p data-i18n="o1_d">09-07 最强主线：元件 +7.55%（迅捷兴 +20%）/ 通信设备 +7.15%（太辰光 +14.5%），主力5日中际旭创 +44.39亿、新易盛 +33.80亿居前——价格与资金双共振，主线地位短期难以撼动。</p>
+          <div class="oc-cond" data-i18n="o1_cond">注意：杠杆与主力双集中 = 拥挤度高，单日暴涨后忌追高；若龙头放量滞涨或涨停家数骤降，视为透支信号，只做回踩不追突破。</div>
+        </div>
+
+        <div class="oc amber">
+          <span class="oc-tag" data-i18n="o2_tag">成长超跌修复（观望）</span>
+          <h3 data-i18n="o2_t">半导体 / 消费电子 / 自动化设备</h3>
+          <p data-i18n="o2_d">09-07 半导体 +3.36% / 消费电子 +2.78% / 自动化设备 +4.12% 跟随创业板 +3.41% 反攻，属估值分位偏高背景下的技术性修复，尚未得到业绩或订单验证。</p>
+          <div class="oc-cond" data-i18n="o2_cond">注意：修复需 2 日以上量价确认；成交若继续缩量，反弹持续性不足，不重仓、不加杠杆。</div>
+        </div>
+
+        <div class="oc red">
+          <span class="oc-tag" data-i18n="o3_tag">红利 / 资源退潮（回避）</span>
+          <h3 data-i18n="o3_t">保险Ⅱ / 贵金属 / 煤炭开采</h3>
+          <p data-i18n="o3_d">09-07 保险Ⅱ −3.00% 领跌、贵金属 −2.91%（山金国际 −1.71%）/ 煤炭开采 −2.63% / 国有大型银行Ⅱ −1.88% 集体退潮——风险偏好回升期的资金再平衡，短期承压。</p>
+          <div class="oc-cond" data-i18n="o3_cond">注意：属高低切换而非基本面恶化，不盲目杀跌；但主线未确认前不宜左侧抄底，等待缩量止跌信号。</div>
+        </div>
+      </div>
+
+      <div class="cat" style="padding-left:0;margin-top:18px;" data-i18n="o_rules_t">交易规则（09-08）</div>
+      <ul class="rules">
+        <li data-i18n="o_r1"><b>仓位</b>：中性（5 成左右），不加杠杆。情绪由「放量分化 / 修复反弹」升级「科技反攻 / 普涨回暖」，风险等级维持中，可参与但不追高。</li>
+        <li data-i18n="o_r2"><b>量价确认</b>：涨股比 ≥50% 且成交回升至 ¥2 万亿上方，方可将仓位提至上限；若成交继续缩量至 ¥1.8万亿以下，视为回暖动力不足，降仓至 ≤3 成。</li>
+        <li data-i18n="o_r3"><b>主线参与</b>：光模块 / PCB 只做回踩不追高，重点看龙头是否放量滞涨；成长超跌修复方向需 2 日以上量价确认再介入。</li>
+        <li data-i18n="o_r4"><b>回避清单</b>：6 板及以上高位连板（龙版传媒已公告 AI 业务营收占比<0.01%，题材与基本面严重背离）、杠杆与主力双集中且已连续大涨的光模块个股追高、红利资源左侧抄底。</li>
+        <li data-i18n="o_r5"><b>风控</b>：若 09-08 光模块主线龙头断板或涨停家数较 90 家腰斩，视为情绪透支，立即降仓；上证跌破 MA20（3935.82）则转防守。</li>
+      </ul>
+
+      <p class="note" style="margin-top:14px;font-size:.76rem;color:var(--muted)" data-i18n="o_compliance"><b>合规说明：</b>本展望仅给出板块方向与交易规则，不涉及具体个股推荐；群体心理定位与板块推断基于 2026-09-07 真实行情数据，市场有风险，决策须独立。</p>
+    </div>
+  </section>
+
+  <!-- Sources -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_source">数据来源与日期口径</span><span class="en">Data Sources & Time Caliber</span></h2>
+    <div class="card">
+      <ul class="src">
+        <li><b data-i18n="s_breadth">涨跌分布 / 总览</b><span data-i18n="s_breadth_v">westock · data_market_overview(market_statis_updown)；2026-09-07 收盘</span></li>
+        <li><b data-i18n="s_portrait">市场画像 summary</b><span data-i18n="s_portrait_v">westock · data_market_overview(type=summary)；2026-09-07（涨股比 57% 真实广度修复，科技反攻）</span></li>
+        <li><b data-i18n="s_index">指数表现</b><span data-i18n="s_index_v">westock · data_market_overview(market_statis_daily_trade)；2026-09-07 收盘</span></li>
+        <li><b data-i18n="s_sector">板块排行 / 资金流</b><span data-i18n="s_sector_v">westock · data_sector(mode=ranking, kind=industry/concept)；2026-09-07</span></li>
+        <li><b data-i18n="s_hot">热搜股票</b><span data-i18n="s_hot_v">westock · data_hot(kind=board)；2026-09-07（通信设备 / 元件 / CPO 居前）</span></li>
+        <li><b data-i18n="s_macro">核心宏观</b><span data-i18n="s_macro_v">westock · data_macro(cn_pmi, cn_capacity_utilization, cn_financing 等)；PMI/产能/社融为 08-21 复核（无新发布，月频），CPI/M1-M2/10Y/LPR 沿用前期值</span></li>
+        <li><b data-i18n="s_margin">两融（个股）</b><span data-i18n="s_margin_v">westock · tool_ranking(metric=margin_chg_d)；2026-09-07</span></li>
+        <li><b data-i18n="s_main">主力5日净流入</b><span data-i18n="s_main_v">westock · tool_ranking(metric=cap_main_5d)；2026-09-07（中际旭创 +44.39亿 居首）</span></li>
+        <li><b data-i18n="s_board">连板高度</b><span data-i18n="s_board_v">westock · tool_ranking(metric=limitup_days)；2026-09-07（当日排行榜已刷新，共 94 只）</span></li>
+        <li><b data-i18n="s_gap">数据缺口</b><span data-i18n="s_gap_v">市场两融余额聚合值（data_market_overview type=margin）数据源返回空，已用个股融资变动替代，未编造；估值 PE_TTM 20.39 为 2026-09-03 口径（中证全指估值滞后发布），已标注。</span></li>
+      </ul>
+      <div class="note" data-i18n="t_src_note">时间口径：所有时点按北京时间。宏观为月频 / 季频，与日频行情不可直接对齐，已分别标注。涨跌分布 / 指数 / 板块 / 融资单日 / 主力5日 / 连板梯队均为 2026-09-07 当日真实数据；估值为 2026-09-03 口径。</div>
+    </div>
+  </section>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    <p data-i18n="disc1">免责声明：以上内容基于公开数据和量化分析，仅供参考，不构成投资建议。市场有风险，投资需谨慎。任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往表现不预示未来收益。</p>
+    <p style="margin-top:8px" data-i18n="disc2">本研判为「群体心理 / 条件框架」分析，非买卖指令；风险读数与偏差严重度为模型综合映射，须与价格结构、估值、资金流向交叉验证，不可单独作为交易依据。</p>
+  </div>
+
+  <div class="foot" data-i18n="t_foot">群体心理风险雷达 · 由 westock 官方行情数据生成 · 仅供研究参考</div>
+</div>
+
+<script>
+  var I18N = {
+    zh:{
+      t_kicker:"A股 · 群体行为金融研判",
+      t_title:"群体心理风险雷达",
+      t_sub:"行为金融偏差 · 拥挤度 · 融资 · 热度 — 综合风险雷达。基于 westock 官方行情数据的真实查询结果。",
+      t_date:"数据截至",
+      t_path:"分析路径：群体心理分析（路径 C）",
+      t_tldr:"一句话结论",
+      t_headline:"一句话",
+      t_headline_sub:"2026-09-07 · 收盘",
+      hk_stage:"阶段定性",
+      hv_stage:"<b>科技反攻 / 普涨回暖</b>（09-07）",
+      hk_upratio:"涨股比",
+      hv_upratio:"<b>57%</b>（前次 09-04 46% · ↑ 11pct，广度显著修复）",
+      hk_lim:"涨停 / 跌停",
+      hv_lim:"<b>90</b> / <b>1</b>（涨停翻倍，跌停近乎清零）",
+      hk_amt:"成交额",
+      hv_amt:"<b>¥1.95万亿</b>（小幅缩量 −840亿，仍为 10 日均 99.5%）",
+      hk_cycle:"情绪周期",
+      hv_cycle:"<b>科技反攻 / 普涨回暖</b>",
+      hk_risk:"风险等级",
+      hv_risk:"<b class=\"hl-risk\">中</b>（维持）",
+      hk_flag:"关键提示",
+      hv_flag:"涨股比 46%→<b>57%</b>、涨停 42→<b>90</b>、创业板 <b>+3.41%</b>——广度与赚钱效应同步回暖；但成交小幅缩量 −840亿，且融资单日前五（天孚通信 +3.04亿 / 新易盛 +1.99亿 / 剑桥科技 +1.75亿 / 德科立 +1.48亿）与主力5日前八（中际旭创 +44.39亿起）高度集中于光模块/PCB，杠杆与主线拥挤度明显上升，估值 PE_TTM 20.39（10年分位 79.52%）仍偏高",
+      tk1:"阶段定性",
+      tv1:"A 股 09-07 由 09-04「放量分化 / 修复反弹」升级为「<b>科技反攻 / 普涨回暖</b>」：涨股比升至 <b>57%</b>（3167涨 / 2196跌 / 平195，由 46% 再修复 +11pct），涨停 <b>90</b>（42→90，翻倍），跌停仅 1；创业板 <b>+3.41%</b>（3398.68）、深成 +1.91%（13774.91）、上证 +0.07%（3932.70）三指齐涨，成长风格大幅跑赢。成交 ¥1.95万亿（环比 <b>−840亿</b>，仍达 10 日均 99.5%）。风险等级维持<b>中</b>。",
+      tk2:"广度显著修复",
+      tv2:"涨股比 <b>57%</b>（前次 46% ↑ 11pct）· 涨停 <b>90</b>（42→90）· 跌停 <b>1</b>（近乎清零）· 成交 <b>¥1.95万亿</b>（小幅缩量 −840亿，10 日均 99.5%）——赚钱效应与参与度同步回升，指数与个股背离彻底收敛。",
+      tk3:"指数转强",
+      tv3:"上证 <b>+0.07%</b>（3932.70）几乎平收、深成 <b>+1.91%</b>（13774.91）、创业板 <b>+3.41%</b>（3398.68）——成长风格全面占优；上证收 3932.70 仍贴近 MA20（3935.82）与布林中轨，MACD 红柱 2.557（DIF 7.13 > DEA 5.85）但较前期收敛，KDJ 中位（K57.9/D63.3/J47.1），RSI_12 50.35 中性。",
+      tk4:"板块结构",
+      tv4:"<b>元件 +7.55%</b>（迅捷兴 +20%）与 <b>通信设备 +7.15%</b>（太辰光 +14.5%）领涨，非金属材料Ⅱ +4.72%（长江材料 +10%）/ 渔业 +4.59%（中水渔业 +9.96%）/ 电子化学品Ⅱ +4.51%（中石科技 +17.39%）/ 种植业 +4.48%（亚盛集团 +10.09%）/ 自动化设备 +4.12% 跟随——<b>光模块 / PCB / 元件 / 电子化学品构成 TMT 主线</b>；<b>保险Ⅱ −3.00%</b>（中国人保 −1.75%）领跌，贵金属 −2.91%（山金国际 −1.71%）/ 煤炭开采 −2.63% / 厨卫电器 −2.34% / 化学纤维 −1.97% / 国有大型银行Ⅱ −1.88%——红利与资源方向集体退潮。",
+      tk5:"连板结构",
+      tv5:"连板高度 <b>6 板</b>（龙版传媒，由 5 板晋级，但公司已公告 AI 视频业务营收占比不足 0.01%、上半年净利同比 −34.46%）；3板 3 只（亚盛集团 / 百大集团 / 爱仕达）、2板 9 只（安记食品 / 敦煌种业 / 中水渔业 / 天沃科技 / 播恩集团 / 华天酒店 / 海欣食品 / 罗牛山 / 中国出版）、首板 81 只——<b>高度上移但题材由农业食品/地产链切换至 TMT</b>。",
+      tk6:"杠杆转向",
+      tv6:"融资单日加仓榜 <b>天孚通信 +3.04亿 居首</b>，新易盛 +1.99亿、我爱我家 +1.85亿、剑桥科技 +1.75亿、德科立 +1.48亿、协创数据 +1.31亿——<b>杠杆由电池/玻纤全面转向光模块（前五占三席）</b>，方向高度集中；与 09-04「中国巨石加仓却被闷杀」不同，本次杠杆加仓方向与当日领涨主线一致，短期共振但拥挤度快速累积。",
+      tk7:"估值 / 风格",
+      tv7:"PE_TTM <b>20.39</b>（10年分位 <b>79.52%</b> 仍偏高）+ PB 1.75（估值口径 09-03）；风格 20 日口径<b>价值仍占优</b>（价值 +1.43% vs 成长 −3.48%），但当日成长大幅反攻（创业板 +3.41%）——属超跌成长的技术性修复，尚未扭转中期价值主导格局。",
+      tk8:"情绪周期",
+      tv8:"由 09-04「放量分化 / 修复反弹」转入「<b>科技反攻 / 普涨回暖</b>」：广度 57%、涨停翻倍至 90、跌停近乎清零、创业板 +3.41% 领涨，恐慌基本出清；但成交小幅缩量 −840亿、杠杆与主资金高度集中于光模块/PCB、估值分位 79.52% 仍高、连板 6 板龙头基本面已公告不匹配——<b>回暖确认但结构拥挤，风险等级维持中</b>。",
+      t_tldr_text:"A股 09-07 呈现「科技反攻 / 普涨回暖」：涨股比 46%→57%（3167涨/2196跌/平195），涨停 42→90 翻倍，跌停仅 1，创业板 +3.41%（3398.68）领涨、深成 +1.91%、上证 +0.07%（3932.70）；成交 ¥1.95万亿（环比 −840亿，仍为 10 日均 99.5%）。元件 +7.55%（迅捷兴 +20%）/ 通信设备 +7.15%（太辰光 +14.5%）领涨，非金属材料Ⅱ +4.72% / 渔业 +4.59% / 电子化学品Ⅱ +4.51%（中石科技 +17.39%）/ 种植业 +4.48% 跟随，TMT 主线成型；保险Ⅱ −3.00% 领跌，贵金属 −2.91% / 煤炭开采 −2.63% / 国有大型银行Ⅱ −1.88% 红利资源退潮。连板高度 6板（龙版传媒，已公告 AI 业务营收占比<0.01%），3板 3 只、2板 9 只、首板 81 只。资金信号：融资单日天孚通信 +3.04亿居首（新易盛 +1.99亿、剑桥科技 +1.75亿、德科立 +1.48亿，光模块占前五三席）；主力5日中际旭创 +44.39亿第一、新易盛 +33.80亿、工业富联 +22.25亿、剑桥科技 +19.61亿。估值 PE_TTM 20.39（10年分位 79.52%）仍偏高——回暖确认但杠杆与主线拥挤，风险等级中。",
+      t_risk:"风险等级",
+      t_risk_hi:"中",
+      c_upratio:"涨股比",
+      c_limitup:"涨停",
+      c_board:"连板高度",
+      c_pe:"估值 PE分位",
+      c_pmi:"制造业PMI",
+      c_turn:"两市成交",
+      t_sec_bias:"行为偏差热力图",
+      t_cycle:"情绪周期定位（六阶段）",
+      r1:"绝望",
+      r2:"怀疑",
+      r3:"乐观",
+      r4:"狂热",
+      r5:"焦虑",
+      r6:"自满",
+      t_cycle_note:"注：上方「中性偏暖」为实时群体心理定位（科技反攻 / 普涨回暖）——09-07 涨跌分布（涨股比 57%、涨停 90、跌停 1、成交 ¥1.95万亿）显示广度显著修复、恐慌出清、赚钱效应回升；但成交小幅缩量、融资与主力资金高度集中于光模块/PCB、估值分位 79.52% 仍高。若 09-08 涨股比守住 50% 上方且成交不再缩量，回暖延续；若光模块主线放量滞涨或龙头断板，则视为情绪透支，回撤风险上升。",
+      t_leg:"严重度（由数据综合映射）",
+      t_bias_note:"注：偏差严重度为基于下方真实数据的模型映射（1=低，5=高），用于呈现群体心理的脆弱点分布，并非对个股的买卖建议。",
+      t_sec_radar:"风险雷达",
+      t_radar_note:"六维风险读数（0–100，由下方真实数据综合映射，越高代表该维度群体脆弱性越强）：拥挤度 58 / 融资 70 / 换手 54 / 广度 46 / 媒体 62 / 估值 87。广度由 58 降至 46（09-07 涨股比升至 57%、跌停近乎清零，参与度实质改善）；换手由 56 降至 54（成交 ¥1.95万亿，10 日均 99.5%，量能小幅回落）；融资由 64 升至 70（单日加仓前五中光模块占三席：天孚通信 +3.04亿 / 新易盛 +1.99亿 / 剑桥科技 +1.75亿，杠杆方向高度集中）；拥挤度由 52 升至 58（主线收敛至光模块/PCB/元件，主力5日前十中 7 只为光通信或 PCB，赚钱效应集中）；媒体由 55 升至 62（涨停 90、6 板龙头、创业板 +3.41%，情绪温度明显升温）；估值 87 持平（PE_TTM 20.39、10年分位 79.52%，口径 09-03 未变）。整体脆弱性由「广度+估值」转向「融资+拥挤+媒体」——情绪回暖确认，但杠杆与主线集中度上升成为新的风险源。",
+      ax_crowd:"拥挤度",
+      ax_margin:"融资",
+      ax_turn:"换手",
+      ax_breadth:"广度",
+      ax_media:"媒体情绪",
+      ax_val:"估值",
+      t_breadth:"市场涨跌分布（2026-09-07 收盘）",
+      b_up:"上涨",
+      b_down:"下跌",
+      b_flat:"平盘",
+      b_limitup:"涨停",
+      b_limitdn:"跌停",
+      b_amt:"成交额",
+      t_breadth_note:"涨股比由 46% 升至 57%、涨停 42→90 翻倍、跌停维持近零（1 只）；成交 ¥1.95万亿环比 −840亿（小幅缩量，仍为 10 日均 99.5%）。指数全面转强：创业板 +3.41% / 深成 +1.91% / 上证 +0.07%，上证收 3932.70 贴近 MA20（3935.82）与布林中轨；元件 +7.55% / 通信设备 +7.15% 领涨，保险Ⅱ −3.00% / 贵金属 −2.91% 领跌——TMT 主线成型、红利资源退潮。",
+      t_sec_evidence:"关键证据表",
+      th_metric:"指标",
+      th_read:"真实读数",
+      th_interp:"行为金融解读",
+      ev_market:"一、市场广度与总览",
+      ev_upratio:"涨股比",
+      ev_upratio_i:"由 46% 升至 57%（+11pct），涨 3167 / 跌 2196 / 平 195，参与度显著回升，跌停近乎清零显示恐慌盘彻底出清",
+      ev_limit:"涨停 / 跌停",
+      ev_limit_i:"涨停 90（42→90 翻倍）、跌停 1，连板高度升至 6板（龙版传媒）——投机热度明显升温，赚钱效应集中於 TMT",
+      ev_amount:"两市成交额",
+      ev_amount_i:"量能 ¥1.95万亿（环比 −840亿，10 日均的 99.5%），小幅缩量但仍在均位附近——回暖由存量资金再分配驱动，增量尚不显著",
+      ev_index:"二、核心指数表现（2026-09-07 收盘）",
+      ev_sh:"上证指数",
+      ev_sh_i:"微涨 +0.07%（3932.70），收于 MA20 3935.82 与布林中轨略下方，MACD 红柱 2.557 收敛（DIF 7.13 > DEA 5.85），RSI_12 50.35 中性，PE_TTM 20.39（10年分位 79.52% 偏高）",
+      ev_sz:"深证成指",
+      ev_sz_i:"深成 +1.91%（13774.91），跟随创业板走强，中期弱势边际改善，但仍需量能确认",
+      ev_cyb:"创业板指",
+      ev_cyb_i:"创业板 +3.41%（3398.68）领涨三大指数，成长风格全面反攻，属超跌技术性修复",
+      ev_sector:"三、板块排行与主线",
+      ev_secup:"领涨行业",
+      ev_secup_i:"元件 +7.55%（迅捷兴 +20%）/ 通信设备 +7.15%（太辰光 +14.5%）领涨，非金属材料Ⅱ +4.72%（长江材料 +10%）/ 渔业 +4.59%（中水渔业 +9.96%）/ 电子化学品Ⅱ +4.51%（中石科技 +17.39%）/ 种植业 +4.48%（亚盛集团 +10.09%）/ 自动化设备 +4.12%——光模块 / PCB / 元件 / 电子化学品构成 TMT 主线",
+      ev_secdn:"领跌行业",
+      ev_secdn_i:"保险Ⅱ −3.00%（中国人保 −1.75%）领跌 / 贵金属 −2.91%（山金国际 −1.71%）/ 煤炭开采 −2.63% / 厨卫电器 −2.34% / 化学纤维 −1.97% / 国有大型银行Ⅱ −1.88%——红利、资源与前期防御方向集体退潮",
+      ev_board:"极端题材",
+      ev_board_i:"连板 6板（龙版传媒），3板 3 只（亚盛集团 / 百大集团 / 爱仕达），2板 9 只（安记食品 / 敦煌种业 / 中水渔业 / 天沃科技 / 播恩集团 / 华天酒店 / 海欣食品 / 罗牛山 / 中国出版），首板 81 只；热点由农业食品 / 地产链切换至 TMT（迅捷兴 +20% / 太辰光 +14.5% / 中石科技 +17.39%）",
+      ev_flow:"四、资金：连板 / 主力 / 两融",
+      ev_height:"连板高度",
+      ev_height_i:"高度 6板（龙版传媒，2026-09-07 收盘），由 5 板晋级；但公司已公告 AI 视频业务 6 月营收约 80 元、7 月约 7.5 万元，占 2025 年营收不足 0.01%，上半年归母净利同比 −34.46%——题材与基本面严重背离",
+      ev_main:"主力5日净流入TOP",
+      ev_main_i:"主力5日净流入高度集中于光模块 / PCB：中际旭创 +44.39亿 居首、新易盛 +33.80亿、工业富联 +22.25亿、剑桥科技 +19.61亿、光迅科技 +17.41亿、方正科技 +16.37亿、天孚通信 +13.24亿、德科立 +12.95亿；中国船舶 +12.89亿为前十中唯一非 TMT——主力定价权集中于单一赛道",
+      ev_margin:"融资单日变动TOP",
+      ev_margin_i:"融资单日加仓榜天孚通信居首（+3.04亿），新易盛 +1.99亿、我爱我家 +1.85亿、剑桥科技 +1.75亿、德科立 +1.48亿、协创数据 +1.31亿、云铝股份 +1.21亿、精智达 +1.15亿、宁德时代 +1.15亿、恒宝股份 +1.14亿——前五中光模块占三席，杠杆方向由电池/玻纤切换至光通信",
+      ev_hot:"热搜 / 领涨TOP",
+      ev_hot_i:"热点由 TMT 主导：龙版传媒 6板（文化传媒）/ 迅捷兴 +20%（元件）/ 太辰光 +14.5%（通信设备）/ 中石科技 +17.39%（电子化学品Ⅱ）/ 中水渔业 +9.96%（渔业）/ 亚盛集团 +10.09%（种植业）；data_hot 板块榜首位为通信设备、元件、共封装光模块(CPO)，与主力资金高度一致",
+      ev_margintotal:"市场两融余额",
+      ev_margintotal_i:"缺口：聚合两融余额（data_market_overview type=margin）返回空，以个股融资变动替代观察（见上）；连板高度 / 融资单日 / 主力5日均为 2026-09-07 真实数据",
+      ev_macro:"五、核心宏观指标",
+      ev_pmi:"制造业PMI（7月）",
+      ev_pmi_i:"基本面收缩，与「高估值 + 中期弱势」明显背离；非制造业新订单偏弱",
+      ev_capu:"产能利用率（Q2）",
+      ev_capu_i:"实物经济动能走弱，价格缺乏业绩支撑",
+      ev_cpi:"CPI（7月）",
+      ev_cpi_i:"低通胀、需求偏弱，难证景气全面复苏",
+      ev_social:"社融（7月）",
+      ev_social_i:"信用需求弱，资金绕道股市 = 流动性驱动特征",
+      ev_m1m2:"M1-M2 剪刀差",
+      ev_m1m2_i:"活钱偏弱，资金空转，典型后周期现象",
+      ev_yield:"10Y 国债收益率",
+      ev_yield_i:"极低无风险利率，既支撑估值也反映增长担忧",
+      ev_lpr:"LPR",
+      ev_lpr_i:"宽松基调未变",
+      t_ev_note:"数据口径：宏观指标多截至 2026-07（月频）或 2026-09-07（日频）；涨跌分布 / 指数 / 成交额 / 板块 / 融资单日 / 主力5日 / 连板梯队均为 2026-09-07 真实收盘。估值 PE_TTM 20.39 为 2026-09-03 口径（中证全指估值滞后发布），已在正文标注。详见末尾「数据来源与日期口径」。",
+      t_sec_risk:"风险分层",
+      rc1_tag:"红线区 · 光模块杠杆与主力双集中 + 高估值",
+      rc1_t:"光模块杠杆与主力双集中 + 高估值",
+      rc1_d:"融资单日前五中光模块占三席（天孚通信 +3.04亿 / 新易盛 +1.99亿 / 剑桥科技 +1.75亿），主力5日前十中 7 只为光通信或 PCB（中际旭创 +44.39亿起）——杠杆与主力定价权同时集中于同一赛道，一旦证伪回撤幅度大；叠加 PE_TTM 20.39、10年分位 79.52% 仍偏高，6 板龙头龙版传媒已公告 AI 业务营收占比不足 0.01%——题材与基本面严重背离。",
+      rc1_rep:"代表：光模块（中际旭创 / 新易盛 / 天孚通信）/ PCB（迅捷兴 / 兴森科技）/ 6板龙头（龙版传媒）",
+      rc1_cond:"条件框架：高位主线不追涨、不加杠杆；以量能持续 + 指数站回短期均线上方为右侧确认，破位即减，杠杆仓位优先降。",
+      rc2_tag:"黄线区 · 成交缩量下的普涨（量价背离）",
+      rc2_t:"成交缩量下的普涨",
+      rc2_d:"涨停翻倍至 90、涨股比 57%、创业板 +3.41%，但成交环比 −840亿至 ¥1.95万亿（10 日均 99.5%）——回暖由存量资金再分配驱动而非增量入场，量价存在背离；上证 +0.07% 几乎平收、仍收于 MA20 与布林中轨略下方，权重股未跟进。",
+      rc2_rep:"代表：创业板 / 深成指（成长风格反攻）/ 上证权重（未同步）",
+      rc2_cond:"条件框架：不追日内领涨题材；新主线（电子硬件）需量价持续确认，严禁把单日轮动当反转，警惕「狂热」标签下高位放量追涨。",
+      rc3_tag:"绿线区 · 红利与资源退潮（相对）",
+      rc3_t:"红利 / 资源方向退潮",
+      rc3_d:"保险Ⅱ −3.00%（中国人保 −1.75%）领跌，贵金属 −2.91%（山金国际 −1.71%）/ 煤炭开采 −2.63% / 化学纤维 −1.97% / 国有大型银行Ⅱ −1.88% / 农商行Ⅱ −1.66%——前期防御与资源方向在风险偏好回升时被抛售，属资金再平衡而非基本面恶化，但提示高低切换仍在进行。",
+      rc3_rep:"代表：保险Ⅱ（中国人保）/ 贵金属（山金国际）/ 煤炭开采（上海能源）",
+      rc3_cond:"条件框架：仅作避险对冲与仓位保护；资源已转弱段不宜视为安全垫，整体风险预算应显著收缩。",
+      t_sec_outlook:"下个交易日（09-08 周二）展望",
+      o_logic:"研判逻辑（基于 09-07 收盘 + 群体心理定位）",
+      o_logic_text:"由 09-07 的「科技反攻 / 普涨回暖」延伸：情绪周期定位「科技反攻 / 普涨回暖」，涨股比 57%、涨停 90、跌停 1、创业板 +3.41%，广度与赚钱效应同步修复；但成交小幅缩量 −840亿、融资与主力资金高度集中于光模块/PCB、估值分位 79.52% 仍高、6 板龙头基本面已公告不匹配。基于此推演 09-08 的板块方向与交易规则（<b>不涉及具体个股推荐</b>）。",
+      o1_tag:"光模块 / PCB（观察）",
+      o1_t:"通信设备 / 元件 / 电子化学品Ⅱ",
+      o1_d:"09-07 最强主线：元件 +7.55%（迅捷兴 +20%）/ 通信设备 +7.15%（太辰光 +14.5%），主力5日中际旭创 +44.39亿、新易盛 +33.80亿居前——价格与资金双共振，主线地位短期难以撼动。",
+      o1_cond:"注意：杠杆与主力双集中 = 拥挤度高，单日暴涨后忌追高；若龙头放量滞涨或涨停家数骤降，视为透支信号，只做回踩不追突破。",
+      o2_tag:"成长超跌修复（观望）",
+      o2_t:"半导体 / 消费电子 / 自动化设备",
+      o2_d:"09-07 半导体 +3.36% / 消费电子 +2.78% / 自动化设备 +4.12% 跟随创业板 +3.41% 反攻，属估值分位偏高背景下的技术性修复，尚未得到业绩或订单验证。",
+      o2_cond:"注意：修复需 2 日以上量价确认；成交若继续缩量，反弹持续性不足，不重仓、不加杠杆。",
+      o3_tag:"红利 / 资源退潮（回避）",
+      o3_t:"保险Ⅱ / 贵金属 / 煤炭开采",
+      o3_d:"09-07 保险Ⅱ −3.00% 领跌、贵金属 −2.91%（山金国际 −1.71%）/ 煤炭开采 −2.63% / 国有大型银行Ⅱ −1.88% 集体退潮——风险偏好回升期的资金再平衡，短期承压。",
+      o3_cond:"注意：属高低切换而非基本面恶化，不盲目杀跌；但主线未确认前不宜左侧抄底，等待缩量止跌信号。",
+      o_rules_t:"交易规则（09-08）",
+      o_r1:"<b>仓位</b>：中性（5 成左右），不加杠杆。情绪由「放量分化 / 修复反弹」升级「科技反攻 / 普涨回暖」，风险等级维持中，可参与但不追高。",
+      o_r2:"<b>量价确认</b>：涨股比 ≥50% 且成交回升至 ¥2 万亿上方，方可将仓位提至上限；若成交继续缩量至 ¥1.8万亿以下，视为回暖动力不足，降仓至 ≤3 成。",
+      o_r3:"<b>主线参与</b>：光模块 / PCB 只做回踩不追高，重点看龙头是否放量滞涨；成长超跌修复方向需 2 日以上量价确认再介入。",
+      o_r4:"<b>回避清单</b>：6 板及以上高位连板（龙版传媒已公告 AI 业务营收占比<0.01%，题材与基本面严重背离）、杠杆与主力双集中且已连续大涨的光模块个股追高、红利资源左侧抄底。",
+      o_r5:"<b>风控</b>：若 09-08 光模块主线龙头断板或涨停家数较 90 家腰斩，视为情绪透支，立即降仓；上证跌破 MA20（3935.82）则转防守。",
+      o_compliance:"<b>合规说明：</b>本展望仅给出板块方向与交易规则，不涉及具体个股推荐；群体心理定位与板块推断基于 2026-09-07 真实行情数据，市场有风险，决策须独立。",
+      t_sec_source:"数据来源与日期口径",
+      s_breadth:"涨跌分布 / 总览",
+      s_breadth_v:"westock · data_market_overview(market_statis_updown)；2026-09-07 收盘",
+      s_portrait:"市场画像 summary",
+      s_portrait_v:"westock · data_market_overview(type=summary)；2026-09-07（涨股比 57% 真实广度修复，科技反攻）",
+      s_index:"指数表现",
+      s_index_v:"westock · data_market_overview(market_statis_daily_trade)；2026-09-07 收盘",
+      s_sector:"板块排行 / 资金流",
+      s_sector_v:"westock · data_sector(mode=ranking, kind=industry/concept)；2026-09-07",
+      s_hot:"热搜股票",
+      s_hot_v:"westock · data_hot(kind=board)；2026-09-07（通信设备 / 元件 / CPO 居前）",
+      s_macro:"核心宏观",
+      s_macro_v:"westock · data_macro(cn_pmi, cn_capacity_utilization, cn_financing 等)；PMI/产能/社融为 08-21 复核（无新发布，月频），CPI/M1-M2/10Y/LPR 沿用前期值",
+      s_margin:"两融（个股）",
+      s_margin_v:"westock · tool_ranking(metric=margin_chg_d)；2026-09-07",
+      s_main:"主力5日净流入",
+      s_main_v:"westock · tool_ranking(metric=cap_main_5d)；2026-09-07（中际旭创 +44.39亿 居首）",
+      s_board:"连板高度",
+      s_board_v:"westock · tool_ranking(metric=limitup_days)；2026-09-07（当日排行榜已刷新，共 94 只）",
+      s_gap:"数据缺口",
+      s_gap_v:"市场两融余额聚合值（data_market_overview type=margin）数据源返回空，已用个股融资变动替代，未编造；估值 PE_TTM 20.39 为 2026-09-03 口径（中证全指估值滞后发布），已标注。",
+      t_src_note:"时间口径：所有时点按北京时间。宏观为月频 / 季频，与日频行情不可直接对齐，已分别标注。涨跌分布 / 指数 / 板块 / 融资单日 / 主力5日 / 连板梯队均为 2026-09-07 当日真实数据；估值为 2026-09-03 口径。",
+      disc1:"免责声明：以上内容基于公开数据和量化分析，仅供参考，不构成投资建议。市场有风险，投资需谨慎。任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往表现不预示未来收益。",
+      disc2:"本研判为「群体心理 / 条件框架」分析，非买卖指令；风险读数与偏差严重度为模型综合映射，须与价格结构、估值、资金流向交叉验证，不可单独作为交易依据。",
+      t_foot:"群体心理风险雷达 · 由 westock 官方行情数据生成 · 仅供研究参考",
+    },
+    en:{
+      t_kicker:"A-share · Crowd Behavioral Finance",
+      t_title:"Crowd Psychology Risk Radar",
+      t_sub:"Behavioral bias · crowding · margin · heat — an integrated risk radar. Built on real queries via westock official market data.",
+      t_date:"Data as of",
+      t_path:"Path: Crowd Psychology Analysis (Path C)",
+      t_tldr:"Bottom Line",
+      t_headline:"Headline",
+      t_headline_sub:"2026-09-07 · Close",
+      hk_stage:"Stage",
+      hv_stage:"<b>Tech counter-offensive / Broad recovery</b> (09-07)",
+      hk_upratio:"Up-ratio",
+      hv_upratio:"<b>57%</b> (prev 09-04 46% · ↑ 11pct, breadth repairs notably)",
+      hk_lim:"Limit-up / -down",
+      hv_lim:"<b>90</b> / <b>1</b> (limit-up doubles, limit-down near zero)",
+      hk_amt:"Turnover",
+      hv_amt:"<b>¥1.95tn</b> (−¥84bn vs prev, still 99.5% of 10d avg)",
+      hk_cycle:"Sentiment cycle",
+      hv_cycle:"<b>Tech counter-offensive / Broad recovery</b>",
+      hk_risk:"Risk level",
+      hv_risk:"<b class=\"hl-risk\">Medium</b> (unchanged)",
+      hk_flag:"Key flag",
+      hv_flag:"Up-ratio 46%→<b>57%</b>, limit-up 42→<b>90</b>, ChiNext <b>+3.41%</b> — breadth and profit effect recover together; yet turnover shrinks −¥84bn, and both margin top-5 (TFC +¥304mn / Innolight +¥199mn / Cambridge +¥175mn / Dekel +¥148mn) and main-5d top-8 (Innolight #1 +¥4.44bn) cluster heavily in optical modules / PCB; valuation PE_TTM 20.39 (10y pctile 79.52%) still rich",
+      tk1:"Stage",
+      tv1:"A-shares 09-07 upgrade from 09-04's \"volume-rebound / repair with divergence\" to \"<b>tech counter-offensive / broad recovery</b>\": up-ratio rises to <b>57%</b> (3167 up / 2196 down / 195 flat, +11pct from 46%), limit-up <b>90</b> (42→90, doubled), limit-down just 1; ChiNext <b>+3.41%</b> (3398.68), SZ Component +1.91% (13774.91), SSE +0.07% (3932.70) — all three up, growth style outperforms. Turnover ¥1.95tn (−<b>¥84bn</b> QoQ, still 99.5% of the 10d average). Risk level stays <b>Medium</b>.",
+      tk2:"Breadth repairs",
+      tv2:"Up-ratio <b>57%</b> (prev 46%, ↑11pct) · limit-up <b>90</b> (42→90) · limit-down <b>1</b> (near zero) · turnover <b>¥1.95tn</b> (−¥84bn, 99.5% of 10d avg) — profit effect and participation rebound together; the index/stock divergence fully converges.",
+      tk3:"Indices turn up",
+      tv3:"SSE <b>+0.07%</b> (3932.70) nearly flat, SZ Component <b>+1.91%</b> (13774.91), ChiNext <b>+3.41%</b> (3398.68) — growth style dominates; SSE closes at 3932.70, still just below MA20 (3935.82) and the BOLL mid; MACD bar 2.557 narrowing (DIF 7.13 > DEA 5.85), KDJ mid (K57.9/D63.3/J47.1), RSI_12 50.35 neutral.",
+      tk4:"Sector structure",
+      tv4:"<b>Components +7.55%</b> (Xunjiexing +20%) and <b>Comms equipment +7.15%</b> (T&S Comm +14.5%) lead; Non-metal MaterialsⅡ +4.72% (Changjiang Materials +10%) / Fisheries +4.59% (Zhongshui +9.96%) / Electronic ChemicalsⅡ +4.51% (Zhongshi Tech +17.39%) / Planting +4.48% (Yasheng +10.09%) / Automation +4.12% follow — <b>optical modules / PCB / components / electronic chemicals form the TMT main line</b>; <b>InsuranceⅡ −3.00%</b> (PICC −1.75%) leads losers, Precious Metals −2.91% (Shanjin −1.71%) / Coal Mining −2.63% / Kitchen & Bath −2.34% / Chemical Fibre −1.97% / State-owned BanksⅡ −1.88% — dividend and resource names retreat together.",
+      tk5:"Limit-up ladder",
+      tv5:"Ladder height <b>6 boards</b> (Longban Media, up from 5) — though the company disclosed AI-video revenue <0.01% of 2025 sales and H1 net profit −34.46% YoY; 3-board ×3 (Yasheng / Bauda / Aishida), 2-board ×9 (Anji Food / Dunhuang Seed / Zhongshui / Tianwo / Boen / Huatian Hotel / Haixin Food / Luoniu / China Publishing), first-board ×81 — <b>height rises while themes rotate from agri/property to TMT</b>.",
+      tk6:"Leverage rotation",
+      tv6:"Daily margin add: <b>TFC Optical +¥304mn #1</b>, Innolight +¥199mn, Wuwo Wujia +¥185mn, Cambridge Tech +¥175mn, Dekel +¥148mn, Xiechuang Data +¥131mn — <b>leverage rotates wholesale from batteries/fiberglass into optical modules (3 of top 5)</b>; unlike 09-04 (adding into trapped fiberglass), this time leverage aligns with the day's leading line — short-term resonance, but crowding builds fast.",
+      tk7:"Valuation / style",
+      tv7:"PE_TTM <b>20.39</b> (10y pctile <b>79.52%</b>, still rich) + PB 1.75 (valuation as of 09-03); on a 20d view <b>value still leads</b> (value +1.43% vs growth −3.48%), yet growth counter-attacks intraday (ChiNext +3.41%) — a technical bounce in oversold growth, not yet a reversal of the medium-term value-led regime.",
+      tk8:"Sentiment cycle",
+      tv8:"From 09-04's \"volume-rebound / repair with divergence\" into \"<b>tech counter-offensive / broad recovery</b>\": breadth 57%, limit-up doubled to 90, limit-down near zero, ChiNext +3.41% leads — panic essentially cleared; yet turnover shrinks ¥84bn, leverage and main capital cluster in optical modules/PCB, valuation pctile 79.52% still rich, and the 6-board leader has disclosed fundamentals that do not match the story — <b>recovery confirmed but structure crowded; risk stays Medium</b>.",
+      t_tldr_text:"A-shares 09-07 = \"tech counter-offensive / broad recovery\": up-ratio 46%→57% (3167 up / 2196 down / 195 flat), limit-up 42→90, limit-down just 1, ChiNext +3.41% (3398.68) leads, SZ +1.91%, SSE +0.07% (3932.70); turnover ¥1.95tn (−¥84bn, 99.5% of 10d avg). Components +7.55% (Xunjiexing +20%) / Comms equipment +7.15% (T&S +14.5%) lead; Non-metal MaterialsⅡ +4.72% / Fisheries +4.59% / Electronic ChemicalsⅡ +4.51% (Zhongshi +17.39%) / Planting +4.48% follow — the TMT main line forms; InsuranceⅡ −3.00% leads losers, Precious Metals −2.91% / Coal −2.63% / State BanksⅡ −1.88% retreat. Ladder height 6 boards (Longban Media, AI revenue <0.01% disclosed), 3-board ×3, 2-board ×9, first-board ×81. Capital: daily margin TFC +¥304mn #1 (Innolight +¥199mn, Cambridge +¥175mn, Dekel +¥148mn, optical modules take 3 of top 5); main-5d Innolight +¥4.44bn #1, XYS +¥3.38bn, Foxconn Industrial +¥2.22bn, Cambridge +¥1.96bn. Valuation PE_TTM 20.39 (10y pctile 79.52%) still rich — recovery confirmed but leverage and main-line crowding rise; risk Medium.",
+      t_risk:"Risk Level",
+      t_risk_hi:"Medium",
+      c_upratio:"Up %",
+      c_limitup:"Limit-up",
+      c_board:"Streak",
+      c_pe:"PE pctile",
+      c_pmi:"Mfg PMI",
+      c_turn:"Turnover",
+      t_sec_bias:"Behavioral Bias Heatmap",
+      t_cycle:"Sentiment Cycle (six stages)",
+      r1:"Despair",
+      r2:"Doubt",
+      r3:"Optimism",
+      r4:"Euphoria",
+      r5:"Anxiety",
+      r6:"Complacency",
+      t_cycle_note:"Note: the \"neutral-to-warm\" tag above is the live crowd-psychology position (tech counter-offensive / broad recovery) — 09-07 breadth (up-ratio 57%, limit-up 90, limit-down 1, turnover ¥1.95tn) shows breadth repairing, panic cleared and profit effect returning; yet turnover shrinks, leverage and main capital concentrate in optical modules/PCB, valuation pctile 79.52% remains rich. If 09-08 holds up-ratio above 50% and turnover stops shrinking, the recovery extends; if the optical-module line stalls on volume or the ladder leader breaks, treat it as sentiment exhaustion and downside risk rises.",
+      t_leg:"Severity (model-mapped from data)",
+      t_bias_note:"Note: bias severity is a model mapping from the real data below (1=low, 5=high), used to surface where crowd psychology is most fragile. It is not a buy/sell call on any stock.",
+      t_sec_radar:"Risk Radar",
+      t_radar_note:"Six-dimension risk readings (0–100, mapped from the real data below; higher = greater crowd fragility on that axis): crowding 58 / margin 70 / turnover 54 / breadth 46 / media 62 / valuation 87. Breadth 58→46 (up-ratio rises to 57%, limit-down near zero, participation materially improves); turnover 56→54 (¥1.95tn, 99.5% of 10d avg, volume eases slightly); margin 64→70 (3 of the top-5 daily adds are optical modules: TFC +¥304mn / Innolight +¥199mn / Cambridge +¥175mn, leverage highly concentrated); crowding 52→58 (the main line narrows to optical modules/PCB/components, 7 of the main-5d top-10 are optical or PCB); media 55→62 (limit-up 90, 6-board leader, ChiNext +3.41%, sentiment heats up); valuation 87 flat (PE_TTM 20.39, 10y pctile 79.52%, as of 09-03). Fragility shifts from \"breadth + valuation\" to \"margin + crowding + media\" — recovery confirmed, but leverage and main-line concentration become the new risk source.",
+      ax_crowd:"Crowding",
+      ax_margin:"Margin",
+      ax_turn:"Turnover",
+      ax_breadth:"Breadth",
+      ax_media:"Media",
+      ax_val:"Valuation",
+      t_breadth:"Market breadth (2026-09-07 close)",
+      b_up:"Up",
+      b_down:"Down",
+      b_flat:"Flat",
+      b_limitup:"Limit-up",
+      b_limitdn:"Limit-down",
+      b_amt:"Amount",
+      t_breadth_note:"Up-ratio rises 46%→57%, limit-up doubles 42→90, limit-down stays near zero (1); turnover ¥1.95tn, −¥84bn QoQ (slight shrink, still 99.5% of the 10d average). Indices turn broadly stronger: ChiNext +3.41% / SZ +1.91% / SSE +0.07%, with SSE closing at 3932.70 just under MA20 (3935.82) and the BOLL mid; Components +7.55% / Comms equipment +7.15% lead, InsuranceⅡ −3.00% / Precious Metals −2.91% lag — TMT main line forms while dividend/resource names retreat.",
+      t_sec_evidence:"Key Evidence",
+      th_metric:"Metric",
+      th_read:"Real Reading",
+      th_interp:"Behavioral Interpretation",
+      ev_market:"I. Breadth & Overview",
+      ev_upratio:"Up-stock ratio",
+      ev_upratio_i:"46%→57% (+11pct), 3167 up / 2196 down / 195 flat; participation rebounds, limit-down near zero shows panic fully cleared",
+      ev_limit:"Limit-up / Limit-down",
+      ev_limit_i:"Limit-up 90 (42→90, doubled), limit-down 1, ladder height up to 6 boards (Longban Media) — speculative heat rises, profit effect concentrates in TMT",
+      ev_amount:"Total turnover",
+      ev_amount_i:"Turnover ¥1.95tn (−¥84bn QoQ, 99.5% of the 10d average) — slight shrink but still near average; the recovery is driven by reallocation of existing capital, not fresh inflows",
+      ev_index:"II. Core indices (2026-09-07 close)",
+      ev_sh:"SSE Composite",
+      ev_sh_i:"+0.07% (3932.70), closing just below MA20 3935.82 and the BOLL mid; MACD bar 2.557 narrowing (DIF 7.13 > DEA 5.85), RSI_12 50.35 neutral, PE_TTM 20.39 (10y pctile 79.52%, rich)",
+      ev_sz:"SZSE Component",
+      ev_sz_i:"SZ Component +1.91% (13774.91), following ChiNext higher; the medium-term downtrend improves marginally but still needs volume confirmation",
+      ev_cyb:"ChiNext",
+      ev_cyb_i:"ChiNext +3.41% (3398.68) leads all three indices; growth style counter-attacks broadly — a technical bounce from oversold levels",
+      ev_sector:"III. Sector Ranking & Main Line",
+      ev_secup:"Top sectors",
+      ev_secup_i:"Components +7.55% (Xunjiexing +20%) / Comms equipment +7.15% (T&S +14.5%) lead; Non-metal MaterialsⅡ +4.72% (Changjiang Materials +10%) / Fisheries +4.59% (Zhongshui +9.96%) / Electronic ChemicalsⅡ +4.51% (Zhongshi Tech +17.39%) / Planting +4.48% (Yasheng +10.09%) / Automation +4.12% — optical modules / PCB / components / electronic chemicals form the TMT main line",
+      ev_secdn:"Top laggards",
+      ev_secdn_i:"InsuranceⅡ −3.00% (PICC −1.75%) leads losers / Precious Metals −2.91% (Shanjin −1.71%) / Coal Mining −2.63% / Kitchen & Bath −2.34% / Chemical Fibre −1.97% / State-owned BanksⅡ −1.88% — dividend, resource and former defensive names retreat together",
+      ev_board:"Extreme theme",
+      ev_board_i:"Ladder 6 boards (Longban Media), 3-board ×3 (Yasheng / Bauda / Aishida), 2-board ×9 (Anji Food / Dunhuang Seed / Zhongshui / Tianwo / Boen / Huatian Hotel / Haixin Food / Luoniu / China Publishing), first-board ×81; hotspots rotate from agri-food/property to TMT (Xunjiexing +20% / T&S +14.5% / Zhongshi Tech +17.39%)",
+      ev_flow:"IV. Flows: Streak / Main Force / Margin",
+      ev_height:"Streak height",
+      ev_height_i:"Height 6 boards (Longban Media, 2026-09-07 close), up from 5; yet the company disclosed AI-video revenue of ~¥80 in June and ~¥75k in July, <0.01% of 2025 sales, with H1 net profit −34.46% YoY — the story diverges sharply from fundamentals",
+      ev_main:"Main capital 5d net inflow TOP",
+      ev_main_i:"Main-5d inflow concentrates in optical modules / PCB: Innolight +¥4.44bn #1, XYS +¥3.38bn, Foxconn Industrial +¥2.22bn, Cambridge Tech +¥1.96bn, Accelink +¥1.74bn, Founder Tech +¥1.64bn, TFC +¥1.32bn, Dekel +¥1.30bn; China Shipbuilding +¥1.29bn is the only non-TMT in the top ten — pricing power concentrates in a single track",
+      ev_margin:"Daily margin change TOP",
+      ev_margin_i:"Daily margin adds: TFC Optical +¥304mn #1, Innolight +¥199mn, Wuwo Wujia +¥185mn, Cambridge Tech +¥175mn, Dekel +¥148mn, Xiechuang Data +¥131mn, Yunnan Aluminium +¥121mn, Jingzhida +¥115mn, CATL +¥115mn, Hengbao +¥114mn — optical modules take 3 of the top 5; leverage rotates from batteries/fiberglass to optical comms",
+      ev_hot:"Top hot-search / leaders",
+      ev_hot_i:"Hotspots led by TMT: Longban Media 6 boards (media) / Xunjiexing +20% (components) / T&S Comm +14.5% (comms equipment) / Zhongshi Tech +17.39% (electronic chemicalsⅡ) / Zhongshui +9.96% (fisheries) / Yasheng +10.09% (planting); the data_hot board ranking leads with Comms Equipment, Components and CPO — fully consistent with main capital flows",
+      ev_margintotal:"Market margin balance",
+      ev_margintotal_i:"Gap: aggregate margin balance (data_market_overview type=margin) returns empty, substituted with per-stock margin changes (see above); ladder height / daily margin / main-5d are all real 2026-09-07 data",
+      ev_macro:"V. Core Macro Indicators",
+      ev_pmi:"Mfg PMI (Jul)",
+      ev_pmi_i:"Fundamentals contracting, clear divergence from 'high-valuation + mid-term weakness'; non-mfg new orders weak",
+      ev_capu:"Capacity utilization (Q2)",
+      ev_capu_i:"Real-economy momentum weakening, prices lack earnings support",
+      ev_cpi:"CPI (Jul)",
+      ev_cpi_i:"Low inflation, weak demand, no proof of broad recovery",
+      ev_social:"Total social financing (Jul)",
+      ev_social_i:"Weak credit demand, money bypassing into stocks = liquidity-driven feature",
+      ev_m1m2:"M1-M2 scissors",
+      ev_m1m2_i:"Weak active money, funds idling — typical late-cycle pattern",
+      ev_yield:"10Y gov bond yield",
+      ev_yield_i:"Very low risk-free rate supports valuation yet signals growth worry",
+      ev_lpr:"LPR",
+      ev_lpr_i:"Easing stance unchanged",
+      t_ev_note:"Data basis: macro indicators are monthly (mostly to 2026-07) or daily (to 2026-09-07); breadth / indices / turnover / sectors / daily margin / main-5d / ladder are all real 2026-09-07 closes. Valuation PE_TTM 20.39 is as of 2026-09-03 (CSI All-Share valuation published with a lag) and is flagged in the text. See \"Sources and date basis\" at the end.",
+      t_sec_risk:"Risk Stratification",
+      rc1_tag:"Red zone · Optical-module leverage & main-capital double concentration + rich valuation",
+      rc1_t:"Optical-module double concentration + rich valuation",
+      rc1_d:"Three of the top-5 daily margin adds are optical modules (TFC +¥304mn / Innolight +¥199mn / Cambridge +¥175mn) and 7 of the main-5d top-10 are optical or PCB (Innolight +¥4.44bn at the top) — leverage and main-capital pricing power concentrate in the same track, so a falsification would mean a deep drawdown; plus PE_TTM 20.39 at a 79.52% 10y pctile, and the 6-board leader has disclosed AI revenue <0.01% of sales — story and fundamentals diverge badly.",
+      rc1_rep:"Represented by: optical modules (Innolight / XYS / TFC) / PCB (Xunjiexing / Xingsen) / 6-board leader (Longban Media)",
+      rc1_cond:"Conditional: no chasing highs, no adding leverage on high-level lines; use sustained volume + index above short-term MA as right-side confirmation; cut on break, lever positions first.",
+      rc2_tag:"Amber zone · Broad rally on shrinking turnover (volume-price divergence)",
+      rc2_t:"Broad rally on shrinking volume",
+      rc2_d:"Limit-up doubles to 90, up-ratio 57%, ChiNext +3.41% — yet turnover falls ¥84bn to ¥1.95tn (99.5% of the 10d average): the recovery is driven by reallocation of existing capital rather than fresh inflows, a volume-price divergence; the SSE adds just +0.07% and still closes slightly below MA20 and the BOLL mid, with heavyweights not following.",
+      rc2_rep:"Represented by: ChiNext / SZ Component (growth bounce) / SSE heavyweights (not following)",
+      rc2_cond:"Conditional: don't chase intraday leaders; new main line (electronics) needs sustained volume+price confirmation; never treat a single-day rotation as reversal; beware high-level chase under the 'Euphoria' tag.",
+      rc3_tag:"Green zone · Dividend & resource retreat (relative)",
+      rc3_t:"Dividend / resource retreat",
+      rc3_d:"InsuranceⅡ −3.00% leads losers, Precious Metals −2.91% (Shanjin −1.71%) / Coal Mining −2.63% / Chemical Fibre −1.97% / State-owned BanksⅡ −1.88% / Rural Commercial BanksⅡ −1.66% — former defensive and resource names are sold as risk appetite returns; this is capital rebalancing rather than fundamental deterioration, but it signals the high-to-low switch is still running.",
+      rc3_rep:"Represented by: InsuranceⅡ (PICC) / Precious Metals (Shanjin) / Coal Mining (Shanghai Energy)",
+      rc3_cond:"Conditional: safe-haven hedge and book protection only; weakened resources no longer a safety net; overall risk budget should shrink markedly.",
+      t_sec_outlook:"Next session (09-08 Tue) outlook",
+      o_logic:"Reasoning (based on the 09-07 close + crowd-psychology position)",
+      o_logic_text:"Extending 09-07's \"tech counter-offensive / broad recovery\": the cycle sits at \"tech counter-offensive / broad recovery\", with up-ratio 57%, limit-up 90, limit-down 1 and ChiNext +3.41% — breadth and profit effect repair together; yet turnover shrinks ¥84bn, leverage and main capital concentrate in optical modules/PCB, valuation pctile 79.52% stays rich, and the 6-board leader's disclosed fundamentals do not match the story. Sector directions and trading rules for 09-08 follow (<b>no individual stock recommendations</b>).",
+      o1_tag:"Optical modules / PCB (watch)",
+      o1_t:"Comms equipment / Components / Electronic chemicalsⅡ",
+      o1_d:"09-07's strongest line: Components +7.55% (Xunjiexing +20%) / Comms equipment +7.15% (T&S +14.5%), with main-5d Innolight +¥4.44bn and XYS +¥3.38bn at the top — price and capital resonate; the main-line status is hard to shake near term.",
+      o1_cond:"Caution: leverage and main capital both concentrated = high crowding; do not chase after a one-day surge. If leaders stall on heavy volume or limit-up counts collapse, treat it as exhaustion — only buy pullbacks, not breakouts.",
+      o2_tag:"Oversold growth repair (wait)",
+      o2_t:"Semiconductors / Consumer electronics / Automation",
+      o2_d:"09-07 Semiconductors +3.36% / Consumer electronics +2.78% / Automation +4.12% follow ChiNext's +3.41% bounce — a technical repair against a rich valuation percentile, not yet validated by earnings or orders.",
+      o2_cond:"Caution: the repair needs 2+ sessions of volume-price confirmation; if turnover keeps shrinking, the bounce lacks stamina — no heavy positions, no leverage.",
+      o3_tag:"Dividend / resource retreat (avoid)",
+      o3_t:"InsuranceⅡ / Precious metals / Coal mining",
+      o3_d:"09-07 InsuranceⅡ −3.00% leads losers; Precious Metals −2.91% (Shanjin −1.71%) / Coal Mining −2.63% / State-owned BanksⅡ −1.88% retreat together — capital rebalancing as risk appetite returns; near-term pressure persists.",
+      o3_cond:"Caution: this is a high-to-low switch, not fundamental deterioration — do not panic-sell; but avoid left-side bottom-fishing before the main line is confirmed; wait for a shrinking-volume stabilisation signal.",
+      o_rules_t:"Trading rules (09-08)",
+      o_r1:"<b>Position</b>: neutral (~50%), no leverage. The cycle upgrades from \"volume-rebound / repair with divergence\" to \"tech counter-offensive / broad recovery\"; risk stays Medium — participate, but do not chase.",
+      o_r2:"<b>Volume-price confirmation</b>: only raise to the position cap if up-ratio ≥50% and turnover climbs back above ¥2tn; if turnover keeps shrinking below ¥1.8tn, treat the recovery as underpowered and cut to ≤30%.",
+      o_r3:"<b>Main-line participation</b>: in optical modules / PCB, buy pullbacks only, not breakouts — watch whether leaders stall on heavy volume; for oversold growth repairs, wait 2+ sessions of volume-price confirmation before entering.",
+      o_r4:"<b>Avoid list</b>: ladders at 6 boards or above (Longban Media disclosed AI revenue <0.01% of sales — story and fundamentals diverge sharply); chasing optical-module names that are both leverage- and main-capital concentrated after consecutive surges; left-side bottom-fishing in dividend/resources.",
+      o_r5:"<b>Risk control</b>: if optical-module leaders break their boards on 09-08 or limit-up counts halve from 90, treat it as sentiment exhaustion and cut exposure immediately; if the SSE breaks MA20 (3935.82), switch to defence.",
+      o_compliance:"<b>Compliance:</b> this outlook gives sector directions and trading rules only, with no individual stock recommendations; the crowd-psychology position and sector inferences are based on real 2026-09-07 market data. Markets carry risk; decisions must be independent.",
+      t_sec_source:"Data Sources & Time Caliber",
+      s_breadth:"Breadth / Overview",
+      s_breadth_v:"westock · data_market_overview(market_statis_updown); 2026-09-07 close",
+      s_portrait:"Market portrait summary",
+      s_portrait_v:"westock · data_market_overview(type=summary); 2026-09-07 (up-ratio 57%, genuine breadth repair, tech counter-offensive)",
+      s_index:"Index performance",
+      s_index_v:"westock · data_market_overview(market_statis_daily_trade); 2026-09-07 close",
+      s_sector:"Sector ranking / flows",
+      s_sector_v:"westock · data_sector(mode=ranking, kind=industry/concept); 2026-09-07",
+      s_hot:"Hot-search stocks",
+      s_hot_v:"westock · data_hot(kind=board); 2026-09-07 (Comms Equipment / Components / CPO on top)",
+      s_macro:"Core macro",
+      s_macro_v:"westock · data_macro(cn_pmi, cn_capacity_utilization, cn_financing, etc.); PMI/capacity/financing re-checked 08-21 (no new release, monthly), CPI/M1-M2/10Y/LPR from prior pulls",
+      s_margin:"Margin (per stock)",
+      s_margin_v:"westock · tool_ranking(metric=margin_chg_d); 2026-09-07",
+      s_main:"Main-force 5d net inflow",
+      s_main_v:"westock · tool_ranking(metric=cap_main_5d); 2026-09-07 (Innolight +¥4.44bn #1)",
+      s_board:"Streak height",
+      s_board_v:"westock · tool_ranking(metric=limitup_days); 2026-09-07 (ranking refreshed, 94 names)",
+      s_gap:"Data gap",
+      s_gap_v:"Aggregate margin balance (data_market_overview type=margin) returns empty; per-stock margin changes substituted, nothing fabricated. Valuation PE_TTM 20.39 is as of 2026-09-03 (CSI All-Share valuation published with a lag) and is flagged.",
+      t_src_note:"Timing: all timestamps are Beijing time. Macro data are monthly/quarterly and cannot be aligned directly with daily quotes; each is flagged. Breadth / indices / sectors / daily margin / main-5d / ladder are real 2026-09-07 data; valuation is as of 2026-09-03.",
+      disc1:"Disclaimer: The above is based on public data and quantitative analysis for reference only and does not constitute investment advice. Markets are risky; invest with caution. Any investment decision should be made independently based on your own risk tolerance, financial situation and objectives, and consult a licensed professional when necessary. Past performance does not predict future returns.",
+      disc2:"This assessment is a 'crowd psychology / conditional-framework' analysis, not a buy/sell instruction; risk readings and bias severities are model mappings and must be cross-checked with price structure, valuation and fund flows — not used alone as a trade basis.",
+      t_foot:"Crowd Psychology Risk Radar · generated from westock official market data · for research reference only",
+    }
+  };
+
+  var BIAS = [
+    {zh:"羊群效应",en:"Herding",sev:4,zhd:"涨股比升至57%、涨停翻倍至90，资金蜂拥涌入元件（+7.55%，迅捷兴+20%）与通信设备（+7.15%，太辰光+14.5%），主力5日前十中7只为光通信/PCB——群体高度跟随单一赛道，独立判断被赚钱效应淹没。",end:"Up-ratio rises to 57% and limit-up doubles to 90; capital crowds into components (+7.55%, Xunjiexing +20%) and comms equipment (+7.15%, T&S +14.5%), with 7 of the main-5d top-10 in optical/PCB — the herd follows a single track and independent judgement is drowned by the profit effect."},
+    {zh:"损失厌恶",en:"Loss Aversion",sev:2,zhd:"红利与资源方向被抛售（保险Ⅱ−3.00%/贵金属−2.91%/煤炭开采−2.63%），持有者在回暖首日选择切换而非止损，把「错过科技反弹」视为更大损失——由恐慌转为错失恐惧（FOMO）。",end:"Dividend and resource names are sold (InsuranceⅡ −3.00% / precious metals −2.91% / coal −2.63%); holders switch rather than cut losses on the first recovery day, treating 'missing the tech bounce' as the bigger loss — panic morphs into fear of missing out."},
+    {zh:"心理账户/赌徒谬误",en:"Mental Acct / Gambler",sev:2,zhd:"把光模块单日大涨外推为「主线已确立、还会再涨」，忽视连板6板龙头龙版传媒已公告AI业务营收占比不足0.01%、上半年净利同比−34.46%，题材与基本面严重背离。",end:"Extrapolating one day's optical-module surge into 'the main line is set and will keep rising', ignoring that the 6-board leader Longban Media disclosed AI revenue <0.01% of sales and H1 net profit −34.46% YoY — story and fundamentals diverge badly."},
+    {zh:"过度自信",en:"Overconfidence",sev:3,zhd:"把涨股比57%与涨停90读作「全面转牛」，忽视成交反而缩量−840亿、上证仅+0.07%且仍收于MA20（3935.82）下方、估值分位79.52%仍高。",end:"Reading up-ratio 57% and 90 limit-ups as a full bull turn, ignoring that turnover instead shrank ¥84bn, the SSE added only +0.07% and still closed below MA20 (3935.82), with the valuation pctile at 79.52%."},
+    {zh:"处置效应",en:"Disposition",sev:2,zhd:"卖盈（红利/资源方向在回暖首日被抛售兑现）持亏（前期套牢的光模块在反弹中被视为「回本仓」而继续加杠杆），融资单日前五中光模块占三席即为佐证。",end:"Selling winners (dividend/resources dumped on the first recovery day) while holding losers (trapped optical-module positions treated as 'break-even books' and levered further) — evidenced by optical modules taking 3 of the top-5 daily margin adds."},
+    {zh:"锚定偏差",en:"Anchoring",sev:3,zhd:"锚定 09-02「涨股比 28%」的恐慌低点与创业板前期高位，对 57% 的中性偏暖水平缺乏定价锚，容易在单日 +3.41% 的涨幅中追高。",end:"Anchored to 09-02's panic low (up-ratio 28%) and ChiNext's prior highs, lacking a pricing anchor at the neutral-warm 57% level — prone to chasing after a single +3.41% day."},
+    {zh:"确认偏误",en:"Confirmation Bias",sev:4,zhd:"只看涨停90、创业板+3.41%与主力5日中际旭创+44.39亿的共振，忽略成交缩量−840亿、杠杆与主力双集中于同一赛道、6板龙头基本面已公告不匹配。",end:"Only watching the resonance of 90 limit-ups, ChiNext +3.41% and main-5d Innolight +¥4.44bn, while ignoring the −¥84bn turnover shrink, the double concentration of leverage and main capital in one track, and the 6-board leader's disclosed mismatch."},
+    {zh:"近因偏差",en:"Recency",sev:3,zhd:"外推单日「科技反攻」为持续性反转，对 09-02 恐慌（28%）与 09-03 跌停急升（17）的记忆迅速淡化，忽视回暖需要 2 日以上量价确认。",end:"Extrapolating a single day's 'tech counter-offensive' into a sustained reversal; memories of 09-02 panic (28%) and 09-03's limit-down surge (17) fade fast, ignoring that recovery needs 2+ sessions of volume-price confirmation."},
+    {zh:"叙事偏差",en:"Narrative",sev:4,zhd:"「AI算力 / 光模块景气」叙事被涨停潮与主力5日资金榜强化（中际旭创+44.39亿、新易盛+33.80亿），故事与资金自我实现；但融资前五中光模块占三席，叙事一旦证伪回撤幅度极大。",end:"The 'AI compute / optical-module prosperity' narrative is reinforced by the limit-up wave and the main-5d leaderboard (Innolight +¥4.44bn, XYS +¥3.38bn); story and capital self-reinforce — but with optical modules taking 3 of the top-5 margin adds, the drawdown would be severe if the story is falsified."},
+    {zh:"代表性启发",en:"Representativeness",sev:3,zhd:"被元件 +7.55% 与通信设备 +7.15% 的单日赚钱效应代表整体市场，误判「全面回暖」，忽视保险Ⅱ −3.00% 领跌、红利资源集体退潮与成交缩量的现实。",end:"Components +7.55% and comms equipment +7.15% one-day profit effects taken as representative of the whole market; mistaking it for a broad recovery while ignoring InsuranceⅡ −3.00% leading losers, the dividend/resource retreat and shrinking turnover."}
+  ];
+
+  var HEATCOL = {1:"var(--h1)",2:"var(--h2)",3:"var(--h3)",4:"var(--h4)",5:"var(--h5)"};
+
+  function buildHeat(lang){
+    var box = document.getElementById('heat');
+    box.innerHTML = '';
+    BIAS.forEach(function(b){
+      var d = document.createElement('div');
+      d.className = 'cell';
+      d.style.background = HEATCOL[b.sev];
+      var name = lang==='en' ? b.en : b.zh;
+      var desc = lang==='en' ? b.end : b.zhd;
+      d.innerHTML = '<div class="bn">'+name+'</div><div class="bd">'+desc+'</div><span class="sev">'+b.sev+' / 5</span>';
+      box.appendChild(d);
+    });
+  }
+
+  function applyLang(lang){
+    var dic = I18N[lang] || I18N.zh;
+    document.documentElement.lang = (lang==='en' ? 'en' : 'zh-CN');
+    var nodes = document.querySelectorAll('[data-i18n]');
+    for(var i=0;i<nodes.length;i++){
+      var k = nodes[i].getAttribute('data-i18n');
+      if(dic[k]!==undefined){ nodes[i].innerHTML = dic[k]; }
+    }
+    buildHeat(lang);
+    document.getElementById('btnZh').className = (lang==='zh'?'active':'');
+    document.getElementById('btnEn').className = (lang==='en'?'active':'');
+    document.title = (lang==='en' ? I18N.en.t_title : I18N.zh.t_title);
+  }
+
+  function setLang(lang){
+    applyLang(lang);
+    var url = new URL(window.location.href);
+    url.searchParams.set('lang', lang);
+    window.history.replaceState({}, '', url.toString());
+  }
+
+  (function(){
+    var p = new URL(window.location.href).searchParams.get('lang');
+    var lang = (p==='en') ? 'en' : 'zh';
+    applyLang(lang);
+  })();
+</script>
+</body>
+</html>
