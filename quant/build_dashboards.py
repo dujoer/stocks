@@ -118,6 +118,8 @@ td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
   border-radius:8px; font-size:13px; }
 .ladder .badge { display:inline-block; border-radius:6px; padding:1px 8px; margin-right:8px; font-weight:700; font-size:12px; }
 .ladder .b5 { background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.35); color:#b8332a; }
+.ladder .b6 { background:rgba(184,51,42,.16); border:1px solid rgba(184,51,42,.55); color:#b8332a; }
+.ladder .b5 { background:rgba(184,51,42,.12); border:1px solid rgba(184,51,42,.42); color:#b8332a; }
 .ladder .b4 { background:rgba(184,51,42,.08); border:1px solid rgba(184,51,42,.30); color:#b8332a; }
 .ladder .b3 { background:rgba(184,137,59,.14); border:1px solid rgba(184,137,59,.40); color:#d8bd8a; }
 .ladder .b2 { background:rgba(184,137,59,.14); border:1px solid rgba(184,137,59,.40); color:#d8bd8a; }
@@ -212,11 +214,13 @@ SCRIPT = ("<script>function toggle(id){var e=document.getElementById(id);"
           "if(e){e.style.display=(e.style.display==='none')?'table-row':'none';}}</script>")
 
 # ---------- 连板梯队(2026-08-27, 来自 tool_ranking limitup_days) ----------
-TIERS = {4: [], 3: [], 2: [], 1: []}
+TIERS = {t: [] for t in range(8, 0, -1)}
 for s in lu["stocks"]:
     d = s.get("LimitUpDays")
     if d in TIERS:
         TIERS[d].append((s["name"], s["code"]))
+    elif isinstance(d, int) and d > 8:
+        TIERS[8].append((s["name"], s["code"]))
 LIMITUP_LISTED = sum(len(v) for v in TIERS.values())
 LIMITUP_TOTAL = lu.get("totalStocks", LIMITUP_LISTED)
 # 实际列出数（受 tool_ranking limit=100 截断）与全市场总数可能不一致，据实标注
@@ -389,10 +393,10 @@ sector_html = (f"<div class='section'><h2>🔥 板块热度 — {DATE} 收盘</h
                f"领跌：{('、'.join(b['name']+' '+pct(float(b['zdf'])) for b in boards_sorted[-3:]))}（数据来源：腾讯自选股板块排行）。</div></div>")
 
 # ---------- 连板梯队 ----------
-tier_label = {4: "4连板", 3: "3连板", 2: "2连板", 1: "首板"}
-tier_cls = {4: "b4", 3: "b3", 2: "b2", 1: "b1"}
+tier_label = {t: (f"{t}连板" if t >= 2 else "首板") for t in range(8, 0, -1)}
+tier_cls = {t: ("b6" if t >= 6 else "b5" if t == 5 else f"b{t}") for t in range(8, 0, -1)}
 ladder_html = ""
-for t in [4, 3, 2, 1]:
+for t in [t for t in range(8, 0, -1) if TIERS[t]]:
     names = TIERS[t]
     if t == 1:
         shown = names[:16]
