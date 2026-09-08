@@ -145,6 +145,14 @@ for _pat in _AUTO_PATTERNS:
         if _rel not in FILES:
             FILES.append(_rel)
             _AUTO_ADDED.append(_rel)
+# 递归兜底：背景模式下 ** 递归 glob 偶发返回空，改用 os.walk 保证 web/ 下所有层级 html 都被纳入
+for _root, _dirs, _files in os.walk(os.path.join(ROOT, "web")):
+    for _fn in _files:
+        if _fn.endswith(".html"):
+            _rel = os.path.relpath(os.path.join(_root, _fn), ROOT).replace(os.sep, "/")
+            if _rel not in FILES:
+                FILES.append(_rel)
+                _AUTO_ADDED.append(_rel)
 if _AUTO_ADDED:
     print(f"[auto] 纳入 {len(_AUTO_ADDED)} 个带日期/版块页面与数据源以确保结构一致")
 
