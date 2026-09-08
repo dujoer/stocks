@@ -207,6 +207,15 @@ def main():
     sell_amt = sum(r["amount"] for r in sell)
     net = buy_amt - sell_amt
     latest = d.get("latestDeclare")
+    try:
+        _ld = datetime.date(int(latest[:4]), int(latest[4:6]), int(latest[6:8]))
+        lag_d = (datetime.date.fromisoformat(DATE) - _ld).days
+    except Exception:
+        lag_d = 0
+    lag_html = f' ｜ <b style="color:#b8893b">数据延迟 {lag_d} 天</b>' if lag_d > 0 else ''
+    lag_note = (f' <span style="color:#b8893b">（{lag_d} 天属正常：westock 事件接口每日定时从巨潮等公告源拉取，'
+                f'09-05/06 周末及采集当日晚间公告需待次日入库后自动跟上，次日执行 SOP 时无需手动补。）</span>'
+                ) if lag_d > 0 else ''
 
     # ---- 行业聚合（申万一级）----
     by_sw1 = collections.defaultdict(lambda: {"b": 0.0, "s": 0.0, "n": 0})
@@ -358,11 +367,11 @@ def main():
 </header>
 
 <div class='meta'>
-采集日 <b>{DATE}</b> ｜ 接口快照日 <b>{d.get('snapDate')}</b> ｜ 最新披露日 <b>{fmt_date(latest)}</b><br>
+采集日 <b>{DATE}</b> ｜ 接口快照日 <b>{d.get('snapDate')}</b> ｜ 最新披露日 <b>{fmt_date(latest)}</b>{lag_html}<br>
 数据口径：westock 事件 <b>董监高增减持（近 1 个月窗口）</b>，共 <b>{d['count']}</b> 条变动记录，
 覆盖 <b>{d['stockCount']}</b> 只股票、<b>{date_window_days}</b> 个披露交易日（<b>{date_range_txt}</b>）；行业取自申万一/二级分类。
 「当日涨跌」为采集日行情快照，非变动当日涨跌。<br>
-<b>8.1 起的增减持已完整收录</b>（08-01/08-02 为周末无变动披露，最早一笔自 08-03 起）；如需查询更早，需补一次更早的快照。
+<b>8.1 起的增减持已完整收录</b>（08-01/08-02 为周末无变动披露，最早一笔自 08-03 起）；如需查询更早，需补一次更早的快照。{lag_note}
 </div>
 
 <div class='section'>
