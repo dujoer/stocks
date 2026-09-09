@@ -62,6 +62,31 @@ h2 { font-size:20px; margin:38px 0 14px; padding-left:12px; border-left:5px soli
   margin-right:10px; vertical-align:-2px; }
 .note { background:#fffaf0; border-left:4px solid #b7791f; padding:12px 16px;
   border-radius:0 8px 8px 0; font-size:13.5px; color:#6b4f2a; margin:14px 0; }
+/* 全站索引（按功能分组） */
+.idxwrap { background:#fff; border:1px solid #e3e7ec; border-radius:14px;
+  padding:18px 22px; margin-bottom:18px; box-shadow:0 1px 4px rgba(20,30,50,.04); }
+.izone { margin:10px 0 14px; padding-bottom:10px; border-bottom:1px dashed #eef1f4; }
+.izone:last-child { border-bottom:none; }
+.izh { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.izi { font-size:20px; }
+.izt { font-size:15px; font-weight:700; color:#1f4e79; }
+.ipages { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px; }
+.pg { display:flex; flex-direction:column; gap:2px; background:#f7f9fc; border:1px solid #e6ecf3;
+  border-radius:8px; padding:8px 12px; text-decoration:none; color:inherit; transition:.15s; }
+.pg:hover { border-color:#2b6cb0; background:#eef4fa; }
+.pgn { font-size:13px; font-weight:700; color:#1f4e79; }
+.pgd { font-size:11.5px; color:#5a6573; line-height:1.4; }
+/* 关系图 */
+.relwrap { background:#fff; border:1px solid #e3e7ec; border-radius:14px;
+  padding:14px 18px; margin-bottom:18px; box-shadow:0 1px 4px rgba(20,30,50,.04); }
+.relhd { display:grid; grid-template-columns:1.4fr 2fr 2fr; gap:10px; padding:6px 10px;
+  font-size:12px; color:#7b8794; border-bottom:1px solid #eef1f4; }
+.relrow { display:grid; grid-template-columns:1.4fr 2fr 2fr; gap:10px; padding:8px 10px;
+  font-size:12.5px; border-bottom:1px dashed #eef1f4; align-items:start; }
+.relrow:last-child { border-bottom:none; }
+.reln { font-weight:700; color:#1f4e79; }
+.relflow { color:#5a6573; }
+.relflow.out { color:#8a5a1e; }
 footer { margin-top:46px; padding-top:18px; border-top:1px solid #e3e7ec;
   font-size:12px; color:#7b8794; }
 .topnav { font-size:13px; margin-bottom:14px; }
@@ -71,7 +96,7 @@ footer { margin-top:46px; padding-top:18px; border-top:1px solid #e3e7ec;
 </head>
 <body>
 <div class='wrap'>
-<div class='topnav'><a href='../market/index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='../market/hotmoney.html'>游资看板</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../research/index.html'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='index.html'>版块总览</a><a href='../db/index.html'>数据中心</a><a href='../../index.html'>返回主页</a></div>
+<div class='topnav'><a href='../market/index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='../market/hotmoney.html'>游资看板</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../research/index.html'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='index.html'>版块总览</a><a href='../db/index.html'>数据中心</a><a href='../../index.html'>返回主页</a></div>
 
 <header class='top'>
   <h1>📦 版块总览</h1>
@@ -79,17 +104,47 @@ footer { margin-top:46px; padding-top:18px; border-top:1px solid #e3e7ec;
   <div class='updated'>生成于 2026-09-09 · 统计数字实时读取自 quant/ 下的数据文件</div>
 </header>
 
+<h2>🧭 全站页面索引（按功能分组）</h2>
+<div class='idxwrap'>
+<div class='izone'><div class='izh'><span class='izi'>📊</span><span class='izt'>每日总览（今天该看什么）</span></div><div class='ipages'><a class='pg' href='../market/index.html'><span class='pgn'>🗺️ 每日总览</span><span class='pgd'>大盘看板一屏总览</span></a><a class='pg' href='../lhb/lhb.html'><span class='pgn'>🐉 龙虎榜主看板</span><span class='pgd'>异动 / 机构榜 / 游资胜率 / 共振</span></a><a class='pg' href='../sector/index.html'><span class='pgn'>🔥 板块强度</span><span class='pgd'>板块资金 + 主力行为 + 估值分位</span></a></div></div><div class='izone'><div class='izh'><span class='izi'>💰</span><span class='izt'>资金动向（谁在买 / 卖）</span></div><div class='ipages'><a class='pg' href='../exec/index.html'><span class='pgn'>💼 高管增减持</span><span class='pgd'>内部人董监高持股变动</span></a><a class='pg' href='../block/archive.html'><span class='pgn'>🧾 大宗交易</span><span class='pgd'>大资金折价 / 溢价调仓</span></a></div></div><div class='izone'><div class='izh'><span class='izi'>🧠</span><span class='izt'>市场情绪</span></div><div class='ipages'><a class='pg' href='../psychology/index.html'><span class='pgn'>🧠 群体心理风险雷达</span><span class='pgd'>情绪周期 + 偏差 + 风险分层</span></a></div></div><div class='izone'><div class='izh'><span class='izi'>👑</span><span class='izt'>牛人与股东（谁在持仓）</span></div><div class='ipages'><a class='pg' href='../shareholder/tracker.html'><span class='pgn'>🎯 牛人追踪（索引）</span><span class='pgd'>牛散 / 私募 / 公募 / 游资 索引 + 增减持</span></a><a class='pg' href='../shareholder/2026-q2-industry-elite.html'><span class='pgn'>🏆 行业最强榜</span><span class='pgd'>31 行业 × 牛散 / 私募 / 公募 Top20</span></a><a class='pg' href='../shareholder/top-elite.html'><span class='pgn'>🌟 玩家图谱</span><span class='pgd'>按知名度策划的 Top20 + 高管共现</span></a><a class='pg' href='../shareholder/stock-accumulation.html'><span class='pgn'>📈 增持信号扫描</span><span class='pgd'>全市场 5544 只增持 / 减持扫描</span></a><a class='pg' href='../shareholder/known-accumulation-health.html'><span class='pgn'>🩺 健康度过滤</span><span class='pgd'>上游 50 只加技术面四维打分</span></a></div></div><div class='izone'><div class='izh'><span class='izi'>🔍</span><span class='izt'>单只深挖</span></div><div class='ipages'><a class='pg' href='../research/index.html'><span class='pgn'>🔍 个股调研</span><span class='pgd'>短线 / 中线 / 长线 三周期</span></a></div></div><div class='izone'><div class='izh'><span class='izi'>🗄️</span><span class='izt'>数据与工具</span></div><div class='ipages'><a class='pg' href='../db/index.html'><span class='pgn'>🗄️ 数据中心</span><span class='pgd'>9 模块历史查询</span></a><a class='pg' href='index.html'><span class='pgn'>📦 版块总览（本页）</span><span class='pgd'>自检 + 全站索引</span></a></div></div>
+</div>
+
+<h2>🔗 页面关系（数据流 / 上下游）</h2>
+<div class='relwrap'>
+  <div class='relhd'><div>页面</div><div>← 输入 / 依赖</div><div>输出 / 走向 →</div></div>
+  <div class='relrow'><div class='reln'>📊 每日总览</div><div class='relflow'>汇总：龙虎榜 + 板块强度 + 高管增减持 + 大宗</div><div class='relflow out'>→ 资金动向 / 市场情绪</div></div><div class='relrow'><div class='reln'>🐉 龙虎榜主看板</div><div class='relflow'>席位明细 → 牛人追踪·游资席位</div><div class='relflow out'>← 数据中心（查历史席位）</div></div><div class='relrow'><div class='reln'>🔥 板块强度</div><div class='relflow'>行业过滤 → 行业最强榜 / 牛人追踪</div><div class='relflow out'>← 数据中心（查历史板块）</div></div><div class='relrow'><div class='reln'>💼 高管增减持</div><div class='relflow'>共现主体 → 玩家图谱</div><div class='relflow out'>← 数据中心（查历史增减持）</div></div><div class='relrow'><div class='reln'>🧾 大宗交易</div><div class='relflow'>与高管增减持互补（折价+内部人）</div><div class='relflow out'>← 数据中心</div></div><div class='relrow'><div class='reln'>🧠 群体心理雷达</div><div class='relflow'>情绪外化 → 龙虎榜 / 板块强度</div><div class='relflow out'>← 数据中心（趋势跨日）</div></div><div class='relrow'><div class='reln'>🎯 牛人追踪（索引）</div><div class='relflow'>← 板块强度（按行业筛） / 高管（按主体筛）</div><div class='relflow out'>→ 数据中心（查历年）</div></div><div class='relrow'><div class='reln'>🏆 行业最强榜</div><div class='relflow'>→ 牛人追踪（按行业版入口） / 玩家图谱</div><div class='relflow out'>← 数据中心</div></div><div class='relrow'><div class='reln'>🌟 玩家图谱</div><div class='relflow'>→ 高管共现 / 牛人追踪</div><div class='relflow out'>← 数据中心</div></div><div class='relrow'><div class='reln'>📈 增持信号扫描</div><div class='relflow'>→ 健康度过滤（技术面）</div><div class='relflow out'>← 数据中心</div></div><div class='relrow'><div class='reln'>🩺 健康度过滤</div><div class='relflow'>← 增持信号扫描（上游 50 只）</div><div class='relflow out'>→ 个股调研（最终单只）</div></div><div class='relrow'><div class='reln'>🔍 个股调研</div><div class='relflow'>← 板块强度 / 牛人追踪 / 健康度（筛选上游）</div><div class='relflow out'>→ 数据中心（查历年）</div></div><div class='relrow'><div class='reln'>🗄️ 数据中心</div><div class='relflow'>← 所有上方页面的历史数据源</div><div class='relflow out'></div></div><div class='relrow'><div class='reln'>📦 版块总览</div><div class='relflow'>本门户卡片的数据来源说明页</div><div class='relflow out'></div></div>
+</div>
+<div class='note'><b>阅读建议：</b>从「每日总览」开始扫一眼全局 → 「资金动向 / 市场情绪」看定性 → 「牛人与股东」按行业筛 → 「单只深挖」拿到具体票 → 全程所有数据都能在「数据中心」查历史。</div>
+
 <h2>⏰ 每日更新时间建议</h2>
 <div class='tlwrap'><div class='tl ok'><div class='tt'>15:00</div><div class='tn'>收盘</div><div class='td'>行情、涨跌停、板块资金定格</div></div><div class='tl wait'><div class='tt'>15:30</div><div class='tn'>盘后数据可拉</div><div class='td'>此时可开始跑，但龙虎榜未公布、大盘统计未聚合</div></div><div class='tl wait'><div class='tt'>18:00 前后</div><div class='tn'>龙虎榜陆续公布</div><div class='td'>沪深交易所盘后披露，个别标的可能延后</div></div><div class='tl ok'><div class='tt'>19:30</div><div class='tn'>最早可靠窗口</div><div class='td'>实测：龙虎榜 19:xx 与 20:56 复拉均为 62 只，已定稿</div></div><div class='tl best'><div class='tt'>20:00–21:00</div><div class='tn'>★ 推荐时段</div><div class='td'>大盘统计聚合定稿（实测 20:00 与 20:56 涨跌分布完全一致）</div></div><div class='tl warn'><div class='tt'>次日 08:00–09:15</div><div class='tn'>补救窗口</div><div class='td'>板块强度最后机会；高管增减持可纳入前夜公告</div></div><div class='tl dead'><div class='tt'>次日 09:30</div><div class='tn'>✕ 死线</div><div class='td'>开盘后板块快照被覆盖，T 日板块强度永久不可补</div></div></div>
 <div class='note'>
 <b>推荐：交易日当晚 20:00–21:00 手动触发一次全量更新。</b>
-此时龙虎榜已公布完毕、大盘统计聚合定稿、板块资金与行情早已定格，五个版块可一次性跑齐。<br>
+此时龙虎榜已公布完毕、大盘统计聚合定稿、板块资金与行情早已定格，全部版块可一次性跑齐。<br>
 <b>硬约束：</b>板块强度的快照次日开盘即被覆盖且不可回溯，若当晚漏跑，务必在
 <b>次日 09:15 之前</b>补跑（开盘前接口仍返回前一交易日收盘快照）。
 </div>
 
-<h2>🗂 五大版块</h2>
+<h2>🗂 全部版块详情</h2>
 
+<div class='sec'>
+  <div class='sechead'>
+    <span class='sic'>🗺️</span>
+    <div class='stitle'>
+      <a href='../market/index.html'>每日总览</a>
+    </div>
+    <span class='badge fresh'>今日</span>
+    <span class='bdate'>数据截至 2026-09-09</span>
+  </div>
+  <div class='sdesc'>交易日盘后第一眼：大盘看板（指数 / 涨跌家数 / 涨停梯队 / 资金流向 / 板块热度）一屏总览。</div>
+  
+  <div class='row'><div class='lab'>内容模块</div><div class='val'><span class='chip'>指数面板</span><span class='chip'>涨跌家数与成交额</span><span class='chip'>涨停梯队（含连板）</span><span class='chip'>资金流向（板块 / 个股）</span><span class='chip'>板块热度 Top</span><span class='chip'>当日要闻</span></div></div>
+  <div class='row'><div class='lab'>数据来源</div><div class='val'><span class='chip'>data_market_overview</span><span class='chip'>data_hot(board_hot)</span><span class='chip'>data_quote</span><span class='chip'>limitup</span></div></div>
+  <div class='row'><div class='lab'>更新节奏</div><div class='val'>
+    <span class='cad must'>每个交易日必跑</span></div></div>
+  <div class='row'><div class='lab'>口径要点</div><div class='val note2'>build_dashboards.py 一并产出，与龙虎榜主看板同源。</div></div>
+  <div class='row'><div class='lab'>产出文件</div><div class='val files'><code>web/market/index.html</code><code>web/market/hotmoney.html</code></div></div>
+</div>
 <div class='sec'>
   <div class='sechead'>
     <span class='sic'>🐉</span>
@@ -168,8 +223,8 @@ footer { margin-top:46px; padding-top:18px; border-top:1px solid #e3e7ec;
     <div class='stitle'>
       <a href='../psychology/index.html'>群体心理风险雷达</a>
     </div>
-    <span class='badge warn'>2 天前</span>
-    <span class='bdate'>数据截至 2026-09-07</span>
+    <span class='badge fresh'>今日</span>
+    <span class='bdate'>数据截至 2026-09-09</span>
   </div>
   <div class='sdesc'>从群体行为角度给市场做「心理体检」：情绪处在周期哪一段、哪些认知偏差正在发酵、风险怎么分层。</div>
   
@@ -178,7 +233,7 @@ footer { margin-top:46px; padding-top:18px; border-top:1px solid #e3e7ec;
   <div class='row'><div class='lab'>更新节奏</div><div class='val'>
     <span class='cad opt'>按需更新（独立子系统）</span></div></div>
   <div class='row'><div class='lab'>口径要点</div><div class='val note2'>每个交易日一份单篇 HTML，数据内嵌在 market-trend/_build_MMDD.py 脚本里，非从落盘 JSON 读取，故需逐日新建脚本。</div></div>
-  <div class='row'><div class='lab'>产出文件</div><div class='val files'><code>web/psychology/index.html</code><code>web/psychology/crowd-psychology-risk-radar-20260907.html</code></div></div>
+  <div class='row'><div class='lab'>产出文件</div><div class='val files'><code>web/psychology/index.html</code><code>web/psychology/crowd-psychology-risk-radar-20260909.html</code></div></div>
 </div>
 <div class='sec'>
   <div class='sechead'>
@@ -251,6 +306,60 @@ footer { margin-top:46px; padding-top:18px; border-top:1px solid #e3e7ec;
     <span class='cad opt'>定期报告发布后重跑；量价快照随扫描日更新</span></div></div>
   <div class='row'><div class='lab'>口径要点</div><div class='val note2'>规则打分、不荐个股；「行业订单 / 业绩可验证」「瓶颈环节」未纳入评分，需自行核验。技术面为单一时点快照。</div></div>
   <div class='row'><div class='lab'>产出文件</div><div class='val files'><code>web/shareholder/known-accumulation-health.html</code></div></div>
+</div>
+<div class='sec'>
+  <div class='sechead'>
+    <span class='sic'>🎯</span>
+    <div class='stitle'>
+      <a href='../shareholder/tracker.html'>牛人追踪（索引入口）</a>
+    </div>
+    <span class='badge warn'>季频</span>
+    <span class='bdate'>数据截至 2026-Q2</span>
+  </div>
+  <div class='sdesc'>把「厉害的人」做成可索引、可跟随的清单：全市场 5500+ 只中报十大股东 → 牛散/私募/公募 索引；龙虎榜营业部 → 游资席位。</div>
+  
+  <div class='row'><div class='lab'>内容模块</div><div class='val'><span class='chip'>牛散 2640 / 私募 939 / 公募 867</span><span class='chip'>游资席位 833（龙虎榜聚合）</span><span class='chip'>姓名 + 行业筛选</span><span class='chip'>按持仓家数 / 增仓力度 / 持股数排序</span><span class='chip'>个股持仓明细 + 动向·加仓/减仓</span><span class='chip'>关注★ + 代号映射 localStorage</span><span class='chip'>纯本机不上传</span></div></div>
+  <div class='row'><div class='lab'>数据来源</div><div class='val'><span class='chip'>2026 中报十大股东 + 十大流通股东</span><span class='chip'>Q2↔Q1 环比（holdChange）</span><span class='chip'>龙虎榜营业部（08-17~09-09 活跃度）</span></div></div>
+  <div class='row'><div class='lab'>更新节奏</div><div class='val'>
+    <span class='cad opt'>季频更新（中报 / 季报披露季重跑）</span></div></div>
+  <div class='row'><div class='lab'>口径要点</div><div class='val note2'>「跟随」核心信号来自 holdChange 环比：正=加仓↑ 负=减仓↓。localStorage 关注与代号映射纯本机。</div></div>
+  <div class='row'><div class='lab'>产出文件</div><div class='val files'><code>web/shareholder/tracker.html</code><code>web/shareholder/data/person_index.json</code></div></div>
+</div>
+<div class='sec'>
+  <div class='sechead'>
+    <span class='sic'>🔍</span>
+    <div class='stitle'>
+      <a href='../research/index.html'>个股调研（三周期）</a>
+    </div>
+    <span class='badge warn'>季频</span>
+    <span class='bdate'>数据截至 2026-09-04</span>
+  </div>
+  <div class='sdesc'>单只 A 股「短线 / 中线 / 长线」三周期调研：单季拆分、内部人行为对照、板块资金确认、七条标准打分（不荐个股）。</div>
+  
+  <div class='row'><div class='lab'>内容模块</div><div class='val'><span class='chip'>短线：单季拆分 + 主力意图</span><span class='chip'>中线：基本面周期 + 内部人对照</span><span class='chip'>长线：行业订单 / 业绩可验证</span><span class='chip'>板块资金确认</span><span class='chip'>七条标准逐条打分 + 验证指标</span></div></div>
+  <div class='row'><div class='lab'>数据来源</div><div class='val'><span class='chip'>westock data_finance</span><span class='chip'>data_quote</span><span class='chip'>data_technical</span><span class='chip'>中报十大股东</span><span class='chip'>板块强度</span></div></div>
+  <div class='row'><div class='lab'>更新节奏</div><div class='val'>
+    <span class='cad opt'>按需更新（深度调研，单只一篇 HTML）</span></div></div>
+  <div class='row'><div class='lab'>口径要点</div><div class='val note2'>上游筛选：板块强度 / 牛人追踪 / 健康度过滤。调研结论只输出板块与交易规则，不给个股推荐。</div></div>
+  <div class='row'><div class='lab'>产出文件</div><div class='val files'><code>web/research/index.html</code><code>web/research/research-*.html</code></div></div>
+</div>
+<div class='sec'>
+  <div class='sechead'>
+    <span class='sic'>🗄️</span>
+    <div class='stitle'>
+      <a href='../db/index.html'>数据中心</a>
+    </div>
+    <span class='badge fresh'>实时</span>
+    <span class='bdate'>数据截至 2026-09-09</span>
+  </div>
+  <div class='sdesc'>全模块历史数据查询页：龙虎榜 / 高管增减持 / 大宗 / 板块强度 / 涨停梯队 / 热搜 / 新闻 / 大盘指标 9 个表，支持模块切换、日期区间、搜索、专项筛选、排序、分页。</div>
+  
+  <div class='row'><div class='lab'>内容模块</div><div class='val'><span class='chip'>9 个数据模块（exec / block / lhb / lhb_seat / sector / limitup / board_hot / news / market_metric）</span><span class='chip'>列式压缩 JSON + 按月分片</span><span class='chip'>模块切换 + 日期区间 + 全文搜索</span><span class='chip'>专项筛选 + 排序 + 分页</span></div></div>
+  <div class='row'><div class='lab'>数据来源</div><div class='val'><span class='chip'>quant/db/stocks.db（SQLite 9 表）</span><span class='chip'>quant/db_export.py → web/data/{module}_YYYY-MM.json</span></div></div>
+  <div class='row'><div class='lab'>更新节奏</div><div class='val'>
+    <span class='cad must'>实时（每次手动更新后由 db_update.py 同步）</span></div></div>
+  <div class='row'><div class='lab'>口径要点</div><div class='val note2'>历史长期留存，INSERT OR REPLACE 幂等。所有上方页面的历史数据源。</div></div>
+  <div class='row'><div class='lab'>产出文件</div><div class='val files'><code>web/db/index.html</code><code>web/data/*.json</code><code>quant/db/stocks.db</code></div></div>
 </div>
 
 <h2>✅ 每日手动更新自检清单</h2>
