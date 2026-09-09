@@ -16,6 +16,14 @@ V = json.load(open(os.path.join(Q2, "_ind_valuation.json"), encoding="utf-8"))
 VAL_BY_IND = {r["ind"]: r for r in V["rows"]}
 GROUPS = ("个人", "私募", "公募")
 
+# 顶级游资（知名牛散）名录：用于在全市场/行业个人榜中单独标注。
+# 来自 A 股长期活跃的知名个人投资者（牛散）。如需增删，直接改这个集合即可。
+TOP_YOUZI = {
+    "葛卫东", "王亚伟", "章建平", "裘国根", "陈发树", "刘益谦", "王茹远", "赵建平",
+    "沈昌宇", "吴鸣霄", "刘芳", "黄木顺", "张寿清", "舒逸民", "郑素贞", "何雪萍",
+    "孙惠刚", "周军", "蒋菲", "韩朝东", "刘晓卫", "沈付兴", "邹瀚枢", "瞿果",
+}
+
 # ============================================================
 # 行业四象限：聪明钱净增持 × 估值分位
 # ============================================================
@@ -57,7 +65,8 @@ def slim(x):
             "inc": x["inc"], "dec": x["dec"], "flat": x["flat"],
             "pct": x["pct_sum"], "sc": x["score"],
             "b": x["s_breadth"], "p": x["s_power"], "d": x["s_depth"],
-            "ind": x["ind"],
+            "ind": x["ind"], "hk": x.get("hk", ""),
+            "yz": 1 if x.get("short", "")[:26] in TOP_YOUZI else 0,
             "win": x.get("win"), "avg": x.get("avg"), "n_valid": x.get("n_valid"),
             "st": [{"n": s["name"], "c": s["code"], "d": s["d"], "p": s["pct"]}
                    for s in x["stocks"][:6]]}
@@ -143,9 +152,16 @@ def top_table(lst, g):
             nm_cell = f"<b>{x['nm']}</b><br><span class='tiny'>· {x['mgr']}</span>"
         else:
             nm_cell = f"<b>{x['nm']}</b>"
+        tail = f"<br><span class='tiny'>{x['ind']}</span>"
+        if g == "个人":
+            hk_cls = "sh" if x.get("hk") == "股东" else "pi"
+            badge = f"<br><span class='hk {hk_cls}'>{x.get('hk','')}</span>"
+            if x.get("yz"):
+                badge += " <span class='yz'>顶级游资</span>"
+            tail = badge + tail
         out.append(
             f"<tr><td class='num rk'>{i}</td>"
-            f"<td class='nm'>{nm_cell}<br><span class='tiny'>{x['ind']}</span></td>"
+            f"<td class='nm'>{nm_cell}{tail}</td>"
             f"<td class='num'>{x['n']}</td>"
             f"<td class='num up'>{x['inc']}</td>"
             f"<td class='num down'>{x['dec']}</td>"
@@ -167,6 +183,26 @@ TOP_BLOCKS = "".join(
 DEC_BLOCKS = "".join(
     f"<div class='tabpane2' data-g='{g}'>{top_table(DATA['all_dec'][g], g)}</div>"
     for g in GROUPS)
+
+# 顶级游资参与标注（自然人榜里命中的知名牛散单独列出：覆盖全市场榜 + 各行业榜）
+YZ_PERSONS = []
+_seen_yz = set()
+def _add_yz(x):
+    if x.get("yz") and x["nm"] not in _seen_yz:
+        _seen_yz.add(x["nm"]); YZ_PERSONS.append(x)
+for x in DATA["all_top"]["个人"]:
+    _add_yz(x)
+for _ind, _d in DATA["by_ind"].items():
+    for x in _d["个人"]:
+        _add_yz(x)
+YZ_BLOCK = ""
+if YZ_PERSONS:
+    items = "、".join(
+        f"<b>{x['nm']}</b>（{x['ind']}·{x['hk']}·强度{x['sc']:.1f}·Top{x['n']}家）"
+        for x in YZ_PERSONS)
+    YZ_BLOCK = ("<div class='amberbox' style='border-left:4px solid #b8893b'>"
+                f"<b>★ 顶级游资参与（自然人榜命中 {len(YZ_PERSONS)} 位知名牛散）</b><br>{items}"
+                "<br><span class='tiny'>名录见脚本顶部 TOP_YOUZI 常量，可按需增删；行内另以 <span class='yz'>顶级游资</span> 徽章标注。</span></div>")
 
 PILLS = "".join(
     f"<button class='pill' data-ind='{r['ind']}'>{r['ind']}"
@@ -224,6 +260,13 @@ td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
 .tiny { font-size:11px; color:#8a929c; font-weight:400; }
 .rk { color:#b8893b; font-weight:800; }
 .sc { color:#b8893b; font-weight:800; }
+.hk { display:inline-block; margin-top:3px; padding:1px 7px; border-radius:9px; font-size:10px; font-weight:700; }
+.hk.sh { background:rgba(184,51,42,.13); color:#b8332a; border:1px solid rgba(184,51,42,.35); }
+.hk.pi { background:rgba(107,91,149,.14); color:#6b5b95; border:1px solid rgba(107,91,149,.32); }
+.yz { display:inline-block; margin-left:6px; padding:1px 7px; border-radius:9px; font-size:10px; font-weight:700;
+  background:linear-gradient(135deg,rgba(184,137,59,.24),rgba(216,57,43,.20)); color:#9a5a16;
+  border:1px solid rgba(184,137,59,.5); vertical-align:middle; }
+.yzrow { background:linear-gradient(90deg,rgba(184,137,59,.10),rgba(216,57,43,.05)) !important; }
 .note { color:#8a929c; font-size:12px; margin-top:8px; line-height:1.7; }
 .amberbox { font-size:13px; color:#b8893b; background:linear-gradient(135deg,rgba(184,137,59,.10),rgba(184,137,59,.04));
   border:1px solid rgba(184,137,59,.18); border-radius:12px; padding:12px 16px; margin:12px 0; line-height:1.8; }
@@ -336,7 +379,14 @@ function rowsOf(list, g){
     const nm = x.mgr
       ? "<b>"+x.nm+"</b><br><span class='tiny'>· "+x.mgr+"</span>"
       : "<b>"+x.nm+"</b>";
-    h+="<tr data-k='"+g+i+"'><td class='num rk'>"+(i+1)+"</td><td class='nm'>"+nm+"</td>"
+    let badge = "";
+    if(g==='个人'){
+      const hkCls = (x.hk==='股东') ? 'sh' : 'pi';
+      badge = "<br><span class='hk "+hkCls+"'>"+(x.hk||'')+"</span>";
+      if(x.yz) badge += " <span class='yz'>顶级游资</span>";
+    }
+    const rowCls = (g==='个人' && x.yz) ? ' ygrow' : '';
+    h+="<tr class='"+rowCls+"' data-k='"+g+i+"'><td class='num rk'>"+(i+1)+"</td><td class='nm'>"+nm+badge+"</td>"
       +"<td class='num'>"+x.n+"</td><td class='num up'>"+x.inc+"</td>"
       +"<td class='num down'>"+x.dec+"</td><td class='num'>"+x.pct.toFixed(2)+"%</td>"
       +"<td class='num sc'>"+x.sc.toFixed(2)+"</td>"
@@ -468,7 +518,8 @@ HTML = f"""<!DOCTYPE html>
 <div class='section'>
 <h2>行业最强榜 · 各行业个人 / 私募 / 公募 Top20</h2>
 <div class='sub2'>点击行业标签切换。标签后的数字是该行业聪明钱净增持家次。
-表格里点任意一行可展开该股东的具体持仓与强度拆解。每卡可<b>按强度 / 按胜率*</b>切换排序，胜率* 为该股东中报全部持股在 2026-06-30 → 2026-09-01 窗口的上涨比例与平均涨幅（仅作历史参考）。</div>
+表格里点任意一行可展开该股东的具体持仓与强度拆解。每卡可<b>按强度 / 按胜率*</b>切换排序，胜率* 为该股东中报全部持股在 2026-06-30 → 2026-09-01 窗口的上涨比例与平均涨幅（仅作历史参考）。
+自然人（牛散）行会标注 <span class='hk sh'>股东</span>（进入过前十大股东）或 <span class='hk pi'>个人投资</span>（仅十大流通股东），命中知名牛散名录的额外标 <span class='yz'>顶级游资</span>。</div>
 <div class='pills'>{PILLS}</div>
 <div class='amberbox' id='indTitle'></div>
 <div class='grid3' id='indBody'></div>
@@ -478,6 +529,12 @@ HTML = f"""<!DOCTYPE html>
 <h2>全市场强度榜 Top20</h2>
 <div class='sub2'>不分行业的横向对比。个人榜按行业分别统计
 （同名自然人无法区分，跨行业合并会把不同的人叠成一个）；私募与公募名称唯一，做跨行业合并。</div>
+{YZ_BLOCK}
+<div class='legend'>
+<span><span class='hk sh'>股东</span> 进入过「前十大股东」（注册股东）</span>
+<span><span class='hk pi'>个人投资</span> 仅出现在「十大流通股东」</span>
+<span><span class='yz'>顶级游资</span> 命中知名牛散名录</span>
+</div>
 <div class='tabs'>
 <button class='tab on' data-scope='top' data-g='个人'>自然人</button>
 <button class='tab' data-scope='top' data-g='私募'>私募</button>
