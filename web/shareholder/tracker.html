@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>牛人追踪 · 股东与游资索引</title>
+<style>
+.wrap { max-width:1180px; margin:0 auto; padding:40px 20px 70px; }
+.topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px; padding-bottom:14px; border-bottom:1px solid #ececf0; }
+.topnav a { color:#b8893b; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px; border:1px solid transparent; }
+.topnav a:hover { background:rgba(184,137,59,.10); }
+.topnav a.xlink { color:#b8332a; border-color:rgba(184,51,42,.35); }
+.topnav a.xlink:hover { background:rgba(184,51,42,.08); }
+.topnav a.cur { background:#b8893b; color:#fff; font-weight:700; }
+header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#b8893b,#8a5a1e); -webkit-background-clip:text; background-clip:text; color:transparent; }
+header .sub { color:#6b7280; font-size:14px; margin:0 0 18px; }
+.toolbar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:16px; }
+.tabs { display:flex; gap:6px; flex-wrap:wrap; }
+.tab { font-size:13px; padding:6px 14px; border-radius:18px; border:1px solid #e3e3e8; background:#fff; color:#444; cursor:pointer; }
+.tab.on { background:#b8893b; color:#fff; border-color:#b8893b; font-weight:700; }
+input,select { font-size:13px; padding:7px 10px; border:1px solid #ddd; border-radius:8px; background:#fff; color:#23262b; }
+input[type=text]{ min-width:200px; }
+.btn { font-size:13px; padding:6px 13px; border-radius:8px; border:1px solid #b8893b; background:#fff; color:#b8893b; cursor:pointer; }
+.btn.on { background:#b8893b; color:#fff; }
+.count { color:#8a929c; font-size:12px; margin-left:auto; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:14px; }
+.card { background:#fff; border:1px solid #ececf0; border-radius:14px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.04); cursor:pointer; transition:.15s; }
+.card:hover { box-shadow:0 4px 14px rgba(0,0,0,.08); transform:translateY(-1px); }
+.card-h { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.nm { font-size:16px; font-weight:700; color:#23262b; }
+.star { color:#e0a93b; }
+.badge { font-size:11px; padding:2px 8px; border-radius:10px; font-weight:700; }
+.b-ns { background:rgba(184,51,42,.10); color:#b8332a; }
+.b-sm { background:rgba(184,137,59,.12); color:#8a5a1e; }
+.b-gm { background:rgba(26,158,90,.12); color:#1a9e5a; }
+.b-yz { background:rgba(80,90,200,.12); color:#3a44b0; }
+.stat { margin-top:8px; font-size:13px; color:#555; display:flex; gap:14px; flex-wrap:wrap; }
+.up { color:#b8332a; font-weight:700; }
+.dn { color:#1a9e5a; font-weight:700; }
+.chips { margin-top:8px; display:flex; flex-wrap:wrap; gap:6px; }
+.chip { font-size:11px; background:#f2f3f5; color:#555; padding:3px 8px; border-radius:9px; }
+.acts { margin-top:10px; display:flex; gap:8px; }
+.acts .btn { font-size:12px; padding:4px 10px; }
+.ali { color:#b8332a; font-size:12px; margin-left:4px; }
+.more { text-align:center; margin:18px 0; }
+/* modal */
+.mask { position:fixed; inset:0; background:rgba(20,22,28,.45); display:none; align-items:flex-start; justify-content:center; padding:40px 16px; overflow:auto; z-index:50; }
+.mask.show { display:flex; }
+.modal { background:#fff; border-radius:16px; max-width:880px; width:100%; padding:22px 24px 28px; }
+.modal h2 { margin:0 0 4px; font-size:20px; color:#23262b; }
+.modal .mh { color:#888; font-size:13px; margin-bottom:14px; }
+.close { float:right; cursor:pointer; color:#aaa; font-size:22px; line-height:1; }
+section.blk { margin-top:16px; }
+section.blk h3 { font-size:14px; color:#b8893b; border-left:3px solid #b8893b; padding-left:8px; margin:0 0 8px; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th,td { text-align:left; padding:6px 8px; border-bottom:1px solid #f0f0f3; }
+th { color:#888; font-weight:600; }
+td.r,th.r { text-align:right; }
+.tagup { color:#b8332a; font-weight:700; }
+.tagdn { color:#1a9e5a; font-weight:700; }
+.tagflat { color:#999; }
+.yzstk { font-size:12px; color:#555; padding:5px 0; border-bottom:1px solid #f3f3f5; display:flex; justify-content:space-between; gap:10px; }
+footer { margin-top:34px; padding-top:16px; border-top:1px solid #ececf0; color:#9aa1ab; font-size:12px; }
+.legend { font-size:12px; color:#8a929c; margin-top:6px; }
+@media(max-width:700px){ .wrap{padding:24px 12px 50px;} header h1{font-size:22px;} .grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div class='wrap'>
+  <div class='topnav'>
+    <a href='../market/index.html'>每日总览</a>
+    <a href='../lhb/lhb.html'>龙虎榜分析</a>
+    <a href='../market/hotmoney.html'>游资看板</a>
+    <a href='../sector/index.html'>板块强度</a>
+    <a href='../exec/index.html'>高管增减持</a>
+    <a href='../block/index.html'>大宗交易</a>
+    <a href='../psychology/index.html'>群体心理</a>
+    <a href='../research/index.html'>个股调研</a>
+    <a href='2026-q2-industry-elite.html'>行业最强</a>
+    <a href='top-elite.html' class='xlink'>玩家图谱</a>
+    <a href='stock-accumulation.html' class='xlink'>增持扫描</a>
+    <a href='known-accumulation-health.html' class='xlink'>健康度过滤</a>
+    <a href='tracker.html' class='cur'>牛人追踪</a>
+    <a href='../sections/index.html'>版块总览</a>
+    <a href='../db/index.html'>数据中心</a>
+    <a href='../../index.html'>返回主页</a>
+  </div>
+
+  <header>
+    <h1>牛人追踪 · 股东与游资索引</h1>
+    <p class='sub'>把「厉害的人」做成可索引、可跟随的清单：牛散 / 私募 / 公募 来自 2026-Q2 十大股东（含 Q2↔Q1 增减持信号），游资席位来自龙虎榜营业部活跃度。</p>
+  </header>
+
+  <div class='toolbar'>
+    <div class='tabs' id='tabs'>
+      <div class='tab on' data-t='牛散'>牛散</div>
+      <div class='tab' data-t='私募'>私募</div>
+      <div class='tab' data-t='公募'>公募</div>
+      <div class='tab' data-t='游资'>游资席位</div>
+    </div>
+    <input type='text' id='q' placeholder='搜索姓名 / 代号…'>
+    <select id='ind'></select>
+    <select id='sort'>
+      <option value='nHold'>排序：持仓家数</option>
+      <option value='add'>排序：增仓力度</option>
+      <option value='shares'>排序：持股数</option>
+    </select>
+    <button class='btn' id='watchBtn'>★ 我的关注</button>
+    <span class='count' id='count'></span>
+  </div>
+
+  <div class='grid' id='list'></div>
+  <div class='more' id='moreWrap' style='display:none'><button class='btn' id='moreBtn'>显示更多</button></div>
+
+  <footer>
+    数据来源：2026-Q2 上市公司十大股东 / 十大流通股东（全市场 5500+ 只）+ 龙虎榜营业部（2026-08-17 ~ 09-09）。
+    增减持信号取 holdChange（Q2 相对 Q1 环比）。关注名单与代号仅存于本机浏览器（localStorage），不上传。
+    <div class='legend'>红=加仓↑ / 绿=减仓↓ ｜ 牛散=自然人 / 私募=投资·资管·信托 / 公募=基金·社保·保险 / 游资=龙虎榜营业部</div>
+  </footer>
+</div>
+
+<div class='mask' id='mask'><div class='modal' id='modal'></div></div>
+
+<script>
+const TYPE_KEY={'牛散':'niusan','私募':'simu','公募':'gongmu','游资':'youzi'};
+const TYPE_CLS={'牛散':'b-ns','私募':'b-sm','公募':'b-gm','游资':'b-yz'};
+let DATA=null, watch=loadWatch();
+const state={tab:'牛散',q:'',ind:'',sort:'nHold',watchOnly:false,slice:120};
+
+function loadWatch(){try{return JSON.parse(localStorage.getItem('niuren_watch'))||{names:[],aliases:{}};}catch(e){return{names:[],aliases:{}};}}
+function saveWatch(){localStorage.setItem('niuren_watch',JSON.stringify(watch));}
+function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function fmt(n){if(n==null)return'-';const a=Math.abs(n);if(a>=1e8)return (n/1e8).toFixed(2)+'亿';if(a>=1e4)return (n/1e4).toFixed(1)+'万';return String(n);}
+function fmtSh(n){return n>=1e4?(n/1e4).toFixed(1)+'万股':String(n);}
+
+fetch('data/person_index.json').then(r=>r.json()).then(d=>{DATA=d;buildIndFilter();render();})
+  .catch(e=>{document.getElementById('list').innerHTML='<p style="color:#b8332a">数据加载失败：'+esc(e)+'<br>请确认已生成 person_index.json 并已随站点推送。</p>';});
+
+document.getElementById('tabs').addEventListener('click',e=>{
+  const t=e.target.getAttribute('data-t'); if(!t)return;
+  state.tab=t; state.slice=120; state.watchOnly=false; document.getElementById('watchBtn').classList.remove('on');
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.getAttribute('data-t')===t));
+  buildIndFilter(); render();
+});
+document.getElementById('q').addEventListener('input',e=>{state.q=e.target.value.trim(); state.slice=120; render();});
+document.getElementById('ind').addEventListener('change',e=>{state.ind=e.target.value; state.slice=120; render();});
+document.getElementById('sort').addEventListener('change',e=>{state.sort=e.target.value; render();});
+document.getElementById('watchBtn').addEventListener('click',function(){
+  state.watchOnly=!state.watchOnly; this.classList.toggle('on',state.watchOnly); state.slice=120; render();
+});
+document.getElementById('moreBtn').addEventListener('click',()=>{state.slice+=120; render();});
+document.getElementById('mask').addEventListener('click',e=>{if(e.target.id==='mask')closeModal();});
+
+function buildIndFilter(){
+  const sel=document.getElementById('ind');
+  if(state.tab==='游资'){sel.style.display='none'; sel.innerHTML=''; return;}
+  sel.style.display='';
+  const set=new Set(); (DATA[TYPE_KEY[state.tab]]||[]).forEach(p=>(p.industries||[]).forEach(i=>set.add(i.name)));
+  const arr=[...set].sort();
+  sel.innerHTML='<option value="">全部行业</option>'+arr.map(x=>'<option value="'+esc(x)+'">'+esc(x)+'</option>').join('');
+  sel.value=state.ind;
+}
+
+function curList(){
+  if(state.watchOnly){
+    let arr=[]; ['niusan','simu','gongmu'].forEach(k=>(DATA[k]||[]).forEach(p=>{if(watch.names.includes(p.name))arr.push(p);}));
+    return arr;
+  }
+  let arr=(DATA[TYPE_KEY[state.tab]]||[]).slice();
+  if(state.q){const q=state.q.toLowerCase(); arr=arr.filter(p=>p.name.toLowerCase().includes(q)||(watch.aliases[p.name]||'').toLowerCase().includes(q));}
+  if(state.tab!=='游资'&&state.ind){arr=arr.filter(p=>(p.industries||[]).some(i=>i.name===state.ind));}
+  if(state.tab==='游资'){
+    if(state.sort==='shares')arr.sort((a,b)=>b.totalBuy-a.totalBuy); else arr.sort((a,b)=>b.freq-a.freq);
+  }else{
+    if(state.sort==='nHold')arr.sort((a,b)=>b.nHold-a.nHold);
+    else if(state.sort==='add')arr.sort((a,b)=>(b.addCnt-b.cutCnt)-(a.addCnt-a.cutCnt));
+    else if(state.sort==='shares')arr.sort((a,b)=>b.totalHoldShares-a.totalHoldShares);
+  }
+  return arr;
+}
+
+function render(){
+  const list=document.getElementById('list');
+  const arr=curList();
+  document.getElementById('count').textContent='共 '+arr.length+' 位';
+  const slice=arr.slice(0,state.slice);
+  if(state.tab==='游资') list.innerHTML=slice.map(youziCard).join('');
+  else list.innerHTML=slice.map(personCard).join('');
+  const mw=document.getElementById('moreWrap');
+  mw.style.display=arr.length>state.slice?'block':'none';
+}
+
+function ali(name){const a=watch.aliases[name]; return a?' <span class="ali">代号:'+esc(a)+'</span>':'';}
+function isW(name){return watch.names.includes(name);}
+
+function personCard(p){
+  const t=p.type;
+  const chips=(p.industries||[]).slice(0,4).map(i=>'<span class="chip">'+esc(i.name)+' '+i.cnt+'</span>').join('');
+  const star=p.star?'<span class="star">★</span>':'';
+  return '<div class="card" onclick="openPerson(\''+esc(p.name)+'\')">'+
+    '<div class="card-h"><span class="nm">'+star+esc(p.name)+ali(p.name)+'</span>'+
+      '<span class="badge '+TYPE_CLS[t]+'">'+t+'</span></div>'+
+    '<div class="stat"><span>持仓 <b>'+p.nHold+'</b> 家</span>'+
+      '<span class="up">加仓 '+p.addCnt+'</span><span class="dn">减仓 '+p.cutCnt+'</span>'+
+      '<span>持股 '+fmtSh(p.totalHoldShares)+'</span></div>'+
+    '<div class="chips">'+chips+'</div>'+
+    '<div class="acts"><button onclick="event.stopPropagation();toggleWatch(\''+esc(p.name)+'\')">'+(isW(p.name)?'★ 已关注':'☆ 关注')+'</button>'+
+      '<button onclick="event.stopPropagation();setAlias(\''+esc(p.name)+'\')">设代号</button></div>'+
+    '</div>';
+}
+
+function youziCard(y){
+  const stk=(y.stocks||[]).slice(0,6).map(s=>{
+    const names=String(s.name||'').split(';');
+    return names.map(n=>'<span class="chip">'+esc(n.trim())+'</span>').join('');
+  }).join('');
+  const star=y.star?'<span class="star">★</span>':'';
+  return '<div class="card" onclick="openYouzi(\''+esc(y.name)+'\')">'+
+    '<div class="card-h"><span class="nm">'+star+esc(y.name)+'</span><span class="badge '+TYPE_CLS['游资']+'">游资席位</span></div>'+
+    '<div class="stat"><span>上榜 <b>'+y.freq+'</b> 次</span><span>买入合计 <b>'+fmt(y.totalBuy)+'</b></span><span>最近 '+esc(y.lastDate)+'</span></div>'+
+    '<div class="chips">'+stk+'</div>'+
+    '<div class="acts"><button onclick="event.stopPropagation();toggleWatch(\''+esc(y.name)+'\',\'游资\')">'+(isW(y.name)?'★ 已关注':'☆ 关注')+'</button></div>'+
+    '</div>';
+}
+
+function toggleWatch(name){ // 牛散/私募/公募 关注
+  const i=watch.names.indexOf(name);
+  if(i>=0)watch.names.splice(i,1); else watch.names.push(name);
+  saveWatch(); render();
+}
+function setAlias(name){
+  const cur=watch.aliases[name]||'';
+  const v=prompt('为「'+name+'」设置代号（仅存本机）：',cur);
+  if(v===null)return;
+  if(v.trim()==='')delete watch.aliases[name]; else watch.aliases[name]=v.trim();
+  saveWatch(); render();
+}
+
+/* ---------- modal ---------- */
+function openPerson(name){
+  let p=null; ['niusan','simu','gongmu'].forEach(k=>(DATA[k]||[]).forEach(x=>{if(x.name===name)p=x;}));
+  if(!p)return;
+  const add=(p.holdings||[]).filter(h=>h.holdChange>0).sort((a,b)=>b.holdChange-a.holdChange);
+  const cut=(p.holdings||[]).filter(h=>h.holdChange<0).sort((a,b)=>a.holdChange-b.holdChange);
+  const rows=(p.holdings||[]).map(h=>{
+    const d=h.holdChange>0?'<span class="tagup">↑加仓 '+fmt(h.holdChange)+'</span>':h.holdChange<0?'<span class="tagdn">↓减仓 '+fmt(h.holdChange)+'</span>':'<span class="tagflat">持平</span>';
+    return '<tr><td>'+esc(h.name)+'</td><td>'+esc(h.code)+'</td><td>'+esc(h.industry)+'</td><td class="r">'+h.holdPct+'%</td><td class="r">'+fmtSh(h.holdShares)+'</td><td>'+d+'</td></tr>';
+  }).join('');
+  const addRows=add.length?'<table><tr><th>股票</th><th>代码</th><th>行业</th><th class="r">占流通</th><th class="r">加仓股数</th></tr>'+
+    add.map(h=>'<tr><td>'+esc(h.name)+'</td><td>'+esc(h.code)+'</td><td>'+esc(h.industry)+'</td><td class="r">'+h.holdPct+'%</td><td class="r tagup">+'+fmtSh(h.holdChange)+'</td></tr>').join('')+'</table>'
+    :'<p class="legend">本季无加仓记录。</p>';
+  const cutRows=cut.length?'<table><tr><th>股票</th><th>代码</th><th>行业</th><th class="r">占流通</th><th class="r">减仓股数</th></tr>'+
+    cut.map(h=>'<tr><td>'+esc(h.name)+'</td><td>'+esc(h.code)+'</td><td>'+esc(h.industry)+'</td><td class="r">'+h.holdPct+'%</td><td class="r tagdn">'+fmtSh(h.holdChange)+'</td></tr>').join('')+'</table>'
+    :'<p class="legend">本季无减仓记录。</p>';
+  const m=document.getElementById('modal');
+  m.innerHTML='<span class="close" onclick="closeModal()">×</span>'+
+    '<h2>'+esc(p.name)+ali(p.name)+' <span class="badge '+TYPE_CLS[p.type]+'">'+p.type+'</span></h2>'+
+    '<div class="mh">持仓 '+p.nHold+' 家 · 加仓 '+p.addCnt+' / 减仓 '+p.cutCnt+' · 平均占流通 '+p.avgHoldPct+'% · 持股合计 '+fmtSh(p.totalHoldShares)+'</div>'+
+    '<section class="blk"><h3>全部持仓（'+p.holdings.length+'）</h3><table><tr><th>股票</th><th>代码</th><th>行业</th><th class="r">占流通</th><th class="r">持股数</th><th>Q2↔Q1</th></tr>'+rows+'</table></section>'+
+    '<section class="blk"><h3>动向 · 加仓（跟随重点）</h3>'+addRows+'</section>'+
+    '<section class="blk"><h3>动向 · 减仓</h3>'+cutRows+'</section>'+
+    '<div class="acts" style="margin-top:16px"><button class="btn" onclick="toggleWatch(\''+esc(p.name)+'\')">'+(isW(p.name)?'★ 已关注':'☆ 关注')+'</button>'+
+      '<button class="btn" onclick="setAlias(\''+esc(p.name)+'\')">设代号</button></div>';
+  document.getElementById('mask').classList.add('show');
+}
+function openYouzi(name){
+  let y=null; (DATA.youzi||[]).forEach(x=>{if(x.name===name)y=x;});
+  if(!y)return;
+  const rows=(y.stocks||[]).map(s=>{
+    const names=String(s.name||'').split(';').map(n=>n.trim()).filter(Boolean);
+    return '<div class="yzstk"><span>'+esc(s.date)+' · '+names.map(esc).join('、')+'</span><span class="r">'+fmt(s.buyAmt)+'</span></div>';
+  }).join('');
+  const m=document.getElementById('modal');
+  m.innerHTML='<span class="close" onclick="closeModal()">×</span>'+
+    '<h2>'+esc(y.name)+(y.star?' <span class="star">★</span>':'')+' <span class="badge '+TYPE_CLS['游资']+'">游资席位</span></h2>'+
+    '<div class="mh">上榜 '+y.freq+' 次 · 买入合计 '+fmt(y.totalBuy)+' · 区间 '+esc(y.firstDate)+' ~ '+esc(y.lastDate)+'</div>'+
+    '<section class="blk"><h3>近期现身（'+y.stocks.length+' 条，按日期）</h3>'+rows+'</section>'+
+    '<div class="acts" style="margin-top:16px"><button class="btn" onclick="toggleWatch(\''+esc(y.name)+'\',\'游资\')">'+(isW(y.name)?'★ 已关注':'☆ 关注')+'</button></div>';
+  document.getElementById('mask').classList.add('show');
+}
+function closeModal(){document.getElementById('mask').classList.remove('show');}
+</script>
+</body>
+</html>
