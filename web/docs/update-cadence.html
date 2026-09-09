@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>数据更新维度与时间分类 · A股分析中心</title>
+<style>
+* { box-sizing:border-box; }
+body { margin:0; background:#f5f6f8; color:#23262b;
+  font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif; line-height:1.7; }
+.wrap { max-width:1180px; margin:0 auto; padding:28px 22px 70px; }
+.topnav { background:linear-gradient(90deg,#b8893b,#caa15a); border-radius:0 0 14px 14px; padding:10px 22px;
+  display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+.topnav a { color:#fff; text-decoration:none; font-size:13px; padding:5px 12px; border-radius:20px; background:rgba(255,255,255,.12); }
+.topnav a.cur, .topnav a:hover { background:rgba(255,255,255,.28); }
+header.head { padding:26px 4px 10px; }
+header.head h1 { font-size:27px; margin:0 0 6px; background:linear-gradient(90deg,#b8893b,#23262b);
+  -webkit-background-clip:text; background-clip:text; color:transparent; }
+header.head .sub { color:#5a6573; font-size:14px; }
+.updated { color:#7b8794; font-size:12.5px; margin:6px 0 18px; }
+.section { background:#fff; border:1px solid #e3e7ec; border-radius:14px; padding:18px 20px; margin:16px 0;
+  box-shadow:0 1px 4px rgba(20,30,50,.04); }
+.section h2 { font-size:20px; margin:0 0 14px; padding-left:12px; border-left:5px solid #b8893b; }
+.tiers { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+.tier { border-radius:12px; padding:14px 16px; border:1px solid #e3e7ec; }
+.tier.daily { background:#eafaf1; border-color:#bfe6cd; }
+.tier.periodic { background:#fff6e9; border-color:#f3dca8; }
+.tier.ondemand { background:#eef3fb; border-color:#c9d8ee; }
+.tier.gate { background:#fdeef0; border-color:#f3c6cc; }
+.tier h3 { margin:0 0 4px; font-size:16px; }
+.tier .cnt { font-size:28px; font-weight:800; color:#b8893b; }
+.tier p { margin:6px 0 0; font-size:12.5px; color:#5a6573; }
+.filterbar { display:flex; gap:8px; flex-wrap:wrap; margin:4px 0 14px; }
+.filterbar button { cursor:pointer; border:1px solid #d7dde4; background:#fff; color:#3a4048;
+  padding:6px 14px; border-radius:20px; font-size:13px; }
+.filterbar button.active { background:#b8893b; color:#fff; border-color:#b8893b; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th,td { text-align:left; padding:9px 10px; border-bottom:1px solid #eef1f4; vertical-align:top; }
+th { background:#f7f8fa; color:#3a4048; font-weight:700; position:sticky; top:0; }
+tr:hover td { background:#fafbfc; }
+.tag { display:inline-block; padding:2px 9px; border-radius:20px; font-size:11px; font-weight:700; white-space:nowrap; }
+.tag.daily { background:#e6f6ee; color:#128a52; }
+.tag.periodic { background:#fdf3e0; color:#b7791f; }
+.tag.ondemand { background:#e8f0fb; color:#2b6cb0; }
+.tag.gate { background:#fdecea; color:#c0392b; }
+.tag.resident { background:#eef1f4; color:#5a6573; }
+.dim { font-weight:700; color:#1c2430; }
+.muted { color:#7b8794; font-size:12px; }
+.hint { color:#b7791f; font-size:12px; }
+.chk { list-style:none; padding:0; margin:0; }
+.chk li { display:flex; gap:10px; align-items:flex-start; padding:9px 4px; border-bottom:1px solid #eef1f4; }
+.chk input { margin-top:5px; width:16px; height:16px; accent-color:#b8893b; }
+.chk .t { font-size:13.5px; }
+.chk .d { font-size:12px; color:#7b8794; }
+.warn { background:#fffaf0; border-left:4px solid #b7791f; padding:12px 16px; border-radius:0 8px 8px 0;
+  font-size:13.5px; color:#6b4f2a; margin:12px 0; }
+.warn b { color:#b7791f; }
+.btn { cursor:pointer; border:1px solid #d7dde4; background:#fff; padding:6px 14px; border-radius:8px; font-size:13px; }
+footer { margin-top:40px; padding-top:16px; border-top:1px solid #e3e7ec; font-size:12px; color:#7b8794; line-height:1.8; }
+@media(max-width:700px){ .wrap{padding:18px 12px 50px;} th,td{padding:7px 6px; font-size:12px;} }
+</style>
+</head>
+<body>
+<div class='topnav'>
+  <a href='../../index.html'>总门户</a>
+  <a href='../sections/index.html'>版块总览</a>
+  <a href='../lhb/lhb.html'>龙虎榜</a>
+  <a href='../sector/index.html'>板块强度</a>
+  <a href='../exec/index.html'>高管增减持</a>
+  <a href='../block/index.html'>大宗交易</a>
+  <a href='../psychology/index.html'>心理雷达</a>
+  <a href='../shareholder/tracker.html'>牛人追踪</a>
+  <a href='../db/index.html'>数据中心</a>
+  <a href='update-cadence.html' class='cur'>更新维度</a>
+</div>
+<div class='wrap'>
+<header class='head'>
+  <h1>数据更新维度与时间分类</h1>
+  <div class='sub'>把全站 15 个数据维度按「更新频率」归为四档，标明触发条件、数据源/脚本、最近更新日期与易漏提示，供每日手动更新时对照。</div>
+  <div class='updated'>整理于 2026-09-10 · 各「最近更新」为当前仓库真实文件日期</div>
+</header>
+
+<div class='section'>
+  <h2>📊 更新节奏总览（四档）</h2>
+  <div class='tiers'>
+    <div class='tier daily'><h3>① 每日必做</h3><div class='cnt'>7</div><p>交易日盘后 20:00–21:00 跑齐：龙虎榜 / 板块强度 / 高管增减持 / 大宗 / 心理雷达 / 数据库累积 / 看板门户重建</p></div>
+    <div class='tier periodic'><h3>② 季频 · 定期</h3><div class='cnt'>5</div><p>随季报（中报/年报/一季报/三季报）刷新：行业最强榜、知名Top20、增持扫描、量价健康度、牛人追踪（股东部分）</p></div>
+    <div class='tier ondemand'><h3>③ 按需 · 事件</h3><div class='cnt'>1</div><p>用户指定个股时触发：个股三周期调研</p></div>
+    <div class='tier gate'><h3>④ 推送门禁</h3><div class='cnt'>每次</div><p>每次推送前后：断链0 / 污染0 / curl 200 三道门禁</p></div>
+  </div>
+  <div class='warn'>另有 <b>数据中心查询页</b> 为「常驻被动层」——本身无需更新，只保证每日 <code>db_update</code> 跑通使其底层数据常新。</div>
+</div>
+
+<div class='section'>
+  <h2>🗂 全维度清单（按时间分类 · 可筛选）</h2>
+  <div class='filterbar'>
+    <button data-f='all' class='active'>全部</button>
+    <button data-f='daily'>① 每日必做</button>
+    <button data-f='periodic'>② 季频·定期</button>
+    <button data-f='ondemand'>③ 按需·事件</button>
+    <button data-f='gate'>④ 推送门禁</button>
+    <button data-f='resident'>常驻被动</button>
+  </div>
+  <table>
+    <thead><tr>
+      <th style='width:15%'>数据维度</th><th style='width:9%'>频率</th><th style='width:16%'>触发条件</th>
+      <th style='width:24%'>数据源 / 生成脚本</th><th style='width:10%'>最近更新</th><th style='width:26%'>易漏提示</th>
+    </tr></thead>
+    <tbody>
+      <tr data-tier='daily'>
+        <td class='dim'>龙虎榜主看板</td><td><span class='tag daily'>每日</span></td>
+        <td>交易日盘后 20:00–21:00（龙虎榜公布后）</td>
+        <td>westock <code>data_lhb</code> 5接口 + 4分项(jg/yyb/gslmr/gslxw) + <code>lhb_detail</code>席位明细 → <code>_merge_lhb_subtabs.py</code> → <code>build_lhb_enriched</code> → <code>build_dashboards</code></td>
+        <td>2026-09-09</td>
+        <td class='hint'>席位明细与 build_lhb_enriched 最易漏；漏跑则全榜表从 9 列退化 6 列（丢上榜原因/行业/游资介入度/席位）</td>
+      </tr>
+      <tr data-tier='daily'>
+        <td class='dim'>板块强度</td><td><span class='tag daily'>每日·红线</span></td>
+        <td><b>T日 20:00 或 T+1 09:15 前</b>（开盘后接口只返最新快照，不可回溯）</td>
+        <td>westock <code>data_sector</code> industry(ranking,limit=300)+concept(limit=1000) → <code>gen_sector_raw</code> → <code>run_daily_sector</code></td>
+        <td>2026-09-09</td>
+        <td class='hint'>date 参数被忽略，只能前向累积；<b>漏跑即永久断档不可补</b></td>
+      </tr>
+      <tr data-tier='daily'>
+        <td class='dim'>高管增减持（董监高）</td><td><span class='tag daily'>每日</span></td>
+        <td>盘后</td>
+        <td>westock <code>tool_event(manager_sharechg,limit=700)</code> + <code>data_quote</code> → <code>gen_exec</code> → <code>build_exec</code></td>
+        <td>2026-09-09</td>
+        <td class='hint'>limit=700 覆盖全市场；<code>db_update</code> 会累积历史</td>
+      </tr>
+      <tr data-tier='daily'>
+        <td class='dim'>大宗交易</td><td><span class='tag daily'>每日必做</span></td>
+        <td>盘后</td>
+        <td>westock <code>tool_event(block_past_30,limit=必须3000)</code> + <code>data_quote(codes=当日去重)</code> → <code>gen_block</code> → <code>build_block</code></td>
+        <td>2026-09-09</td>
+        <td class='hint'>limit 必须 3000；Discount=(收盘价−成交价)/收盘价×100，正=折价 负=溢价</td>
+      </tr>
+      <tr data-tier='daily'>
+        <td class='dim'>群体心理风险雷达</td><td><span class='tag daily'>每日</span></td>
+        <td>盘后 ~21:00（原「按需」已改为每日必做）</td>
+        <td>以最近一期 HTML 为 SRC 模板，字典合并覆盖动态键 → <code>_build_{MMDD}.py</code> → <code>_update_index_{MMDD}.py</code></td>
+        <td>2026-09-09</td>
+        <td class='hint'>hub 条目须以闭合 <code>}</code> 结尾否则 index 整页瘫痪；改完必须 node <code>new Function</code> 校验</td>
+      </tr>
+      <tr data-tier='daily'>
+        <td class='dim'>本地数据库累积</td><td><span class='tag daily'>每日</span></td>
+        <td>盘后（随每日更新）</td>
+        <td><code>db_update.py [DATE?]</code> → <code>db_export.py</code>（列式压缩分片至 web/data）</td>
+        <td>2026-09-09</td>
+        <td class='hint'>INSERT OR REPLACE 幂等，历史自动留存；导出 web/data 分片供查询页</td>
+      </tr>
+      <tr data-tier='daily'>
+        <td class='dim'>看板/门户/导航/版块总览重建</td><td><span class='tag daily'>每日收尾</span></td>
+        <td>各数据跑完后</td>
+        <td><code>build_dashboards</code> → <code>build_portal</code> → <code>build_sections</code> → <code>_apply_nav</code> → <code>_link_check</code></td>
+        <td>2026-09-09</td>
+        <td class='hint'>补跑历史日须最后再跑最新交易日，否则 index.html 停在旧日期；build_portal 须在 dashboards 之后跑还原门户版</td>
+      </tr>
+      <tr data-tier='periodic'>
+        <td class='dim'>行业最强榜（全市场）</td><td><span class='tag periodic'>季频</span></td>
+        <td>新一季十大股东数据可用时（Q2→Q3 约 11 月）</td>
+        <td>全市场 5544 只中报十大股东 → <code>build_top_elite.py</code></td>
+        <td>2026-06-30 (Q2)</td>
+        <td class='hint'>仅中报期更新；新季度数据一到即重跑</td>
+      </tr>
+      <tr data-tier='periodic'>
+        <td class='dim'>行业知名 Top20 私募/牛散</td><td><span class='tag periodic'>季频·策划</span></td>
+        <td>Q2 数据 + 知名度策划，随 Q2 刷新</td>
+        <td>策划生成 <code>top-elite.html</code>（按知名度/历史业绩，非短期收益胜率）</td>
+        <td>2026-09-09 (重建)</td>
+        <td class='hint'>与高管增减持共现的知名主体做交叉标注</td>
+      </tr>
+      <tr data-tier='periodic'>
+        <td class='dim'>股票增持信号扫描</td><td><span class='tag periodic'>季频</span></td>
+        <td>中报期</td>
+        <td>全市场 5544 只中报十大流通股东变动逐只扫描 → <code>stock-accumulation.html</code></td>
+        <td>2026-06-30 (Q2)</td>
+        <td class='hint'>中报固定；新季度重跑</td>
+      </tr>
+      <tr data-tier='periodic'>
+        <td class='dim'>知名加仓·量价健康度过滤</td><td><span class='tag periodic'>季频</span></td>
+        <td>上游增持扫描 + 技术面快照</td>
+        <td>westock <code>data_technical</code>/<code>data_quote</code> + 中报 → <code>known-accumulation-health.html</code></td>
+        <td>2026-09-05</td>
+        <td class='hint'>规则打分不荐个股；技术面为单一时点快照</td>
+      </tr>
+      <tr data-tier='periodic'>
+        <td class='dim'>牛人追踪（股东与游资索引）</td><td><span class='tag periodic'>季频+游资日增</span></td>
+        <td>Q2 股东（静态）+ 龙虎榜席位（日增）</td>
+        <td><code>_merged_shareholder.json</code>(Q2) + LHB <code>yyb</code>(08-17~09-09) → <code>_build_person_index.py</code> → <code>person_index.json</code></td>
+        <td>2026-09-09</td>
+        <td class='hint'>牛散/私募/公募部分随新季度刷新；游资排名可随 LHB 累积随时重跑 builder</td>
+      </tr>
+      <tr data-tier='ondemand'>
+        <td class='dim'>个股调研（三周期）</td><td><span class='tag ondemand'>按需</span></td>
+        <td>用户指定个股时</td>
+        <td>westock 单只调研（短线/中线/长线）→ <code>research-{code}-{date}.html</code></td>
+        <td>2026-09-04 (2只)</td>
+        <td class='hint'>季频/按需；只输出板块与交易规则，不荐个股</td>
+      </tr>
+      <tr data-tier='gate'>
+        <td class='dim'>推送门禁（三道）</td><td><span class='tag gate'>每次推送</span></td>
+        <td>推送前后</td>
+        <td><code>_push_lhb</code>（断链0 / 污染0自动剥离 / curl 200）</td>
+        <td>2026-09-09</td>
+        <td class='hint'>必须 <code>dangerouslyDisableSandbox=true</code> 否则 SIGTERM；推送后 curl 抽检关键页 200；不可信 <code>|tail</code> 截断日志</td>
+      </tr>
+      <tr data-tier='resident'>
+        <td class='dim'>数据中心查询页</td><td><span class='tag resident'>常驻被动</span></td>
+        <td>无（随 db_update 每日刷新底层）</td>
+        <td><code>db_export.py</code> → <code>web/db/index.html</code></td>
+        <td>2026-09-09 (底层)</td>
+        <td class='hint'>查询层本身无需更新，只保证每日 db_update 跑通</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class='section'>
+  <h2>✅ 每日必做勾选清单（可勾选 · 本地保存）</h2>
+  <ul class='chk' id='dailyChk'>
+    <li><input type='checkbox' data-k='lhb'><div><div class='t'>① 龙虎榜：5接口 + 4分项 + lhb_detail席位明细 + build_lhb_enriched</div><div class='d'>漏跑全榜表从9列退化6列</div></div></li>
+    <li><input type='checkbox' data-k='sector'><div><div class='t'>② 板块强度（红线：T日20:00 或 T+1 09:15 前）</div><div class='d'>date参数忽略，前向累积；漏跑永久断档</div></div></li>
+    <li><input type='checkbox' data-k='exec'><div><div class='t'>③ 高管增减持：manager_sharechg(limit=700) + data_quote → gen_exec → build_exec</div></div></li>
+    <li><input type='checkbox' data-k='block'><div><div class='t'>④ 大宗交易：block_past_30(limit=必须3000) + data_quote → gen_block → build_block</div></div></li>
+    <li><input type='checkbox' data-k='psy'><div><div class='t'>⑤ 心理雷达：_build_{MMDD}.py → _update_index_{MMDD}.py（hub须闭合}）</div></div></li>
+    <li><input type='checkbox' data-k='db'><div><div class='t'>⑥ 本地数据库：db_update.py → db_export.py</div></div></li>
+    <li><input type='checkbox' data-k='portal'><div><div class='t'>⑦ 重建：build_dashboards → build_portal → build_sections → _apply_nav → _link_check</div></div></li>
+    <li><input type='checkbox' data-k='push'><div><div class='t'>⑧ 推送门禁：_push_lhb（dangerouslyDisableSandbox=true）→ 断链0 / 污染0 / curl 200</div></div></li>
+  </ul>
+  <div style='margin-top:10px'><button class='btn' id='resetChk'>重置今日勾选</button><span class='muted' style='margin-left:10px'>勾选状态仅存本机浏览器，换设备不共享</span></div>
+</div>
+
+<div class='section'>
+  <h2>⏰ 定期 / 季频刷新提醒</h2>
+  <table>
+    <thead><tr><th style='width:24%'>维度</th><th style='width:20%'>当前基于</th><th style='width:28%'>下次触发信号</th><th style='width:28%'>提醒</th></tr></thead>
+    <tbody>
+      <tr><td class='dim'>行业最强榜</td><td>2026-Q2 中报</td><td>westock 开放 Q3（三季报）十大股东</td><td class='hint'>约 11 月；一到即重跑 build_top_elite</td></tr>
+      <tr><td class='dim'>股票增持信号扫描</td><td>2026-Q2 中报</td><td>同上（中报期）</td><td class='hint'>与最强榜同步</td></tr>
+      <tr><td class='dim'>知名 Top20 私募/牛散</td><td>Q2 + 策划</td><td>Q2 数据刷新或知名度调整</td><td class='hint'>随上游股东数据刷新</td></tr>
+      <tr><td class='dim'>知名加仓·量价健康度</td><td>Q2 + 技术快照(09-05)</td><td>增持扫描刷新 + 重新取技术面</td><td class='hint'>技术面会过期，重跑前建议重新取快照</td></tr>
+      <tr><td class='dim'>牛人追踪（股东部分）</td><td>Q2 股东</td><td>新季度股东数据</td><td class='hint'>游资部分可随时重跑；股东部分等新季度</td></tr>
+      <tr><td class='dim'>个股调研</td><td>按需</td><td>你指定新标的</td><td class='hint'>不占用每日额度，随叫随做</td></tr>
+    </tbody>
+  </table>
+  <div class='warn'>季频维度<b>不会自动提醒</b>——建议在日历里给「季报披露高峰期（4月/8月/10月/次年4月）」设提醒，届时集中重跑 ② 组 5 个维度。</div>
+</div>
+
+<div class='section'>
+  <h2>🚧 关键时间红线（不可逾越）</h2>
+  <div class='warn'>
+    <b>1. 板块强度窗口：</b>T日 20:00–21:00 全量更新；若漏跑，必须在 <b>T+1 09:15 之前</b>补跑——开盘后 <code>data_sector</code> 只返回当日最新快照，历史不可回溯，漏一天即永久断档。<br>
+    <b>2. 心理雷达：</b>已改为每日必做，盘后 ~21:00 产出；hub 条目必须以闭合 <code>}</code> 结尾，否则 index 整页 JS 瘫痪。<br>
+    <b>3. 推送外网：</b><code>_push_lhb.py</code> 必须 <code>dangerouslyDisableSandbox=true</code> 运行，否则被沙箱 SIGTERM 且无输出。<br>
+    <b>4. 推送后校验：</b>GitHub Pages 有 ~1 分钟构建延迟，新建/改动页首测常 404，复测即 200；务必 curl 抽检关键页，且<b>不可信 <code>|tail</code> 截断的推送日志</b>。
+  </div>
+</div>
+
+<footer>
+数据来源：腾讯自选股 <b>westock-mcp</b>（盘后公开数据，滞后且非未来收益承诺）。<br>
+本页为「更新维度与节奏」内部参考，由 A股量化助理整理 · 仅供参考，不构成投资建议 · 市场有风险，投资需谨慎。<br>
+配套文档：<a href='DAILY_UPDATE_SOP.html'>DAILY_UPDATE_SOP.html</a> · <a href='../sections/index.html'>版块总览</a>。
+</footer>
+</div>
+<script>
+(function(){
+  // 筛选
+  var btns=document.querySelectorAll('.filterbar button');
+  var rows=document.querySelectorAll('tbody tr[data-tier]');
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      btns.forEach(function(x){x.classList.remove('active');});
+      b.classList.add('active');
+      var f=b.getAttribute('data-f');
+      rows.forEach(function(r){
+        r.style.display=(f==='all'||r.getAttribute('data-tier')===f)?'':'none';
+      });
+    });
+  });
+  // 每日勾选本地保存
+  var KEY='a-share-daily-chk-'+new Date().toISOString().slice(0,10);
+  var boxes=document.querySelectorAll('#dailyChk input');
+  function load(){ try{ var s=JSON.parse(localStorage.getItem(KEY)||'{}'); boxes.forEach(function(bx){ bx.checked=!!s[bx.getAttribute('data-k')]; }); }catch(e){} }
+  function save(){ var s={}; boxes.forEach(function(bx){ s[bx.getAttribute('data-k')]=bx.checked; }); try{ localStorage.setItem(KEY,JSON.stringify(s)); }catch(e){} }
+  boxes.forEach(function(bx){ bx.addEventListener('change',save); });
+  load();
+  document.getElementById('resetChk').addEventListener('click',function(){
+    boxes.forEach(function(bx){ bx.checked=false; }); save();
+  });
+})();
+</script>
+</body>
+</html>
