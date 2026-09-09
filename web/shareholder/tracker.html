@@ -63,6 +63,13 @@ td.r,th.r { text-align:right; }
 footer { margin-top:34px; padding-top:16px; border-top:1px solid #ececf0; color:#9aa1ab; font-size:12px; }
 .legend { font-size:12px; color:#8a929c; margin-top:6px; }
 @media(max-width:700px){ .wrap{padding:24px 12px 50px;} header h1{font-size:22px;} .grid{grid-template-columns:1fr;} }
+/* file:// 协议提示横幅（本地打开时显示） */
+.protobar { position:sticky; top:0; z-index:60; background:#fff7e6; border:1px solid #f0d8a8; border-radius:10px; padding:12px 16px; margin-bottom:18px; font-size:13px; color:#7a4f1a; line-height:1.7; box-shadow:0 2px 8px rgba(184,137,59,.12); }
+.protobar b { color:#a0651f; }
+.protobar a.btn { display:inline-block; margin-left:8px; padding:4px 10px; background:#b8893b; color:#fff; border-radius:6px; text-decoration:none; font-size:12.5px; }
+.protobar a.btn:hover { background:#a07530; }
+.protobar code { background:#fdf3e0; padding:1px 5px; border-radius:4px; font-size:12px; color:#7a4f1a; }
+.protobar .x { float:right; cursor:pointer; color:#a0651f; font-size:18px; line-height:1; padding:0 4px; }
 </style>
 </head>
 <body>
@@ -90,6 +97,23 @@ footer { margin-top:34px; padding-top:16px; border-top:1px solid #ececf0; color:
     <h1>牛人追踪 · 股东与游资索引</h1>
     <p class='sub'>把「厉害的人」做成可索引、可跟随的清单：牛散 / 私募 / 公募 来自 2026-Q2 十大股东（含 Q2↔Q1 增减持信号），游资席位来自龙虎榜营业部活跃度。</p>
   </header>
+
+  <div id='protobar' class='protobar' style='display:none'>
+    <span class='x' onclick='document.getElementById("protobar").style.display="none"' title='关闭提示'>×</span>
+    <b>⚠️ 检测到您正用 file:// 协议打开本页</b><br>
+    浏览器出于安全考虑会拦截本地 <code>fetch()</code>，所以右侧的数据列表加载不出来。请任选其一：
+    <br>
+    <b>① 线上版（已部署）</b><a class='btn' href='https://dujoer.github.io/stocks/web/shareholder/tracker.html' target='_blank'>打开线上版 →</a>
+    <br>
+    <b>② 本地起服务</b>在项目根目录 <code>G:\ai\股票</code> 打开命令行执行 <code>python -m http.server 8000</code>，然后访问 <a class='btn' href='http://localhost:8000/web/shareholder/tracker.html' target='_blank'>localhost 版 →</a>
+  </div>
+
+  <script>
+  // 自动检测协议，命中 file:// 时显示提示横幅
+  (function(){ try{
+    if(location.protocol==='file:'){document.getElementById('protobar').style.display='';}
+  }catch(e){} })();
+  </script>
 
   <div class='toolbar'>
     <div class='tabs' id='tabs'>
@@ -133,8 +157,14 @@ function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;'
 function fmt(n){if(n==null)return'-';const a=Math.abs(n);if(a>=1e8)return (n/1e8).toFixed(2)+'亿';if(a>=1e4)return (n/1e4).toFixed(1)+'万';return String(n);}
 function fmtSh(n){return n>=1e4?(n/1e4).toFixed(1)+'万股':String(n);}
 
-fetch('data/person_index.json').then(r=>r.json()).then(d=>{DATA=d;buildIndFilter();render();})
-  .catch(e=>{document.getElementById('list').innerHTML='<p style="color:#b8332a">数据加载失败：'+esc(e)+'<br>请确认已生成 person_index.json 并已随站点推送。</p>';});
+fetch('data/person_index.json').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(d=>{DATA=d;buildIndFilter();render();})
+  .catch(e=>{
+    const isFile=location.protocol==='file:';
+    const tip=isFile?'<br><br><b>可能原因：</b>你正用 file:// 协议打开本页，浏览器拦截了本地 fetch()。请看页面顶部横幅的两种解决方案。'
+                   :'<br><br>请确认已生成 web/shareholder/data/person_index.json 且已随站点推送。';
+    document.getElementById('list').innerHTML='<div style="padding:18px;color:#b8332a;background:#fdecea;border:1px solid #f5c6cb;border-radius:10px;">数据加载失败：'+esc(e)+tip+'</div>';
+    const pb=document.getElementById('protobar'); if(pb){pb.style.display='';}
+  });
 
 document.getElementById('tabs').addEventListener('click',e=>{
   const t=e.target.getAttribute('data-t'); if(!t)return;
