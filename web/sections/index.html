@@ -363,12 +363,13 @@ footer { margin-top:46px; padding-top:18px; border-top:1px solid #e3e7ec;
 </div>
 
 <h2>✅ 每日手动更新自检清单</h2>
-<div class='sec'><div class='ck'><span class='box'></span>龙虎榜：market_overview / board_hot / quotes / limitup / lhb + news 全部落盘</div><div class='ck'><span class='box'></span>龙虎榜明细 3 批 + lhb_enriched_{DATE}.json + 申万涨跌幅映射刷新</div><div class='ck'><span class='box'></span><b>板块强度</b>（不可跳过）：industry + concept 快照 → gen_sector_raw.py → run_daily_sector.py</div><div class='ck'><span class='box'></span>高管增减持：tool_event + data_quote → gen_exec.py → build_exec.py</div><div class='ck'><span class='box'></span>心理雷达（按需）</div><div class='ck'><span class='box'></span>build_portal.py → build_sections.py（本页）→ _push_lhb.py 推送</div><div class='ck'><span class='box'></span>合规扫描：产物内不得出现个人持有信息、账户盈亏、自下而上选股等敏感内容（关键词清单见项目约定）</div></div>
+<div class='sec'><div class='ck'><span class='box'></span>龙虎榜：market_overview / board_hot / quotes / limitup / lhb + news 全部落盘</div><div class='ck'><span class='box'></span>龙虎榜明细 3 批 + lhb_enriched_{DATE}.json + 申万涨跌幅映射刷新</div><div class='ck'><span class='box'></span><b>板块强度</b>（不可跳过）：industry + concept 快照 → gen_sector_raw.py → run_daily_sector.py</div><div class='ck'><span class='box'></span>高管增减持：tool_event + data_quote → gen_exec.py → build_exec.py</div><div class='ck'><span class='box'></span>心理雷达（每日必做）</div><div class='ck'><span class='box'></span>build_portal.py → build_sections.py（本页）→ _push_lhb.py 推送</div><div class='ck'><span class='box'></span>合规扫描：产物内不得出现个人持有信息、账户盈亏、自下而上选股等敏感内容（关键词清单见项目约定）</div></div>
 
 <footer>
 数据来源：腾讯自选股 <b>westock-mcp</b>（盘后公开数据）。<br>
 本页由 <code>quant/build_sections.py</code> 自动生成，可随时重跑以同步最新口径 ·
-仅供参考，<b>不构成投资建议</b> · 市场有风险，投资需谨慎。
+仅供参考，<b>不构成投资建议</b> · 市场有风险，投资需谨慎。<br>
+相关文档：<a href='web/docs/update-cadence.html'>📅 数据更新维度与时间分类</a> · <a href='web/docs/DAILY_UPDATE_SOP.html'>DAILY_UPDATE_SOP</a>
 </footer>
 </div>
 </body>
