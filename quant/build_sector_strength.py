@@ -64,6 +64,28 @@ def build_html(daily):
     top_str = top_strip(s["topByStrength"], "strength", "", lambda v: f"{v:.2f}")
     top_dark = top_strip(s["topDarkMoney"], "darkY", "亿", lambda v: f"{v:+.2f}")
 
+    # 行业四象限：聪明钱流向(资金进/退) × 估值高/低
+    inds = [r for r in records if r.get("kind") == "行业" and "valPct" in r]
+    qgroups = {"qa": [], "qb": [], "qc": [], "qd": []}
+    for r in inds:
+        qgroups.setdefault(r.get("qcls") or "qd", []).append(r)
+    qorder = [
+        ("qa", "资金进 · 估值低", "优"),
+        ("qb", "资金进 · 估值高", "热"),
+        ("qc", "资金退 · 估值低", "冷"),
+        ("qd", "资金退 · 估值高", "慎"),
+    ]
+    qcards = []
+    for g, label, tag in qorder:
+        items = sorted(qgroups.get(g, []), key=lambda x: -(x.get("darkVal", 0) or 0))
+        top = items[:8]
+        names = "、".join(f'<b>{x["name"]}</b>({x.get("valPct")})' for x in top) or "—"
+        qcards.append(
+            f'<div class="qcard qc-{g}"><div class="qc-h">{label}<span class="qc-tag">{tag}</span></div>'
+            f'<div class="qc-n">{len(items)} 个行业</div>'
+            f'<div class="qc-list">{names}</div></div>')
+    quad_html = "\n".join(qcards)
+
     data_json = json.dumps(records, ensure_ascii=False)
 
     html = """<!DOCTYPE html>
@@ -132,6 +154,25 @@ tbody tr:hover{background:#f3f4f6}
 .sbar{display:inline-block;height:6px;border-radius:3px;vertical-align:middle;margin-left:8px}
 .note{color:var(--mut);font-size:11px;margin-top:14px;line-height:1.7}
 .note code{background:#f0f2f5;padding:1px 5px;border-radius:4px;color:var(--gold)}
+.quads{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.qcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 14px;position:relative;overflow:hidden}
+.qcard:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;opacity:.6}
+.qcard.qc-qa:before{background:var(--down)}
+.qcard.qc-qb:before{background:var(--jc)}
+.qcard.qc-qc:before{background:var(--xp)}
+.qcard.qc-qd:before{background:var(--qc)}
+.qc-h{font-size:12.5px;font-weight:700;display:flex;align-items:center;gap:6px}
+.qc-tag{font-size:9.5px;font-weight:600;padding:1px 6px;border-radius:10px;background:#f0f2f5;color:var(--mut)}
+.qc-n{font-size:11px;color:var(--mut);margin:5px 0 7px}
+.qc-list{font-size:11px;color:#3a4250;line-height:1.65}
+.qc-list b{color:var(--gold);font-weight:600}
+.qb-adge{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;display:inline-block;white-space:nowrap}
+.qb-adge.qa{background:rgba(26,158,90,.16);color:var(--down)}
+.qb-adge.qb{background:rgba(232,179,57,.16);color:var(--jc)}
+.qb-adge.qc{background:rgba(59,111,209,.15);color:var(--xp)}
+.qb-adge.qd{background:rgba(224,72,59,.15);color:var(--qc)}
+.valbar{display:inline-block;height:6px;border-radius:3px;vertical-align:middle;margin-left:6px;background:var(--line)}
+@media(max-width:1100px){.quads{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}.strips{grid-template-columns:1fr}
   .hide-narrow{display:none}}
 </style>
@@ -146,10 +187,13 @@ tbody tr:hover{background:#f3f4f6}
   <div class="strip"><h3>★ 强势板块 Top 10（按强度）</h3>""" + top_str + """</div>
   <div class="strip"><h3>★ 暗盘资金流入 Top 10（亿元）</h3>""" + top_dark + """</div>
 </div>
+<div class="sub" style="margin:-4px 0 10px">行业四象限：<b>资金进/退</b> = 暗盘资金(主力−散户)正负 ｜ <b>估值高/低</b> = 估值分位(PE/PB历史百分位均值)以 50 为界，越小越便宜。仅行业板块有估值数据。</div>
+<div class="quads">""" + quad_html + """</div>
 <div class="controls">
   <input type="text" id="search" placeholder="搜索板块 / 领涨股…">
   <select id="f-kind"><option value="">类型:全部</option><option value="行业">行业</option><option value="概念">概念</option></select>
   <select id="f-behavior"><option value="">行为:全部</option><option value="抢筹">抢筹</option><option value="建仓">建仓</option><option value="洗盘">洗盘</option><option value="出货">出货</option></select>
+  <select id="f-quad"><option value="">象限:全部</option><option value="qa">资金进·估值低</option><option value="qb">资金进·估值高</option><option value="qc">资金退·估值低</option><option value="qd">资金退·估值高</option></select>
   <select id="f-dir"><option value="">涨跌:全部</option><option value="up">上涨</option><option value="down">下跌</option></select>
   <select id="f-strength"><option value="">强度:全部</option><option value="g10">≥10</option><option value="g5">≥5</option><option value="g3">≥3(抢筹级)</option><option value="l-1">≤−1(出货级)</option></select>
   <button id="reset">重置</button>
@@ -168,6 +212,8 @@ tbody tr:hover{background:#f3f4f6}
 <th data-k="darkVal" title="暗盘资金=主力−散户(元)">暗盘资金 ⇅</th>
 <th data-k="strengthVal" title="板块强度=暗盘/总成交额×100">板块强度 ⇅</th>
 <th data-k="behaviorRank">主力行为 ⇅</th>
+<th data-k="valPct" title="估值分位 = PE/PB历史百分位均值(越小越便宜)">估值分位 ⇅</th>
+<th data-k="quad">资金×估值 ⇅</th>
 <th class="hide-narrow" data-k="leader">领涨股</th>
 </tr></thead>
 <tbody id="tb"></tbody>
@@ -189,10 +235,12 @@ function applyFilters(){
   const b=document.getElementById('f-behavior').value;
   const d=document.getElementById('f-dir').value;
   const st=document.getElementById('f-strength').value;
+  const qd=document.getElementById('f-quad').value;
   let rows=DATA.filter(r=>{
     if(q && !(r.name.toLowerCase().includes(q) || (r.leader||'').toLowerCase().includes(q))) return false;
     if(k && r.kind!==k) return false;
     if(b && r.behavior!==b) return false;
+    if(qd && (r.qcls||'')!==qd) return false;
     if(d==='up' && (r.pctVal||0)<=0) return false;
     if(d==='down' && (r.pctVal||0)>=0) return false;
     const sv=r.strengthVal||0;
@@ -229,6 +277,8 @@ function render(rows){
       '<td><span class="'+(sv>=0?'up':'down')+'">'+(r.strengthText||'')+'</span>'+
         '<span class="sbar" style="width:'+w.toFixed(1)+'px;background:'+bc+'"></span></td>'+
       '<td><span class="beh '+behClass[r.behavior]+'">'+r.behavior+'</span></td>'+
+      '<td class="'+(r.valPct!=null?(r.valPct<30?'down':r.valPct>70?'up':'') : '')+'">'+(r.valPct!=null? r.valPct+'%':'—')+'</td>'+
+      '<td><span class="qb-adge '+(r.qcls||'')+'">'+(r.quad||'')+'</span></td>'+
       '<td class="hide-narrow">'+(r.leader||'')+'</td>';
     tb.appendChild(tr);
   });
@@ -244,13 +294,13 @@ document.querySelectorAll('th[data-k]').forEach(th=>{
     applyFilters();
   });
 });
-['search','f-kind','f-behavior','f-dir','f-strength'].forEach(id=>{
+['search','f-kind','f-behavior','f-quad','f-dir','f-strength'].forEach(id=>{
   document.getElementById(id).addEventListener('input',applyFilters);
   document.getElementById(id).addEventListener('change',applyFilters);
 });
 document.getElementById('reset').addEventListener('click',()=>{
   document.getElementById('search').value='';
-  ['f-kind','f-behavior','f-dir','f-strength'].forEach(id=>document.getElementById(id).value='');
+  ['f-kind','f-behavior','f-quad','f-dir','f-strength'].forEach(id=>document.getElementById(id).value='');
   sortKey='strengthVal';sortDir=-1;
   document.querySelectorAll('th').forEach(x=>x.classList.remove('sorted'));
   applyFilters();
@@ -258,19 +308,21 @@ document.getElementById('reset').addEventListener('click',()=>{
 document.getElementById('csv').addEventListener('click',()=>{
   const q=(document.getElementById('search').value||'').trim().toLowerCase();
   const k=document.getElementById('f-kind').value,b=document.getElementById('f-behavior').value,
-        d=document.getElementById('f-dir').value,st=document.getElementById('f-strength').value;
+        d=document.getElementById('f-dir').value,st=document.getElementById('f-strength').value,
+        qd=document.getElementById('f-quad').value;
   const rows=DATA.filter(r=>{
     if(q && !(r.name.toLowerCase().includes(q)||(r.leader||'').toLowerCase().includes(q)))return false;
-    if(k&&r.kind!==k)return false; if(b&&r.behavior!==b)return false;
+    if(k&&r.kind!==k)return false; if(b&&r.behavior!==b)return false; if(qd&&(r.qcls||'')!==qd)return false;
     if(d==='up'&&(r.pctVal||0)<=0)return false; if(d==='down'&&(r.pctVal||0)>=0)return false;
     const sv=r.strengthVal||0; if(st==='g10'&&sv<10)return false; if(st==='g5'&&sv<5)return false;
     if(st==='g3'&&sv<3)return false; if(st==='l-1'&&sv>-1)return false; return true;
   });
-  const head=['板块','类型','涨幅%','总成交额(亿)','主力资金(亿)','散户资金(亿)','暗盘资金(亿)','板块强度','主力行为','领涨股'];
+  const head=['板块','类型','涨幅%','总成交额(亿)','主力资金(亿)','散户资金(亿)','暗盘资金(亿)','板块强度','主力行为','估值分位%','资金×估值象限','领涨股'];
   const lines=[head.join(',')];
   rows.forEach(r=>lines.push([r.name,r.kind,(r.pctVal||0).toFixed(2),
     (r.totalVal/1e8).toFixed(2),(r.mainVal/1e8).toFixed(2),(r.retailVal/1e8).toFixed(2),
-    (r.darkVal/1e8).toFixed(2),(r.strengthVal||0).toFixed(2),r.behavior,r.leader||''].join(',')));
+    (r.darkVal/1e8).toFixed(2),(r.strengthVal||0).toFixed(2),r.behavior,
+    (r.valPct!=null?r.valPct:''),(r.quad||''),r.leader||''].join(',')));
   const blob=new Blob(['\uFEFF'+lines.join('\\n')],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download='sector-strength-""" + date.replace('-','') + """.csv';a.click();
