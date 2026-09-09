@@ -72,7 +72,7 @@ def existing_day_pages():
 
 def build_html(trend, sectors):
     trend_json = json.dumps(trend, ensure_ascii=False)
-    NAV = selfcontained_nav("sector", home="../../index.html")
+    NAV = selfcontained_nav("", home="../index.html")
     sectors_json = json.dumps(sectors, ensure_ascii=False)
     existing_json = json.dumps(existing_day_pages(), ensure_ascii=False)
     html = """<!DOCTYPE html>
