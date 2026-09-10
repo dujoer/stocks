@@ -37,6 +37,9 @@ SECTIONS = [
     ("群体心理", "psychology/index.html"),
     ("个股调研", "research/index.html"),
     ("行业最强", "shareholder/2026-q2-industry-elite.html"),
+    ("牛人追踪", "shareholder/tracker.html"),
+    ("信号池", "picks/index.html"),
+    ("做T池", "tplus/index.html"),
     ("版块总览", "sections/index.html"),
     ("数据中心", "db/index.html"),
 ]
