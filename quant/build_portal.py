@@ -68,6 +68,34 @@ research_d, research_f = latest(r"^research-.*?-(\d{8})\.html$", os.path.join(WE
 exec_d, exec_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "exec_chg"))
 blk_d, blk_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "block_chg"))
 
+# 个股信号池：读 history.json 取最新一期日期与档位分布
+pick_d = None
+pick_stat = ""
+try:
+    _hp = os.path.join(ROOT, "quant", "picks", "history.json")
+    if os.path.exists(_hp):
+        _h = json.load(open(_hp, encoding="utf-8"))
+        if _h:
+            pick_d = datetime.date.fromisoformat(_h[-1]["date"])
+            _n = _h[-1].get("n", 0)
+            pick_stat = f"候选 {_n} 只 ｜ 每日交易计划"
+except Exception:
+    pick_d = None
+
+# 做T池：读 history.json 取最新一期日期与档位分布
+tplus_d = None
+tplus_stat = ""
+try:
+    _tp = os.path.join(ROOT, "quant", "tplus", "history.json")
+    if os.path.exists(_tp):
+        _th = json.load(open(_tp, encoding="utf-8"))
+        if _th:
+            tplus_d = datetime.date.fromisoformat(_th[-1]["date"])
+            _t = _th[-1]
+            tplus_stat = f"A {_t.get('A',0)} ｜ B {_t.get('B',0)} ｜ C {_t.get('C',0)} ｜ 网格 {_t.get('grid',0)}"
+except Exception:
+    tplus_d = None
+
 
 # ---- 各模块内联数据快照（让总门户一眼看全所有版块的核心数据，不只是链接列表）----
 def _load_json(path):
@@ -266,6 +294,10 @@ psy_txt, psy_cls = freshness(psy_d)
 research_txt, research_cls = freshness(research_d)
 exec_txt, exec_cls = freshness(exec_d)
 blk_txt, blk_cls = freshness(blk_d)
+pick_txt, pick_cls = freshness(pick_d) if pick_d else ("—", "stale")
+STAT["pick"] = pick_stat
+tplus_txt, tplus_cls = freshness(tplus_d) if tplus_d else ("—", "stale")
+STAT["tplus"] = tplus_stat
 
 def fmt(d):
     return d.strftime("%Y-%m-%d") if d else "—"
@@ -273,75 +305,199 @@ def fmt(d):
 def badge(cls, txt):
     return f"<span class='badge {cls}'>{txt}</span>"
 
-# ---- 卡片定义 ----
-cards = [
+# ---- 功能区定义（替代旧的扁平卡片列表）----
+# 每个 zone 是「一类功能」，cards 是该功能下的具体页面入口。
+# 目的：让总门户一眼看清「每天要看哪几个版块、各版块之间是什么关系」。
+ZONES = [
     {
-        "ic": "🐉", "t": "龙虎榜主看板", "href": "web/lhb/lhb.html",
-        "d": "大盘概览 / 板块热度 / 连板梯队 / 龙虎榜机构榜·共振·席位胜率",
-        "stat": STAT["lhb"], "date": fmt(lhb_d), "fresh": badge(lhb_cls, lhb_txt),
+        "ic": "📊", "t": "每日总览（今天该看什么）",
+        "desc": "交易日盘后第一眼必看的几个面板：大盘整体 / 异动机构 / 板块资金行为。",
+        "rel": "见下方各卡片。",
+        "cards": [
+            {
+                "ic": "🗺️", "t": "每日总览", "href": "web/market/index.html",
+                "func": "大盘看板：指数 / 涨跌家数 / 涨停梯队 / 资金流向 / 板块热度 一屏总览。",
+                "rel": "📌 龙虎榜主看板 + 板块强度（数据源）。",
+                "stat": STAT["lhb"], "date": fmt(lhb_d), "fresh": badge(lhb_cls, lhb_txt),
+            },
+            {
+                "ic": "🐉", "t": "龙虎榜主看板", "href": "web/lhb/lhb.html",
+                "func": "异动个股 / 机构榜 / 游资席位胜率 / 机构+游资共振 信号。",
+                "rel": "→ 游资席位（web/lhb/lhb.html #yyb） → 牛人追踪·游资（web/shareholder/tracker.html）。",
+                "stat": STAT["lhb"], "date": fmt(lhb_d), "fresh": badge(lhb_cls, lhb_txt),
+            },
+            {
+                "ic": "🔥", "t": "板块强度", "href": "web/sector/index.html",
+                "func": "行业 / 概念板块的当日资金强度 + 主力行为（抢筹/建仓/洗盘/出货）+ 多日趋势 + 估值分位。",
+                "rel": "→ 行业最强榜（按行业筛最强股东） → 牛人追踪（按板块筛持仓）。",
+                "stat": STAT["sec"], "date": fmt(sec_d), "fresh": badge(sec_cls, sec_txt),
+            },
+        ],
     },
     {
-        "ic": "💼", "t": "高管增减持（董监高）", "href": "web/exec/index.html",
-        "d": "全市场董监高持股变动：增持/减持明细与金额、申万行业分布、个股聚合净额",
-        "stat": STAT["exec"], "date": fmt(exec_d), "fresh": badge(exec_cls, exec_txt),
+        "ic": "💰", "t": "资金动向（谁在买 / 卖）",
+        "desc": "看大资金与内部人的调仓动作——董监高自买自卖、大宗交易折溢价。",
+        "rel": "高管增减持 + 大宗交易 互补看：内部人异动 + 大额协议转让。",
+        "cards": [
+            {
+                "ic": "💼", "t": "高管增减持（董监高）", "href": "web/exec/index.html",
+                "func": "全市场董监高持股变动：增持/减持明细与金额、申万行业分布、个股聚合净额。",
+                "rel": "→ 玩家图谱（共现主体交叉标注） → 数据中心（翻历史）。",
+                "stat": STAT["exec"], "date": fmt(exec_d), "fresh": badge(exec_cls, exec_txt),
+            },
+            {
+                "ic": "🧾", "t": "大宗交易", "href": "web/block/archive.html",
+                "func": "全市场大宗交易逐笔：折溢价、成交额、买卖营业部、机构席位动向；每日归档。",
+                "rel": "→ 高管增减持（大宗折价可能配合内部人出货） → 数据中心。",
+                "stat": STAT["block"], "date": fmt(blk_d), "fresh": badge(blk_cls, blk_txt),
+            },
+        ],
     },
     {
-        "ic": "🧾", "t": "大宗交易", "href": "web/block/archive.html",
-        "d": "全市场大宗交易逐笔：折溢价、成交额、买卖营业部与机构席位动向；每日归档总览（含最新一期与全部交易日）",
-        "stat": STAT["block"], "date": fmt(blk_d), "fresh": badge(blk_cls, blk_txt),
+        "ic": "🧠", "t": "市场情绪",
+        "desc": "市场在想什么——情绪周期、认知偏差、风险分层。",
+        "rel": "与板块强度互补：情绪是定性、强度是定量。",
+        "cards": [
+            {
+                "ic": "🧠", "t": "群体心理风险雷达", "href": "web/psychology/index.html",
+                "func": "情绪周期 / 认知偏差热力 / 风险分层，每日单篇 + 跨日趋势索引 + 六维雷达图。",
+                "rel": "→ 龙虎榜（情绪外化为异动） → 板块强度（情绪外化为资金方向）。",
+                "stat": STAT["psy"], "date": fmt(psy_d), "fresh": badge(psy_cls, psy_txt),
+            },
+        ],
     },
     {
-        "ic": "🔥", "t": "板块强度", "href": "web/sector/index.html",
-        "d": "行业/概念板块主力资金、强度与主力行为（抢筹/建仓/洗盘/出货）日更与趋势",
-        "stat": STAT["sec"], "date": fmt(sec_d), "fresh": badge(sec_cls, sec_txt),
+        "ic": "👑", "t": "牛人与股东（谁在持仓）",
+        "desc": "看全市场牛散 / 私募 / 公募 / 游资席位的当前持仓与增减持动向。",
+        "rel": "牛人追踪 是索引入口；下方四张表是中报专题（定期刷新）。",
+        "cards": [
+            {
+                "ic": "🎯", "t": "牛人追踪（索引）", "href": "web/shareholder/tracker.html",
+                "func": "全市场 5500+ 只中报十大股东 → 牛散/私募/公募 索引 + 龙虎榜营业部 → 游资席位；含 Q2↔Q1 增减持信号，可关注代号、可按行业筛选。",
+                "rel": "← 行业最强榜（行业版） ← 玩家图谱（精选版） ← 增持扫描（信号版） ← 健康度过滤（技术版）。",
+                "stat": "牛散 2640 ｜ 私募 939 ｜ 公募 867 ｜ 游资 833",
+                "date": "2026-Q2", "fresh": badge("warn", "季频"),
+            },
+            {
+                "ic": "🏆", "t": "行业最强榜（全市场）", "href": "web/shareholder/2026-q2-industry-elite.html",
+                "func": "申万 31 个行业各自最强的 自然人 / 私募 / 公募 各 20 名 + 资金估值四象限 + 胜率/均涨。",
+                "rel": "→ 牛人追踪（行业版入口） → 玩家图谱（按知名度重排）。",
+                "stat": STAT["elite"], "date": "2026-06-30", "fresh": badge("warn", "定期"),
+            },
+            {
+                "ic": "🌟", "t": "行业知名 Top20 玩家图谱", "href": "web/shareholder/top-elite.html",
+                "func": "按行业知名度与历史业绩策划的 私募 / 牛散 Top20（非短期收益胜率），并交叉标注与高管增减持共现的知名主体。",
+                "rel": "→ 高管增减持（查看共现） → 牛人追踪（任意查持仓）。",
+                "stat": "", "date": "2026-09-04", "fresh": badge("warn", "策划"),
+            },
+            {
+                "ic": "📈", "t": "股票增持信号扫描", "href": "web/shareholder/stock-accumulation.html",
+                "func": "全市场 5544 只中报十大流通股东变动逐只扫描：增持 / 减持家数与股数，筛出「增持多于减持」并高亮知名私募 / 牛散加仓标的。",
+                "rel": "→ 健康度过滤（在上游 50 只上叠技术面）。",
+                "stat": STAT["accum"], "date": "2026-06-30", "fresh": badge("warn", "定期"),
+            },
+            {
+                "ic": "🩺", "t": "知名加仓 · 量价健康度过滤", "href": "web/shareholder/known-accumulation-health.html",
+                "func": "在上游 50 只知名私募 / 牛散加仓股上叠加技术面二次过滤：趋势结构 + 动量健康 + 量价配合 + 相对位置，纯量价口径打分。",
+                "rel": "← 增持扫描（上游） → 个股调研（最终单只深挖）。",
+                "stat": STAT["khealth"], "date": "2026-09-04", "fresh": badge("warn", "定期"),
+            },
+        ],
     },
     {
-        "ic": "🧠", "t": "群体心理风险雷达", "href": "web/psychology/index.html",
-        "d": "情绪周期 / 认知偏差热力 / 风险分层，每日单篇 + 跨日趋势索引",
-        "stat": STAT["psy"], "date": fmt(psy_d), "fresh": badge(psy_cls, psy_txt),
+        "ic": "🎯", "t": "个股信号池（次日建仓候选）",
+        "desc": "把上游三路信号合流打分，直接输出「明天可关注哪些票、什么价进、什么价止损」的交易计划，并每日归档回看胜率。",
+        "rel": "中报增减持 + 高管增减持 + 大宗交易（三路信号）→ 叠加当日量价确认 → 输出候选与买卖点 → 次日自动回填表现。",
+        "cards": [
+            {
+                "ic": "🎯", "t": "个股信号池 · 每日候选", "href": "web/picks/index.html",
+                "func": "每日盘后输出建仓候选池与逐只交易计划：进场区间 / 止损 / 目标位 / 盈亏比 / 建议仓位，含评分模型说明与历史胜率归档。",
+                "rel": "← 高管增减持 + 大宗交易 + 中报（三路上游） → 个股调研（选中后深挖）。",
+                "stat": STAT["pick"], "date": fmt(pick_d), "fresh": badge(pick_cls, pick_txt),
+            },
+            {
+                "ic": "📉", "t": "信号池回测", "href": "web/picks/backtest.html",
+                "func": "按档位 × 周期（T+1 / T+3 / T+5）统计候选股实际表现：平均收益、胜率、触及目标与止损次数，用于校准模型权重。",
+                "rel": "← 个股信号池（每日累积 history.json） → 权重调优。",
+                "stat": STAT["pick"], "date": fmt(pick_d), "fresh": badge(pick_cls, pick_txt),
+            },
+        ],
     },
     {
-        "ic": "🏆", "t": "行业最强榜（全市场）", "href": "web/shareholder/2026-q2-industry-elite.html",
-        "d": "全市场 5544 只 A 股中报股东全量解析：申万 31 个行业各自最强的自然人 / 私募 / 公募各 20 名 + 资金估值四象限 + 胜率/均涨",
-        "stat": STAT["elite"], "date": "2026-06-30", "fresh": badge("warn", "定期"),
+        "ic": "🔁", "t": "做T池（区间反复做T）",
+        "desc": "筛出高波动 + 高流动性 + 区间震荡且机构底仓扎实的标的，用网格/波段方法反复做T摊低成本。",
+        "rel": "机构底仓（公募/社保/险资）→ 技术面筛震荡箱体 → 网格档位 + 波段买卖点。",
+        "cards": [
+            {
+                "ic": "🔁", "t": "做T池 · 每日候选", "href": "web/tplus/index.html",
+                "func": "从 848 只机构底仓池中筛出可反复做T的标的：箱体区间 / 网格 5 档价位 / 波段买卖区 / 止损 / 仓位建议，含机构方法论说明与历史归档。",
+                "rel": "← 机构底仓池（公募/社保/险资） → 数据中心（积累历史）。",
+                "stat": STAT["tplus"], "date": fmt(tplus_d), "fresh": badge(tplus_cls, tplus_txt),
+            },
+        ],
     },
     {
-        "ic": "🌟", "t": "行业知名 Top20 私募 / 牛散", "href": "web/shareholder/top-elite.html",
-        "d": "按行业知名度与历史业绩策划的私募 / 牛散 Top20 玩家图谱（非短期收益胜率），并交叉标注与高管增减持共现的知名主体。",
-        "stat": "", "date": "2026-09-04", "fresh": badge("warn", "策划"),
+        "ic": "🔍", "t": "单只深挖",
+        "desc": "从池子筛到具体一只票后的完整调研。",
+        "rel": "上游：板块强度 + 牛人追踪 + 健康度过滤 + 个股信号池 → 下游：个股调研 → 数据中心。",
+        "cards": [
+            {
+                "ic": "🔍", "t": "个股调研（三周期）", "href": "web/research/index.html",
+                "func": "单只 A 股「短线 / 中线 / 长线」三周期调研：单季拆分、内部人行为对照、板块资金确认、七条标准打分。",
+                "rel": "← 板块强度 / 牛人追踪 / 健康度（筛选上游） → 数据中心（查历年）。",
+                "stat": STAT["research"], "date": fmt(research_d), "fresh": badge(research_cls, research_txt),
+            },
+        ],
     },
     {
-        "ic": "📈", "t": "股票增持信号扫描", "href": "web/shareholder/stock-accumulation.html",
-        "d": "全市场 5544 只中报十大流通股东变动逐只扫描：统计增持 / 减持家数与股数，筛出「增持多于减持」并高亮知名私募 / 牛散加仓标的",
-        "stat": STAT["accum"], "date": "2026-06-30", "fresh": badge("warn", "定期"),
-    },
-    {
-        "ic": "🩺", "t": "知名加仓 · 量价健康度过滤", "href": "web/shareholder/known-accumulation-health.html",
-        "d": "在上游 50 只知名私募 / 牛散加仓股上叠加技术面二次过滤：趋势结构 30 + 动量健康 25 + 量价配合 20 + 相对位置 25，纯量价口径打分（规则透明、不荐个股）",
-        "stat": STAT["khealth"], "date": "2026-09-04", "fresh": badge("warn", "定期"),
-    },
-    {
-        "ic": "🔍", "t": "个股调研（三周期）", "href": "web/research/index.html",
-        "d": "单只 A 股「短线 / 中线 / 长线」三周期调研：单季拆分、内部人行为对照、板块资金确认与七条标准打分",
-        "stat": STAT["research"], "date": fmt(research_d), "fresh": badge(research_cls, research_txt),
-    },
-    {
-        "ic": "📦", "t": "版块总览", "href": "web/sections/index.html",
-        "d": "所有版块的内容清单 / 数据来源 / 更新节奏 / 更新时间建议 · 每日更新后一眼看出哪个版块落后",
-        "stat": STAT["sec2"], "date": fmt(max([d for d in [lhb_d, exec_d, sec_d, psy_d] if d], default=None)),
-        "fresh": badge("fresh", "自检页"),
+        "ic": "🗄️", "t": "数据与工具",
+        "desc": "底层数据查询 + 每日自检。",
+        "rel": "数据中心 = 所有模块的历史；版块总览 = 每日落后检查。",
+        "cards": [
+            {
+                "ic": "🗄️", "t": "数据中心", "href": "web/db/index.html",
+                "func": "全模块历史数据查询：龙虎榜 / 高管增减持 / 大宗 / 板块强度 / 涨停梯队 / 热搜 / 新闻 / 大盘指标，支持模块切换、日期区间、搜索、专项筛选。",
+                "rel": "← 所有上方页面的历史数据源。",
+                "stat": "8 模块 ｜ 列式分片 ｜ 按月归档",
+                "date": TODAY.strftime("%Y-%m-%d"), "fresh": badge("fresh", "实时"),
+            },
+            {
+                "ic": "📦", "t": "版块总览（自检）", "href": "web/sections/index.html",
+                "func": "所有版块的内容清单 / 数据来源 / 更新节奏 / 更新时间建议；每日更新后一眼看出哪个版块落后。",
+                "rel": "本门户卡片的数据来源说明页。",
+                "stat": STAT["sec2"],
+                "date": fmt(max([d for d in [lhb_d, exec_d, sec_d, psy_d] if d], default=None)),
+                "fresh": badge("fresh", "自检页"),
+            },
+        ],
     },
 ]
 
-cards_html = "\n".join(
-    f"<a class='card' href='{c['href']}'>"
-    f"<div class='cardtop'><span class='ic'>{c['ic']}</span>{c['fresh']}</div>"
-    f"<div class='t'>{c['t']}</div>"
-    f"<div class='d'>{c['d']}</div>"
-    + (f"<div class='stat'>{c['stat']}</div>" if c.get('stat') else "")
-    + f"<div class='meta'>数据截至 {c['date']}</div>"
-    f"</a>" for c in cards
-)
+# ---- 渲染各功能区 ----
+def _zone_section(z):
+    cards_in_zone = "\n".join(
+        f"<a class='card' href='{c['href']}'>"
+        f"<div class='cardtop'><span class='ic'>{c['ic']}</span>{c['fresh']}</div>"
+        f"<div class='t'>{c['t']}</div>"
+        f"<div class='func'>{c.get('func', c.get('d', ''))}</div>"
+        f"<div class='rel'>{c.get('rel', '')}</div>"
+        + (f"<div class='stat'>{c['stat']}</div>" if c.get('stat') else "")
+        + f"<div class='meta'>数据截至 {c['date']}</div>"
+        f"</a>" for c in z["cards"]
+    )
+    return (
+        f"<section class='zone'>"
+        f"<div class='zone-h'>"
+        f"<span class='zone-ic'>{z['ic']}</span>"
+        f"<h2 class='zone-t'>{z['t']}</h2>"
+        f"</div>"
+        f"<div class='zone-desc'>{z['desc']}</div>"
+        f"<div class='zone-rel'><b>关联：</b>{z['rel']}</div>"
+        f"<div class='grid'>{cards_in_zone}</div>"
+        f"</section>"
+    )
+
+zones_html = "\n".join(_zone_section(z) for z in ZONES)
 
 # ---- 每日更新清单 ----
 update_steps = [
@@ -370,28 +526,38 @@ html = f"""<!DOCTYPE html>
 * {{ box-sizing:border-box; }}
 body {{ margin:0; background:#f5f6f8; color:#1c2430;
   font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif; line-height:1.7; }}
-.wrap {{ max-width:1040px; margin:0 auto; padding:40px 22px 70px; }}
-header.top {{ border-bottom:3px solid #1f4e79; padding-bottom:18px; margin-bottom:10px; }}
+.wrap {{ max-width:1080px; margin:0 auto; padding:40px 22px 70px; }}
+header.top {{ border-bottom:3px solid #1f4e79; padding-bottom:18px; margin-bottom:18px; }}
 h1 {{ font-size:30px; margin:0 0 6px; letter-spacing:.5px; }}
 .sub {{ color:#5a6573; font-size:14px; }}
-.updated {{ color:#7b8794; font-size:12.5px; margin:6px 0 26px; }}
-.grid {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:18px; }}
-.card {{ display:block; text-decoration:none; color:inherit; background:#fff; border:1px solid #e3e7ec;
-  border-radius:16px; padding:22px 20px; box-shadow:0 2px 10px rgba(20,30,50,.05); transition:.18s; }}
+.updated {{ color:#7b8794; font-size:12.5px; margin:6px 0 0; }}
+/* 功能区 */
+section.zone {{ margin:30px 0 0; padding:18px 0 0; border-top:1px dashed #d8dde5; }}
+section.zone:first-of-type {{ border-top:none; padding-top:6px; }}
+.zone-h {{ display:flex; align-items:center; gap:10px; margin-bottom:4px; }}
+.zone-ic {{ font-size:24px; }}
+.zone-t {{ font-size:20px; margin:0; color:#1f4e79; padding-left:10px; border-left:5px solid #1f4e79; }}
+.zone-desc {{ color:#5a6573; font-size:13.5px; margin:6px 0 2px; }}
+.zone-rel {{ background:#eef4fa; border-left:3px solid #2b6cb0; padding:6px 12px; border-radius:0 6px 6px 0; font-size:12.5px; color:#1f4e79; margin:0 0 14px; }}
+.zone-rel b {{ color:#1f4e79; }}
+/* 卡片网格 */
+.grid {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; }}
+.card {{ display:flex; flex-direction:column; text-decoration:none; color:inherit; background:#fff; border:1px solid #e3e7ec;
+  border-radius:14px; padding:18px 18px 14px; box-shadow:0 2px 8px rgba(20,30,50,.05); transition:.18s; }}
 .card:hover {{ border-color:#2b6cb0; transform:translateY(-3px); box-shadow:0 8px 22px rgba(31,78,121,.12); }}
 .cardtop {{ display:flex; align-items:center; justify-content:space-between; }}
-.ic {{ font-size:30px; }}
-.t {{ font-size:18px; font-weight:700; margin:12px 0 8px; color:#1c2430; }}
-.d {{ font-size:13px; color:#5a6573; line-height:1.65; min-height:62px; }}
-.meta {{ font-size:12px; color:#7b8794; margin-top:12px; padding-top:10px; border-top:1px dashed #e3e7ec; }}
-.stat {{ font-size:12.5px; color:#3a4048; margin-top:10px; padding:8px 10px; background:rgba(184,137,59,.06);
-  border-radius:1px; line-height:1.7; }}
+.ic {{ font-size:24px; }}
+.t {{ font-size:16px; font-weight:700; margin:8px 0 6px; color:#1c2430; }}
+.func {{ font-size:12.5px; color:#3a4048; line-height:1.6; min-height:54px; }}
+.rel {{ font-size:11.5px; color:#2b6cb0; background:#f5faff; padding:4px 8px; border-radius:6px; margin-top:6px; line-height:1.5; }}
+.meta {{ font-size:11.5px; color:#7b8794; margin-top:8px; padding-top:8px; border-top:1px dashed #e3e7ec; }}
+.stat {{ font-size:12px; color:#3a4048; margin-top:8px; padding:6px 10px; background:rgba(184,137,59,.06);
+  border-radius:6px; line-height:1.7; }}
 .stat b {{ color:#1c2430; font-weight:700; }}
 .badge {{ font-size:11px; padding:3px 10px; border-radius:20px; font-weight:700; }}
 .badge.fresh {{ background:#e6f6ee; color:#128a52; }}
 .badge.warn {{ background:#fdf3e0; color:#b7791f; }}
 .badge.stale {{ background:#fdecea; color:#c0392b; }}
-h2 {{ font-size:21px; margin:44px 0 16px; padding-left:12px; border-left:5px solid #1f4e79; }}
 .sop {{ background:#fff; border:1px solid #e3e7ec; border-radius:14px; padding:8px 22px; margin:14px 0;
   box-shadow:0 1px 4px rgba(20,30,50,.04); }}
 .step {{ display:flex; gap:14px; padding:14px 4px; border-bottom:1px solid #eef1f4; }}
@@ -402,8 +568,10 @@ h2 {{ font-size:21px; margin:44px 0 16px; padding-left:12px; border-left:5px sol
 code {{ background:#eef4fa; color:#1f4e79; padding:1px 6px; border-radius:5px; font-size:12.5px; }}
 .note {{ background:#fffaf0; border-left:4px solid #b7791f; padding:12px 16px; border-radius:0 8px 8px 0;
   font-size:13.5px; color:#6b4f2a; margin:14px 0; }}
+h2.sec {{ font-size:21px; margin:44px 0 16px; padding-left:12px; border-left:5px solid #1f4e79; }}
 footer {{ margin-top:48px; padding-top:18px; border-top:1px solid #e3e7ec;
   font-size:12px; color:#7b8794; line-height:1.8; }}
+@media(max-width:700px){{ .wrap{{padding:24px 12px 50px;}} h1{{font-size:22px;}} .grid{{grid-template-columns:1fr;}} .zone-t{{font-size:16px;}} }}
 </style>
 </head>
 <body>
@@ -411,17 +579,15 @@ footer {{ margin-top:48px; padding-top:18px; border-top:1px solid #e3e7ec;
 {PORTAL_NAV}
 <header class='top'>
   <h1>A股分析中心 · 总门户</h1>
-  <div class='sub'>龙虎榜主看板 · 高管增减持 · 板块强度 · 群体心理风险雷达 · 行业最强榜 · 增持扫描 · 量价健康度 · 版块总览</div>
-  <div class='updated'>门户重建于 {TODAY.strftime('%Y-%m-%d')} · 各卡片标注对应子系统的数据最新日期与新鲜度</div>
+  <div class='sub'>按功能区分组：每日总览 → 资金动向 → 市场情绪 → 牛人与股东 → 单只深挖 → 数据与工具</div>
+  <div class='updated'>门户重建于 {TODAY.strftime('%Y-%m-%d')} · 每张卡片标注功能、关联页面、数据新鲜度</div>
 </header>
 
-<div class='grid'>
-{cards_html}
-</div>
+{zones_html}
 
 <div class='note'><b>⏰ 建议更新时间：交易日当晚 20:00–21:00</b>（龙虎榜已公布、大盘统计已聚合）。<b>板块强度必须在次日 09:15 前跑完</b>——接口只返回最新快照，开盘后即被覆盖且不可回溯。完整版块说明与自检清单见 <a href='web/sections/index.html'>版块总览</a>。</div>
 
-<h2>📅 每日更新清单（SOP）</h2>
+<h2 class='sec'>📅 每日更新清单（SOP）</h2>
 <div class='note'>完整操作手册（数据口径、已知坑、校验清单）见 <a href='web/docs/DAILY_UPDATE_SOP.html'>DAILY_UPDATE_SOP.html</a>。下表为精简步骤，各子系统最新日期以本门户卡片为准。</div>
 <div class='sop'>
 {steps_html}
