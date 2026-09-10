@@ -52,6 +52,13 @@ tr:last-child td { border-bottom:none; }
 footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-size:12px; color:#8a929c; }
 .muted { color:#8a929c; font-size:12px; }
 @media(max-width:700px){ .wrap{padding:20px 12px 44px;} header h1{font-size:20px;} table{font-size:12px;} }
+/* 字段悬浮说明：带虚线下划线的字段均可悬浮查看口径 */
+.tip { cursor:help; border-bottom:1px dotted #c3cad3; }
+.kv.tipbox:hover { background:#fdf8ef; border-color:#e6d3ae; }
+.kv .k.tipk::after { content:"?"; display:inline-block; margin-left:3px; font-size:10px;
+  color:#b8893b; border:1px solid rgba(184,137,59,.45); border-radius:50%;
+  width:12px; height:12px; line-height:11px; text-align:center; }
+.chip[title], .badge[title], .score[title] { cursor:help; }
 </style></head><body>
 <div class='wrap'>
 <div class='topnav'><a href='../../index.html'>总门户</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../db/index.html'>数据中心</a><a href='index.html'>信号池</a><a href='backtest.html'>回测</a><a href='../sections/index.html'>版块总览</a></div>
@@ -60,24 +67,24 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
 
 <div class='note'><b>最新一期：</b><a href='pick_2026-09-10.html'>2026-09-10</a> —— 机构轨 25 只（A 0 / B 8）· 游资轨 24 只（A 4 / B 4）。</div>
 
-<div class='section'><h2>历史表现（次日回填）</h2>
+<div class='section' title='每一期的候选只数与次日回填表现：均涨 = 该期全部候选次日相对进场参考价的平均收益；触T1 / 触止损 = 区间内最高价触及目标一、最低价触及止损位的只数。'><h2>历史表现（多周期回填）</h2>
 <div class='note'>机构轨累计 <span class='muted'>首期尚无回填</span><br>游资轨累计 <span class='muted'>首期尚无回填</span></div>
-<table><thead><tr><th>日期</th><th>机构轨</th><th>机构轨次日</th><th>游资轨</th><th>游资轨次日</th></tr></thead>
+<table><thead><tr><th>日期</th><th title='该期该轨输出的候选只数（已通过 Gate 一票否决后剩余的数量）。'>机构轨</th><th title='次日（T+1）回填：均涨 = 全部候选相对进场参考价的平均收益；触T1 = 区间最高价触及目标一的只数；触止损 = 区间最低价跌破止损位的只数。'>机构轨次日</th><th title='该期该轨输出的候选只数（已通过 Gate 一票否决后剩余的数量）。'>游资轨</th><th title='次日（T+1）回填：均涨 = 全部候选相对进场参考价的平均收益；触T1 = 区间最高价触及目标一的只数；触止损 = 区间最低价跌破止损位的只数。'>游资轨次日</th></tr></thead>
 <tbody><tr><td><a href='pick_2026-09-10.html'>2026-09-10</a></td><td>10</td><td><span class='muted'>待回填</span></td><td>10</td><td><span class='muted'>待回填</span></td></tr></tbody></table></div>
 
 <div class='section'><h2>双池评分模型</h2>
-<table><thead><tr><th>维度</th><th>机构轨</th><th>游资轨</th><th>口径</th></tr></thead><tbody>
-<tr><td>方向分</td><td>28</td><td>30</td><td>机构：龙虎榜机构净买入 18 + 一致预期目标价空间 10 / 游资：知名席位现身 18 + 买入额 8 + 席位家数 4</td></tr>
-<tr><td>机构评级</td><td>8</td><td>—</td><td>覆盖机构家数 + 买入占比（data_rating）</td></tr>
-<tr><td>两融</td><td>6</td><td>8</td><td>融资余额环比（杠杆进场为正）；融券大增为负（data_fund_margin）</td></tr>
-<tr><td>主力资金</td><td>10</td><td>10</td><td>机构看 5日/20日主力净流入（中期）；游资看当日主力净流入</td></tr>
-<tr><td>中报背景</td><td>8</td><td>5</td><td>Q2 十大流通股东加仓家数（已降权为背景项，滞后 72 天）</td></tr>
-<tr><td>高管增减持</td><td>8</td><td>5</td><td>按 变动金额 / 总市值 归一化，过滤象征性小额增持</td></tr>
-<tr><td>大宗交易</td><td>6</td><td>5</td><td>机构专用买入、溢价 / 折价</td></tr>
-<tr><td>量价</td><td>20</td><td>28</td><td>趋势结构 + 量能 + 动量 + 相对位置</td></tr>
-<tr><td>筹码</td><td>6</td><td>9</td><td>获利盘比例、现价与平均成本偏离、筹码集中度</td></tr>
-<tr><td>风险扣分</td><td>−≤12</td><td>−≤12</td><td>高管净减持 / 大宗机构净卖出 / 高位 / 超买 / 破 MA60 / 质押 / 诉讼 / 解禁</td></tr>
-<tr><td>热度反向</td><td>−≤4</td><td>−≤4</td><td>热搜榜名次 + 当日涨幅，散户过热视为短期见顶信号</td></tr>
+<table><thead><tr><th class='tip' title='评分模型的组成维度，机构轨与游资轨权重不同。'>维度</th><th class='tip' title='该维度在机构轨总分中的满分值（机构轨满分 100）。'>机构轨</th><th class='tip' title='该维度在游资轨总分中的满分值（游资轨满分 100）。'>游资轨</th><th class='tip' title='该维度的具体计算方式与数据来源。'>口径</th></tr></thead><tbody>
+<tr><td class='tip' title='机构轨方向分，满分 28：龙虎榜机构席位净买入金额（最高 18）+ 一致预期目标价相对现价的空间（最高 10，空间 ≥30% 满分）。'>方向分</td><td>28</td><td>30</td><td>机构：龙虎榜机构净买入 18 + 一致预期目标价空间 10 / 游资：知名席位现身 18 + 买入额 8 + 席位家数 4</td></tr>
+<tr><td class='tip' title='最近 6 个月券商评级的覆盖家数与买入/增持占比，满分 8（data_rating）。小票常无覆盖，得分 0 属正常，不因此加分也不扣分。'>机构评级</td><td>8</td><td>—</td><td>覆盖机构家数 + 买入占比（data_rating）</td></tr>
+<tr><td class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融</td><td>6</td><td>8</td><td>融资余额环比（杠杆进场为正）；融券大增为负（data_fund_margin）</td></tr>
+<tr><td class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金</td><td>10</td><td>10</td><td>机构看 5日/20日主力净流入（中期）；游资看当日主力净流入</td></tr>
+<tr><td class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景</td><td>8</td><td>5</td><td>Q2 十大流通股东加仓家数（已降权为背景项，滞后 72 天）</td></tr>
+<tr><td class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管增减持</td><td>8</td><td>5</td><td>按 变动金额 / 总市值 归一化，过滤象征性小额增持</td></tr>
+<tr><td class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗交易</td><td>6</td><td>5</td><td>机构专用买入、溢价 / 折价</td></tr>
+<tr><td class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价</td><td>20</td><td>28</td><td>趋势结构 + 量能 + 动量 + 相对位置</td></tr>
+<tr><td class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码</td><td>6</td><td>9</td><td>获利盘比例、现价与平均成本偏离、筹码集中度</td></tr>
+<tr><td class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险扣分</td><td>−≤12</td><td>−≤12</td><td>高管净减持 / 大宗机构净卖出 / 高位 / 超买 / 破 MA60 / 质押 / 诉讼 / 解禁</td></tr>
+<tr><td class='tip' title='热搜榜名次 + 当日涨幅：已上榜且涨幅巨大视为散户过热、短期见顶信号，最多扣 4 分（反向指标）。'>热度反向</td><td>−≤4</td><td>−≤4</td><td>热搜榜名次 + 当日涨幅，散户过热视为短期见顶信号</td></tr>
 </tbody></table>
 <div class='note'><b>一票否决（Gate）：</b>所属板块主力出货 · 获利盘 &gt;90% · 现价高于平均成本 30% · 均线空头排列且跌破 MA60 · RSI&gt;80 · <b>解禁市值占比 ≥1%</b> · <b>处于计划减持窗口</b> · <b>质押比例 &gt;30%</b>。
 <b>档位：</b>A ≥70（8%~10%）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。
