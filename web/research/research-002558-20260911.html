@@ -1,0 +1,234 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>巨人网络（002558）三周期调研 · 2026-09-10</title><style>
+:root{--bg:#f5f6f8;--card:#fff;--ink:#1c2430;--ink2:#23262b;--sub:#6b7280;
+  --line:#e5e7eb;--gold:#b8893b;--red:#b8332a;--green:#1a9e5a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink2);
+ font:15px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 20px 64px}
+header{background:var(--card);border:1px solid var(--line);border-radius:14px;
+ padding:24px 26px;margin-bottom:18px}
+h1{margin:0 0 4px;font-size:24px;color:var(--ink);letter-spacing:-.2px}
+.sub{color:var(--sub);font-size:13px}
+.px{display:flex;align-items:baseline;gap:12px;margin:14px 0 4px}
+.px b{font-size:38px;color:var(--ink);font-weight:700;letter-spacing:-1px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:10px;margin-top:16px}
+.kv div{background:#fafbfc;border:1px solid var(--line);border-radius:9px;padding:9px 12px}
+.kv span{display:block;color:var(--sub);font-size:11.5px}
+.kv b{font-size:16px;color:var(--ink);font-weight:600}
+section{background:var(--card);border:1px solid var(--line);border-radius:14px;
+ padding:22px 26px;margin-bottom:18px}
+h2{margin:0 0 6px;font-size:18px;color:var(--ink);border-left:3px solid var(--gold);padding-left:10px}
+h3{margin:22px 0 8px;font-size:15px;color:var(--ink)}
+p{margin:8px 0}
+.lead{color:var(--sub);font-size:13.5px;margin:0 0 16px;padding-left:13px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right}
+th{background:#fafbfc;color:var(--sub);font-weight:600;font-size:12.5px;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td.k{color:var(--ink);font-weight:600;white-space:nowrap}
+td.desc{text-align:left;color:#4b5563;font-size:13px;line-height:1.65}
+td.num{font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink)}
+tr:last-child td{border-bottom:none}
+.up{color:var(--red);font-weight:600}.dn{color:var(--green);font-weight:600}
+.fl{color:var(--sub)}
+.chart{width:100%;height:auto;display:block;margin:14px 0 6px}
+.tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.tag.ok{background:#e8f5ee;color:#127a45}.tag.bad{background:#fbeceb;color:#a02b23}
+.tag.mid{background:#fdf3e3;color:#9a6c25}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:14px;margin:14px 0}
+.card{border:1px solid var(--line);border-radius:11px;padding:16px 17px;background:#fafbfc}
+.card .t{font-size:12.5px;color:var(--sub);margin-bottom:6px}
+.card .v{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.card .d{font-size:13px;color:#4b5563;line-height:1.65}
+.card.hot{border-color:#e8c98a;background:#fdf9f1}
+.card.cold{border-color:#cfe6da;background:#f4fbf7}
+.note{border-left:3px solid var(--gold);background:#fdf9f1;padding:13px 16px;
+ border-radius:0 9px 9px 0;margin:14px 0;font-size:13.5px;line-height:1.7}
+.note.warn{border-color:var(--red);background:#fdf4f3}
+.note.good{border-color:var(--green);background:#f2faf6}
+.note b{color:var(--ink)}
+ul{margin:8px 0;padding-left:20px}li{margin:5px 0}
+.chk{list-style:none;padding-left:2px}
+.chk li{padding-left:24px;position:relative}
+.chk li:before{content:"\25A1";position:absolute;left:0;color:var(--gold);font-size:15px}
+.bar{display:inline-block;width:118px;height:7px;background:#eef0f3;border-radius:4px;
+ overflow:hidden;vertical-align:middle;margin-right:7px}
+.bar i{display:block;height:100%;border-radius:4px}
+.rating{display:inline-block;padding:4px 14px;border-radius:8px;font-size:19px;
+ font-weight:700;letter-spacing:.5px}
+.rating.r5{background:#e8f5ee;color:#127a45}
+.rating.r4{background:#fdf3e3;color:#9a6c25}
+.rating.r3{background:#fdf3e3;color:#9a6c25}
+.rating.r2{background:#fbeceb;color:#a02b23}
+.rating.r1{background:#fbeceb;color:#a02b23}
+footer{color:var(--sub);font-size:12px;text-align:center;padding:8px 0 0}
+@media(max-width:640px){.wrap{padding:16px 12px 48px}section{padding:18px 16px}h1{font-size:20px}}
+
+</style></head><body>
+<!-- UNIFIED_NAV -->
+<div style='display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:12px 4px;border-bottom:1px solid rgba(184,137,59,.3);font-size:13px;'><a href='../market/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>每日总览</a><a href='../lhb/lhb.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>龙虎榜分析</a><a href='../market/hotmoney.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>游资看板</a><a href='../sector/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>板块强度</a><a href='../exec/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>高管增减持</a><a href='../block/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>大宗交易</a><a href='../psychology/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>群体心理</a><a href='index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>行业最强</a><a href='../shareholder/tracker.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>牛人追踪</a><a href='../picks/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>信号池</a><a href='../tplus/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>做T池</a><a href='../sections/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>版块总览</a><a href='../db/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>数据中心</a><a href='../../index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>返回主页</a></div>
+
+
+<div class="wrap">
+
+<header><h1>巨人网络（002558）· 三周期调研</h1>
+<div class="sub">深圳主板 · 传媒／游戏Ⅱ · 互联网游戏的研发和运营 · 上市 2011-03-02 · 董事长 刘伟</div>
+<div class="px"><b>26.0</b><span class="dn" style="font-size:16px;font-weight:600">-0.50%</span><span class="fl">2026-09-10 收盘</span></div>
+<div class="kv"><div><span>市盈率 TTM</span><b>15.83</b></div><div><span>市盈率 前瞻</span><b>11.52</b></div><div><span>市净率</span><b>2.94</b></div><div><span>总市值</span><b>494.15 亿</b></div><div><span>年初至今</span><b>−39.68%</b></div><div><span>52 周区间</span><b>23.44 – 53.16</b></div><div><span>换手率</span><b>1.69%</b></div><div><span>股息率 TTM</span><b>1.30%</b></div></div></header>
+<section><h2>结论总评</h2>
+<p class="lead">2026H1 营收 +182.08%、归母净利 +175.96%、扣非 22.36 亿（高于归母）、毛利率提升至 95.79% —— 业绩是真的。而股价 YTD −39.68%、距 52 周高 −51.1%。矛盾的一端是业绩，另一端是实控人系套现约 14 亿。减持计划已于 9/9 届满，RSI2 跌到 8.21 —— 这是「基本面已经赢、价格还没赢」的位置。</p>
+<div style="margin:6px 0 16px"><span class="rating r5">高胜率标的</span><span class="fl" style="margin-left:12px">七条标准 5 / 7 &nbsp;·&nbsp; 定性：基本面已赢 · 价格未赢</span></div>
+<div class="cards">
+<div class="card "><div class="t">短线（1–5 个交易日）</div><div class="v">可参与超卖反弹</div><div class="d">MACD 死叉（DIF −0.298 &lt; DEA −0.243，柱 −0.111），方向未转多；但超卖读数极端：<b>RSI2 仅 8.21、KDJ 的 J 值 2.86、RSI6 32.67</b>。9/10 成交额萎缩至 8.32 亿（量比 0.41），抛压已衰竭。下行空间被压缩，是「等信号」而非「等价格」的位置。</div></div>
+<div class="card hot"><div class="t">中线（1–3 个月）</div><div class="v">可配置 · 条件是减持不再续</div><div class="d">两个硬条件：① 减持计划 9/9 届满后 1 个月内<b>无新一轮减持公告</b>；② 出现单日主力净流入 &gt; 5,000 万。当前 20 日累计净流出 3.03 亿，尚未满足第 2 条。30 家机构覆盖、目标价 41.21（较现价 +58.5%）构成定价锚。</div></div>
+<div class="card "><div class="t">长线（6 个月以上）</div><div class="v">可作核心仓，但须接受增速回落</div><div class="d">一致预期：2026E 净利 43.50 亿（+147.91%）→ 2027E 49.40 亿（+13.57%）→ 2028E 53.45 亿（+8.21%）。<b>爆款周期的峰值就在 2026 年</b>，之后是正常的增速回落。PE 15.83 / PE_fwd 11.52、ROE(TTM) 18.55%，估值本身不贵 —— 前提是《超自然行动组》的流水能维持。</div></div>
+</div>
+<div class="note warn"><b>最强警示：实控人系在爆款兑现期套现约 14 亿。</b>2026-09-09 公告第二大股东减持计划届满，累计减持占总股本 <b>2.82%</b>（约 5,360 万股，对应市值约 13.9 亿，新闻口径为「史玉柱减持套现超 14 亿」）。这是本股 YTD −39.68% 与业绩 +175.96% 同时存在的唯一解释。<b>但关键变化在于：该减持计划已于 9/9 届满 —— 压制股价 9 个月的供给压力，在制度层面已经出清。</b>后续只需观察是否有新一轮减持计划。</div>
+</section>
+<section><h2>价格结构与关键位</h2>
+<p class="lead">周线收盘（2025-08 至 2026-09，共 56 周）。这是一只「翻倍上涨 → 高位见顶 → 腰斩式下跌 → 缩量筑底」的完整周期，目前处在最后一段的末端。</p>
+<svg class="chart" viewBox="0 0 1000 240" preserveAspectRatio="xMidYMid meet"><polygon points="16.0,176.7 33.6,163.1 51.2,154.9 68.8,109.9 86.4,86.0 104.0,66.1 121.6,68.5 139.2,64.0 156.8,89.7 174.4,107.9 192.0,95.8 209.6,130.8 227.2,124.2 244.8,125.8 262.4,124.8 280.0,90.7 297.6,98.7 315.2,89.1 332.8,64.6 350.4,58.2 368.0,76.5 385.6,53.3 403.2,62.5 420.8,33.3 438.4,71.9 456.0,84.9 473.6,91.9 491.2,117.5 508.8,127.4 526.4,128.5 544.0,150.5 561.6,150.3 579.2,143.3 596.8,134.3 614.4,149.0 632.0,156.8 649.6,145.8 667.2,143.0 684.8,163.7 702.4,181.2 720.0,190.6 737.6,191.1 755.2,206.7 772.8,203.6 790.4,180.2 808.0,182.1 825.6,166.1 843.2,169.1 860.8,201.8 878.4,168.0 896.0,167.6 913.6,170.9 931.2,188.9 948.8,181.2 966.4,178.7 984.0,189.7 984.0,224.0 16.0,224.0" fill="#b8893b" opacity=".08"/><line x1="16" y1="174.7" x2="984" y2="174.7" stroke="#b8893b" stroke-width="1" stroke-dasharray="4 4" opacity=".8"/><text x="982" y="170.7" fill="#b8893b" font-size="10.5" text-anchor="end">28.27 布林上轨</text><line x1="16" y1="183.6" x2="984" y2="183.6" stroke="#9aa4b2" stroke-width="1" stroke-dasharray="4 4" opacity=".8"/><text x="982" y="179.6" fill="#9aa4b2" font-size="10.5" text-anchor="end">26.92 布林中轨</text><line x1="16" y1="192.5" x2="984" y2="192.5" stroke="#b8332a" stroke-width="1" stroke-dasharray="4 4" opacity=".8"/><text x="982" y="188.5" fill="#b8332a" font-size="10.5" text-anchor="end">25.58 布林下轨</text><polyline points="16.0,176.7 33.6,163.1 51.2,154.9 68.8,109.9 86.4,86.0 104.0,66.1 121.6,68.5 139.2,64.0 156.8,89.7 174.4,107.9 192.0,95.8 209.6,130.8 227.2,124.2 244.8,125.8 262.4,124.8 280.0,90.7 297.6,98.7 315.2,89.1 332.8,64.6 350.4,58.2 368.0,76.5 385.6,53.3 403.2,62.5 420.8,33.3 438.4,71.9 456.0,84.9 473.6,91.9 491.2,117.5 508.8,127.4 526.4,128.5 544.0,150.5 561.6,150.3 579.2,143.3 596.8,134.3 614.4,149.0 632.0,156.8 649.6,145.8 667.2,143.0 684.8,163.7 702.4,181.2 720.0,190.6 737.6,191.1 755.2,206.7 772.8,203.6 790.4,180.2 808.0,182.1 825.6,166.1 843.2,169.1 860.8,201.8 878.4,168.0 896.0,167.6 913.6,170.9 931.2,188.9 948.8,181.2 966.4,178.7 984.0,189.7" fill="none" stroke="#b8893b" stroke-width="2" stroke-linejoin="round"/><circle cx="984.0" cy="189.7" r="4" fill="#b8332a"/><text x="976.0" y="182.7" fill="#b8332a" font-size="12" font-weight="700" text-anchor="end">26.00</text><circle cx="420.8" cy="33.3" r="3.2" fill="#1a9e5a"/><text x="427.8" y="27.3" fill="#1a9e5a" font-size="11" font-weight="700">53.16 52周高</text></svg>
+<h3>阶段拆解</h3>
+<table><tr><th>阶段</th><th>区间</th><th>幅度</th><th>说明</th></tr>
+<tr><td class="k">低位启动</td><td class="num">27.96 → 38.05</td><td class="up">+36%</td><td class="desc">2025-08-15 至 2025-09-05，四周内从 27.96 拉升至 38.05，周换手从 13% 升至 13.5%</td></tr>
+<tr><td class="k">主升浪</td><td class="num">38.05 → 53.16</td><td class="up">+40%</td><td class="desc">2025-09-12 至 2026-01-23，历时约 19 周，2026-01-23 当周触及 53.16（52 周高）</td></tr>
+<tr><td class="k">腰斩式下跌</td><td class="num">53.16 → 23.44</td><td class="dn">-56%</td><td class="desc">2026-01-30 至 2026-06-12，历时 5 个月，2026-06-12 当周触及 23.44（52 周低）</td></tr>
+<tr><td class="k">反弹失败</td><td class="num">23.44 → 31.20</td><td class="up">+33%</td><td class="desc">2026-06-26 至 2026-08-07，放量反弹，2026-08-07 当周换手 30.98% 为区间最高</td></tr>
+<tr><td class="k">二次回落</td><td class="num">31.20 → 26.00</td><td class="dn">-17%</td><td class="desc">2026-08 中旬以来持续回落，今日 −0.50%、量比 0.41 极度缩量</td></tr>
+</table>
+<h3>关键价位</h3>
+<table><tr><th>位置</th><th>价格</th><th>含义</th></tr>
+<tr><td class="k">强阻力</td><td class="num">31.20</td><td class="desc">2026-08-07 当周高点，也是本轮反弹的天花板</td></tr>
+<tr><td class="k">阻力</td><td class="num">28.27</td><td class="desc">布林上轨</td></tr>
+<tr><td class="k">中轨</td><td class="num">26.92</td><td class="desc"><b>布林中轨，多空分界</b>；现价 26.00 在其下方</td></tr>
+<tr><td class="k">现价</td><td class="num">26.00</td><td class="desc">—</td></tr>
+<tr><td class="k">短线支撑</td><td class="num">25.58</td><td class="desc">布林下轨；跌破则可能重新测试 6 月低点</td></tr>
+<tr><td class="k">强支撑</td><td class="num">23.44 – 23.90</td><td class="desc">2026-06-12 / 06-18 / 07-24 三周密集低点区，52 周低</td></tr>
+</table>
+<div class="note warn"><b>波动警示：</b>2026-07-17 当周换手 38.12%、2026-07-24 当周 34.28%、2026-07-10 当周 35.65% —— 连续三周换手超 34%，成交额均超 180 亿元。这与当前的 12.36% 周换手形成鲜明对比：<b>筹码已经从高频换手者手里，转移到了更低频的持有者手里。</b></div>
+<div class="note good">价格位置相对清晰：26.00 距 52 周高 53.16 已 −51.1%，距 52 周低 23.44 仅 +10.9%。在五只持仓中，它是<b>唯一同时满足「距高点腰斩」与「贴近前低」</b>的标的 —— 这意味着向下空间与向上空间的不对称性最有利。</div>
+</section>
+<section><h2>基本面：单季拆分拆掉「同比」的假象</h2>
+<p class="lead">这只票没有需要拆穿的「假象」—— 业绩是真的，而且质量很高。</p>
+<h3>半年度口径</h3>
+<table><tr><th>报告期</th><th>营收</th><th>同比</th><th>归母净利</th><th>同比</th><th>毛利率</th></tr>
+<tr><td class="k">2024H1</td><td class="num">14.27 亿</td><td><span class="dn">-1.13%</span></td><td class="num">+7.177 亿</td><td><span class="up">+8.16%</span></td><td class="num">88.42%</td></tr>
+<tr><td class="k">2025H1</td><td class="num">16.62 亿</td><td><span class="up">+16.47%</span></td><td class="num">+7.770 亿</td><td><span class="up">+8.27%</span></td><td class="num">90.78%</td></tr>
+<tr><td class="k">2026H1</td><td class="num">46.89 亿</td><td><span class="up">+182.08%</span></td><td class="num">+21.443 亿</td><td><span class="up">+175.96%</span></td><td class="num">95.79%</td></tr>
+</table>
+<h3>单季口径（关键）</h3>
+<table><tr><th>单季</th><th>营收</th><th>同比</th><th>归母净利</th><th>同比</th></tr>
+<tr><td class="k">2025Q1</td><td class="num">7.238 亿</td><td><span class="up">+3.94%</span></td><td class="num">+3.479 亿</td><td><span class="dn">-1.29%</span></td></tr>
+<tr><td class="k">2025Q2</td><td class="num">9.384 亿</td><td><span class="up">+28.42%</span></td><td class="num">+4.292 亿</td><td><span class="up">+17.49%</span></td></tr>
+<tr><td class="k">2026Q1</td><td class="num">23.285 亿</td><td><span class="up">+221.70%</span></td><td class="num">+10.804 亿</td><td><span class="up">+210.58%</span></td></tr>
+<tr style="background:#fdf9f1"><td class="k">2026Q2</td><td class="num">23.602 亿</td><td><span class="up">+151.52%</span></td><td class="num">+10.639 亿</td><td><span class="up">+147.89%</span></td></tr>
+</table>
+<div class="note warn"><b>拆单季的结果：两个季度都是三位数增长，不存在单季失速。</b>Q1 营收 +221.70%、归母 +210.58%；Q2 营收 +151.52%、归母 +147.89% —— 增速虽从 Q1 到 Q2 有所回落，但仍是三位数量级。更关键的三点是：① <b>扣非归母 22.36 亿高于归母净利 21.44 亿</b>，说明利润没有依赖非经常性损益（这是与盈新发展最本质的区别）；② <b>毛利率从 90.78% 提升至 95.79%</b>（+5.01pct），是自研流水占比提升的典型特征；③ R&amp;D 投入 6.03 亿、占营收 12.9%，爆款期未削减研发。<b>规模、质量、投入三个维度同时向上。</b></div>
+<h3>质量与估值</h3>
+<table><tr><th>指标</th><th>数值</th><th>解读</th></tr>
+<tr><td class="k">ROE（TTM）</td><td class="num">18.55%</td><td class="desc">五只中最高；H1 加权 ROE 13.22%</td></tr>
+<tr><td class="k">扣非净利（H1）</td><td class="num">22.36 亿</td><td class="desc"><b>高于归母净利 21.44 亿</b> —— 利润含金量高，无一次性收益依赖</td></tr>
+<tr><td class="k">毛利率（H1）</td><td class="num">95.79%</td><td class="desc">同比 +5.01 个百分点，自研流水占比提升的直接证据</td></tr>
+<tr><td class="k">研发投入（H1）</td><td class="num">6.03 亿</td><td class="desc">占营收 12.9%，爆款期未削减投入</td></tr>
+<tr><td class="k">机构一致预期</td><td class="num">30 家覆盖 · 目标价 41.21</td><td class="desc">2026E 归母 43.50 亿（+147.91%），对应 PE 11.36；目标价较现价 +58.5%</td></tr>
+<tr><td class="k">盈利预测（2027E）</td><td class="num">49.40 亿 (+13.57%)</td><td class="desc">23 家机构；增速从 +147.91% 回落至 +13.57%，说明 2026 是爆款峰值年</td></tr>
+</table>
+</section>
+<section><h2>股东结构与内部人行为</h2>
+<p class="lead">这只票的全部分歧，集中在「谁在卖、谁在买」这一件事上 —— 而且两个方向都很大。</p>
+<table><tr><th>股东</th><th>持股比例</th><th>本期变动</th><th>性质</th></tr>
+<tr><td class="k">上海巨人投资管理有限公司</td><td class="num">29.69%</td><td class="fl">持平</td><td class="desc">控股股东 · 史玉柱系</td></tr>
+<tr><td class="k">香港中央结算有限公司</td><td class="num">10.40%</td><td class="up">+3,252 万股</td><td class="desc">北向资金 · 大幅增持</td></tr>
+<tr><td class="k">上海腾澎投资合伙企业(有限合伙)</td><td class="num">10.29%</td><td class="fl">持平</td><td class="desc">一致行动人</td></tr>
+<tr><td class="k">华夏中证动漫游戏 ETF</td><td class="num">1.85%</td><td class="up">+23 万股</td><td class="desc">被动指数 · 增持</td></tr>
+<tr><td class="k">阿布达比投资局-自有资金</td><td class="num">1.24%</td><td class="fl">−1,206 万股</td><td class="desc">主权基金 · 大幅减持</td></tr>
+<tr><td class="k">全国社保基金一一五组合</td><td class="num">0.60%</td><td class="fl">持平</td><td class="desc">社保 · 持有</td></tr>
+<tr><td class="k">国泰中证动漫游戏 ETF</td><td class="num">0.54%</td><td class="fl">持平</td><td class="desc">被动指数 · 持有</td></tr>
+<tr><td class="k">浙江华娱网络科技有限公司</td><td class="num">0.48%</td><td class="fl">持平</td><td class="desc">产业资本</td></tr>
+<tr><td class="k">高盛国际-自有资金</td><td class="num">0.39%</td><td class="fl">持平</td><td class="desc">外资 · 持有</td></tr>
+<tr><td class="k">张德兴</td><td class="num">0.39%</td><td class="fl">持平</td><td class="desc">自然人</td></tr>
+</table>
+<div class="cards">
+<div class="card hot"><div class="t">实控人系减持</div><div class="v">约 14 亿</div><div class="d">2026-09-09 公告：第二大股东减持计划<b>届满</b>，累计减持占总股本 <b>2.82%</b>（约 5,360 万股，对应市值约 13.9 亿）。这是本股 YTD −39.68% 的最直接解释。<b>已届满 = 制度层面的供给压力出清。</b></div></div>
+<div class="card cold"><div class="t">北向大举加仓</div><div class="v">+3,252 万股</div><div class="d">香港中央结算中报增持 3,252 万股（约 +19.7%），持股升至 10.40%，为第二大股东。<b>外资在实控人系套现的同时大幅加仓</b>，方向完全相反。</div></div>
+<div class="card cold"><div class="t">机构覆盖</div><div class="v">30 家</div><div class="d">五只持仓中最多的一家（其余为 0–2 家）。一致预期 2026E 净利 43.50 亿、目标价 41.21，23 家机构给出 2027 年预测。</div></div>
+<div class="card hot"><div class="t">主权基金撤退</div><div class="v">−1,206 万股</div><div class="d">阿布达比投资局减持 1,206 万股（降幅约 33.9%）。社保一一五组合、高盛国际、两只游戏 ETF 均持平或小幅增持。</div></div>
+</div>
+<div class="note warn"><b>核心分歧就在「谁在卖」。</b>实控人系在爆款兑现期减持 2.82%、套现约 14 亿；同时阿布达比投资局减 1,206 万股。与之对立的是北向 +3,252 万股、社保持有、30 家机构覆盖、目标价 41.21（+58.5%）。<b>这是「产业资本兑现 vs 二级市场机构定价」的正面冲突</b> —— 也是 YTD −39.68% 与业绩 +175.96% 能够同时存在的唯一解释。</div>
+<div class="note good"><b>最重要的时点信号：减持计划已于 2026-09-09 届满。</b>压制股价 9 个月的供给压力在制度层面已经出清。后续需要盯的只有一件事 —— 是否出现新一轮减持计划公告。如果没有，压制股价的表面原因就不存在了。</div>
+<div class="note ">治理：取消监事会属新《公司法》下的常规治理调整（改设审计委员会），<b>非负面事件</b>。近一年唯一的高管交易是 2024-06 张栋增持 1 万股 @9.48（复权前价格）。</div>
+</section>
+<section><h2>资金面</h2>
+<p class="lead">资金流出的节奏与减持落地时点高度吻合 —— 这反而是个好消息。</p>
+<h3>主力净流入</h3>
+<svg class="chart" viewBox="0 0 1000 180" preserveAspectRatio="xMidYMid meet"><line x1="18" y1="134.0" x2="982" y2="134.0" stroke="#c9ced6" stroke-width="1"/><rect x="75.8" y="134.0" width="125.3" height="2.6" fill="#1a9e5a" rx="3"/><text x="138.5" y="149.6" fill="#1a9e5a" font-size="11.5" font-weight="700" text-anchor="middle">-848万</text><text x="138.5" y="172" fill="#6b7280" font-size="11.5" text-anchor="middle">今日</text><rect x="316.8" y="134.0" width="125.3" height="24.4" fill="#1a9e5a" rx="3"/><text x="379.5" y="171.4" fill="#1a9e5a" font-size="11.5" font-weight="700" text-anchor="middle">-8041万</text><text x="379.5" y="172" fill="#6b7280" font-size="11.5" text-anchor="middle">5日</text><rect x="557.8" y="134.0" width="125.3" height="79.1" fill="#1a9e5a" rx="3"/><text x="620.5" y="226.1" fill="#1a9e5a" font-size="11.5" font-weight="700" text-anchor="middle">-2.60亿</text><text x="620.5" y="172" fill="#6b7280" font-size="11.5" text-anchor="middle">10日</text><rect x="798.8" y="134.0" width="125.3" height="92.0" fill="#1a9e5a" rx="3"/><text x="861.5" y="239.0" fill="#1a9e5a" font-size="11.5" font-weight="700" text-anchor="middle">-3.03亿</text><text x="861.5" y="172" fill="#6b7280" font-size="11.5" text-anchor="middle">20日</text></svg>
+<table><tr><th>口径</th><th>净流入</th><th>解读</th></tr>
+<tr><td class="k">今日</td><td class="dn">−848 万</td><td class="desc">成交额萎缩至 8.32 亿元（量比 0.41），抛压已显著衰减</td></tr>
+<tr><td class="k">近 5 日</td><td class="dn">−8,041 万</td><td class="desc">日均流出约 1,600 万，绝对额已不大</td></tr>
+<tr><td class="k">近 10 日</td><td class="dn">−2.60 亿</td><td class="desc">9/9 单日净流出 4.0 亿（<b>减持公告落地日</b>）</td></tr>
+<tr><td class="k">近 20 日</td><td class="dn">−3.03 亿</td><td class="desc">20 日累计净流出 3.03 亿，占流通市值仅 0.61%</td></tr>
+</table>
+<div class="note warn">全市场主力净流入排名 <b>4,165 位</b>。关键是节奏：<b>9/9 减持公告日单日净流出 4.0 亿，9/10 骤降至 848 万、成交额萎缩至 8.32 亿（量比 0.41）</b> —— 这是「抛压释放完毕」的典型量能特征。但要客观：<b>资金面转正才是确认信号，当前的缩量只说明卖压衰竭，不代表买盘已经回来。</b>20 日累计流出 3.03 亿仅占流通市值 0.61%，相对于 494 亿的市值，这个流出量并不算大。</div>
+<h3>融资余额（亿元）· 杠杆与产业资本方向相反</h3>
+<svg class="chart" viewBox="0 0 1000 190" preserveAspectRatio="xMidYMid meet"><polyline points="18.0,154.6 105.6,133.5 193.3,112.9 280.9,111.1 368.5,84.4 456.2,65.4 543.8,99.1 631.5,132.0 719.1,104.7 806.7,67.0 894.4,100.1 982.0,37.2" fill="none" stroke="#b8332a" stroke-width="2" stroke-linejoin="round"/><circle cx="18.0" cy="154.6" r="3" fill="#b8332a"/><text x="18.0" y="146.6" fill="#6b7280" font-size="10.5" text-anchor="middle">16.244</text><circle cx="543.8" cy="99.1" r="3" fill="#b8332a"/><text x="543.8" y="91.1" fill="#6b7280" font-size="10.5" text-anchor="middle">17.022</text><circle cx="982.0" cy="37.2" r="3" fill="#b8332a"/><text x="982.0" y="29.2" fill="#6b7280" font-size="10.5" text-anchor="middle">17.889</text><text x="18" y="187" fill="#9aa4b2" font-size="10.5" text-anchor="start">8/25</text><text x="982" y="187" fill="#9aa4b2" font-size="10.5" text-anchor="end">9/09</text></svg>
+<table><tr><th>项目</th><th>数值</th><th>解读</th></tr>
+<tr><td class="k">融资余额（9/9）</td><td class="num">17.889 亿</td><td class="desc">占流通市值 3.62%；绝对额为五只中最大</td></tr>
+<tr><td class="k">8/25 以来变化</td><td class="up">+1.645 亿 (+10.1%)</td><td class="desc">16.244 亿 → 17.889 亿，与股价下跌方向相反</td></tr>
+<tr><td class="k">9/9 单日</td><td class="up">净买入约 8,801 万</td><td class="desc">当日买入 2.34 亿 / 偿还 1.46 亿；而股价当日 −4.64%</td></tr>
+<tr><td class="k">融券余额</td><td class="num">1,176 万</td><td class="desc">占两融 0.65%，做空压力可忽略</td></tr>
+</table>
+<div class="note warn">融资盘在股价下跌 4.64% 的 9/9 逆势净买入约 8,801 万元，融资余额升至 17.889 亿的区间新高 —— <b>杠杆资金与产业资本方向完全相反</b>：实控人系在减、融资盘在加。这种结构的好处是筹码从产业资本转移到愿意承担风险的二级资金手里；坏处是一旦继续下行，17.889 亿的融资盘（占流通市值 3.62%）会形成第二波抛压。<b>把「融资余额跌破 16 亿」作为短线风险信号。</b></div>
+<h3>诊股五维评分</h3>
+<table><tr><th>维度</th><th>评分</th><th>周变动</th><th>月变动</th><th>条</th></tr><tr><td class="k">资金</td><td class="num">41.37</td><td class="dn">-5.87</td><td class="dn">-14.76</td><td><span class="bar"><i style="width:41%;background:#b8893b"></i></span></td></tr><tr><td class="k">技术</td><td class="num">48.65</td><td class="dn">-11.63</td><td class="dn">-31.77</td><td><span class="bar"><i style="width:49%;background:#b8893b"></i></span></td></tr><tr><td class="k">基本面</td><td class="num">95.87</td><td class="up">+0.16</td><td class="up">+3.45</td><td><span class="bar"><i style="width:96%;background:#b8332a"></i></span></td></tr><tr><td class="k">风险</td><td class="num">78.99</td><td class="up">+0.10</td><td class="up">+0.20</td><td><span class="bar"><i style="width:79%;background:#b8332a"></i></span></td></tr><tr><td class="k">综合</td><td class="num">79.09</td><td class="dn">-2.22</td><td class="dn">-3.29</td><td><span class="bar"><i style="width:79%;background:#b8332a"></i></span></td></tr></table>
+<div class="note">这张评分表的分裂程度是五只中最大的：<b>基本面 95.87（五只最高），而技术 48.65、资金 41.37（两只最低）</b>。基本面与技术面相差 47 分 —— 说明诊断系统既认可利润的真实性，也清楚地看到价格趋势与资金流向的恶化。综合 79.09 主要靠基本面撑起，而资金月变动 −14.76、技术月变动 −31.77。<b>在恶化的是价格，不是生意。</b></div>
+</section>
+<section><h2>板块背景</h2>
+<p class="lead">最大的背离在这里：公司在板块里业绩最强，板块在资金上却最弱。</p>
+<div class="cards">
+<div class="card hot"><div class="t">申万二级：游戏Ⅱ · 5 日资金</div><div class="v">全市场 116 / 124 名</div><div class="d">5 日主力净流出 <b>−19.26 亿</b>，20 日 −26.64 亿。当日 −0.70%，26 只成分股<b>仅 2 只上涨</b>。板块层面没有任何资金支撑。</div></div>
+<div class="card hot"><div class="t">板块位置</div><div class="v">垫底</div><div class="d">游戏Ⅱ 5 日、20 日资金均为大幅净流出，在全市场 124 个申万二级行业中排名靠后。本股 20 日净流出 3.03 亿，与板块同向。</div></div>
+<div class="card cold"><div class="t">行业估值 · 机构观点</div><div class="v">处于底部</div><div class="d">9/10 机构观点：「当前游戏行业板块处于估值底部，有望启动一波资金回流带来的估值回归行情」。</div></div>
+<div class="card cold"><div class="t">公司地位</div><div class="v">增速黑马</div><div class="d">2026 中报透视：世纪华通营收领跑、三七互娱靠 AI 投资补利润、<b>巨人网络成增速黑马</b>（营收 +182.08%）。</div></div>
+</div>
+<div class="note ">催化剂清单：① 《超自然行动组》成为爆款，驱动 H1 营收 +182.08%；② 减持计划 2026-09-09 届满，供给压力制度性出清；③ 机构认为游戏板块处于估值底部；④ 30 家机构覆盖、目标价 41.21。</div>
+<div class="note warn"><b>需要客观看待的背离：</b>公司的业绩在板块里是最强的，资金在板块里却是最弱的。游戏Ⅱ 5 日 −19.26 亿、20 日 −26.64 亿，而巨人网络自己 5 日 −8,041 万、20 日 −3.03 亿。板块与个股同向流出，说明这不是「个股被错杀」，而是<b>整个游戏板块当前不在资金视野内</b>。基本面优秀只能保证它「跌不深」，不能保证它「马上涨」。</div>
+</section>
+<section><h2>个股筛选七条标准对照</h2>
+<p class="lead">按既定框架逐条打分：<b>5 / 7 通过</b> —— 五只持仓中最高分，也是唯一达到「高胜率」门槛的。</p>
+<table><tr><th>标准</th><th>判定</th><th>依据</th></tr>
+<tr><td class="k">强趋势</td><td><span class="tag bad">不符</span></td><td class="desc">YTD −39.68%、20 日 −9.00%；60 日 +7.93% 是唯一为正的中期口径</td></tr>
+<tr><td class="k">相对低位</td><td><span class="tag ok">符合</span></td><td class="desc">26.00 距 52 周高 53.16 −51.1%，距 52 周低 23.44 +10.9%</td></tr>
+<tr><td class="k">量价健康</td><td><span class="tag mid">部分</span></td><td class="desc">今日量比 0.41 极度缩量，RSI2 8.21、KDJ 的 J 值 2.86 属极端超卖；但 20 日资金净流出 3.03 亿</td></tr>
+<tr><td class="k">机构主导</td><td><span class="tag ok">符合</span></td><td class="desc">30 家机构覆盖、北向 +3,252 万股、社保一一五组合在列；但阿布达比投资局减 1,206 万股</td></tr>
+<tr><td class="k">订单业绩可验证</td><td><span class="tag ok">符合</span></td><td class="desc">营收 +182.08%、归母 +175.96%、扣非 22.36 亿 &gt; 归母 21.44 亿、毛利率 95.79%（+5.01pct）</td></tr>
+<tr><td class="k">瓶颈环节</td><td><span class="tag mid">部分</span></td><td class="desc">自研游戏研发运营，爆款具备短期定价权，但游戏产品有生命周期，不构成持久壁垒</td></tr>
+<tr><td class="k">换手适中</td><td><span class="tag ok">符合</span></td><td class="desc">日换手 1.69%、周换手 12.36%，五只中最低，无投机资金扰动</td></tr>
+</table>
+<div class="note">结论：<b>高胜率标的 —— 五只持仓中唯一</b>。它在「相对低位、机构主导、订单业绩可验证、换手适中」四条上合格，「量价健康」与「瓶颈环节」部分合格，「强趋势」不合格。<b>这是典型的「基本面已经赢、价格还没赢」的状态</b> —— 与前四只「价格涨了、基本面没跟上」恰好相反。它的核心矛盾不在生意，而在于「产业资本兑现期是否已真正结束」。</div>
+</section>
+<section><h2>操作规则与风控</h2>
+<table><tr><th>周期</th><th>规则</th><th>触发条件</th></tr>
+<tr><td class="k">短线</td><td class="desc">可参与超卖反弹。RSI2 8.21、KDJ 的 J 值 2.86 是极端读数，历史上 RSI2 低于 10 通常对应短线底部区域。</td><td class="desc">跌破 25.58（布林下轨）止损；反弹第一目标 26.92（布林中轨），第二目标 28.27（布林上轨）</td></tr>
+<tr><td class="k">中线</td><td class="desc">可配置。条件是「减持届满后 1 个月内无新减持公告」+「出现单日主力净流入 &gt; 5,000 万」。</td><td class="desc">若 10 月内出现新一轮减持计划 → 中线逻辑作废，先减半</td></tr>
+<tr><td class="k">长线</td><td class="desc">可作核心仓，但须接受 2027 增速回落。一致预期 2026E +147.91% → 2027E +13.57% → 2028E +8.21%，<b>爆款峰值在 2026</b>。</td><td class="desc">《超自然行动组》月流水连续 2 个季度下滑，或 2027 新游不及预期 → 降低预期</td></tr>
+<tr><td class="k">仓位</td><td class="desc">五只中可给到最高，建议总仓位 <b>10%–12%</b>。</td><td class="desc">依据：PE 15.83 / PE_fwd 11.52、30 家机构覆盖、扣非质量最高（扣非 &gt; 归母）</td></tr>
+<tr><td class="k">止损</td><td class="desc">短线止损 25.58（−1.6%，布林下轨）；中线止损 23.44（−9.8%，52 周低）。</td><td class="desc">23.44 破位且基本面无变化 → 视为错杀，可分批而非一次性清仓</td></tr>
+</table>
+<div class="note warn"><b>技术面当前状态（2026-09-10）：</b>收 26.00，位于布林中轨 26.92 之下、下轨 25.58 之上。MACD 死叉（DIF −0.298 &lt; DEA −0.243，柱 −0.111）。但超卖读数极端：<b>RSI2 仅 8.21（20 以下即为极端）、KDJ 的 J 值 2.86、RSI6 32.67</b>。方向尚未转多，但下行空间已被压缩 —— <b>这是「等信号而非等价格」的位置</b>。第一个值得等的信号是单日主力净流入超 5,000 万。</div>
+</section>
+<section><h2>每日验证清单</h2>
+<p class="lead">持有期间每日收盘后逐项核对，任一项转负即减仓。</p>
+<ul class="chk">
+<li>减持：是否出现新一轮减持计划公告（2026-09-09 前一轮已届满）。<b>这是本股第一号变量</b></li>
+<li>主力资金：是否出现单日净流入 &gt; 5,000 万。当前连续 20 日净流出，今日 −848 万</li>
+<li>融资余额：当前 17.889 亿。跌破 16 亿 → 杠杆退潮，短线风险</li>
+<li>价格：是否守住 25.58（布林下轨）。跌破 → 短线止损</li>
+<li>量比：当前 0.41（极度缩量）。反弹需要量比回到 1.0 以上才算有效</li>
+<li>《超自然行动组》：月流水与榜单排名是否维持。这是 H1 +182% 的唯一来源</li>
+<li>三季报（10 月底）：单季营收能否维持 +100% 以上。Q2 为 +151.52%</li>
+<li>机构预期：30 家机构是否维持 2026E 净利 43.50 亿、目标价 41.21</li>
+</ul></section>
+<footer>数据来源：腾讯自选股（westock-mcp），收盘口径 2026-09-10，生成于 2026-09-11。本报告为研究记录，不构成投资建议。</footer>
+</div></body></html>
