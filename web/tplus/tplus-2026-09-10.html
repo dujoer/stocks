@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>做T池 · 2026-09-10 · A股分析中心</title>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--tx:#23262b;--sub:#6b7280;--gold:#b8893b;--red:#b8332a;--green:#1a9e5a;--line:#e6e8eb;}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6;}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 20px 60px;}
+.topnav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.topnav a{font-size:12.5px;color:#7a5a1f;background:#fff;border:1px solid #e7dcc4;border-radius:20px;padding:5px 12px;text-decoration:none;}
+.topnav a:hover{background:#faf3e4;}
+.topnav a.cur{background:linear-gradient(135deg,#c79a44,#a97b2e);color:#fff;border-color:transparent;}
+header{background:linear-gradient(135deg,#fdf8ef,#f7efe0);border:1px solid #ecdfc6;border-radius:16px;padding:22px 24px;margin-bottom:18px;}
+header h1{margin:0 0 6px;font-size:26px;background:linear-gradient(135deg,#c79a44,#8f6420);-webkit-background-clip:text;background-clip:text;color:transparent;}
+header .sub{color:var(--sub);font-size:13px;}
+.section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px;}
+.section h2{margin:0 0 12px;font-size:17px;padding-left:10px;border-left:4px solid var(--gold);}
+.note{background:#fbf9f4;border:1px solid #efe6d4;border-radius:10px;padding:12px 14px;color:#5c5648;font-size:13px;margin-bottom:14px;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th,td{padding:8px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;}
+th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left;}
+thead th{background:#faf7f0;color:#7a5a1f;font-weight:600;position:sticky;top:0;}
+tbody tr:hover{background:#fdfaf3;}
+.up{color:var(--red);} .down{color:var(--green);} .muted{color:var(--sub);} .dim{color:#9aa3ad;}
+.badge{display:inline-block;min-width:20px;text-align:center;border-radius:6px;padding:1px 7px;font-size:12px;font-weight:700;color:#fff;}
+.bA{background:#b8332a;} .bB{background:#d98a26;} .bC{background:#7a8aa0;} .bD{background:#c2c7cd;}
+.tag{display:inline-block;font-size:11.5px;border-radius:6px;padding:1px 7px;margin-right:4px;}
+.tgrid{background:#eef4ec;color:#2f6b46;border:1px solid #d6e6da;}
+.tswing{background:#eef1f8;color:#3b4f86;border:1px solid #d9e0f0;}
+.tinst{background:#fbf3e3;color:#8a5d16;border:1px solid #efe0bf;}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fff;}
+.card .hd{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.card .nm{font-size:16px;font-weight:700;}
+.card .cd{color:var(--sub);font-size:12px;}
+.grid2{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 12px;margin:8px 0;}
+.kv{background:#fafbfc;border:1px solid #eef0f2;border-radius:8px;padding:6px 9px;}
+.kv .k{color:var(--sub);font-size:11.5px;}
+.kv .v{font-size:14px;font-weight:600;}
+.kv .k.tipk::after{content:"?";display:inline-block;margin-left:3px;font-size:9px;color:var(--gold);border:1px solid rgba(184,137,59,.5);border-radius:50%;width:11px;height:11px;line-height:10px;text-align:center;}
+.gtable{width:100%;font-size:12.5px;border-collapse:collapse;margin-top:6px;}
+.gtable th,.gtable td{padding:4px 6px;text-align:center;border-bottom:1px dashed #eceef0;}
+.gbuy{color:var(--green);font-weight:600;} .gsell{color:var(--red);font-weight:600;}
+.sig{font-size:12.5px;color:#4b5563;margin-top:6px;}
+.tip{cursor:help;border-bottom:1px dotted #c3cad3;}
+.kv.tipbox:hover{background:#fdf8ef;}
+footer{text-align:center;color:#9aa3ad;font-size:12px;margin-top:24px;}
+@media(max-width:760px){.cards{grid-template-columns:1fr;}.wrap{padding:18px 12px 44px;}table{font-size:12px;}}
+</style></head>
+<body><div class='wrap'>
+<div class='topnav'><a href='../market/index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='../market/hotmoney.html'>游资看板</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../research/index.html'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../picks/index.html'>信号池</a><a href='index.html'>做T池</a><a href='../sections/index.html'>版块总览</a><a href='../db/index.html'>数据中心</a><a href='../../index.html'>返回主页</a></div>
+<header>
+  <h1>做T池（可反复做T候选）</h1>
+  <div class='sub'>从「机构底仓池」中筛出<b>高波动 + 高流动性 + 区间震荡 + 有机构底仓支撑</b>的标的，
+  按顶级机构常用的<b>网格交易 / 均值回归 / 底仓+卫星仓 / 波动率套利</b>方法给出网格档位与波段买卖点。数据日期 <b>2026-09-10</b>。</div>
+</header>
+
+<div class='note'><b>今日结论：</b>入选 119 只（A 17 / B 36 / C 34，其中网格型 46 只）。
+做T前请先确认已有底仓（A股 T+1）；<b>单次做T亏损控制在总资金 0.5% 以内</b>，破箱体下沿即停。</div>
+
+<div class='section'><h2>做T榜单</h2>
+<table><thead><tr><th class='tip' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>分</th><th>名称</th><th>代码</th><th>行业</th><th class='tip' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>类型</th><th class='tip' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'>现价</th><th class='tip' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'>振幅%</th><th class='tip' title='近 14 日平均真实波幅占现价比例（%），衡量单日波动幅度。3%~8% 最适合做T；过高(&gt;10%)易单边、风险大。'>ATR%</th><th class='tip' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'>换手%</th><th class='tip' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'>箱体下~上</th><th class='tip' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'>箱位%</th><th class='tip' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'>MA20斜率</th><th class='tip' title='公募基金持有十大流通股比例（季度数据）。底仓越重，箱体下沿支撑越强，做T越安全。'>基金%</th><th class='tip' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>档</th></tr></thead><tbody><tr><td><b>88.7</b></td><td>中文在线</td><td class='muted'>sz300364</td><td>传媒</td><td>网格型</td><td>24.61 <span class='down' style='font-size:11px'>-1.95%</span></td><td>6.1</td><td>7.1</td><td>6.8</td><td>21.81~29.90</td><td>35</td><td>-0.02%</td><td>6.2</td><td><span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span></td></tr><tr><td><b>88.7</b></td><td>京基智农</td><td class='muted'>sz000048</td><td>农林牧渔</td><td>网格型</td><td>23.20 <span class='up' style='font-size:11px'>+10.00%</span></td><td>5.2</td><td>5.1</td><td>5.4</td><td>19.65~24.88</td><td>68</td><td>-0.60%</td><td>9.2</td><td><span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span></td></tr><tr><td><b>87.4</b></td><td>仕佳光子</td><td class='muted'>sh688313</td><td>通信</td><td>网格型</td><td>149.75 <span class='up' style='font-size:11px'>+1.22%</span></td><td>6.3</td><td>6.2</td><td>4.0</td><td>136.22~167.18</td><td>44</td><td>+2.47%</td><td>6.4</td><td><span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span></td></tr><tr><td><b>86.8</b></td><td>共达电声</td><td class='muted'>sz002655</td><td>电子</td><td>波段型</td><td>36.09 <span class='down' style='font-size:11px'>-2.46%</span></td><td>7.2</td><td>7.1</td><td>6.1</td><td>31.68~40.77</td><td>49</td><td>+4.59%</td><td>4.5</td><td><span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span></td></tr><tr><td><b>85.5</b></td><td>中曼石油</td><td class='muted'>sh603619</td><td>石油石化</td><td>网格型</td><td>24.14 <span class='down' style='font-size:11px'>-2.46%</span></td><td>5.2</td><td>5.2</td><td>10.1</td><td>21.56~25.71</td><td>62</td><td>+1.22%</td><td>1.2</td><td><span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span></td></tr><tr><td><b>85.3</b></td><td>新金路</td><td class='muted'>sz000510</td><td>基础化工</td><td>网格型</td><td>16.56 <span class='down' style='font-size:11px'>-4.39%</span></td><td>6.1</td><td>6.1</td><td>4.2</td><td>15.31~18.49</td><td>39</td><td>+0.08%</td><td>4.2</td><td><span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span></td></tr><tr><td><b>84.9</b></td><td>模塑科技</td><td class='muted'>sz000700</td><td>汽车</td><td>网格型</td><td>11.71 <span class='down' style='font-size:11px'>-3.70%</span></td><td>5.2</td><td>5.4</td><td>3.8</td><td>10.47~12.62</td><td>58</td><td>-0.21%</td><td>4.8</td><td><span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span></td></tr><tr><td><b>84.0</b></td><td>苏垦农发</td><td class='muted'>sh601952</td><td>农林牧渔</td><td>波段型</td><td>9.91 <span class='down' style='font-size:11px'>-3.60%</span></td><td>6.1</td><td>6.1</td><td>5.5</td><td>8.02~10.91</td><td>65</td><td>+4.85%</td><td>2.5</td><td><span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span></td></tr><tr><td><b>83.5</b></td><td>长光华芯</td><td class='muted'>sh688048</td><td>电子</td><td>网格型</td><td>305.96 <span class='down' style='font-size:11px'>-1.53%</span></td><td>6.8</td><td>6.3</td><td>4.5</td><td>268.00~339.99</td><td>53</td><td>+0.78%</td><td>5.3</td><td><span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span></td></tr><tr><td><b>83.4</b></td><td>海星股份</td><td class='muted'>sh603115</td><td>电子</td><td>网格型</td><td>86.23 <span class='up' style='font-size:11px'>+3.26%</span></td><td>7.9</td><td>7.7</td><td>6.0</td><td>71.31~90.88</td><td>76</td><td>+1.39%</td><td>4.9</td><td><span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span></td></tr><tr><td><b>82.4</b></td><td>聚辰股份</td><td class='muted'>sh688123</td><td>电子</td><td>网格型</td><td>132.77 <span class='down' style='font-size:11px'>-1.36%</span></td><td>6.4</td><td>6.8</td><td>3.5</td><td>124.00~154.00</td><td>29</td><td>+0.06%</td><td>7.2</td><td><span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span></td></tr><tr><td><b>81.9</b></td><td>协鑫能科</td><td class='muted'>sz002015</td><td>公用事业</td><td>波段型</td><td>17.18 <span class='up' style='font-size:11px'>+4.56%</span></td><td>5.1</td><td>6.1</td><td>8.8</td><td>13.76~17.86</td><td>83</td><td>+1.99%</td><td>6.7</td><td><span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span></td></tr><tr><td><b>81.5</b></td><td>新乡化纤</td><td class='muted'>sz000949</td><td>基础化工</td><td>网格型</td><td>6.84 <span class='down' style='font-size:11px'>-6.94%</span></td><td>4.7</td><td>4.9</td><td>3.5</td><td>6.22~8.18</td><td>32</td><td>+3.19%</td><td>2.5</td><td><span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span></td></tr><tr><td><b>80.8</b></td><td>长芯博创</td><td class='muted'>sz300548</td><td>通信</td><td>波段型</td><td>214.70 <span class='down' style='font-size:11px'>-0.23%</span></td><td>7.2</td><td>6.6</td><td>3.5</td><td>178.05~224.92</td><td>78</td><td>+4.21%</td><td>10.9</td><td><span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span></td></tr><tr><td><b>80.5</b></td><td>万泽股份</td><td class='muted'>sz000534</td><td>医药生物</td><td>网格型</td><td>24.94 <span class='down' style='font-size:11px'>-2.43%</span></td><td>5.7</td><td>5.6</td><td>4.5</td><td>22.38~30.06</td><td>33</td><td>-3.02%</td><td>2.9</td><td><span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span></td></tr><tr><td><b>80.3</b></td><td>众合科技</td><td class='muted'>sz000925</td><td>机械设备</td><td>网格型</td><td>8.16 <span class='down' style='font-size:11px'>-5.56%</span></td><td>5.6</td><td>6.9</td><td>6.8</td><td>7.63~9.57</td><td>27</td><td>+2.39%</td><td>1.6</td><td><span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span></td></tr><tr><td><b>80.1</b></td><td>新雷能</td><td class='muted'>sz300593</td><td>电力设备</td><td>波段型</td><td>33.34 <span class='up' style='font-size:11px'>+0.30%</span></td><td>7.0</td><td>7.1</td><td>2.7</td><td>28.30~35.08</td><td>74</td><td>+4.17%</td><td>7.3</td><td><span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span></td></tr><tr><td><b>78.9</b></td><td>科森科技</td><td class='muted'>sh603626</td><td>电子</td><td>波段型</td><td>19.11 <span class='down' style='font-size:11px'>-4.88%</span></td><td>6.9</td><td>7.9</td><td>7.0</td><td>15.25~21.69</td><td>60</td><td>+4.78%</td><td>7.4</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>78.4</b></td><td>星网锐捷</td><td class='muted'>sz002396</td><td>通信</td><td>波段型</td><td>35.99 <span class='up' style='font-size:11px'>+0.50%</span></td><td>7.6</td><td>7.5</td><td>8.9</td><td>29.40~41.95</td><td>53</td><td>+4.93%</td><td>2.8</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>78.4</b></td><td>杰普特</td><td class='muted'>sh688025</td><td>机械设备</td><td>网格型</td><td>407.97 <span class='up' style='font-size:11px'>+3.06%</span></td><td>6.7</td><td>6.6</td><td>2.6</td><td>357.04~427.36</td><td>72</td><td>+2.55%</td><td>2.6</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>77.9</b></td><td>北大荒</td><td class='muted'>sh600598</td><td>农林牧渔</td><td>网格型</td><td>13.45 <span class='down' style='font-size:11px'>-3.38%</span></td><td>6.0</td><td>5.8</td><td>2.9</td><td>11.76~14.59</td><td>60</td><td>+2.91%</td><td>2.4</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>77.8</b></td><td>江钨装备</td><td class='muted'>sh600397</td><td>机械设备</td><td>网格型</td><td>16.98 <span class='down' style='font-size:11px'>-3.90%</span></td><td>6.6</td><td>6.5</td><td>6.5</td><td>16.25~19.71</td><td>21</td><td>-0.97%</td><td>2.2</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>77.8</b></td><td>菲利华</td><td class='muted'>sz300395</td><td>国防军工</td><td>波段型</td><td>100.49 <span class='up' style='font-size:11px'>+2.13%</span></td><td>5.1</td><td>5.2</td><td>6.6</td><td>81.05~102.99</td><td>89</td><td>+1.37%</td><td>0.6</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>77.7</b></td><td>国恩股份</td><td class='muted'>sz002768</td><td>基础化工</td><td>网格型</td><td>61.86 <span class='up' style='font-size:11px'>+1.28%</span></td><td>5.4</td><td>5.3</td><td>2.5</td><td>57.87~67.60</td><td>41</td><td>+0.63%</td><td>1.7</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>77.6</b></td><td>科创新源</td><td class='muted'>sz300731</td><td>基础化工</td><td>波段型</td><td>47.86 <span class='down' style='font-size:11px'>-3.04%</span></td><td>7.3</td><td>7.1</td><td>3.5</td><td>36.04~50.88</td><td>80</td><td>+5.47%</td><td>6.3</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>77.2</b></td><td>顺络电子</td><td class='muted'>sz002138</td><td>电子</td><td>网格型</td><td>46.94 <span class='down' style='font-size:11px'>-1.86%</span></td><td>5.6</td><td>5.4</td><td>2.7</td><td>44.06~54.10</td><td>29</td><td>-1.05%</td><td>3.8</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>76.7</b></td><td>科泰电源</td><td class='muted'>sz300153</td><td>电力设备</td><td>波段型</td><td>25.40 <span class='down' style='font-size:11px'>-5.08%</span></td><td>5.6</td><td>5.2</td><td>6.2</td><td>20.34~27.12</td><td>75</td><td>+3.56%</td><td>1.0</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>76.6</b></td><td>福瑞医科</td><td class='muted'>sz300049</td><td>医药生物</td><td>波段型</td><td>45.31 <span class='up' style='font-size:11px'>+4.40%</span></td><td>5.5</td><td>5.2</td><td>4.0</td><td>37.49~46.70</td><td>85</td><td>-0.77%</td><td>6.2</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>76.0</b></td><td>禾盛新材</td><td class='muted'>sz002290</td><td>家用电器</td><td>网格型</td><td>65.55 <span class='down' style='font-size:11px'>-2.79%</span></td><td>5.9</td><td>5.2</td><td>2.3</td><td>59.56~70.98</td><td>52</td><td>+2.04%</td><td>4.7</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>75.9</b></td><td>颀中科技</td><td class='muted'>sh688352</td><td>电子</td><td>网格型</td><td>17.26 <span class='down' style='font-size:11px'>-2.49%</span></td><td>6.4</td><td>6.7</td><td>4.1</td><td>16.25~20.45</td><td>24</td><td>-0.80%</td><td>1.2</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>75.8</b></td><td>首都在线</td><td class='muted'>sz300846</td><td>计算机</td><td>网格型</td><td>19.71 <span class='up' style='font-size:11px'>+3.90%</span></td><td>4.8</td><td>4.3</td><td>9.5</td><td>17.87~21.77</td><td>47</td><td>-2.09%</td><td>1.6</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>75.8</b></td><td>南亚新材</td><td class='muted'>sh688519</td><td>电子</td><td>网格型</td><td>309.59 <span class='up' style='font-size:11px'>+6.15%</span></td><td>7.8</td><td>7.6</td><td>2.8</td><td>262.74~323.99</td><td>76</td><td>-0.52%</td><td>6.6</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>75.7</b></td><td>国机精工</td><td class='muted'>sz002046</td><td>机械设备</td><td>波段型</td><td>59.04 <span class='down' style='font-size:11px'>-0.67%</span></td><td>6.3</td><td>5.4</td><td>4.4</td><td>45.61~60.89</td><td>88</td><td>+4.05%</td><td>1.1</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>75.6</b></td><td>金能科技</td><td class='muted'>sh603113</td><td>基础化工</td><td>波段型</td><td>5.28 <span class='down' style='font-size:11px'>-5.71%</span></td><td>6.3</td><td>6.9</td><td>5.6</td><td>4.50~6.38</td><td>41</td><td>+4.34%</td><td>11.7</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>75.6</b></td><td>斯菱智驱</td><td class='muted'>sz301550</td><td>汽车</td><td>网格型</td><td>92.90 <span class='down' style='font-size:11px'>-3.08%</span></td><td>7.3</td><td>6.8</td><td>2.5</td><td>73.89~101.98</td><td>68</td><td>+2.99%</td><td>6.3</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>75.5</b></td><td>赛意信息</td><td class='muted'>sz300687</td><td>计算机</td><td>网格型</td><td>27.70 <span class='down' style='font-size:11px'>-0.82%</span></td><td>5.3</td><td>4.9</td><td>2.5</td><td>24.94~31.06</td><td>45</td><td>+0.43%</td><td>1.8</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>75.5</b></td><td>炬光科技</td><td class='muted'>sh688167</td><td>电子</td><td>波段型</td><td>315.00 <span class='up' style='font-size:11px'>+4.12%</span></td><td>7.6</td><td>7.2</td><td>8.3</td><td>250.59~322.24</td><td>90</td><td>+7.60%</td><td>8.0</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>74.9</b></td><td>康龙化成</td><td class='muted'>sz300759</td><td>医药生物</td><td>波段型</td><td>41.55 <span class='down' style='font-size:11px'>-0.34%</span></td><td>5.0</td><td>4.9</td><td>2.7</td><td>40.53~53.57</td><td>8</td><td>-3.13%</td><td>7.6</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>74.8</b></td><td>闰土股份</td><td class='muted'>sz002440</td><td>基础化工</td><td>波段型</td><td>12.28 <span class='down' style='font-size:11px'>-3.23%</span></td><td>5.6</td><td>6.2</td><td>3.5</td><td>11.73~14.80</td><td>18</td><td>-0.94%</td><td>0.0</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>74.6</b></td><td>万凯新材</td><td class='muted'>sz301216</td><td>基础化工</td><td>波段型</td><td>17.90 <span class='down' style='font-size:11px'>-7.97%</span></td><td>6.0</td><td>7.8</td><td>7.0</td><td>16.12~21.21</td><td>35</td><td>+3.81%</td><td>5.2</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>74.5</b></td><td>蔚蓝锂芯</td><td class='muted'>sz002245</td><td>电力设备</td><td>网格型</td><td>17.97 <span class='up' style='font-size:11px'>+0.96%</span></td><td>4.6</td><td>4.5</td><td>2.1</td><td>16.70~20.25</td><td>36</td><td>-0.17%</td><td>6.5</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>74.4</b></td><td>彤程新材</td><td class='muted'>sh603650</td><td>基础化工</td><td>网格型</td><td>64.51 <span class='down' style='font-size:11px'>-1.09%</span></td><td>4.9</td><td>4.4</td><td>4.1</td><td>56.72~72.96</td><td>48</td><td>-1.38%</td><td>0.4</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>74.2</b></td><td>雅克科技</td><td class='muted'>sz002409</td><td>电子</td><td>波段型</td><td>133.48 <span class='up' style='font-size:11px'>+1.49%</span></td><td>4.9</td><td>5.2</td><td>6.2</td><td>125.27~163.19</td><td>22</td><td>-3.61%</td><td>1.1</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>73.5</b></td><td>海目星</td><td class='muted'>sh688559</td><td>机械设备</td><td>波段型</td><td>59.60 <span class='up' style='font-size:11px'>+0.97%</span></td><td>6.7</td><td>6.3</td><td>6.0</td><td>47.83~61.50</td><td>86</td><td>+3.66%</td><td>0.0</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>73.3</b></td><td>鸿合科技</td><td class='muted'>sz002955</td><td>电子</td><td>网格型</td><td>37.19 <span class='down' style='font-size:11px'>-4.98%</span></td><td>5.5</td><td>5.5</td><td>2.6</td><td>32.69~41.61</td><td>50</td><td>+2.38%</td><td>6.6</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>73.1</b></td><td>京仪装备</td><td class='muted'>sh688652</td><td>电子</td><td>波段型</td><td>129.00 <span class='down' style='font-size:11px'>-0.23%</span></td><td>5.8</td><td>6.2</td><td>2.5</td><td>124.20~166.00</td><td>11</td><td>-4.10%</td><td>10.3</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>72.6</b></td><td>铭普光磁</td><td class='muted'>sz002902</td><td>通信</td><td>波段型</td><td>28.05 <span class='up' style='font-size:11px'>+4.20%</span></td><td>5.4</td><td>5.3</td><td>16.8</td><td>23.32~28.82</td><td>86</td><td>+2.14%</td><td>5.0</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>72.4</b></td><td>中粮糖业</td><td class='muted'>sh600737</td><td>农林牧渔</td><td>波段型</td><td>17.82 <span class='down' style='font-size:11px'>-10.00%</span></td><td>7.2</td><td>7.0</td><td>9.3</td><td>12.63~19.89</td><td>71</td><td>+7.42%</td><td>5.6</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>72.2</b></td><td>君正股份</td><td class='muted'>sz300223</td><td>电子</td><td>波段型</td><td>132.45 <span class='up' style='font-size:11px'>+0.36%</span></td><td>4.6</td><td>4.7</td><td>3.4</td><td>126.00~161.55</td><td>18</td><td>-1.41%</td><td>4.5</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>71.6</b></td><td>剑桥科技</td><td class='muted'>sh603083</td><td>通信</td><td>波段型</td><td>234.43 <span class='up' style='font-size:11px'>+7.05%</span></td><td>6.6</td><td>6.0</td><td>11.8</td><td>165.01~237.87</td><td>95</td><td>+8.13%</td><td>6.3</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>71.2</b></td><td>恒宝股份</td><td class='muted'>sz002104</td><td>通信</td><td>波段型</td><td>12.36 <span class='down' style='font-size:11px'>-4.04%</span></td><td>6.6</td><td>7.6</td><td>11.8</td><td>9.40~14.73</td><td>56</td><td>+5.44%</td><td>3.4</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>70.5</b></td><td>江山股份</td><td class='muted'>sh600389</td><td>基础化工</td><td>波段型</td><td>19.54 <span class='down' style='font-size:11px'>-2.59%</span></td><td>4.1</td><td>4.2</td><td>3.9</td><td>18.11~20.49</td><td>60</td><td>-0.72%</td><td>6.6</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>70.2</b></td><td>南华期货</td><td class='muted'>sh603093</td><td>非银金融</td><td>网格型</td><td>13.57 <span class='up' style='font-size:11px'>+1.80%</span></td><td>4.9</td><td>5.2</td><td>4.2</td><td>11.06~14.31</td><td>77</td><td>+2.01%</td><td>0.2</td><td><span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span></td></tr><tr><td><b>69.8</b></td><td>光韵达</td><td class='muted'>sz300227</td><td>机械设备</td><td>波段型</td><td>13.86 <span class='down' style='font-size:11px'>-3.28%</span></td><td>4.9</td><td>4.6</td><td>4.9</td><td>11.20~14.68</td><td>76</td><td>+4.33%</td><td>0.0</td><td><span class='badge bC' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>C</span></td></tr><tr><td><b>69.3</b></td><td>百洋股份</td><td class='muted'>sz002696</td><td>农林牧渔</td><td>波段型</td><td>7.19 <span class='down' style='font-size:11px'>-7.35%</span></td><td>7.1</td><td>7.4</td><td>15.0</td><td>5.85~8.14</td><td>59</td><td>+5.20%</td><td>12.9</td><td><span class='badge bC' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>C</span></td></tr><tr><td><b>69.2</b></td><td>奥来德</td><td class='muted'>sh688378</td><td>电子</td><td>网格型</td><td>44.19 <span class='up' style='font-size:11px'>+0.66%</span></td><td>6.7</td><td>6.1</td><td>3.5</td><td>40.23~50.67</td><td>38</td><td>+1.26%</td><td>0.0</td><td><span class='badge bC' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>C</span></td></tr><tr><td><b>69.1</b></td><td>国科军工</td><td class='muted'>sh688543</td><td>国防军工</td><td>网格型</td><td>44.63 <span class='down' style='font-size:11px'>-1.89%</span></td><td>4.5</td><td>4.7</td><td>3.5</td><td>37.25~46.96</td><td>76</td><td>+2.39%</td><td>3.7</td><td><span class='badge bC' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>C</span></td></tr><tr><td><b>68.9</b></td><td>诺 普 信</td><td class='muted'>sz002215</td><td>农林牧渔</td><td>波段型</td><td>10.48 <span class='down' style='font-size:11px'>-3.14%</span></td><td>4.2</td><td>4.3</td><td>4.0</td><td>8.80~11.15</td><td>71</td><td>+4.03%</td><td>3.1</td><td><span class='badge bC' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>C</span></td></tr><tr><td><b>68.0</b></td><td>诺思格</td><td class='muted'>sz301333</td><td>医药生物</td><td>网格型</td><td>59.84 <span class='down' style='font-size:11px'>-1.60%</span></td><td>5.8</td><td>5.4</td><td>3.3</td><td>50.37~64.50</td><td>67</td><td>-1.03%</td><td>1.7</td><td><span class='badge bC' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>C</span></td></tr><tr><td><b>67.6</b></td><td>日科化学</td><td class='muted'>sz300214</td><td>基础化工</td><td>波段型</td><td>10.34 <span class='down' style='font-size:11px'>-8.98%</span></td><td>7.6</td><td>7.6</td><td>7.6</td><td>10.28~13.33</td><td>2</td><td>-2.75%</td><td>8.9</td><td><span class='badge bC' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>C</span></td></tr></tbody></table></div>
+
+<div class='section'><h2>逐只操作手册（A/B 档 · 前 45 只）</h2>
+<div class='note'>每只给出网格 5 档价位与动作、波段买卖区与止损、仓位建议。表格中数字均可悬浮查看口径。</div>
+<div class='cards'>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>中文在线</span>
+      <span class='cd'>sz300364 · 传媒</span>
+      <span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>88.7</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×1</span><span class='tag tinst'>基金持股 6.2%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 6.1%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>MA20 走平</span><span class='tag tinst'>RSI 55</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>24.61 <span class='down' style='font-size:11px'>-1.95%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>6.1% / 7.1%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>6.8% / 0.44</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>21.81 ~ 29.90 <span class='dim'>(37%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>35% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>-0.02%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 40% + 滚动 30%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>21.81</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>23.83</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>25.85</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>27.88</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>29.90</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 24.52~25.01｜卖区 29.30~29.90｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 20.83</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 28.9 · 流动性 20.0 · 区间结构 24.6 · 机构底仓 9.4 · 稳定性 5.8 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 20.83 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>京基智农</span>
+      <span class='cd'>sz000048 · 农林牧渔</span>
+      <span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>88.7</b></span>
+    </div>
+    <div><span class='tag tinst'>基金持股 9.2%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 5.2%</span><span class='tag tinst'>MA20 走平</span><span class='tag tinst'>RSI 56</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>23.20 <span class='up' style='font-size:11px'>+10.00%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>5.2% / 5.1%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>5.4% / 1.99</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>19.65 ~ 24.88 <span class='dim'>(27%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>68% · 贴上沿·高抛区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>-0.60%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 40% + 滚动 30%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>19.65</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>20.96</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>22.27</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>23.57</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>24.88</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 22.59~23.04｜卖区 24.38~24.88｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 18.77</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 17.1 · 区间结构 25.0 · 机构底仓 10.0 · 稳定性 6.6 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 18.77 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>仕佳光子</span>
+      <span class='cd'>sh688313 · 通信</span>
+      <span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>87.4</b></span>
+    </div>
+    <div><span class='tag tinst'>基金持股 6.4%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 6.3%</span><span class='tag tinst'>RSI 43</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>149.75 <span class='up' style='font-size:11px'>+1.22%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>6.3% / 6.2%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>4.0% / 1.06</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>136.22 ~ 167.18 <span class='dim'>(23%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>44% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+2.47%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 40% + 滚动 30%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>136.22</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>143.96</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>151.70</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>159.44</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>167.18</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 136.22~138.94｜卖区 163.84~167.18｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 130.09</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 18.0 · 区间结构 23.9 · 机构底仓 6.8 · 稳定性 8.7 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 130.09 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>共达电声</span>
+      <span class='cd'>sz002655 · 电子</span>
+      <span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>86.8</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 4.5%</span><span class='tag tswing' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>波段型</span><span class='tag tinst'>高振幅 7.2%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>RSI 45</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>36.09 <span class='down' style='font-size:11px'>-2.46%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>7.2% / 7.1%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>6.1% / 0.80</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>31.68 ~ 40.77 <span class='dim'>(29%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>49% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+4.59%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 40% + 滚动 30%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>31.68</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>33.95</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>36.23</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>38.50</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>40.77</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 31.68~32.31｜卖区 39.95~40.77｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 30.25</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 28.5 · 流动性 20.0 · 区间结构 21.6 · 机构底仓 7.9 · 稳定性 8.8 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 30.25 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>中曼石油</span>
+      <span class='cd'>sh603619 · 石油石化</span>
+      <span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>85.5</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 1.2%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 5.2%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>MA20 走平</span><span class='tag tinst'>RSI 54</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>24.14 <span class='down' style='font-size:11px'>-2.46%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>5.2% / 5.2%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>10.1% / 1.36</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>21.56 ~ 25.71 <span class='dim'>(19%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>62% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+1.22%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 40% + 滚动 30%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>21.56</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>22.60</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>23.63</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>24.67</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>25.71</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 23.32~23.79｜卖区 25.20~25.71｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 20.59</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 20.0 · 区间结构 25.0 · 机构底仓 1.5 · 稳定性 9.0 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 20.59 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>新金路</span>
+      <span class='cd'>sz000510 · 基础化工</span>
+      <span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>85.3</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 4.2%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 6.1%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>MA20 走平</span><span class='tag tinst'>RSI 49</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>16.56 <span class='down' style='font-size:11px'>-4.39%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>6.1% / 6.1%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>4.2% / 0.59</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>15.31 ~ 18.49 <span class='dim'>(21%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>39% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+0.08%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 40% + 滚动 30%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>15.31</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>16.11</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>16.90</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>17.70</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>18.49</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 15.31~15.62｜卖区 18.12~18.49｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 14.62</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 18.9 · 区间结构 25.0 · 机构底仓 7.4 · 稳定性 10.0 · 风险 -6.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -6.0</span></div>
+    <div class='sig'>⚠ 跌破 MA60</div>
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 14.62 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>模塑科技</span>
+      <span class='cd'>sz000700 · 汽车</span>
+      <span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>84.9</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 4.8%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 5.2%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>MA20 走平</span><span class='tag tinst'>RSI 59</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>11.71 <span class='down' style='font-size:11px'>-3.70%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>5.2% / 5.4%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>3.8% / 0.61</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>10.47 ~ 12.62 <span class='dim'>(21%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>58% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>-0.21%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 40% + 滚动 30%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>10.47</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>11.01</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>11.54</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>12.08</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>12.62</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 11.46~11.69｜卖区 12.37~12.62｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 10.00</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 17.3 · 区间结构 25.0 · 机构底仓 8.6 · 稳定性 10.0 · 风险 -6.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -6.0</span></div>
+    <div class='sig'>⚠ 跌破 MA60</div>
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 10.00 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>苏垦农发</span>
+      <span class='cd'>sh601952 · 农林牧渔</span>
+      <span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>84.0</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 2.5%</span><span class='tag tswing' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>波段型</span><span class='tag tinst'>高振幅 6.1%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>RSI 65</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>9.91 <span class='down' style='font-size:11px'>-3.60%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>6.1% / 6.1%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>5.5% / 1.57</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>8.02 ~ 10.91 <span class='dim'>(36%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>65% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+4.85%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 40% + 滚动 30%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>8.02</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>8.74</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>9.46</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>10.19</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>10.91</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 9.22~9.40｜卖区 10.69~10.91｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 7.66</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 20.0 · 区间结构 21.3 · 机构底仓 4.0 · 稳定性 8.7 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 7.66 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>长光华芯</span>
+      <span class='cd'>sh688048 · 电子</span>
+      <span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>83.5</b></span>
+    </div>
+    <div><span class='tag tinst'>基金持股 5.3%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 6.8%</span><span class='tag tinst'>MA20 走平</span><span class='tag tinst'>RSI 49</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>305.96 <span class='down' style='font-size:11px'>-1.53%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>6.8% / 6.3%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>4.5% / 0.75</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>268.00 ~ 339.99 <span class='dim'>(27%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>53% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+0.78%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 40% + 滚动 30%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>268.00</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>286.00</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>304.00</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>321.99</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>339.99</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 299.30~305.28｜卖区 333.19~339.99｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 255.94</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 20.0 · 区间结构 25.0 · 机构底仓 4.5 · 稳定性 10.0 · 风险 -6.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -6.0</span></div>
+    <div class='sig'>⚠ 跌破 MA60</div>
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 255.94 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>海星股份</span>
+      <span class='cd'>sh603115 · 电子</span>
+      <span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>83.4</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 4.9%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 7.9%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>MA20 走平</span><span class='tag tinst'>RSI 60</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>86.23 <span class='up' style='font-size:11px'>+3.26%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>7.9% / 7.7%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>6.0% / 1.13</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>71.31 ~ 90.88 <span class='dim'>(27%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>76% · 贴上沿·高抛区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+1.39%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 40% + 滚动 30%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>71.31</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>76.20</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>81.09</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>85.99</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>90.88</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 79.33~80.92｜卖区 89.06~90.88｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 68.10</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 22.6 · 流动性 20.0 · 区间结构 22.1 · 机构底仓 8.8 · 稳定性 10.0 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 68.10 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>聚辰股份</span>
+      <span class='cd'>sh688123 · 电子</span>
+      <span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>82.4</b></span>
+    </div>
+    <div><span class='tag tinst'>基金持股 7.2%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 6.4%</span><span class='tag tinst'>MA20 走平</span><span class='tag tinst'>RSI 46</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>132.77 <span class='down' style='font-size:11px'>-1.36%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>6.4% / 6.8%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>3.5% / 0.77</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>124.00 ~ 154.00 <span class='dim'>(24%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>29% · 贴下沿·低吸区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+0.06%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 40% + 滚动 30%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>124.00</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>131.50</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>139.00</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>146.50</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>154.00</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 124.00~126.48｜卖区 150.92~154.00｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 118.42</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 15.9 · 区间结构 24.0 · 机构底仓 8.5 · 稳定性 10.0 · 风险 -6.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -6.0</span></div>
+    <div class='sig'>⚠ 跌破 MA60</div>
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 118.42 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>协鑫能科</span>
+      <span class='cd'>sz002015 · 公用事业</span>
+      <span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>81.9</b></span>
+    </div>
+    <div><span class='tag tinst'>基金持股 6.7%</span><span class='tag tswing' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>波段型</span><span class='tag tinst'>高振幅 5.1%</span><span class='tag tinst'>RSI 69</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>17.18 <span class='up' style='font-size:11px'>+4.56%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>5.1% / 6.1%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>8.8% / 1.24</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>13.76 ~ 17.86 <span class='dim'>(30%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>83% · 贴上沿·高抛区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+1.99%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 40% + 滚动 30%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>13.76</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>14.79</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>15.81</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>16.84</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>17.86</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 16.06~16.39｜卖区 17.50~17.86｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 13.14</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 20.0 · 区间结构 18.9 · 机构底仓 7.4 · 稳定性 5.5 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 13.14 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>新乡化纤</span>
+      <span class='cd'>sz000949 · 基础化工</span>
+      <span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>81.5</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 2.5%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 4.7%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>RSI 48</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>6.84 <span class='down' style='font-size:11px'>-6.94%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>4.7% / 4.9%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>3.5% / 1.10</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>6.22 ~ 8.18 <span class='dim'>(32%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>32% · 贴下沿·低吸区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+3.19%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 40% + 滚动 30%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>6.22</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>6.71</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>7.20</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>7.69</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>8.18</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 6.22~6.34｜卖区 8.02~8.18｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 5.94</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 28.6 · 流动性 15.9 · 区间结构 23.0 · 机构底仓 4.0 · 稳定性 10.0 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 5.94 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>长芯博创</span>
+      <span class='cd'>sz300548 · 通信</span>
+      <span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>80.8</b></span>
+    </div>
+    <div><span class='tag tinst'>基金持股 10.9%</span><span class='tag tswing' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>波段型</span><span class='tag tinst'>高振幅 7.2%</span><span class='tag tinst'>公募重仓 11%</span><span class='tag tinst'>RSI 61</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>214.70 <span class='down' style='font-size:11px'>-0.23%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>7.2% / 6.6%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>3.5% / 0.76</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>178.05 ~ 224.92 <span class='dim'>(26%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>78% · 贴上沿·高抛区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+4.21%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 40% + 滚动 30%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>178.05</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>189.77</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>201.49</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>213.20</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>224.92</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 205.40~209.51｜卖区 220.42~224.92｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 170.04</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 28.0 · 流动性 16.1 · 区间结构 18.3 · 机构底仓 10.0 · 稳定性 8.4 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 170.04 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>万泽股份</span>
+      <span class='cd'>sz000534 · 医药生物</span>
+      <span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>80.5</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×3</span><span class='tag tinst'>基金持股 2.9%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 5.7%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>RSI 41</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>24.94 <span class='down' style='font-size:11px'>-2.43%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>5.7% / 5.6%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>4.5% / 0.99</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>22.38 ~ 30.06 <span class='dim'>(34%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>33% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>-3.02%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 40% + 滚动 30%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>22.38</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>24.30</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>26.22</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>28.14</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>30.06</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 22.38~22.83｜卖区 29.46~30.06｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 21.37</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 19.9 · 区间结构 23.3 · 机构底仓 4.9 · 稳定性 8.5 · 风险 -6.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -6.0</span></div>
+    <div class='sig'>⚠ 跌破 MA60</div>
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 21.37 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>众合科技</span>
+      <span class='cd'>sz000925 · 机械设备</span>
+      <span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>80.3</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 1.6%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 5.6%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>RSI 50</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>8.16 <span class='down' style='font-size:11px'>-5.56%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>5.6% / 6.9%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>6.8% / 1.19</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>7.63 ~ 9.57 <span class='dim'>(25%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>27% · 贴下沿·低吸区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+2.39%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 40% + 滚动 30%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>7.63</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>8.12</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>8.60</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>9.09</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>9.57</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 7.63~7.78｜卖区 9.38~9.57｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 7.29</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 19.9 · 区间结构 22.3 · 机构底仓 2.3 · 稳定性 5.8 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 7.29 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>新雷能</span>
+      <span class='cd'>sz300593 · 电力设备</span>
+      <span class='badge bA' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>A</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>80.1</b></span>
+    </div>
+    <div><span class='tag tinst'>基金持股 7.3%</span><span class='tag tswing' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>波段型</span><span class='tag tinst'>高振幅 7.0%</span><span class='tag tinst'>RSI 57</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>33.34 <span class='up' style='font-size:11px'>+0.30%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>7.0% / 7.1%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>2.7% / 0.47</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>28.30 ~ 35.08 <span class='dim'>(24%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>74% · 贴上沿·高抛区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+4.17%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 40% + 滚动 30%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>28.30</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>30.00</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>31.69</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>33.38</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>35.08</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 31.39~32.02｜卖区 34.38~35.08｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 27.03</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 28.8 · 流动性 12.8 · 区间结构 19.8 · 机构底仓 8.7 · 稳定性 10.0 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 27.03 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>科森科技</span>
+      <span class='cd'>sh603626 · 电子</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>78.9</b></span>
+    </div>
+    <div><span class='tag tinst'>基金持股 7.4%</span><span class='tag tswing' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>波段型</span><span class='tag tinst'>高振幅 6.9%</span><span class='tag tinst'>RSI 52</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>19.11 <span class='down' style='font-size:11px'>-4.88%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>6.9% / 7.9%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>7.0% / 0.79</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>15.25 ~ 21.69 <span class='dim'>(42%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>60% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+4.78%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>15.25</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>16.86</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>18.47</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>20.08</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>21.69</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 18.91~19.29｜卖区 21.26~21.69｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 14.56</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 22.1 · 流动性 20.0 · 区间结构 19.2 · 机构底仓 8.8 · 稳定性 8.8 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 14.56 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>星网锐捷</span>
+      <span class='cd'>sz002396 · 通信</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>78.4</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×5</span><span class='tag tinst'>基金持股 2.8%</span><span class='tag tswing' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>波段型</span><span class='tag tinst'>高振幅 7.6%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>RSI 57</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>35.99 <span class='up' style='font-size:11px'>+0.50%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>7.6% / 7.5%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>8.9% / 0.64</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>29.40 ~ 41.95 <span class='dim'>(43%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>53% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+4.93%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>29.40</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>32.54</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>35.67</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>38.81</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>41.95</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 34.96~35.66｜卖区 41.11~41.95｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 28.08</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 24.9 · 流动性 20.0 · 区间结构 18.9 · 机构底仓 4.6 · 稳定性 10.0 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 28.08 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>杰普特</span>
+      <span class='cd'>sh688025 · 机械设备</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>78.4</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 2.6%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 6.7%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>RSI 49</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>407.97 <span class='up' style='font-size:11px'>+3.06%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>6.7% / 6.6%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>2.6% / 0.87</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>357.04 ~ 427.36 <span class='dim'>(20%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>72% · 贴上沿·高抛区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+2.55%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>357.04</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>374.62</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>392.20</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>409.78</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>427.36</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 399.10~407.08｜卖区 418.81~427.36｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 340.97</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 12.5 · 区间结构 22.3 · 机构底仓 4.1 · 稳定性 9.5 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 340.97 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>北大荒</span>
+      <span class='cd'>sh600598 · 农林牧渔</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>77.9</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×4</span><span class='tag tinst'>基金持股 2.4%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 6.0%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>RSI 58</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>13.45 <span class='down' style='font-size:11px'>-3.38%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>6.0% / 5.8%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>2.9% / 0.71</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>11.76 ~ 14.59 <span class='dim'>(24%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>60% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+2.91%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>11.76</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>12.47</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>13.18</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>13.88</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>14.59</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 13.16~13.42｜卖区 14.30~14.59｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 11.23</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 13.4 · 区间结构 23.4 · 机构底仓 3.7 · 稳定性 7.3 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 11.23 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>江钨装备</span>
+      <span class='cd'>sh600397 · 机械设备</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>77.8</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 2.2%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 6.6%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>MA20 走平</span><span class='tag tinst'>RSI 43</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>16.98 <span class='down' style='font-size:11px'>-3.90%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>6.6% / 6.5%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>6.5% / 0.75</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>16.25 ~ 19.71 <span class='dim'>(21%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>21% · 贴下沿·低吸区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>-0.97%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>16.25</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>17.12</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>17.98</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>18.84</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>19.71</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 16.25~16.57｜卖区 19.32~19.71｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 15.52</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 20.0 · 区间结构 21.1 · 机构底仓 3.4 · 稳定性 9.3 · 风险 -6.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -6.0</span></div>
+    <div class='sig'>⚠ 跌破 MA60</div>
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 15.52 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>菲利华</span>
+      <span class='cd'>sz300395 · 国防军工</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>77.8</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 0.6%</span><span class='tag tswing' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>波段型</span><span class='tag tinst'>高振幅 5.1%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>MA20 走平</span><span class='tag tinst'>RSI 68</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>100.49 <span class='up' style='font-size:11px'>+2.13%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>5.1% / 5.2%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>6.6% / 1.52</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>81.05 ~ 102.99 <span class='dim'>(27%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>89% · 贴上沿·高抛区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+1.37%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>81.05</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>86.53</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>92.02</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>97.50</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>102.99</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 91.75~93.59｜卖区 100.93~102.99｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 77.40</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 20.0 · 区间结构 17.6 · 机构底仓 0.2 · 稳定性 10.0 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 77.40 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>国恩股份</span>
+      <span class='cd'>sz002768 · 基础化工</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>77.7</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 1.7%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 5.4%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>MA20 走平</span><span class='tag tinst'>RSI 42</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>61.86 <span class='up' style='font-size:11px'>+1.28%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>5.4% / 5.3%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>2.5% / 1.17</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>57.87 ~ 67.60 <span class='dim'>(17%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>41% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+0.63%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>57.87</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>60.30</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>62.73</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>65.17</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>67.60</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 57.87~59.03｜卖区 66.25~67.60｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 55.27</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 12.0 · 区间结构 23.7 · 机构底仓 2.3 · 稳定性 9.6 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 55.27 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>科创新源</span>
+      <span class='cd'>sz300731 · 基础化工</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>77.6</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 6.3%</span><span class='tag tswing' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>波段型</span><span class='tag tinst'>高振幅 7.3%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>RSI 66</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>47.86 <span class='down' style='font-size:11px'>-3.04%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>7.3% / 7.1%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>3.5% / 0.55</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>36.04 ~ 50.88 <span class='dim'>(41%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>80% · 贴上沿·高抛区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+5.47%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>36.04</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>39.75</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>43.46</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>47.17</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>50.88</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 43.47~44.34｜卖区 49.86~50.88｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 34.42</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 27.2 · 流动性 15.9 · 区间结构 14.6 · 机构底仓 11.6 · 稳定性 8.2 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 34.42 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>顺络电子</span>
+      <span class='cd'>sz002138 · 电子</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>77.2</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×4</span><span class='tag tinst'>基金持股 3.8%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 5.6%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>MA20 走平</span><span class='tag tinst'>RSI 42</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>46.94 <span class='down' style='font-size:11px'>-1.86%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>5.6% / 5.4%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>2.7% / 0.80</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>44.06 ~ 54.10 <span class='dim'>(23%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>29% · 贴下沿·低吸区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>-1.05%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>44.06</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>46.57</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>49.08</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>51.59</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>54.10</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 44.06~44.94｜卖区 53.02~54.10｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 42.08</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 12.9 · 区间结构 23.8 · 机构底仓 6.5 · 稳定性 10.0 · 风险 -6.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -6.0</span></div>
+    <div class='sig'>⚠ 跌破 MA60</div>
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 42.08 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>科泰电源</span>
+      <span class='cd'>sz300153 · 电力设备</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>76.7</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 1.0%</span><span class='tag tswing' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>波段型</span><span class='tag tinst'>高振幅 5.6%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>RSI 69</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>25.40 <span class='down' style='font-size:11px'>-5.08%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>5.6% / 5.2%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>6.2% / 0.84</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>20.34 ~ 27.12 <span class='dim'>(33%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>75% · 贴上沿·高抛区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+3.56%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>20.34</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>22.04</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>23.73</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>25.43</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>27.12</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 22.90~23.35｜卖区 26.58~27.12｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 19.42</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 16.6 · 区间结构 20.3 · 机构底仓 1.1 · 稳定性 8.7 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 19.42 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>福瑞医科</span>
+      <span class='cd'>sz300049 · 医药生物</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>76.6</b></span>
+    </div>
+    <div><span class='tag tinst'>基金持股 6.2%</span><span class='tag tswing' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>波段型</span><span class='tag tinst'>高振幅 5.5%</span><span class='tag tinst'>MA20 走平</span><span class='tag tinst'>RSI 58</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>45.31 <span class='up' style='font-size:11px'>+4.40%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>5.5% / 5.2%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>4.0% / 1.06</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>37.49 ~ 46.70 <span class='dim'>(25%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>85% · 贴上沿·高抛区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>-0.77%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>37.49</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>39.79</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>42.09</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>44.40</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>46.70</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 42.46~43.31｜卖区 45.77~46.70｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 35.80</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 16.7 · 区间结构 19.0 · 机构底仓 6.5 · 稳定性 4.5 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 35.80 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>禾盛新材</span>
+      <span class='cd'>sz002290 · 家用电器</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>76.0</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 4.7%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 5.9%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>RSI 54</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>65.55 <span class='down' style='font-size:11px'>-2.79%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>5.9% / 5.2%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>2.3% / 0.77</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>59.56 ~ 70.98 <span class='dim'>(19%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>52% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+2.04%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>59.56</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>62.42</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>65.27</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>68.12</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>70.98</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 64.59~65.88｜卖区 69.56~70.98｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 56.88</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 11.3 · 区间结构 24.4 · 机构底仓 8.4 · 稳定性 7.9 · 风险 -6.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -6.0</span></div>
+    <div class='sig'>⚠ 跌破 MA60</div>
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 56.88 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>颀中科技</span>
+      <span class='cd'>sh688352 · 电子</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>75.9</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 1.2%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 6.4%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>MA20 走平</span><span class='tag tinst'>RSI 41</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>17.26 <span class='down' style='font-size:11px'>-2.49%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>6.4% / 6.7%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>4.1% / 0.65</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>16.25 ~ 20.45 <span class='dim'>(26%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>24% · 贴下沿·低吸区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>-0.80%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>16.25</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>17.30</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>18.35</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>19.40</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>20.45</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 16.25~16.57｜卖区 20.04~20.45｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 15.52</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 18.6 · 区间结构 22.2 · 机构底仓 1.4 · 稳定性 9.7 · 风险 -6.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -6.0</span></div>
+    <div class='sig'>⚠ 跌破 MA60</div>
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 15.52 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>首都在线</span>
+      <span class='cd'>sz300846 · 计算机</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>75.8</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 1.6%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 4.8%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>RSI 53</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>19.71 <span class='up' style='font-size:11px'>+3.90%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>4.8% / 4.3%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>9.5% / 2.12</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>17.87 ~ 21.77 <span class='dim'>(22%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>47% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>-2.09%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>17.87</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>18.84</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>19.82</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>20.80</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>21.77</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 19.43~19.81｜卖区 21.33~21.77｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 17.07</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 27.0 · 流动性 20.0 · 区间结构 24.3 · 机构底仓 2.3 · 稳定性 8.2 · 风险 -6.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -6.0</span></div>
+    <div class='sig'>⚠ 跌破 MA60</div>
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 17.07 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>南亚新材</span>
+      <span class='cd'>sh688519 · 电子</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>75.8</b></span>
+    </div>
+    <div><span class='tag tinst'>基金持股 6.6%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 7.8%</span><span class='tag tinst'>MA20 走平</span><span class='tag tinst'>RSI 56</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>309.59 <span class='up' style='font-size:11px'>+6.15%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>7.8% / 7.6%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>2.8% / 1.28</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>262.74 ~ 323.99 <span class='dim'>(23%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>76% · 贴上沿·高抛区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>-0.52%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>262.74</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>278.05</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>293.37</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>308.68</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>323.99</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 292.35~298.19｜卖区 317.51~323.99｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 250.92</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 23.4 · 流动性 13.2 · 区间结构 22.0 · 机构底仓 7.2 · 稳定性 10.0 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 250.92 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>国机精工</span>
+      <span class='cd'>sz002046 · 机械设备</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>75.7</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 1.1%</span><span class='tag tswing' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>波段型</span><span class='tag tinst'>高振幅 6.3%</span><span class='tag tinst'>顶级机构底仓</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>59.04 <span class='down' style='font-size:11px'>-0.67%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>6.3% / 5.4%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>4.4% / 1.66</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>45.61 ~ 60.89 <span class='dim'>(34%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>88% · 贴上沿·高抛区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+4.05%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>45.61</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>49.43</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>53.25</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>57.07</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>60.89</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 51.56~52.59｜卖区 59.67~60.89｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 43.56</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 19.4 · 区间结构 15.1 · 机构底仓 1.2 · 稳定性 10.0 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 43.56 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>金能科技</span>
+      <span class='cd'>sh603113 · 基础化工</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>75.6</b></span>
+    </div>
+    <div><span class='tag tinst'>基金持股 11.7%</span><span class='tag tswing' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>波段型</span><span class='tag tinst'>高振幅 6.3%</span><span class='tag tinst'>公募重仓 12%</span><span class='tag tinst'>RSI 53</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>5.28 <span class='down' style='font-size:11px'>-5.71%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>6.3% / 6.9%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>5.6% / 1.49</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>4.50 ~ 6.38 <span class='dim'>(42%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>41% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+4.34%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>4.50</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>4.97</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>5.44</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>5.91</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>6.38</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 4.50~4.59｜卖区 6.25~6.38｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 4.30</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 10.5 · 区间结构 19.9 · 机构底仓 10.0 · 稳定性 5.3 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 4.30 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>斯菱智驱</span>
+      <span class='cd'>sz301550 · 汽车</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>75.6</b></span>
+    </div>
+    <div><span class='tag tinst'>基金持股 6.3%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 7.3%</span><span class='tag tinst'>RSI 54</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>92.90 <span class='down' style='font-size:11px'>-3.08%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>7.3% / 6.8%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>2.5% / 0.38</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>73.89 ~ 101.98 <span class='dim'>(38%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>68% · 贴上沿·高抛区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+2.99%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>73.89</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>80.91</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>87.94</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>94.96</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>101.98</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 88.43~90.20｜卖区 99.94~101.98｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 70.56</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 27.4 · 流动性 12.2 · 区间结构 22.6 · 机构底仓 6.5 · 稳定性 7.0 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 70.56 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>赛意信息</span>
+      <span class='cd'>sz300687 · 计算机</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>75.5</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 1.8%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 5.3%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>MA20 走平</span><span class='tag tinst'>RSI 55</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>27.70 <span class='down' style='font-size:11px'>-0.82%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>5.3% / 4.9%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>2.5% / 0.59</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>24.94 ~ 31.06 <span class='dim'>(25%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>45% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+0.43%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>24.94</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>26.47</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>28.00</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>29.53</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>31.06</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 24.94~25.44｜卖区 30.44~31.06｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 23.82</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 12.1 · 区间结构 25.0 · 机构底仓 2.5 · 稳定性 5.9 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 23.82 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>炬光科技</span>
+      <span class='cd'>sh688167 · 电子</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>75.5</b></span>
+    </div>
+    <div><span class='tag tinst'>基金持股 8.0%</span><span class='tag tswing' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>波段型</span><span class='tag tinst'>高振幅 7.6%</span><span class='tag tinst'>RSI 63</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>315.00 <span class='up' style='font-size:11px'>+4.12%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>7.6% / 7.2%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>8.3% / 1.03</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>250.59 ~ 322.24 <span class='dim'>(29%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>90% · 贴上沿·高抛区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+7.60%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>250.59</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>268.50</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>286.42</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>304.33</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>322.24</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 287.00~292.74｜卖区 315.80~322.24｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 239.31</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 25.2 · 流动性 20.0 · 区间结构 10.4 · 机构底仓 9.9 · 稳定性 10.0 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 239.31 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>康龙化成</span>
+      <span class='cd'>sz300759 · 医药生物</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>74.9</b></span>
+    </div>
+    <div><span class='tag tinst'>基金持股 7.6%</span><span class='tag tswing' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>波段型</span><span class='tag tinst'>高振幅 5.0%</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>41.55 <span class='down' style='font-size:11px'>-0.34%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>5.0% / 4.9%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>2.7% / 0.82</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>40.53 ~ 53.57 <span class='dim'>(32%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>8% · 贴下沿·低吸区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>-3.13%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>40.53</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>43.79</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>47.05</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>50.31</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>53.57</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 40.53~41.34｜卖区 52.50~53.57｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 38.71</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 12.7 · 区间结构 14.6 · 机构底仓 9.3 · 稳定性 8.4 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 38.71 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>闰土股份</span>
+      <span class='cd'>sz002440 · 基础化工</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>74.8</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 0.0%</span><span class='tag tswing' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>波段型</span><span class='tag tinst'>高振幅 5.6%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>MA20 走平</span><span class='tag tinst'>RSI 50</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>12.28 <span class='down' style='font-size:11px'>-3.23%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>5.6% / 6.2%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>3.5% / 0.78</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>11.73 ~ 14.80 <span class='dim'>(26%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>18% · 贴下沿·低吸区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>-0.94%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>11.73</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>12.50</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>13.27</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>14.03</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>14.80</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 11.73~11.96｜卖区 14.50~14.80｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 11.20</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 15.8 · 区间结构 20.0 · 机构底仓 -1.0 · 稳定性 10.0 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 11.20 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>万凯新材</span>
+      <span class='cd'>sz301216 · 基础化工</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>74.6</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×4</span><span class='tag tinst'>基金持股 5.2%</span><span class='tag tswing' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>波段型</span><span class='tag tinst'>高振幅 6.0%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>RSI 56</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>17.90 <span class='down' style='font-size:11px'>-7.97%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>6.0% / 7.8%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>7.0% / 1.05</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>16.12 ~ 21.21 <span class='dim'>(32%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>35% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+3.81%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>16.12</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>17.39</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>18.66</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>19.94</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>21.21</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 16.12~16.44｜卖区 20.79~21.21｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 15.39</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 23.5 · 流动性 20.0 · 区间结构 22.4 · 机构底仓 9.4 · 稳定性 5.3 · 风险 -6.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -6.0</span></div>
+    <div class='sig'>⚠ 跌破 MA60</div>
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 15.39 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>蔚蓝锂芯</span>
+      <span class='cd'>sz002245 · 电力设备</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>74.5</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 6.5%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 4.6%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>MA20 走平</span><span class='tag tinst'>RSI 47</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>17.97 <span class='up' style='font-size:11px'>+0.96%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>4.6% / 4.5%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>2.1% / 0.60</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>16.70 ~ 20.25 <span class='dim'>(21%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>36% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>-0.17%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>16.70</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>17.59</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>18.48</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>19.36</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>20.25</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 16.70~17.03｜卖区 19.84~20.25｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 15.95</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 24.2 · 流动性 10.6 · 区间结构 25.0 · 机构底仓 11.9 · 稳定性 8.8 · 风险 -6.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -6.0</span></div>
+    <div class='sig'>⚠ 跌破 MA60</div>
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 15.95 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>彤程新材</span>
+      <span class='cd'>sh603650 · 基础化工</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>74.4</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×3</span><span class='tag tinst'>基金持股 0.4%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 4.9%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>MA20 走平</span><span class='tag tinst'>RSI 50</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>64.51 <span class='down' style='font-size:11px'>-1.09%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>4.9% / 4.4%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>4.1% / 1.67</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>56.72 ~ 72.96 <span class='dim'>(29%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>48% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>-1.38%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>56.72</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>60.78</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>64.84</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>68.90</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>72.96</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 63.14~64.41｜卖区 71.50~72.96｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 54.17</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 28.1 · 流动性 18.4 · 区间结构 25.0 · 机构底仓 -0.2 · 稳定性 9.1 · 风险 -6.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -6.0</span></div>
+    <div class='sig'>⚠ 跌破 MA60</div>
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 54.17 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>雅克科技</span>
+      <span class='cd'>sz002409 · 电子</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>74.2</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×2</span><span class='tag tinst'>基金持股 1.1%</span><span class='tag tswing' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>波段型</span><span class='tag tinst'>高振幅 4.9%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>RSI 44</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>133.48 <span class='up' style='font-size:11px'>+1.49%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>4.9% / 5.2%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>6.2% / 1.33</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>125.27 ~ 163.19 <span class='dim'>(30%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>22% · 贴下沿·低吸区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>-3.61%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>125.27</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>134.75</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>144.23</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>153.71</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>163.19</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 125.27~127.78｜卖区 159.93~163.19｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 119.63</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 20.0 · 区间结构 19.0 · 机构底仓 1.2 · 稳定性 10.0 · 风险 -6.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -6.0</span></div>
+    <div class='sig'>⚠ 跌破 MA60</div>
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 119.63 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>海目星</span>
+      <span class='cd'>sh688559 · 机械设备</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>73.5</b></span>
+    </div>
+    <div><span class='tag tinst'>顶级机构×4</span><span class='tag tinst'>基金持股 0.0%</span><span class='tag tswing' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>波段型</span><span class='tag tinst'>高振幅 6.7%</span><span class='tag tinst'>顶级机构底仓</span><span class='tag tinst'>RSI 62</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>59.60 <span class='up' style='font-size:11px'>+0.97%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>6.7% / 6.3%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>6.0% / 1.12</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>47.83 ~ 61.50 <span class='dim'>(29%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>86% · 贴上沿·高抛区</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+3.66%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>47.83</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>51.25</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>54.66</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>58.08</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>61.50</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 54.66~55.75｜卖区 60.27~61.50｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 45.68</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 20.0 · 区间结构 16.1 · 机构底仓 -1.0 · 稳定性 8.4 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 45.68 或 MA20 拐头向下 → 停做T。</div>
+  </div>
+  <div class='card'>
+    <div class='hd'>
+      <span class='nm'>鸿合科技</span>
+      <span class='cd'>sz002955 · 电子</span>
+      <span class='badge bB' title='A ≥80（可重点做T）· B 70~80（适合做T）· C 60~70（可小仓试）· D &lt;60（不适合，仅列出）。'>B</span>
+      <span style='margin-left:auto' class='cd' title='做T适合度总分（0~100）：波动性 30 + 流动性 20 + 区间结构 25 + 机构底仓 15 + 波动稳定性 10 − 风险扣分。分数越高越适合反复做T。'>做T分 <b style='color:#b8892b'>73.3</b></span>
+    </div>
+    <div><span class='tag tinst'>基金持股 6.6%</span><span class='tag tgrid' title='网格型 = 箱体清晰、均线粘合，适合机械网格高抛低吸；波段型 = 有一定趋势/箱体较宽，适合按支撑压力几日一循环。'>网格型</span><span class='tag tinst'>高振幅 5.5%</span><span class='tag tinst'>RSI 57</span></div>
+    <div class='grid2'>
+      <div class='kv tipbox' title='数据日期（T 日）收盘价，括号内为当日涨跌幅（红涨绿跌）。所有网格/波段价位均以该日收盘后的数据推算。'><div class='k tipk'>现价</div><div class='v'>37.19 <span class='down' style='font-size:11px'>-4.98%</span></div></div>
+      <div class='kv tipbox' title='近 20 个交易日 (最高−最低)/前收 的平均值（%）。做T的『空间』来自振幅：低于 3% 基本没有做T价值，3%~9% 最佳。'><div class='k tipk'>振幅/ATR</div><div class='v sm'>5.5% / 5.5%</div></div>
+      <div class='kv tipbox' title='当日换手率（成交量/流通股本）。2%~18% 为活跃且可持续；过高(&gt;20%)多为游资情绪票，做T易被闷杀。'><div class='k tipk'>换手/量比</div><div class='v sm'>2.6% / 0.76</div></div>
+      <div class='kv tipbox' title='近 20 日形成的震荡区间 [下沿 L, 上沿 U]。反复做T即在此区间内高抛低吸。箱体高度=(U−L)/L，15%~45% 最佳。'><div class='k tipk'>箱体 [下沿~上沿]</div><div class='v sm'>32.69 ~ 41.61 <span class='dim'>(27%)</span></div></div>
+      <div class='kv tipbox' title='现价在箱体中的百分位：0=贴下沿(低吸区)，100=贴上沿(高抛区)，50=中枢。理想做T在 20%~80% 区间。'><div class='k tipk'>箱内位置</div><div class='v sm'>50% · 贴中枢</div></div>
+      <div class='kv tipbox' title='MA20 近 5 日的变化率（%）。越接近 0 说明越横盘、越适合网格；绝对值大说明在走趋势，做T易做反。'><div class='k tipk'>MA20 斜率</div><div class='v sm'>+2.38%</div></div>
+    </div>
+    <div class='sig'><b class='tip' title='机构常用『底仓+卫星仓』：底仓不动吃趋势/分红，用卫星(滚动)仓反复做T摊低成本。A股 T+1，做T必须先有底仓。'>仓位建议：</b>底仓 30% + 滚动 20%</div>
+    <table class='gtable'>
+      <thead><tr><th title='把箱体 [L,U] 均分为 5 档，给出每档的价格与建议动作。下跌触及买入档分批接、上涨触及卖出档分批抛，机械执行。'>网格档</th><th>价格</th><th>动作</th></tr></thead>
+      <tbody><tr><td>1</td><td>32.69</td><td class='gbuy'>分批买入</td></tr><tr><td>2</td><td>34.92</td><td class='gbuy'>分批买入</td></tr><tr><td>3</td><td>37.15</td><td class='dim'>中枢观望</td></tr><tr><td>4</td><td>39.38</td><td class='gsell'>分批卖出</td></tr><tr><td>5</td><td>41.61</td><td class='gsell'>分批卖出</td></tr></tbody>
+    </table>
+    <div class='sig'><b title='回落至支撑位附近的吸纳区间（支撑取箱体下沿与 MA20 的较高者）。'>波段做T：</b>买区 36.51~37.24｜卖区 40.78~41.61｜<span class='down'><b title='做T的纪律线：收盘跌破箱体下沿一定比例（通常 4%~6%）即无条件清仓，避免『越补越亏』。'>止损 31.22</b></span>（持有 3~7 日）</div>
+    <div class='sig'><b>打分：</b>波动 30.0 · 流动性 3.0 · 区间结构 24.0 · 机构底仓 7.2 · 稳定性 9.0 · 风险 -0.0 · <span class='tip' title='风险扣分：跌破 MA60、RSI 超买、接近一年高位、成交额不足、命中解禁/减持名单等。'>风险 -0.0</span></div>
+    
+    <div class='sig dim'><b title='出现以下任一即停止做T：放量破箱体下沿、MA20 拐头向下走成空头排列、出现解禁/减持公告。'>失效：</b>放量跌破 31.22 或 MA20 拐头向下 → 停做T。</div>
+  </div></div></div>
+
+<div class='section'><h2>方法论：顶级机构如何做T</h2>
+<div class='note'><b>1. 网格交易法</b>——在预设价格网格上机械高抛低吸，不预测方向，赚取波动本身。前提是标的处于<b>区间震荡</b>且波动率充足。
+<b>2. 均值回归</b>——价格围绕箱体中枢（机构成本区）往复，偏离越远回归动力越强。
+<b>3. 底仓 + 卫星仓</b>——底仓不动（吃趋势/分红），仅用卫星仓反复做T摊低成本；A股 T+1，做T必须先有底仓。
+<b>4. 波动率套利</b>——日振幅/ATR 越大，单次做T的价差空间越大。<br>
+<b>纪律</b>：破箱体下沿无条件清仓；单次做T亏损 ≤ 总资金 0.5%；不追高、不满仓滚动。</div>
+<table><thead><tr><th>维度</th><th>满分</th><th>口径</th></tr></thead><tbody>
+<tr><td>波动性</td><td>30</td><td>近20日平均振幅 与 ATR%(14) 取大者，3.5%~9% 满分（<3% 无做T价值，>10% 易单边）</td></tr>
+<tr><td>流动性</td><td>20</td><td>换手率 3%~15%（10分）+ 日均成交额 ≥3亿（10分）</td></tr>
+<tr><td>区间结构</td><td>25</td><td>箱体高度 15%~45%（10分）+ 现价靠中枢（10分）+ MA20 走平（5分）</td></tr>
+<tr><td>机构底仓</td><td>15</td><td>公募持股 5%~25%（10分）+ 社保/险资 ≥2 家（5分）</td></tr>
+<tr><td>波动稳定性</td><td>10</td><td>近20日振幅变异系数越低越好（波动规律、节奏可把握）</td></tr>
+<tr><td>风险扣分</td><td>−≤32</td><td>破MA60 −6、近一年高位 −4、RSI超买 −4、箱体过宽 −3、成交额不足 −3、解禁 −8、减持 −6</td></tr>
+</tbody></table></div>
+
+<div class='section'><h2>历史归档</h2>
+<table><thead><tr><th>日期</th><th>入选</th><th>A</th><th>B</th><th>C</th><th>网格型</th><th>波段型</th></tr></thead>
+<tbody><tr><td>2026-09-10</td><td>119</td><td>17</td><td>36</td><td>34</td><td>46</td><td>73</td></tr></tbody></table></div>
+
+<footer>本页为规则化量化输出，不构成投资建议。数据来源：westock（行情/技术/K线）+ 2026-Q2 十大流通股东。
+做T有风险，务必先有底仓、严设止损。</footer>
+</div></body></html>
