@@ -12,20 +12,21 @@ body { margin:0; background:#f5f6f8; color:#23262b;
   border:1px solid rgba(184,137,59,.35); }
 .topnav a.cur { background:#b8893b; color:#fff; border-color:#b8893b; }
 .topnav a:hover { background:rgba(184,137,59,.10); }
-.topnav a.cur:hover { background:#b8893b; }
-header h1 { font-size:26px; margin:0 0 6px; color:#23262b; }
+header h1 { font-size:26px; margin:0 0 6px; }
 header h1 span { background:linear-gradient(90deg,#b8893b,#8a6428); -webkit-background-clip:text;
   -webkit-text-fill-color:transparent; }
 .sub { color:#6b7480; font-size:13.5px; }
 .section { margin-top:30px; }
 .section h2 { font-size:19px; margin:0 0 14px; padding-left:12px; border-left:4px solid #b8893b; }
+.trk { display:inline-block; font-size:12px; padding:2px 10px; border-radius:20px; margin-left:8px; }
+.trk.i { background:#e6f1fb; color:#185fa5; } .trk.y { background:#fcebeb; color:#a32d2d; }
 table { width:100%; border-collapse:collapse; background:#fff; font-size:13px;
   border:1px solid #e6e9ee; border-radius:10px; overflow:hidden; }
-th,td { padding:9px 10px; text-align:left; border-bottom:1px solid #eef1f4; }
+th,td { padding:8px 9px; text-align:left; border-bottom:1px solid #eef1f4; }
 th { background:#fafbfc; color:#5a6573; font-weight:600; font-size:12.5px; }
 tr:last-child td { border-bottom:none; }
 .up { color:#b8332a; } .down { color:#1a9e5a; }
-.card { background:#fff; border:1px solid #e6e9ee; border-radius:12px; padding:18px 20px; margin-bottom:14px; }
+.card { background:#fff; border:1px solid #e6e9ee; border-radius:12px; padding:16px 18px; margin-bottom:12px; }
 .card.hi { border-left:4px solid #b8893b; }
 .chead { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
 .cname { font-size:17px; font-weight:700; }
@@ -34,18 +35,20 @@ tr:last-child td { border-bottom:none; }
 .bA { background:#fdecea; color:#b8332a; } .bB { background:#fdf3e0; color:#b7791f; }
 .bC { background:#eef4fa; color:#2b6cb0; } .bD { background:#eef0f2; color:#6b7480; }
 .score { font-size:22px; font-weight:800; color:#b8893b; }
-.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:12px; }
-.kv { background:#fafbfc; border:1px solid #eef1f4; border-radius:8px; padding:8px 10px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:9px; margin-top:11px; }
+.kv { background:#fafbfc; border:1px solid #eef1f4; border-radius:8px; padding:7px 10px; }
 .kv .k { font-size:11.5px; color:#8a929c; }
-.kv .v { font-size:15px; font-weight:700; margin-top:2px; }
-.kv .v.sm { font-size:13px; font-weight:600; }
-.sig { margin-top:12px; font-size:12.5px; color:#5a6573; }
+.kv .v { font-size:14px; font-weight:700; margin-top:2px; }
+.kv .v.sm { font-size:12.5px; font-weight:600; }
+.sig { margin-top:10px; font-size:12.5px; color:#5a6573; }
 .sig b { color:#23262b; }
 .chip { display:inline-block; background:#f4f6f8; border:1px solid #e6e9ee; border-radius:14px;
   padding:1px 9px; font-size:11.5px; margin:2px 4px 2px 0; color:#5a6573; }
 .note { background:#fffaf0; border-left:4px solid #b8893b; padding:12px 16px; border-radius:0 8px 8px 0;
   font-size:13px; color:#6b4f2a; margin:14px 0; }
 .warn { background:#fdecea; border-left-color:#b8332a; color:#8c2b22; }
+.veto { background:#f4f6f8; border:1px dashed #c8ced6; border-radius:10px; padding:12px 16px;
+  font-size:12.5px; color:#6b7480; margin:12px 0; }
 footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-size:12px; color:#8a929c; }
 .muted { color:#8a929c; font-size:12px; }
 @media(max-width:700px){ .wrap{padding:20px 12px 44px;} header h1{font-size:20px;} table{font-size:12px;} }
@@ -53,27 +56,31 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
 <div class='wrap'>
 <div class='topnav'><a href='../../index.html'>总门户</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../db/index.html'>数据中心</a><a href='index.html'>信号池</a><a href='../sections/index.html'>版块总览</a></div>
 <header><h1><span>个股信号池</span> · 每日归档</h1>
-<div class='sub'>中报增减持 + 高管增减持 + 大宗交易三路信号合流 → 每日建仓候选与买卖点，次日自动回填表现，长期统计胜率。</div></header>
+<div class='sub'>机构轨（波段）+ 游资轨（短线）双池输出建仓候选与买卖点，次日自动回填表现并统计胜率。</div></header>
 
-<div class='note'><b>最新一期：</b><a href='pick_2026-09-10.html'>2026-09-10</a>（候选 33 只，A 档 0 / B 档 5 / C 档 22）。</div>
+<div class='note'><b>最新一期：</b><a href='pick_2026-09-10.html'>2026-09-10</a> —— 机构轨 26 只（A 3 / B 9）· 游资轨 25 只（A 3 / B 7）。</div>
 
 <div class='section'><h2>历史表现（次日回填）</h2>
-<div class='note'>累计 <b><span class='muted'>首期尚无回填数据</span></b>。统计口径：以当日给出的目标价 T1/T2 与止损位，对照次日最高价 / 最低价判定是否触及。</div>
-<table><thead><tr><th>日期</th><th>候选数</th><th>次日表现</th></tr></thead>
-<tbody><tr><td><a href='pick_2026-09-10.html'>2026-09-10</a></td><td>33</td><td><span class='muted'>待次日行情回填</span></td></tr></tbody></table></div>
+<div class='note'>机构轨累计 <span class='muted'>首期尚无回填</span><br>游资轨累计 <span class='muted'>首期尚无回填</span></div>
+<table><thead><tr><th>日期</th><th>机构轨</th><th>机构轨次日</th><th>游资轨</th><th>游资轨次日</th></tr></thead>
+<tbody><tr><td><a href='pick_2026-09-10.html'>2026-09-10</a></td><td>10</td><td><span class='muted'>待回填</span></td><td>10</td><td><span class='muted'>待回填</span></td></tr></tbody></table></div>
 
-<div class='section'><h2>评分模型</h2>
-<table><thead><tr><th>维度</th><th>权重</th><th>口径</th></tr></thead><tbody>
-<tr><td>中报增减持</td><td>25</td><td>2026-Q2 十大流通股东环比：加仓家数为主，减仓扣分</td></tr>
-<tr><td>高管增减持</td><td>20</td><td>近 20 个交易日董监高变动：净增持笔数与股数</td></tr>
-<tr><td>大宗交易</td><td>20</td><td>近 20 个交易日：机构买入金额、溢价/折价、机构净卖出扣分</td></tr>
-<tr><td>量价健康</td><td>25</td><td>趋势结构 10（MA5/20/60）+ 量能 5（换手、量比）+ 动量 5（RSI12）+ 相对位置 5（52 周位）</td></tr>
-<tr><td>风险扣分</td><td>−10</td><td>高管净减持、大宗机构净卖出、高折价、中报减仓多于加仓、一年高位、RSI 超买</td></tr>
+<div class='section'><h2>双池评分模型</h2>
+<table><thead><tr><th>维度</th><th>机构轨</th><th>游资轨</th><th>口径</th></tr></thead><tbody>
+<tr><td>方向分</td><td>30</td><td>32</td><td>机构：龙虎榜机构净买入 + 一致预期目标价空间 / 游资：知名席位现身 + 买入额 + 席位家数</td></tr>
+<tr><td>主力资金</td><td>10</td><td>8</td><td>机构看 5日/20日主力净流入（中期）；游资看当日主力净流入</td></tr>
+<tr><td>中报背景</td><td>10</td><td>6</td><td>Q2 十大流通股东加仓家数（已降权为背景项，滞后 72 天）</td></tr>
+<tr><td>高管增减持</td><td>10</td><td>6</td><td>按 变动金额 / 总市值 归一化，过滤象征性小额增持</td></tr>
+<tr><td>大宗交易</td><td>8</td><td>6</td><td>机构专用买入、溢价 / 折价</td></tr>
+<tr><td>量价</td><td>22</td><td>30</td><td>趋势结构 + 量能 + 动量 + 相对位置</td></tr>
+<tr><td>筹码</td><td>10</td><td>12</td><td>获利盘比例、现价与平均成本偏离、筹码集中度</td></tr>
+<tr><td>风险扣分</td><td>−10</td><td>−10</td><td>高管净减持 / 大宗机构净卖出 / 高位 / 超买 / 破 MA60</td></tr>
 </tbody></table>
-<div class='note'>档位：A ≥70 重点建仓（8%~10%）· B 60~70 可建仓（5%~7%）· C 50~60 轻仓观察（≤3%）· D &lt;50 仅跟踪不建仓。
-买卖点：进场取现价至 MA5 区间（乖离 MA20 超 10% 则改回踩 MA10），止损取 MA20×0.97 / BOLL 下轨 / 进场×0.93 三者中最接近的上方支撑，目标 +8% / +15%。</div></div>
+<div class='note'><b>一票否决（Gate）：</b>所属板块主力出货 · 获利盘 &gt;90% · 现价高于平均成本 30% · 均线空头排列且跌破 MA60 · RSI&gt;80。
+<b>档位：</b>A ≥70（8%~10%）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。
+<b>买卖点：</b>机构轨止损取 MA20×0.97 / 平均成本×0.97 / 进场×0.93 中最接近者，目标 +10%/+15%；游资轨止损 −3~5%，目标 +5%/+8%，不封板即走。</div></div>
 
-<div class='note warn'><b>风险提示：</b>规则化输出，<b>不构成投资建议</b>。中报滞后、大宗与高管为披露快照，务必自行核验基本面并严格执行止损。</div>
+<div class='note warn'><b>风险提示：</b>规则化输出，<b>不构成投资建议</b>。中报滞后、游资轨波动剧烈，务必自行核验基本面并严格执行止损。</div>
 
 <footer>数据源：westock-mcp · 中报十大流通股东（2026-06-30）· 仅供参考，不构成投资建议。</footer>
 </div></body></html>
