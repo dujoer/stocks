@@ -166,6 +166,13 @@ footer { margin-top:40px; padding-top:16px; border-top:1px solid #e3e7ec; font-s
         <td class='hint'>读 <code>history.json</code> 按「档位 × 周期」统计平均收益 / 胜率 / 触 T1·T2·止损，产出 <code>web/picks/backtest.html</code>。<b>建议累积 20 个交易日后再据其校准权重</b>——重点看 A 档是否优于 C 档、机构轨 T+5 是否优于 T+1</td>
       </tr>
       <tr data-tier='daily'>
+        <td class='dim'>做T池（可反复做T候选）</td><td><span class='tag daily'>每日</span></td>
+        <td>盘后（与信号池同批）</td>
+        <td><code>gen_tplus.py --date D</code> → 拉 <code>data_quote</code>（≈200 只/批）+ <code>data_kline</code>（60 日）→ <code>build_tplus.py --date D</code></td>
+        <td>2026-09-10</td>
+        <td class='hint'>从<b>机构底仓池</b>（公募持股 ≥5% 或 社保/养老/险资 ≥2 家，约 848 只）中筛出高波动 + 高流动性 + <b>区间震荡</b>标的，按网格 / 均值回归 / 底仓+卫星仓给出网格 5 档价位与波段买卖点。做T须先有底仓；破箱体下沿无条件清仓</td>
+      </tr>
+      <tr data-tier='daily'>
         <td class='dim'>本地数据库累积</td><td><span class='tag daily'>每日</span></td>
         <td>盘后（随每日更新）</td>
         <td><code>db_update.py [DATE?]</code> → <code>db_export.py</code>（列式压缩分片至 web/data）</td>
