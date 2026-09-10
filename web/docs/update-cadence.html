@@ -66,6 +66,10 @@ footer { margin-top:40px; padding-top:16px; border-top:1px solid #e3e7ec; font-s
 
 
 
+
+
+
+
 <div class='topnav'>
   <a href='../../index.html'>总门户</a>
   <a href='../sections/index.html'>版块总览</a>
@@ -88,7 +92,7 @@ footer { margin-top:40px; padding-top:16px; border-top:1px solid #e3e7ec; font-s
 <div class='section'>
   <h2>📊 更新节奏总览（四档）</h2>
   <div class='tiers'>
-    <div class='tier daily'><h3>① 每日必做</h3><div class='cnt'>8</div><p>交易日盘后 20:00–21:00 跑齐：龙虎榜 / 板块强度 / 高管增减持 / 大宗 / 心理雷达 / <b>个股信号池</b> / 数据库累积 / 看板门户重建</p></div>
+    <div class='tier daily'><h3>① 每日必做</h3><div class='cnt'>9</div><p>交易日盘后 20:00–21:00 跑齐：龙虎榜 / 板块强度 / 高管增减持 / 大宗 / 心理雷达 / <b>个股信号池</b> / <b>信号池回测</b> / 数据库累积 / 看板门户重建</p></div>
     <div class='tier periodic'><h3>② 季频 · 定期</h3><div class='cnt'>5</div><p>随季报（中报/年报/一季报/三季报）刷新：行业最强榜、知名Top20、增持扫描、量价健康度、牛人追踪（股东部分）</p></div>
     <div class='tier ondemand'><h3>③ 按需 · 事件</h3><div class='cnt'>1</div><p>用户指定个股时触发：个股三周期调研</p></div>
     <div class='tier gate'><h3>④ 推送门禁</h3><div class='cnt'>每次</div><p>每次推送前后：断链0 / 污染0 / curl 200 三道门禁</p></div>
@@ -150,9 +154,16 @@ footer { margin-top:40px; padding-top:16px; border-top:1px solid #e3e7ec; font-s
       <tr data-tier='daily'>
         <td class='dim'>个股信号池（次日建仓候选）</td><td><span class='tag daily'>每日</span></td>
         <td>盘后（须在行情 / 大宗 / 高管跑完后）</td>
-        <td><code>gen_picks.py --date D</code> → 拉 <code>data_quote</code> + <code>data_technical</code>（候选股，25 只/批）→ <code>build_picks.py --date D</code></td>
+        <td><code>gen_picks.py --date D</code> → 拉 <code>data_quote</code> + <code>data_technical</code> + <code>data_fund_flow</code> + <code>data_chip</code> + <code>data_consensus</code> + <code>data_rating</code> + <code>data_fund_margin</code> + <code>data_risk</code> + <code>data_hot</code> + <code>tool_event</code>（25 只/批）→ <code>build_picks.py --date D</code></td>
         <td>2026-09-10</td>
-        <td class='hint'><b>依赖上游</b>：须在 高管增减持 / 大宗交易 当日跑完后执行；候选池默认取前 40 只 → 行情 2 批。<code>history.json</code> 自动累积，次日行情文件存在时自动回填次日表现（触 T1/T2/止损）与胜率</td>
+        <td class='hint'><b>依赖上游</b>：须在 高管增减持 / 大宗交易 当日跑完后执行。11 维评分（机构轨/游资轨）+ 一票否决（板块出货 / 获利盘 / 破 MA60 / 解禁 ≥1% / 计划减持窗口 / 质押 &gt;30%）。<code>history.json</code> 自动累积，次日行情存在时自动回填 <b>T+1/T+3/T+5</b> 表现与胜率</td>
+      </tr>
+      <tr data-tier='daily'>
+        <td class='dim'>信号池回测</td><td><span class='tag daily'>每日</span></td>
+        <td>build_picks 之后（同一串命令里跑）</td>
+        <td><code>backtest_picks.py</code>（无参数）</td>
+        <td>2026-09-10（累积中）</td>
+        <td class='hint'>读 <code>history.json</code> 按「档位 × 周期」统计平均收益 / 胜率 / 触 T1·T2·止损，产出 <code>web/picks/backtest.html</code>。<b>建议累积 20 个交易日后再据其校准权重</b>——重点看 A 档是否优于 C 档、机构轨 T+5 是否优于 T+1</td>
       </tr>
       <tr data-tier='daily'>
         <td class='dim'>本地数据库累积</td><td><span class='tag daily'>每日</span></td>
