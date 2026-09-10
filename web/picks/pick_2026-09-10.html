@@ -52,38 +52,46 @@ tr:last-child td { border-bottom:none; }
 footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-size:12px; color:#8a929c; }
 .muted { color:#8a929c; font-size:12px; }
 @media(max-width:700px){ .wrap{padding:20px 12px 44px;} header h1{font-size:20px;} table{font-size:12px;} }
+/* 字段悬浮说明：带虚线下划线的字段均可悬浮查看口径 */
+.tip { cursor:help; border-bottom:1px dotted #c3cad3; }
+.kv.tipbox:hover { background:#fdf8ef; border-color:#e6d3ae; }
+.kv .k.tipk::after { content:"?"; display:inline-block; margin-left:3px; font-size:10px;
+  color:#b8893b; border:1px solid rgba(184,137,59,.45); border-radius:50%;
+  width:12px; height:12px; line-height:11px; text-align:center; }
+.chip[title], .badge[title], .score[title] { cursor:help; }
 </style></head><body>
 <div class='wrap'>
 <div class='topnav'><a href='../../index.html'>总门户</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../db/index.html'>数据中心</a><a href='index.html'>信号池</a><a href='backtest.html'>回测</a><a href='../sections/index.html'>版块总览</a></div>
 <header><h1><span>个股信号池</span> · 2026-09-10</h1>
-<div class='sub'>机构轨（波段 5~15 日）与 游资轨（短线 1~3 日）双池分轨打分，含板块闸门与筹码/资金流确认，每日盘后更新并回填次日表现。</div></header>
+<div class='sub'>机构轨（波段 5~15 日）与 游资轨（短线 1~3 日）双池分轨打分，含板块闸门与筹码/资金流确认，每日盘后更新并回填次日表现。
+<div class='muted' style='margin-top:6px'>字段旁带 <span class='tip' style='border:none'>?</span> 或虚线下划线的均可悬浮查看计算口径。</div></div></header>
 
 <div class='note'><b>今日结论：</b>机构轨 25 只（A 0 / B 8）· 游资轨 24 只（A 4 / B 4）。
-闸门：所属板块主力出货、获利盘 &gt;90%、现价高于成本 30%、空头排列破 MA60、RSI&gt;80 一律剔除。</div>
+<span class='tip' title='一票否决闸门：所属板块主力出货 · 获利盘 &gt;90% · 现价高于平均成本 30% · 均线空头排列且跌破 MA60 · RSI&gt;80 · 解禁市值占比 ≥1% · 处于计划减持窗口 · 质押比例 &gt;30%，命中任意一条即剔除，不参与打分。'>闸门</span>：所属板块主力出货、获利盘 &gt;90%、现价高于成本 30%、空头排列破 MA60、RSI&gt;80、解禁 ≥1%、减持窗口、质押 &gt;30% 一律剔除。</div>
 <div class='veto'><b>已剔除 15 只（触发一票否决）：</b>德明利（均线空头排列且跌破MA60）、华曙高科（所属板块主力出货（机械设备））、周大生（所属板块主力出货（纺织服饰））、金安国纪（获利盘96%，抛压极大）、立讯精密（所属板块主力出货（电子））、宏和科技（均线空头排列且跌破MA60）、键凯科技（处于计划减持窗口（韩磊，至 20270108））、湖南黄金（获利盘91%，抛压极大）、ST荣科（获利盘96%，抛压极大）、东亚药业（获利盘99%，抛压极大）、游族网络（获利盘100%，抛压极大）、东方钽业（均线空头排列且跌破MA60）…</div>
 
 <div class='section'><h2>机构轨 · 波段<span class='trk i'>5~15 日</span></h2>
 <div class='muted' style='margin-bottom:8px'>机构方向 28（龙虎榜机构净买入 18 + 目标价空间 10）+ 机构评级 8 + 两融 6 + 主力资金 10 + 中报背景 8 + 高管 8 + 大宗 6 + 量价 20 + 筹码 6 − 风险 ≤12 − 热度反向 ≤4</div>
-<table><thead><tr><th>名称</th><th>代码</th><th>行业</th><th>板块</th><th>总分</th><th>当日</th><th>换手%</th><th>52周位</th><th>获利盘%</th><th>止损</th><th>目标一</th><th>档</th></tr></thead>
-<tbody><tr><td>长飞光纤</td><td class='muted'>sh601869</td><td>通信</td><td>—</td><td><b>68.7</b></td><td class='down'>-1.42%</td><td>2.79</td><td>69</td><td>83</td><td>382.8</td><td>452.78</td><td><span class='badge bB'>B</span></td></tr><tr><td>思泉新材</td><td class='muted'>sz301489</td><td>电子</td><td>—</td><td><b>68.2</b></td><td class='down'>-3.78%</td><td>7.93</td><td>33</td><td>36</td><td>120.02</td><td>141.96</td><td><span class='badge bB'>B</span></td></tr><tr><td>中谷物流</td><td class='muted'>sh603565</td><td>交通运输</td><td>—</td><td><b>65.1</b></td><td class='down'>-1.21%</td><td>1.18</td><td>69</td><td>81</td><td>11.86</td><td>13.56</td><td><span class='badge bB'>B</span></td></tr><tr><td>惠泰医疗</td><td class='muted'>sh688617</td><td>医药生物</td><td>—</td><td><b>63.7</b></td><td class='up'>+0.29%</td><td>0.85</td><td>40</td><td>63</td><td>225.5</td><td>266.72</td><td><span class='badge bB'>B</span></td></tr><tr><td>星网锐捷</td><td class='muted'>sz002396</td><td>通信</td><td>—</td><td><b>63.6</b></td><td class='up'>+0.50%</td><td>8.95</td><td>76</td><td>30</td><td>34.05</td><td>40.27</td><td><span class='badge bB'>B</span></td></tr><tr><td>楚天龙</td><td class='muted'>sz003040</td><td>通信</td><td>—</td><td><b>63.0</b></td><td class='down'>-10.00%</td><td>15.55</td><td>67</td><td>15</td><td>18.83</td><td>22.27</td><td><span class='badge bB'>B</span></td></tr><tr><td>光迅科技</td><td class='muted'>sz002281</td><td>通信</td><td>—</td><td><b>62.6</b></td><td class='down'>-1.86%</td><td>2.99</td><td>56</td><td>46</td><td>167.42</td><td>198.02</td><td><span class='badge bB'>B</span></td></tr><tr><td>深南电路</td><td class='muted'>sz002916</td><td>电子</td><td>—</td><td><b>60.0</b></td><td class='up'>+2.35%</td><td>1.25</td><td>70</td><td>74</td><td>356.8</td><td>422.02</td><td><span class='badge bB'>B</span></td></tr><tr><td>石药创新</td><td class='muted'>sz300765</td><td>医药生物</td><td>—</td><td><b>59.8</b></td><td class='up'>+2.18%</td><td>1.46</td><td>61</td><td>61</td><td>40.38</td><td>47.76</td><td><span class='badge bC'>C</span></td></tr><tr><td>中石科技</td><td class='muted'>sz300684</td><td>电子</td><td>—</td><td><b>59.4</b></td><td class='down'>-0.19%</td><td>7.47</td><td>68</td><td>10</td><td>80.98</td><td>95.79</td><td><span class='badge bC'>C</span></td></tr><tr><td>博汇股份</td><td class='muted'>sz300839</td><td>石油石化</td><td>—</td><td><b>59.0</b></td><td class='down'>-5.53%</td><td>4.74</td><td>31</td><td>44</td><td>12.49</td><td>14.34</td><td><span class='badge bC'>C</span></td></tr><tr><td>英维克</td><td class='muted'>sz002837</td><td>机械设备</td><td>—</td><td><b>57.1</b></td><td class='down'>-2.16%</td><td>2.60</td><td>32</td><td>29</td><td>59.37</td><td>68.58</td><td><span class='badge bC'>C</span></td></tr><tr><td>易点天下</td><td class='muted'>sz301171</td><td>传媒</td><td>—</td><td><b>55.4</b></td><td class='down'>-2.53%</td><td>8.93</td><td>35</td><td>17</td><td>34.76</td><td>41.11</td><td><span class='badge bC'>C</span></td></tr><tr><td>恒宝股份</td><td class='muted'>sz002104</td><td>通信</td><td>—</td><td><b>53.3</b></td><td class='down'>-4.04%</td><td>11.79</td><td>19</td><td>18</td><td>11.96</td><td>14.14</td><td><span class='badge bC'>C</span></td></tr><tr><td>千金药业</td><td class='muted'>sh600479</td><td>医药生物</td><td>—</td><td><b>51.5</b></td><td class='down'>-9.99%</td><td>20.49</td><td>60</td><td>9</td><td>12.36</td><td>14.62</td><td><span class='badge bC'>C</span></td></tr><tr><td>福立旺</td><td class='muted'>sh688678</td><td>电子</td><td>—</td><td><b>50.8</b></td><td class='down'>-3.02%</td><td>3.02</td><td>55</td><td>68</td><td>20.04</td><td>23.71</td><td><span class='badge bC'>C</span></td></tr><tr><td>高争民爆</td><td class='muted'>sz002827</td><td>基础化工</td><td>—</td><td><b>49.8</b></td><td class='down'>-5.87%</td><td>3.63</td><td>80</td><td>73</td><td>59.6</td><td>70.5</td><td><span class='badge bD'>D</span></td></tr><tr><td>通鼎互联</td><td class='muted'>sz002491</td><td>通信</td><td>—</td><td><b>48.8</b></td><td class='down'>-5.40%</td><td>10.49</td><td>46</td><td>22</td><td>19.75</td><td>23.36</td><td><span class='badge bD'>D</span></td></tr><tr><td>上海能源</td><td class='muted'>sh600508</td><td>煤炭</td><td>—</td><td><b>48.3</b></td><td class='down'>-2.50%</td><td>3.61</td><td>71</td><td>56</td><td>10.9</td><td>12.57</td><td><span class='badge bD'>D</span></td></tr><tr><td>光洋股份</td><td class='muted'>sz002708</td><td>汽车</td><td>—</td><td><b>48.0</b></td><td class='down'>-0.42%</td><td>7.87</td><td>92</td><td>82</td><td>13.84</td><td>16.37</td><td><span class='badge bD'>D</span></td></tr><tr><td>浪潮信息</td><td class='muted'>sz000977</td><td>计算机</td><td>—</td><td><b>46.9</b></td><td class='down'>-1.33%</td><td>3.61</td><td>37</td><td>2</td><td>67.19</td><td>79.47</td><td><span class='badge bD'>D</span></td></tr><tr><td>沃森生物</td><td class='muted'>sz300142</td><td>医药生物</td><td>—</td><td><b>42.7</b></td><td class='down'>-3.35%</td><td>3.73</td><td>36</td><td>9</td><td>12.24</td><td>14.48</td><td><span class='badge bD'>D</span></td></tr><tr><td>速达股份</td><td class='muted'>sz001277</td><td>机械设备</td><td>洗盘</td><td><b>39.8</b></td><td class='down'>-2.41%</td><td>3.60</td><td>22</td><td>9</td><td>28.58</td><td>33.81</td><td><span class='badge bD'>D</span></td></tr><tr><td>万向德农</td><td class='muted'>sh600371</td><td>农林牧渔</td><td>—</td><td><b>39.2</b></td><td class='down'>-8.12%</td><td>21.45</td><td>77</td><td>25</td><td>13.01</td><td>15.38</td><td><span class='badge bD'>D</span></td></tr><tr><td>神奇制药</td><td class='muted'>sh600613</td><td>医药生物</td><td>—</td><td><b>35.0</b></td><td class='down'>-5.65%</td><td>23.42</td><td>50</td><td>8</td><td>8.27</td><td>9.78</td><td><span class='badge bD'>D</span></td></tr></tbody></table>
+<table><thead><tr><th class='tip' title='个股名称。候选来自三路信号（中报十大股东增减持 / 高管增减持 / 大宗交易）与龙虎榜机构、游资方向合流。'>名称</th><th class='tip' title='带市场前缀的代码：sh 沪市、sz 深市、bj 北交所。'>代码</th><th class='tip' title='申万一级行业，来自中报股东库的代码-行业映射。'>行业</th><th class='tip' title='该股所属板块当日的「主力行为」（抢筹 / 建仓 / 洗盘 / 出货）。行为为「出货」时触发 Gate0 板块闸门，直接剔除。'>板块</th><th class='tip' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>总分</th><th class='tip' title='数据日期的当日涨跌幅。'>当日</th><th class='tip' title='当日换手率（成交量 / 流通股本）。过高（&gt;20%）视为情绪过热，量价分打折。'>换手%</th><th class='tip' title='现价在近 52 周最高最低区间中的百分位，0 为最低、100 为最高。&gt;92 视为接近一年高位并扣分。'>52周位</th><th class='tip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘%</th><th class='tip' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'>止损</th><th class='tip' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'>目标一</th><th class='tip' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>档</th></tr></thead>
+<tbody><tr><td>长飞光纤</td><td class='muted'>sh601869</td><td>通信</td><td>—</td><td><b>68.7</b></td><td class='down'>-1.42%</td><td>2.79</td><td>69</td><td>83</td><td>382.8</td><td>452.78</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>思泉新材</td><td class='muted'>sz301489</td><td>电子</td><td>—</td><td><b>68.2</b></td><td class='down'>-3.78%</td><td>7.93</td><td>33</td><td>36</td><td>120.02</td><td>141.96</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>中谷物流</td><td class='muted'>sh603565</td><td>交通运输</td><td>—</td><td><b>65.1</b></td><td class='down'>-1.21%</td><td>1.18</td><td>69</td><td>81</td><td>11.86</td><td>13.56</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>惠泰医疗</td><td class='muted'>sh688617</td><td>医药生物</td><td>—</td><td><b>63.7</b></td><td class='up'>+0.29%</td><td>0.85</td><td>40</td><td>63</td><td>225.5</td><td>266.72</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>星网锐捷</td><td class='muted'>sz002396</td><td>通信</td><td>—</td><td><b>63.6</b></td><td class='up'>+0.50%</td><td>8.95</td><td>76</td><td>30</td><td>34.05</td><td>40.27</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>楚天龙</td><td class='muted'>sz003040</td><td>通信</td><td>—</td><td><b>63.0</b></td><td class='down'>-10.00%</td><td>15.55</td><td>67</td><td>15</td><td>18.83</td><td>22.27</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>光迅科技</td><td class='muted'>sz002281</td><td>通信</td><td>—</td><td><b>62.6</b></td><td class='down'>-1.86%</td><td>2.99</td><td>56</td><td>46</td><td>167.42</td><td>198.02</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>深南电路</td><td class='muted'>sz002916</td><td>电子</td><td>—</td><td><b>60.0</b></td><td class='up'>+2.35%</td><td>1.25</td><td>70</td><td>74</td><td>356.8</td><td>422.02</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>石药创新</td><td class='muted'>sz300765</td><td>医药生物</td><td>—</td><td><b>59.8</b></td><td class='up'>+2.18%</td><td>1.46</td><td>61</td><td>61</td><td>40.38</td><td>47.76</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>中石科技</td><td class='muted'>sz300684</td><td>电子</td><td>—</td><td><b>59.4</b></td><td class='down'>-0.19%</td><td>7.47</td><td>68</td><td>10</td><td>80.98</td><td>95.79</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>博汇股份</td><td class='muted'>sz300839</td><td>石油石化</td><td>—</td><td><b>59.0</b></td><td class='down'>-5.53%</td><td>4.74</td><td>31</td><td>44</td><td>12.49</td><td>14.34</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>英维克</td><td class='muted'>sz002837</td><td>机械设备</td><td>—</td><td><b>57.1</b></td><td class='down'>-2.16%</td><td>2.60</td><td>32</td><td>29</td><td>59.37</td><td>68.58</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>易点天下</td><td class='muted'>sz301171</td><td>传媒</td><td>—</td><td><b>55.4</b></td><td class='down'>-2.53%</td><td>8.93</td><td>35</td><td>17</td><td>34.76</td><td>41.11</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>恒宝股份</td><td class='muted'>sz002104</td><td>通信</td><td>—</td><td><b>53.3</b></td><td class='down'>-4.04%</td><td>11.79</td><td>19</td><td>18</td><td>11.96</td><td>14.14</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>千金药业</td><td class='muted'>sh600479</td><td>医药生物</td><td>—</td><td><b>51.5</b></td><td class='down'>-9.99%</td><td>20.49</td><td>60</td><td>9</td><td>12.36</td><td>14.62</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>福立旺</td><td class='muted'>sh688678</td><td>电子</td><td>—</td><td><b>50.8</b></td><td class='down'>-3.02%</td><td>3.02</td><td>55</td><td>68</td><td>20.04</td><td>23.71</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>高争民爆</td><td class='muted'>sz002827</td><td>基础化工</td><td>—</td><td><b>49.8</b></td><td class='down'>-5.87%</td><td>3.63</td><td>80</td><td>73</td><td>59.6</td><td>70.5</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>通鼎互联</td><td class='muted'>sz002491</td><td>通信</td><td>—</td><td><b>48.8</b></td><td class='down'>-5.40%</td><td>10.49</td><td>46</td><td>22</td><td>19.75</td><td>23.36</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>上海能源</td><td class='muted'>sh600508</td><td>煤炭</td><td>—</td><td><b>48.3</b></td><td class='down'>-2.50%</td><td>3.61</td><td>71</td><td>56</td><td>10.9</td><td>12.57</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>光洋股份</td><td class='muted'>sz002708</td><td>汽车</td><td>—</td><td><b>48.0</b></td><td class='down'>-0.42%</td><td>7.87</td><td>92</td><td>82</td><td>13.84</td><td>16.37</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>浪潮信息</td><td class='muted'>sz000977</td><td>计算机</td><td>—</td><td><b>46.9</b></td><td class='down'>-1.33%</td><td>3.61</td><td>37</td><td>2</td><td>67.19</td><td>79.47</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>沃森生物</td><td class='muted'>sz300142</td><td>医药生物</td><td>—</td><td><b>42.7</b></td><td class='down'>-3.35%</td><td>3.73</td><td>36</td><td>9</td><td>12.24</td><td>14.48</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>速达股份</td><td class='muted'>sz001277</td><td>机械设备</td><td>洗盘</td><td><b>39.8</b></td><td class='down'>-2.41%</td><td>3.60</td><td>22</td><td>9</td><td>28.58</td><td>33.81</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>万向德农</td><td class='muted'>sh600371</td><td>农林牧渔</td><td>—</td><td><b>39.2</b></td><td class='down'>-8.12%</td><td>21.45</td><td>77</td><td>25</td><td>13.01</td><td>15.38</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>神奇制药</td><td class='muted'>sh600613</td><td>医药生物</td><td>—</td><td><b>35.0</b></td><td class='down'>-5.65%</td><td>23.42</td><td>50</td><td>8</td><td>8.27</td><td>9.78</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr></tbody></table>
 
   <div class='card hi'>
     <div class='chead'>
       <span class='cname'>长飞光纤</span>
       <span class='ccode'>sh601869 · 通信</span>
-      <span class='badge bB'>B 可建仓</span>
-      <span style='margin-left:auto' class='score'>68.7</span>
+      <span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B 可建仓</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>68.7</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>435.74 <span class='down' style='font-size:12px'>-1.42%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>407.50 ~ 415.73</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>382.80（-7.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>452.78 / 473.36</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.43</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>435.74 <span class='down' style='font-size:12px'>-1.42%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>407.50 ~ 415.73</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>382.80（-7.0%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>452.78 / 473.36</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>1.43</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 3.23亿</span><span class='chip'>机构席位 6 家</span><span class='chip'>目标价空间 +4%</span><span class='chip'>知名席位 1 次</span><span class='chip'>游资买入 3.57亿</span><span class='chip'>主力当日 -4.66亿</span><span class='chip'>获利盘 83%</span></div>
-    <div class='sig'><b>打分：</b>机构方向 22.0 · 机构评级 3.6 · 两融 3.6 · 主力资金 10.0 · 中报背景 5.0 · 高管 0.0 · 大宗 6.0 · 量价 16.6 · 筹码 3.9 · 风险 -2.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 3.23亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 6 家</span><span class='chip' title='券商一致预期目标价相对现价的空间：≥30% 满分 10 分，15%~30% 得 7 分，0~15% 得 4 分，低于现价 0 分。'>目标价空间 +4%</span><span class='chip' title='龙虎榜营业部中命中「知名游资席位库」（web/shareholder/data/person_index.json 中标记 star 的席位）的次数。'>知名席位 1 次</span><span class='chip' title='近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。'>游资买入 3.57亿</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 -4.66亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 83%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='机构轨方向分，满分 28：龙虎榜机构席位净买入金额（最高 18）+ 一致预期目标价相对现价的空间（最高 10，空间 ≥30% 满分）。'>机构方向 22.0</span> · <span class='tip' title='最近 6 个月券商评级的覆盖家数与买入/增持占比，满分 8（data_rating）。小票常无覆盖，得分 0 属正常，不因此加分也不扣分。'>机构评级 3.6</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 3.6</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 10.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 5.0</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 6.0</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 16.6</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 3.9</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -2.0</span></div>
     <div class='sig'><b>介入：</b>乖离MA20 10.5%，回踩MA10（411.62）介入，不追高；<b>失效：</b>跌破 382.80 无条件离场。</div>
     <div class='sig'>⚠ 中报减仓多于加仓</div>
   </div>
@@ -91,19 +99,19 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
     <div class='chead'>
       <span class='cname'>思泉新材</span>
       <span class='ccode'>sz301489 · 电子</span>
-      <span class='badge bB'>B 可建仓</span>
-      <span style='margin-left:auto' class='score'>68.2</span>
+      <span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B 可建仓</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>68.2</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>124.90 <span class='down' style='font-size:12px'>-3.78%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>124.28 ~ 133.83</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>120.02（-7.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>141.96 / 148.41</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.43</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>124.90 <span class='down' style='font-size:12px'>-3.78%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>124.28 ~ 133.83</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>120.02（-7.0%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>141.96 / 148.41</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>1.43</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 1.58亿</span><span class='chip'>机构席位 4 家</span><span class='chip'>目标价空间 +45%</span><span class='chip'>知名席位 1 次</span><span class='chip'>游资买入 1.48亿</span><span class='chip'>主力当日 -0.80亿</span><span class='chip'>获利盘 36%</span></div>
-    <div class='sig'><b>打分：</b>机构方向 28.0 · 机构评级 3.6 · 两融 4.2 · 主力资金 10.0 · 中报背景 8.0 · 高管 0.0 · 大宗 0.0 · 量价 14.0 · 筹码 5.4 · 风险 -5.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 1.58亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 4 家</span><span class='chip' title='券商一致预期目标价相对现价的空间：≥30% 满分 10 分，15%~30% 得 7 分，0~15% 得 4 分，低于现价 0 分。'>目标价空间 +45%</span><span class='chip' title='龙虎榜营业部中命中「知名游资席位库」（web/shareholder/data/person_index.json 中标记 star 的席位）的次数。'>知名席位 1 次</span><span class='chip' title='近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。'>游资买入 1.48亿</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 -0.80亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 36%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='机构轨方向分，满分 28：龙虎榜机构席位净买入金额（最高 18）+ 一致预期目标价相对现价的空间（最高 10，空间 ≥30% 满分）。'>机构方向 28.0</span> · <span class='tip' title='最近 6 个月券商评级的覆盖家数与买入/增持占比，满分 8（data_rating）。小票常无覆盖，得分 0 属正常，不因此加分也不扣分。'>机构评级 3.6</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 4.2</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 10.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 8.0</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 0.0</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 14.0</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 5.4</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -5.0</span></div>
     <div class='sig'><b>介入：</b>现价至MA5区间分批建仓；<b>失效：</b>跌破 120.02 无条件离场。</div>
     <div class='sig'>⚠ 跌破MA60、高管历史转让 4 笔</div>
   </div>
@@ -111,19 +119,19 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
     <div class='chead'>
       <span class='cname'>中谷物流</span>
       <span class='ccode'>sh603565 · 交通运输</span>
-      <span class='badge bB'>B 可建仓</span>
-      <span style='margin-left:auto' class='score'>65.1</span>
+      <span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B 可建仓</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>65.1</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>12.26 <span class='down' style='font-size:12px'>-1.21%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>12.20 ~ 12.45</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>11.86（-3.75%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>13.56 / 14.17</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>2.66</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>12.26 <span class='down' style='font-size:12px'>-1.21%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>12.20 ~ 12.45</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>11.86（-3.75%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>13.56 / 14.17</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>2.66</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 1.59亿</span><span class='chip'>机构席位 4 家</span><span class='chip'>目标价空间 +23%</span><span class='chip'>知名席位 2 次</span><span class='chip'>游资买入 0.20亿</span><span class='chip'>主力当日 -0.03亿</span><span class='chip'>获利盘 81%</span></div>
-    <div class='sig'><b>打分：</b>机构方向 25.0 · 机构评级 3.6 · 两融 0.9 · 主力资金 7.0 · 中报背景 8.0 · 高管 0.0 · 大宗 0.0 · 量价 17.4 · 筹码 3.2 · 风险 -0.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 1.59亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 4 家</span><span class='chip' title='券商一致预期目标价相对现价的空间：≥30% 满分 10 分，15%~30% 得 7 分，0~15% 得 4 分，低于现价 0 分。'>目标价空间 +23%</span><span class='chip' title='龙虎榜营业部中命中「知名游资席位库」（web/shareholder/data/person_index.json 中标记 star 的席位）的次数。'>知名席位 2 次</span><span class='chip' title='近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。'>游资买入 0.20亿</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 -0.03亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 81%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='机构轨方向分，满分 28：龙虎榜机构席位净买入金额（最高 18）+ 一致预期目标价相对现价的空间（最高 10，空间 ≥30% 满分）。'>机构方向 25.0</span> · <span class='tip' title='最近 6 个月券商评级的覆盖家数与买入/增持占比，满分 8（data_rating）。小票常无覆盖，得分 0 属正常，不因此加分也不扣分。'>机构评级 3.6</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 0.9</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 7.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 8.0</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 0.0</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 17.4</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 3.2</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -0.0</span></div>
     <div class='sig'><b>介入：</b>现价至MA5区间分批建仓；<b>失效：</b>跌破 11.86 无条件离场。</div>
     
   </div>
@@ -131,19 +139,19 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
     <div class='chead'>
       <span class='cname'>惠泰医疗</span>
       <span class='ccode'>sh688617 · 医药生物</span>
-      <span class='badge bB'>B 可建仓</span>
-      <span style='margin-left:auto' class='score'>63.7</span>
+      <span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B 可建仓</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>63.7</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>239.90 <span class='up' style='font-size:12px'>+0.29%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>238.70 ~ 246.24</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>225.50（-7.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>266.72 / 278.84</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.43</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>239.90 <span class='up' style='font-size:12px'>+0.29%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>238.70 ~ 246.24</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>225.50（-7.0%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>266.72 / 278.84</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>1.43</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 1.60亿</span><span class='chip'>机构席位 4 家</span><span class='chip'>目标价空间 +38%</span><span class='chip'>主力当日 -0.19亿</span><span class='chip'>获利盘 63%</span></div>
-    <div class='sig'><b>打分：</b>机构方向 28.0 · 机构评级 3.6 · 两融 0.0 · 主力资金 4.0 · 中报背景 8.0 · 高管 0.0 · 大宗 6.0 · 量价 9.3 · 筹码 4.8 · 风险 -0.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 1.60亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 4 家</span><span class='chip' title='券商一致预期目标价相对现价的空间：≥30% 满分 10 分，15%~30% 得 7 分，0~15% 得 4 分，低于现价 0 分。'>目标价空间 +38%</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 -0.19亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 63%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='机构轨方向分，满分 28：龙虎榜机构席位净买入金额（最高 18）+ 一致预期目标价相对现价的空间（最高 10，空间 ≥30% 满分）。'>机构方向 28.0</span> · <span class='tip' title='最近 6 个月券商评级的覆盖家数与买入/增持占比，满分 8（data_rating）。小票常无覆盖，得分 0 属正常，不因此加分也不扣分。'>机构评级 3.6</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 0.0</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 4.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 8.0</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 6.0</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 9.3</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 4.8</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -0.0</span></div>
     <div class='sig'><b>介入：</b>现价至MA5区间分批建仓；<b>失效：</b>跌破 225.50 无条件离场。</div>
     
   </div>
@@ -151,19 +159,19 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
     <div class='chead'>
       <span class='cname'>星网锐捷</span>
       <span class='ccode'>sz002396 · 通信</span>
-      <span class='badge bB'>B 可建仓</span>
-      <span style='margin-left:auto' class='score'>63.6</span>
+      <span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B 可建仓</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>63.6</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>35.99 <span class='up' style='font-size:12px'>+0.50%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>35.81 ~ 37.41</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>34.05（-7.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>40.27 / 42.10</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.43</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>35.99 <span class='up' style='font-size:12px'>+0.50%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>35.81 ~ 37.41</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>34.05（-7.0%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>40.27 / 42.10</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>1.43</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 2.98亿</span><span class='chip'>机构席位 4 家</span><span class='chip'>目标价空间 +12%</span><span class='chip'>知名席位 3 次</span><span class='chip'>游资买入 6.17亿</span><span class='chip'>主力当日 1.27亿</span><span class='chip'>获利盘 30%</span></div>
-    <div class='sig'><b>打分：</b>机构方向 22.0 · 机构评级 3.6 · 两融 2.4 · 主力资金 5.0 · 中报背景 8.0 · 高管 0.0 · 大宗 3.0 · 量价 14.2 · 筹码 5.4 · 风险 -0.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 2.98亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 4 家</span><span class='chip' title='券商一致预期目标价相对现价的空间：≥30% 满分 10 分，15%~30% 得 7 分，0~15% 得 4 分，低于现价 0 分。'>目标价空间 +12%</span><span class='chip' title='龙虎榜营业部中命中「知名游资席位库」（web/shareholder/data/person_index.json 中标记 star 的席位）的次数。'>知名席位 3 次</span><span class='chip' title='近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。'>游资买入 6.17亿</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 1.27亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 30%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='机构轨方向分，满分 28：龙虎榜机构席位净买入金额（最高 18）+ 一致预期目标价相对现价的空间（最高 10，空间 ≥30% 满分）。'>机构方向 22.0</span> · <span class='tip' title='最近 6 个月券商评级的覆盖家数与买入/增持占比，满分 8（data_rating）。小票常无覆盖，得分 0 属正常，不因此加分也不扣分。'>机构评级 3.6</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 2.4</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 5.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 8.0</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 3.0</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 14.2</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 5.4</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -0.0</span></div>
     <div class='sig'><b>介入：</b>现价至MA5区间分批建仓；<b>失效：</b>跌破 34.05 无条件离场。</div>
     
   </div>
@@ -171,19 +179,19 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
     <div class='chead'>
       <span class='cname'>楚天龙</span>
       <span class='ccode'>sz003040 · 通信</span>
-      <span class='badge bB'>B 可建仓</span>
-      <span style='margin-left:auto' class='score'>63.0</span>
+      <span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B 可建仓</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>63.0</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>18.90 <span class='down' style='font-size:12px'>-10.00%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>20.04 ~ 20.44</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>18.83（-7.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>22.27 / 23.28</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.43</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>18.90 <span class='down' style='font-size:12px'>-10.00%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>20.04 ~ 20.44</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>18.83（-7.0%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>22.27 / 23.28</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>1.43</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 2.40亿</span><span class='chip'>机构席位 3 家</span><span class='chip'>知名席位 2 次</span><span class='chip'>游资买入 5.10亿</span><span class='chip'>主力当日 -1.43亿</span><span class='chip'>获利盘 15%</span></div>
-    <div class='sig'><b>打分：</b>机构方向 18.0 · 机构评级 1.6 · 两融 6.0 · 主力资金 10.0 · 中报背景 8.0 · 高管 0.0 · 大宗 0.0 · 量价 16.6 · 筹码 2.8 · 风险 -0.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 2.40亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 3 家</span><span class='chip' title='龙虎榜营业部中命中「知名游资席位库」（web/shareholder/data/person_index.json 中标记 star 的席位）的次数。'>知名席位 2 次</span><span class='chip' title='近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。'>游资买入 5.10亿</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 -1.43亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 15%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='机构轨方向分，满分 28：龙虎榜机构席位净买入金额（最高 18）+ 一致预期目标价相对现价的空间（最高 10，空间 ≥30% 满分）。'>机构方向 18.0</span> · <span class='tip' title='最近 6 个月券商评级的覆盖家数与买入/增持占比，满分 8（data_rating）。小票常无覆盖，得分 0 属正常，不因此加分也不扣分。'>机构评级 1.6</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 6.0</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 10.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 8.0</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 0.0</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 16.6</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 2.8</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -0.0</span></div>
     <div class='sig'><b>介入：</b>乖离MA20 11.8%，回踩MA10（20.24）介入，不追高；<b>失效：</b>跌破 18.83 无条件离场。</div>
     
   </div>
@@ -191,19 +199,19 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
     <div class='chead'>
       <span class='cname'>光迅科技</span>
       <span class='ccode'>sz002281 · 通信</span>
-      <span class='badge bB'>B 可建仓</span>
-      <span style='margin-left:auto' class='score'>62.6</span>
+      <span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B 可建仓</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>62.6</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>179.39 <span class='down' style='font-size:12px'>-1.86%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>177.96 ~ 182.08</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>167.42（-7.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>198.02 / 207.02</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.43</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>179.39 <span class='down' style='font-size:12px'>-1.86%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>177.96 ~ 182.08</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>167.42（-7.0%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>198.02 / 207.02</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>1.43</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 3.37亿</span><span class='chip'>机构席位 5 家</span><span class='chip'>目标价空间 +29%</span><span class='chip'>知名席位 1 次</span><span class='chip'>游资买入 7.69亿</span><span class='chip'>主力当日 -3.54亿</span><span class='chip'>获利盘 46%</span></div>
-    <div class='sig'><b>打分：</b>机构方向 25.0 · 机构评级 1.6 · 两融 4.2 · 主力资金 10.0 · 中报背景 8.0 · 高管 0.0 · 大宗 0.0 · 量价 14.0 · 筹码 4.8 · 风险 -5.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 3.37亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 5 家</span><span class='chip' title='券商一致预期目标价相对现价的空间：≥30% 满分 10 分，15%~30% 得 7 分，0~15% 得 4 分，低于现价 0 分。'>目标价空间 +29%</span><span class='chip' title='龙虎榜营业部中命中「知名游资席位库」（web/shareholder/data/person_index.json 中标记 star 的席位）的次数。'>知名席位 1 次</span><span class='chip' title='近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。'>游资买入 7.69亿</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 -3.54亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 46%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='机构轨方向分，满分 28：龙虎榜机构席位净买入金额（最高 18）+ 一致预期目标价相对现价的空间（最高 10，空间 ≥30% 满分）。'>机构方向 25.0</span> · <span class='tip' title='最近 6 个月券商评级的覆盖家数与买入/增持占比，满分 8（data_rating）。小票常无覆盖，得分 0 属正常，不因此加分也不扣分。'>机构评级 1.6</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 4.2</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 10.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 8.0</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 0.0</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 14.0</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 4.8</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -5.0</span></div>
     <div class='sig'><b>介入：</b>现价至MA5区间分批建仓；<b>失效：</b>跌破 167.42 无条件离场。</div>
     <div class='sig'>⚠ 跌破MA60、高管历史转让 3 笔</div>
   </div>
@@ -211,19 +219,19 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
     <div class='chead'>
       <span class='cname'>深南电路</span>
       <span class='ccode'>sz002916 · 电子</span>
-      <span class='badge bB'>B 可建仓</span>
-      <span style='margin-left:auto' class='score'>60.0</span>
+      <span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B 可建仓</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>60.0</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>392.31 <span class='up' style='font-size:12px'>+2.35%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>369.12 ~ 398.19</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>356.80（-7.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>422.02 / 441.21</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.43</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>392.31 <span class='up' style='font-size:12px'>+2.35%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>369.12 ~ 398.19</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>356.80（-7.0%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>422.02 / 441.21</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>1.43</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 1.88亿</span><span class='chip'>机构席位 6 家</span><span class='chip'>目标价空间 +6%</span><span class='chip'>知名席位 1 次</span><span class='chip'>游资买入 8.44亿</span><span class='chip'>主力当日 4.73亿</span><span class='chip'>获利盘 74%</span></div>
-    <div class='sig'><b>打分：</b>机构方向 22.0 · 机构评级 3.6 · 两融 0.9 · 主力资金 5.0 · 中报背景 8.0 · 高管 0.0 · 大宗 0.0 · 量价 16.6 · 筹码 3.9 · 风险 -0.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 1.88亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 6 家</span><span class='chip' title='券商一致预期目标价相对现价的空间：≥30% 满分 10 分，15%~30% 得 7 分，0~15% 得 4 分，低于现价 0 分。'>目标价空间 +6%</span><span class='chip' title='龙虎榜营业部中命中「知名游资席位库」（web/shareholder/data/person_index.json 中标记 star 的席位）的次数。'>知名席位 1 次</span><span class='chip' title='近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。'>游资买入 8.44亿</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 4.73亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 74%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='机构轨方向分，满分 28：龙虎榜机构席位净买入金额（最高 18）+ 一致预期目标价相对现价的空间（最高 10，空间 ≥30% 满分）。'>机构方向 22.0</span> · <span class='tip' title='最近 6 个月券商评级的覆盖家数与买入/增持占比，满分 8（data_rating）。小票常无覆盖，得分 0 属正常，不因此加分也不扣分。'>机构评级 3.6</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 0.9</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 5.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 8.0</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 0.0</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 16.6</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 3.9</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -0.0</span></div>
     <div class='sig'><b>介入：</b>现价至MA5区间分批建仓；<b>失效：</b>跌破 356.80 无条件离场。</div>
     
   </div>
@@ -231,19 +239,19 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
     <div class='chead'>
       <span class='cname'>石药创新</span>
       <span class='ccode'>sz300765 · 医药生物</span>
-      <span class='badge bC'>C 轻仓观察</span>
-      <span style='margin-left:auto' class='score'>59.8</span>
+      <span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C 轻仓观察</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>59.8</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>42.63 <span class='up' style='font-size:12px'>+2.18%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>42.42 ~ 44.41</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>40.38（-7.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>47.76 / 49.93</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.43</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>≤3% · 5~15 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>42.63 <span class='up' style='font-size:12px'>+2.18%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>42.42 ~ 44.41</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>40.38（-7.0%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>47.76 / 49.93</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>1.43</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>≤3% · 5~15 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 4.64亿</span><span class='chip'>机构席位 6 家</span><span class='chip'>知名席位 2 次</span><span class='chip'>游资买入 4.78亿</span><span class='chip'>主力当日 0.30亿</span><span class='chip'>获利盘 61%</span></div>
-    <div class='sig'><b>打分：</b>机构方向 18.0 · 机构评级 3.6 · 两融 0.9 · 主力资金 7.0 · 中报背景 8.0 · 高管 0.0 · 大宗 6.0 · 量价 11.5 · 筹码 4.8 · 风险 -0.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 4.64亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 6 家</span><span class='chip' title='龙虎榜营业部中命中「知名游资席位库」（web/shareholder/data/person_index.json 中标记 star 的席位）的次数。'>知名席位 2 次</span><span class='chip' title='近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。'>游资买入 4.78亿</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 0.30亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 61%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='机构轨方向分，满分 28：龙虎榜机构席位净买入金额（最高 18）+ 一致预期目标价相对现价的空间（最高 10，空间 ≥30% 满分）。'>机构方向 18.0</span> · <span class='tip' title='最近 6 个月券商评级的覆盖家数与买入/增持占比，满分 8（data_rating）。小票常无覆盖，得分 0 属正常，不因此加分也不扣分。'>机构评级 3.6</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 0.9</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 7.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 8.0</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 6.0</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 11.5</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 4.8</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -0.0</span></div>
     <div class='sig'><b>介入：</b>现价至MA5区间分批建仓；<b>失效：</b>跌破 40.38 无条件离场。</div>
     
   </div>
@@ -251,45 +259,45 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
     <div class='chead'>
       <span class='cname'>中石科技</span>
       <span class='ccode'>sz300684 · 电子</span>
-      <span class='badge bC'>C 轻仓观察</span>
-      <span style='margin-left:auto' class='score'>59.4</span>
+      <span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C 轻仓观察</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>59.4</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>83.50 <span class='down' style='font-size:12px'>-0.19%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>83.08 ~ 91.08</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>80.98（-7.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>95.79 / 100.14</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.43</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>≤3% · 5~15 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>83.50 <span class='down' style='font-size:12px'>-0.19%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>83.08 ~ 91.08</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>80.98（-7.0%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>95.79 / 100.14</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>1.43</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>≤3% · 5~15 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 0.65亿</span><span class='chip'>机构席位 2 家</span><span class='chip'>目标价空间 +19%</span><span class='chip'>游资买入 3.14亿</span><span class='chip'>主力当日 -0.37亿</span><span class='chip'>获利盘 10%</span></div>
-    <div class='sig'><b>打分：</b>机构方向 18.2 · 机构评级 3.6 · 两融 6.0 · 主力资金 5.0 · 中报背景 8.0 · 高管 0.0 · 大宗 6.0 · 量价 9.8 · 筹码 2.8 · 风险 -0.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 0.65亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 2 家</span><span class='chip' title='券商一致预期目标价相对现价的空间：≥30% 满分 10 分，15%~30% 得 7 分，0~15% 得 4 分，低于现价 0 分。'>目标价空间 +19%</span><span class='chip' title='近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。'>游资买入 3.14亿</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 -0.37亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 10%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='机构轨方向分，满分 28：龙虎榜机构席位净买入金额（最高 18）+ 一致预期目标价相对现价的空间（最高 10，空间 ≥30% 满分）。'>机构方向 18.2</span> · <span class='tip' title='最近 6 个月券商评级的覆盖家数与买入/增持占比，满分 8（data_rating）。小票常无覆盖，得分 0 属正常，不因此加分也不扣分。'>机构评级 3.6</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 6.0</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 5.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 8.0</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 6.0</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 9.8</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 2.8</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -0.0</span></div>
     <div class='sig'><b>介入：</b>现价至MA5区间分批建仓；<b>失效：</b>跌破 80.98 无条件离场。</div>
     
   </div></div>
 
 <div class='section'><h2>游资轨 · 短线<span class='trk y'>1~3 日</span></h2>
 <div class='muted' style='margin-bottom:8px'>游资方向 30（知名席位 18 + 买入额 8 + 席位家数 4）+ 主力资金 10 + 量价 28 + 筹码 9 + 两融 8 + 中报 5 + 高管 5 + 大宗 5 − 风险 ≤12 − 热度反向 ≤4</div>
-<table><thead><tr><th>名称</th><th>代码</th><th>行业</th><th>板块</th><th>总分</th><th>当日</th><th>换手%</th><th>52周位</th><th>获利盘%</th><th>止损</th><th>目标一</th><th>档</th></tr></thead>
-<tbody><tr><td>星网锐捷</td><td class='muted'>sz002396</td><td>通信</td><td>—</td><td><b>78.5</b></td><td class='up'>+0.50%</td><td>8.95</td><td>76</td><td>30</td><td>34.36</td><td>37.98</td><td><span class='badge bA'>A</span></td></tr><tr><td>福立旺</td><td class='muted'>sh688678</td><td>电子</td><td>—</td><td><b>77.6</b></td><td class='down'>-3.02%</td><td>3.02</td><td>55</td><td>68</td><td>20.26</td><td>22.39</td><td><span class='badge bA'>A</span></td></tr><tr><td>石药创新</td><td class='muted'>sz300765</td><td>医药生物</td><td>—</td><td><b>73.6</b></td><td class='up'>+2.18%</td><td>1.46</td><td>61</td><td>61</td><td>40.7</td><td>44.99</td><td><span class='badge bA'>A</span></td></tr><tr><td>楚天龙</td><td class='muted'>sz003040</td><td>通信</td><td>—</td><td><b>72.2</b></td><td class='down'>-10.00%</td><td>15.55</td><td>67</td><td>15</td><td>18.04</td><td>19.94</td><td><span class='badge bA'>A</span></td></tr><tr><td>通鼎互联</td><td class='muted'>sz002491</td><td>通信</td><td>—</td><td><b>66.7</b></td><td class='down'>-5.40%</td><td>10.49</td><td>46</td><td>22</td><td>20.07</td><td>22.18</td><td><span class='badge bB'>B</span></td></tr><tr><td>深南电路</td><td class='muted'>sz002916</td><td>电子</td><td>—</td><td><b>62.8</b></td><td class='up'>+2.35%</td><td>1.25</td><td>70</td><td>74</td><td>359.85</td><td>402.9</td><td><span class='badge bB'>B</span></td></tr><tr><td>中谷物流</td><td class='muted'>sh603565</td><td>交通运输</td><td>—</td><td><b>61.8</b></td><td class='down'>-1.21%</td><td>1.18</td><td>69</td><td>81</td><td>11.71</td><td>12.94</td><td><span class='badge bB'>B</span></td></tr><tr><td>千金药业</td><td class='muted'>sh600479</td><td>医药生物</td><td>—</td><td><b>60.7</b></td><td class='down'>-9.99%</td><td>20.49</td><td>60</td><td>9</td><td>12.13</td><td>13.41</td><td><span class='badge bB'>B</span></td></tr><tr><td>长飞光纤</td><td class='muted'>sh601869</td><td>通信</td><td>—</td><td><b>58.8</b></td><td class='down'>-1.42%</td><td>2.79</td><td>69</td><td>83</td><td>402.34</td><td>448.92</td><td><span class='badge bC'>C</span></td></tr><tr><td>恒宝股份</td><td class='muted'>sz002104</td><td>通信</td><td>—</td><td><b>58.3</b></td><td class='down'>-4.04%</td><td>11.79</td><td>19</td><td>18</td><td>11.8</td><td>13.04</td><td><span class='badge bC'>C</span></td></tr><tr><td>思泉新材</td><td class='muted'>sz301489</td><td>电子</td><td>—</td><td><b>54.3</b></td><td class='down'>-3.78%</td><td>7.93</td><td>33</td><td>36</td><td>119.25</td><td>131.8</td><td><span class='badge bC'>C</span></td></tr><tr><td>高争民爆</td><td class='muted'>sz002827</td><td>基础化工</td><td>—</td><td><b>54.0</b></td><td class='down'>-5.87%</td><td>3.63</td><td>80</td><td>73</td><td>58.97</td><td>65.17</td><td><span class='badge bC'>C</span></td></tr><tr><td>上海能源</td><td class='muted'>sh600508</td><td>煤炭</td><td>—</td><td><b>51.6</b></td><td class='down'>-2.50%</td><td>3.61</td><td>71</td><td>56</td><td>10.82</td><td>11.96</td><td><span class='badge bC'>C</span></td></tr><tr><td>光迅科技</td><td class='muted'>sz002281</td><td>通信</td><td>—</td><td><b>51.0</b></td><td class='down'>-1.86%</td><td>2.99</td><td>56</td><td>46</td><td>171.02</td><td>189.02</td><td><span class='badge bC'>C</span></td></tr><tr><td>中石科技</td><td class='muted'>sz300684</td><td>电子</td><td>—</td><td><b>50.7</b></td><td class='down'>-0.19%</td><td>7.47</td><td>68</td><td>10</td><td>79.72</td><td>88.11</td><td><span class='badge bC'>C</span></td></tr><tr><td>神奇制药</td><td class='muted'>sh600613</td><td>医药生物</td><td>—</td><td><b>50.6</b></td><td class='down'>-5.65%</td><td>23.42</td><td>50</td><td>8</td><td>8.12</td><td>8.98</td><td><span class='badge bC'>C</span></td></tr><tr><td>博汇股份</td><td class='muted'>sz300839</td><td>石油石化</td><td>—</td><td><b>48.3</b></td><td class='down'>-5.53%</td><td>4.74</td><td>31</td><td>44</td><td>12.23</td><td>13.52</td><td><span class='badge bD'>D</span></td></tr><tr><td>易点天下</td><td class='muted'>sz301171</td><td>传媒</td><td>—</td><td><b>46.1</b></td><td class='down'>-2.53%</td><td>8.93</td><td>35</td><td>17</td><td>34.6</td><td>38.24</td><td><span class='badge bD'>D</span></td></tr><tr><td>万向德农</td><td class='muted'>sh600371</td><td>农林牧渔</td><td>—</td><td><b>46.1</b></td><td class='down'>-8.12%</td><td>21.45</td><td>77</td><td>25</td><td>13.51</td><td>14.93</td><td><span class='badge bD'>D</span></td></tr><tr><td>英维克</td><td class='muted'>sz002837</td><td>机械设备</td><td>—</td><td><b>44.3</b></td><td class='down'>-2.16%</td><td>2.60</td><td>32</td><td>29</td><td>58.32</td><td>64.45</td><td><span class='badge bD'>D</span></td></tr><tr><td>沃森生物</td><td class='muted'>sz300142</td><td>医药生物</td><td>—</td><td><b>41.3</b></td><td class='down'>-3.35%</td><td>3.73</td><td>36</td><td>9</td><td>12.41</td><td>13.72</td><td><span class='badge bD'>D</span></td></tr><tr><td>光洋股份</td><td class='muted'>sz002708</td><td>汽车</td><td>—</td><td><b>37.2</b></td><td class='down'>-0.42%</td><td>7.87</td><td>92</td><td>82</td><td>15.59</td><td>17.23</td><td><span class='badge bD'>D</span></td></tr><tr><td>浪潮信息</td><td class='muted'>sz000977</td><td>计算机</td><td>—</td><td><b>36.0</b></td><td class='down'>-1.33%</td><td>3.61</td><td>37</td><td>2</td><td>67.24</td><td>74.32</td><td><span class='badge bD'>D</span></td></tr><tr><td>速达股份</td><td class='muted'>sz001277</td><td>机械设备</td><td>洗盘</td><td><b>31.2</b></td><td class='down'>-2.41%</td><td>3.60</td><td>22</td><td>9</td><td>28.98</td><td>32.03</td><td><span class='badge bD'>D</span></td></tr></tbody></table>
+<table><thead><tr><th class='tip' title='个股名称。候选来自三路信号（中报十大股东增减持 / 高管增减持 / 大宗交易）与龙虎榜机构、游资方向合流。'>名称</th><th class='tip' title='带市场前缀的代码：sh 沪市、sz 深市、bj 北交所。'>代码</th><th class='tip' title='申万一级行业，来自中报股东库的代码-行业映射。'>行业</th><th class='tip' title='该股所属板块当日的「主力行为」（抢筹 / 建仓 / 洗盘 / 出货）。行为为「出货」时触发 Gate0 板块闸门，直接剔除。'>板块</th><th class='tip' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>总分</th><th class='tip' title='数据日期的当日涨跌幅。'>当日</th><th class='tip' title='当日换手率（成交量 / 流通股本）。过高（&gt;20%）视为情绪过热，量价分打折。'>换手%</th><th class='tip' title='现价在近 52 周最高最低区间中的百分位，0 为最低、100 为最高。&gt;92 视为接近一年高位并扣分。'>52周位</th><th class='tip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘%</th><th class='tip' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'>止损</th><th class='tip' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'>目标一</th><th class='tip' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>档</th></tr></thead>
+<tbody><tr><td>星网锐捷</td><td class='muted'>sz002396</td><td>通信</td><td>—</td><td><b>78.5</b></td><td class='up'>+0.50%</td><td>8.95</td><td>76</td><td>30</td><td>34.36</td><td>37.98</td><td><span class='badge bA' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>A</span></td></tr><tr><td>福立旺</td><td class='muted'>sh688678</td><td>电子</td><td>—</td><td><b>77.6</b></td><td class='down'>-3.02%</td><td>3.02</td><td>55</td><td>68</td><td>20.26</td><td>22.39</td><td><span class='badge bA' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>A</span></td></tr><tr><td>石药创新</td><td class='muted'>sz300765</td><td>医药生物</td><td>—</td><td><b>73.6</b></td><td class='up'>+2.18%</td><td>1.46</td><td>61</td><td>61</td><td>40.7</td><td>44.99</td><td><span class='badge bA' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>A</span></td></tr><tr><td>楚天龙</td><td class='muted'>sz003040</td><td>通信</td><td>—</td><td><b>72.2</b></td><td class='down'>-10.00%</td><td>15.55</td><td>67</td><td>15</td><td>18.04</td><td>19.94</td><td><span class='badge bA' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>A</span></td></tr><tr><td>通鼎互联</td><td class='muted'>sz002491</td><td>通信</td><td>—</td><td><b>66.7</b></td><td class='down'>-5.40%</td><td>10.49</td><td>46</td><td>22</td><td>20.07</td><td>22.18</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>深南电路</td><td class='muted'>sz002916</td><td>电子</td><td>—</td><td><b>62.8</b></td><td class='up'>+2.35%</td><td>1.25</td><td>70</td><td>74</td><td>359.85</td><td>402.9</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>中谷物流</td><td class='muted'>sh603565</td><td>交通运输</td><td>—</td><td><b>61.8</b></td><td class='down'>-1.21%</td><td>1.18</td><td>69</td><td>81</td><td>11.71</td><td>12.94</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>千金药业</td><td class='muted'>sh600479</td><td>医药生物</td><td>—</td><td><b>60.7</b></td><td class='down'>-9.99%</td><td>20.49</td><td>60</td><td>9</td><td>12.13</td><td>13.41</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>长飞光纤</td><td class='muted'>sh601869</td><td>通信</td><td>—</td><td><b>58.8</b></td><td class='down'>-1.42%</td><td>2.79</td><td>69</td><td>83</td><td>402.34</td><td>448.92</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>恒宝股份</td><td class='muted'>sz002104</td><td>通信</td><td>—</td><td><b>58.3</b></td><td class='down'>-4.04%</td><td>11.79</td><td>19</td><td>18</td><td>11.8</td><td>13.04</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>思泉新材</td><td class='muted'>sz301489</td><td>电子</td><td>—</td><td><b>54.3</b></td><td class='down'>-3.78%</td><td>7.93</td><td>33</td><td>36</td><td>119.25</td><td>131.8</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>高争民爆</td><td class='muted'>sz002827</td><td>基础化工</td><td>—</td><td><b>54.0</b></td><td class='down'>-5.87%</td><td>3.63</td><td>80</td><td>73</td><td>58.97</td><td>65.17</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>上海能源</td><td class='muted'>sh600508</td><td>煤炭</td><td>—</td><td><b>51.6</b></td><td class='down'>-2.50%</td><td>3.61</td><td>71</td><td>56</td><td>10.82</td><td>11.96</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>光迅科技</td><td class='muted'>sz002281</td><td>通信</td><td>—</td><td><b>51.0</b></td><td class='down'>-1.86%</td><td>2.99</td><td>56</td><td>46</td><td>171.02</td><td>189.02</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>中石科技</td><td class='muted'>sz300684</td><td>电子</td><td>—</td><td><b>50.7</b></td><td class='down'>-0.19%</td><td>7.47</td><td>68</td><td>10</td><td>79.72</td><td>88.11</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>神奇制药</td><td class='muted'>sh600613</td><td>医药生物</td><td>—</td><td><b>50.6</b></td><td class='down'>-5.65%</td><td>23.42</td><td>50</td><td>8</td><td>8.12</td><td>8.98</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>博汇股份</td><td class='muted'>sz300839</td><td>石油石化</td><td>—</td><td><b>48.3</b></td><td class='down'>-5.53%</td><td>4.74</td><td>31</td><td>44</td><td>12.23</td><td>13.52</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>易点天下</td><td class='muted'>sz301171</td><td>传媒</td><td>—</td><td><b>46.1</b></td><td class='down'>-2.53%</td><td>8.93</td><td>35</td><td>17</td><td>34.6</td><td>38.24</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>万向德农</td><td class='muted'>sh600371</td><td>农林牧渔</td><td>—</td><td><b>46.1</b></td><td class='down'>-8.12%</td><td>21.45</td><td>77</td><td>25</td><td>13.51</td><td>14.93</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>英维克</td><td class='muted'>sz002837</td><td>机械设备</td><td>—</td><td><b>44.3</b></td><td class='down'>-2.16%</td><td>2.60</td><td>32</td><td>29</td><td>58.32</td><td>64.45</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>沃森生物</td><td class='muted'>sz300142</td><td>医药生物</td><td>—</td><td><b>41.3</b></td><td class='down'>-3.35%</td><td>3.73</td><td>36</td><td>9</td><td>12.41</td><td>13.72</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>光洋股份</td><td class='muted'>sz002708</td><td>汽车</td><td>—</td><td><b>37.2</b></td><td class='down'>-0.42%</td><td>7.87</td><td>92</td><td>82</td><td>15.59</td><td>17.23</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>浪潮信息</td><td class='muted'>sz000977</td><td>计算机</td><td>—</td><td><b>36.0</b></td><td class='down'>-1.33%</td><td>3.61</td><td>37</td><td>2</td><td>67.24</td><td>74.32</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>速达股份</td><td class='muted'>sz001277</td><td>机械设备</td><td>洗盘</td><td><b>31.2</b></td><td class='down'>-2.41%</td><td>3.60</td><td>22</td><td>9</td><td>28.98</td><td>32.03</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr></tbody></table>
 
   <div class='card hi'>
     <div class='chead'>
       <span class='cname'>星网锐捷</span>
       <span class='ccode'>sz002396 · 通信</span>
-      <span class='badge bA'>A 重点建仓</span>
-      <span style='margin-left:auto' class='score'>78.5</span>
+      <span class='badge bA' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>A 重点建仓</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>78.5</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>35.99 <span class='up' style='font-size:12px'>+0.50%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>35.63 ~ 36.71</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>34.36（-5.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>37.98 / 39.06</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.0</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>8%~10% · 1~3 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>35.99 <span class='up' style='font-size:12px'>+0.50%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>35.63 ~ 36.71</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>34.36（-5.0%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>37.98 / 39.06</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>1.0</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>8%~10% · 1~3 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 2.98亿</span><span class='chip'>机构席位 4 家</span><span class='chip'>目标价空间 +12%</span><span class='chip'>知名席位 3 次</span><span class='chip'>游资买入 6.17亿</span><span class='chip'>主力当日 1.27亿</span><span class='chip'>获利盘 30%</span></div>
-    <div class='sig'><b>打分：</b>游资方向 32.0 · 主力资金 8.0 · 中报背景 4.8 · 高管 0.0 · 大宗 2.5 · 量价 19.9 · 筹码 8.1 · 两融 3.2 · 风险 -0.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 2.98亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 4 家</span><span class='chip' title='券商一致预期目标价相对现价的空间：≥30% 满分 10 分，15%~30% 得 7 分，0~15% 得 4 分，低于现价 0 分。'>目标价空间 +12%</span><span class='chip' title='龙虎榜营业部中命中「知名游资席位库」（web/shareholder/data/person_index.json 中标记 star 的席位）的次数。'>知名席位 3 次</span><span class='chip' title='近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。'>游资买入 6.17亿</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 1.27亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 30%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='游资轨方向分，满分 30：知名游资席位现身次数（最高 18）+ 龙虎榜营业部买入额（最高 8）+ 席位家数（最高 4）。机构轨权重表里记为 30。'>游资方向 32.0</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 8.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 4.8</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 2.5</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 19.9</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 8.1</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 3.2</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -0.0</span></div>
     <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 34.36 无条件离场。</div>
     
   </div>
@@ -297,19 +305,19 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
     <div class='chead'>
       <span class='cname'>福立旺</span>
       <span class='ccode'>sh688678 · 电子</span>
-      <span class='badge bA'>A 重点建仓</span>
-      <span style='margin-left:auto' class='score'>77.6</span>
+      <span class='badge bA' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>A 重点建仓</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>77.6</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>21.22 <span class='down' style='font-size:12px'>-3.02%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>21.01 ~ 21.64</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>20.26（-5.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>22.39 / 23.03</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.0</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>8%~10% · 1~3 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>21.22 <span class='down' style='font-size:12px'>-3.02%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>21.01 ~ 21.64</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>20.26（-5.0%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>22.39 / 23.03</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>1.0</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>8%~10% · 1~3 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 0.58亿</span><span class='chip'>机构席位 2 家</span><span class='chip'>知名席位 3 次</span><span class='chip'>游资买入 5.02亿</span><span class='chip'>主力当日 0.23亿</span><span class='chip'>获利盘 68%</span></div>
-    <div class='sig'><b>打分：</b>游资方向 31.2 · 主力资金 8.0 · 中报背景 4.8 · 高管 0.0 · 大宗 0.0 · 量价 23.2 · 筹码 7.2 · 两融 3.2 · 风险 -0.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 0.58亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 2 家</span><span class='chip' title='龙虎榜营业部中命中「知名游资席位库」（web/shareholder/data/person_index.json 中标记 star 的席位）的次数。'>知名席位 3 次</span><span class='chip' title='近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。'>游资买入 5.02亿</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 0.23亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 68%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='游资轨方向分，满分 30：知名游资席位现身次数（最高 18）+ 龙虎榜营业部买入额（最高 8）+ 席位家数（最高 4）。机构轨权重表里记为 30。'>游资方向 31.2</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 8.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 4.8</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 0.0</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 23.2</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 7.2</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 3.2</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -0.0</span></div>
     <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 20.26 无条件离场。</div>
     
   </div>
@@ -317,19 +325,19 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
     <div class='chead'>
       <span class='cname'>石药创新</span>
       <span class='ccode'>sz300765 · 医药生物</span>
-      <span class='badge bA'>A 重点建仓</span>
-      <span style='margin-left:auto' class='score'>73.6</span>
+      <span class='badge bA' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>A 重点建仓</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>73.6</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>42.63 <span class='up' style='font-size:12px'>+2.18%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>42.20 ~ 43.48</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>40.70（-5.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>44.99 / 46.27</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.0</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>8%~10% · 1~3 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>42.63 <span class='up' style='font-size:12px'>+2.18%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>42.20 ~ 43.48</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>40.70（-5.0%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>44.99 / 46.27</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>1.0</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>8%~10% · 1~3 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 4.64亿</span><span class='chip'>机构席位 6 家</span><span class='chip'>知名席位 2 次</span><span class='chip'>游资买入 4.78亿</span><span class='chip'>主力当日 0.30亿</span><span class='chip'>获利盘 61%</span></div>
-    <div class='sig'><b>打分：</b>游资方向 31.2 · 主力资金 8.0 · 中报背景 4.8 · 高管 0.0 · 大宗 5.0 · 量价 16.2 · 筹码 7.2 · 两融 1.2 · 风险 -0.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 4.64亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 6 家</span><span class='chip' title='龙虎榜营业部中命中「知名游资席位库」（web/shareholder/data/person_index.json 中标记 star 的席位）的次数。'>知名席位 2 次</span><span class='chip' title='近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。'>游资买入 4.78亿</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 0.30亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 61%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='游资轨方向分，满分 30：知名游资席位现身次数（最高 18）+ 龙虎榜营业部买入额（最高 8）+ 席位家数（最高 4）。机构轨权重表里记为 30。'>游资方向 31.2</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 8.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 4.8</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 5.0</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 16.2</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 7.2</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 1.2</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -0.0</span></div>
     <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 40.70 无条件离场。</div>
     
   </div>
@@ -337,19 +345,19 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
     <div class='chead'>
       <span class='cname'>楚天龙</span>
       <span class='ccode'>sz003040 · 通信</span>
-      <span class='badge bA'>A 重点建仓</span>
-      <span style='margin-left:auto' class='score'>72.2</span>
+      <span class='badge bA' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>A 重点建仓</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>72.2</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>18.90 <span class='down' style='font-size:12px'>-10.00%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>18.71 ~ 19.28</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>18.04（-5.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>19.94 / 20.51</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.0</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>8%~10% · 1~3 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>18.90 <span class='down' style='font-size:12px'>-10.00%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>18.71 ~ 19.28</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>18.04（-5.0%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>19.94 / 20.51</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>1.0</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>8%~10% · 1~3 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 2.40亿</span><span class='chip'>机构席位 3 家</span><span class='chip'>知名席位 2 次</span><span class='chip'>游资买入 5.10亿</span><span class='chip'>主力当日 -1.43亿</span><span class='chip'>获利盘 15%</span></div>
-    <div class='sig'><b>打分：</b>游资方向 32.0 · 主力资金 0.0 · 中报背景 4.8 · 高管 0.0 · 大宗 0.0 · 量价 23.2 · 筹码 4.2 · 两融 8.0 · 风险 -0.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 2.40亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 3 家</span><span class='chip' title='龙虎榜营业部中命中「知名游资席位库」（web/shareholder/data/person_index.json 中标记 star 的席位）的次数。'>知名席位 2 次</span><span class='chip' title='近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。'>游资买入 5.10亿</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 -1.43亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 15%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='游资轨方向分，满分 30：知名游资席位现身次数（最高 18）+ 龙虎榜营业部买入额（最高 8）+ 席位家数（最高 4）。机构轨权重表里记为 30。'>游资方向 32.0</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 0.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 4.8</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 0.0</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 23.2</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 4.2</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 8.0</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -0.0</span></div>
     <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 18.04 无条件离场。</div>
     
   </div>
@@ -357,19 +365,19 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
     <div class='chead'>
       <span class='cname'>通鼎互联</span>
       <span class='ccode'>sz002491 · 通信</span>
-      <span class='badge bB'>B 可建仓</span>
-      <span style='margin-left:auto' class='score'>66.7</span>
+      <span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B 可建仓</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>66.7</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>21.02 <span class='down' style='font-size:12px'>-5.40%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>20.81 ~ 21.44</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>20.07（-5.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>22.18 / 22.82</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.0</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 1~3 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>21.02 <span class='down' style='font-size:12px'>-5.40%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>20.81 ~ 21.44</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>20.07（-5.0%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>22.18 / 22.82</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>1.0</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>5%~7% · 1~3 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 12.50亿</span><span class='chip'>机构席位 4 家</span><span class='chip'>知名席位 4 次</span><span class='chip'>游资买入 6.54亿</span><span class='chip'>主力当日 -3.44亿</span><span class='chip'>获利盘 22%</span></div>
-    <div class='sig'><b>打分：</b>游资方向 32.0 · 主力资金 0.0 · 中报背景 3.0 · 高管 0.0 · 大宗 0.0 · 量价 22.0 · 筹码 7.7 · 两融 8.0 · 风险 -6.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 12.50亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 4 家</span><span class='chip' title='龙虎榜营业部中命中「知名游资席位库」（web/shareholder/data/person_index.json 中标记 star 的席位）的次数。'>知名席位 4 次</span><span class='chip' title='近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。'>游资买入 6.54亿</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 -3.44亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 22%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='游资轨方向分，满分 30：知名游资席位现身次数（最高 18）+ 龙虎榜营业部买入额（最高 8）+ 席位家数（最高 4）。机构轨权重表里记为 30。'>游资方向 32.0</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 0.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 3.0</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 0.0</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 22.0</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 7.7</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 8.0</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -6.0</span></div>
     <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 20.07 无条件离场。</div>
     <div class='sig'>⚠ 跌破MA60、质押比例 27.1% 偏高</div>
   </div>
@@ -377,19 +385,19 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
     <div class='chead'>
       <span class='cname'>深南电路</span>
       <span class='ccode'>sz002916 · 电子</span>
-      <span class='badge bB'>B 可建仓</span>
-      <span style='margin-left:auto' class='score'>62.8</span>
+      <span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B 可建仓</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>62.8</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>392.31 <span class='up' style='font-size:12px'>+2.35%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>367.27 ~ 400.16</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>359.85（-6.22%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>402.90 / 414.41</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>0.8</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 1~3 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>392.31 <span class='up' style='font-size:12px'>+2.35%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>367.27 ~ 400.16</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>359.85（-6.22%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>402.90 / 414.41</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>0.8</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>5%~7% · 1~3 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 1.88亿</span><span class='chip'>机构席位 6 家</span><span class='chip'>目标价空间 +6%</span><span class='chip'>知名席位 1 次</span><span class='chip'>游资买入 8.44亿</span><span class='chip'>主力当日 4.73亿</span><span class='chip'>获利盘 74%</span></div>
-    <div class='sig'><b>打分：</b>游资方向 19.6 · 主力资金 8.0 · 中报背景 4.8 · 高管 0.0 · 大宗 0.0 · 量价 23.3 · 筹码 5.8 · 两融 1.2 · 风险 -0.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 1.88亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 6 家</span><span class='chip' title='券商一致预期目标价相对现价的空间：≥30% 满分 10 分，15%~30% 得 7 分，0~15% 得 4 分，低于现价 0 分。'>目标价空间 +6%</span><span class='chip' title='龙虎榜营业部中命中「知名游资席位库」（web/shareholder/data/person_index.json 中标记 star 的席位）的次数。'>知名席位 1 次</span><span class='chip' title='近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。'>游资买入 8.44亿</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 4.73亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 74%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='游资轨方向分，满分 30：知名游资席位现身次数（最高 18）+ 龙虎榜营业部买入额（最高 8）+ 席位家数（最高 4）。机构轨权重表里记为 30。'>游资方向 19.6</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 8.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 4.8</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 0.0</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 23.3</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 5.8</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 1.2</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -0.0</span></div>
     <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 359.85 无条件离场。</div>
     
   </div>
@@ -397,19 +405,19 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
     <div class='chead'>
       <span class='cname'>中谷物流</span>
       <span class='ccode'>sh603565 · 交通运输</span>
-      <span class='badge bB'>B 可建仓</span>
-      <span style='margin-left:auto' class='score'>61.8</span>
+      <span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B 可建仓</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>61.8</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>12.26 <span class='down' style='font-size:12px'>-1.21%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>12.14 ~ 12.51</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>11.71（-5.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>12.94 / 13.31</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.0</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 1~3 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>12.26 <span class='down' style='font-size:12px'>-1.21%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>12.14 ~ 12.51</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>11.71（-5.0%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>12.94 / 13.31</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>1.0</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>5%~7% · 1~3 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 1.59亿</span><span class='chip'>机构席位 4 家</span><span class='chip'>目标价空间 +23%</span><span class='chip'>知名席位 2 次</span><span class='chip'>游资买入 0.20亿</span><span class='chip'>主力当日 -0.03亿</span><span class='chip'>获利盘 81%</span></div>
-    <div class='sig'><b>打分：</b>游资方向 23.6 · 主力资金 3.0 · 中报背景 4.8 · 高管 0.0 · 大宗 0.0 · 量价 24.4 · 筹码 4.8 · 两融 1.2 · 风险 -0.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 1.59亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 4 家</span><span class='chip' title='券商一致预期目标价相对现价的空间：≥30% 满分 10 分，15%~30% 得 7 分，0~15% 得 4 分，低于现价 0 分。'>目标价空间 +23%</span><span class='chip' title='龙虎榜营业部中命中「知名游资席位库」（web/shareholder/data/person_index.json 中标记 star 的席位）的次数。'>知名席位 2 次</span><span class='chip' title='近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。'>游资买入 0.20亿</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 -0.03亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 81%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='游资轨方向分，满分 30：知名游资席位现身次数（最高 18）+ 龙虎榜营业部买入额（最高 8）+ 席位家数（最高 4）。机构轨权重表里记为 30。'>游资方向 23.6</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 3.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 4.8</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 0.0</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 24.4</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 4.8</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 1.2</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -0.0</span></div>
     <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 11.71 无条件离场。</div>
     
   </div>
@@ -417,19 +425,19 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
     <div class='chead'>
       <span class='cname'>千金药业</span>
       <span class='ccode'>sh600479 · 医药生物</span>
-      <span class='badge bB'>B 可建仓</span>
-      <span style='margin-left:auto' class='score'>60.7</span>
+      <span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B 可建仓</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>60.7</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>12.71 <span class='down' style='font-size:12px'>-9.99%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>12.58 ~ 12.96</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>12.13（-5.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>13.41 / 13.80</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.0</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 1~3 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>12.71 <span class='down' style='font-size:12px'>-9.99%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>12.58 ~ 12.96</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>12.13（-5.0%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>13.41 / 13.80</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>1.0</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>5%~7% · 1~3 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 1.16亿</span><span class='chip'>机构席位 3 家</span><span class='chip'>知名席位 2 次</span><span class='chip'>游资买入 3.42亿</span><span class='chip'>主力当日 -1.32亿</span><span class='chip'>获利盘 9%</span></div>
-    <div class='sig'><b>打分：</b>游资方向 32.0 · 主力资金 0.0 · 中报背景 4.8 · 高管 0.0 · 大宗 0.0 · 量价 20.1 · 筹码 3.8 · 两融 0.0 · 风险 -0.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 1.16亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 3 家</span><span class='chip' title='龙虎榜营业部中命中「知名游资席位库」（web/shareholder/data/person_index.json 中标记 star 的席位）的次数。'>知名席位 2 次</span><span class='chip' title='近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。'>游资买入 3.42亿</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 -1.32亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 9%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='游资轨方向分，满分 30：知名游资席位现身次数（最高 18）+ 龙虎榜营业部买入额（最高 8）+ 席位家数（最高 4）。机构轨权重表里记为 30。'>游资方向 32.0</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 0.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 4.8</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 0.0</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 20.1</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 3.8</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 0.0</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -0.0</span></div>
     <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 12.13 无条件离场。</div>
     
   </div>
@@ -437,19 +445,19 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
     <div class='chead'>
       <span class='cname'>长飞光纤</span>
       <span class='ccode'>sh601869 · 通信</span>
-      <span class='badge bC'>C 轻仓观察</span>
-      <span style='margin-left:auto' class='score'>58.8</span>
+      <span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C 轻仓观察</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>58.8</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>435.74 <span class='down' style='font-size:12px'>-1.42%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>410.64 ~ 444.45</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>402.34（-5.9%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>448.92 / 461.75</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>0.85</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>≤3% · 1~3 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>435.74 <span class='down' style='font-size:12px'>-1.42%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>410.64 ~ 444.45</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>402.34（-5.9%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>448.92 / 461.75</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>0.85</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>≤3% · 1~3 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 3.23亿</span><span class='chip'>机构席位 6 家</span><span class='chip'>目标价空间 +4%</span><span class='chip'>知名席位 1 次</span><span class='chip'>游资买入 3.57亿</span><span class='chip'>主力当日 -4.66亿</span><span class='chip'>获利盘 83%</span></div>
-    <div class='sig'><b>打分：</b>游资方向 18.8 · 主力资金 0.0 · 中报背景 3.0 · 高管 0.0 · 大宗 5.0 · 量价 23.3 · 筹码 5.8 · 两融 4.8 · 风险 -2.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 3.23亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 6 家</span><span class='chip' title='券商一致预期目标价相对现价的空间：≥30% 满分 10 分，15%~30% 得 7 分，0~15% 得 4 分，低于现价 0 分。'>目标价空间 +4%</span><span class='chip' title='龙虎榜营业部中命中「知名游资席位库」（web/shareholder/data/person_index.json 中标记 star 的席位）的次数。'>知名席位 1 次</span><span class='chip' title='近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。'>游资买入 3.57亿</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 -4.66亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 83%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='游资轨方向分，满分 30：知名游资席位现身次数（最高 18）+ 龙虎榜营业部买入额（最高 8）+ 席位家数（最高 4）。机构轨权重表里记为 30。'>游资方向 18.8</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 0.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 3.0</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 5.0</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 23.3</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 5.8</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 4.8</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -2.0</span></div>
     <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 402.34 无条件离场。</div>
     <div class='sig'>⚠ 中报减仓多于加仓</div>
   </div>
@@ -457,19 +465,19 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
     <div class='chead'>
       <span class='cname'>恒宝股份</span>
       <span class='ccode'>sz002104 · 通信</span>
-      <span class='badge bC'>C 轻仓观察</span>
-      <span style='margin-left:auto' class='score'>58.3</span>
+      <span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C 轻仓观察</span>
+      <span style='margin-left:auto' class='score' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>58.3</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>12.36 <span class='down' style='font-size:12px'>-4.04%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>12.24 ~ 12.61</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>11.80（-5.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>13.04 / 13.42</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.0</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>≤3% · 1~3 个交易日</div></div>
+      <div class='kv tipbox' title='数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。'><div class='k tipk'>现价</div><div class='v'>12.36 <span class='down' style='font-size:12px'>-4.04%</span></div></div>
+      <div class='kv tipbox' title='建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。'><div class='k tipk'>进场区间</div><div class='v sm'>12.24 ~ 12.61</div></div>
+      <div class='kv tipbox' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'><div class='k tipk'>止损</div><div class='v sm down'>11.80（-5.0%）</div></div>
+      <div class='kv tipbox' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'><div class='k tipk'>目标一 / 二</div><div class='v sm up'>13.04 / 13.42</div></div>
+      <div class='kv tipbox' title='（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，&lt;1 应当放弃。'><div class='k tipk'>盈亏比</div><div class='v sm'>1.0</div></div>
+      <div class='kv tipbox' title='按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D &lt;50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。'><div class='k tipk'>仓位 / 周期</div><div class='v sm'>≤3% · 1~3 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>机构净买 3.52亿</span><span class='chip'>机构席位 4 家</span><span class='chip'>知名席位 2 次</span><span class='chip'>游资买入 0.97亿</span><span class='chip'>主力当日 -1.04亿</span><span class='chip'>获利盘 18%</span></div>
-    <div class='sig'><b>打分：</b>游资方向 28.2 · 主力资金 0.0 · 中报背景 4.8 · 高管 0.0 · 大宗 0.0 · 量价 20.9 · 筹码 5.1 · 两融 1.2 · 风险 -2.0</div>
+    <div class='sig'><b>信号：</b><span class='chip' title='近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。'>机构净买 3.52亿</span><span class='chip' title='单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。'>机构席位 4 家</span><span class='chip' title='龙虎榜营业部中命中「知名游资席位库」（web/shareholder/data/person_index.json 中标记 star 的席位）的次数。'>知名席位 2 次</span><span class='chip' title='近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。'>游资买入 0.97亿</span><span class='chip' title='当日主力净流入金额（主力净流入 − 散户净流入）。'>主力当日 -1.04亿</span><span class='chip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘 18%</span></div>
+    <div class='sig'><b>打分：</b><span class='tip' title='游资轨方向分，满分 30：知名游资席位现身次数（最高 18）+ 龙虎榜营业部买入额（最高 8）+ 席位家数（最高 4）。机构轨权重表里记为 30。'>游资方向 28.2</span> · <span class='tip' title='主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。'>主力资金 0.0</span> · <span class='tip' title='2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。'>中报背景 4.8</span> · <span class='tip' title='近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。'>高管 0.0</span> · <span class='tip' title='近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。'>大宗 0.0</span> · <span class='tip' title='量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。'>量价 20.9</span> · <span class='tip' title='获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。'>筹码 5.1</span> · <span class='tip' title='融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。'>两融 1.2</span> · <span class='tip' title='风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 &gt;15% 等。'>风险 -2.0</span></div>
     <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 11.80 无条件离场。</div>
     <div class='sig'>⚠ 中报减仓多于加仓</div>
   </div></div>
