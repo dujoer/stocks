@@ -38,13 +38,39 @@ def esc(s):
     return (str(s or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
 
 
+# ---------------- 字段口径说明（悬浮提示） ----------------
+TIPS = {
+    "轨": "机构轨＝波段模型（持有 5~15 日，看 5/20 日资金与机构评级）；游资轨＝短线模型（持有 1~3 日，看当日资金与龙虎榜营业部）。",
+    "档位": "按信号池当日总分分档：A ≥70 · B 60~70 · C 50~60 · D <50。回测用来检验高档位是否真的优于低档位。",
+    "T+1": "以页面给出的进场参考价买入，第 1 个交易日收盘价计算的平均收益（(收盘 − 进场价) / 进场价）。",
+    "T+3": "以进场参考价买入，第 3 个交易日收盘价计算的平均收益。机构轨理论上应优于 T+1。",
+    "T+5": "以进场参考价买入，第 5 个交易日收盘价计算的平均收益。",
+    "胜率": "该组内收益为正的样本数 ÷ 有效样本数。",
+    "触T1": "该组内区间最高价触及目标一的样本数（同一只票在一个周期内只计一次）。",
+    "触T2": "该组内区间最高价触及目标二的样本数。",
+    "止损": "该组内区间最低价跌破止损位的样本数。",
+    "候选数": "该期该轨输出的候选只数（已通过一票否决后剩余）。",
+    "有效样本": "已回填出该周期收益的候选只数；持仓周期未满时尚未结算。",
+    "结算状态": "是否已有足够的后续交易日完成回填，以及用于结算的数据日期。",
+    "均涨": "该组内全部样本的平均收益（算术平均，未做等权再平衡）。",
+    "总览卡": "该轨在该持有周期下的整体表现：均涨 / 样本数 / 胜率 / 触及目标与止损次数。样本极小时仅供参考。",
+    "进场参考价": "信号池当日给出的进场区间中值，回测与次日回填全部以它为买入基准价。",
+}
+
+
+def tip_t(key):
+    t = TIPS.get(key)
+    return f" title='{esc(t)}'" if t else ""
+
+
 def nav(cur="backtest"):
     items = [
         ("总门户", "../../index.html"), ("龙虎榜", "../lhb/lhb.html"),
         ("板块强度", "../sector/index.html"), ("高管增减持", "../exec/index.html"),
         ("大宗交易", "../block/index.html"), ("群体心理", "../psychology/index.html"),
         ("牛人追踪", "../shareholder/tracker.html"), ("数据中心", "../db/index.html"),
-        ("信号池", "index.html"), ("回测", "backtest.html"), ("版块总览", "../sections/index.html"),
+        ("信号池", "index.html"), ("回测", "backtest.html"),
+        ("做T池", "../tplus/index.html"), ("版块总览", "../sections/index.html"),
     ]
     out = []
     for n, h in items:
@@ -146,9 +172,11 @@ def main():
             win = d["win"] / d["n"] * 100
             cls = "up" if avg > 0 else ("down" if avg < 0 else "")
             cards.append(
-                f"<div class='kbox'><div class='kt'>{tname} · {kname}</div>"
-                f"<div class='kv {cls}'>{avg:+.2f}%</div>"
-                f"<div class='kd'>样本 {d['n']} · 胜率 {win:.0f}% · 触T1 {d['t1']} · 止损 {d['st']}</div></div>")
+                f"<div class='kbox'{tip_t('总览卡')}><div class='kt'>{tname} · {kname}</div>"
+                f"<div class='kv {cls}'{tip_t('均涨')}>{avg:+.2f}%</div>"
+                f"<div class='kd'>样本 {d['n']} · <span class='tip'{tip_t('胜率')}>胜率 {win:.0f}%</span>"
+                f" · <span class='tip'{tip_t('触T1')}>触T1 {d['t1']}</span>"
+                f" · <span class='tip'{tip_t('止损')}>止损 {d['st']}</span></div></div>")
 
     # ---- 分档表 ----
     rows = []
@@ -167,8 +195,10 @@ def main():
                 cls = "up" if avg > 0 else ("down" if avg < 0 else "")
                 cells.append(
                     f"<td><b class='{cls}'>{avg:+.2f}%</b><br>"
-                    f"<span class='dim'>胜率 {win:.0f}% · n={a['n']}</span><br>"
-                    f"<span class='dim'>T1 {a['t1']} / T2 {a['t2']} / 止损 {a['st']}</span></td>")
+                    f"<span class='dim tip'{tip_t('胜率')}>胜率 {win:.0f}% · n={a['n']}</span><br>"
+                    f"<span class='dim tip'{tip_t('触T1')}>T1 {a['t1']}</span> / "
+                    f"<span class='dim tip'{tip_t('触T2')}>T2 {a['t2']}</span> / "
+                    f"<span class='dim tip'{tip_t('止损')}>止损 {a['st']}</span></td>")
             if any_n:
                 rows.append(f"<tr><td><b>{tname}</b></td><td><b>{g}</b></td>" + "".join(cells) + "</tr>")
 
@@ -194,6 +224,16 @@ def main():
                 return f"<td class='{cls}'>{v:+.2f}%</td>"
             det.append(f"<tr><td>{h.get('date')}</td><td>{tname}</td><td>{len(h.get(tk) or [])}</td>"
                        f"{cc(r1)}{cc(r3)}{cc(r5)}<td>{n1}</td><td>{st}（{sd}）</td></tr>")
+
+    det_html = "".join(det) if det else "<tr><td colspan='8' class='dim'>暂无</td></tr>"
+    t_tk = tip_t("轨")
+    t_g = tip_t("档位")
+    t_1 = tip_t("T+1")
+    t_3 = tip_t("T+3")
+    t_5 = tip_t("T+5")
+    t_cnt = tip_t("候选数")
+    t_s = tip_t("有效样本")
+    t_st = tip_t("结算状态")
 
     os.makedirs(OUT_DIR, exist_ok=True)
     html = f"""<!DOCTYPE html>
@@ -226,6 +266,7 @@ table {{ width:100%; border-collapse:collapse; background:#fff; font-size:13px;
 th,td {{ padding:8px 9px; text-align:left; border-bottom:1px solid #eef1f4; }}
 th {{ background:#fafbfc; color:#5a6573; font-weight:600; font-size:12.5px; }}
 .up {{ color:#b8332a; }} .down {{ color:#1a9e5a; }} .dim {{ color:#9aa3ad; }}
+.tip {{ cursor:help; border-bottom:1px dotted #c3cad3; }}
 .note {{ background:#fffaf0; border-left:4px solid #b7791f; padding:12px 16px; border-radius:0 8px 8px 0;
   font-size:13.5px; color:#6b4f2a; margin:14px 0; }}
 footer {{ margin-top:38px; padding-top:16px; border-top:1px solid #e6e9ee; font-size:12px; color:#8a929c; }}
@@ -236,17 +277,17 @@ footer {{ margin-top:38px; padding-top:16px; border-top:1px solid #e6e9ee; font-
 
 <div class='section'><h2>总览</h2>
 <div class='kgrid'>{"".join(cards)}</div>
-<div class='note'><b>口径：</b>收益以页面给出的<b>进场参考价</b>为基准（(第 N 日收盘 − 进场价) / 进场价）；
+<div class='note'><b>口径：</b>收益以页面给出的<span class='tip'{tip_t('进场参考价')}>进场参考价</span>为基准（(第 N 日收盘 − 进场价) / 进场价）；
 胜率 = 收益为正的比例；「触T1 / 触T2 / 止损」统计区间内最高价触及目标一/目标二、最低价触及止损位的家数（同一只票在周期内只计一次）。
 <b>样本极小，仅作模型自检，不构成任何收益承诺。</b></div></div>
 
 <div class='section'><h2>分档表现</h2>
-<table><thead><tr><th>轨</th><th>档位</th><th>次日 T+1</th><th>3 日 T+3</th><th>5 日 T+5</th></tr></thead>
+<table><thead><tr><th{t_tk}>轨</th><th{t_g}>档位</th><th{t_1}>次日 T+1</th><th{t_3}>3 日 T+3</th><th{t_5}>5 日 T+5</th></tr></thead>
 <tbody>{"".join(rows)}</tbody></table></div>
 
 <div class='section'><h2>逐期明细</h2>
-<table><thead><tr><th>日期</th><th>轨</th><th>候选数</th><th>T+1</th><th>T+3</th><th>T+5</th><th>有效样本</th><th>结算状态</th></tr></thead>
-<tbody>{"".join(det) if det else "<tr><td colspan='8' class='dim'>暂无</td></tr>"}</tbody></table></div>
+<table><thead><tr><th>日期</th><th{t_tk}>轨</th><th{t_cnt}>候选数</th><th{t_1}>T+1</th><th{t_3}>T+3</th><th{t_5}>T+5</th><th{t_s}>有效样本</th><th{t_st}>结算状态</th></tr></thead>
+<tbody>{det_html}</tbody></table></div>
 
 <div class='note'><b>为什么必须回测：</b>信号池是规则化模型，改权重、加维度后如果不看实际结果，很容易陷入"看着合理但持续亏钱"的循环。
 建议累计 <b>20 个交易日</b> 后，按本页分档胜率重新校准权重——尤其关注：A 档是否显著优于 C 档（若否，说明档位阈值失效）、
