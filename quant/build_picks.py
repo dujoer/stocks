@@ -593,7 +593,93 @@ tr:last-child td { border-bottom:none; }
 footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-size:12px; color:#8a929c; }
 .muted { color:#8a929c; font-size:12px; }
 @media(max-width:700px){ .wrap{padding:20px 12px 44px;} header h1{font-size:20px;} table{font-size:12px;} }
+/* 字段悬浮说明：带虚线下划线的字段均可悬浮查看口径 */
+.tip { cursor:help; border-bottom:1px dotted #c3cad3; }
+.kv.tipbox:hover { background:#fdf8ef; border-color:#e6d3ae; }
+.kv .k.tipk::after { content:"?"; display:inline-block; margin-left:3px; font-size:10px;
+  color:#b8893b; border:1px solid rgba(184,137,59,.45); border-radius:50%;
+  width:12px; height:12px; line-height:11px; text-align:center; }
+.chip[title], .badge[title], .score[title] { cursor:help; }
 """
+
+
+# ---------------- 字段口径说明（悬浮提示） ----------------
+TIPS = {
+    # 卡片交易计划字段
+    "现价": "数据日期的收盘价，括号内为当日涨跌幅（红涨绿跌）。全部买卖点均以该日收盘后的数据计算。",
+    "进场区间": "建议分批建仓的价格带。机构轨：乖离 MA20 超过 10% 时改挂 MA10±1%（不追高），否则取「现价~MA5」上下各 0.5%~1.5%；游资轨：min(现价,MA5)×0.99 ~ 现价×1.02。后续目标位与止损均以该区间中值 mid 为基准。",
+    "止损": "机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。",
+    "目标一": "目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。",
+    "盈亏比": "（目标一 − 进场中值）÷（进场中值 − 止损），即潜在盈利空间 ÷ 潜在亏损空间。分子固定 10%（机构轨）/ 5%（游资轨），所以数值完全由止损幅度决定：止损越近，比值越高。经验阈值 ≥2 值得做，<1 应当放弃。",
+    "仓位": "按总分档位给出的建议最大仓位：A ≥70 分 8%~10%，B 60~70 分 5%~7%，C 50~60 分 3% 以内，D <50 分不建仓。分母为总资金，单票最大亏损应控制在总资金 2% 以内。",
+    # 列表表头
+    "名称": "个股名称。候选来自三路信号（中报十大股东增减持 / 高管增减持 / 大宗交易）与龙虎榜机构、游资方向合流。",
+    "代码": "带市场前缀的代码：sh 沪市、sz 深市、bj 北交所。",
+    "行业": "申万一级行业，来自中报股东库的代码-行业映射。",
+    "板块": "该股所属板块当日的「主力行为」（抢筹 / 建仓 / 洗盘 / 出货）。行为为「出货」时触发 Gate0 板块闸门，直接剔除。",
+    "总分": "该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。",
+    "当日": "数据日期的当日涨跌幅。",
+    "换手": "当日换手率（成交量 / 流通股本）。过高（>20%）视为情绪过热，量价分打折。",
+    "52周位": "现价在近 52 周最高最低区间中的百分位，0 为最低、100 为最高。>92 视为接近一年高位并扣分。",
+    "获利盘": "筹码分布中处于盈利状态的持仓占比。>90% 视为抛压极大并一票否决，>85% 扣分。",
+    "档位": "A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D <50 不建仓。",
+    # 打分明细维度
+    "机构方向": "机构轨方向分，满分 28：龙虎榜机构席位净买入金额（最高 18）+ 一致预期目标价相对现价的空间（最高 10，空间 ≥30% 满分）。",
+    "游资方向": "游资轨方向分，满分 30：知名游资席位现身次数（最高 18）+ 龙虎榜营业部买入额（最高 8）+ 席位家数（最高 4）。机构轨权重表里记为 30。",
+    "机构评级": "最近 6 个月券商评级的覆盖家数与买入/增持占比，满分 8（data_rating）。小票常无覆盖，得分 0 属正常，不因此加分也不扣分。",
+    "两融": "融资余额环比变化（杠杆资金进场为正），融券大幅增加为负，满分 6（机构轨）/ 8（游资轨）。",
+    "主力资金": "主力净流入。机构轨看 5 日与 20 日（各 5 分，共 10 分，判断中期资金）；游资轨只看当日（10 分）。主力资金 = 主力净流入 − 散户净流入。",
+    "中报背景": "2026 年中报十大流通股东加仓家数（≥2 家满分）。数据截至 2026-06-30 已滞后，仅作底仓确认，权重已下调。",
+    "高管": "近 20 个交易日高管增减持，按「变动金额 / 总市值」归一化，满分 8（机构轨）/ 5（游资轨）。净减持转为风险扣分而非本项负分。",
+    "大宗": "近 20 个交易日大宗交易：机构专用席位买入、溢价成交为正面，满分 6（机构轨）/ 5（游资轨）；机构净卖出转为风险扣分。",
+    "量价": "量价健康度，机构轨满分 20、游资轨满分 28。由趋势结构（多头排列/中期上行/站上MA20…）42% + 量能换手 22% + RSI 动量 18% + 52 周相对位置 18% 加权。",
+    "筹码": "获利盘比例、现价与平均成本偏离、筹码集中度，满分 6（机构轨）/ 9（游资轨）。",
+    "风险": "风险扣分合计（最多 −12）：高管净减持 −4、大宗机构净卖出 −3、中报减仓多于加仓 −2、破 MA60 −3、RSI 偏高 −2、接近一年高位 −3、质押 >15% 等。",
+    # 信号标签
+    "机构净买": "近 20 个交易日龙虎榜机构专用席位的净买入金额合计（买入 − 卖出）。",
+    "机构席位": "单日龙虎榜上机构专用席位出现的最大家数，家数越多说明机构分歧小、共识强。",
+    "目标价空间": "券商一致预期目标价相对现价的空间：≥30% 满分 10 分，15%~30% 得 7 分，0~15% 得 4 分，低于现价 0 分。",
+    "知名席位": "龙虎榜营业部中命中「知名游资席位库」（web/shareholder/data/person_index.json 中标记 star 的席位）的次数。",
+    "游资买入": "近 20 个交易日龙虎榜营业部买入金额合计；同一条记录涉及多只股票时按只数均摊，避免重复计入。",
+    "主力当日": "当日主力净流入金额（主力净流入 − 散户净流入）。",
+    "板块行为": "该股所属板块当日的主力行为：抢筹（主力净流入 / 换手率 × 100 ≥3）、建仓（1~3）、洗盘（−1~1）、出货（<−1）。",
+    # 归档首页
+    "历史表现": "每一期的候选只数与次日回填表现：均涨 = 该期全部候选次日相对进场参考价的平均收益；触T1 / 触止损 = 区间内最高价触及目标一、最低价触及止损位的只数。",
+    "维度": "评分模型的组成维度，机构轨与游资轨权重不同。",
+    "机构轨权重": "该维度在机构轨总分中的满分值（机构轨满分 100）。",
+    "游资轨权重": "该维度在游资轨总分中的满分值（游资轨满分 100）。",
+    "口径": "该维度的具体计算方式与数据来源。",
+    # 回测
+    "回测T+1": "以进场参考价买入、第 1 个交易日收盘价计算的平均收益。",
+    "回测T+3": "以进场参考价买入、第 3 个交易日收盘价计算的平均收益。",
+    "回测T+5": "以进场参考价买入、第 5 个交易日收盘价计算的平均收益。",
+    "胜率": "该组内收益为正的样本数 ÷ 有效样本数。",
+    "触T1": "该组内区间最高价触及目标一的样本数（同一只票在一个周期内只计一次）。",
+    "触T2": "该组内区间最高价触及目标二的样本数。",
+    "触止损": "该组内区间最低价跌破止损位的样本数。",
+    "有效样本": "已回填出该周期收益的候选只数；不足周期长度时尚未结算。",
+    "候选数": "该期该轨输出的候选只数（已通过 Gate 一票否决后剩余的数量）。",
+    "次日表现": "次日（T+1）回填：均涨 = 全部候选相对进场参考价的平均收益；触T1 = 区间最高价触及目标一的只数；触止损 = 区间最低价跌破止损位的只数。",
+    "热度反向": "热搜榜名次 + 当日涨幅：已上榜且涨幅巨大视为散户过热、短期见顶信号，最多扣 4 分（反向指标）。",
+    "进场参考价": "页面给出的进场区间中值 mid，回测与次日回填全部以它为买入基准价。",
+    "Gate": "一票否决闸门：所属板块主力出货 · 获利盘 >90% · 现价高于平均成本 30% · 均线空头排列且跌破 MA60 · RSI>80 · 解禁市值占比 ≥1% · 处于计划减持窗口 · 质押比例 >30%，命中任意一条即剔除，不参与打分。",
+}
+
+
+def tip(key, cls="tip"):
+    """生成 title 属性；无说明时返回空串"""
+    t = TIPS.get(key)
+    if not t:
+        return ""
+    return f" class='{cls}' title='{esc(t)}'"
+
+
+def tip_t(key):
+    """只返回 title='...'"""
+    t = TIPS.get(key)
+    if not t:
+        return ""
+    return f" title='{esc(t)}'"
 
 
 def nav(cur="picks"):
@@ -602,7 +688,8 @@ def nav(cur="picks"):
         ("板块强度", "../sector/index.html"), ("高管增减持", "../exec/index.html"),
         ("大宗交易", "../block/index.html"), ("群体心理", "../psychology/index.html"),
         ("牛人追踪", "../shareholder/tracker.html"), ("数据中心", "../db/index.html"),
-        ("信号池", "index.html"), ("回测", "backtest.html"), ("版块总览", "../sections/index.html"),
+        ("信号池", "index.html"), ("回测", "backtest.html"),
+        ("做T池", "../tplus/index.html"), ("版块总览", "../sections/index.html"),
     ]
     out = ["<div class='topnav'>"]
     for n, h in items:
@@ -802,25 +889,27 @@ def main():
         out = []
         for r in rows[:10]:
             p = r["plan"]
-            sigs = []
+            sigs = []  # (说明键, 展示文本)
             if r["inst"].get("netBuy"):
-                sigs.append(f"机构净买 {yi(r['inst']['netBuy'])}")
+                sigs.append(("机构净买", f"机构净买 {yi(r['inst']['netBuy'])}"))
             if r["inst"].get("branchMax"):
-                sigs.append(f"机构席位 {r['inst']['branchMax']} 家")
+                sigs.append(("机构席位", f"机构席位 {r['inst']['branchMax']} 家"))
             if r["tpspace"]:
-                sigs.append(f"目标价空间 {r['tpspace']:+.0f}%")
+                sigs.append(("目标价空间", f"目标价空间 {r['tpspace']:+.0f}%"))
             if r["youzi"].get("starCnt"):
-                sigs.append(f"知名席位 {r['youzi']['starCnt']} 次")
+                sigs.append(("知名席位", f"知名席位 {r['youzi']['starCnt']} 次"))
             if r["youzi"].get("buy"):
-                sigs.append(f"游资买入 {yi(r['youzi']['buy'])}")
+                sigs.append(("游资买入", f"游资买入 {yi(r['youzi']['buy'])}"))
             if r["ff"].get("mainNetFlow"):
-                sigs.append(f"主力当日 {yi(r['ff']['mainNetFlow'])}")
+                sigs.append(("主力当日", f"主力当日 {yi(r['ff']['mainNetFlow'])}"))
             if r["chip"].get("profitRate") is not None:
-                sigs.append(f"获利盘 {r['chip']['profitRate']:.0f}%")
+                sigs.append(("获利盘", f"获利盘 {r['chip']['profitRate']:.0f}%"))
             if r["behavior"]:
-                sigs.append(f"板块{r['behavior']}")
-            sigs_html = "".join(f"<span class='chip'>{esc(x)}</span>" for x in sigs)
-            det = " · ".join(f"{k} {v}" for k, v in r["detail"].items())
+                sigs.append(("板块行为", f"板块{r['behavior']}"))
+            sigs_html = "".join(
+                f"<span class='chip'{tip_t(key)}>{esc(txt)}</span>" for key, txt in sigs)
+            det = " · ".join(
+                f"<span{tip(k2)}>{esc(k2)} {v}</span>" for k2, v in r["detail"].items())
             risk = ("<div class='sig'>⚠ " + esc("、".join(r["riskNotes"])) + "</div>"
                     if r["riskNotes"] else "")
             out.append(f"""
@@ -828,19 +917,19 @@ def main():
     <div class='chead'>
       <span class='cname'>{esc(r['name'])}</span>
       <span class='ccode'>{esc(r['code'])} · {esc(r.get('sw1') or '—')}</span>
-      <span class='badge b{r['grade']}'>{r['grade']} {esc(r['gname'])}</span>
-      <span style='margin-left:auto' class='score'>{r['score']}</span>
+      <span class='badge b{r['grade']}'{tip_t('档位')}>{r['grade']} {esc(r['gname'])}</span>
+      <span style='margin-left:auto' class='score'{tip_t('总分')}>{r['score']}</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>{fnum(r['price'])} <span class='{"up" if (r["chg"] or 0) >= 0 else "down"}' style='font-size:12px'>{pct(r['chg'])}</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>{fnum(p['lo'])} ~ {fnum(p['hi'])}</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>{fnum(p['stop'])}（{p['stopPct']}%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>{fnum(p['t1'])} / {fnum(p['t2'])}</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>{p['rr']}</div></div>
-      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>{esc(r['posStr'])} · {esc(p['hold'])}</div></div>
+      <div class='kv tipbox'{tip_t('现价')}><div class='k tipk'>现价</div><div class='v'>{fnum(r['price'])} <span class='{"up" if (r["chg"] or 0) >= 0 else "down"}' style='font-size:12px'>{pct(r['chg'])}</span></div></div>
+      <div class='kv tipbox'{tip_t('进场区间')}><div class='k tipk'>进场区间</div><div class='v sm'>{fnum(p['lo'])} ~ {fnum(p['hi'])}</div></div>
+      <div class='kv tipbox'{tip_t('止损')}><div class='k tipk'>止损</div><div class='v sm down'>{fnum(p['stop'])}（{p['stopPct']}%）</div></div>
+      <div class='kv tipbox'{tip_t('目标一')}><div class='k tipk'>目标一 / 二</div><div class='v sm up'>{fnum(p['t1'])} / {fnum(p['t2'])}</div></div>
+      <div class='kv tipbox'{tip_t('盈亏比')}><div class='k tipk'>盈亏比</div><div class='v sm'>{p['rr']}</div></div>
+      <div class='kv tipbox'{tip_t('仓位')}><div class='k tipk'>仓位 / 周期</div><div class='v sm'>{esc(r['posStr'])} · {esc(p['hold'])}</div></div>
     </div>
     <div class='sig'><b>信号：</b>{sigs_html}</div>
-    <div class='sig'><b>打分：</b>{esc(det)} · 风险 {r['pen']}</div>
+    <div class='sig'><b>打分：</b>{det} · <span{tip('风险')}>风险 {r['pen']}</span></div>
     <div class='sig'><b>介入：</b>{esc(p['note'])}；<b>失效：</b>跌破 {fnum(p['stop'])} 无条件离场。</div>
     {risk}
   </div>""")
@@ -855,8 +944,17 @@ def main():
             f"<td>{fnum(r['turn'])}</td><td>{fnum(r['pos52'], 0)}</td>"
             f"<td>{fnum((r['chip'] or {}).get('profitRate'), 0)}</td>"
             f"<td>{esc(r['plan']['stop'])}</td><td>{esc(r['plan']['t1'])}</td>"
-            f"<td><span class='badge b{r['grade']}'>{r['grade']}</span></td></tr>"
+            f"<td><span class='badge b{r['grade']}'{tip_t('档位')}>{r['grade']}</span></td></tr>"
             for r in rows)
+
+    def th(key, label):
+        return f"<th{tip(key)}>{label}</th>"
+
+    THEAD = ("<thead><tr>" + th("名称", "名称") + th("代码", "代码") + th("行业", "行业")
+             + th("板块", "板块") + th("总分", "总分") + th("当日", "当日")
+             + th("换手", "换手%") + th("52周位", "52周位") + th("获利盘", "获利盘%")
+             + th("止损", "止损") + th("目标一", "目标一") + th("档位", "档")
+             + "</tr></thead>")
 
     na = sum(1 for r in inst_rows if r["grade"] == "A")
     nb = sum(1 for r in inst_rows if r["grade"] == "B")
@@ -876,21 +974,22 @@ def main():
 <div class='wrap'>
 {nav()}
 <header><h1><span>个股信号池</span> · {D}</h1>
-<div class='sub'>机构轨（波段 5~15 日）与 游资轨（短线 1~3 日）双池分轨打分，含板块闸门与筹码/资金流确认，每日盘后更新并回填次日表现。</div></header>
+<div class='sub'>机构轨（波段 5~15 日）与 游资轨（短线 1~3 日）双池分轨打分，含板块闸门与筹码/资金流确认，每日盘后更新并回填次日表现。
+<div class='muted' style='margin-top:6px'>字段旁带 <span class='tip' style='border:none'>?</span> 或虚线下划线的均可悬浮查看计算口径。</div></div></header>
 
 <div class='note'><b>今日结论：</b>机构轨 {len(inst_rows)} 只（A {na} / B {nb}）· 游资轨 {len(youzi_rows)} 只（A {nya} / B {nyb}）。
-闸门：所属板块主力出货、获利盘 &gt;90%、现价高于成本 30%、空头排列破 MA60、RSI&gt;80 一律剔除。</div>
+<span{tip('Gate')}>闸门</span>：所属板块主力出货、获利盘 &gt;90%、现价高于成本 30%、空头排列破 MA60、RSI&gt;80、解禁 ≥1%、减持窗口、质押 &gt;30% 一律剔除。</div>
 {veto_html}
 
 <div class='section'><h2>机构轨 · 波段<span class='trk i'>5~15 日</span></h2>
 <div class='muted' style='margin-bottom:8px'>机构方向 28（龙虎榜机构净买入 18 + 目标价空间 10）+ 机构评级 8 + 两融 6 + 主力资金 10 + 中报背景 8 + 高管 8 + 大宗 6 + 量价 20 + 筹码 6 − 风险 ≤12 − 热度反向 ≤4</div>
-<table><thead><tr><th>名称</th><th>代码</th><th>行业</th><th>板块</th><th>总分</th><th>当日</th><th>换手%</th><th>52周位</th><th>获利盘%</th><th>止损</th><th>目标一</th><th>档</th></tr></thead>
+<table>{THEAD}
 <tbody>{table_html(inst_rows)}</tbody></table>
 {cards_html(inst_rows, 'inst')}</div>
 
 <div class='section'><h2>游资轨 · 短线<span class='trk y'>1~3 日</span></h2>
 <div class='muted' style='margin-bottom:8px'>游资方向 30（知名席位 18 + 买入额 8 + 席位家数 4）+ 主力资金 10 + 量价 28 + 筹码 9 + 两融 8 + 中报 5 + 高管 5 + 大宗 5 − 风险 ≤12 − 热度反向 ≤4</div>
-<table><thead><tr><th>名称</th><th>代码</th><th>行业</th><th>板块</th><th>总分</th><th>当日</th><th>换手%</th><th>52周位</th><th>获利盘%</th><th>止损</th><th>目标一</th><th>档</th></tr></thead>
+<table>{THEAD}
 <tbody>{table_html(youzi_rows)}</tbody></table>
 {cards_html(youzi_rows, 'youzi')}</div>
 
@@ -931,6 +1030,13 @@ def main():
         a = sum(avgs) / len(avgs) if avgs else 0
         return f"触T1 {h1}/{tot}（{h1 / tot * 100:.0f}%）· 触止损 {hs} · 次日均涨 {pct(a)}"
 
+    t_cnt = tip_t("候选数")
+    t_nx = tip_t("次日表现")
+    t_dim = tip("维度")
+    t_wi = tip("机构轨权重")
+    t_wy = tip("游资轨权重")
+    t_cal = tip("口径")
+
     idx = f"""<!DOCTYPE html>
 <html lang='zh-CN'><head><meta charset='UTF-8'>
 <meta name='viewport' content='width=device-width,initial-scale=1.0'>
@@ -942,24 +1048,24 @@ def main():
 
 <div class='note'><b>最新一期：</b><a href='pick_{D}.html'>{D}</a> —— 机构轨 {len(inst_rows)} 只（A {na} / B {nb}）· 游资轨 {len(youzi_rows)} 只（A {nya} / B {nyb}）。</div>
 
-<div class='section'><h2>历史表现（次日回填）</h2>
+<div class='section'{tip_t('历史表现')}><h2>历史表现（多周期回填）</h2>
 <div class='note'>机构轨累计 {wr('inst', ti)}<br>游资轨累计 {wr('youzi', ty)}</div>
-<table><thead><tr><th>日期</th><th>机构轨</th><th>机构轨次日</th><th>游资轨</th><th>游资轨次日</th></tr></thead>
+<table><thead><tr><th>日期</th><th{t_cnt}>机构轨</th><th{t_nx}>机构轨次日</th><th{t_cnt}>游资轨</th><th{t_nx}>游资轨次日</th></tr></thead>
 <tbody>{"".join(hist_row(h) for h in reversed(history))}</tbody></table></div>
 
 <div class='section'><h2>双池评分模型</h2>
-<table><thead><tr><th>维度</th><th>机构轨</th><th>游资轨</th><th>口径</th></tr></thead><tbody>
-<tr><td>方向分</td><td>28</td><td>30</td><td>机构：龙虎榜机构净买入 18 + 一致预期目标价空间 10 / 游资：知名席位现身 18 + 买入额 8 + 席位家数 4</td></tr>
-<tr><td>机构评级</td><td>8</td><td>—</td><td>覆盖机构家数 + 买入占比（data_rating）</td></tr>
-<tr><td>两融</td><td>6</td><td>8</td><td>融资余额环比（杠杆进场为正）；融券大增为负（data_fund_margin）</td></tr>
-<tr><td>主力资金</td><td>10</td><td>10</td><td>机构看 5日/20日主力净流入（中期）；游资看当日主力净流入</td></tr>
-<tr><td>中报背景</td><td>8</td><td>5</td><td>Q2 十大流通股东加仓家数（已降权为背景项，滞后 72 天）</td></tr>
-<tr><td>高管增减持</td><td>8</td><td>5</td><td>按 变动金额 / 总市值 归一化，过滤象征性小额增持</td></tr>
-<tr><td>大宗交易</td><td>6</td><td>5</td><td>机构专用买入、溢价 / 折价</td></tr>
-<tr><td>量价</td><td>20</td><td>28</td><td>趋势结构 + 量能 + 动量 + 相对位置</td></tr>
-<tr><td>筹码</td><td>6</td><td>9</td><td>获利盘比例、现价与平均成本偏离、筹码集中度</td></tr>
-<tr><td>风险扣分</td><td>−≤12</td><td>−≤12</td><td>高管净减持 / 大宗机构净卖出 / 高位 / 超买 / 破 MA60 / 质押 / 诉讼 / 解禁</td></tr>
-<tr><td>热度反向</td><td>−≤4</td><td>−≤4</td><td>热搜榜名次 + 当日涨幅，散户过热视为短期见顶信号</td></tr>
+<table><thead><tr><th{t_dim}>维度</th><th{t_wi}>机构轨</th><th{t_wy}>游资轨</th><th{t_cal}>口径</th></tr></thead><tbody>
+<tr><td{tip('机构方向')}>方向分</td><td>28</td><td>30</td><td>机构：龙虎榜机构净买入 18 + 一致预期目标价空间 10 / 游资：知名席位现身 18 + 买入额 8 + 席位家数 4</td></tr>
+<tr><td{tip('机构评级')}>机构评级</td><td>8</td><td>—</td><td>覆盖机构家数 + 买入占比（data_rating）</td></tr>
+<tr><td{tip('两融')}>两融</td><td>6</td><td>8</td><td>融资余额环比（杠杆进场为正）；融券大增为负（data_fund_margin）</td></tr>
+<tr><td{tip('主力资金')}>主力资金</td><td>10</td><td>10</td><td>机构看 5日/20日主力净流入（中期）；游资看当日主力净流入</td></tr>
+<tr><td{tip('中报背景')}>中报背景</td><td>8</td><td>5</td><td>Q2 十大流通股东加仓家数（已降权为背景项，滞后 72 天）</td></tr>
+<tr><td{tip('高管')}>高管增减持</td><td>8</td><td>5</td><td>按 变动金额 / 总市值 归一化，过滤象征性小额增持</td></tr>
+<tr><td{tip('大宗')}>大宗交易</td><td>6</td><td>5</td><td>机构专用买入、溢价 / 折价</td></tr>
+<tr><td{tip('量价')}>量价</td><td>20</td><td>28</td><td>趋势结构 + 量能 + 动量 + 相对位置</td></tr>
+<tr><td{tip('筹码')}>筹码</td><td>6</td><td>9</td><td>获利盘比例、现价与平均成本偏离、筹码集中度</td></tr>
+<tr><td{tip('风险')}>风险扣分</td><td>−≤12</td><td>−≤12</td><td>高管净减持 / 大宗机构净卖出 / 高位 / 超买 / 破 MA60 / 质押 / 诉讼 / 解禁</td></tr>
+<tr><td{tip('热度反向')}>热度反向</td><td>−≤4</td><td>−≤4</td><td>热搜榜名次 + 当日涨幅，散户过热视为短期见顶信号</td></tr>
 </tbody></table>
 <div class='note'><b>一票否决（Gate）：</b>所属板块主力出货 · 获利盘 &gt;90% · 现价高于平均成本 30% · 均线空头排列且跌破 MA60 · RSI&gt;80 · <b>解禁市值占比 ≥1%</b> · <b>处于计划减持窗口</b> · <b>质押比例 &gt;30%</b>。
 <b>档位：</b>A ≥70（8%~10%）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。
