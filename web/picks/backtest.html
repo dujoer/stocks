@@ -28,6 +28,7 @@ table { width:100%; border-collapse:collapse; background:#fff; font-size:13px;
 th,td { padding:8px 9px; text-align:left; border-bottom:1px solid #eef1f4; }
 th { background:#fafbfc; color:#5a6573; font-weight:600; font-size:12.5px; }
 .up { color:#b8332a; } .down { color:#1a9e5a; } .dim { color:#9aa3ad; }
+.tip { cursor:help; border-bottom:1px dotted #c3cad3; }
 .note { background:#fffaf0; border-left:4px solid #b7791f; padding:12px 16px; border-radius:0 8px 8px 0;
   font-size:13.5px; color:#6b4f2a; margin:14px 0; }
 footer { margin-top:38px; padding-top:16px; border-top:1px solid #e6e9ee; font-size:12px; color:#8a929c; }
@@ -38,16 +39,16 @@ footer { margin-top:38px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
 
 <div class='section'><h2>总览</h2>
 <div class='kgrid'><div class='kbox'><div class='kt'>机构轨 · 次日 (T+1)</div><div class='kv dim'>—</div><div class='kd'>暂无已结算样本</div></div><div class='kbox'><div class='kt'>机构轨 · 3 日 (T+3)</div><div class='kv dim'>—</div><div class='kd'>暂无已结算样本</div></div><div class='kbox'><div class='kt'>机构轨 · 5 日 (T+5)</div><div class='kv dim'>—</div><div class='kd'>暂无已结算样本</div></div><div class='kbox'><div class='kt'>游资轨 · 次日 (T+1)</div><div class='kv dim'>—</div><div class='kd'>暂无已结算样本</div></div><div class='kbox'><div class='kt'>游资轨 · 3 日 (T+3)</div><div class='kv dim'>—</div><div class='kd'>暂无已结算样本</div></div><div class='kbox'><div class='kt'>游资轨 · 5 日 (T+5)</div><div class='kv dim'>—</div><div class='kd'>暂无已结算样本</div></div></div>
-<div class='note'><b>口径：</b>收益以页面给出的<b>进场参考价</b>为基准（(第 N 日收盘 − 进场价) / 进场价）；
+<div class='note'><b>口径：</b>收益以页面给出的<span class='tip' title='信号池当日给出的进场区间中值，回测与次日回填全部以它为买入基准价。'>进场参考价</span>为基准（(第 N 日收盘 − 进场价) / 进场价）；
 胜率 = 收益为正的比例；「触T1 / 触T2 / 止损」统计区间内最高价触及目标一/目标二、最低价触及止损位的家数（同一只票在周期内只计一次）。
 <b>样本极小，仅作模型自检，不构成任何收益承诺。</b></div></div>
 
 <div class='section'><h2>分档表现</h2>
-<table><thead><tr><th>轨</th><th>档位</th><th>次日 T+1</th><th>3 日 T+3</th><th>5 日 T+5</th></tr></thead>
+<table><thead><tr><th title='机构轨＝波段模型（持有 5~15 日，看 5/20 日资金与机构评级）；游资轨＝短线模型（持有 1~3 日，看当日资金与龙虎榜营业部）。'>轨</th><th title='按信号池当日总分分档：A ≥70 · B 60~70 · C 50~60 · D &lt;50。回测用来检验高档位是否真的优于低档位。'>档位</th><th title='以页面给出的进场参考价买入，第 1 个交易日收盘价计算的平均收益（(收盘 − 进场价) / 进场价）。'>次日 T+1</th><th title='以进场参考价买入，第 3 个交易日收盘价计算的平均收益。机构轨理论上应优于 T+1。'>3 日 T+3</th><th title='以进场参考价买入，第 5 个交易日收盘价计算的平均收益。'>5 日 T+5</th></tr></thead>
 <tbody><tr><td colspan='5' class='dim' style='text-align:center;padding:20px'>尚无已结算样本。信号池自首期起累积，每个交易日盘后自动回填 T+1/T+3/T+5 表现，积累 3 期后开始显示统计。</td></tr></tbody></table></div>
 
 <div class='section'><h2>逐期明细</h2>
-<table><thead><tr><th>日期</th><th>轨</th><th>候选数</th><th>T+1</th><th>T+3</th><th>T+5</th><th>有效样本</th><th>结算状态</th></tr></thead>
+<table><thead><tr><th>日期</th><th title='机构轨＝波段模型（持有 5~15 日，看 5/20 日资金与机构评级）；游资轨＝短线模型（持有 1~3 日，看当日资金与龙虎榜营业部）。'>轨</th><th title='该期该轨输出的候选只数（已通过一票否决后剩余）。'>候选数</th><th title='以页面给出的进场参考价买入，第 1 个交易日收盘价计算的平均收益（(收盘 − 进场价) / 进场价）。'>T+1</th><th title='以进场参考价买入，第 3 个交易日收盘价计算的平均收益。机构轨理论上应优于 T+1。'>T+3</th><th title='以进场参考价买入，第 5 个交易日收盘价计算的平均收益。'>T+5</th><th title='已回填出该周期收益的候选只数；持仓周期未满时尚未结算。'>有效样本</th><th title='是否已有足够的后续交易日完成回填，以及用于结算的数据日期。'>结算状态</th></tr></thead>
 <tbody><tr><td>2026-09-10</td><td>机构轨</td><td>10</td><td class='dim'>—</td><td class='dim'>—</td><td class='dim'>—</td><td>0</td><td>待结算（—）</td></tr><tr><td>2026-09-10</td><td>游资轨</td><td>10</td><td class='dim'>—</td><td class='dim'>—</td><td class='dim'>—</td><td>0</td><td>待结算（—）</td></tr></tbody></table></div>
 
 <div class='note'><b>为什么必须回测：</b>信号池是规则化模型，改权重、加维度后如果不看实际结果，很容易陷入"看着合理但持续亏钱"的循环。
