@@ -54,11 +54,11 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
 @media(max-width:700px){ .wrap{padding:20px 12px 44px;} header h1{font-size:20px;} table{font-size:12px;} }
 </style></head><body>
 <div class='wrap'>
-<div class='topnav'><a href='../../index.html'>总门户</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../db/index.html'>数据中心</a><a href='index.html'>信号池</a><a href='../sections/index.html'>版块总览</a></div>
+<div class='topnav'><a href='../../index.html'>总门户</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../db/index.html'>数据中心</a><a href='index.html'>信号池</a><a href='backtest.html'>回测</a><a href='../sections/index.html'>版块总览</a></div>
 <header><h1><span>个股信号池</span> · 每日归档</h1>
 <div class='sub'>机构轨（波段）+ 游资轨（短线）双池输出建仓候选与买卖点，次日自动回填表现并统计胜率。</div></header>
 
-<div class='note'><b>最新一期：</b><a href='pick_2026-09-10.html'>2026-09-10</a> —— 机构轨 26 只（A 3 / B 9）· 游资轨 25 只（A 3 / B 7）。</div>
+<div class='note'><b>最新一期：</b><a href='pick_2026-09-10.html'>2026-09-10</a> —— 机构轨 25 只（A 0 / B 8）· 游资轨 24 只（A 4 / B 4）。</div>
 
 <div class='section'><h2>历史表现（次日回填）</h2>
 <div class='note'>机构轨累计 <span class='muted'>首期尚无回填</span><br>游资轨累计 <span class='muted'>首期尚无回填</span></div>
@@ -67,16 +67,19 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
 
 <div class='section'><h2>双池评分模型</h2>
 <table><thead><tr><th>维度</th><th>机构轨</th><th>游资轨</th><th>口径</th></tr></thead><tbody>
-<tr><td>方向分</td><td>30</td><td>32</td><td>机构：龙虎榜机构净买入 + 一致预期目标价空间 / 游资：知名席位现身 + 买入额 + 席位家数</td></tr>
-<tr><td>主力资金</td><td>10</td><td>8</td><td>机构看 5日/20日主力净流入（中期）；游资看当日主力净流入</td></tr>
-<tr><td>中报背景</td><td>10</td><td>6</td><td>Q2 十大流通股东加仓家数（已降权为背景项，滞后 72 天）</td></tr>
-<tr><td>高管增减持</td><td>10</td><td>6</td><td>按 变动金额 / 总市值 归一化，过滤象征性小额增持</td></tr>
-<tr><td>大宗交易</td><td>8</td><td>6</td><td>机构专用买入、溢价 / 折价</td></tr>
-<tr><td>量价</td><td>22</td><td>30</td><td>趋势结构 + 量能 + 动量 + 相对位置</td></tr>
-<tr><td>筹码</td><td>10</td><td>12</td><td>获利盘比例、现价与平均成本偏离、筹码集中度</td></tr>
-<tr><td>风险扣分</td><td>−10</td><td>−10</td><td>高管净减持 / 大宗机构净卖出 / 高位 / 超买 / 破 MA60</td></tr>
+<tr><td>方向分</td><td>28</td><td>30</td><td>机构：龙虎榜机构净买入 18 + 一致预期目标价空间 10 / 游资：知名席位现身 18 + 买入额 8 + 席位家数 4</td></tr>
+<tr><td>机构评级</td><td>8</td><td>—</td><td>覆盖机构家数 + 买入占比（data_rating）</td></tr>
+<tr><td>两融</td><td>6</td><td>8</td><td>融资余额环比（杠杆进场为正）；融券大增为负（data_fund_margin）</td></tr>
+<tr><td>主力资金</td><td>10</td><td>10</td><td>机构看 5日/20日主力净流入（中期）；游资看当日主力净流入</td></tr>
+<tr><td>中报背景</td><td>8</td><td>5</td><td>Q2 十大流通股东加仓家数（已降权为背景项，滞后 72 天）</td></tr>
+<tr><td>高管增减持</td><td>8</td><td>5</td><td>按 变动金额 / 总市值 归一化，过滤象征性小额增持</td></tr>
+<tr><td>大宗交易</td><td>6</td><td>5</td><td>机构专用买入、溢价 / 折价</td></tr>
+<tr><td>量价</td><td>20</td><td>28</td><td>趋势结构 + 量能 + 动量 + 相对位置</td></tr>
+<tr><td>筹码</td><td>6</td><td>9</td><td>获利盘比例、现价与平均成本偏离、筹码集中度</td></tr>
+<tr><td>风险扣分</td><td>−≤12</td><td>−≤12</td><td>高管净减持 / 大宗机构净卖出 / 高位 / 超买 / 破 MA60 / 质押 / 诉讼 / 解禁</td></tr>
+<tr><td>热度反向</td><td>−≤4</td><td>−≤4</td><td>热搜榜名次 + 当日涨幅，散户过热视为短期见顶信号</td></tr>
 </tbody></table>
-<div class='note'><b>一票否决（Gate）：</b>所属板块主力出货 · 获利盘 &gt;90% · 现价高于平均成本 30% · 均线空头排列且跌破 MA60 · RSI&gt;80。
+<div class='note'><b>一票否决（Gate）：</b>所属板块主力出货 · 获利盘 &gt;90% · 现价高于平均成本 30% · 均线空头排列且跌破 MA60 · RSI&gt;80 · <b>解禁市值占比 ≥1%</b> · <b>处于计划减持窗口</b> · <b>质押比例 &gt;30%</b>。
 <b>档位：</b>A ≥70（8%~10%）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。
 <b>买卖点：</b>机构轨止损取 MA20×0.97 / 平均成本×0.97 / 进场×0.93 中最接近者，目标 +10%/+15%；游资轨止损 −3~5%，目标 +5%/+8%，不封板即走。</div></div>
 
