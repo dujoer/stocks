@@ -12,20 +12,21 @@ body { margin:0; background:#f5f6f8; color:#23262b;
   border:1px solid rgba(184,137,59,.35); }
 .topnav a.cur { background:#b8893b; color:#fff; border-color:#b8893b; }
 .topnav a:hover { background:rgba(184,137,59,.10); }
-.topnav a.cur:hover { background:#b8893b; }
-header h1 { font-size:26px; margin:0 0 6px; color:#23262b; }
+header h1 { font-size:26px; margin:0 0 6px; }
 header h1 span { background:linear-gradient(90deg,#b8893b,#8a6428); -webkit-background-clip:text;
   -webkit-text-fill-color:transparent; }
 .sub { color:#6b7480; font-size:13.5px; }
 .section { margin-top:30px; }
 .section h2 { font-size:19px; margin:0 0 14px; padding-left:12px; border-left:4px solid #b8893b; }
+.trk { display:inline-block; font-size:12px; padding:2px 10px; border-radius:20px; margin-left:8px; }
+.trk.i { background:#e6f1fb; color:#185fa5; } .trk.y { background:#fcebeb; color:#a32d2d; }
 table { width:100%; border-collapse:collapse; background:#fff; font-size:13px;
   border:1px solid #e6e9ee; border-radius:10px; overflow:hidden; }
-th,td { padding:9px 10px; text-align:left; border-bottom:1px solid #eef1f4; }
+th,td { padding:8px 9px; text-align:left; border-bottom:1px solid #eef1f4; }
 th { background:#fafbfc; color:#5a6573; font-weight:600; font-size:12.5px; }
 tr:last-child td { border-bottom:none; }
 .up { color:#b8332a; } .down { color:#1a9e5a; }
-.card { background:#fff; border:1px solid #e6e9ee; border-radius:12px; padding:18px 20px; margin-bottom:14px; }
+.card { background:#fff; border:1px solid #e6e9ee; border-radius:12px; padding:16px 18px; margin-bottom:12px; }
 .card.hi { border-left:4px solid #b8893b; }
 .chead { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
 .cname { font-size:17px; font-weight:700; }
@@ -34,18 +35,20 @@ tr:last-child td { border-bottom:none; }
 .bA { background:#fdecea; color:#b8332a; } .bB { background:#fdf3e0; color:#b7791f; }
 .bC { background:#eef4fa; color:#2b6cb0; } .bD { background:#eef0f2; color:#6b7480; }
 .score { font-size:22px; font-weight:800; color:#b8893b; }
-.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:12px; }
-.kv { background:#fafbfc; border:1px solid #eef1f4; border-radius:8px; padding:8px 10px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:9px; margin-top:11px; }
+.kv { background:#fafbfc; border:1px solid #eef1f4; border-radius:8px; padding:7px 10px; }
 .kv .k { font-size:11.5px; color:#8a929c; }
-.kv .v { font-size:15px; font-weight:700; margin-top:2px; }
-.kv .v.sm { font-size:13px; font-weight:600; }
-.sig { margin-top:12px; font-size:12.5px; color:#5a6573; }
+.kv .v { font-size:14px; font-weight:700; margin-top:2px; }
+.kv .v.sm { font-size:12.5px; font-weight:600; }
+.sig { margin-top:10px; font-size:12.5px; color:#5a6573; }
 .sig b { color:#23262b; }
 .chip { display:inline-block; background:#f4f6f8; border:1px solid #e6e9ee; border-radius:14px;
   padding:1px 9px; font-size:11.5px; margin:2px 4px 2px 0; color:#5a6573; }
 .note { background:#fffaf0; border-left:4px solid #b8893b; padding:12px 16px; border-radius:0 8px 8px 0;
   font-size:13px; color:#6b4f2a; margin:14px 0; }
 .warn { background:#fdecea; border-left-color:#b8332a; color:#8c2b22; }
+.veto { background:#f4f6f8; border:1px dashed #c8ced6; border-radius:10px; padding:12px 16px;
+  font-size:12.5px; color:#6b7480; margin:12px 0; }
 footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-size:12px; color:#8a929c; }
 .muted { color:#8a929c; font-size:12px; }
 @media(max-width:700px){ .wrap{padding:20px 12px 44px;} header h1{font-size:20px;} table{font-size:12px;} }
@@ -53,422 +56,427 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
 <div class='wrap'>
 <div class='topnav'><a href='../../index.html'>总门户</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../db/index.html'>数据中心</a><a href='index.html'>信号池</a><a href='../sections/index.html'>版块总览</a></div>
 <header><h1><span>个股信号池</span> · 2026-09-10</h1>
-<div class='sub'>中报增减持 + 高管增减持 + 大宗交易三路信号合流，叠加当日量价确认，输出次日建仓候选与逐只买卖点。每日盘后更新，历史可回看。</div></header>
+<div class='sub'>机构轨（波段 5~15 日）与 游资轨（短线 1~3 日）双池分轨打分，含板块闸门与筹码/资金流确认，每日盘后更新并回填次日表现。</div></header>
 
-<div class='note'><b>今日结论：</b>候选池 33 只 —— A 档重点建仓 0 只、B 档可建仓 5 只、C 档轻仓观察 22 只。
-评分 = 中报 25 + 高管 20 + 大宗 20 + 量价 25 − 风险 10。仓位为单票占总资金上限，A 档亦不超过 10%，总仓位建议不超过五成。</div>
+<div class='note'><b>今日结论：</b>机构轨 26 只（A 3 / B 9）· 游资轨 25 只（A 3 / B 7）。
+闸门：所属板块主力出货、获利盘 &gt;90%、现价高于成本 30%、空头排列破 MA60、RSI&gt;80 一律剔除。</div>
+<div class='veto'><b>已剔除 14 只（触发一票否决）：</b>德明利（均线空头排列且跌破MA60）、华曙高科（所属板块主力出货（机械设备））、周大生（所属板块主力出货（纺织服饰））、金安国纪（获利盘96%，抛压极大）、立讯精密（所属板块主力出货（电子））、宏和科技（均线空头排列且跌破MA60）、湖南黄金（获利盘91%，抛压极大）、ST荣科（获利盘96%，抛压极大）、东亚药业（获利盘99%，抛压极大）、游族网络（获利盘100%，抛压极大）、东方钽业（均线空头排列且跌破MA60）、ST佳缘（均线空头排列且跌破MA60）…</div>
 
-<div class='section'><h2>候选池明细（按总分排序）</h2>
-<table><thead><tr><th>名称</th><th>代码</th><th>行业</th><th>总分</th><th>中报25</th><th>高管20</th><th>大宗20</th><th>量价25</th><th>风险</th><th>当日</th><th>换手%</th><th>52周位</th><th>档</th></tr></thead>
-<tbody><tr><td>苏农银行</td><td class='muted'>sh603323</td><td>银行</td><td><b>64.0</b></td><td>21.0</td><td>20.0</td><td>0.0</td><td>23.0</td><td>-0.0</td><td class='up'>+1.53%</td><td>2.01</td><td>82</td><td><span class='badge bB'>B</span></td></tr><tr><td>华峰测控</td><td class='muted'>sh688200</td><td>电子</td><td><b>63.9</b></td><td>23.0</td><td>20.0</td><td>8.4</td><td>12.5</td><td>-0.0</td><td class='up'>+0.44%</td><td>1.31</td><td>53</td><td><span class='badge bB'>B</span></td></tr><tr><td>立讯精密</td><td class='muted'>sz002475</td><td>电子</td><td><b>63.8</b></td><td>25.0</td><td>12.0</td><td>12.8</td><td>14.0</td><td>-0.0</td><td class='down'>-2.52%</td><td>1.06</td><td>27</td><td><span class='badge bB'>B</span></td></tr><tr><td>迈瑞医疗</td><td class='muted'>sz300760</td><td>医药生物</td><td><b>60.5</b></td><td>21.0</td><td>0.0</td><td>20.0</td><td>19.5</td><td>-0.0</td><td class='up'>+0.30%</td><td>0.54</td><td>32</td><td><span class='badge bB'>B</span></td></tr><tr><td>安集科技</td><td class='muted'>sh688019</td><td>电子</td><td><b>60.0</b></td><td>25.0</td><td>20.0</td><td>0.0</td><td>15.0</td><td>-0.0</td><td class='down'>-1.81%</td><td>1.05</td><td>40</td><td><span class='badge bB'>B</span></td></tr><tr><td>中润光学</td><td class='muted'>sh688307</td><td>电子</td><td><b>59.0</b></td><td>25.0</td><td>20.0</td><td>0.0</td><td>14.0</td><td>-0.0</td><td class='down'>-1.61%</td><td>2.60</td><td>29</td><td><span class='badge bC'>C</span></td></tr><tr><td>寒武纪</td><td class='muted'>sh688256</td><td>电子</td><td><b>58.9</b></td><td>19.0</td><td>20.0</td><td>8.4</td><td>11.5</td><td>-0.0</td><td class='down'>-1.05%</td><td>0.90</td><td>41</td><td><span class='badge bC'>C</span></td></tr><tr><td>浩辰软件</td><td class='muted'>sh688657</td><td>计算机</td><td><b>58.5</b></td><td>25.0</td><td>20.0</td><td>0.0</td><td>13.5</td><td>-0.0</td><td class='down'>-0.99%</td><td>1.27</td><td>37</td><td><span class='badge bC'>C</span></td></tr><tr><td>济川药业</td><td class='muted'>sh600566</td><td>医药生物</td><td><b>58.5</b></td><td>25.0</td><td>16.0</td><td>0.0</td><td>17.5</td><td>-0.0</td><td class='down'>-0.97%</td><td>0.35</td><td>61</td><td><span class='badge bC'>C</span></td></tr><tr><td>紫金矿业</td><td class='muted'>sh601899</td><td>有色金属</td><td><b>58.2</b></td><td>16.8</td><td>0.0</td><td>20.0</td><td>21.5</td><td>-0.0</td><td class='down'>-0.84%</td><td>0.48</td><td>52</td><td><span class='badge bC'>C</span></td></tr><tr><td>星湖科技</td><td class='muted'>sh600866</td><td>基础化工</td><td><b>57.0</b></td><td>18.8</td><td>0.0</td><td>19.2</td><td>19.0</td><td>-0.0</td><td class='down'>-3.28%</td><td>2.37</td><td>14</td><td><span class='badge bC'>C</span></td></tr><tr><td>悦安新材</td><td class='muted'>sh688786</td><td>有色金属</td><td><b>56.5</b></td><td>25.0</td><td>20.0</td><td>2.0</td><td>11.5</td><td>-2.0</td><td class='down'>-1.70%</td><td>1.42</td><td>12</td><td><span class='badge bC'>C</span></td></tr><tr><td>统联精密</td><td class='muted'>sh688210</td><td>电子</td><td><b>56.0</b></td><td>23.0</td><td>20.0</td><td>0.0</td><td>13.0</td><td>-0.0</td><td class='down'>-6.91%</td><td>3.05</td><td>12</td><td><span class='badge bC'>C</span></td></tr><tr><td>惠泰医疗</td><td class='muted'>sh688617</td><td>医药生物</td><td><b>55.5</b></td><td>23.0</td><td>0.0</td><td>20.0</td><td>12.5</td><td>-0.0</td><td class='up'>+0.29%</td><td>0.85</td><td>40</td><td><span class='badge bC'>C</span></td></tr><tr><td>浩通科技</td><td class='muted'>sz301026</td><td>有色金属</td><td><b>55.5</b></td><td>23.0</td><td>20.0</td><td>0.0</td><td>12.5</td><td>-0.0</td><td class='down'>-2.30%</td><td>2.20</td><td>29</td><td><span class='badge bC'>C</span></td></tr><tr><td>新泉股份</td><td class='muted'>sh603179</td><td>汽车</td><td><b>55.5</b></td><td>23.0</td><td>20.0</td><td>0.0</td><td>12.5</td><td>-0.0</td><td class='down'>-2.66%</td><td>1.40</td><td>10</td><td><span class='badge bC'>C</span></td></tr><tr><td>安博通</td><td class='muted'>sh688168</td><td>计算机</td><td><b>54.8</b></td><td>25.0</td><td>0.0</td><td>15.8</td><td>14.0</td><td>-0.0</td><td class='down'>-0.11%</td><td>5.88</td><td>12</td><td><span class='badge bC'>C</span></td></tr><tr><td>晶升股份</td><td class='muted'>sh688478</td><td>电子</td><td><b>54.6</b></td><td>14.8</td><td>20.0</td><td>8.4</td><td>11.5</td><td>-0.0</td><td class='down'>-1.80%</td><td>1.73</td><td>19</td><td><span class='badge bC'>C</span></td></tr><tr><td>安乃达</td><td class='muted'>sh603350</td><td>电力设备</td><td><b>54.0</b></td><td>21.0</td><td>20.0</td><td>0.0</td><td>13.0</td><td>-0.0</td><td class='down'>-2.73%</td><td>1.34</td><td>10</td><td><span class='badge bC'>C</span></td></tr><tr><td>紫光国微</td><td class='muted'>sz002049</td><td>电子</td><td><b>53.5</b></td><td>23.0</td><td>20.0</td><td>0.0</td><td>10.5</td><td>-0.0</td><td class='down'>-1.16%</td><td>0.94</td><td>2</td><td><span class='badge bC'>C</span></td></tr><tr><td>东来技术</td><td class='muted'>sh688129</td><td>基础化工</td><td><b>53.5</b></td><td>23.0</td><td>20.0</td><td>0.0</td><td>10.5</td><td>-0.0</td><td class='down'>-3.85%</td><td>0.64</td><td>20</td><td><span class='badge bC'>C</span></td></tr><tr><td>新易盛</td><td class='muted'>sz300502</td><td>通信</td><td><b>53.3</b></td><td>23.0</td><td>0.0</td><td>18.3</td><td>16.0</td><td>-4.0</td><td class='down'>-0.94%</td><td>1.75</td><td>50</td><td><span class='badge bC'>C</span></td></tr><tr><td>澄星股份</td><td class='muted'>sh600078</td><td>基础化工</td><td><b>52.2</b></td><td>18.8</td><td>20.0</td><td>0.0</td><td>13.5</td><td>-0.0</td><td class='down'>-2.16%</td><td>2.44</td><td>44</td><td><span class='badge bC'>C</span></td></tr><tr><td>周大生</td><td class='muted'>sz002867</td><td>纺织服饰</td><td><b>52.0</b></td><td>21.0</td><td>20.0</td><td>0.0</td><td>11.0</td><td>-0.0</td><td class='down'>-1.49%</td><td>0.90</td><td>4</td><td><span class='badge bC'>C</span></td></tr><tr><td>爱迪特</td><td class='muted'>sz301580</td><td>医药生物</td><td><b>51.5</b></td><td>23.0</td><td>0.0</td><td>15.0</td><td>13.5</td><td>-0.0</td><td class='down'>-1.31%</td><td>2.76</td><td>41</td><td><span class='badge bC'>C</span></td></tr><tr><td>诺唯赞</td><td class='muted'>sh688105</td><td>医药生物</td><td><b>51.2</b></td><td>25.0</td><td>0.0</td><td>12.2</td><td>14.0</td><td>-0.0</td><td class='down'>-3.87%</td><td>1.49</td><td>46</td><td><span class='badge bC'>C</span></td></tr><tr><td>中微公司</td><td class='muted'>sh688012</td><td>电子</td><td><b>50.5</b></td><td>21.0</td><td>0.0</td><td>18.0</td><td>11.5</td><td>-0.0</td><td class='up'>+0.36%</td><td>0.88</td><td>54</td><td><span class='badge bC'>C</span></td></tr><tr><td>豪迈科技</td><td class='muted'>sz002595</td><td>机械设备</td><td><b>47.0</b></td><td>25.0</td><td>0.0</td><td>11.0</td><td>11.0</td><td>-0.0</td><td class='down'>-1.42%</td><td>0.49</td><td>9</td><td><span class='badge bD'>D</span></td></tr><tr><td>信科移动-U</td><td class='muted'>sh688387</td><td>通信</td><td><b>46.8</b></td><td>6.2</td><td>20.0</td><td>11.0</td><td>12.5</td><td>-3.0</td><td class='down'>-1.29%</td><td>1.20</td><td>33</td><td><span class='badge bD'>D</span></td></tr><tr><td>华曙高科</td><td class='muted'>sh688433</td><td>机械设备</td><td><b>46.5</b></td><td>6.5</td><td>16.0</td><td>14.0</td><td>15.0</td><td>-5.0</td><td class='down'>-3.27%</td><td>1.32</td><td>60</td><td><span class='badge bD'>D</span></td></tr><tr><td>拓新药业</td><td class='muted'>sz301089</td><td>医药生物</td><td><b>45.3</b></td><td>10.5</td><td>20.0</td><td>3.8</td><td>13.0</td><td>-2.0</td><td class='down'>-2.48%</td><td>1.57</td><td>18</td><td><span class='badge bD'>D</span></td></tr><tr><td>海大集团</td><td class='muted'>sz002311</td><td>农林牧渔</td><td><b>43.2</b></td><td>12.8</td><td>0.0</td><td>20.0</td><td>10.5</td><td>-0.0</td><td class='down'>-2.25%</td><td>0.49</td><td>10</td><td><span class='badge bD'>D</span></td></tr><tr><td>瑞芯微</td><td class='muted'>sh603893</td><td>电子</td><td><b>40.5</b></td><td>0.0</td><td>20.0</td><td>11.0</td><td>12.5</td><td>-3.0</td><td class='down'>-2.51%</td><td>1.53</td><td>43</td><td><span class='badge bD'>D</span></td></tr></tbody></table></div>
+<div class='section'><h2>机构轨 · 波段<span class='trk i'>5~15 日</span></h2>
+<div class='muted' style='margin-bottom:8px'>机构方向 30（龙虎榜机构净买入 + 一致预期目标价空间）+ 主力资金 10 + 中报背景 10 + 高管 10 + 大宗 8 + 量价 22 + 筹码 10 − 风险 10</div>
+<table><thead><tr><th>名称</th><th>代码</th><th>行业</th><th>板块</th><th>总分</th><th>当日</th><th>换手%</th><th>52周位</th><th>获利盘%</th><th>止损</th><th>目标一</th><th>档</th></tr></thead>
+<tbody><tr><td>思泉新材</td><td class='muted'>sz301489</td><td>电子</td><td>—</td><td><b>71.4</b></td><td class='down'>-3.78%</td><td>7.93</td><td>33</td><td>36</td><td>120.02</td><td>141.96</td><td><span class='badge bA'>A</span></td></tr><tr><td>长飞光纤</td><td class='muted'>sh601869</td><td>通信</td><td>—</td><td><b>70.8</b></td><td class='down'>-1.42%</td><td>2.79</td><td>69</td><td>83</td><td>382.8</td><td>452.78</td><td><span class='badge bA'>A</span></td></tr><tr><td>惠泰医疗</td><td class='muted'>sh688617</td><td>医药生物</td><td>—</td><td><b>70.3</b></td><td class='up'>+0.29%</td><td>0.85</td><td>40</td><td>63</td><td>225.5</td><td>266.72</td><td><span class='badge bA'>A</span></td></tr><tr><td>中谷物流</td><td class='muted'>sh603565</td><td>交通运输</td><td>—</td><td><b>68.5</b></td><td class='down'>-1.21%</td><td>1.18</td><td>69</td><td>81</td><td>11.86</td><td>13.56</td><td><span class='badge bB'>B</span></td></tr><tr><td>星网锐捷</td><td class='muted'>sz002396</td><td>通信</td><td>—</td><td><b>67.6</b></td><td class='up'>+0.50%</td><td>8.95</td><td>76</td><td>30</td><td>34.05</td><td>40.27</td><td><span class='badge bB'>B</span></td></tr><tr><td>光迅科技</td><td class='muted'>sz002281</td><td>通信</td><td>—</td><td><b>67.4</b></td><td class='down'>-1.86%</td><td>2.99</td><td>56</td><td>46</td><td>167.42</td><td>198.02</td><td><span class='badge bB'>B</span></td></tr><tr><td>石药创新</td><td class='muted'>sz300765</td><td>医药生物</td><td>—</td><td><b>65.7</b></td><td class='up'>+2.18%</td><td>1.46</td><td>61</td><td>61</td><td>40.38</td><td>47.76</td><td><span class='badge bB'>B</span></td></tr><tr><td>深南电路</td><td class='muted'>sz002916</td><td>电子</td><td>—</td><td><b>63.8</b></td><td class='up'>+2.35%</td><td>1.25</td><td>70</td><td>74</td><td>356.8</td><td>422.02</td><td><span class='badge bB'>B</span></td></tr><tr><td>博汇股份</td><td class='muted'>sz300839</td><td>石油石化</td><td>—</td><td><b>63.2</b></td><td class='down'>-5.53%</td><td>4.74</td><td>31</td><td>44</td><td>12.49</td><td>14.34</td><td><span class='badge bB'>B</span></td></tr><tr><td>楚天龙</td><td class='muted'>sz003040</td><td>通信</td><td>—</td><td><b>62.9</b></td><td class='down'>-10.00%</td><td>15.55</td><td>67</td><td>15</td><td>18.83</td><td>22.27</td><td><span class='badge bB'>B</span></td></tr><tr><td>英维克</td><td class='muted'>sz002837</td><td>机械设备</td><td>—</td><td><b>60.8</b></td><td class='down'>-2.16%</td><td>2.60</td><td>32</td><td>29</td><td>59.37</td><td>68.58</td><td><span class='badge bB'>B</span></td></tr><tr><td>恒宝股份</td><td class='muted'>sz002104</td><td>通信</td><td>—</td><td><b>60.1</b></td><td class='down'>-4.04%</td><td>11.79</td><td>19</td><td>18</td><td>11.96</td><td>14.14</td><td><span class='badge bB'>B</span></td></tr><tr><td>易点天下</td><td class='muted'>sz301171</td><td>传媒</td><td>—</td><td><b>59.3</b></td><td class='down'>-2.53%</td><td>8.93</td><td>35</td><td>17</td><td>34.76</td><td>41.11</td><td><span class='badge bC'>C</span></td></tr><tr><td>高争民爆</td><td class='muted'>sz002827</td><td>基础化工</td><td>—</td><td><b>58.8</b></td><td class='down'>-5.87%</td><td>3.63</td><td>80</td><td>73</td><td>59.6</td><td>70.5</td><td><span class='badge bC'>C</span></td></tr><tr><td>中石科技</td><td class='muted'>sz300684</td><td>电子</td><td>—</td><td><b>57.3</b></td><td class='down'>-0.19%</td><td>7.47</td><td>68</td><td>10</td><td>80.98</td><td>95.79</td><td><span class='badge bC'>C</span></td></tr><tr><td>千金药业</td><td class='muted'>sh600479</td><td>医药生物</td><td>—</td><td><b>56.9</b></td><td class='down'>-9.99%</td><td>20.49</td><td>60</td><td>9</td><td>12.36</td><td>14.62</td><td><span class='badge bC'>C</span></td></tr><tr><td>福立旺</td><td class='muted'>sh688678</td><td>电子</td><td>—</td><td><b>54.2</b></td><td class='down'>-3.02%</td><td>3.02</td><td>55</td><td>68</td><td>20.04</td><td>23.71</td><td><span class='badge bC'>C</span></td></tr><tr><td>通鼎互联</td><td class='muted'>sz002491</td><td>通信</td><td>—</td><td><b>53.8</b></td><td class='down'>-5.40%</td><td>10.49</td><td>46</td><td>22</td><td>19.75</td><td>23.36</td><td><span class='badge bC'>C</span></td></tr><tr><td>光洋股份</td><td class='muted'>sz002708</td><td>汽车</td><td>—</td><td><b>51.1</b></td><td class='down'>-0.42%</td><td>7.87</td><td>92</td><td>82</td><td>13.84</td><td>16.37</td><td><span class='badge bC'>C</span></td></tr><tr><td>浪潮信息</td><td class='muted'>sz000977</td><td>计算机</td><td>—</td><td><b>51.0</b></td><td class='down'>-1.33%</td><td>3.61</td><td>37</td><td>2</td><td>67.19</td><td>79.47</td><td><span class='badge bC'>C</span></td></tr><tr><td>上海能源</td><td class='muted'>sh600508</td><td>煤炭</td><td>—</td><td><b>49.6</b></td><td class='down'>-2.50%</td><td>3.61</td><td>71</td><td>56</td><td>10.9</td><td>12.57</td><td><span class='badge bD'>D</span></td></tr><tr><td>万向德农</td><td class='muted'>sh600371</td><td>农林牧渔</td><td>—</td><td><b>45.4</b></td><td class='down'>-8.12%</td><td>21.45</td><td>77</td><td>25</td><td>13.01</td><td>15.38</td><td><span class='badge bD'>D</span></td></tr><tr><td>神奇制药</td><td class='muted'>sh600613</td><td>医药生物</td><td>—</td><td><b>45.2</b></td><td class='down'>-5.65%</td><td>23.42</td><td>50</td><td>8</td><td>8.27</td><td>9.78</td><td><span class='badge bD'>D</span></td></tr><tr><td>沃森生物</td><td class='muted'>sz300142</td><td>医药生物</td><td>—</td><td><b>44.9</b></td><td class='down'>-3.35%</td><td>3.73</td><td>36</td><td>9</td><td>12.24</td><td>14.48</td><td><span class='badge bD'>D</span></td></tr><tr><td>速达股份</td><td class='muted'>sz001277</td><td>机械设备</td><td>洗盘</td><td><b>44.0</b></td><td class='down'>-2.41%</td><td>3.60</td><td>22</td><td>9</td><td>28.58</td><td>33.81</td><td><span class='badge bD'>D</span></td></tr><tr><td>键凯科技</td><td class='muted'>sh688356</td><td>医药生物</td><td>—</td><td><b>35.2</b></td><td class='down'>-4.23%</td><td>5.64</td><td>19</td><td>5</td><td>73.27</td><td>86.66</td><td><span class='badge bD'>D</span></td></tr></tbody></table>
 
-<div class='section'><h2>交易计划（前 20 只）</h2>
-
   <div class='card hi'>
     <div class='chead'>
-      <span class='cname'>苏农银行</span>
-      <span class='ccode'>sh603323 · 银行</span>
-      <span class='badge bB'>B 可建仓</span>
-      <span style='margin-left:auto' class='score'>64.0</span>
+      <span class='cname'>思泉新材</span>
+      <span class='ccode'>sz301489 · 电子</span>
+      <span class='badge bA'>A 重点建仓</span>
+      <span style='margin-left:auto' class='score'>71.4</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>4.64 <span class='up' style='font-size:12px'>+1.53%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>4.54 ~ 4.71</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>4.30（-7.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>4.99 / 5.32</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.14</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>5%~7%</div></div>
+      <div class='kv'><div class='k'>现价</div><div class='v'>124.90 <span class='down' style='font-size:12px'>-3.78%</span></div></div>
+      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>124.28 ~ 133.83</div></div>
+      <div class='kv'><div class='k'>止损</div><div class='v sm down'>120.02（-7.0%）</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>141.96 / 148.41</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.43</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>8%~10% · 5~15 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 6 家加仓</span><span class='chip'>中报 2 家减仓</span><span class='chip'>高管增持 10 笔</span><span class='chip'>高管减持 5 笔</span></div>
-    <div class='sig'><b>打分：</b>中报 21.0 · 高管 20.0 · 大宗 0.0 · 量价 23.0 · 风险 -0.0</div>
-    <div class='sig'><b>介入：</b>现价至MA5区间分批介入；<b>失效：</b>跌破 4.30 无条件离场。</div>
-    
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 1.58亿</span><span class='chip'>机构席位 4 家</span><span class='chip'>目标价空间 +45%</span><span class='chip'>知名席位 1 次</span><span class='chip'>游资买入 1.48亿</span><span class='chip'>主力当日 -0.80亿</span><span class='chip'>获利盘 36%</span></div>
+    <div class='sig'><b>打分：</b>机构方向 30.0 · 主力资金 10.0 · 中报背景 10.0 · 高管 0.0 · 大宗 0.0 · 量价 15.4 · 筹码 9.0 · 风险 -3.0</div>
+    <div class='sig'><b>介入：</b>现价至MA5区间分批建仓；<b>失效：</b>跌破 120.02 无条件离场。</div>
+    <div class='sig'>⚠ 跌破MA60</div>
   </div>
   <div class='card hi'>
     <div class='chead'>
-      <span class='cname'>华峰测控</span>
-      <span class='ccode'>sh688200 · 电子</span>
-      <span class='badge bB'>B 可建仓</span>
-      <span style='margin-left:auto' class='score'>63.9</span>
+      <span class='cname'>长飞光纤</span>
+      <span class='ccode'>sh601869 · 通信</span>
+      <span class='badge bA'>A 重点建仓</span>
+      <span style='margin-left:auto' class='score'>70.8</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>355.55 <span class='up' style='font-size:12px'>+0.44%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>353.77 ~ 366.24</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>338.94（-5.85%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>388.80 / 414.00</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.37</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>5%~7%</div></div>
+      <div class='kv'><div class='k'>现价</div><div class='v'>435.74 <span class='down' style='font-size:12px'>-1.42%</span></div></div>
+      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>407.50 ~ 415.73</div></div>
+      <div class='kv'><div class='k'>止损</div><div class='v sm down'>382.80（-7.0%）</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>452.78 / 473.36</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.43</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>8%~10% · 5~15 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 9 家加仓</span><span class='chip'>中报 1 家减仓</span><span class='chip'>高管增持 16 笔</span><span class='chip'>大宗 2 笔 0.14亿</span></div>
-    <div class='sig'><b>打分：</b>中报 23.0 · 高管 20.0 · 大宗 8.4 · 量价 12.5 · 风险 -0.0</div>
-    <div class='sig'><b>介入：</b>现价附近分批介入；<b>失效：</b>跌破 338.94 无条件离场。</div>
-    
-  </div>
-  <div class='card hi'>
-    <div class='chead'>
-      <span class='cname'>立讯精密</span>
-      <span class='ccode'>sz002475 · 电子</span>
-      <span class='badge bB'>B 可建仓</span>
-      <span style='margin-left:auto' class='score'>63.8</span>
-    </div>
-    <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>54.45 <span class='down' style='font-size:12px'>-2.52%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>54.18 ~ 55.95</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>51.21（-7.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>59.47 / 63.32</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.14</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>5%~7%</div></div>
-    </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 4 家加仓</span><span class='chip'>高管增持 2 笔</span><span class='chip'>大宗 1 笔 0.28亿</span><span class='chip'>机构买入 0.28亿</span></div>
-    <div class='sig'><b>打分：</b>中报 25.0 · 高管 12.0 · 大宗 12.8 · 量价 14.0 · 风险 -0.0</div>
-    <div class='sig'><b>介入：</b>现价附近分批介入；<b>失效：</b>跌破 51.21 无条件离场。</div>
-    
-  </div>
-  <div class='card hi'>
-    <div class='chead'>
-      <span class='cname'>迈瑞医疗</span>
-      <span class='ccode'>sz300760 · 医药生物</span>
-      <span class='badge bB'>B 可建仓</span>
-      <span style='margin-left:auto' class='score'>60.5</span>
-    </div>
-    <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>165.70 <span class='up' style='font-size:12px'>+0.30%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>164.87 ~ 169.97</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>155.70（-7.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>180.82 / 192.53</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.14</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>5%~7%</div></div>
-    </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 4 家加仓</span><span class='chip'>中报 2 家减仓</span><span class='chip'>大宗 1 笔 1.69亿</span><span class='chip'>机构买入 1.69亿</span></div>
-    <div class='sig'><b>打分：</b>中报 21.0 · 高管 0.0 · 大宗 20.0 · 量价 19.5 · 风险 -0.0</div>
-    <div class='sig'><b>介入：</b>现价附近分批介入；<b>失效：</b>跌破 155.70 无条件离场。</div>
-    
-  </div>
-  <div class='card hi'>
-    <div class='chead'>
-      <span class='cname'>安集科技</span>
-      <span class='ccode'>sh688019 · 电子</span>
-      <span class='badge bB'>B 可建仓</span>
-      <span style='margin-left:auto' class='score'>60.0</span>
-    </div>
-    <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>222.58 <span class='down' style='font-size:12px'>-1.81%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>220.97 ~ 225.92</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>207.80（-7.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>241.32 / 256.96</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.14</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>5%~7%</div></div>
-    </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 8 家加仓</span><span class='chip'>高管增持 18 笔</span></div>
-    <div class='sig'><b>打分：</b>中报 25.0 · 高管 20.0 · 大宗 0.0 · 量价 15.0 · 风险 -0.0</div>
-    <div class='sig'><b>介入：</b>现价至MA5区间分批介入；<b>失效：</b>跌破 207.80 无条件离场。</div>
-    
-  </div>
-  <div class='card hi'>
-    <div class='chead'>
-      <span class='cname'>中润光学</span>
-      <span class='ccode'>sh688307 · 电子</span>
-      <span class='badge bC'>C 轻仓观察</span>
-      <span style='margin-left:auto' class='score'>59.0</span>
-    </div>
-    <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>44.56 <span class='down' style='font-size:12px'>-1.61%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>44.34 ~ 46.30</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>43.20（-4.67%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>48.95 / 52.12</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.71</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>≤3%</div></div>
-    </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 7 家加仓</span><span class='chip'>高管增持 44 笔</span></div>
-    <div class='sig'><b>打分：</b>中报 25.0 · 高管 20.0 · 大宗 0.0 · 量价 14.0 · 风险 -0.0</div>
-    <div class='sig'><b>介入：</b>现价附近分批介入；<b>失效：</b>跌破 43.20 无条件离场。</div>
-    
-  </div>
-  <div class='card hi'>
-    <div class='chead'>
-      <span class='cname'>寒武纪</span>
-      <span class='ccode'>sh688256 · 电子</span>
-      <span class='badge bC'>C 轻仓观察</span>
-      <span style='margin-left:auto' class='score'>58.9</span>
-    </div>
-    <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>1,043.84 <span class='down' style='font-size:12px'>-1.05%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>1,038.62 ~ 1,080.40</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>985.34（-7.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>1,144.27 / 1,218.44</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.14</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>≤3%</div></div>
-    </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 6 家加仓</span><span class='chip'>中报 3 家减仓</span><span class='chip'>高管增持 41 笔</span><span class='chip'>大宗 2 笔 0.08亿</span></div>
-    <div class='sig'><b>打分：</b>中报 19.0 · 高管 20.0 · 大宗 8.4 · 量价 11.5 · 风险 -0.0</div>
-    <div class='sig'><b>介入：</b>现价附近分批介入；<b>失效：</b>跌破 985.34 无条件离场。</div>
-    
-  </div>
-  <div class='card hi'>
-    <div class='chead'>
-      <span class='cname'>浩辰软件</span>
-      <span class='ccode'>sh688657 · 计算机</span>
-      <span class='badge bC'>C 轻仓观察</span>
-      <span style='margin-left:auto' class='score'>58.5</span>
-    </div>
-    <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>32.00 <span class='down' style='font-size:12px'>-0.99%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>31.84 ~ 33.07</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>30.18（-7.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>35.05 / 37.32</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.14</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>≤3%</div></div>
-    </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 8 家加仓</span><span class='chip'>高管增持 24 笔</span></div>
-    <div class='sig'><b>打分：</b>中报 25.0 · 高管 20.0 · 大宗 0.0 · 量价 13.5 · 风险 -0.0</div>
-    <div class='sig'><b>介入：</b>现价附近分批介入；<b>失效：</b>跌破 30.18 无条件离场。</div>
-    
-  </div>
-  <div class='card hi'>
-    <div class='chead'>
-      <span class='cname'>济川药业</span>
-      <span class='ccode'>sh600566 · 医药生物</span>
-      <span class='badge bC'>C 轻仓观察</span>
-      <span style='margin-left:auto' class='score'>58.5</span>
-    </div>
-    <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>25.51 <span class='down' style='font-size:12px'>-0.97%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>25.38 ~ 26.11</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>24.37（-5.36%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>27.80 / 29.61</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.49</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>≤3%</div></div>
-    </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 4 家加仓</span><span class='chip'>高管增持 8 笔</span><span class='chip'>高管减持 5 笔</span></div>
-    <div class='sig'><b>打分：</b>中报 25.0 · 高管 16.0 · 大宗 0.0 · 量价 17.5 · 风险 -0.0</div>
-    <div class='sig'><b>介入：</b>现价附近分批介入；<b>失效：</b>跌破 24.37 无条件离场。</div>
-    
-  </div>
-  <div class='card hi'>
-    <div class='chead'>
-      <span class='cname'>紫金矿业</span>
-      <span class='ccode'>sh601899 · 有色金属</span>
-      <span class='badge bC'>C 轻仓观察</span>
-      <span style='margin-left:auto' class='score'>58.2</span>
-    </div>
-    <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>34.11 <span class='down' style='font-size:12px'>-0.84%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>33.55 ~ 34.62</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>32.65（-4.2%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>36.81 / 39.20</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.9</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>≤3%</div></div>
-    </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 3 家加仓</span><span class='chip'>中报 1 家减仓</span><span class='chip'>大宗 8 笔 2.67亿</span><span class='chip'>机构买入 1.53亿</span></div>
-    <div class='sig'><b>打分：</b>中报 16.8 · 高管 0.0 · 大宗 20.0 · 量价 21.5 · 风险 -0.0</div>
-    <div class='sig'><b>介入：</b>现价至MA5区间分批介入；<b>失效：</b>跌破 32.65 无条件离场。</div>
-    
-  </div>
-  <div class='card hi'>
-    <div class='chead'>
-      <span class='cname'>星湖科技</span>
-      <span class='ccode'>sh600866 · 基础化工</span>
-      <span class='badge bC'>C 轻仓观察</span>
-      <span style='margin-left:auto' class='score'>57.0</span>
-    </div>
-    <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>4.42 <span class='down' style='font-size:12px'>-3.28%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>4.40 ~ 4.55</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>4.25（-5.02%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>4.83 / 5.14</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.59</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>≤3%</div></div>
-    </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 3 家加仓</span><span class='chip'>大宗 6 笔 1.23亿</span><span class='chip'>机构买入 0.68亿</span></div>
-    <div class='sig'><b>打分：</b>中报 18.8 · 高管 0.0 · 大宗 19.2 · 量价 19.0 · 风险 -0.0</div>
-    <div class='sig'><b>介入：</b>现价附近分批介入；<b>失效：</b>跌破 4.25 无条件离场。</div>
-    
-  </div>
-  <div class='card hi'>
-    <div class='chead'>
-      <span class='cname'>悦安新材</span>
-      <span class='ccode'>sh688786 · 有色金属</span>
-      <span class='badge bC'>C 轻仓观察</span>
-      <span style='margin-left:auto' class='score'>56.5</span>
-    </div>
-    <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>25.45 <span class='down' style='font-size:12px'>-1.70%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>25.32 ~ 26.15</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>24.24（-5.83%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>27.80 / 29.60</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.37</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>≤3%</div></div>
-    </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 9 家加仓</span><span class='chip'>高管增持 9 笔</span><span class='chip'>大宗 1 笔 0.03亿</span></div>
-    <div class='sig'><b>打分：</b>中报 25.0 · 高管 20.0 · 大宗 2.0 · 量价 11.5 · 风险 -2.0</div>
-    <div class='sig'><b>介入：</b>现价附近分批介入；<b>失效：</b>跌破 24.24 无条件离场。</div>
-    <div class='sig'>⚠ 风险：大宗折价11.4%偏高</div>
-  </div>
-  <div class='card hi'>
-    <div class='chead'>
-      <span class='cname'>统联精密</span>
-      <span class='ccode'>sh688210 · 电子</span>
-      <span class='badge bC'>C 轻仓观察</span>
-      <span style='margin-left:auto' class='score'>56.0</span>
-    </div>
-    <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>28.27 <span class='down' style='font-size:12px'>-6.91%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>28.13 ~ 31.49</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>27.99（-6.11%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>32.19 / 34.28</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.31</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>≤3%</div></div>
-    </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 4 家加仓</span><span class='chip'>中报 1 家减仓</span><span class='chip'>高管增持 20 笔</span><span class='chip'>高管减持 7 笔</span></div>
-    <div class='sig'><b>打分：</b>中报 23.0 · 高管 20.0 · 大宗 0.0 · 量价 13.0 · 风险 -0.0</div>
-    <div class='sig'><b>介入：</b>现价附近分批介入；<b>失效：</b>跌破 27.99 无条件离场。</div>
-    
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 3.23亿</span><span class='chip'>机构席位 6 家</span><span class='chip'>目标价空间 +4%</span><span class='chip'>知名席位 1 次</span><span class='chip'>游资买入 3.57亿</span><span class='chip'>主力当日 -4.66亿</span><span class='chip'>获利盘 83%</span></div>
+    <div class='sig'><b>打分：</b>机构方向 24.0 · 主力资金 10.0 · 中报背景 6.0 · 高管 0.0 · 大宗 8.0 · 量价 18.3 · 筹码 6.5 · 风险 -2.0</div>
+    <div class='sig'><b>介入：</b>乖离MA20 10.5%，回踩MA10（411.62）介入，不追高；<b>失效：</b>跌破 382.80 无条件离场。</div>
+    <div class='sig'>⚠ 中报减仓多于加仓</div>
   </div>
   <div class='card hi'>
     <div class='chead'>
       <span class='cname'>惠泰医疗</span>
       <span class='ccode'>sh688617 · 医药生物</span>
-      <span class='badge bC'>C 轻仓观察</span>
-      <span style='margin-left:auto' class='score'>55.5</span>
+      <span class='badge bA'>A 重点建仓</span>
+      <span style='margin-left:auto' class='score'>70.3</span>
     </div>
     <div class='grid'>
       <div class='kv'><div class='k'>现价</div><div class='v'>239.90 <span class='up' style='font-size:12px'>+0.29%</span></div></div>
       <div class='kv'><div class='k'>进场区间</div><div class='v sm'>238.70 ~ 246.24</div></div>
       <div class='kv'><div class='k'>止损</div><div class='v sm down'>225.50（-7.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>261.87 / 278.84</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.14</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>≤3%</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>266.72 / 278.84</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.43</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>8%~10% · 5~15 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 4 家加仓</span><span class='chip'>中报 1 家减仓</span><span class='chip'>大宗 1 笔 1.66亿</span><span class='chip'>机构买入 1.66亿</span></div>
-    <div class='sig'><b>打分：</b>中报 23.0 · 高管 0.0 · 大宗 20.0 · 量价 12.5 · 风险 -0.0</div>
-    <div class='sig'><b>介入：</b>现价附近分批介入；<b>失效：</b>跌破 225.50 无条件离场。</div>
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 1.60亿</span><span class='chip'>机构席位 4 家</span><span class='chip'>目标价空间 +38%</span><span class='chip'>主力当日 -0.19亿</span><span class='chip'>获利盘 63%</span></div>
+    <div class='sig'><b>打分：</b>机构方向 30.0 · 主力资金 4.0 · 中报背景 10.0 · 高管 0.0 · 大宗 8.0 · 量价 10.3 · 筹码 8.0 · 风险 -0.0</div>
+    <div class='sig'><b>介入：</b>现价至MA5区间分批建仓；<b>失效：</b>跌破 225.50 无条件离场。</div>
     
   </div>
   <div class='card hi'>
     <div class='chead'>
-      <span class='cname'>浩通科技</span>
-      <span class='ccode'>sz301026 · 有色金属</span>
-      <span class='badge bC'>C 轻仓观察</span>
-      <span style='margin-left:auto' class='score'>55.5</span>
+      <span class='cname'>中谷物流</span>
+      <span class='ccode'>sh603565 · 交通运输</span>
+      <span class='badge bB'>B 可建仓</span>
+      <span style='margin-left:auto' class='score'>68.5</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>20.00 <span class='down' style='font-size:12px'>-2.30%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>19.90 ~ 20.62</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>19.29（-4.77%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>21.88 / 23.30</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.68</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>≤3%</div></div>
+      <div class='kv'><div class='k'>现价</div><div class='v'>12.26 <span class='down' style='font-size:12px'>-1.21%</span></div></div>
+      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>12.20 ~ 12.45</div></div>
+      <div class='kv'><div class='k'>止损</div><div class='v sm down'>11.86（-3.75%）</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>13.56 / 14.17</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>2.66</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 7 家加仓</span><span class='chip'>中报 1 家减仓</span><span class='chip'>高管增持 6 笔</span></div>
-    <div class='sig'><b>打分：</b>中报 23.0 · 高管 20.0 · 大宗 0.0 · 量价 12.5 · 风险 -0.0</div>
-    <div class='sig'><b>介入：</b>现价附近分批介入；<b>失效：</b>跌破 19.29 无条件离场。</div>
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 1.59亿</span><span class='chip'>机构席位 4 家</span><span class='chip'>目标价空间 +23%</span><span class='chip'>知名席位 2 次</span><span class='chip'>游资买入 0.20亿</span><span class='chip'>主力当日 -0.03亿</span><span class='chip'>获利盘 81%</span></div>
+    <div class='sig'><b>打分：</b>机构方向 27.0 · 主力资金 7.0 · 中报背景 10.0 · 高管 0.0 · 大宗 0.0 · 量价 19.2 · 筹码 5.3 · 风险 -0.0</div>
+    <div class='sig'><b>介入：</b>现价至MA5区间分批建仓；<b>失效：</b>跌破 11.86 无条件离场。</div>
     
   </div>
   <div class='card hi'>
     <div class='chead'>
-      <span class='cname'>新泉股份</span>
-      <span class='ccode'>sh603179 · 汽车</span>
-      <span class='badge bC'>C 轻仓观察</span>
-      <span style='margin-left:auto' class='score'>55.5</span>
+      <span class='cname'>星网锐捷</span>
+      <span class='ccode'>sz002396 · 通信</span>
+      <span class='badge bB'>B 可建仓</span>
+      <span style='margin-left:auto' class='score'>67.6</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>38.78 <span class='down' style='font-size:12px'>-2.66%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>38.59 ~ 40.76</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>37.91（-4.45%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>42.85 / 45.62</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.8</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>≤3%</div></div>
+      <div class='kv'><div class='k'>现价</div><div class='v'>35.99 <span class='up' style='font-size:12px'>+0.50%</span></div></div>
+      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>35.81 ~ 37.41</div></div>
+      <div class='kv'><div class='k'>止损</div><div class='v sm down'>34.05（-7.0%）</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>40.27 / 42.10</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.43</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 7 家加仓</span><span class='chip'>中报 1 家减仓</span><span class='chip'>高管增持 90 笔</span></div>
-    <div class='sig'><b>打分：</b>中报 23.0 · 高管 20.0 · 大宗 0.0 · 量价 12.5 · 风险 -0.0</div>
-    <div class='sig'><b>介入：</b>现价附近分批介入；<b>失效：</b>跌破 37.91 无条件离场。</div>
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 2.98亿</span><span class='chip'>机构席位 4 家</span><span class='chip'>目标价空间 +12%</span><span class='chip'>知名席位 3 次</span><span class='chip'>游资买入 6.17亿</span><span class='chip'>主力当日 1.27亿</span><span class='chip'>获利盘 30%</span></div>
+    <div class='sig'><b>打分：</b>机构方向 24.0 · 主力资金 5.0 · 中报背景 10.0 · 高管 0.0 · 大宗 4.0 · 量价 15.6 · 筹码 9.0 · 风险 -0.0</div>
+    <div class='sig'><b>介入：</b>现价至MA5区间分批建仓；<b>失效：</b>跌破 34.05 无条件离场。</div>
     
   </div>
   <div class='card hi'>
     <div class='chead'>
-      <span class='cname'>安博通</span>
-      <span class='ccode'>sh688168 · 计算机</span>
-      <span class='badge bC'>C 轻仓观察</span>
-      <span style='margin-left:auto' class='score'>54.8</span>
+      <span class='cname'>光迅科技</span>
+      <span class='ccode'>sz002281 · 通信</span>
+      <span class='badge bB'>B 可建仓</span>
+      <span style='margin-left:auto' class='score'>67.4</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>36.26 <span class='down' style='font-size:12px'>-0.11%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>36.08 ~ 37.05</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>35.24（-3.61%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>39.49 / 42.05</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>2.21</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>≤3%</div></div>
+      <div class='kv'><div class='k'>现价</div><div class='v'>179.39 <span class='down' style='font-size:12px'>-1.86%</span></div></div>
+      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>177.96 ~ 182.08</div></div>
+      <div class='kv'><div class='k'>止损</div><div class='v sm down'>167.42（-7.0%）</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>198.02 / 207.02</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.43</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 8 家加仓</span><span class='chip'>大宗 4 笔 0.46亿</span><span class='chip'>机构买入 0.46亿</span></div>
-    <div class='sig'><b>打分：</b>中报 25.0 · 高管 0.0 · 大宗 15.8 · 量价 14.0 · 风险 -0.0</div>
-    <div class='sig'><b>介入：</b>现价附近分批介入；<b>失效：</b>跌破 35.24 无条件离场。</div>
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 3.37亿</span><span class='chip'>机构席位 5 家</span><span class='chip'>目标价空间 +29%</span><span class='chip'>知名席位 1 次</span><span class='chip'>游资买入 7.69亿</span><span class='chip'>主力当日 -3.54亿</span><span class='chip'>获利盘 46%</span></div>
+    <div class='sig'><b>打分：</b>机构方向 27.0 · 主力资金 10.0 · 中报背景 10.0 · 高管 0.0 · 大宗 0.0 · 量价 15.4 · 筹码 8.0 · 风险 -3.0</div>
+    <div class='sig'><b>介入：</b>现价至MA5区间分批建仓；<b>失效：</b>跌破 167.42 无条件离场。</div>
+    <div class='sig'>⚠ 跌破MA60</div>
+  </div>
+  <div class='card hi'>
+    <div class='chead'>
+      <span class='cname'>石药创新</span>
+      <span class='ccode'>sz300765 · 医药生物</span>
+      <span class='badge bB'>B 可建仓</span>
+      <span style='margin-left:auto' class='score'>65.7</span>
+    </div>
+    <div class='grid'>
+      <div class='kv'><div class='k'>现价</div><div class='v'>42.63 <span class='up' style='font-size:12px'>+2.18%</span></div></div>
+      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>42.42 ~ 44.41</div></div>
+      <div class='kv'><div class='k'>止损</div><div class='v sm down'>40.38（-7.0%）</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>47.76 / 49.93</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.43</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
+    </div>
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 4.64亿</span><span class='chip'>机构席位 6 家</span><span class='chip'>知名席位 2 次</span><span class='chip'>游资买入 4.78亿</span><span class='chip'>主力当日 0.30亿</span><span class='chip'>获利盘 61%</span></div>
+    <div class='sig'><b>打分：</b>机构方向 20.0 · 主力资金 7.0 · 中报背景 10.0 · 高管 0.0 · 大宗 8.0 · 量价 12.7 · 筹码 8.0 · 风险 -0.0</div>
+    <div class='sig'><b>介入：</b>现价至MA5区间分批建仓；<b>失效：</b>跌破 40.38 无条件离场。</div>
     
   </div>
   <div class='card hi'>
     <div class='chead'>
-      <span class='cname'>晶升股份</span>
-      <span class='ccode'>sh688478 · 电子</span>
-      <span class='badge bC'>C 轻仓观察</span>
-      <span style='margin-left:auto' class='score'>54.6</span>
+      <span class='cname'>深南电路</span>
+      <span class='ccode'>sz002916 · 电子</span>
+      <span class='badge bB'>B 可建仓</span>
+      <span style='margin-left:auto' class='score'>63.8</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>40.93 <span class='down' style='font-size:12px'>-1.80%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>40.73 ~ 42.44</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>38.67（-7.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>44.91 / 47.82</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.14</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>≤3%</div></div>
+      <div class='kv'><div class='k'>现价</div><div class='v'>392.31 <span class='up' style='font-size:12px'>+2.35%</span></div></div>
+      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>369.12 ~ 398.19</div></div>
+      <div class='kv'><div class='k'>止损</div><div class='v sm down'>356.80（-7.0%）</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>422.02 / 441.21</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.43</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 3 家加仓</span><span class='chip'>中报 2 家减仓</span><span class='chip'>高管增持 9 笔</span><span class='chip'>大宗 2 笔 0.16亿</span></div>
-    <div class='sig'><b>打分：</b>中报 14.8 · 高管 20.0 · 大宗 8.4 · 量价 11.5 · 风险 -0.0</div>
-    <div class='sig'><b>介入：</b>现价附近分批介入；<b>失效：</b>跌破 38.67 无条件离场。</div>
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 1.88亿</span><span class='chip'>机构席位 6 家</span><span class='chip'>目标价空间 +6%</span><span class='chip'>知名席位 1 次</span><span class='chip'>游资买入 8.44亿</span><span class='chip'>主力当日 4.73亿</span><span class='chip'>获利盘 74%</span></div>
+    <div class='sig'><b>打分：</b>机构方向 24.0 · 主力资金 5.0 · 中报背景 10.0 · 高管 0.0 · 大宗 0.0 · 量价 18.3 · 筹码 6.5 · 风险 -0.0</div>
+    <div class='sig'><b>介入：</b>现价至MA5区间分批建仓；<b>失效：</b>跌破 356.80 无条件离场。</div>
     
   </div>
   <div class='card hi'>
     <div class='chead'>
-      <span class='cname'>安乃达</span>
-      <span class='ccode'>sh603350 · 电力设备</span>
-      <span class='badge bC'>C 轻仓观察</span>
-      <span style='margin-left:auto' class='score'>54.0</span>
+      <span class='cname'>博汇股份</span>
+      <span class='ccode'>sz300839 · 石油石化</span>
+      <span class='badge bB'>B 可建仓</span>
+      <span style='margin-left:auto' class='score'>63.2</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>27.75 <span class='down' style='font-size:12px'>-2.73%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>27.61 ~ 28.76</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>26.21（-7.0%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>30.44 / 32.41</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.14</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>≤3%</div></div>
+      <div class='kv'><div class='k'>现价</div><div class='v'>12.81 <span class='down' style='font-size:12px'>-5.53%</span></div></div>
+      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>12.75 ~ 13.34</div></div>
+      <div class='kv'><div class='k'>止损</div><div class='v sm down'>12.49（-4.19%）</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>14.34 / 15.00</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>2.38</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 5 家加仓</span><span class='chip'>中报 2 家减仓</span><span class='chip'>高管增持 4 笔</span></div>
-    <div class='sig'><b>打分：</b>中报 21.0 · 高管 20.0 · 大宗 0.0 · 量价 13.0 · 风险 -0.0</div>
-    <div class='sig'><b>介入：</b>现价附近分批介入；<b>失效：</b>跌破 26.21 无条件离场。</div>
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 0.92亿</span><span class='chip'>机构席位 4 家</span><span class='chip'>知名席位 1 次</span><span class='chip'>游资买入 0.08亿</span><span class='chip'>主力当日 -0.16亿</span><span class='chip'>获利盘 44%</span></div>
+    <div class='sig'><b>打分：</b>机构方向 17.0 · 主力资金 10.0 · 中报背景 10.0 · 高管 0.0 · 大宗 0.0 · 量价 18.2 · 筹码 8.0 · 风险 -0.0</div>
+    <div class='sig'><b>介入：</b>现价至MA5区间分批建仓；<b>失效：</b>跌破 12.49 无条件离场。</div>
     
   </div>
   <div class='card hi'>
     <div class='chead'>
-      <span class='cname'>紫光国微</span>
-      <span class='ccode'>sz002049 · 电子</span>
-      <span class='badge bC'>C 轻仓观察</span>
-      <span style='margin-left:auto' class='score'>53.5</span>
+      <span class='cname'>楚天龙</span>
+      <span class='ccode'>sz003040 · 通信</span>
+      <span class='badge bB'>B 可建仓</span>
+      <span style='margin-left:auto' class='score'>62.9</span>
     </div>
     <div class='grid'>
-      <div class='kv'><div class='k'>现价</div><div class='v'>60.50 <span class='down' style='font-size:12px'>-1.16%</span></div></div>
-      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>60.20 ~ 62.37</div></div>
-      <div class='kv'><div class='k'>止损</div><div class='v sm down'>58.24（-4.97%）</div></div>
-      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>66.19 / 70.48</div></div>
-      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.61</div></div>
-      <div class='kv'><div class='k'>建议仓位</div><div class='v sm'>≤3%</div></div>
+      <div class='kv'><div class='k'>现价</div><div class='v'>18.90 <span class='down' style='font-size:12px'>-10.00%</span></div></div>
+      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>20.04 ~ 20.44</div></div>
+      <div class='kv'><div class='k'>止损</div><div class='v sm down'>18.83（-7.0%）</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>22.27 / 23.28</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.43</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 5~15 个交易日</div></div>
     </div>
-    <div class='sig'><b>信号：</b><span class='chip'>中报 4 家加仓</span><span class='chip'>中报 1 家减仓</span><span class='chip'>高管增持 55 笔</span></div>
-    <div class='sig'><b>打分：</b>中报 23.0 · 高管 20.0 · 大宗 0.0 · 量价 10.5 · 风险 -0.0</div>
-    <div class='sig'><b>介入：</b>现价附近分批介入；<b>失效：</b>跌破 58.24 无条件离场。</div>
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 2.40亿</span><span class='chip'>机构席位 3 家</span><span class='chip'>知名席位 2 次</span><span class='chip'>游资买入 5.10亿</span><span class='chip'>主力当日 -1.43亿</span><span class='chip'>获利盘 15%</span></div>
+    <div class='sig'><b>打分：</b>机构方向 20.0 · 主力资金 10.0 · 中报背景 10.0 · 高管 0.0 · 大宗 0.0 · 量价 18.2 · 筹码 4.7 · 风险 -0.0</div>
+    <div class='sig'><b>介入：</b>乖离MA20 11.8%，回踩MA10（20.24）介入，不追高；<b>失效：</b>跌破 18.83 无条件离场。</div>
     
   </div></div>
 
-<div class='note warn'><b>风险提示：</b>本页为量化规则输出，所有买卖点均来自公开数据与固定公式，<b>不构成投资建议</b>。
-信号本质是「过去发生了什么」，不含对公司基本面的判断；中报数据截至 2026-06-30 存在滞后，大宗与高管数据为当日披露快照。
-务必自行核验业绩与行业逻辑，严格执行止损，单票亏损不超过总资金 2%。</div>
+<div class='section'><h2>游资轨 · 短线<span class='trk y'>1~3 日</span></h2>
+<div class='muted' style='margin-bottom:8px'>游资方向 32（知名席位 20 + 买入额 8 + 席位家数 4）+ 主力资金 8 + 中报 6 + 高管 6 + 大宗 6 + 量价 30 + 筹码 12 − 风险 10</div>
+<table><thead><tr><th>名称</th><th>代码</th><th>行业</th><th>板块</th><th>总分</th><th>当日</th><th>换手%</th><th>52周位</th><th>获利盘%</th><th>止损</th><th>目标一</th><th>档</th></tr></thead>
+<tbody><tr><td>星网锐捷</td><td class='muted'>sz002396</td><td>通信</td><td>—</td><td><b>81.1</b></td><td class='up'>+0.50%</td><td>8.95</td><td>76</td><td>30</td><td>34.36</td><td>37.98</td><td><span class='badge bA'>A</span></td></tr><tr><td>福立旺</td><td class='muted'>sh688678</td><td>电子</td><td>—</td><td><b>79.6</b></td><td class='down'>-3.02%</td><td>3.02</td><td>55</td><td>68</td><td>20.26</td><td>22.39</td><td><span class='badge bA'>A</span></td></tr><tr><td>石药创新</td><td class='muted'>sz300765</td><td>医药生物</td><td>—</td><td><b>78.1</b></td><td class='up'>+2.18%</td><td>1.46</td><td>61</td><td>61</td><td>40.7</td><td>44.99</td><td><span class='badge bA'>A</span></td></tr><tr><td>楚天龙</td><td class='muted'>sz003040</td><td>通信</td><td>—</td><td><b>68.5</b></td><td class='down'>-10.00%</td><td>15.55</td><td>67</td><td>15</td><td>18.04</td><td>19.94</td><td><span class='badge bB'>B</span></td></tr><tr><td>深南电路</td><td class='muted'>sz002916</td><td>电子</td><td>—</td><td><b>66.4</b></td><td class='up'>+2.35%</td><td>1.25</td><td>70</td><td>74</td><td>359.85</td><td>402.9</td><td><span class='badge bB'>B</span></td></tr><tr><td>通鼎互联</td><td class='muted'>sz002491</td><td>通信</td><td>—</td><td><b>66.4</b></td><td class='down'>-5.40%</td><td>10.49</td><td>46</td><td>22</td><td>20.07</td><td>22.18</td><td><span class='badge bB'>B</span></td></tr><tr><td>中谷物流</td><td class='muted'>sh603565</td><td>交通运输</td><td>—</td><td><b>65.1</b></td><td class='down'>-1.21%</td><td>1.18</td><td>69</td><td>81</td><td>11.71</td><td>12.94</td><td><span class='badge bB'>B</span></td></tr><tr><td>千金药业</td><td class='muted'>sh600479</td><td>医药生物</td><td>—</td><td><b>64.6</b></td><td class='down'>-9.99%</td><td>20.49</td><td>60</td><td>9</td><td>12.13</td><td>13.41</td><td><span class='badge bB'>B</span></td></tr><tr><td>高争民爆</td><td class='muted'>sz002827</td><td>基础化工</td><td>—</td><td><b>61.7</b></td><td class='down'>-5.87%</td><td>3.63</td><td>80</td><td>73</td><td>58.97</td><td>65.17</td><td><span class='badge bB'>B</span></td></tr><tr><td>恒宝股份</td><td class='muted'>sz002104</td><td>通信</td><td>—</td><td><b>61.5</b></td><td class='down'>-4.04%</td><td>11.79</td><td>19</td><td>18</td><td>11.8</td><td>13.04</td><td><span class='badge bB'>B</span></td></tr><tr><td>长飞光纤</td><td class='muted'>sh601869</td><td>通信</td><td>—</td><td><b>59.2</b></td><td class='down'>-1.42%</td><td>2.79</td><td>69</td><td>83</td><td>402.34</td><td>448.92</td><td><span class='badge bC'>C</span></td></tr><tr><td>神奇制药</td><td class='muted'>sh600613</td><td>医药生物</td><td>—</td><td><b>57.3</b></td><td class='down'>-5.65%</td><td>23.42</td><td>50</td><td>8</td><td>8.12</td><td>8.98</td><td><span class='badge bC'>C</span></td></tr><tr><td>思泉新材</td><td class='muted'>sz301489</td><td>电子</td><td>—</td><td><b>56.0</b></td><td class='down'>-3.78%</td><td>7.93</td><td>33</td><td>36</td><td>119.25</td><td>131.8</td><td><span class='badge bC'>C</span></td></tr><tr><td>博汇股份</td><td class='muted'>sz300839</td><td>石油石化</td><td>—</td><td><b>55.5</b></td><td class='down'>-5.53%</td><td>4.74</td><td>31</td><td>44</td><td>12.23</td><td>13.52</td><td><span class='badge bC'>C</span></td></tr><tr><td>上海能源</td><td class='muted'>sh600508</td><td>煤炭</td><td>—</td><td><b>53.6</b></td><td class='down'>-2.50%</td><td>3.61</td><td>71</td><td>56</td><td>10.82</td><td>11.96</td><td><span class='badge bC'>C</span></td></tr><tr><td>光迅科技</td><td class='muted'>sz002281</td><td>通信</td><td>—</td><td><b>52.4</b></td><td class='down'>-1.86%</td><td>2.99</td><td>56</td><td>46</td><td>171.02</td><td>189.02</td><td><span class='badge bC'>C</span></td></tr><tr><td>键凯科技</td><td class='muted'>sh688356</td><td>医药生物</td><td>—</td><td><b>52.1</b></td><td class='down'>-4.23%</td><td>5.64</td><td>19</td><td>5</td><td>73.04</td><td>80.73</td><td><span class='badge bC'>C</span></td></tr><tr><td>万向德农</td><td class='muted'>sh600371</td><td>农林牧渔</td><td>—</td><td><b>50.7</b></td><td class='down'>-8.12%</td><td>21.45</td><td>77</td><td>25</td><td>13.51</td><td>14.93</td><td><span class='badge bC'>C</span></td></tr><tr><td>易点天下</td><td class='muted'>sz301171</td><td>传媒</td><td>—</td><td><b>49.7</b></td><td class='down'>-2.53%</td><td>8.93</td><td>35</td><td>17</td><td>34.6</td><td>38.24</td><td><span class='badge bD'>D</span></td></tr><tr><td>英维克</td><td class='muted'>sz002837</td><td>机械设备</td><td>—</td><td><b>47.7</b></td><td class='down'>-2.16%</td><td>2.60</td><td>32</td><td>29</td><td>58.32</td><td>64.45</td><td><span class='badge bD'>D</span></td></tr><tr><td>中石科技</td><td class='muted'>sz300684</td><td>电子</td><td>—</td><td><b>47.3</b></td><td class='down'>-0.19%</td><td>7.47</td><td>68</td><td>10</td><td>79.72</td><td>88.11</td><td><span class='badge bD'>D</span></td></tr><tr><td>沃森生物</td><td class='muted'>sz300142</td><td>医药生物</td><td>—</td><td><b>43.6</b></td><td class='down'>-3.35%</td><td>3.73</td><td>36</td><td>9</td><td>12.41</td><td>13.72</td><td><span class='badge bD'>D</span></td></tr><tr><td>光洋股份</td><td class='muted'>sz002708</td><td>汽车</td><td>—</td><td><b>41.6</b></td><td class='down'>-0.42%</td><td>7.87</td><td>92</td><td>82</td><td>15.59</td><td>17.23</td><td><span class='badge bD'>D</span></td></tr><tr><td>浪潮信息</td><td class='muted'>sz000977</td><td>计算机</td><td>—</td><td><b>40.2</b></td><td class='down'>-1.33%</td><td>3.61</td><td>37</td><td>2</td><td>67.24</td><td>74.32</td><td><span class='badge bD'>D</span></td></tr><tr><td>速达股份</td><td class='muted'>sz001277</td><td>机械设备</td><td>洗盘</td><td><b>36.5</b></td><td class='down'>-2.41%</td><td>3.60</td><td>22</td><td>9</td><td>28.98</td><td>32.03</td><td><span class='badge bD'>D</span></td></tr></tbody></table>
 
-<footer>数据源：westock-mcp（行情 / 技术指标 / 高管持股变动 / 大宗交易）· 中报十大流通股东（2026-06-30）<br>
-生成脚本 <code>quant/gen_picks.py</code> + <code>quant/build_picks.py</code> · 仅供参考，不构成投资建议 · 市场有风险，投资需谨慎。</footer>
+  <div class='card hi'>
+    <div class='chead'>
+      <span class='cname'>星网锐捷</span>
+      <span class='ccode'>sz002396 · 通信</span>
+      <span class='badge bA'>A 重点建仓</span>
+      <span style='margin-left:auto' class='score'>81.1</span>
+    </div>
+    <div class='grid'>
+      <div class='kv'><div class='k'>现价</div><div class='v'>35.99 <span class='up' style='font-size:12px'>+0.50%</span></div></div>
+      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>35.63 ~ 36.71</div></div>
+      <div class='kv'><div class='k'>止损</div><div class='v sm down'>34.36（-5.0%）</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>37.98 / 39.06</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.0</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>8%~10% · 1~3 个交易日</div></div>
+    </div>
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 2.98亿</span><span class='chip'>机构席位 4 家</span><span class='chip'>目标价空间 +12%</span><span class='chip'>知名席位 3 次</span><span class='chip'>游资买入 6.17亿</span><span class='chip'>主力当日 1.27亿</span><span class='chip'>获利盘 30%</span></div>
+    <div class='sig'><b>打分：</b>游资方向 32.0 · 主力资金 8.0 · 中报背景 6.0 · 高管 0.0 · 大宗 3.0 · 量价 21.3 · 筹码 10.8 · 风险 -0.0</div>
+    <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 34.36 无条件离场。</div>
+    
+  </div>
+  <div class='card hi'>
+    <div class='chead'>
+      <span class='cname'>福立旺</span>
+      <span class='ccode'>sh688678 · 电子</span>
+      <span class='badge bA'>A 重点建仓</span>
+      <span style='margin-left:auto' class='score'>79.6</span>
+    </div>
+    <div class='grid'>
+      <div class='kv'><div class='k'>现价</div><div class='v'>21.22 <span class='down' style='font-size:12px'>-3.02%</span></div></div>
+      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>21.01 ~ 21.64</div></div>
+      <div class='kv'><div class='k'>止损</div><div class='v sm down'>20.26（-5.0%）</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>22.39 / 23.03</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.0</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>8%~10% · 1~3 个交易日</div></div>
+    </div>
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 0.58亿</span><span class='chip'>机构席位 2 家</span><span class='chip'>知名席位 3 次</span><span class='chip'>游资买入 5.02亿</span><span class='chip'>主力当日 0.23亿</span><span class='chip'>获利盘 68%</span></div>
+    <div class='sig'><b>打分：</b>游资方向 31.2 · 主力资金 8.0 · 中报背景 6.0 · 高管 0.0 · 大宗 0.0 · 量价 24.8 · 筹码 9.6 · 风险 -0.0</div>
+    <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 20.26 无条件离场。</div>
+    
+  </div>
+  <div class='card hi'>
+    <div class='chead'>
+      <span class='cname'>石药创新</span>
+      <span class='ccode'>sz300765 · 医药生物</span>
+      <span class='badge bA'>A 重点建仓</span>
+      <span style='margin-left:auto' class='score'>78.1</span>
+    </div>
+    <div class='grid'>
+      <div class='kv'><div class='k'>现价</div><div class='v'>42.63 <span class='up' style='font-size:12px'>+2.18%</span></div></div>
+      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>42.20 ~ 43.48</div></div>
+      <div class='kv'><div class='k'>止损</div><div class='v sm down'>40.70（-5.0%）</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>44.99 / 46.27</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.0</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>8%~10% · 1~3 个交易日</div></div>
+    </div>
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 4.64亿</span><span class='chip'>机构席位 6 家</span><span class='chip'>知名席位 2 次</span><span class='chip'>游资买入 4.78亿</span><span class='chip'>主力当日 0.30亿</span><span class='chip'>获利盘 61%</span></div>
+    <div class='sig'><b>打分：</b>游资方向 31.2 · 主力资金 8.0 · 中报背景 6.0 · 高管 0.0 · 大宗 6.0 · 量价 17.3 · 筹码 9.6 · 风险 -0.0</div>
+    <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 40.70 无条件离场。</div>
+    
+  </div>
+  <div class='card hi'>
+    <div class='chead'>
+      <span class='cname'>楚天龙</span>
+      <span class='ccode'>sz003040 · 通信</span>
+      <span class='badge bB'>B 可建仓</span>
+      <span style='margin-left:auto' class='score'>68.5</span>
+    </div>
+    <div class='grid'>
+      <div class='kv'><div class='k'>现价</div><div class='v'>18.90 <span class='down' style='font-size:12px'>-10.00%</span></div></div>
+      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>18.71 ~ 19.28</div></div>
+      <div class='kv'><div class='k'>止损</div><div class='v sm down'>18.04（-5.0%）</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>19.94 / 20.51</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.0</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 1~3 个交易日</div></div>
+    </div>
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 2.40亿</span><span class='chip'>机构席位 3 家</span><span class='chip'>知名席位 2 次</span><span class='chip'>游资买入 5.10亿</span><span class='chip'>主力当日 -1.43亿</span><span class='chip'>获利盘 15%</span></div>
+    <div class='sig'><b>打分：</b>游资方向 32.0 · 主力资金 0.0 · 中报背景 6.0 · 高管 0.0 · 大宗 0.0 · 量价 24.8 · 筹码 5.6 · 风险 -0.0</div>
+    <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 18.04 无条件离场。</div>
+    
+  </div>
+  <div class='card hi'>
+    <div class='chead'>
+      <span class='cname'>深南电路</span>
+      <span class='ccode'>sz002916 · 电子</span>
+      <span class='badge bB'>B 可建仓</span>
+      <span style='margin-left:auto' class='score'>66.4</span>
+    </div>
+    <div class='grid'>
+      <div class='kv'><div class='k'>现价</div><div class='v'>392.31 <span class='up' style='font-size:12px'>+2.35%</span></div></div>
+      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>367.27 ~ 400.16</div></div>
+      <div class='kv'><div class='k'>止损</div><div class='v sm down'>359.85（-6.22%）</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>402.90 / 414.41</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>0.8</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 1~3 个交易日</div></div>
+    </div>
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 1.88亿</span><span class='chip'>机构席位 6 家</span><span class='chip'>目标价空间 +6%</span><span class='chip'>知名席位 1 次</span><span class='chip'>游资买入 8.44亿</span><span class='chip'>主力当日 4.73亿</span><span class='chip'>获利盘 74%</span></div>
+    <div class='sig'><b>打分：</b>游资方向 19.6 · 主力资金 8.0 · 中报背景 6.0 · 高管 0.0 · 大宗 0.0 · 量价 25.0 · 筹码 7.8 · 风险 -0.0</div>
+    <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 359.85 无条件离场。</div>
+    
+  </div>
+  <div class='card hi'>
+    <div class='chead'>
+      <span class='cname'>通鼎互联</span>
+      <span class='ccode'>sz002491 · 通信</span>
+      <span class='badge bB'>B 可建仓</span>
+      <span style='margin-left:auto' class='score'>66.4</span>
+    </div>
+    <div class='grid'>
+      <div class='kv'><div class='k'>现价</div><div class='v'>21.02 <span class='down' style='font-size:12px'>-5.40%</span></div></div>
+      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>20.81 ~ 21.44</div></div>
+      <div class='kv'><div class='k'>止损</div><div class='v sm down'>20.07（-5.0%）</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>22.18 / 22.82</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.0</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 1~3 个交易日</div></div>
+    </div>
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 12.50亿</span><span class='chip'>机构席位 4 家</span><span class='chip'>知名席位 4 次</span><span class='chip'>游资买入 6.54亿</span><span class='chip'>主力当日 -3.44亿</span><span class='chip'>获利盘 22%</span></div>
+    <div class='sig'><b>打分：</b>游资方向 32.0 · 主力资金 0.0 · 中报背景 3.6 · 高管 0.0 · 大宗 0.0 · 量价 23.6 · 筹码 10.2 · 风险 -3.0</div>
+    <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 20.07 无条件离场。</div>
+    <div class='sig'>⚠ 跌破MA60</div>
+  </div>
+  <div class='card hi'>
+    <div class='chead'>
+      <span class='cname'>中谷物流</span>
+      <span class='ccode'>sh603565 · 交通运输</span>
+      <span class='badge bB'>B 可建仓</span>
+      <span style='margin-left:auto' class='score'>65.1</span>
+    </div>
+    <div class='grid'>
+      <div class='kv'><div class='k'>现价</div><div class='v'>12.26 <span class='down' style='font-size:12px'>-1.21%</span></div></div>
+      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>12.14 ~ 12.51</div></div>
+      <div class='kv'><div class='k'>止损</div><div class='v sm down'>11.71（-5.0%）</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>12.94 / 13.31</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.0</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 1~3 个交易日</div></div>
+    </div>
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 1.59亿</span><span class='chip'>机构席位 4 家</span><span class='chip'>目标价空间 +23%</span><span class='chip'>知名席位 2 次</span><span class='chip'>游资买入 0.20亿</span><span class='chip'>主力当日 -0.03亿</span><span class='chip'>获利盘 81%</span></div>
+    <div class='sig'><b>打分：</b>游资方向 23.6 · 主力资金 3.0 · 中报背景 6.0 · 高管 0.0 · 大宗 0.0 · 量价 26.1 · 筹码 6.4 · 风险 -0.0</div>
+    <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 11.71 无条件离场。</div>
+    
+  </div>
+  <div class='card hi'>
+    <div class='chead'>
+      <span class='cname'>千金药业</span>
+      <span class='ccode'>sh600479 · 医药生物</span>
+      <span class='badge bB'>B 可建仓</span>
+      <span style='margin-left:auto' class='score'>64.6</span>
+    </div>
+    <div class='grid'>
+      <div class='kv'><div class='k'>现价</div><div class='v'>12.71 <span class='down' style='font-size:12px'>-9.99%</span></div></div>
+      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>12.58 ~ 12.96</div></div>
+      <div class='kv'><div class='k'>止损</div><div class='v sm down'>12.13（-5.0%）</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>13.41 / 13.80</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.0</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 1~3 个交易日</div></div>
+    </div>
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 1.16亿</span><span class='chip'>机构席位 3 家</span><span class='chip'>知名席位 2 次</span><span class='chip'>游资买入 3.42亿</span><span class='chip'>主力当日 -1.32亿</span><span class='chip'>获利盘 9%</span></div>
+    <div class='sig'><b>打分：</b>游资方向 32.0 · 主力资金 0.0 · 中报背景 6.0 · 高管 0.0 · 大宗 0.0 · 量价 21.5 · 筹码 5.0 · 风险 -0.0</div>
+    <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 12.13 无条件离场。</div>
+    
+  </div>
+  <div class='card hi'>
+    <div class='chead'>
+      <span class='cname'>高争民爆</span>
+      <span class='ccode'>sz002827 · 基础化工</span>
+      <span class='badge bB'>B 可建仓</span>
+      <span style='margin-left:auto' class='score'>61.7</span>
+    </div>
+    <div class='grid'>
+      <div class='kv'><div class='k'>现价</div><div class='v'>61.76 <span class='down' style='font-size:12px'>-5.87%</span></div></div>
+      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>61.14 ~ 63.00</div></div>
+      <div class='kv'><div class='k'>止损</div><div class='v sm down'>58.97（-5.0%）</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>65.17 / 67.03</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.0</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 1~3 个交易日</div></div>
+    </div>
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 0.48亿</span><span class='chip'>机构席位 1 家</span><span class='chip'>游资买入 3.07亿</span><span class='chip'>主力当日 0.04亿</span><span class='chip'>获利盘 73%</span></div>
+    <div class='sig'><b>打分：</b>游资方向 11.2 · 主力资金 8.0 · 中报背景 6.0 · 高管 0.0 · 大宗 6.0 · 量价 22.7 · 筹码 7.8 · 风险 -0.0</div>
+    <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 58.97 无条件离场。</div>
+    
+  </div>
+  <div class='card hi'>
+    <div class='chead'>
+      <span class='cname'>恒宝股份</span>
+      <span class='ccode'>sz002104 · 通信</span>
+      <span class='badge bB'>B 可建仓</span>
+      <span style='margin-left:auto' class='score'>61.5</span>
+    </div>
+    <div class='grid'>
+      <div class='kv'><div class='k'>现价</div><div class='v'>12.36 <span class='down' style='font-size:12px'>-4.04%</span></div></div>
+      <div class='kv'><div class='k'>进场区间</div><div class='v sm'>12.24 ~ 12.61</div></div>
+      <div class='kv'><div class='k'>止损</div><div class='v sm down'>11.80（-5.0%）</div></div>
+      <div class='kv'><div class='k'>目标一 / 二</div><div class='v sm up'>13.04 / 13.42</div></div>
+      <div class='kv'><div class='k'>盈亏比</div><div class='v sm'>1.0</div></div>
+      <div class='kv'><div class='k'>仓位 / 周期</div><div class='v sm'>5%~7% · 1~3 个交易日</div></div>
+    </div>
+    <div class='sig'><b>信号：</b><span class='chip'>机构净买 3.52亿</span><span class='chip'>机构席位 4 家</span><span class='chip'>知名席位 2 次</span><span class='chip'>游资买入 0.97亿</span><span class='chip'>主力当日 -1.04亿</span><span class='chip'>获利盘 18%</span></div>
+    <div class='sig'><b>打分：</b>游资方向 28.2 · 主力资金 0.0 · 中报背景 6.0 · 高管 0.0 · 大宗 0.0 · 量价 22.4 · 筹码 6.8 · 风险 -2.0</div>
+    <div class='sig'><b>介入：</b>次日开盘不追高（高开&gt;3%放弃），分时回踩介入；不封板即走；<b>失效：</b>跌破 11.80 无条件离场。</div>
+    <div class='sig'>⚠ 中报减仓多于加仓</div>
+  </div></div>
+
+<div class='note warn'><b>风险提示：</b>本页为量化规则输出，<b>不构成投资建议</b>。中报数据截至 2026-06-30 已滞后，仅作背景参考；
+游资轨波动剧烈、须严格执行紧止损。所有买卖点来自公开数据与固定公式，不含基本面判断，务必自行核验并控制单票亏损不超过总资金 2%。</div>
+
+<footer>数据源：westock-mcp（行情 / 技术指标 / 资金流 / 筹码 / 一致预期 / 龙虎榜 / 高管变动 / 大宗）· 中报十大流通股东（2026-06-30）<br>
+生成脚本 <code>quant/gen_picks.py</code> + <code>quant/build_picks.py</code> · 仅供参考，不构成投资建议。</footer>
 </div></body></html>
