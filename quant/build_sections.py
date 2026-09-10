@@ -264,6 +264,21 @@ sec_stats = stat_line([
 
 SECTIONS = [
     {
+        "ic": "🗺️", "name": "每日总览", "href": "../market/index.html",
+        "date": fmt(lhb_d), "badge": freshness(lhb_d),
+        "desc": "交易日盘后第一眼：大盘看板（指数 / 涨跌家数 / 涨停梯队 / 资金流向 / 板块热度）一屏总览。",
+        "modules": chips([
+            "指数面板", "涨跌家数与成交额", "涨停梯队（含连板）",
+            "资金流向（板块 / 个股）", "板块热度 Top", "当日要闻",
+        ]),
+        "sources": chips(["data_market_overview", "data_hot(board_hot)", "data_quote", "limitup"]),
+        "cadence": "每个交易日必跑",
+        "cadence_cls": "must",
+        "notes": "build_dashboards.py 一并产出，与龙虎榜主看板同源。",
+        "files": ["web/market/index.html", "web/market/hotmoney.html"],
+        "stats": "",
+    },
+    {
         "ic": "🐉", "name": "龙虎榜主看板", "href": "../lhb/lhb.html",
         "date": fmt(lhb_d), "badge": freshness(lhb_d),
         "desc": "当日盘后龙虎榜全景：从大盘环境一路下钻到每只上榜个股的席位与游资标签。",
@@ -410,6 +425,110 @@ SECTIONS = [
         "files": ["web/shareholder/known-accumulation-health.html"],
         "stats": "",
     },
+    {
+        "ic": "🎯", "name": "牛人追踪（索引入口）", "href": "../shareholder/tracker.html",
+        "date": "2026-Q2", "badge": ("季频", "warn"),
+        "desc": "把「厉害的人」做成可索引、可跟随的清单：全市场 5500+ 只中报十大股东 → 牛散/私募/公募 索引；龙虎榜营业部 → 游资席位。",
+        "modules": chips([
+            "牛散 2640 / 私募 939 / 公募 867", "游资席位 833（龙虎榜聚合）",
+            "姓名 + 行业筛选", "按持仓家数 / 增仓力度 / 持股数排序",
+            "个股持仓明细 + 动向·加仓/减仓", "关注★ + 代号映射 localStorage",
+            "纯本机不上传",
+        ]),
+        "sources": chips(["2026 中报十大股东 + 十大流通股东", "Q2↔Q1 环比（holdChange）", "龙虎榜营业部（08-17~09-09 活跃度）"]),
+        "cadence": "季频更新（中报 / 季报披露季重跑）",
+        "cadence_cls": "opt",
+        "notes": "「跟随」核心信号来自 holdChange 环比：正=加仓↑ 负=减仓↓。localStorage 关注与代号映射纯本机。",
+        "files": ["web/shareholder/tracker.html", "web/shareholder/data/person_index.json"],
+        "stats": "",
+    },
+    {
+        "ic": "🔍", "name": "个股调研（三周期）", "href": "../research/index.html",
+        "date": "2026-09-04", "badge": ("季频", "warn"),
+        "desc": "单只 A 股「短线 / 中线 / 长线」三周期调研：单季拆分、内部人行为对照、板块资金确认、七条标准打分（不荐个股）。",
+        "modules": chips([
+            "短线：单季拆分 + 主力意图", "中线：基本面周期 + 内部人对照",
+            "长线：行业订单 / 业绩可验证", "板块资金确认",
+            "七条标准逐条打分 + 验证指标",
+        ]),
+        "sources": chips(["westock data_finance", "data_quote", "data_technical", "中报十大股东", "板块强度"]),
+        "cadence": "按需更新（深度调研，单只一篇 HTML）",
+        "cadence_cls": "opt",
+        "notes": "上游筛选：板块强度 / 牛人追踪 / 健康度过滤。调研结论只输出板块与交易规则，不给个股推荐。",
+        "files": ["web/research/index.html", "web/research/research-*.html"],
+        "stats": "",
+    },
+    {
+        "ic": "🎯", "name": "个股信号池（次日建仓候选）", "href": "../picks/index.html",
+        "date": (json.load(open(os.path.join(ROOT, "quant", "picks", "history.json"), encoding="utf-8"))[-1]["date"]
+                 if os.path.exists(os.path.join(ROOT, "quant", "picks", "history.json")) else "—"),
+        "badge": ("每日", "must"),
+        "desc": "把「中报增减持 + 高管增减持 + 大宗交易」三路信号合流打分，叠加当日量价确认，输出次日建仓候选池与逐只交易计划（进场区间 / 止损 / 目标位 / 盈亏比 / 建议仓位），每日归档并自动回填次日表现统计胜率。",
+        "modules": chips([
+            "三路信号聚合（中报 25 + 高管 20 + 大宗 20）",
+            "量价健康 25（趋势 10 / 量能 5 / 动量 5 / 位置 5）",
+            "风险扣分 10（净减持 / 机构卖出 / 高折价 / 高位 / 超买）",
+            "档位 A~D 与仓位（A≥70 八到十成·B 60~70 五到七成·C 50~60 三成·D 不建仓）",
+            "逐只交易计划（进场 / 止损 / 目标一·二 / 盈亏比）",
+            "历史归档 + 次日表现自动回填（触目标 / 触止损统计）",
+        ]),
+        "sources": chips([
+            "westock data_quote（现价 / 换手 / 量比 / 52 周位 / PE / PB）",
+            "westock data_technical（MA5/10/20/60、MACD、RSI12、KDJ、BOLL）",
+            "quant/exec_chg/*.json（近 20 日高管增减持）",
+            "quant/block_chg/*.json（近 20 日大宗交易）",
+            "quant/q2_full/_merged_shareholder.json（2026-Q2 十大流通股东环比）",
+        ]),
+        "cadence": "每个交易日盘后（20:00 后），与每日更新 SOP 同步；两步：gen_picks.py → 拉行情 → build_picks.py",
+        "cadence_cls": "must",
+        "notes": "中报数据截至 2026-06-30 存在滞后；大宗与高管为当日披露快照。买卖点由固定公式产出，不含基本面判断，务必自行核验并严格执行止损（单票亏损不超过总资金 2%）。本页为规则化输出，不构成投资建议。",
+        "files": ["web/picks/index.html", "web/picks/pick_*.html", "quant/picks/*.json", "quant/gen_picks.py", "quant/build_picks.py"],
+        "stats": "",
+    },
+    {
+        "ic": "🔁", "name": "做T池（可反复做T候选）", "href": "../tplus/index.html",
+        "date": (json.load(open(os.path.join(ROOT, "quant", "tplus", "history.json"), encoding="utf-8"))[-1]["date"]
+                 if os.path.exists(os.path.join(ROOT, "quant", "tplus", "history.json")) else "—"),
+        "badge": ("每日", "must"),
+        "desc": "从「机构底仓池」（公募持股≥5% 或 社保/养老/险资≥2家）中筛出高波动 + 高流动性 + 区间震荡的标的，"
+                "按顶级机构常用的网格交易 / 均值回归 / 底仓+卫星仓方法，给出网格 5 档价位、波段买卖区、止损与仓位建议。",
+        "modules": chips([
+            "机构底仓池 848 只候选（公募重仓 + 顶级机构）",
+            "硬门槛：非ST · 流通市值 20~1200亿 · 换手 2%~18% · 日振幅 ≥3%",
+            "做T适合度 5 维评分（波动 30 / 流动性 20 / 区间结构 25 / 机构 15 / 稳定 10 − 风险）",
+            "网格 5 档价位 + 波段买卖区 + 止损（逐只操作手册）",
+            "档位 A≥80 / B 70~80 / C 60~70（网格型 / 波段型分类）",
+            "历史归档（每日入选数与类型分布）",
+        ]),
+        "sources": chips([
+            "westock data_quote（振幅 / 换手 / 量比 / 市值 / 52周位）",
+            "westock data_kline（60 日前复权，算箱体 / ATR / MA / BOLL / RSI）",
+            "quant/q2_full/_merged_shareholder.json（公募 / 社保 / 险资 持仓）",
+            "quant/picks/events_unlock|reduce_*.json（解禁 / 减持排雷）",
+        ]),
+        "cadence": "每个交易日盘后，与每日更新 SOP 同步；两步：gen_tplus.py → 拉行情/K线 → build_tplus.py",
+        "cadence_cls": "must",
+        "notes": "做T依托底仓（A股 T+1），无底仓不适用；网格/波段价位为规则化输出，务必自行核验。纪律：破箱体下沿无条件清仓，单次做T亏损 ≤ 总资金 0.5%。本页不构成投资建议。",
+        "files": ["web/tplus/index.html", "web/tplus/tplus-*.html", "quant/tplus/*.json", "quant/gen_tplus.py", "quant/build_tplus.py"],
+        "stats": "",
+    },
+    {
+        "ic": "🗄️", "name": "数据中心", "href": "../db/index.html",
+        "date": TODAY.strftime("%Y-%m-%d"), "badge": ("实时", "fresh"),
+        "desc": "全模块历史数据查询页：龙虎榜 / 高管增减持 / 大宗 / 板块强度 / 涨停梯队 / 热搜 / 新闻 / 大盘指标 9 个表，支持模块切换、日期区间、搜索、专项筛选、排序、分页。",
+        "modules": chips([
+            "9 个数据模块（exec / block / lhb / lhb_seat / sector / limitup / board_hot / news / market_metric）",
+            "列式压缩 JSON + 按月分片",
+            "模块切换 + 日期区间 + 全文搜索",
+            "专项筛选 + 排序 + 分页",
+        ]),
+        "sources": chips(["quant/db/stocks.db（SQLite 9 表）", "quant/db_export.py → web/data/{module}_YYYY-MM.json"]),
+        "cadence": "实时（每次手动更新后由 db_update.py 同步）",
+        "cadence_cls": "must",
+        "notes": "历史长期留存，INSERT OR REPLACE 幂等。所有上方页面的历史数据源。",
+        "files": ["web/db/index.html", "web/data/*.json", "quant/db/stocks.db"],
+        "stats": "",
+    },
 ]
 
 sec_html = ""
@@ -435,6 +554,101 @@ for s in SECTIONS:
   <div class='row'><div class='lab'>口径要点</div><div class='val note2'>{s['notes']}</div></div>
   <div class='row'><div class='lab'>产出文件</div><div class='val files'>{files_html}</div></div>
 </div>"""
+
+# ---------------- 全站页面索引（按功能分组 + 关系图） ----------------
+INDEX_ZONES = [
+    {
+        "ic": "📊", "t": "每日总览（今天该看什么）",
+        "pages": [
+            ("🗺️ 每日总览", "../market/index.html", "大盘看板一屏总览"),
+            ("🐉 龙虎榜主看板", "../lhb/lhb.html", "异动 / 机构榜 / 游资胜率 / 共振"),
+            ("🔥 板块强度", "../sector/index.html", "板块资金 + 主力行为 + 估值分位"),
+        ],
+    },
+    {
+        "ic": "💰", "t": "资金动向（谁在买 / 卖）",
+        "pages": [
+            ("💼 高管增减持", "../exec/index.html", "内部人董监高持股变动"),
+            ("🧾 大宗交易", "../block/archive.html", "大资金折价 / 溢价调仓"),
+        ],
+    },
+    {
+        "ic": "🧠", "t": "市场情绪",
+        "pages": [
+            ("🧠 群体心理风险雷达", "../psychology/index.html", "情绪周期 + 偏差 + 风险分层"),
+        ],
+    },
+    {
+        "ic": "👑", "t": "牛人与股东（谁在持仓）",
+        "pages": [
+            ("🎯 牛人追踪（索引）", "../shareholder/tracker.html", "牛散 / 私募 / 公募 / 游资 索引 + 增减持"),
+            ("🏆 行业最强榜", "../shareholder/2026-q2-industry-elite.html", "31 行业 × 牛散 / 私募 / 公募 Top20"),
+            ("🌟 玩家图谱", "../shareholder/top-elite.html", "按知名度策划的 Top20 + 高管共现"),
+            ("📈 增持信号扫描", "../shareholder/stock-accumulation.html", "全市场 5544 只增持 / 减持扫描"),
+            ("🩺 健康度过滤", "../shareholder/known-accumulation-health.html", "上游 50 只加技术面四维打分"),
+        ],
+    },
+    {
+        "ic": "🎯", "t": "个股信号池（次日建仓候选）",
+        "pages": [
+            ("🎯 个股信号池", "../picks/index.html", "三路信号合流 → 候选 + 买卖点 + 胜率归档"),
+            ("📉 信号池回测", "../picks/backtest.html", "档位 × T+1/T+3/T+5 胜率与收益统计"),
+        ],
+    },
+    {
+        "ic": "🔍", "t": "单只深挖",
+        "pages": [
+            ("🔍 个股调研", "../research/index.html", "短线 / 中线 / 长线 三周期"),
+        ],
+    },
+    {
+        "ic": "🗄️", "t": "数据与工具",
+        "pages": [
+            ("🗄️ 数据中心", "../db/index.html", "9 模块历史查询"),
+            ("📦 版块总览（本页）", "index.html", "自检 + 全站索引"),
+        ],
+    },
+]
+
+def _index_zones_html():
+    out = []
+    for z in INDEX_ZONES:
+        page_html = "".join(
+            f"<a class='pg' href='{h}'><span class='pgn'>{n}</span>"
+            f"<span class='pgd'>{d}</span></a>"
+            for n, h, d in z["pages"]
+        )
+        out.append(
+            f"<div class='izone'>"
+            f"<div class='izh'><span class='izi'>{z['ic']}</span>"
+            f"<span class='izt'>{z['t']}</span></div>"
+            f"<div class='ipages'>{page_html}</div>"
+            f"</div>"
+        )
+    return "".join(out)
+
+RELATIONSHIPS = [
+    ("📊 每日总览", "汇总：龙虎榜 + 板块强度 + 高管增减持 + 大宗", "→ 资金动向 / 市场情绪"),
+    ("🐉 龙虎榜主看板", "席位明细 → 牛人追踪·游资席位", "← 数据中心（查历史席位）"),
+    ("🔥 板块强度", "行业过滤 → 行业最强榜 / 牛人追踪", "← 数据中心（查历史板块）"),
+    ("💼 高管增减持", "共现主体 → 玩家图谱", "← 数据中心（查历史增减持）"),
+    ("🧾 大宗交易", "与高管增减持互补（折价+内部人）", "← 数据中心"),
+    ("🧠 群体心理雷达", "情绪外化 → 龙虎榜 / 板块强度", "← 数据中心（趋势跨日）"),
+    ("🎯 个股信号池", "← 中报 / 高管增减持 / 大宗交易（三路信号）+ 量价确认", "→ 个股调研（选中后深挖）· → 归档回看胜率"),
+    ("🎯 牛人追踪（索引）", "← 板块强度（按行业筛） / 高管（按主体筛）", "→ 数据中心（查历年）"),
+    ("🏆 行业最强榜", "→ 牛人追踪（按行业版入口） / 玩家图谱", "← 数据中心"),
+    ("🌟 玩家图谱", "→ 高管共现 / 牛人追踪", "← 数据中心"),
+    ("📈 增持信号扫描", "→ 健康度过滤（技术面）", "← 数据中心"),
+    ("🩺 健康度过滤", "← 增持信号扫描（上游 50 只）", "→ 个股调研（最终单只）"),
+    ("🔍 个股调研", "← 板块强度 / 牛人追踪 / 健康度（筛选上游）", "→ 数据中心（查历年）"),
+    ("🗄️ 数据中心", "← 所有上方页面的历史数据源", ""),
+    ("📦 版块总览", "本门户卡片的数据来源说明页", ""),
+]
+rel_html = "".join(
+    f"<div class='relrow'><div class='reln'>{n}</div>"
+    f"<div class='relflow'>{f}</div><div class='relflow out'>{o}</div></div>"
+    for n, f, o in RELATIONSHIPS
+)
 
 # ---------------- 更新时间建议 ----------------
 TIMELINE = [
@@ -528,6 +742,31 @@ h2 {{ font-size:20px; margin:38px 0 14px; padding-left:12px; border-left:5px sol
   margin-right:10px; vertical-align:-2px; }}
 .note {{ background:#fffaf0; border-left:4px solid #b7791f; padding:12px 16px;
   border-radius:0 8px 8px 0; font-size:13.5px; color:#6b4f2a; margin:14px 0; }}
+/* 全站索引（按功能分组） */
+.idxwrap {{ background:#fff; border:1px solid #e3e7ec; border-radius:14px;
+  padding:18px 22px; margin-bottom:18px; box-shadow:0 1px 4px rgba(20,30,50,.04); }}
+.izone {{ margin:10px 0 14px; padding-bottom:10px; border-bottom:1px dashed #eef1f4; }}
+.izone:last-child {{ border-bottom:none; }}
+.izh {{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }}
+.izi {{ font-size:20px; }}
+.izt {{ font-size:15px; font-weight:700; color:#1f4e79; }}
+.ipages {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px; }}
+.pg {{ display:flex; flex-direction:column; gap:2px; background:#f7f9fc; border:1px solid #e6ecf3;
+  border-radius:8px; padding:8px 12px; text-decoration:none; color:inherit; transition:.15s; }}
+.pg:hover {{ border-color:#2b6cb0; background:#eef4fa; }}
+.pgn {{ font-size:13px; font-weight:700; color:#1f4e79; }}
+.pgd {{ font-size:11.5px; color:#5a6573; line-height:1.4; }}
+/* 关系图 */
+.relwrap {{ background:#fff; border:1px solid #e3e7ec; border-radius:14px;
+  padding:14px 18px; margin-bottom:18px; box-shadow:0 1px 4px rgba(20,30,50,.04); }}
+.relhd {{ display:grid; grid-template-columns:1.4fr 2fr 2fr; gap:10px; padding:6px 10px;
+  font-size:12px; color:#7b8794; border-bottom:1px solid #eef1f4; }}
+.relrow {{ display:grid; grid-template-columns:1.4fr 2fr 2fr; gap:10px; padding:8px 10px;
+  font-size:12.5px; border-bottom:1px dashed #eef1f4; align-items:start; }}
+.relrow:last-child {{ border-bottom:none; }}
+.reln {{ font-weight:700; color:#1f4e79; }}
+.relflow {{ color:#5a6573; }}
+.relflow.out {{ color:#8a5a1e; }}
 footer {{ margin-top:46px; padding-top:18px; border-top:1px solid #e3e7ec;
   font-size:12px; color:#7b8794; }}
 .topnav {{ font-size:13px; margin-bottom:14px; }}
@@ -545,16 +784,28 @@ footer {{ margin-top:46px; padding-top:18px; border-top:1px solid #e3e7ec;
   <div class='updated'>生成于 {TODAY.strftime('%Y-%m-%d')} · 统计数字实时读取自 quant/ 下的数据文件</div>
 </header>
 
+<h2>🧭 全站页面索引（按功能分组）</h2>
+<div class='idxwrap'>
+{_index_zones_html()}
+</div>
+
+<h2>🔗 页面关系（数据流 / 上下游）</h2>
+<div class='relwrap'>
+  <div class='relhd'><div>页面</div><div>← 输入 / 依赖</div><div>输出 / 走向 →</div></div>
+  {rel_html}
+</div>
+<div class='note'><b>阅读建议：</b>从「每日总览」开始扫一眼全局 → 「资金动向 / 市场情绪」看定性 → 「牛人与股东」按行业筛 → 「单只深挖」拿到具体票 → 全程所有数据都能在「数据中心」查历史。</div>
+
 <h2>⏰ 每日更新时间建议</h2>
 <div class='tlwrap'>{tl_html}</div>
 <div class='note'>
 <b>推荐：交易日当晚 20:00–21:00 手动触发一次全量更新。</b>
-此时龙虎榜已公布完毕、大盘统计聚合定稿、板块资金与行情早已定格，五个版块可一次性跑齐。<br>
+此时龙虎榜已公布完毕、大盘统计聚合定稿、板块资金与行情早已定格，全部版块可一次性跑齐。<br>
 <b>硬约束：</b>板块强度的快照次日开盘即被覆盖且不可回溯，若当晚漏跑，务必在
 <b>次日 09:15 之前</b>补跑（开盘前接口仍返回前一交易日收盘快照）。
 </div>
 
-<h2>🗂 五大版块</h2>
+<h2>🗂 全部版块详情</h2>
 {sec_html}
 
 <h2>✅ 每日手动更新自检清单</h2>
