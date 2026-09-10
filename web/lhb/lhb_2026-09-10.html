@@ -1,0 +1,4660 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>龙虎榜分析</title>
+<style>* { box-sizing: border-box; }
+body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:#f5f6f8; color:#23262b; min-height:100vh; }
+.wrap { max-width:1040px; margin:0 auto; padding:40px 20px 60px; }
+.topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
+  border-bottom:1px solid rgba(0,0,0,.08); }
+.topnav a { color:#b8893b; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(184,137,59,.35); transition:.2s; }
+.topnav a:hover { background:rgba(184,137,59,.10); }
+header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#b8893b,#b8332a,#6b5b95);
+  -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
+header p { margin:4px 0; color:#8a929c; font-size:13px; line-height:1.6; }
+.meta { margin:14px 0 24px; font-size:12px; color:#6b7280; line-height:1.7; }
+.meta b { color:#b8893b; }
+.section { background:#ffffff;
+  border:1px solid rgba(0,0,0,.08); border-radius:20px; padding:18px 20px; margin:0 0 22px;
+  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); }
+.section h2 { font-size:17px; margin:0 0 14px; color:#1c2430; display:flex; align-items:center; gap:8px; }
+.section h2:before { content:""; width:4px; height:16px; background:#b8893b; border-radius:3px; }
+.idxrow { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px; }
+.idx { flex:1; min-width:200px; background:linear-gradient(135deg,rgba(184,51,42,.08),rgba(184,51,42,.03));
+  border:1px solid rgba(184,51,42,.20); border-radius:14px; padding:13px 10px; text-align:center;
+  box-shadow:0 1px 3px rgba(184,51,42,.06); }
+.idx .k { font-size:11px; color:#6b7280; letter-spacing:.3px; }
+.idx .v { font-size:22px; font-weight:800; color:#1c2430; margin:5px 0 2px; }
+.idx .c { font-size:13px; font-weight:700; }
+.idx .hl { font-size:10px; color:#8a929c; margin-top:4px; }
+.bar { display:flex; height:34px; border-radius:8px; overflow:hidden; margin:10px 0; font-size:12px;
+  color:#ffffff; text-align:center; line-height:34px; box-shadow:0 2px 6px rgba(0,0,0,.12); }
+.chiprow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+.chip { background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06); border-radius:12px;
+  padding:10px 6px; text-align:center; min-width:74px; backdrop-filter:blur(6px); box-shadow:0 1px 3px rgba(20,30,50,.04); }
+.chip .ck { font-size:10px; color:#8a929c; }
+.chip .cv { font-size:16px; font-weight:800; margin-top:3px; }
+.tag { display:inline-block; border-radius:20px; padding:3px 11px; font-size:12px; margin:3px 4px 3px 0;
+  background:#eef2f8; color:#33414f; }
+.tag.hot { background:#fdeceb; color:#d8392b; }
+.tag.cold { background:#e9f6ef; color:#1a9e5a; }
+.pill { display:inline-block; background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06);
+  border-radius:20px; padding:4px 11px; font-size:12px; color:#3a4048; margin:3px 4px 3px 0; cursor:help; }
+.pill b { color:#b8893b; font-weight:700; }
+table { width:100%; border-collapse:collapse; font-size:13px; background:rgba(0,0,0,.03);
+  border:1px solid rgba(0,0,0,.05); border-radius:12px; overflow:hidden; margin:10px 0; }
+th,td { padding:8px 10px; text-align:left; border-bottom:1px solid rgba(0,0,0,.04); }
+th { background:rgba(20,30,50,.06); color:#3a4048; font-weight:600; font-size:12px; }
+td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+.up { color:#b8332a; } .down { color:#1a9e5a; }
+.note { color:#8a929c; font-size:12px; margin-top:8px; line-height:1.6; }
+.amberbox { font-size:13px; color:#b8893b; background:linear-gradient(135deg,rgba(184,137,59,.10),rgba(184,137,59,.04));
+  border:1px solid rgba(184,137,59,.18); border-radius:12px; padding:12px 16px; margin:12px 0; line-height:1.6; }
+.ladder { margin:6px 0; padding:8px 10px; background:rgba(0,0,0,.03); border:1px solid rgba(0,0,0,.08);
+  border-radius:8px; font-size:13px; }
+.ladder .badge { display:inline-block; border-radius:6px; padding:1px 8px; margin-right:8px; font-weight:700; font-size:12px; }
+.ladder .b5 { background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.35); color:#b8332a; }
+.ladder .b6 { background:rgba(184,51,42,.16); border:1px solid rgba(184,51,42,.55); color:#b8332a; }
+.ladder .b5 { background:rgba(184,51,42,.12); border:1px solid rgba(184,51,42,.42); color:#b8332a; }
+.ladder .b4 { background:rgba(184,51,42,.08); border:1px solid rgba(184,51,42,.30); color:#b8332a; }
+.ladder .b3 { background:rgba(184,137,59,.14); border:1px solid rgba(184,137,59,.40); color:#d8bd8a; }
+.ladder .b2 { background:rgba(184,137,59,.14); border:1px solid rgba(184,137,59,.40); color:#d8bd8a; }
+.ladder .b1 { background:rgba(90,107,128,.12); border:1px solid rgba(90,107,128,.35); color:#a7b4c9; }
+.namechip { display:inline-block; color:#3a4048; margin:2px 6px 2px 0; font-size:13px; }
+.empty { color:#8a929c; text-align:center; padding:38px 0; font-size:14px; line-height:1.8; }
+.empty b { color:#b8893b; }
+footer { margin-top:40px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08);
+  font-size:12px; color:#8a929c; line-height:1.8; }
+a.inlink { color:#b8893b; text-decoration:none; border:1px solid rgba(201,166,107,.5);
+  border-radius:10px; padding:6px 14px; font-size:13px; font-weight:700; display:inline-block; margin:4px 6px 4px 0; }
+a.inlink:hover { background:rgba(201,166,107,.16); }
+.wrap.landing { max-width:880px; text-align:center; }
+.landing header h1 { font-size:34px; }
+.landing header p { margin:6px 0; color:#8a929c; font-size:14px; }
+.date { margin:18px 0 30px; font-size:13px; color:#b8893b; letter-spacing:.5px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; text-align:left; }
+.card { display:block; text-decoration:none; color:#23262b; background:#ffffff;
+  border:1px solid rgba(0,0,0,.08); border-radius:18px; padding:20px 18px;
+  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); transition:.2s; }
+.card:hover { border-color:rgba(184,137,59,.50); transform:translateY(-2px); background:linear-gradient(135deg,rgba(184,137,59,.08),rgba(255,255,255,.03)); }
+.card .ic { font-size:26px; }
+.card .t { font-size:17px; font-weight:700; margin:10px 0 6px; color:#1c2430; }
+.card .d { font-size:12.5px; color:#8a929c; line-height:1.6; }
+.hist { margin-top:30px; font-size:12.5px; color:#6b7280; }
+.hist a { color:#b8893b; text-decoration:none; border:1px solid rgba(201,166,107,.4); border-radius:10px; padding:5px 12px; display:inline-block; margin:4px; }
+.foot { margin-top:42px; font-size:12px; color:#8a929c; line-height:1.8; }
+.lhb { table-layout:fixed; }
+.lhb th, .lhb td { font-size:12.5px; vertical-align:top; }
+.lhb td.reason { color:#6b7280; width:150px; font-size:11.5px; line-height:1.4; }
+.lhb td.sec { font-size:12px; white-space:nowrap; }
+.hm { text-align:center; }
+.hm-high { color:#f2a65a; font-weight:800; }
+.hm-mid { color:#b8893b; font-weight:700; }
+.hm-low { color:#8a93a3; }
+.hmtags { margin-top:3px; }
+.hmtag { display:inline-block; background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.30); color:#b8332a; border-radius:10px; padding:1px 7px; font-size:10.5px; margin:2px 2px 0 0; }
+.toggle { color:#b8893b; cursor:pointer; font-size:12px; user-select:none; }
+.toggle:hover { text-decoration:underline; }
+.seats { display:flex; gap:24px; flex-wrap:wrap; padding:6px 4px; }
+.seats .buys, .seats .sells { flex:1; min-width:260px; }
+.seat-h { font-weight:700; margin-bottom:6px; font-size:13px; }
+.seat-h.up { color:#b8332a; } .seat-h.down { color:#1a9e5a; }
+.seats ul { list-style:none; margin:0; padding:0; }
+.seats li { display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px dashed rgba(0,0,0,.04); font-size:12px; }
+.seats li .nm { flex:1; color:#3a4048; }
+.seats li .amt { font-variant-numeric:tabular-nums; font-weight:700; }
+tr.detail td { background:rgba(0,0,0,.03); }
+</style>
+</head>
+<body>
+<div class='wrap'>
+<div class='topnav'>
+<a href='../market/index.html'>每日总览</a>
+<a href='lhb.html'>龙虎榜分析</a>
+<a href='../market/hotmoney.html'>游资看板</a>
+<a href='../sector/index.html'>板块强度</a>
+<a href='../exec/index.html'>高管增减持</a>
+<a href='../block/index.html'>大宗交易</a>
+<a href='../psychology/index.html'>群体心理</a>
+<a href='../research/index.html'>个股调研</a>
+<a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a>
+<a href='../shareholder/tracker.html'>牛人追踪</a>
+<a href='../sections/index.html'>版块总览</a>
+<a href='../db/index.html'>数据中心</a>
+<a href='../../index.html'>返回主页</a>
+</div>
+<header>
+<h1>🐉 龙虎榜分析</h1>
+<p>个股板块(一级/二级) · 涨跌幅 · 游资介入度 · 席位明细 — 2026-09-10</p>
+</header>
+<div class='meta'>数据来源：westock-mcp data_lhb（全榜 / 机构榜 / 共振 / 席位胜率）+ data_sector（申万一/二级涨跌幅）。一级涨跌幅为成分二级均值（2026-09-10 实时）。</div>
+<div class='chiprow'>
+<a class='inlink' href='lhb_2026-09-09.html'>← 前一日（2026-09-09）</a>
+<span class='pill'>当前 2026-09-10</span>
+<a class='inlink' href='../../index.html'>返回总门户 →</a>
+</div>
+<div class='section'>
+<h2>🐉 龙虎榜全榜 48 只（按净买入额排序）</h2>
+<div class='note'>每行可点击展开查看买方/卖方席位 Top5 与游资标签。板块为申万一级 / 二级（名称+当日涨跌幅）；游资介入度按带标签席位数量分高/中/低，游资净买合计仅统计带标签席位。净买入额单位：亿元。</div>
+<table class='lhb'>
+<thead>
+<tr>
+<th>排名</th>
+<th>名称</th>
+<th class='num'>涨幅%</th>
+<th class='num'>净买入(亿)</th>
+<th>上榜原因</th>
+<th>一级行业</th>
+<th>二级行业</th>
+<th>游资介入度</th>
+<th>席位</th>
+</tr>
+</thead>
+<tbody>
+<tr class='r' onclick="toggle('dsz002636')" style='cursor:pointer'>
+<td class='num'>1</td>
+<td>
+<b>金安国纪</b> <span class='note'>sz002636</span>
+</td>
+<td class='num up'>+10.00%</td>
+<td class='num up'>5.49</td>
+<td class='reason'>日涨幅偏离值达7%</td>
+<td class='sec'>电子 <span class='down'>-1.39%</span>
+</td>
+<td class='sec'>元件 <span class='down'>-1.74%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>中山东路</span>
+<span class='hmtag'>桑田路</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002636' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>深股通专用</span>
+<span class='amt up'>2.88亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>1.86亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司上海松江区中山东路证券营业部</span>
+<span class='amt up'>1.31亿</span> <span class='hmtag'>中山东路</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.88亿</span>
+</li>
+<li>
+<span class='nm'>国盛证券股份有限公司宁波桑田路证券营业部</span>
+<span class='amt up'>0.74亿</span> <span class='hmtag'>桑田路</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>深股通专用</span>
+<span class='amt up'>1.48亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.65亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.46亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨金融城南环路证券营业部</span>
+<span class='amt up'>0.31亿</span>
+</li>
+<li>
+<span class='nm'>广发证券股份有限公司郑州农业路证券营业部</span>
+<span class='amt up'>0.30亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='up'>2.02亿</b>（仅统计带游资标签席位；共 2 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz301689')" style='cursor:pointer'>
+<td class='num'>2</td>
+<td>
+<b>电科思仪</b> <span class='note'>sz301689</span>
+</td>
+<td class='num up'>+237.50%</td>
+<td class='num up'>3.05</td>
+<td class='reason'>无价格涨跌幅限制</td>
+<td class='sec'>—</td>
+<td class='sec'>—</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>拉萨天团</span>
+<span class='hmtag'>温州帮</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz301689' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>国泰海通证券股份有限公司上海长宁区江苏路证券营业部</span>
+<span class='amt up'>0.74亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.72亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司重庆民生路证券营业部</span>
+<span class='amt up'>0.67亿</span>
+</li>
+<li>
+<span class='nm'>华泰证券股份有限公司深圳益田路荣超商务中心证券营业部</span>
+<span class='amt up'>0.49亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.43亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨东环路第二证券营业部</span>
+<span class='amt up'>0.09亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.09亿</span>
+</li>
+<li>
+<span class='nm'>中国中金财富证券有限公司深圳中金大厦证券营业部</span>
+<span class='amt up'>0.09亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨团结路第一证券营业部</span>
+<span class='amt up'>0.09亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+<li>
+<span class='nm'>平安证券股份有限公司浙江分公司</span>
+<span class='amt up'>0.07亿</span> <span class='hmtag'>温州帮</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='up'>0.23亿</b>（仅统计带游资标签席位；共 2 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600744')" style='cursor:pointer'>
+<td class='num'>3</td>
+<td>
+<b>华银电力</b> <span class='note'>sh600744</span>
+</td>
+<td class='num up'>+10.06%</td>
+<td class='num up'>2.22</td>
+<td class='reason'>日涨幅偏离值达7%</td>
+<td class='sec'>公用事业 <span class='down'>-0.07%</span>
+</td>
+<td class='sec'>电力 <span class='down'>-0.07%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>东北猛男</span>
+<span class='hmtag'>拉萨天团</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600744' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>国新证券股份有限公司北京分公司</span>
+<span class='amt up'>0.91亿</span>
+</li>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>0.78亿</span>
+</li>
+<li>
+<span class='nm'>开源证券股份有限公司西安西大街证券营业部</span>
+<span class='amt up'>0.63亿</span>
+</li>
+<li>
+<span class='nm'>东方证券股份有限公司拉萨金珠西路证券营业部</span>
+<span class='amt up'>0.51亿</span>
+</li>
+<li>
+<span class='nm'>国新证券股份有限公司北京中关村大街证券营业部</span>
+<span class='amt up'>0.22亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>0.28亿</span>
+</li>
+<li>
+<span class='nm'>高盛(中国)证券有限责任公司上海浦东新区世纪大道证券营业部</span>
+<span class='amt up'>0.18亿</span>
+</li>
+<li>
+<span class='nm'>中信证券股份有限公司上海分公司</span>
+<span class='amt up'>0.13亿</span> <span class='hmtag'>东北猛男</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨金融城南环路证券营业部</span>
+<span class='amt up'>0.12亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨东环路第二证券营业部</span>
+<span class='amt up'>0.11亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='down'>-0.24亿</b>（仅统计带游资标签席位；共 2 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002174')" style='cursor:pointer'>
+<td class='num'>4</td>
+<td>
+<b>游族网络</b> <span class='note'>sz002174</span>
+</td>
+<td class='num up'>+10.00%</td>
+<td class='num up'>1.56</td>
+<td class='reason'>日涨幅偏离值达7%</td>
+<td class='sec'>传媒 <span class='down'>-2.19%</span>
+</td>
+<td class='sec'>游戏Ⅱ <span class='down'>-1.33%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>温州帮</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002174' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.84亿</span>
+</li>
+<li>
+<span class='nm'>深股通专用</span>
+<span class='amt up'>0.61亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.50亿</span>
+</li>
+<li>
+<span class='nm'>开源证券股份有限公司西安西大街证券营业部</span>
+<span class='amt up'>0.46亿</span>
+</li>
+<li>
+<span class='nm'>平安证券股份有限公司浙江分公司</span>
+<span class='amt up'>0.44亿</span> <span class='hmtag'>温州帮</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.76亿</span>
+</li>
+<li>
+<span class='nm'>深股通专用</span>
+<span class='amt up'>0.30亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.13亿</span>
+</li>
+<li>
+<span class='nm'>中信建投证券股份有限公司苏州分公司</span>
+<span class='amt up'>0.12亿</span>
+</li>
+<li>
+<span class='nm'>广发证券股份有限公司诸暨东二路证券营业部</span>
+<span class='amt up'>0.12亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='up'>0.39亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603601')" style='cursor:pointer'>
+<td class='num'>5</td>
+<td>
+<b>再升科技</b> <span class='note'>sh603601</span>
+</td>
+<td class='num up'>+10.06%</td>
+<td class='num up'>1.36</td>
+<td class='reason'>日涨幅偏离值达7%</td>
+<td class='sec'>建筑材料 <span class='down'>-0.32%</span>
+</td>
+<td class='sec'>玻璃玻纤 <span class='up'>+1.23%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>温州帮</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603601' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>1.87亿</span>
+</li>
+<li>
+<span class='nm'>国新证券股份有限公司北京分公司</span>
+<span class='amt up'>0.91亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司北京德外大街证券营业部</span>
+<span class='amt up'>0.42亿</span>
+</li>
+<li>
+<span class='nm'>平安证券股份有限公司浙江分公司</span>
+<span class='amt up'>0.35亿</span> <span class='hmtag'>温州帮</span>
+</li>
+<li>
+<span class='nm'>瑞银证券有限责任公司上海花园石桥路证券营业部</span>
+<span class='amt up'>0.31亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>1.23亿</span>
+</li>
+<li>
+<span class='nm'>瑞银证券有限责任公司上海花园石桥路证券营业部</span>
+<span class='amt up'>0.34亿</span>
+</li>
+<li>
+<span class='nm'>摩根大通证券(中国)有限公司上海银城中路证券营业部</span>
+<span class='amt up'>0.33亿</span>
+</li>
+<li>
+<span class='nm'>高盛(中国)证券有限责任公司上海浦东新区世纪大道证券营业部</span>
+<span class='amt up'>0.31亿</span>
+</li>
+<li>
+<span class='nm'>中泰证券股份有限公司上海浦东新区江耀路证券营业部</span>
+<span class='amt up'>0.30亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='up'>0.35亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz000823')" style='cursor:pointer'>
+<td class='num'>6</td>
+<td>
+<b>超声电子</b> <span class='note'>sz000823</span>
+</td>
+<td class='num up'>+10.00%</td>
+<td class='num up'>0.92</td>
+<td class='reason'>日涨幅偏离值达7%</td>
+<td class='sec'>电子 <span class='down'>-1.39%</span>
+</td>
+<td class='sec'>元件 <span class='down'>-1.74%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>温州帮</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz000823' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>国泰海通证券股份有限公司武汉紫阳东路证券营业部</span>
+<span class='amt up'>1.57亿</span>
+</li>
+<li>
+<span class='nm'>深股通专用</span>
+<span class='amt up'>1.09亿</span>
+</li>
+<li>
+<span class='nm'>国投证券股份有限公司重庆解放碑证券营业部</span>
+<span class='amt up'>0.54亿</span>
+</li>
+<li>
+<span class='nm'>华泰证券股份有限公司上海黄浦区黄陂南路证券营业部</span>
+<span class='amt up'>0.49亿</span>
+</li>
+<li>
+<span class='nm'>平安证券股份有限公司浙江分公司</span>
+<span class='amt up'>0.46亿</span> <span class='hmtag'>温州帮</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>深股通专用</span>
+<span class='amt up'>1.56亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.87亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.69亿</span>
+</li>
+<li>
+<span class='nm'>中泰证券股份有限公司济南纬二路证券营业部</span>
+<span class='amt up'>0.54亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.46亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='up'>0.44亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz000565')" style='cursor:pointer'>
+<td class='num'>7</td>
+<td>
+<b>渝三峡A</b> <span class='note'>sz000565</span>
+</td>
+<td class='num up'>+10.01%</td>
+<td class='num up'>0.80</td>
+<td class='reason'>连续三个交易日内，涨幅偏离值累计达20%</td>
+<td class='sec'>基础化工 <span class='down'>-1.43%</span>
+</td>
+<td class='sec'>化学制品 <span class='down'>-1.66%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz000565' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>国泰海通证券股份有限公司南京胜利路证券营业部</span>
+<span class='amt up'>0.34亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司广州珠江新城营业部</span>
+<span class='amt up'>0.14亿</span>
+</li>
+<li>
+<span class='nm'>开源证券股份有限公司西安西大街证券营业部</span>
+<span class='amt up'>0.14亿</span>
+</li>
+<li>
+<span class='nm'>金元证券股份有限公司徐州康宁路证券营业部</span>
+<span class='amt up'>0.14亿</span>
+</li>
+<li>
+<span class='nm'>国投证券股份有限公司深圳红荔西路证券营业部</span>
+<span class='amt up'>0.14亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.10亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.09亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.09亿</span>
+</li>
+<li>
+<span class='nm'>金元证券股份有限公司徐州康宁路证券营业部</span>
+<span class='amt up'>0.08亿</span>
+</li>
+<li>
+<span class='nm'>金元证券股份有限公司徐州康宁路证券营业部</span>
+<span class='amt up'>0.08亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz301176')" style='cursor:pointer'>
+<td class='num'>8</td>
+<td>
+<b>逸豪新材</b> <span class='note'>sz301176</span>
+</td>
+<td class='num up'>+15.29%</td>
+<td class='num up'>0.72</td>
+<td class='reason'>日收盘价涨幅达15%</td>
+<td class='sec'>电子 <span class='down'>-1.39%</span>
+</td>
+<td class='sec'>元件 <span class='down'>-1.74%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz301176' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.57亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司上海长宁区江苏路证券营业部</span>
+<span class='amt up'>0.42亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.34亿</span>
+</li>
+<li>
+<span class='nm'>东北证券股份有限公司佛山分公司</span>
+<span class='amt up'>0.31亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.31亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.37亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.31亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.28亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.27亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.26亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600488')" style='cursor:pointer'>
+<td class='num'>9</td>
+<td>
+<b>津药药业</b> <span class='note'>sh600488</span>
+</td>
+<td class='num up'>+10.07%</td>
+<td class='num up'>0.68</td>
+<td class='reason'>日涨幅偏离值达7%</td>
+<td class='sec'>医药生物 <span class='down'>-1.01%</span>
+</td>
+<td class='sec'>化学制药 <span class='down'>-1.04%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>作手新一</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600488' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>国泰海通证券股份有限公司南京太平南路证券营业部</span>
+<span class='amt up'>0.37亿</span> <span class='hmtag'>作手新一</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司上海长宁区江苏路证券营业部</span>
+<span class='amt up'>0.30亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司无锡湖滨路证券营业部</span>
+<span class='amt up'>0.30亿</span>
+</li>
+<li>
+<span class='nm'>联储证券股份有限公司宁波分公司</span>
+<span class='amt up'>0.24亿</span>
+</li>
+<li>
+<span class='nm'>甬兴证券有限公司天津解放北路证券营业部</span>
+<span class='amt up'>0.20亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>0.29亿</span>
+</li>
+<li>
+<span class='nm'>中银国际证券股份有限公司浙江分公司</span>
+<span class='amt up'>0.14亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司佛山南海金明路证券营业部</span>
+<span class='amt up'>0.12亿</span>
+</li>
+<li>
+<span class='nm'>南京证券股份有限公司常州太湖东路证券营业部</span>
+<span class='amt up'>0.09亿</span>
+</li>
+<li>
+<span class='nm'>招商证券股份有限公司深圳益田路免税商务大厦证券营业部</span>
+<span class='amt up'>0.08亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='up'>0.37亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz000993')" style='cursor:pointer'>
+<td class='num'>10</td>
+<td>
+<b>闽东电力</b> <span class='note'>sz000993</span>
+</td>
+<td class='num up'>+10.03%</td>
+<td class='num up'>0.62</td>
+<td class='reason'>连续三个交易日内，涨幅偏离值累计达20%</td>
+<td class='sec'>公用事业 <span class='down'>-0.07%</span>
+</td>
+<td class='sec'>电力 <span class='down'>-0.07%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz000993' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>国泰海通证券股份有限公司上海徐汇区宛平南路证券营业部</span>
+<span class='amt up'>0.38亿</span>
+</li>
+<li>
+<span class='nm'>深股通专用</span>
+<span class='amt up'>0.34亿</span>
+</li>
+<li>
+<span class='nm'>东亚前海证券有限责任公司浙江第二分公司</span>
+<span class='amt up'>0.31亿</span>
+</li>
+<li>
+<span class='nm'>深股通专用</span>
+<span class='amt up'>0.22亿</span>
+</li>
+<li>
+<span class='nm'>中国银河证券股份有限公司广州粤海金融中心证券营业部</span>
+<span class='amt up'>0.19亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>深股通专用</span>
+<span class='amt up'>0.40亿</span>
+</li>
+<li>
+<span class='nm'>深股通专用</span>
+<span class='amt up'>0.33亿</span>
+</li>
+<li>
+<span class='nm'>华福证券股份有限公司宁德天湖东路证券营业部</span>
+<span class='amt up'>0.13亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.12亿</span>
+</li>
+<li>
+<span class='nm'>广发证券股份有限公司西安南广济街证券营业部</span>
+<span class='amt up'>0.11亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600359')" style='cursor:pointer'>
+<td class='num'>11</td>
+<td>
+<b>新农开发</b> <span class='note'>sh600359</span>
+</td>
+<td class='num up'>+10.05%</td>
+<td class='num up'>0.59</td>
+<td class='reason'>连续三个交易日内，涨幅偏离值累计达20%</td>
+<td class='sec'>农林牧渔 <span class='down'>-2.71%</span>
+</td>
+<td class='sec'>种植业 <span class='down'>-5.93%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>作手新一</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600359' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>中国银河证券股份有限公司桂林中山中路证券营业部</span>
+<span class='amt up'>0.33亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.20亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司南京太平南路证券营业部</span>
+<span class='amt up'>0.16亿</span> <span class='hmtag'>作手新一</span>
+</li>
+<li>
+<span class='nm'>国联民生证券股份有限公司上海虹口区杨树浦路证券营业部</span>
+<span class='amt up'>0.13亿</span>
+</li>
+<li>
+<span class='nm'>申万宏源证券有限公司济南历山路证券营业部</span>
+<span class='amt up'>0.12亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>国泰海通证券股份有限公司南宁民族大道证券营业部</span>
+<span class='amt up'>0.08亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.07亿</span>
+</li>
+<li>
+<span class='nm'>申万宏源证券有限公司扬州分公司</span>
+<span class='amt up'>0.06亿</span>
+</li>
+<li>
+<span class='nm'>中信证券股份有限公司北京复外大街证券营业部</span>
+<span class='amt up'>0.06亿</span>
+</li>
+<li>
+<span class='nm'>东方证券股份有限公司无锡梁清路证券营业部</span>
+<span class='amt up'>0.06亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='up'>0.16亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002377')" style='cursor:pointer'>
+<td class='num'>12</td>
+<td>
+<b>国创高新</b> <span class='note'>sz002377</span>
+</td>
+<td class='num up'>+10.16%</td>
+<td class='num up'>0.50</td>
+<td class='reason'>连续三个交易日内，涨幅偏离值累计达20%</td>
+<td class='sec'>石油石化 <span class='down'>-2.31%</span>
+</td>
+<td class='sec'>炼化及贸易 <span class='down'>-2.14%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002377' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>国泰海通证券股份有限公司南京胜利路证券营业部</span>
+<span class='amt up'>0.33亿</span>
+</li>
+<li>
+<span class='nm'>中国银河证券股份有限公司绍兴鲁迅中路证券营业部</span>
+<span class='amt up'>0.25亿</span>
+</li>
+<li>
+<span class='nm'>开源证券股份有限公司西安西大街证券营业部</span>
+<span class='amt up'>0.24亿</span>
+</li>
+<li>
+<span class='nm'>华源证券股份有限公司江苏分公司</span>
+<span class='amt up'>0.22亿</span>
+</li>
+<li>
+<span class='nm'>东亚前海证券有限责任公司浙江分公司</span>
+<span class='amt up'>0.16亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>中国银河证券股份有限公司台州黄岩委羽街证券营业部</span>
+<span class='amt up'>0.37亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.20亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.20亿</span>
+</li>
+<li>
+<span class='nm'>国金证券股份有限公司深圳湾一号证券营业部</span>
+<span class='amt up'>0.13亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.11亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603421')" style='cursor:pointer'>
+<td class='num'>13</td>
+<td>
+<b>鼎信通讯</b> <span class='note'>sh603421</span>
+</td>
+<td class='num up'>+9.95%</td>
+<td class='num up'>0.43</td>
+<td class='reason'>连续三个交易日内，涨幅偏离值累计达20%</td>
+<td class='sec'>通信 <span class='down'>-1.48%</span>
+</td>
+<td class='sec'>通信设备 <span class='down'>-2.53%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>东北猛男</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603421' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>开源证券股份有限公司西安西大街证券营业部</span>
+<span class='amt up'>0.40亿</span>
+</li>
+<li>
+<span class='nm'>国新证券股份有限公司北京分公司</span>
+<span class='amt up'>0.35亿</span>
+</li>
+<li>
+<span class='nm'>国新证券股份有限公司北京中关村大街证券营业部</span>
+<span class='amt up'>0.22亿</span>
+</li>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>0.14亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司成都龙腾东路证券营业部</span>
+<span class='amt up'>0.10亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>0.32亿</span>
+</li>
+<li>
+<span class='nm'>开源证券股份有限公司西安西大街证券营业部</span>
+<span class='amt up'>0.22亿</span>
+</li>
+<li>
+<span class='nm'>中信证券股份有限公司上海分公司</span>
+<span class='amt up'>0.10亿</span> <span class='hmtag'>东北猛男</span>
+</li>
+<li>
+<span class='nm'>中国银河证券股份有限公司厦门嘉禾路证券营业部</span>
+<span class='amt up'>0.07亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.06亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='down'>-0.10亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600722')" style='cursor:pointer'>
+<td class='num'>14</td>
+<td>
+<b>金牛化工</b> <span class='note'>sh600722</span>
+</td>
+<td class='num down'>-8.45%</td>
+<td class='num up'>0.40</td>
+<td class='reason'>日振幅值达15%</td>
+<td class='sec'>基础化工 <span class='down'>-1.43%</span>
+</td>
+<td class='sec'>化学原料 <span class='down'>-2.08%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600722' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>1.33亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.62亿</span>
+</li>
+<li>
+<span class='nm'>中国国际金融股份有限公司上海分公司</span>
+<span class='amt up'>0.56亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司浙江互联网分公司</span>
+<span class='amt up'>0.44亿</span>
+</li>
+<li>
+<span class='nm'>高盛(中国)证券有限责任公司上海浦东新区世纪大道证券营业部</span>
+<span class='amt up'>0.35亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>1.27亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司浙江互联网分公司</span>
+<span class='amt up'>0.45亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.43亿</span>
+</li>
+<li>
+<span class='nm'>中国国际金融股份有限公司上海分公司</span>
+<span class='amt up'>0.43亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨金融城南环路证券营业部</span>
+<span class='amt up'>0.33亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603216')" style='cursor:pointer'>
+<td class='num'>15</td>
+<td>
+<b>梦天家居</b> <span class='note'>sh603216</span>
+</td>
+<td class='num up'>+5.66%</td>
+<td class='num up'>0.28</td>
+<td class='reason'>日振幅值达15%</td>
+<td class='sec'>轻工制造 <span class='down'>-1.08%</span>
+</td>
+<td class='sec'>家居用品 <span class='down'>-0.85%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>东北猛男</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603216' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>0.42亿</span>
+</li>
+<li>
+<span class='nm'>高盛(中国)证券有限责任公司上海浦东新区世纪大道证券营业部</span>
+<span class='amt up'>0.11亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.10亿</span>
+</li>
+<li>
+<span class='nm'>瑞银证券有限责任公司上海花园石桥路证券营业部</span>
+<span class='amt up'>0.09亿</span>
+</li>
+<li>
+<span class='nm'>中国国际金融股份有限公司上海分公司</span>
+<span class='amt up'>0.09亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>0.20亿</span>
+</li>
+<li>
+<span class='nm'>高盛(中国)证券有限责任公司上海浦东新区世纪大道证券营业部</span>
+<span class='amt up'>0.10亿</span>
+</li>
+<li>
+<span class='nm'>长江证券股份有限公司武汉珞瑜路证券营业部</span>
+<span class='amt up'>0.09亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.08亿</span>
+</li>
+<li>
+<span class='nm'>中信证券股份有限公司上海分公司</span>
+<span class='amt up'>0.06亿</span> <span class='hmtag'>东北猛男</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='down'>-0.06亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600318')" style='cursor:pointer'>
+<td class='num'>16</td>
+<td>
+<b>新力金融</b> <span class='note'>sh600318</span>
+</td>
+<td class='num up'>+10.07%</td>
+<td class='num up'>0.26</td>
+<td class='reason'>日涨幅偏离值达7%</td>
+<td class='sec'>非银金融 <span class='down'>-1.69%</span>
+</td>
+<td class='sec'>多元金融 <span class='down'>-1.82%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600318' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>0.23亿</span>
+</li>
+<li>
+<span class='nm'>开源证券股份有限公司西安西大街证券营业部</span>
+<span class='amt up'>0.14亿</span>
+</li>
+<li>
+<span class='nm'>平安证券股份有限公司嘉兴中环南路证券营业部</span>
+<span class='amt up'>0.14亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司山南香曲东路证券营业部</span>
+<span class='amt up'>0.14亿</span>
+</li>
+<li>
+<span class='nm'>联储证券股份有限公司浙江分公司</span>
+<span class='amt up'>0.13亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>国泰海通证券股份有限公司上海长宁区江苏路证券营业部</span>
+<span class='amt up'>0.12亿</span>
+</li>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>0.12亿</span>
+</li>
+<li>
+<span class='nm'>高盛(中国)证券有限责任公司上海浦东新区世纪大道证券营业部</span>
+<span class='amt up'>0.10亿</span>
+</li>
+<li>
+<span class='nm'>中信证券股份有限公司浙江分公司</span>
+<span class='amt up'>0.09亿</span>
+</li>
+<li>
+<span class='nm'>招商证券股份有限公司深圳益田路免税商务大厦证券营业部</span>
+<span class='amt up'>0.09亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz300290')" style='cursor:pointer'>
+<td class='num'>17</td>
+<td>
+<b>ST荣科</b> <span class='note'>sz300290</span>
+</td>
+<td class='num up'>+18.31%</td>
+<td class='num up'>0.26</td>
+<td class='reason'>日收盘价涨幅达15%</td>
+<td class='sec'>计算机 <span class='down'>-1.46%</span>
+</td>
+<td class='sec'>IT服务Ⅱ <span class='down'>-1.12%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>拉萨天团</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz300290' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>中信建投证券股份有限公司上海营口路证券营业部</span>
+<span class='amt up'>0.26亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.16亿</span>
+</li>
+<li>
+<span class='nm'>中国银河证券股份有限公司南京大明路证券营业部</span>
+<span class='amt up'>0.15亿</span>
+</li>
+<li>
+<span class='nm'>中信建投证券股份有限公司上海营口路证券营业部</span>
+<span class='amt up'>0.15亿</span>
+</li>
+<li>
+<span class='nm'>联储证券股份有限公司陕西分公司</span>
+<span class='amt up'>0.14亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.18亿</span>
+</li>
+<li>
+<span class='nm'>中信建投证券股份有限公司上海营口路证券营业部</span>
+<span class='amt up'>0.16亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.10亿</span>
+</li>
+<li>
+<span class='nm'>华泰证券股份有限公司常州东横街证券营业部</span>
+<span class='amt up'>0.09亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨东环路第一证券营业部</span>
+<span class='amt up'>0.09亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='down'>-0.00亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600192')" style='cursor:pointer'>
+<td class='num'>18</td>
+<td>
+<b>长城电工</b> <span class='note'>sh600192</span>
+</td>
+<td class='num up'>+10.01%</td>
+<td class='num up'>0.22</td>
+<td class='reason'>连续三个交易日内，涨幅偏离值累计达20%</td>
+<td class='sec'>电力设备 <span class='down'>-1.57%</span>
+</td>
+<td class='sec'>电网设备 <span class='down'>-0.45%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600192' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>东亚前海证券有限责任公司浙江第二分公司</span>
+<span class='amt up'>0.31亿</span>
+</li>
+<li>
+<span class='nm'>国联民生证券股份有限公司北京分公司</span>
+<span class='amt up'>0.22亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.15亿</span>
+</li>
+<li>
+<span class='nm'>华泰证券股份有限公司总部</span>
+<span class='amt up'>0.13亿</span>
+</li>
+<li>
+<span class='nm'>长江证券股份有限公司江阴虹桥南路证券营业部</span>
+<span class='amt up'>0.10亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>东亚前海证券有限责任公司浙江第二分公司</span>
+<span class='amt up'>0.34亿</span>
+</li>
+<li>
+<span class='nm'>高盛(中国)证券有限责任公司上海浦东新区世纪大道证券营业部</span>
+<span class='amt up'>0.13亿</span>
+</li>
+<li>
+<span class='nm'>东吴证券股份有限公司宁波前河南路证券营业部</span>
+<span class='amt up'>0.10亿</span>
+</li>
+<li>
+<span class='nm'>国新证券股份有限公司长沙韶山路证券营业部</span>
+<span class='amt up'>0.06亿</span>
+</li>
+<li>
+<span class='nm'>华鑫证券有限责任公司绍兴胜利东路证券营业部</span>
+<span class='amt up'>0.06亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002855')" style='cursor:pointer'>
+<td class='num'>19</td>
+<td>
+<b>捷荣技术</b> <span class='note'>sz002855</span>
+</td>
+<td class='num down'>-9.97%</td>
+<td class='num up'>0.12</td>
+<td class='reason'>连续三个交易日内，跌幅偏离值累计达20%</td>
+<td class='sec'>电子 <span class='down'>-1.39%</span>
+</td>
+<td class='sec'>消费电子 <span class='down'>-0.18%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002855' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.19亿</span>
+</li>
+<li>
+<span class='nm'>东方证券股份有限公司杭州龙井路证券营业部</span>
+<span class='amt up'>0.14亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司浙江互联网分公司</span>
+<span class='amt up'>0.12亿</span>
+</li>
+<li>
+<span class='nm'>中信证券股份有限公司成都天府大道证券营业部</span>
+<span class='amt up'>0.11亿</span>
+</li>
+<li>
+<span class='nm'>中信证券股份有限公司成都天府大道证券营业部</span>
+<span class='amt up'>0.11亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.31亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨金融城南环路证券营业部</span>
+<span class='amt up'>0.14亿</span>
+</li>
+<li>
+<span class='nm'>中国银河证券股份有限公司北京学院南路证券营业部</span>
+<span class='amt up'>0.11亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司浙江互联网分公司</span>
+<span class='amt up'>0.10亿</span>
+</li>
+<li>
+<span class='nm'>长城证券股份有限公司成都天晖中街证券营业部</span>
+<span class='amt up'>0.09亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz301520')" style='cursor:pointer'>
+<td class='num'>20</td>
+<td>
+<b>万邦医药</b> <span class='note'>sz301520</span>
+</td>
+<td class='num down'>-9.56%</td>
+<td class='num up'>0.11</td>
+<td class='reason'>日换手率达30%</td>
+<td class='sec'>医药生物 <span class='down'>-1.01%</span>
+</td>
+<td class='sec'>医疗服务 <span class='up'>+0.06%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>拉萨天团</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz301520' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.30亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.17亿</span>
+</li>
+<li>
+<span class='nm'>国投证券股份有限公司北京青塔西路证券营业部</span>
+<span class='amt up'>0.08亿</span>
+</li>
+<li>
+<span class='nm'>中国银河证券股份有限公司合肥祁门路证券营业部</span>
+<span class='amt up'>0.06亿</span>
+</li>
+<li>
+<span class='nm'>平安证券股份有限公司深圳深南东路罗湖商务中心证券营业部</span>
+<span class='amt up'>0.05亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.22亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.21亿</span>
+</li>
+<li>
+<span class='nm'>招商证券股份有限公司深圳益田路免税商务大厦证券营业部</span>
+<span class='amt up'>0.07亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨东环路第二证券营业部</span>
+<span class='amt up'>0.05亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+<li>
+<span class='nm'>招商证券股份有限公司深圳招商证券大厦证券营业部</span>
+<span class='amt up'>0.05亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='down'>-0.01亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600491')" style='cursor:pointer'>
+<td class='num'>21</td>
+<td>
+<b>ST龙元</b> <span class='note'>sh600491</span>
+</td>
+<td class='num up'>+10.19%</td>
+<td class='num up'>0.04</td>
+<td class='reason'>日涨幅偏离值达7%</td>
+<td class='sec'>建筑装饰 <span class='down'>-0.92%</span>
+</td>
+<td class='sec'>房屋建设Ⅱ <span class='up'>+0.27%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>拉萨天团</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600491' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>东方财富证券股份有限公司山南香曲东路证券营业部</span>
+<span class='amt up'>0.04亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨东环路第二证券营业部</span>
+<span class='amt up'>0.04亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨东城区江苏大道证券营业部</span>
+<span class='amt up'>0.04亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司昌都两江大道证券营业部</span>
+<span class='amt up'>0.03亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨东环路第一证券营业部</span>
+<span class='amt up'>0.03亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>信达证券股份有限公司北京东长安街证券营业部</span>
+<span class='amt up'>0.04亿</span>
+</li>
+<li>
+<span class='nm'>华源证券股份有限公司江苏分公司</span>
+<span class='amt up'>0.03亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司昌都两江大道证券营业部</span>
+<span class='amt up'>0.03亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨团结路第一证券营业部</span>
+<span class='amt up'>0.03亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+<li>
+<span class='nm'>中信建投证券股份有限公司上海营口路证券营业部</span>
+<span class='amt up'>0.02亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='up'>0.05亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh605177')" style='cursor:pointer'>
+<td class='num'>22</td>
+<td>
+<b>东亚药业</b> <span class='note'>sh605177</span>
+</td>
+<td class='num up'>+8.47%</td>
+<td class='num up'>0.01</td>
+<td class='reason'>连续三个交易日内，涨幅偏离值累计达20%</td>
+<td class='sec'>医药生物 <span class='down'>-1.01%</span>
+</td>
+<td class='sec'>化学制药 <span class='down'>-1.04%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>东北猛男</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh605177' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>中信证券股份有限公司上海分公司</span>
+<span class='amt up'>0.51亿</span> <span class='hmtag'>东北猛男</span>
+</li>
+<li>
+<span class='nm'>高盛(中国)证券有限责任公司上海浦东新区世纪大道证券营业部</span>
+<span class='amt up'>0.40亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.39亿</span>
+</li>
+<li>
+<span class='nm'>中国国际金融股份有限公司上海分公司</span>
+<span class='amt up'>0.33亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.27亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>中信证券股份有限公司上海分公司</span>
+<span class='amt up'>0.63亿</span> <span class='hmtag'>东北猛男</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.36亿</span>
+</li>
+<li>
+<span class='nm'>瑞银证券有限责任公司上海花园石桥路证券营业部</span>
+<span class='amt up'>0.33亿</span>
+</li>
+<li>
+<span class='nm'>高盛(中国)证券有限责任公司上海浦东新区世纪大道证券营业部</span>
+<span class='amt up'>0.29亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.28亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='down'>-0.11亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz000017')" style='cursor:pointer'>
+<td class='num'>23</td>
+<td>
+<b>深中华A</b> <span class='note'>sz000017</span>
+</td>
+<td class='num down'>-10.04%</td>
+<td class='num down'>-0.01</td>
+<td class='reason'>日跌幅偏离值达7%</td>
+<td class='sec'>纺织服饰 <span class='down'>-0.73%</span>
+</td>
+<td class='sec'>饰品 <span class='down'>-1.71%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>拉萨天团</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz000017' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>东方证券股份有限公司汕头长平路证券营业部</span>
+<span class='amt up'>0.06亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司东莞总部一路证券营业部</span>
+<span class='amt up'>0.05亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨金融城南环路证券营业部</span>
+<span class='amt up'>0.04亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨东环路第二证券营业部</span>
+<span class='amt up'>0.04亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨团结路第一证券营业部</span>
+<span class='amt up'>0.04亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨江苏东路证券营业部</span>
+<span class='amt up'>0.07亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司绵阳剑南路证券营业部</span>
+<span class='amt up'>0.05亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨金融城南环路证券营业部</span>
+<span class='amt up'>0.04亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司山南香曲东路证券营业部</span>
+<span class='amt up'>0.04亿</span>
+</li>
+<li>
+<span class='nm'>招商证券股份有限公司深圳益田路免税商务大厦证券营业部</span>
+<span class='amt up'>0.04亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='up'>0.01亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002084')" style='cursor:pointer'>
+<td class='num'>24</td>
+<td>
+<b>海鸥住工</b> <span class='note'>sz002084</span>
+</td>
+<td class='num down'>-9.80%</td>
+<td class='num down'>-0.01</td>
+<td class='reason'>连续三个交易日内，跌幅偏离值累计达20%</td>
+<td class='sec'>轻工制造 <span class='down'>-1.08%</span>
+</td>
+<td class='sec'>家居用品 <span class='down'>-0.85%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>拉萨天团</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002084' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>中信证券股份有限公司北京京城大厦证券营业部</span>
+<span class='amt up'>0.56亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司浙江互联网分公司</span>
+<span class='amt up'>0.34亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨团结路第一证券营业部</span>
+<span class='amt up'>0.23亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+<li>
+<span class='nm'>招商证券股份有限公司深圳益田路免税商务大厦证券营业部</span>
+<span class='amt up'>0.21亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨金融城南环路证券营业部</span>
+<span class='amt up'>0.21亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>华泰证券股份有限公司上海黄浦区来福士广场证券营业部</span>
+<span class='amt up'>0.30亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司浙江互联网分公司</span>
+<span class='amt up'>0.28亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨团结路第一证券营业部</span>
+<span class='amt up'>0.27亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨金融城南环路证券营业部</span>
+<span class='amt up'>0.27亿</span>
+</li>
+<li>
+<span class='nm'>浙商证券股份有限公司宁波分公司</span>
+<span class='amt up'>0.26亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='down'>-0.08亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh688496')" style='cursor:pointer'>
+<td class='num'>25</td>
+<td>
+<b>*ST清越</b> <span class='note'>sh688496</span>
+</td>
+<td class='num down'>-20.55%</td>
+<td class='num down'>-0.02</td>
+<td class='reason'>日收盘价跌幅达15%</td>
+<td class='sec'>电子 <span class='down'>-1.39%</span>
+</td>
+<td class='sec'>光学光电子 <span class='down'>-1.65%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>拉萨天团</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh688496' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>国信证券股份有限公司北京分公司</span>
+<span class='amt up'>0.01亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨东环路第二证券营业部</span>
+<span class='amt up'>0.01亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+<li>
+<span class='nm'>中信建投证券股份有限公司株洲天台路证券营业部</span>
+<span class='amt up'>0.00亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨团结路第一证券营业部</span>
+<span class='amt up'>0.00亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+<li>
+<span class='nm'>财信证券股份有限公司温州车站大道证券营业部</span>
+<span class='amt up'>0.00亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>民生证券股份有限公司河南分公司</span>
+<span class='amt up'>0.02亿</span>
+</li>
+<li>
+<span class='nm'>华泰证券股份有限公司北京月坛南街证券营业部</span>
+<span class='amt up'>0.01亿</span>
+</li>
+<li>
+<span class='nm'>招商证券股份有限公司上海牡丹江路证券营业部</span>
+<span class='amt up'>0.01亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司上海宝山区海江路证券营业部</span>
+<span class='amt up'>0.01亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司惠州开城大道证券营业部</span>
+<span class='amt up'>0.01亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='up'>0.01亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603042')" style='cursor:pointer'>
+<td class='num'>26</td>
+<td>
+<b>华脉科技</b> <span class='note'>sh603042</span>
+</td>
+<td class='num down'>-10.02%</td>
+<td class='num down'>-0.05</td>
+<td class='reason'>日跌幅偏离值达7%</td>
+<td class='sec'>通信 <span class='down'>-1.48%</span>
+</td>
+<td class='sec'>通信设备 <span class='down'>-2.53%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>东北猛男</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603042' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.29亿</span>
+</li>
+<li>
+<span class='nm'>高盛(中国)证券有限责任公司上海浦东新区世纪大道证券营业部</span>
+<span class='amt up'>0.26亿</span>
+</li>
+<li>
+<span class='nm'>中国银河证券股份有限公司北京中关村大街证券营业部</span>
+<span class='amt up'>0.17亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司上海东方路证券营业部</span>
+<span class='amt up'>0.16亿</span>
+</li>
+<li>
+<span class='nm'>瑞银证券有限责任公司上海花园石桥路证券营业部</span>
+<span class='amt up'>0.16亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>国泰海通证券股份有限公司南京胜利路证券营业部</span>
+<span class='amt up'>0.34亿</span>
+</li>
+<li>
+<span class='nm'>中信证券股份有限公司上海分公司</span>
+<span class='amt up'>0.21亿</span> <span class='hmtag'>东北猛男</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司济南舜华路证券营业部</span>
+<span class='amt up'>0.19亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司上海长宁区江苏路证券营业部</span>
+<span class='amt up'>0.18亿</span>
+</li>
+<li>
+<span class='nm'>高盛(中国)证券有限责任公司上海浦东新区世纪大道证券营业部</span>
+<span class='amt up'>0.16亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='down'>-0.21亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600108')" style='cursor:pointer'>
+<td class='num'>27</td>
+<td>
+<b>亚盛集团</b> <span class='note'>sh600108</span>
+</td>
+<td class='num down'>-8.06%</td>
+<td class='num down'>-0.11</td>
+<td class='reason'>日振幅值达15%</td>
+<td class='sec'>农林牧渔 <span class='down'>-2.71%</span>
+</td>
+<td class='sec'>种植业 <span class='down'>-5.93%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>东北猛男</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600108' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>0.69亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.69亿</span>
+</li>
+<li>
+<span class='nm'>高盛(中国)证券有限责任公司上海浦东新区世纪大道证券营业部</span>
+<span class='amt up'>0.54亿</span>
+</li>
+<li>
+<span class='nm'>中国银河证券股份有限公司北京中关村大街证券营业部</span>
+<span class='amt up'>0.43亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司浙江互联网分公司</span>
+<span class='amt up'>0.30亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>0.94亿</span>
+</li>
+<li>
+<span class='nm'>国新证券股份有限公司北京分公司</span>
+<span class='amt up'>0.69亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.45亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司晋江世纪大道证券营业部</span>
+<span class='amt up'>0.35亿</span>
+</li>
+<li>
+<span class='nm'>中信证券股份有限公司上海分公司</span>
+<span class='amt up'>0.33亿</span> <span class='hmtag'>东北猛男</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='down'>-0.33亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002162')" style='cursor:pointer'>
+<td class='num'>28</td>
+<td>
+<b>悦心健康</b> <span class='note'>sz002162</span>
+</td>
+<td class='num up'>+1.77%</td>
+<td class='num down'>-0.11</td>
+<td class='reason'>日振幅值达15%</td>
+<td class='sec'>轻工制造 <span class='down'>-1.08%</span>
+</td>
+<td class='sec'>家居用品 <span class='down'>-0.85%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>思明南路</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002162' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>国泰海通证券股份有限公司广州临江大道证券营业部</span>
+<span class='amt up'>0.25亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司佛山南海金明路证券营业部</span>
+<span class='amt up'>0.23亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司广州琶洲证券营业部</span>
+<span class='amt up'>0.17亿</span>
+</li>
+<li>
+<span class='nm'>中国中金财富证券有限公司哈尔滨赣水路证券营业部</span>
+<span class='amt up'>0.13亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.08亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>东亚前海证券有限责任公司上海分公司</span>
+<span class='amt up'>0.32亿</span> <span class='hmtag'>思明南路</span>
+</li>
+<li>
+<span class='nm'>国盛证券股份有限公司深圳梅园路证券营业部</span>
+<span class='amt up'>0.23亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司广州临江大道证券营业部</span>
+<span class='amt up'>0.18亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.12亿</span>
+</li>
+<li>
+<span class='nm'>平安证券股份有限公司绍兴解放大道证券营业部</span>
+<span class='amt up'>0.09亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='down'>-0.25亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603090')" style='cursor:pointer'>
+<td class='num'>29</td>
+<td>
+<b>宏盛股份</b> <span class='note'>sh603090</span>
+</td>
+<td class='num down'>-10.00%</td>
+<td class='num down'>-0.15</td>
+<td class='reason'>日跌幅偏离值达7%</td>
+<td class='sec'>机械设备 <span class='down'>-1.35%</span>
+</td>
+<td class='sec'>通用设备 <span class='down'>-0.69%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>东北猛男</span>
+<span class='hmtag'>拉萨天团</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603090' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>0.08亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨东环路第二证券营业部</span>
+<span class='amt up'>0.04亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司山南香曲东路证券营业部</span>
+<span class='amt up'>0.04亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司成都沙湾路证券营业部</span>
+<span class='amt up'>0.03亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨金融城南环路证券营业部</span>
+<span class='amt up'>0.03亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>0.13亿</span>
+</li>
+<li>
+<span class='nm'>平安证券股份有限公司东莞石竹路证券营业部</span>
+<span class='amt up'>0.07亿</span>
+</li>
+<li>
+<span class='nm'>中信建投证券股份有限公司无锡分公司</span>
+<span class='amt up'>0.07亿</span>
+</li>
+<li>
+<span class='nm'>中信证券股份有限公司上海分公司</span>
+<span class='amt up'>0.06亿</span> <span class='hmtag'>东北猛男</span>
+</li>
+<li>
+<span class='nm'>瑞银证券有限责任公司上海花园石桥路证券营业部</span>
+<span class='amt up'>0.06亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='down'>-0.02亿</b>（仅统计带游资标签席位；共 2 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002403')" style='cursor:pointer'>
+<td class='num'>30</td>
+<td>
+<b>爱仕达</b> <span class='note'>sz002403</span>
+</td>
+<td class='num down'>-5.72%</td>
+<td class='num down'>-0.25</td>
+<td class='reason'>日振幅值达15%</td>
+<td class='sec'>家用电器 <span class='down'>-0.84%</span>
+</td>
+<td class='sec'>小家电 <span class='down'>-2.54%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002403' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.14亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.11亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司浙江互联网分公司</span>
+<span class='amt up'>0.08亿</span>
+</li>
+<li>
+<span class='nm'>中信建投证券股份有限公司南昌桃苑大街证券营业部</span>
+<span class='amt up'>0.08亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.07亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>中信建投证券股份有限公司南昌桃苑大街证券营业部</span>
+<span class='amt up'>0.29亿</span>
+</li>
+<li>
+<span class='nm'>中国银河证券股份有限公司北京中关村大街证券营业部</span>
+<span class='amt up'>0.15亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.10亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨金融城南环路证券营业部</span>
+<span class='amt up'>0.10亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司浙江互联网分公司</span>
+<span class='amt up'>0.08亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh605398')" style='cursor:pointer'>
+<td class='num'>31</td>
+<td>
+<b>新炬网络</b> <span class='note'>sh605398</span>
+</td>
+<td class='num down'>-8.22%</td>
+<td class='num down'>-0.26</td>
+<td class='reason'>连续三个交易日内，跌幅偏离值累计达20%</td>
+<td class='sec'>计算机 <span class='down'>-1.46%</span>
+</td>
+<td class='sec'>IT服务Ⅱ <span class='down'>-1.12%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>拉萨天团</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh605398' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>东方财富证券股份有限公司昌都两江大道证券营业部</span>
+<span class='amt up'>0.13亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司浙江互联网分公司</span>
+<span class='amt up'>0.11亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨团结路第一证券营业部</span>
+<span class='amt up'>0.11亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨金融城南环路证券营业部</span>
+<span class='amt up'>0.10亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨东环路第一证券营业部</span>
+<span class='amt up'>0.09亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>0.25亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.17亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司昌都两江大道证券营业部</span>
+<span class='amt up'>0.13亿</span>
+</li>
+<li>
+<span class='nm'>摩根大通证券(中国)有限公司上海银城中路证券营业部</span>
+<span class='amt up'>0.13亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司浙江互联网分公司</span>
+<span class='amt up'>0.13亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='up'>0.20亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600479')" style='cursor:pointer'>
+<td class='num'>32</td>
+<td>
+<b>千金药业</b> <span class='note'>sh600479</span>
+</td>
+<td class='num down'>-9.99%</td>
+<td class='num down'>-0.28</td>
+<td class='reason'>日跌幅偏离值达7%</td>
+<td class='sec'>医药生物 <span class='down'>-1.01%</span>
+</td>
+<td class='sec'>中药Ⅱ <span class='down'>-1.31%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>拉萨天团</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600479' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨金融城南环路证券营业部</span>
+<span class='amt up'>0.13亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司山南香曲东路证券营业部</span>
+<span class='amt up'>0.13亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司成都龙腾东路证券营业部</span>
+<span class='amt up'>0.12亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司浙江互联网分公司</span>
+<span class='amt up'>0.10亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨团结路第一证券营业部</span>
+<span class='amt up'>0.10亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>0.25亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司浙江互联网分公司</span>
+<span class='amt up'>0.16亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司湛江万豪世家证券营业部</span>
+<span class='amt up'>0.15亿</span>
+</li>
+<li>
+<span class='nm'>高盛(中国)证券有限责任公司上海浦东新区世纪大道证券营业部</span>
+<span class='amt up'>0.15亿</span>
+</li>
+<li>
+<span class='nm'>中国银河证券股份有限公司武汉汉阳证券营业部</span>
+<span class='amt up'>0.15亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='up'>0.10亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz003040')" style='cursor:pointer'>
+<td class='num'>33</td>
+<td>
+<b>楚天龙</b> <span class='note'>sz003040</span>
+</td>
+<td class='num down'>-10.00%</td>
+<td class='num down'>-0.28</td>
+<td class='reason'>日跌幅偏离值达7%</td>
+<td class='sec'>通信 <span class='down'>-1.48%</span>
+</td>
+<td class='sec'>通信设备 <span class='down'>-2.53%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>拉萨天团</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz003040' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>深股通专用</span>
+<span class='amt up'>0.48亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司浙江互联网分公司</span>
+<span class='amt up'>0.21亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨金融城南环路证券营业部</span>
+<span class='amt up'>0.16亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨东环路第一证券营业部</span>
+<span class='amt up'>0.16亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨东环路第二证券营业部</span>
+<span class='amt up'>0.15亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>深股通专用</span>
+<span class='amt up'>0.48亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.27亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司昆明人民中路证券营业部</span>
+<span class='amt up'>0.16亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.15亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨金融城南环路证券营业部</span>
+<span class='amt up'>0.15亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='up'>0.12亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002909')" style='cursor:pointer'>
+<td class='num'>34</td>
+<td>
+<b>集泰股份</b> <span class='note'>sz002909</span>
+</td>
+<td class='num down'>-3.37%</td>
+<td class='num down'>-0.31</td>
+<td class='reason'>日换手率达20%</td>
+<td class='sec'>基础化工 <span class='down'>-1.43%</span>
+</td>
+<td class='sec'>化学制品 <span class='down'>-1.66%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002909' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.27亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.17亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.16亿</span>
+</li>
+<li>
+<span class='nm'>中国银河证券股份有限公司北京学院南路证券营业部</span>
+<span class='amt up'>0.13亿</span>
+</li>
+<li>
+<span class='nm'>平安证券股份有限公司深圳深南东路罗湖商务中心证券营业部</span>
+<span class='amt up'>0.12亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.34亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.31亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.21亿</span>
+</li>
+<li>
+<span class='nm'>中国银河证券股份有限公司北京中关村大街证券营业部</span>
+<span class='amt up'>0.12亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.11亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz000978')" style='cursor:pointer'>
+<td class='num'>35</td>
+<td>
+<b>桂林旅游</b> <span class='note'>sz000978</span>
+</td>
+<td class='num up'>+9.99%</td>
+<td class='num down'>-0.31</td>
+<td class='reason'>连续三个交易日内，涨幅偏离值累计达20%</td>
+<td class='sec'>社会服务 <span class='down'>-0.31%</span>
+</td>
+<td class='sec'>旅游及景区 <span class='up'>+0.72%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz000978' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>华源证券股份有限公司江苏分公司</span>
+<span class='amt up'>0.24亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.23亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.23亿</span>
+</li>
+<li>
+<span class='nm'>华源证券股份有限公司江苏分公司</span>
+<span class='amt up'>0.23亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.22亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.35亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.32亿</span>
+</li>
+<li>
+<span class='nm'>中国中金财富证券有限公司南昌红谷中大道证券营业部</span>
+<span class='amt up'>0.27亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.25亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.20亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603958')" style='cursor:pointer'>
+<td class='num'>36</td>
+<td>
+<b>哈森股份</b> <span class='note'>sh603958</span>
+</td>
+<td class='num down'>-7.20%</td>
+<td class='num down'>-0.32</td>
+<td class='reason'>连续三个交易日内，跌幅偏离值累计达20%</td>
+<td class='sec'>纺织服饰 <span class='down'>-0.73%</span>
+</td>
+<td class='sec'>服装家纺 <span class='up'>+0.38%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>拉萨天团</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603958' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>平安证券股份有限公司深圳深南东路罗湖商务中心证券营业部</span>
+<span class='amt up'>0.13亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司浙江互联网分公司</span>
+<span class='amt up'>0.12亿</span>
+</li>
+<li>
+<span class='nm'>华泰证券股份有限公司昆山黑龙江北路证券营业部</span>
+<span class='amt up'>0.11亿</span>
+</li>
+<li>
+<span class='nm'>中国国际金融股份有限公司上海分公司</span>
+<span class='amt up'>0.10亿</span>
+</li>
+<li>
+<span class='nm'>中信证券股份有限公司浙江分公司</span>
+<span class='amt up'>0.09亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>中信证券股份有限公司嘉兴分公司</span>
+<span class='amt up'>0.40亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司浙江互联网分公司</span>
+<span class='amt up'>0.14亿</span>
+</li>
+<li>
+<span class='nm'>中泰证券股份有限公司总部</span>
+<span class='amt up'>0.12亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨东环路第二证券营业部</span>
+<span class='amt up'>0.10亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+<li>
+<span class='nm'>兴业证券股份有限公司杭州萧山帆影路证券营业部</span>
+<span class='amt up'>0.09亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='down'>-0.10亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz000912')" style='cursor:pointer'>
+<td class='num'>37</td>
+<td>
+<b>泸天化</b> <span class='note'>sz000912</span>
+</td>
+<td class='num down'>-10.00%</td>
+<td class='num down'>-0.37</td>
+<td class='reason'>日跌幅偏离值达7%</td>
+<td class='sec'>基础化工 <span class='down'>-1.43%</span>
+</td>
+<td class='sec'>农化制品 <span class='down'>-2.64%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz000912' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>深股通专用</span>
+<span class='amt up'>0.30亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.15亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.14亿</span>
+</li>
+<li>
+<span class='nm'>财通证券股份有限公司徐州中山北路证券营业部</span>
+<span class='amt up'>0.13亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.10亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>国联民生证券股份有限公司北京分公司</span>
+<span class='amt up'>0.31亿</span>
+</li>
+<li>
+<span class='nm'>深股通专用</span>
+<span class='amt up'>0.25亿</span>
+</li>
+<li>
+<span class='nm'>中国银河证券股份有限公司广州粤海金融中心证券营业部</span>
+<span class='amt up'>0.17亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.14亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司上海徐汇区宛平南路证券营业部</span>
+<span class='amt up'>0.14亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603191')" style='cursor:pointer'>
+<td class='num'>38</td>
+<td>
+<b>望变电气</b> <span class='note'>sh603191</span>
+</td>
+<td class='num down'>-9.99%</td>
+<td class='num down'>-0.44</td>
+<td class='reason'>日跌幅偏离值达7%</td>
+<td class='sec'>电力设备 <span class='down'>-1.57%</span>
+</td>
+<td class='sec'>电网设备 <span class='down'>-0.45%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>拉萨天团</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603191' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>华安证券股份有限公司蚌埠分公司</span>
+<span class='amt up'>0.08亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司宁波和济街证券营业部</span>
+<span class='amt up'>0.07亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司山南香曲东路证券营业部</span>
+<span class='amt up'>0.04亿</span>
+</li>
+<li>
+<span class='nm'>中银国际证券股份有限公司上海张杨路证券营业部</span>
+<span class='amt up'>0.04亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司大庆纬二路证券营业部</span>
+<span class='amt up'>0.03亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.54亿</span>
+</li>
+<li>
+<span class='nm'>招商证券股份有限公司贵港金港大道证券营业部</span>
+<span class='amt up'>0.05亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨团结路第二证券营业部</span>
+<span class='amt up'>0.04亿</span> <span class='hmtag'>拉萨天团</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司昌都两江大道证券营业部</span>
+<span class='amt up'>0.03亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司浙江互联网分公司</span>
+<span class='amt up'>0.02亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='down'>-0.04亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002172')" style='cursor:pointer'>
+<td class='num'>39</td>
+<td>
+<b>澳洋健康</b> <span class='note'>sz002172</span>
+</td>
+<td class='num down'>-2.25%</td>
+<td class='num down'>-0.59</td>
+<td class='reason'>日换手率达20%</td>
+<td class='sec'>医药生物 <span class='down'>-1.01%</span>
+</td>
+<td class='sec'>医疗服务 <span class='up'>+0.06%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>佛山系</span>
+<span class='hmtag'>知春路</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002172' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>中国银河证券股份有限公司北京中关村大街证券营业部</span>
+<span class='amt up'>0.24亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.22亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司广州临江大道证券营业部</span>
+<span class='amt up'>0.15亿</span>
+</li>
+<li>
+<span class='nm'>华泰证券股份有限公司广州海珠广场证券营业部</span>
+<span class='amt up'>0.15亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.12亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.43亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司三亚迎宾路证券营业部</span>
+<span class='amt up'>0.42亿</span> <span class='hmtag'>佛山系</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司北京知春路证券营业部</span>
+<span class='amt up'>0.34亿</span> <span class='hmtag'>知春路</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.16亿</span>
+</li>
+<li>
+<span class='nm'>国投证券股份有限公司深圳红荔西路证券营业部</span>
+<span class='amt up'>0.13亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='down'>-0.75亿</b>（仅统计带游资标签席位；共 2 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600540')" style='cursor:pointer'>
+<td class='num'>40</td>
+<td>
+<b>新赛股份</b> <span class='note'>sh600540</span>
+</td>
+<td class='num down'>-9.02%</td>
+<td class='num down'>-0.60</td>
+<td class='reason'>日振幅值达15%</td>
+<td class='sec'>农林牧渔 <span class='down'>-2.71%</span>
+</td>
+<td class='sec'>种植业 <span class='down'>-5.93%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>知春路</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600540' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.65亿</span>
+</li>
+<li>
+<span class='nm'>高盛(中国)证券有限责任公司上海浦东新区世纪大道证券营业部</span>
+<span class='amt up'>0.30亿</span>
+</li>
+<li>
+<span class='nm'>方正证券股份有限公司杭州白石巷证券营业部</span>
+<span class='amt up'>0.17亿</span>
+</li>
+<li>
+<span class='nm'>瑞银证券有限责任公司上海花园石桥路证券营业部</span>
+<span class='amt up'>0.16亿</span>
+</li>
+<li>
+<span class='nm'>中信证券股份有限公司深圳深南中路中信大厦证券营业部</span>
+<span class='amt up'>0.15亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.58亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司北京知春路证券营业部</span>
+<span class='amt up'>0.50亿</span> <span class='hmtag'>知春路</span>
+</li>
+<li>
+<span class='nm'>高盛(中国)证券有限责任公司上海浦东新区世纪大道证券营业部</span>
+<span class='amt up'>0.43亿</span>
+</li>
+<li>
+<span class='nm'>中国国际金融股份有限公司上海分公司</span>
+<span class='amt up'>0.28亿</span>
+</li>
+<li>
+<span class='nm'>瑞银证券有限责任公司上海花园石桥路证券营业部</span>
+<span class='amt up'>0.24亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='down'>-0.50亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz000759')" style='cursor:pointer'>
+<td class='num'>41</td>
+<td>
+<b>中百集团</b> <span class='note'>sz000759</span>
+</td>
+<td class='num up'>+2.60%</td>
+<td class='num down'>-0.62</td>
+<td class='reason'>日换手率达20%</td>
+<td class='sec'>商贸零售 <span class='down'>-0.98%</span>
+</td>
+<td class='sec'>一般零售 <span class='down'>-1.35%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz000759' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>深股通专用</span>
+<span class='amt up'>0.76亿</span>
+</li>
+<li>
+<span class='nm'>国信证券股份有限公司浙江互联网分公司</span>
+<span class='amt up'>0.31亿</span>
+</li>
+<li>
+<span class='nm'>广发证券股份有限公司南京泰山路证券营业部</span>
+<span class='amt up'>0.23亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.22亿</span>
+</li>
+<li>
+<span class='nm'>平安证券股份有限公司绍兴解放大道证券营业部</span>
+<span class='amt up'>0.21亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>深股通专用</span>
+<span class='amt up'>0.98亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司无锡湖滨路证券营业部</span>
+<span class='amt up'>0.31亿</span>
+</li>
+<li>
+<span class='nm'>平安证券股份有限公司绍兴解放大道证券营业部</span>
+<span class='amt up'>0.27亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.22亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.20亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002702')" style='cursor:pointer'>
+<td class='num'>42</td>
+<td>
+<b>海欣食品</b> <span class='note'>sz002702</span>
+</td>
+<td class='num down'>-6.67%</td>
+<td class='num down'>-0.76</td>
+<td class='reason'>日换手率达20%</td>
+<td class='sec'>食品饮料 <span class='down'>-0.94%</span>
+</td>
+<td class='sec'>食品加工 <span class='down'>-1.40%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002702' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.25亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.16亿</span>
+</li>
+<li>
+<span class='nm'>中国银河证券股份有限公司北京中关村大街证券营业部</span>
+<span class='amt up'>0.16亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.11亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.08亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.60亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.24亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.22亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.18亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.16亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600127')" style='cursor:pointer'>
+<td class='num'>43</td>
+<td>
+<b>金健米业</b> <span class='note'>sh600127</span>
+</td>
+<td class='num down'>-2.30%</td>
+<td class='num down'>-0.82</td>
+<td class='reason'>日换手率达20%</td>
+<td class='sec'>农林牧渔 <span class='down'>-2.71%</span>
+</td>
+<td class='sec'>农产品加工 <span class='down'>-3.16%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>东北猛男</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600127' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>0.90亿</span>
+</li>
+<li>
+<span class='nm'>中信证券股份有限公司上海分公司</span>
+<span class='amt up'>0.46亿</span> <span class='hmtag'>东北猛男</span>
+</li>
+<li>
+<span class='nm'>中信证券股份有限公司深圳深南中路中信大厦证券营业部</span>
+<span class='amt up'>0.45亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.42亿</span>
+</li>
+<li>
+<span class='nm'>招商证券股份有限公司深圳益田路免税商务大厦证券营业部</span>
+<span class='amt up'>0.36亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>1.37亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.75亿</span>
+</li>
+<li>
+<span class='nm'>中国国际金融股份有限公司上海分公司</span>
+<span class='amt up'>0.44亿</span>
+</li>
+<li>
+<span class='nm'>中信证券股份有限公司深圳深南中路中信大厦证券营业部</span>
+<span class='amt up'>0.44亿</span>
+</li>
+<li>
+<span class='nm'>中信证券股份有限公司上海分公司</span>
+<span class='amt up'>0.40亿</span> <span class='hmtag'>东北猛男</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='up'>0.06亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002365')" style='cursor:pointer'>
+<td class='num'>44</td>
+<td>
+<b>永安药业</b> <span class='note'>sz002365</span>
+</td>
+<td class='num down'>-9.98%</td>
+<td class='num down'>-0.92</td>
+<td class='reason'>日跌幅偏离值达7%</td>
+<td class='sec'>医药生物 <span class='down'>-1.01%</span>
+</td>
+<td class='sec'>化学制药 <span class='down'>-1.04%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002365' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>深股通专用</span>
+<span class='amt up'>0.19亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.08亿</span>
+</li>
+<li>
+<span class='nm'>国投证券股份有限公司上海浦东新区樱花路证券营业部</span>
+<span class='amt up'>0.06亿</span>
+</li>
+<li>
+<span class='nm'>中国银河证券股份有限公司重庆万象城证券营业部</span>
+<span class='amt up'>0.06亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨东城区江苏大道证券营业部</span>
+<span class='amt up'>0.05亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>深股通专用</span>
+<span class='amt up'>0.68亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.25亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.18亿</span>
+</li>
+<li>
+<span class='nm'>国金证券股份有限公司上海静安区南京西路证券营业部</span>
+<span class='amt up'>0.16亿</span>
+</li>
+<li>
+<span class='nm'>东吴证券股份有限公司上海西藏南路证券营业部</span>
+<span class='amt up'>0.12亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz000523')" style='cursor:pointer'>
+<td class='num'>45</td>
+<td>
+<b>红棉股份</b> <span class='note'>sz000523</span>
+</td>
+<td class='num up'>+2.29%</td>
+<td class='num down'>-1.23</td>
+<td class='reason'>日换手率达20%</td>
+<td class='sec'>综合 <span class='down'>-1.70%</span>
+</td>
+<td class='sec'>综合Ⅱ <span class='down'>-1.70%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>中山东路</span>
+<span class='hmtag'>佛山系</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz000523' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>深股通专用</span>
+<span class='amt up'>0.89亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司顺德大良证券营业部</span>
+<span class='amt up'>0.64亿</span>
+</li>
+<li>
+<span class='nm'>开源证券股份有限公司西安西大街证券营业部</span>
+<span class='amt up'>0.55亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司东莞总部一路证券营业部</span>
+<span class='amt up'>0.39亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>0.36亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>国泰海通证券股份有限公司上海松江区中山东路证券营业部</span>
+<span class='amt up'>0.86亿</span> <span class='hmtag'>中山东路</span>
+</li>
+<li>
+<span class='nm'>华福证券股份有限公司福州湖东路证券营业部</span>
+<span class='amt up'>0.76亿</span>
+</li>
+<li>
+<span class='nm'>中信建投证券股份有限公司揭阳黄岐山大道证券营业部</span>
+<span class='amt up'>0.52亿</span>
+</li>
+<li>
+<span class='nm'>浙商证券股份有限公司乐清千帆东路证券营业部</span>
+<span class='amt up'>0.51亿</span>
+</li>
+<li>
+<span class='nm'>华泰证券股份有限公司广州兴民路证券营业部</span>
+<span class='amt up'>0.49亿</span> <span class='hmtag'>佛山系</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='down'>-1.35亿</b>（仅统计带游资标签席位；共 2 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600737')" style='cursor:pointer'>
+<td class='num'>46</td>
+<td>
+<b>中粮糖业</b> <span class='note'>sh600737</span>
+</td>
+<td class='num down'>-10.00%</td>
+<td class='num down'>-1.28</td>
+<td class='reason'>日跌幅偏离值达7%</td>
+<td class='sec'>农林牧渔 <span class='down'>-2.71%</span>
+</td>
+<td class='sec'>农产品加工 <span class='down'>-3.16%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>东北猛男</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600737' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>0.64亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.49亿</span>
+</li>
+<li>
+<span class='nm'>中泰证券股份有限公司北京中关村大街证券营业部</span>
+<span class='amt up'>0.39亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司拉萨金融城南环路证券营业部</span>
+<span class='amt up'>0.31亿</span>
+</li>
+<li>
+<span class='nm'>东方财富证券股份有限公司昌都两江大道证券营业部</span>
+<span class='amt up'>0.28亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>0.98亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司上海长宁区江苏路证券营业部</span>
+<span class='amt up'>0.74亿</span>
+</li>
+<li>
+<span class='nm'>东方证券股份有限公司厦门仙岳路证券营业部</span>
+<span class='amt up'>0.64亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.52亿</span>
+</li>
+<li>
+<span class='nm'>中信证券股份有限公司上海分公司</span>
+<span class='amt up'>0.50亿</span> <span class='hmtag'>东北猛男</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='down'>-0.50亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600354')" style='cursor:pointer'>
+<td class='num'>47</td>
+<td>
+<b>敦煌种业</b> <span class='note'>sh600354</span>
+</td>
+<td class='num up'>+4.28%</td>
+<td class='num down'>-1.40</td>
+<td class='reason'>连续三个交易日内，涨幅偏离值累计达20%</td>
+<td class='sec'>农林牧渔 <span class='down'>-2.71%</span>
+</td>
+<td class='sec'>种植业 <span class='down'>-5.93%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600354' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>2.68亿</span>
+</li>
+<li>
+<span class='nm'>高盛(中国)证券有限责任公司上海浦东新区世纪大道证券营业部</span>
+<span class='amt up'>1.64亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>1.20亿</span>
+</li>
+<li>
+<span class='nm'>瑞银证券有限责任公司上海花园石桥路证券营业部</span>
+<span class='amt up'>1.18亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司上海分公司</span>
+<span class='amt up'>0.98亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>高盛(中国)证券有限责任公司上海浦东新区世纪大道证券营业部</span>
+<span class='amt up'>2.28亿</span>
+</li>
+<li>
+<span class='nm'>机构专用</span>
+<span class='amt up'>2.13亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>2.07亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>1.38亿</span>
+</li>
+<li>
+<span class='nm'>瑞银证券有限责任公司上海花园石桥路证券营业部</span>
+<span class='amt up'>1.11亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603162')" style='cursor:pointer'>
+<td class='num'>48</td>
+<td>
+<b>海通发展</b> <span class='note'>sh603162</span>
+</td>
+<td class='num up'>+0.58%</td>
+<td class='num down'>-1.41</td>
+<td class='reason'>日换手率达20%</td>
+<td class='sec'>交通运输 <span class='down'>-1.21%</span>
+</td>
+<td class='sec'>航运港口 <span class='down'>-2.06%</span>
+</td>
+<td class='hm hm-mid'>中<div class='hmtags'>
+<span class='hmtag'>东北猛男</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603162' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>1.83亿</span>
+</li>
+<li>
+<span class='nm'>高盛(中国)证券有限责任公司上海浦东新区世纪大道证券营业部</span>
+<span class='amt up'>0.78亿</span>
+</li>
+<li>
+<span class='nm'>中信证券股份有限公司上海分公司</span>
+<span class='amt up'>0.53亿</span> <span class='hmtag'>东北猛男</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司总部</span>
+<span class='amt up'>0.37亿</span>
+</li>
+<li>
+<span class='nm'>中国中金财富证券有限公司深圳分公司</span>
+<span class='amt up'>0.24亿</span>
+</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li>
+<span class='nm'>沪股通专用</span>
+<span class='amt up'>1.61亿</span>
+</li>
+<li>
+<span class='nm'>国泰海通证券股份有限公司武汉紫阳东路证券营业部</span>
+<span class='amt up'>1.22亿</span>
+</li>
+<li>
+<span class='nm'>开源证券股份有限公司西安西大街证券营业部</span>
+<span class='amt up'>0.94亿</span>
+</li>
+<li>
+<span class='nm'>中信证券股份有限公司上海分公司</span>
+<span class='amt up'>0.87亿</span> <span class='hmtag'>东北猛男</span>
+</li>
+<li>
+<span class='nm'>瑞银证券有限责任公司上海花园石桥路证券营业部</span>
+<span class='amt up'>0.51亿</span>
+</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class='down'>-0.34亿</b>（仅统计带游资标签席位；共 1 个标签席位）</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class='section'>
+<h2>🏛️ 机构专用榜 TOP20（按净买额）</h2>
+<div class='note'>机构专用席位净买入口径；净买额为净流入（买入−卖出）。共 30 只个股上榜机构榜。</div>
+<table>
+<tr>
+<th>名称</th>
+<th class='num'>上榜</th>
+<th class='num'>机构买入(亿)</th>
+<th class='num'>机构净买(亿)</th>
+<th class='num'>净买率%</th>
+<th class='num'>席位</th>
+<th class='num'>总买入(亿)</th>
+<th class='num'>排名</th>
+</tr>
+<tr>
+<td>
+<b>敦煌种业</b> <span class='note'>sh600354</span>
+</td>
+<td class='num'>3</td>
+<td class='num'>-2.13</td>
+<td class='num up'>2.13</td>
+<td class='num up'>41.60</td>
+<td class='num'>1</td>
+<td class='num'>0.00</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>超声电子</b> <span class='note'>sz000823</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-1.10</td>
+<td class='num up'>2.03</td>
+<td class='num up'>25.93</td>
+<td class='num'>3</td>
+<td class='num'>0.93</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>逸豪新材</b> <span class='note'>sz301176</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>0.11</td>
+<td class='num up'>1.50</td>
+<td class='num up'>12.38</td>
+<td class='num'>5</td>
+<td class='num'>1.61</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>海欣食品</b> <span class='note'>sz002702</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.76</td>
+<td class='num up'>1.41</td>
+<td class='num up'>28.49</td>
+<td class='num'>5</td>
+<td class='num'>0.65</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>金安国纪</b> <span class='note'>sz002636</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>2.03</td>
+<td class='num up'>1.30</td>
+<td class='num up'>8.96</td>
+<td class='num'>3</td>
+<td class='num'>3.33</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>桂林旅游</b> <span class='note'>sz000978</span>
+</td>
+<td class='num'>3</td>
+<td class='num'>-0.27</td>
+<td class='num up'>1.10</td>
+<td class='num up'>17.27</td>
+<td class='num'>4</td>
+<td class='num'>0.83</td>
+<td class='num'>3</td>
+</tr>
+<tr>
+<td>
+<b>集泰股份</b> <span class='note'>sz002909</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.30</td>
+<td class='num up'>0.96</td>
+<td class='num up'>28.33</td>
+<td class='num'>4</td>
+<td class='num'>0.67</td>
+<td class='num'>3</td>
+</tr>
+<tr>
+<td>
+<b>游族网络</b> <span class='note'>sz002174</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>0.62</td>
+<td class='num up'>0.89</td>
+<td class='num up'>9.97</td>
+<td class='num'>3</td>
+<td class='num'>1.51</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>中百集团</b> <span class='note'>sz000759</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.30</td>
+<td class='num up'>0.62</td>
+<td class='num up'>34.86</td>
+<td class='num'>3</td>
+<td class='num'>0.33</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>澳洋健康</b> <span class='note'>sz002172</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.24</td>
+<td class='num up'>0.58</td>
+<td class='num up'>27.53</td>
+<td class='num'>2</td>
+<td class='num'>0.35</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>望变电气</b> <span class='note'>sh603191</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.54</td>
+<td class='num up'>0.54</td>
+<td class='num up'>6.83</td>
+<td class='num'>1</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>国创高新</b> <span class='note'>sz002377</span>
+</td>
+<td class='num'>3</td>
+<td class='num'>-0.27</td>
+<td class='num up'>0.51</td>
+<td class='num up'>7.03</td>
+<td class='num'>3</td>
+<td class='num'>0.24</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>桂林旅游</b> <span class='note'>sz000978</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.39</td>
+<td class='num up'>0.51</td>
+<td class='num up'>17.27</td>
+<td class='num'>3</td>
+<td class='num'>0.13</td>
+<td class='num'>3</td>
+</tr>
+<tr>
+<td>
+<b>万邦医药</b> <span class='note'>sz301520</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>0.04</td>
+<td class='num up'>0.43</td>
+<td class='num up'>31.06</td>
+<td class='num'>2</td>
+<td class='num'>0.47</td>
+<td class='num'>3</td>
+</tr>
+<tr>
+<td>
+<b>永安药业</b> <span class='note'>sz002365</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.32</td>
+<td class='num up'>0.43</td>
+<td class='num up'>19.65</td>
+<td class='num'>2</td>
+<td class='num'>0.11</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>楚天龙</b> <span class='note'>sz003040</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>-0.31</td>
+<td class='num up'>0.42</td>
+<td class='num up'>15.55</td>
+<td class='num'>2</td>
+<td class='num'>0.11</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>泸天化</b> <span class='note'>sz000912</span>
+</td>
+<td class='num'>1</td>
+<td class='num'>0.00</td>
+<td class='num up'>0.38</td>
+<td class='num up'>12.18</td>
+<td class='num'>3</td>
+<td class='num'>0.38</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>渝三峡A</b> <span class='note'>sz000565</span>
+</td>
+<td class='num'>3</td>
+<td class='num'>-0.01</td>
+<td class='num up'>0.33</td>
+<td class='num up'>7.47</td>
+<td class='num'>4</td>
+<td class='num'>0.32</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>捷荣技术</b> <span class='note'>sz002855</span>
+</td>
+<td class='num'>3</td>
+<td class='num'>-0.12</td>
+<td class='num up'>0.31</td>
+<td class='num up'>9.08</td>
+<td class='num'>1</td>
+<td class='num'>0.19</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>东亚药业</b> <span class='note'>sh605177</span>
+</td>
+<td class='num'>3</td>
+<td class='num'>-0.02</td>
+<td class='num up'>0.28</td>
+<td class='num up'>12.12</td>
+<td class='num'>2</td>
+<td class='num'>0.27</td>
+<td class='num'>1</td>
+</tr>
+</table>
+</div>
+<div class='section'>
+<h2>🔗 机构 + 游资共振买入（35 只）</h2>
+<div class='note'>同时出现机构与活跃游资席位合力的个股；netAmt 为共振净流入，upRate 为当日涨幅，winNum 为龙虎榜上榜席位家数。</div>
+<table>
+<tr>
+<th>名称</th>
+<th class='num'>上榜天数</th>
+<th class='num'>共振净买(亿)</th>
+<th class='num'>当日涨幅%</th>
+<th class='num'>买入(亿)</th>
+<th class='num'>卖出(亿)</th>
+<th class='num'>席位家数</th>
+</tr>
+<tr>
+<td>
+<b>超声电子</b> <span class='note'>sz000823</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>2.11</td>
+<td class='num up'>+10.00%</td>
+<td class='num'>2.12</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>金安国纪</b> <span class='note'>sz002636</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>1.31</td>
+<td class='num up'>+10.00%</td>
+<td class='num'>1.31</td>
+<td class='num'>0.01</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>敦煌种业</b> <span class='note'>sh600354</span>
+</td>
+<td class='num'>3</td>
+<td class='num up'>0.98</td>
+<td class='num up'>+4.28%</td>
+<td class='num'>0.98</td>
+<td class='num'>0.00</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>华银电力</b> <span class='note'>sh600744</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.91</td>
+<td class='num up'>+10.06%</td>
+<td class='num'>0.91</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>再升科技</b> <span class='note'>sh603601</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.91</td>
+<td class='num up'>+10.06%</td>
+<td class='num'>0.91</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>津药药业</b> <span class='note'>sh600488</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.81</td>
+<td class='num up'>+10.07%</td>
+<td class='num'>0.81</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>闽东电力</b> <span class='note'>sz000993</span>
+</td>
+<td class='num'>3</td>
+<td class='num up'>0.69</td>
+<td class='num up'>+10.03%</td>
+<td class='num'>0.70</td>
+<td class='num'>0.01</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>电科思仪</b> <span class='note'>sz301689</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.67</td>
+<td class='num up'>+237.50%</td>
+<td class='num'>0.67</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>敦煌种业</b> <span class='note'>sh600354</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.59</td>
+<td class='num up'>+4.28%</td>
+<td class='num'>0.59</td>
+<td class='num'>0.00</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>长城电工</b> <span class='note'>sh600192</span>
+</td>
+<td class='num'>3</td>
+<td class='num up'>0.53</td>
+<td class='num up'>+10.01%</td>
+<td class='num'>0.53</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>国创高新</b> <span class='note'>sz002377</span>
+</td>
+<td class='num'>3</td>
+<td class='num up'>0.47</td>
+<td class='num up'>+10.16%</td>
+<td class='num'>0.47</td>
+<td class='num'>0.01</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>鼎信通讯</b> <span class='note'>sh603421</span>
+</td>
+<td class='num'>3</td>
+<td class='num up'>0.45</td>
+<td class='num up'>+9.95%</td>
+<td class='num'>0.45</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>新农开发</b> <span class='note'>sh600359</span>
+</td>
+<td class='num'>3</td>
+<td class='num up'>0.41</td>
+<td class='num up'>+10.05%</td>
+<td class='num'>0.41</td>
+<td class='num'>0.00</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>桂林旅游</b> <span class='note'>sz000978</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.35</td>
+<td class='num up'>+9.99%</td>
+<td class='num'>0.35</td>
+<td class='num'>0.01</td>
+<td class='num'>3</td>
+</tr>
+<tr>
+<td>
+<b>渝三峡A</b> <span class='note'>sz000565</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.29</td>
+<td class='num up'>+10.01%</td>
+<td class='num'>0.29</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>新力金融</b> <span class='note'>sh600318</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.28</td>
+<td class='num up'>+10.07%</td>
+<td class='num'>0.28</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>海通发展</b> <span class='note'>sh603162</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.24</td>
+<td class='num up'>+0.58%</td>
+<td class='num'>0.24</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>悦心健康</b> <span class='note'>sz002162</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.17</td>
+<td class='num up'>+1.77%</td>
+<td class='num'>0.17</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>捷荣技术</b> <span class='note'>sz002855</span>
+</td>
+<td class='num'>3</td>
+<td class='num up'>0.14</td>
+<td class='num down'>-9.97%</td>
+<td class='num'>0.14</td>
+<td class='num'>0.00</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>渝三峡A</b> <span class='note'>sz000565</span>
+</td>
+<td class='num'>3</td>
+<td class='num up'>0.14</td>
+<td class='num up'>+10.01%</td>
+<td class='num'>0.14</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>泸天化</b> <span class='note'>sz000912</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.13</td>
+<td class='num down'>-10.00%</td>
+<td class='num'>0.13</td>
+<td class='num'>0.00</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>中百集团</b> <span class='note'>sz000759</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.13</td>
+<td class='num up'>+2.60%</td>
+<td class='num'>0.23</td>
+<td class='num'>0.10</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>千金药业</b> <span class='note'>sh600479</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.12</td>
+<td class='num down'>-9.99%</td>
+<td class='num'>0.12</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>望变电气</b> <span class='note'>sh603191</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.11</td>
+<td class='num down'>-9.99%</td>
+<td class='num'>0.11</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>哈森股份</b> <span class='note'>sh603958</span>
+</td>
+<td class='num'>3</td>
+<td class='num up'>0.11</td>
+<td class='num down'>-7.20%</td>
+<td class='num'>0.11</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>闽东电力</b> <span class='note'>sz000993</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.10</td>
+<td class='num up'>+10.03%</td>
+<td class='num'>0.10</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>桂林旅游</b> <span class='note'>sz000978</span>
+</td>
+<td class='num'>3</td>
+<td class='num up'>0.08</td>
+<td class='num up'>+9.99%</td>
+<td class='num'>0.24</td>
+<td class='num'>0.16</td>
+<td class='num'>3</td>
+</tr>
+<tr>
+<td>
+<b>ST荣科</b> <span class='note'>sz300290</span>
+</td>
+<td class='num'>3</td>
+<td class='num up'>0.07</td>
+<td class='num up'>+18.31%</td>
+<td class='num'>0.15</td>
+<td class='num'>0.08</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>捷荣技术</b> <span class='note'>sz002855</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.07</td>
+<td class='num down'>-9.97%</td>
+<td class='num'>0.07</td>
+<td class='num'>0.00</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>深中华A</b> <span class='note'>sz000017</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.06</td>
+<td class='num down'>-10.04%</td>
+<td class='num'>0.06</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>永安药业</b> <span class='note'>sz002365</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.04</td>
+<td class='num down'>-9.98%</td>
+<td class='num'>0.06</td>
+<td class='num'>0.02</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>宏盛股份</b> <span class='note'>sh603090</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.03</td>
+<td class='num down'>-10.00%</td>
+<td class='num'>0.03</td>
+<td class='num'>0.00</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>ST荣科</b> <span class='note'>sz300290</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.03</td>
+<td class='num up'>+18.31%</td>
+<td class='num'>0.07</td>
+<td class='num'>0.04</td>
+<td class='num'>1</td>
+</tr>
+<tr>
+<td>
+<b>*ST清越</b> <span class='note'>sh688496</span>
+</td>
+<td class='num'>1</td>
+<td class='num up'>0.01</td>
+<td class='num down'>-20.55%</td>
+<td class='num'>0.01</td>
+<td class='num'>0.00</td>
+<td class='num'>2</td>
+</tr>
+<tr>
+<td>
+<b>*ST清越</b> <span class='note'>sh688496</span>
+</td>
+<td class='num'>3</td>
+<td class='num up'>0.00</td>
+<td class='num down'>-20.55%</td>
+<td class='num'>0.00</td>
+<td class='num'>0.00</td>
+<td class='num'>2</td>
+</tr>
+</table>
+</div>
+<div class='section'>
+<h2>🎯 营业部席位胜率聚合 TOP20</h2>
+<table>
+<tr>
+<th>营业部席位</th>
+<th class='num'>胜率%</th>
+<th class='num'>净买额(亿)</th>
+<th>涉及个股</th>
+</tr>
+<tr>
+<td>国新证券股份有限公司北京分公司</td>
+<td class='num' style='color:#b8893b;font-weight:700'>50.1</td>
+<td class='num up'>2.17</td>
+<td style='color:#6b7280;font-size:12px'>华银电力、鼎信通讯、再升科技</td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司武汉紫阳东路证券营业部</td>
+<td class='num' style='color:#b8893b;font-weight:700'>51.5</td>
+<td class='num up'>1.57</td>
+<td style='color:#6b7280;font-size:12px'>超声电子</td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司上海分公司</td>
+<td class='num' style='color:#b8893b;font-weight:700'>57.6</td>
+<td class='num up'>1.57</td>
+<td style='color:#6b7280;font-size:12px'>敦煌种业</td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司上海松江区中山东路证券营业部</td>
+<td class='num' style='color:#b8893b;font-weight:700'>55.8</td>
+<td class='num up'>1.31</td>
+<td style='color:#6b7280;font-size:12px'>金安国纪</td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司重庆民生路证券营业部</td>
+<td class='num' style='color:#b8893b;font-weight:700'>50.0</td>
+<td class='num up'>0.67</td>
+<td style='color:#6b7280;font-size:12px'>电科思仪</td>
+</tr>
+<tr>
+<td>华源证券股份有限公司江苏分公司</td>
+<td class='num' style='color:#b8893b;font-weight:700'>56.2</td>
+<td class='num up'>0.63</td>
+<td style='color:#6b7280;font-size:12px'>桂林旅游、闽东电力、国创高新</td>
+</tr>
+<tr>
+<td>东亚前海证券有限责任公司浙江第二分公司</td>
+<td class='num' style='color:#b8893b;font-weight:700'>66.7</td>
+<td class='num up'>0.62</td>
+<td style='color:#6b7280;font-size:12px'>长城电工、闽东电力</td>
+</tr>
+<tr>
+<td>国投证券股份有限公司重庆解放碑证券营业部</td>
+<td class='num' style='color:#b8893b;font-weight:700'>50.0</td>
+<td class='num up'>0.54</td>
+<td style='color:#6b7280;font-size:12px'>超声电子</td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司南京太平南路证券营业部</td>
+<td class='num' style='color:#b8893b;font-weight:700'>50.8</td>
+<td class='num up'>0.52</td>
+<td style='color:#6b7280;font-size:12px'>新农开发、津药药业</td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司上海徐汇区宛平南路证券营业部</td>
+<td class='num' style='color:#b8893b;font-weight:700'>54.5</td>
+<td class='num up'>0.38</td>
+<td style='color:#6b7280;font-size:12px'>闽东电力</td>
+</tr>
+<tr>
+<td>国投证券股份有限公司深圳红荔西路证券营业部</td>
+<td class='num' style='color:#b8893b;font-weight:700'>51.0</td>
+<td class='num up'>0.27</td>
+<td style='color:#6b7280;font-size:12px'>渝三峡A</td>
+</tr>
+<tr>
+<td>东方证券股份有限公司杭州龙井路证券营业部</td>
+<td class='num' style='color:#b8893b;font-weight:700'>55.8</td>
+<td class='num up'>0.26</td>
+<td style='color:#6b7280;font-size:12px'>桂林旅游、捷荣技术</td>
+</tr>
+<tr>
+<td>中国银河证券股份有限公司绍兴鲁迅中路证券营业部</td>
+<td class='num' style='color:#b8893b;font-weight:700'>51.2</td>
+<td class='num up'>0.24</td>
+<td style='color:#6b7280;font-size:12px'>国创高新</td>
+</tr>
+<tr>
+<td>联储证券股份有限公司宁波分公司</td>
+<td class='num' style='color:#b8893b;font-weight:700'>54.5</td>
+<td class='num up'>0.24</td>
+<td style='color:#6b7280;font-size:12px'>津药药业</td>
+</tr>
+<tr>
+<td>中国中金财富证券有限公司深圳分公司</td>
+<td class='num' style='color:#b8893b;font-weight:700'>52.2</td>
+<td class='num up'>0.24</td>
+<td style='color:#6b7280;font-size:12px'>海通发展</td>
+</tr>
+<tr>
+<td>国联民生证券股份有限公司北京分公司</td>
+<td class='num' style='color:#b8893b;font-weight:700'>60.0</td>
+<td class='num up'>0.22</td>
+<td style='color:#6b7280;font-size:12px'>长城电工</td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司成都龙腾东路证券营业部</td>
+<td class='num' style='color:#b8893b;font-weight:700'>55.9</td>
+<td class='num up'>0.21</td>
+<td style='color:#6b7280;font-size:12px'>千金药业、鼎信通讯</td>
+</tr>
+<tr>
+<td>甬兴证券有限公司天津解放北路证券营业部</td>
+<td class='num' style='color:#b8893b;font-weight:700'>50.0</td>
+<td class='num up'>0.20</td>
+<td style='color:#6b7280;font-size:12px'>津药药业</td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司广州琶洲证券营业部</td>
+<td class='num' style='color:#b8893b;font-weight:700'>50.0</td>
+<td class='num up'>0.17</td>
+<td style='color:#6b7280;font-size:12px'>悦心健康</td>
+</tr>
+<tr>
+<td>平安证券股份有限公司嘉兴中环南路证券营业部</td>
+<td class='num' style='color:#b8893b;font-weight:700'>50.0</td>
+<td class='num up'>0.14</td>
+<td style='color:#6b7280;font-size:12px'>新力金融</td>
+</tr>
+</table>
+</div>
+<div class='section'>
+<h2>🎯 净买入股票 · 次日表现回溯</h2>
+<div class='amberbox' style='color:#1c2430'>次日回测数据尚未生成（需待下一交易日收盘后）。运行 <code>python quant/gen_lhb_nextday_backtest.py --date 2026-09-10 --quotes &lt;次日行情落盘&gt;</code> 后重跑本生成器即可回填本区块。</div>
+</div>
+<div class='section'>
+<h2>📐 窗口收益（alpha vs 大盘）</h2>
+<div class='empty'>1·3·5·10 交易日窗口收益回测属量化专题，需历史复权数据支撑，本页未内置；该专题为早期远程分析页，本地未保留，后续可单独建设。</div>
+</div>
+<footer>⚠️ 盘后滞后资金痕迹，仅提示概率优势方向，不构成投资建议。</footer>
+<script>function toggle(id){var e=document.getElementById(id);if(e){e.style.display=(e.style.display==='none')?'table-row':'none';}}</script>
+</div>
+</body>
+</html>
