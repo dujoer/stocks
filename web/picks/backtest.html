@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang='zh-CN'><head><meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>信号池回测 · 档位胜率与多周期表现</title>
+<style>
+* { box-sizing:border-box; }
+body { margin:0; background:#f5f6f8; color:#23262b;
+  font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif; line-height:1.7; }
+.wrap { max-width:1180px; margin:0 auto; padding:28px 20px 60px; }
+.topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
+  border-bottom:1px solid #e6e9ee; }
+.topnav a { color:#b8893b; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(184,137,59,.35); }
+.topnav a.cur { background:#b8893b; color:#fff; border-color:#b8893b; }
+header h1 { font-size:26px; margin:0 0 6px; }
+header h1 span { background:linear-gradient(90deg,#b8893b,#8a6428); -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent; }
+.sub { color:#6b7480; font-size:13.5px; }
+.section { margin-top:28px; }
+.section h2 { font-size:19px; margin:0 0 14px; padding-left:12px; border-left:4px solid #b8893b; }
+.kgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
+.kbox { background:#fff; border:1px solid #e6e9ee; border-radius:12px; padding:14px 16px; }
+.kt { font-size:12.5px; color:#6b7480; }
+.kv { font-size:24px; font-weight:700; margin:4px 0; }
+.kd { font-size:12px; color:#8a929c; }
+table { width:100%; border-collapse:collapse; background:#fff; font-size:13px;
+  border:1px solid #e6e9ee; border-radius:10px; overflow:hidden; margin-top:10px; }
+th,td { padding:8px 9px; text-align:left; border-bottom:1px solid #eef1f4; }
+th { background:#fafbfc; color:#5a6573; font-weight:600; font-size:12.5px; }
+.up { color:#b8332a; } .down { color:#1a9e5a; } .dim { color:#9aa3ad; }
+.note { background:#fffaf0; border-left:4px solid #b7791f; padding:12px 16px; border-radius:0 8px 8px 0;
+  font-size:13.5px; color:#6b4f2a; margin:14px 0; }
+footer { margin-top:38px; padding-top:16px; border-top:1px solid #e6e9ee; font-size:12px; color:#8a929c; }
+</style></head><body><div class='wrap'>
+<div class='topnav'><a href='../../index.html'>总门户</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../db/index.html'>数据中心</a><a href='index.html'>信号池</a><a href='backtest.html' class='cur'>回测</a><a href='../sections/index.html'>版块总览</a></div>
+<header><h1><span>信号池回测</span></h1>
+<div class='sub'>按档位与持有周期统计候选股的实际表现：T+1 / T+3 / T+5 平均收益、胜率、触及目标与止损次数。</div></header>
+
+<div class='section'><h2>总览</h2>
+<div class='kgrid'><div class='kbox'><div class='kt'>机构轨 · 次日 (T+1)</div><div class='kv dim'>—</div><div class='kd'>暂无已结算样本</div></div><div class='kbox'><div class='kt'>机构轨 · 3 日 (T+3)</div><div class='kv dim'>—</div><div class='kd'>暂无已结算样本</div></div><div class='kbox'><div class='kt'>机构轨 · 5 日 (T+5)</div><div class='kv dim'>—</div><div class='kd'>暂无已结算样本</div></div><div class='kbox'><div class='kt'>游资轨 · 次日 (T+1)</div><div class='kv dim'>—</div><div class='kd'>暂无已结算样本</div></div><div class='kbox'><div class='kt'>游资轨 · 3 日 (T+3)</div><div class='kv dim'>—</div><div class='kd'>暂无已结算样本</div></div><div class='kbox'><div class='kt'>游资轨 · 5 日 (T+5)</div><div class='kv dim'>—</div><div class='kd'>暂无已结算样本</div></div></div>
+<div class='note'><b>口径：</b>收益以页面给出的<b>进场参考价</b>为基准（(第 N 日收盘 − 进场价) / 进场价）；
+胜率 = 收益为正的比例；「触T1 / 触T2 / 止损」统计区间内最高价触及目标一/目标二、最低价触及止损位的家数（同一只票在周期内只计一次）。
+<b>样本极小，仅作模型自检，不构成任何收益承诺。</b></div></div>
+
+<div class='section'><h2>分档表现</h2>
+<table><thead><tr><th>轨</th><th>档位</th><th>次日 T+1</th><th>3 日 T+3</th><th>5 日 T+5</th></tr></thead>
+<tbody><tr><td colspan='5' class='dim' style='text-align:center;padding:20px'>尚无已结算样本。信号池自首期起累积，每个交易日盘后自动回填 T+1/T+3/T+5 表现，积累 3 期后开始显示统计。</td></tr></tbody></table></div>
+
+<div class='section'><h2>逐期明细</h2>
+<table><thead><tr><th>日期</th><th>轨</th><th>候选数</th><th>T+1</th><th>T+3</th><th>T+5</th><th>有效样本</th><th>结算状态</th></tr></thead>
+<tbody><tr><td>2026-09-10</td><td>机构轨</td><td>10</td><td class='dim'>—</td><td class='dim'>—</td><td class='dim'>—</td><td>0</td><td>待结算（—）</td></tr><tr><td>2026-09-10</td><td>游资轨</td><td>10</td><td class='dim'>—</td><td class='dim'>—</td><td class='dim'>—</td><td>0</td><td>待结算（—）</td></tr></tbody></table></div>
+
+<div class='note'><b>为什么必须回测：</b>信号池是规则化模型，改权重、加维度后如果不看实际结果，很容易陷入"看着合理但持续亏钱"的循环。
+建议累计 <b>20 个交易日</b> 后，按本页分档胜率重新校准权重——尤其关注：A 档是否显著优于 C 档（若否，说明档位阈值失效）、
+机构轨 T+5 是否优于 T+1（若否，说明"波段"定位站不住）。</div>
+
+<footer>累计 1 期 · 候选 20 只 · 已结算样本 0 只次<br>
+数据源：westock-mcp · 本页由 <code>quant/backtest_picks.py</code> 每日自动生成 · 仅供参考，不构成投资建议。</footer>
+</div></body></html>
