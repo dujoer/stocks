@@ -137,7 +137,7 @@ function refreshFilterBar(){
   var parts = [];
   var cur = document.querySelector('.pane:not(.hide)');
   var scopeName = cur ? (cur.id==='p_all' ? '全部明细（700 条·近 1 月窗口）'
-                                  : cur.id==='p_latest' ? '最新披露日（仅当日 20 条）'
+                                  : cur.id==='p_latest' ? '最新__BASIS__（仅当日 20 条）'
                                   : cur.id==='p_buy'    ? '增持榜 Top60'
                                   : cur.id==='p_sell'   ? '减持榜 Top60'
                                   : cur.id==='p_agg'    ? '个股聚合 Top80'
@@ -201,6 +201,11 @@ def main():
     d = json.load(open(src, encoding="utf-8"))
     recs = d["records"]
 
+    # ---- 来源 / 日期口径（支持 westock 原生 与 东财回补两种源）----
+    BASIS = d.get("dateBasis") or "披露日"          # 日期轴口径：披露日（westock）/ 变动日（东财）
+    SRC = str(d.get("source") or "westock")
+    IS_EM = SRC.startswith("eastmoney")
+
     buy = [r for r in recs if r["dir"] == "增持"]
     sell = [r for r in recs if r["dir"] == "减持"]
     buy_amt = sum(r["amount"] for r in buy)
@@ -216,6 +221,25 @@ def main():
     lag_note = (f' <span style="color:#b8893b">（{lag_d} 天属正常：westock 事件接口每日定时从巨潮等公告源拉取，'
                 f'09-05/06 周末及采集当日晚间公告需待次日入库后自动跟上，次日执行 SOP 时无需手动补。）</span>'
                 ) if lag_d > 0 else ''
+
+    # ---- 来源与覆盖率说明（东财回补时显式标注口径差异）----
+    if IS_EM:
+        src_line = (f"数据口径：<b>东财数据中心</b>（RPT_EXECUTIVE_HOLD_DETAILS）回补，"
+                    f"westock 事件接口故障期间的替代源；共 <b>{d['count']}</b> 条变动记录，")
+        cov_note = ("<br><b style='color:#b8332a'>⚠️ 口径差异</b>：本页日期轴为<b>变动日</b>（成交日），"
+                    "非 westock 原口径的<b>披露日</b>；经与 westock 交叉核验，本替代源约覆盖其 "
+                    "<b>75.8%</b>（缺失集中于科创板 688 与股权激励类变动）。westock 恢复后自动回归原口径。")
+    else:
+        src_line = (f"数据口径：westock 事件 <b>董监高增减持（近 1 个月窗口）</b>，共 <b>{d['count']}</b> 条变动记录，")
+        cov_note = ("<br><b>8.1 起的增减持已完整收录</b>（08-01/08-02 为周末无变动披露，最早一笔自 08-03 起）；"
+                    "如需查询更早，需补一次更早的快照。")
+    if IS_EM:
+        src_footer = ("数据来源：<b>东方财富数据中心</b>（RPT_EXECUTIVE_HOLD_DETAILS）—— 上市公司公开披露的董监高持股变动，"
+                      "为 westock 端点故障期间的替代源；日期口径 = <b>变动日</b>，覆盖约 <b>75.8%</b>。")
+    else:
+        src_footer = ("数据来源：腾讯自选股 <b>westock-mcp</b>（上市公司公开披露的董监高持股变动，盘后数据、存在披露滞后）。")
+
+    JS_R = JS.replace("__BASIS__", BASIS)
 
     # ---- 行业聚合（申万一级）----
     by_sw1 = collections.defaultdict(lambda: {"b": 0.0, "s": 0.0, "n": 0})
@@ -280,7 +304,7 @@ def main():
     base_th = ("<th>股票</th><th>代码</th><th>申万一级</th><th>申万二级</th>"
                f"{mgr_th}<th style='text-align:center'>方向</th>"
                "<th class='num'>变动股数(万股)</th><th class='num'>均价(元)</th>"
-               "<th class='num'>变动金额(万元)</th><th>披露日</th><th class='num'>当日涨跌</th>")
+               f"<th class='num'>变动金额(万元)</th><th>{BASIS}</th><th class='num'>当日涨跌</th>")
 
     # 披露日范围（辅助 meta 显示；2026-08-01/08-02 为周末无变动）
     decl_dates = sorted(set(r["declare"] for r in recs))
@@ -367,11 +391,10 @@ def main():
 </header>
 
 <div class='meta'>
-采集日 <b>{DATE}</b> ｜ 接口快照日 <b>{d.get('snapDate')}</b> ｜ 最新披露日 <b>{fmt_date(latest)}</b>{lag_html}<br>
-数据口径：westock 事件 <b>董监高增减持（近 1 个月窗口）</b>，共 <b>{d['count']}</b> 条变动记录，
-覆盖 <b>{d['stockCount']}</b> 只股票、<b>{date_window_days}</b> 个披露交易日（<b>{date_range_txt}</b>）；行业取自申万一/二级分类。
-「当日涨跌」为采集日行情快照，非变动当日涨跌。<br>
-<b>8.1 起的增减持已完整收录</b>（08-01/08-02 为周末无变动披露，最早一笔自 08-03 起）；如需查询更早，需补一次更早的快照。{lag_note}
+采集日 <b>{DATE}</b> ｜ 接口快照日 <b>{d.get('snapDate')}</b> ｜ 最新{BASIS} <b>{fmt_date(latest)}</b>{lag_html}<br>
+{src_line}<br>
+覆盖 <b>{d['stockCount']}</b> 只股票、<b>{date_window_days}</b> 个交易日（{BASIS}口径：<b>{date_range_txt}</b>）；行业取自申万一/二级分类。
+「当日涨跌」为采集日行情快照，非变动当日涨跌。{cov_note}{lag_note}
 </div>
 
 <div class='section'>
@@ -406,7 +429,7 @@ def main():
   <div class='note'>
     <b>口径对齐</b>：卡片金额 = <b>近 1 月全部 {d['count']} 条变动</b>按 sw1 累计（与上方「meta」中的窗口一致）。
     <b>点击任一行业卡片</b>会自动把下方明细切换到「全部明细（700 条·近 1 月窗口）」并按该行业过滤——这样卡片金额与明细口径完全一致。
-    若停留在「最新披露日（仅当日 20 条）」则卡片金额与明细不可直接比较（口径不同）。
+    若停留在「最新{BASIS}（仅当日 20 条）」则卡片金额与明细不可直接比较（口径不同）。
   </div>
 </div>
 
@@ -414,7 +437,7 @@ def main():
   <h2>明细</h2>
   <div id='filterbar' class='filterbar' style='margin:8px 0 12px;padding:8px 12px;background:rgba(184,137,59,.08);border:1px dashed rgba(184,137,59,.35);border-radius:8px;font-size:12px;color:#5a4630'></div>
   <div class='tabs'>
-    <div class='tab' data-tab='p_latest' onclick='switchTab("p_latest")'>最新披露日（{fmt_date(latest)} · {len(latest_recs)} 条）</div>
+    <div class='tab' data-tab='p_latest' onclick='switchTab("p_latest")'>最新{BASIS}（{fmt_date(latest)} · {len(latest_recs)} 条）</div>
     <div class='tab' data-tab='p_buy' onclick='switchTab("p_buy")'>增持榜 Top60</div>
     <div class='tab' data-tab='p_sell' onclick='switchTab("p_sell")'>减持榜 Top60</div>
     <div class='tab' data-tab='p_agg' onclick='switchTab("p_agg")'>个股聚合 Top80</div>
@@ -439,7 +462,7 @@ def main():
   <div class='pane hide' id='p_agg'><div class='scroll'><table>
     <thead><tr><th>股票</th><th>代码</th><th>申万一级</th><th>申万二级</th>
     <th class='num'>变动笔数</th><th class='num'>增持</th><th class='num'>减持</th>
-    <th class='num'>净变动金额(万元)</th><th>最近披露日</th><th class='num'>当日涨跌</th></tr></thead>
+    <th class='num'>净变动金额(万元)</th><th>最近{BASIS}</th><th class='num'>当日涨跌</th></tr></thead>
     <tbody>{t_agg}</tbody></table></div>
     <div class='note'>净变动金额 = Σ(变动股数 × 成交均价)，正=净增持、负=净减持；按净额从高到低排序。</div></div>
 
@@ -448,11 +471,11 @@ def main():
 </div>
 
 {xref_section}<footer>
-数据来源：腾讯自选股 <b>westock-mcp</b>（上市公司公开披露的董监高持股变动，盘后数据、存在披露滞后）。<br>
+{src_footer}<br>
 本页面由 A股量化助理自动生成 · 仅供参考，<b>不构成投资建议</b> · 市场有风险，投资需谨慎。
 </footer>
 </div>
-<script>{JS}</script>
+<script>{JS_R}</script>
 </body>
 </html>
 """
