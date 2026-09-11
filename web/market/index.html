@@ -220,6 +220,18 @@ th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:#c7c7cc; }
 .bC{ background:#f2f2f7 !important; color:var(--muted) !important; border:1px solid var(--line-2) !important; }
 .bD{ background:#fafafa !important; color:#a1a1a6 !important; border:1px solid var(--line-2) !important; }
 
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 10px; border-radius:8px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line-2); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--hover); text-decoration:none;
+}
+
 /* ---------- 说明/注释 ---------- */
 .note{
   background:var(--hover); border:1px solid var(--line-2); border-radius:12px;
@@ -246,6 +258,8 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </style><!--/WB_THEME--></head>
 <body>
 <div class='topnav'><a href='index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='hotmoney.html'>游资看板</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../research/index.html'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a><a href='../sections/index.html'>版块总览</a><a href='../db/index.html'>数据中心</a><a href='../../index.html' class='home'>首页</a></div>
+
+
 
 
 <div class='wrap'>
@@ -598,6 +612,44 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </div>
 <footer>本报告由 A 股量化助理自动化生成 · 数据仅供参考，不构成投资建议 · 市场有风险，投资需谨慎</footer>
 </div>
+<!--ARCHIVE_LINKS-->
+<div class="section">
+<h2>历史归档</h2>
+<div class="arch">
+  <a href="status_2026-09-10.html">09-10 状态报告</a>
+  <a href="status_2026-09-09.html">09-09 状态报告</a>
+  <a href="status_2026-09-08.html">09-08 状态报告</a>
+  <a href="status_2026-09-07.html">09-07 状态报告</a>
+  <a href="status_2026-09-04.html">09-04 状态报告</a>
+  <a href="status_2026-09-03.html">09-03 状态报告</a>
+  <a href="status_2026-09-02.html">09-02 状态报告</a>
+  <a href="status_2026-09-01.html">09-01 状态报告</a>
+  <a href="status_2026-08-31.html">08-31 状态报告</a>
+  <a href="status_2026-08-27.html">08-27 状态报告</a>
+  <a href="status_2026-08-26.html">08-26 状态报告</a>
+  <a href="status_2026-08-25.html">08-25 状态报告</a>
+  <a href="status_2026-08-24.html">08-24 状态报告</a>
+  <a href="status_2026-08-21.html">08-21 状态报告</a>
+  <a href="status_2026-08-20.html">08-20 状态报告</a>
+  <a href="status_2026-08-19.html">08-19 状态报告</a>
+  <a href="status_2026-08-17.html">08-17 状态报告</a>
+  <a href="status_2026-08-16.html">08-16 状态报告</a>
+  <a href="limitup_weekly_2026-08-17_21.html">08-17 连板周报</a>
+  <a href="daily_overview_2026-09-04.html">09-04 每日总览</a>
+  <a href="daily_overview_2026-09-02.html">09-02 每日总览</a>
+  <a href="daily_overview_2026-09-01.html">09-01 每日总览</a>
+  <a href="daily_overview_2026-08-31.html">08-31 每日总览</a>
+  <a href="daily_overview_2026-08-27.html">08-27 每日总览</a>
+  <a href="daily_overview_2026-08-26.html">08-26 每日总览</a>
+  <a href="daily_overview_2026-08-25.html">08-25 每日总览</a>
+  <a href="daily_overview_2026-08-24.html">08-24 每日总览</a>
+  <a href="daily_overview_2026-08-21.html">08-21 每日总览</a>
+  <a href="daily_overview_2026-08-20.html">08-20 每日总览</a>
+  <a href="daily_overview_2026-08-19.html">08-19 每日总览</a>
+  <a href="daily_overview_2026-08-17.html">08-17 每日总览</a>
+</div>
+</div>
+<!--/ARCHIVE_LINKS-->
 <!--WB_APP--><script id='wb-app'>
 /* ============================================================
    通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
