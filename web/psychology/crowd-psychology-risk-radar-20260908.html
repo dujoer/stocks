@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>群体心理风险雷达 · A股</title>
+<style>
+  :root{
+    --bg:#f5f5f7; --card:#ffffff; --ink:#1c1b19; --muted:#6b675f; --line:#e7e2d8;
+    --accent:#b8332a; --accent2:#1f4e5f; --gold:#0071e3;
+    --up:#d8392b; --down:#1a9e5a;
+    --h1:#a5d6a7; --h2:#fff59d; --h3:#ffcc80; --h4:#ef9a9a; --h5:#e53935;
+    --shadow:0 1px 3px rgba(28,27,25,.08),0 8px 24px rgba(28,27,25,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
+    line-height:1.62;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 18px 60px;}
+  /* Masthead */
+  .masthead{background:linear-gradient(135deg,#221f1c 0%,#3a3026 100%);color:#f7f3ea;
+    border-radius:0 0 18px 18px;padding:30px 26px 24px;position:relative;overflow:hidden;}
+  .masthead:before{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;
+    background:radial-gradient(circle,rgba(0,113,227,.35),transparent 70%);}
+  .kicker{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:700;}
+  .masthead h1{font-size:2.05rem;font-weight:800;letter-spacing:-.01em;margin:6px 0 4px;line-height:1.1;}
+  .masthead .sub{font-size:.92rem;color:#cfc6b6;max-width:640px;}
+  .mast-meta{margin-top:14px;font-size:.78rem;color:#bdb4a4;display:flex;gap:16px;flex-wrap:wrap;align-items:center;}
+  .toggle{position:absolute;top:22px;right:24px;display:inline-flex;border:1px solid rgba(247,243,234,.35);
+    border-radius:999px;overflow:hidden;background:rgba(0,0,0,.18);}
+  .toggle button{background:transparent;border:0;color:#e9e2d2;font-size:.82rem;font-weight:600;
+    padding:7px 16px;cursor:pointer;font-family:inherit;}
+  .toggle button.active{background:var(--gold);color:#221f1c;}
+  /* TLDR */
+  .tldr{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--accent);
+    border-radius:14px;padding:22px 24px;margin:22px 0;box-shadow:var(--shadow);}
+  .tldr .lbl{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.14em;color:var(--accent);
+    text-transform:uppercase;margin-bottom:8px;}
+  .tldr p{font-size:1.04rem;line-height:1.7;font-weight:500;}
+  .grade{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-weight:700;
+    background:#fdecea;color:var(--accent);border:1px solid #f3c2bd;border-radius:999px;padding:6px 16px;font-size:.92rem;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+.chip{background:#f3f0e8;border:1px solid var(--line);border-radius:8px;padding:5px 11px;font-size:.8rem;color:var(--muted);}
+.chip b{color:var(--ink);}
+/* Headline (one-line summary banner — list-style) */
+.headline{background:linear-gradient(135deg,#2a2520 0%,#3d332a 100%);color:#f7f3ea;border-radius:14px;
+  padding:18px 22px;margin:18px 0 0;box-shadow:var(--shadow);border-left:5px solid var(--accent);}
+.hl-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(247,243,234,.18);}
+.hl-lbl{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:800;
+  background:rgba(0,113,227,.18);border:1px solid rgba(0,113,227,.35);border-radius:6px;
+  padding:5px 12px;white-space:nowrap;}
+.hl-sub{font-size:.72rem;color:#c8bfb0;letter-spacing:.04em;}
+.hl-table{display:grid;grid-template-columns:96px 1fr;gap:6px 14px;margin:0;padding:0;list-style:none;}
+.hl-table li{display:contents;}
+.hl-table .k{font-size:.78rem;color:#c8bfb0;text-align:right;padding:5px 0;border-bottom:1px dashed rgba(247,243,234,.12);font-weight:500;}
+.hl-table .v{font-size:.92rem;color:#f7f3ea;padding:5px 0;border-bottom:1px dashed rgba(247,243,234,.12);font-weight:600;}
+.hl-table .v b{color:#fff;font-weight:800;}
+.hl-table .v .hl-down{color:#7dd8a3;}
+.hl-table .v .hl-up{color:#ff9a8a;}
+.hl-table .v .hl-risk{color:#ff8a7a;font-size:1rem;letter-spacing:.04em;}
+.hl-table li:last-child .k,.hl-table li:last-child .v{border-bottom:0;}
+@media(max-width:580px){.hl-table{grid-template-columns:80px 1fr;}}
+/* TL;DR — list of one-line keypoints */
+.tldr-lines{display:grid;gap:8px;margin:14px 0 8px;}
+.tldr-line{display:grid;grid-template-columns:6px 96px 1fr;gap:10px;align-items:start;
+  padding:8px 0;border-bottom:1px dashed var(--line);}
+.tldr-line:last-child{border-bottom:0;}
+.tldr-line::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);
+  margin-top:9px;box-shadow:0 0 0 3px rgba(216,57,43,.15);}
+.tldr-line.warn::before{background:var(--gold);box-shadow:0 0 0 3px rgba(0,113,227,.18);}
+.tldr-line.danger::before{background:#1a9e5a;box-shadow:0 0 0 3px rgba(26,158,90,.18);}
+.tldr-line .k{font-size:.78rem;color:var(--accent2);font-weight:800;letter-spacing:.02em;white-space:nowrap;}
+.tldr-line .v{font-size:.92rem;color:var(--ink);line-height:1.6;}
+.tldr-line .v b{color:var(--accent);font-weight:700;}
+  /* sections */
+  .sec{margin-top:34px;}
+  .sec h2{font-size:1.28rem;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .sec h2 .bar{width:6px;height:22px;background:var(--accent);border-radius:2px;display:inline-block;}
+  .sec h2 .en{font-size:.78rem;font-weight:500;color:var(--muted);letter-spacing:.02em;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;box-shadow:var(--shadow);}
+  .note{font-size:.78rem;color:var(--muted);margin-top:10px;}
+  /* sentiment rail */
+  .rail{display:flex;gap:6px;margin:6px 0 4px;flex-wrap:wrap;}
+  .rail .s{flex:1;min-width:78px;text-align:center;padding:10px 4px;border-radius:10px;background:#eef0ea;
+    color:#5b5a55;font-weight:700;font-size:.86rem;border:1px solid #e2e4dc;}
+  .rail .s small{display:block;font-weight:500;font-size:.62rem;color:#8a877f;margin-top:2px;}
+  .rail .s.on{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 4px 14px rgba(184,51,42,.3);}
+  .rail .s.on small{color:#ffe2df;}
+  /* heatmap */
+  .heat{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+  .heat .cell{border-radius:12px;padding:13px 12px;min-height:118px;display:flex;flex-direction:column;
+    justify-content:space-between;border:1px solid rgba(0,0,0,.06);}
+  .heat .cell .bn{font-weight:800;font-size:.92rem;line-height:1.2;color:#241f18;}
+  .heat .cell .bd{font-size:.72rem;line-height:1.4;color:#3c362e;margin-top:6px;}
+  .heat .cell .sev{display:inline-flex;align-items:center;justify-content:center;align-self:flex-start;
+    margin-top:8px;font-size:.7rem;font-weight:800;border-radius:999px;padding:2px 9px;background:rgba(0,0,0,.16);color:#1c1b19;}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:.76rem;color:var(--muted);align-items:center;}
+  .legend i{width:14px;height:14px;border-radius:4px;display:inline-block;margin-right:5px;vertical-align:-2px;}
+  /* radar + breadth layout */
+  .duo{display:grid;grid-template-columns:340px 1fr;gap:18px;align-items:stretch;}
+  @media(max-width:760px){.duo{grid-template-columns:1fr}.heat{grid-template-columns:repeat(2,1fr)}}
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:.86rem;}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{font-size:.74rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#faf8f3;}
+  td .val{font-weight:700;font-variant-numeric:tabular-nums;}
+  .cat{font-size:.74rem;font-weight:800;letter-spacing:.06em;color:var(--accent2);text-transform:uppercase;
+    padding:14px 12px 6px;}
+  .up{color:var(--up);} .down{color:var(--down);}
+  /* risk cards */
+  .risk3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media(max-width:760px){.risk3{grid-template-columns:1fr}}
+  .rc{border-radius:14px;padding:18px 18px;box-shadow:var(--shadow);border:1px solid var(--line);}
+  .rc.red{background:linear-gradient(180deg,#fdecea,#fff);border-top:4px solid var(--accent);}
+  .rc.amber{background:linear-gradient(180deg,#fff8e8,#fff);border-top:4px solid var(--gold);}
+  .rc.green{background:linear-gradient(180deg,#eef7f0,#fff);border-top:4px solid var(--down);}
+  .rc h3{font-size:1.02rem;font-weight:800;margin-bottom:4px;}
+  .rc .tag{font-size:.7rem;font-weight:700;letter-spacing:.04em;padding:2px 9px;border-radius:999px;display:inline-block;margin-bottom:10px;}
+  .rc.red .tag{background:#f3c2bd;color:var(--accent);}
+  .rc.amber .tag{background:#f3e0b3;color:#8a6418;}
+  .rc.green .tag{background:#bfe6cb;color:#14703a;}
+  .rc p{font-size:.82rem;line-height:1.55;color:#3a352e;margin:6px 0;}
+  .rc .rep{font-size:.8rem;color:var(--muted);}
+  .rc .cond{font-size:.8rem;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-weight:600;color:var(--ink);}
+  /* source / disclaimer */
+  .src li{list-style:none;padding:8px 0;border-bottom:1px solid var(--line);font-size:.84rem;display:flex;gap:10px;flex-wrap:wrap;}
+  .src li b{color:var(--accent2);min-width:150px;display:inline-block;}
+  /* Outlook cards */
+  .outlook-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:10px;}
+  @media(max-width:760px){.outlook-grid{grid-template-columns:1fr}}
+  .oc{border-radius:12px;padding:16px 18px;border:1px solid var(--line);}
+  .oc.up{background:linear-gradient(180deg,#eef7f0,#fff);border-top:4px solid var(--down);}
+  .oc.amber{background:linear-gradient(180deg,#fff8e8,#fff);border-top:4px solid var(--gold);}
+  .oc.red{background:linear-gradient(180deg,#fdecea,#fff);border-top:4px solid var(--accent);}
+  .oc .oc-tag{font-size:.68rem;font-weight:800;letter-spacing:.04em;padding:3px 10px;border-radius:999px;display:inline-block;margin-bottom:8px;}
+  .oc.up .oc-tag{background:#bfe6cb;color:#14703a;}
+  .oc.amber .oc-tag{background:#f3e0b3;color:#8a6418;}
+  .oc.red .oc-tag{background:#f3c2bd;color:var(--accent);}
+  .oc h3{font-size:.98rem;font-weight:800;margin-bottom:6px;}
+  .oc p{font-size:.82rem;line-height:1.55;color:#3a352e;margin:4px 0;}
+  .oc-cond{font-size:.78rem;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-weight:600;color:var(--ink);line-height:1.55;}
+  /* Trading rules */
+  .rules{list-style:none;margin-top:8px;padding:0;}
+  .rules li{padding:9px 0;border-bottom:1px solid var(--line);font-size:.86rem;line-height:1.6;}
+  .rules li:last-child{border-bottom:0;}
+  .rules li b{color:var(--accent2);font-weight:800;margin-right:6px;}
+  .disclaimer{background:#f3f0e8;border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-top:24px;font-size:.82rem;color:#4a453c;line-height:1.7;}
+  .disclaimer b{color:var(--accent);}
+  .foot{text-align:center;color:var(--muted);font-size:.74rem;margin-top:28px;}
+</style>
+
+
+
+
+
+<!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — 苹果风·朴素简约
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰白底 + 深灰文字 + 蓝色强调，禁用金色系。
+   ============================================================ */
+:root{
+  --bg:#fbfbfd; --surface:#ffffff; --ink:#1d1d1f; --muted:#6e6e73;
+  --accent:#0071e3; --accent-soft:#e8f4fd; --accent-ink:#005bb5;
+  --red:#ff3b30; --green:#34c759;
+  --line:#d2d2d7; --line-2:#e8e8ed; --hover:#f5f5f7;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 18px 56px;}
+
+/* ---------- 顶部统一导航（单行、不折行、滚动兜底，宽度与内容区对齐） ---------- */
+.topnav{
+  display:flex !important; align-items:center !important; gap:2px !important;
+  max-width:1180px !important; margin:0 auto 20px !important;
+  padding:8px 18px !important;
+  border-bottom:1px solid var(--line) !important;
+  font-size:12px !important; white-space:nowrap !important;
+  flex-wrap:nowrap !important; overflow-x:auto !important;
+  -webkit-overflow-scrolling:touch !important;
+  scrollbar-width:none !important;
+}
+.topnav::-webkit-scrollbar{display:none !important;}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:6px 10px !important;
+  border-radius:6px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; border:none !important; }
+.topnav a.cur{
+  background:var(--accent) !important; color:#fff !important;
+  font-weight:500 !important; border:none !important;
+}
+.topnav a.home{ margin-left:auto !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:700; margin:0 0 6px; letter-spacing:-.3px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片 ---------- */
+.section{
+  margin:24px 0; background:var(--surface); border:1px solid var(--line-2);
+  border-radius:16px; padding:20px; box-shadow:0 1px 2px rgba(0,0,0,.03);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:700;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--hover);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:#c7c7cc; }
+
+/* ---------- 每表搜索筛选框 ---------- */
+.wb-search{
+  width:100%; max-width:340px; padding:8px 12px; margin:4px 0 12px;
+  border:1px solid var(--line); border-radius:8px; font-size:13px; outline:none;
+  background:#fff; color:var(--ink);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,113,227,.12); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #cfe6fb !important; }
+.bB{ background:#e8f9ec !important; color:#1a7a34 !important; border:1px solid #c5efd0 !important; }
+.bC{ background:#f2f2f7 !important; color:var(--muted) !important; border:1px solid var(--line-2) !important; }
+.bD{ background:#fafafa !important; color:#a1a1a6 !important; border:1px solid var(--line-2) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 10px; border-radius:8px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line-2); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--hover); text-decoration:none;
+}
+
+/* ---------- 说明/注释 ---------- */
+.note{
+  background:var(--hover); border:1px solid var(--line-2); border-radius:12px;
+  padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制（把历史页面残留的金/蓝冲突统一回灰蓝） ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav a{ padding:5px 8px; font-size:11px; }
+}
+
+</style><!--/WB_THEME--></head>
+<body>
+<div class='topnav'><a href='../market/index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='../market/hotmoney.html'>游资看板</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='index.html'>群体心理</a><a href='../research/index.html'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a><a href='../sections/index.html'>版块总览</a><a href='../db/index.html'>数据中心</a><a href='../../index.html' class='home'>首页</a></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="toggle" role="group" aria-label="language">
+      <button id="btnZh" class="active" onclick="setLang('zh')">中文</button>
+      <button id="btnEn" onclick="setLang('en')">EN</button>
+    </div>
+    <div class="kicker" data-i18n="t_kicker">A股 · 群体行为金融研判</div>
+    <h1 data-i18n="t_title">群体心理风险雷达</h1>
+    <div class="sub" data-i18n="t_sub">行为金融偏差 · 拥挤度 · 融资 · 热度 — 综合风险雷达。基于 westock 官方行情数据的真实查询结果。</div>
+    <div class="mast-meta">
+      <span><span data-i18n="t_date">数据截至</span>：<b>2026-09-08 收盘（北京时间，盘后）</b></span>
+      <span data-i18n="t_path">分析路径：群体心理分析（路径 C）</span>
+    </div>
+  </header>
+
+  <!-- 一句话结论（表格式，每行一指标） -->
+  <div class="headline">
+    <div class="hl-head">
+      <span class="hl-lbl" data-i18n="t_headline">一句话</span>
+      <span class="hl-sub" data-i18n="t_headline_sub">2026-09-08 · 收盘</span>
+    </div>
+    <ul class="hl-table">
+      <li><span class="k" data-i18n="hk_stage">阶段定性</span><span class="v" data-i18n="hv_stage"><b>高位轮动 / 沪强创弱</b>（09-08）</span></li>
+      <li><span class="k" data-i18n="hk_upratio">涨股比</span><span class="v" data-i18n="hv_upratio"><b>63%</b>（前次 09-07 57% · ↑ 6pct，广度维持偏多）</span></li>
+      <li><span class="k" data-i18n="hk_lim">涨停 / 跌停</span><span class="v" data-i18n="hv_lim"><b>74</b> / <b>—</b>（涨停由 90 回落，跌停数据源缺）</span></li>
+      <li><span class="k" data-i18n="hk_amt">成交额</span><span class="v" data-i18n="hv_amt"><b>¥1.96万亿</b>（微幅放量 +143亿，为 5 日均 103.3%）</span></li>
+      <li><span class="k" data-i18n="hk_cycle">情绪周期</span><span class="v" data-i18n="hv_cycle"><b>高位轮动 / 沪强创弱</b></span></li>
+      <li><span class="k" data-i18n="hk_risk">风险等级</span><span class="v" data-i18n="hv_risk"><b class="hl-risk">中</b>（维持）</span></li>
+      <li><span class="k" data-i18n="hk_flag">关键提示</span><span class="v" data-i18n="hv_flag">涨股比 57%→<b>63%</b> 维持偏多，但结构急变：09-07 领涨的电子硬件集体回落（半导体 −1.30%、消费电子 −1.79%、电池 −2.06%），资金切向农业链（种植业 +4.91%）与周期（焦炭Ⅱ +5.23%）；创业板 −1.15%（前日 +3.41% 大涨后回落）、上证 +0.20% 沪强创弱；连板高度由 6 板骤降至 4 板（龙版传媒断板），题材一日一换——<b>热度未散、轮动加速</b>；两融与跌停数据缺失，未编造。</span></li>
+    </ul>
+  </div>
+
+  <!-- TL;DR — 一行一行的关键点 -->
+  <section class="tldr">
+    <span class="lbl" data-i18n="t_tldr">一句话结论</span>
+    <ul class="tldr-lines" style="list-style:none;padding:0;">
+      <li class="tldr-line"><span class="k" data-i18n="tk1">阶段定性</span><span class="v" data-i18n="tv1">A股 09-08 由 09-07「科技反攻 / 普涨回暖」转入「<b>高位轮动 / 沪强创弱</b>」：涨股比升至 <b>63%</b>（3414涨 / 2025跌 / 平123，由 57% 再升 6pct），涨停 <b>74</b>（由 90 回落 16 只）、跌停数据源缺失；上证 <b>+0.20%</b>（3940.55，盘中高 3951.32）收于 MA5（3937.37）/ MA20（3936.14）上方、MA10（3947.43）/ MA60（3950.33）下方，均线缠绕；深成 <b>−0.52%</b>（13703.21）、创业板 <b>−1.15%</b>（3359.72，前日 +3.41% 后回落）。与 09-07 的关键差异：<b>指数分化</b>——沪市靠周期与农业链接力，而前日领涨的电子硬件（09-07 反攻主力）集体休整；成交 ¥1.96万亿（5 日均 103.3%、环比 +143亿）量能平稳。情绪仍处高位，但<b>轮动加速本身就是过热后的分歧信号</b>。</span></li>
+      <li class="tldr-line warn"><span class="k" data-i18n="tk2">广度维持偏多</span><span class="v" data-i18n="tv2">涨股比 <b>63%</b>（前次 57% ↑6pct）· 涨停 <b>74</b>（90→74 回落）· 成交 <b>¥1.96万亿</b>（5 日均 103.3%、10 日均 99.6%、20 日均 94.2%，环比 +143亿）——广度连续第二日改善；但板块结构揭示分化：926 个板块 672 涨 / 250 跌（72.6% 收红）而个股层面 449 个板块呈主力「出货」，上涨由农业链（种植业 主力 +68.63亿建仓 / 农产品加工 +49.91亿抢筹）与周期（焦炭Ⅱ 抢筹）接力，<b>宽度在、主线散</b>。</span></li>
+      <li class="tldr-line"><span class="k" data-i18n="tk3">技术缠绕未破位</span><span class="v" data-i18n="tv3">上证 <b>+0.20%</b>（3940.55）收于 MA5（3937.37）/ MA20（3936.14）上方、MA10（3947.43）/ MA60（3950.33）下方——<b>四线缠绕、方向未选</b>；BOLL（上4001.07 / 中3936.14 / 下3871.21）中轨附近；MACD <b>+1.55</b>（DIF 6.82 / DEA 6.04，红柱较 09-07 的 +2.56 收窄，多头动能衰减）；RSI6 <b>51.09</b>（中性）、KDJ_J 33.97（K 50.73 下穿 D 59.10 死叉雏形）——<b>动能收敛但未破位</b>：创业板 −1.15% 回踩，深成 BOLL 中轨（13992.23）得而复失，短线结构转弱先行于沪市。</span></li>
+      <li class="tldr-line"><span class="k" data-i18n="tk4">板块结构</span><span class="v" data-i18n="tv4"><b>焦炭Ⅱ +5.23%</b>（主力 +5.61亿，抢筹）领涨，<b>农产品加工 +5.02%</b>（主力 +49.91亿 抢筹）/ <b>种植业 +4.91%</b>（主力 +68.63亿 建仓，亚盛集团涨停晋级4板）/ 油服工程 +4.71% / 房地产服务 +4.69% 跟随——<b>农业链 + 周期接力，低价与涨价预期成为避险方向</b>；<b>电池 −2.06%</b>（暗盘 −16.78亿 出货）/ <b>消费电子 −1.79%</b>（−32.38亿 出货）/ 计算机设备 −1.68% / 半导体 −1.30%——09-07 反攻的电子硬件全线休整，926 板块中 449 呈「出货」。</span></li>
+      <li class="tldr-line"><span class="k" data-i18n="tk5">连板结构</span><span class="v" data-i18n="tv5">连板高度由 09-07 的 6 板（龙版传媒）骤降至 <b>4 板</b>（龙版传媒断板退出），<b>亚盛集团 / 百大集团 / 爱仕达</b>由 3 板晋级 4 板，3板海欣食品 / 中国出版 / 敦煌种业，2板13只（中百集团 / 桂林旅游 / 华脉科技 / 科森科技等）；涨停共 74 只（90→74）——<b>龙头断板、高度降级但梯队厚度仍在</b>，农业（亚盛/敦煌种业/海欣食品）与消费（百大/中百）接棒，题材由科技切向农业消费，轮动极快。</span></li>
+      <li class="tldr-line warn"><span class="k" data-i18n="tk6">资金：两融暂缺</span><span class="v" data-i18n="tv6">两融数据接口降级（service error），<b>未编造</b>；从板块资金看：种植业 主力 +68.63亿（建仓）、农产品加工 +49.91亿（抢筹）、油服工程 +19.38亿——<b>主力在涨价链集中建仓</b>；而消费电子暗盘 −32.38亿、计算机设备 −27.60亿、电池 −16.78亿——<b>09-07 反攻的电子硬件遭主力兑现</b>；杠杆方向无法确认（两融缺），高位轮动期杠杆风险不可视，保持谨慎。</span></li>
+      <li class="tldr-line danger"><span class="k" data-i18n="tk7">估值 / 风格</span><span class="v" data-i18n="tv7">PE_TTM <b>20.40</b>（10年分位 <b>79.6%</b>、5年 79.68%、3年 66.14%，口径 09-08，较 09-07 的 20.39 微升）；风格：沪深300 5日 <b>+0.54%</b> vs 中证1000 5日 <b>+0.86%</b> 小盘略占优，但 20 日维度全指价值 <b>+3.24%</b> vs 全指成长 <b>−2.82%</b>（差 6.06pct）——<b>价值占优的中期主轴未变</b>，09-08 的农业/周期接力恰是价值防御逻辑的延续；创业板 −1.15% 回吐 09-07 涨幅，成长内部再度分化。</span></li>
+      <li class="tldr-line danger"><span class="k" data-i18n="tk8">情绪周期</span><span class="v" data-i18n="tv8">由 09-07「科技反攻 / 普涨回暖」转入「<b>高位轮动 / 沪强创弱</b>」：涨股比 63% 维持偏多、涨停 74 只热度仍在，但<b>连板高度 6板→4板、电子硬件休整、农业周期接力</b>——情绪未退潮、结构在换挡；MACD 红柱收窄 + KDJ 死叉雏形提示动能衰减；历史经验：主线一日一换的高位轮动往往是情绪顶部区的典型形态，需以「涨停是否跌破 50 + 涨股比是否失守 50%」作为退潮确认线，风险等级维持<b>中</b>。</span></li>
+    </ul>
+    <div class="grade"><span data-i18n="t_risk">风险等级</span>：<span data-i18n="t_risk_hi">中</span></div>
+    <div class="chips">
+      <span class="chip"><span data-i18n="c_upratio">涨股比</span> <b>63%</b></span>
+      <span class="chip"><span data-i18n="c_limitup">涨停</span> <b>74</b></span>
+      <span class="chip"><span data-i18n="c_board">连板高度</span> <b>4板</b></span>
+      <span class="chip"><span data-i18n="c_pe">估值 PE分位</span> <b>80%（10Y）</b></span>
+      <span class="chip"><span data-i18n="c_pmi">制造业PMI</span> <b>49.2</b></span>
+      <span class="chip"><span data-i18n="c_turn">两市成交</span> <b>¥1.96万亿</b></span>
+    </div>
+  </section>
+
+  <!-- Sentiment cycle + Bias heatmap -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_bias">行为偏差热力图</span><span class="en">Behavioral Bias Heatmap</span></h2>
+    <div class="card">
+      <div class="cat" style="padding-left:0" data-i18n="t_cycle">情绪周期定位（六阶段）</div>
+      <div class="rail">
+        <div class="s"><span data-i18n="r1">绝望</span><small>Despair</small></div>
+        <div class="s"><span data-i18n="r2">怀疑</span><small>Doubt</small></div>
+        <div class="s on"><span data-i18n="r3">乐观</span><small>Optimism</small></div>
+        <div class="s"><span data-i18n="r4">狂热</span><small>Euphoria</small></div>
+        <div class="s"><span data-i18n="r5">焦虑</span><small>Anxiety</small></div>
+        <div class="s"><span data-i18n="r6">自满</span><small>Complacency</small></div>
+      </div>
+      <div class="note" data-i18n="t_cycle_note">注：上方「乐观 / 高位轮动」为实时群体心理定位（高位轮动 / 沪强创弱）——09-08 涨跌分布（涨股比 63%、涨停 74、成交 ¥1.96万亿）显示热度延续但动能收敛：连板高度 6板→4板、电子硬件休整、MACD 红柱收窄，情绪处「乐观→自满」过渡带；两融与跌停数据缺失。若 09-09 涨停跌破 50 只且涨股比失守 50%，确认退潮启动；若农业/周期接力失败且电子硬件无第二波，轮动将转为普跌。</div>
+      <div class="heat" id="heat"></div>
+      <div class="legend">
+        <span data-i18n="t_leg">严重度（由数据综合映射）</span>：
+        <span><i style="background:var(--h1)"></i>1</span>
+        <span><i style="background:var(--h2)"></i>2</span>
+        <span><i style="background:var(--h3)"></i>3</span>
+        <span><i style="background:var(--h4)"></i>4</span>
+        <span><i style="background:var(--h5)"></i>5（高危）</span>
+      </div>
+      <div class="note" data-i18n="t_bias_note">注：偏差严重度为基于下方真实数据的模型映射（1=低，5=高），用于呈现群体心理的脆弱点分布，并非对个股的买卖建议。</div>
+    </div>
+  </section>
+
+  <!-- Radar + Breadth -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_radar">风险雷达</span><span class="en">Risk Radar</span></h2>
+    <div class="duo">
+      <div class="card">
+        <svg viewBox="0 0 320 320" width="100%" role="img" aria-label="risk radar">
+          <!-- grid -->
+          <g fill="none" stroke="#e2ddd1">
+            <polygon points="160,40 277,110 237,230 83,230 43,110" stroke-width="1"/>
+            <polygon points="160,75 240,121 211,199 109,199 79,121" stroke-width="1"/>
+            <polygon points="160,110 203,133 183,169 137,169 117,133" stroke-width="1"/>
+            <line x1="160" y1="150" x2="160" y2="40" stroke-width="1"/>
+            <line x1="160" y1="150" x2="277" y2="110" stroke-width="1"/>
+            <line x1="160" y1="150" x2="237" y2="230" stroke-width="1"/>
+            <line x1="160" y1="150" x2="83" y2="230" stroke-width="1"/>
+            <line x1="160" y1="150" x2="43" y2="110" stroke-width="1"/>
+          </g>
+          <!-- data polygon -->
+          <polygon points="160,72 218,107 206,167 160,189 104,172 88,98"
+            fill="rgba(184,51,42,.28)" stroke="#b8332a" stroke-width="2.2"/>
+          <g fill="#b8332a">
+            <circle cx="160" cy="72" r="3.2"/><circle cx="218" cy="107" r="3.2"/>
+            <circle cx="206" cy="167" r="3.2"/><circle cx="160" cy="189" r="3.2"/>
+            <circle cx="104" cy="172" r="3.2"/><circle cx="88" cy="98" r="3.2"/>
+          </g>
+          <g font-size="11" font-weight="700" fill="#3a352e" text-anchor="middle">
+            <text x="160" y="30" data-i18n="ax_crowd">拥挤度</text>
+            <text x="292" y="106" data-i18n="ax_margin">融资</text>
+            <text x="250" y="212" data-i18n="ax_turn">换手</text>
+            <text x="160" y="248" data-i18n="ax_breadth">广度</text>
+            <text x="70" y="212" data-i18n="ax_media">媒体情绪</text>
+            <text x="30" y="106" data-i18n="ax_val">估值</text>
+          </g>
+          <g font-size="10" fill="#b8332a" text-anchor="middle" font-weight="800">
+            <text x="160" y="71">59</text><text x="237" y="120">67</text><text x="209" y="194">52</text>
+            <text x="160" y="167">45</text><text x="109" y="201">58</text><text x="55" y="118">87</text>
+          </g>
+        </svg>
+        <div class="note" data-i18n="t_radar_note">六维风险读数（0–100，由下方真实数据综合映射，越高代表该维度群体脆弱性越强）：拥挤度 59 / 融资 67 / 换手 52 / 广度 45 / 媒体 58 / 估值 87。拥挤度由 58 升至 59（主线一日一换：电子硬件→农业周期，题材轮动加速但梯队厚度仍在）；融资由 70 降至 67（两融数据降级暂缺，杠杆无法确认，按轮动期中性偏谨慎回落）；换手由 54 降至 52（成交 ¥1.96万亿 与前日 1.95万亿 基本持平，量能平稳）；广度由 46 降至 45（涨股比 57%→63% 连续改善，涨跌结构仍偏多，但 449 板块「出货」提示内部分化，脆弱性维持低位）；媒体由 62 降至 58（涨停 90→74 回落、龙头断板，情绪温度自高位小幅降温）；估值 87 持平（PE_TTM 20.39→20.40 微升，10年分位 79.6% 高悬）。整体脆弱性由「估值 + 融资」主导——热度未散、估值高悬，轮动加速期最大的风险是追高换挡主线。</div>
+      </div>
+      <div class="card">
+        <div class="cat" style="padding-left:0" data-i18n="t_breadth">市场涨跌分布（2026-09-10 收盘）</div>
+        <svg viewBox="0 0 560 200" width="100%" role="img" aria-label="breadth distribution">
+          <!-- Stacked proportion bar (single row, clean) -->
+          <rect x="14" y="14" width="500" height="26" fill="#f3f0e8" stroke="#e7e2d8"/>
+          <rect x="14" y="14" width="314" height="26" fill="#d8392b"/>
+          <rect x="328" y="14" width="186" height="26" fill="#1a9e5a"/>
+          <text x="171" y="33" fill="#fff" font-size="14" font-weight="800" text-anchor="middle">63%</text>
+          <text x="421" y="33" fill="#fff" font-size="14" font-weight="800" text-anchor="middle">37%</text>
+          <text x="514" y="33" fill="#6b675f" font-size="11" font-weight="700" text-anchor="end">2% 平盘</text>
+
+          <!-- Stat rows: label / number / change -->
+          <g font-size="13" font-weight="700" fill="#3a352e">
+            <text x="14" y="72" data-i18n="b_up">上涨</text>
+            <text x="14" y="92" data-i18n="b_down">下跌</text>
+            <text x="14" y="112" data-i18n="b_flat">平盘</text>
+            <text x="14" y="138" data-i18n="b_limitup">涨停</text>
+            <text x="14" y="158" data-i18n="b_limitdn">跌停</text>
+            <text x="14" y="184" data-i18n="b_amt">成交额</text>
+          </g>
+          <g font-size="14" font-weight="800" text-anchor="end">
+            <text x="340" y="72" fill="#d8392b">3414</text>
+            <text x="340" y="92" fill="#1a9e5a">2025</text>
+            <text x="340" y="112" fill="#6b675f">123</text>
+            <text x="340" y="138" fill="#d8392b">74</text>
+            <text x="340" y="158" fill="#1a9e5a">—</text>
+            <text x="340" y="184" fill="#1c1b19">¥1.96万亿</text>
+          </g>
+          <g font-size="11" fill="#6b675f" text-anchor="start">
+            <text x="355" y="72">（占 63%，较上一报告日（09-07） +6pct）</text>
+            <text x="355" y="92">（占 37%，较上一报告日（09-07） −6pct）</text>
+            <text x="355" y="112">（占 2%）</text>
+            <text x="355" y="138">（较前日 −16 只，连板高度 4板）</text>
+            <text x="355" y="158">（跌停家数历史数据源缺失，未编造）</text>
+            <text x="355" y="184">（环比 +143亿，量能平稳）</text>
+          </g>
+        </svg>
+        <div class="note" data-i18n="t_breadth_note">涨股比 57%→63%（3414涨/2025跌/平123）连续第二日改善、涨停 90→74 回落；成交 ¥1.96万亿（5 日均 103.3%、环比 +143亿）平稳。上证 +0.20%（3940.55，四线缠绕）/ 深成 −0.52%（13703.21）/ 创业板 −1.15%（3359.72）沪强创弱；焦炭Ⅱ +5.23% / 农产品加工 +5.02% / 种植业 +4.91%（主力 +68.63亿）领涨，电池 −2.06% / 消费电子 −1.79% / 半导体 −1.30% 领跌——926 板块 672 收红但 449 呈主力「出货」，宽度在、主线散。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key evidence -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_evidence">关键证据表</span><span class="en">Key Evidence</span></h2>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table data-wb>
+        <thead><tr><th data-i18n="th_metric">指标</th><th data-i18n="th_read">真实读数</th><th data-i18n="th_interp">行为金融解读</th></tr></thead>
+        <tbody>
+          <tr><td class="cat" colspan="3" data-i18n="ev_market">一、市场广度与总览</td></tr>
+          <tr><td data-i18n="ev_upratio">涨股比</td><td><span class="val up">63%</span>（涨3414 / 跌2025 / 平123）</td><td data-i18n="ev_upratio_i">由 57% 升至 63%（+6pct），涨 3414 / 跌 2025 / 平 123，广度连续第二日改善、参与度偏多；但板块层面 449/926 呈主力「出货」，个股宽度与板块行为背离——上涨质量存疑</td></tr>
+          <tr><td data-i18n="ev_limit">涨停 / 跌停</td><td><span class="val up">74</span> / <span class="val down">—</span></td><td data-i18n="ev_limit_i">涨停 74（90→74 回落 16 只）、跌停家数历史数据源缺失（未编造）；连板高度 6板→4板（龙版传媒断板），亚盛集团/百大集团/爱仕达晋级4板——高度降级但梯队仍在，题材由科技切向农业消费</td></tr>
+          <tr><td data-i18n="ev_amount">两市成交额</td><td><span class="val">¥1.96万亿</span>（较前次 +143亿，量能平稳）</td><td data-i18n="ev_amount_i">量能 ¥1.96万亿（5 日均 103.3%、10 日均 99.6%、20 日均 94.2%，环比 +143亿）——量能平稳、 neither 放量出清 nor 缩量避险，高位轮动期的「温水」量价结构</td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_index">二、核心指数表现（2026-09-08 收盘）</td></tr>
+          <tr><td data-i18n="ev_sh">上证指数</td><td><span class="val up">3940.55　+0.20%</span></td><td data-i18n="ev_sh_i">+0.20%（3940.55，盘中高 3951.32 / 低 3925.72），收于 MA5（3937.37）/ MA20（3936.14）上方、MA10（3947.43）/ MA60（3950.33）下方，四线缠绕方向未选；MACD +1.55（DIF 6.82 / DEA 6.04，红柱自 09-07 的 +2.56 收窄）、RSI6 51.09 中性、KDJ_J 33.97（K/D 死叉雏形）；BOLL 中轨（3936.14）附近；PE_TTM 20.40（10年分位 79.6%）</td></tr>
+          <tr><td data-i18n="ev_sz">深证成指</td><td><span class="val down">13703.21　−0.52%</span></td><td data-i18n="ev_sz_i">−0.52%（13703.21），BOLL 中轨（13992.23）得而复失，短线结构先行转弱；60 日维度仍深弱</td></tr>
+          <tr><td data-i18n="ev_cyb">创业板指</td><td><span class="val down">3359.72　−1.15%</span></td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_sector">三、板块排行与主线</td></tr>
+          <tr><td data-i18n="ev_secup">领涨行业</td><td><span class="val up">焦炭Ⅱ +5.23%</span>（主力 +5.61亿，行为「抢筹」）<br>农产品加工 +5.02%（主力 +49.91亿 抢筹）/ 种植业 +4.91%（+68.63亿 建仓）/ 油服工程 +4.71% 跟随<br>全市场 926 个板块 672 个收红，449 个呈主力「出货」</td><td data-i18n="ev_secup_i">焦炭Ⅱ +5.23%（主力 +5.61亿 抢筹）领涨，农产品加工 +5.02%（主力 +49.91亿 抢筹）/ 种植业 +4.91%（主力 +68.63亿 建仓，亚盛集团涨停晋级4板）/ 油服工程 +4.71% / 房地产服务 +4.69% 跟随——农业链 + 周期涨价预期接力，926 板块 672 收红（72.6%）</td></tr>
+          <tr><td data-i18n="ev_secdn">领跌行业</td><td><span class="val down">电池 −2.06%</span>（暗盘 −16.78亿，行为「出货」）<br>消费电子 −1.79%（暗盘 −32.38亿 出货）/ 计算机设备 −1.68%（−27.60亿）/ 半导体 −1.30%<br>09-07 反攻的电子硬件集体休整并遭主力兑现</td><td data-i18n="ev_secdn_i">电池 −2.06%（暗盘 −16.78亿 出货）/ 消费电子 −1.79%（−32.38亿 出货）/ 计算机设备 −1.68%（−27.60亿 出货）/ 半导体 −1.30%——09-07 反攻主力电子硬件集体休整并遭主力兑现，领跌集中于前日强势方向</td></tr>
+          <tr><td data-i18n="ev_board">极端题材</td><td><span class="val up">连板高度 4 板</span>（亚盛集团 / 百大集团 / 爱仕达，由3板晋级）<br>涨停共 74 只（90→74）；3板：海欣食品 / 中国出版 / 敦煌种业；2板13只——龙版传媒6板断板，高度骤降</td><td data-i18n="ev_board_i">连板高度 4板（亚盛集团 / 百大集团 / 爱仕达，由3板晋级）；3板：海欣食品 / 中国出版 / 敦煌种业；2板13只（中百集团 / 桂林旅游 / 华脉科技 / 科森科技等）；涨停共 74 只（90→74）——农业消费接棒科技，轮动极快</td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_flow">四、资金：连板 / 主力 / 两融</td></tr>
+          <tr><td data-i18n="ev_height">连板高度</td><td><span class="val up">亚盛集团 / 百大集团 / 爱仕达 4板</span>（2026-09-08）</td><td data-i18n="ev_height_i">高度 4板（亚盛集团 / 百大集团 / 爱仕达，2026-09-08 收盘，westock 连板名单口径，共 74 只涨停）；龙版传媒 6板断板退出——高度骤降但梯队厚度仍在，投机资金转向农业（亚盛/敦煌种业/海欣食品）与消费（百大/中百）</td></tr>
+          <tr><td data-i18n="ev_main">主力5日净流入TOP</td><td><span class="val">主力5日净流入 TOP（tool_ranking 降级期，历史快照缺，未编造）</span></td><td data-i18n="ev_main_i">主力5日净流入排名接口降级期（tool_ranking service error），无法更新、未编造；当日可见信号：种植业 主力 +68.63亿（建仓）/ 农产品加工 +49.91亿（抢筹）/ 油服工程 +19.38亿 集中流入涨价链，消费电子暗盘 −32.38亿 / 计算机设备 −27.60亿 流出——主力弃「昨日主线」、抢「涨价接力」</td></tr>
+          <tr><td data-i18n="ev_margin">融资单日变动TOP</td><td><span class="val">融资单日变动 TOP（两融接口降级，数据暂缺，未编造）</span></td><td data-i18n="ev_margin_i">两融数据接口降级（service error），融资单日变动与两融余额均暂缺，<b>未编造</b>；高位轮动 + 均线缠绕下杠杆方向无法确认，谨慎对待——若融资盘仍集中于电子硬件，其休整将放大杠杆回撤</td></tr>
+          <tr><td data-i18n="ev_hot">热搜 / 领涨TOP</td><td><span class="val up">亚盛集团 4板</span>（种植业）<br>焦炭Ⅱ +5.23%（抢筹）/ 农产品加工 +5.02%（+49.91亿）<br>种植业 +4.91%（+68.63亿 建仓）/ 油服工程 +4.71%<br>电池 −2.06% / 消费电子 −1.79% / 半导体 −1.30%</td><td data-i18n="ev_hot_i">热点由 TMT 切向农业/周期：亚盛集团 4板（种植业涨停）/ 焦炭Ⅱ +5.23%（云煤能源 +10.10%）/ 农产品加工 +5.02%（*ST广糖 +10.08%）/ 房地产服务 +4.69%（世联行 +10.17%）；与「全指价值 20日 +3.24% vs 全指成长 −2.82%」的价值占优主轴一致</td></tr>
+          <tr><td data-i18n="ev_margintotal">市场两融余额</td><td><span class="val">数据源未返回聚合值</span></td><td data-i18n="ev_margintotal_i">缺口：聚合两融余额与融资单日变动接口降级（service error），已如实标注、未编造；涨跌分布（iFinD 历史日筛选）/ 指数（K线自算，与官方锚点偏差0.0000）/ 板块 / 连板名单均为 2026-09-08 真实数据</td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_macro">五、核心宏观指标</td></tr>
+          <tr><td data-i18n="ev_pmi">制造业PMI（7月）</td><td><span class="val down">49.2</span>（<50，景气收缩）</td><td data-i18n="ev_pmi_i">基本面收缩，与「高估值 + 高位轮动」组合共存——情绪热度缺乏基本面增量支撑，轮动加速即分歧信号</td></tr>
+          <tr><td data-i18n="ev_capu">产能利用率（Q2）</td><td><span class="val down">73.6%</span>（环比 −0.5pct）</td><td data-i18n="ev_capu_i">实物经济动能走弱，涨价链（农业/周期）的预期缺乏产能端验证</td></tr>
+          <tr><td data-i18n="ev_cpi">CPI（7月）</td><td><span class="val">0.5%</span></td><td data-i18n="ev_cpi_i">低通胀、需求偏弱，农产品涨价的持续性待数据确认</td></tr>
+          <tr><td data-i18n="ev_social">社融（7月）</td><td><span class="val down">累计同比 −7.25%</span>（存量同比 +7.4%）</td><td data-i18n="ev_social_i">信用需求弱，资金绕道股市 = 流动性驱动特征，高位轮动期流动性预期敏感</td></tr>
+          <tr><td data-i18n="ev_m1m2">M1-M2 剪刀差</td><td><span class="val down">−3.7%</span></td><td data-i18n="ev_m1m2_i">活钱偏弱，资金空转，典型后周期现象</td></tr>
+          <tr><td data-i18n="ev_yield">10Y 国债收益率</td><td><span class="val down">1.70%</span></td><td data-i18n="ev_yield_i">极低无风险利率，既支撑估值也反映增长担忧</td></tr>
+          <tr><td data-i18n="ev_lpr">LPR</td><td>1Y <span class="val">3.0%</span> / 5Y <span class="val">3.5%</span></td><td data-i18n="ev_lpr_i">宽松基调未变</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note" data-i18n="t_ev_note">数据口径：宏观指标多截至 2026-07（月频）或沿用前期值；涨跌分布（iFinD 历史日筛选：涨3414/跌2025）/ 指数与成交（data_kline 自算，与官方 market_statis_technical@09-07 锚点核验偏差 0.0000）/ 板块（sector_daily 当日快照）/ 连板（westock 连板名单 74 只）均为 2026-09-08 真实数据。估值 PE_TTM 20.40 为 09-08 口径（中证全指，滞后一交易日发布，与 09-09 页引用一致）；两融与跌停家数缺失，已如实标注未编造。详见末尾「数据来源与日期口径」。</div>
+  </section>
+
+  <!-- Risk stratification -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_risk">风险分层</span><span class="en">Risk Stratification</span></h2>
+    <div class="risk3">
+      <div class="rc red">
+        <span class="tag" data-i18n="rc1_tag">红线区 · 估值高悬 + 杠杆不可视</span>
+        <h3 data-i18n="rc1_t">高位轮动下的估值与杠杆盲区</h3>
+        <p data-i18n="rc1_d">PE_TTM 10年分位 79.6% 高悬 + 两融数据缺失（杠杆方向不可视）+ 连板高度骤降（6板→4板）——情绪热度与估值风险错配：热度掩盖估值，一旦退潮估值回归与杠杆踩踏同步发生；涨股比 63% 的偏多宽度不构成安全垫。</p>
+        <p class="rep" data-i18n="rc1_rep">代表：两融集中且已现暗盘流出的电子硬件（消费电子 −32.38亿 / 计算机设备 −27.60亿）/ 高位连板接力（龙版传媒断板示范）</p>
+        <div class="cond" data-i18n="rc1_cond">条件框架：不追高换挡主线；对「昨日强势+今日暗盘流出」方向保持警惕；跌停与两融数据恢复前，杠杆暴露只减不加。</div>
+      </div>
+      <div class="rc amber">
+        <span class="tag" data-i18n="rc2_tag">黄线区 · 轮动加速的博弈</span>
+        <h3 data-i18n="rc2_t">主线一日一换 vs 梯队厚度</h3>
+        <p data-i18n="rc2_d">连板高度 6板→4板但 2板仍有 13 只、涨停 74 只——高度降级、厚度仍在：投机情绪未死、只是换挡；农业（亚盛/敦煌种业/海欣食品）与消费（百大/中百）接棒电子硬件。轮动加速期 chase 容易两头挨打。</p>
+        <p class="rep" data-i18n="rc2_rep">代表：农业链（种植业/农产品加工/渔业）/ 周期涨价（焦炭Ⅱ/油服工程）/ 消费低位（百货）</p>
+        <div class="cond" data-i18n="rc2_cond">条件框架：轮动期只做观察跟踪，不追当日涨幅；确认信号 = 新主线连续 2 日主力净流入且高度重新向上；若接力失败（涨停跌破 50），转入防守。</div>
+      </div>
+      <div class="rc green">
+        <span class="tag" data-i18n="rc3_tag">绿线区 · 涨价链主力建仓</span>
+        <h3 data-i18n="rc3_t">农业 / 周期涨价链获主力真实建仓</h3>
+        <p data-i18n="rc3_d">种植业 主力 +68.63亿（建仓）、农产品加工 +49.91亿（抢筹）、油服工程 +19.38亿（建仓）、焦炭Ⅱ +5.61亿（抢筹）——主力在涨价预期方向真实投放筹码，与 20 日维度价值占优（+3.24% vs −2.82%）的中期主轴一致。</p>
+        <p class="rep" data-i18n="rc3_rep">代表：种植业（亚盛集团 4板）/ 农产品加工 / 焦炭Ⅱ / 油服工程 / 房地产服务</p>
+        <div class="cond" data-i18n="rc3_cond">条件框架：仅作结构跟踪，涨停潮次日不追高；确认信号 = 该方向主力净流入延续且板块换手不萎缩；若 CPI/产业数据证伪涨价预期，及时修正。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Outlook (next-session) -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_outlook">下个交易日（09-09 周三）展望</span><span class="en">Next-Session Outlook (09-09 Wed)</span></h2>
+    <div class="card">
+      <div class="cat" style="padding-left:0" data-i18n="o_logic">研判逻辑（基于 09-08 收盘 + 群体心理定位）</div>
+      <p class="note" data-i18n="o_logic_text">由 09-08 的「高位轮动 / 沪强创弱」延伸：热度延续（涨股比 63%、涨停 74）但动能收敛（连板高度骤降、MACD 红柱收窄、KDJ 死叉雏形、电子硬件暗盘出货）——轮动加速期向「分化」演化的概率在上升。基于此推演 09-09 的板块方向与交易规则（<b>不涉及具体个股推荐</b>）。</p>
+
+      <div class="outlook-grid">
+        <div class="oc up">
+          <span class="oc-tag" data-i18n="o1_tag">涨价链接力方向（观察）</span>
+          <h3 data-i18n="o1_t">种植业 / 农产品加工 / 焦炭Ⅱ / 油服工程</h3>
+          <p data-i18n="o1_d">09-08 获主力真实建仓/抢筹的方向（种植业 +68.63亿、农产品加工 +49.91亿），若 09-09 延续净流入，则轮动主线确认、情绪以「换挡」而非「退潮」消化。</p>
+          <div class="oc-cond" data-i18n="o1_cond">注意：农业/周期题材对消息面敏感、持续性历史偏弱；确认标准 = 连续 2 日主力净流入 + 高度重新向上；若一日游，轮动将直接转入退潮。</div>
+        </div>
+
+        <div class="oc amber">
+          <span class="oc-tag" data-i18n="o2_tag">电子硬件兑现方向（回避）</span>
+          <h3 data-i18n="o2_t">消费电子 / 计算机设备 / 电池 / 高位连板</h3>
+          <p data-i18n="o2_d">09-07 反攻主力在 09-08 遭主力兑现（消费电子暗盘 −32.38亿、计算机设备 −27.60亿、电池 −16.78亿），创业板 −1.15% 同步回吐——若两融盘仍滞留其中，休整将放大为回撤。</p>
+          <div class="oc-cond" data-i18n="o2_cond">注意：暗盘连续流出方向不做左侧承接；等待暗盘转正 + 缩量止跌；高位连板接力（龙头断板后）胜率显著下降。</div>
+        </div>
+
+        <div class="oc red">
+          <span class="oc-tag" data-i18n="o3_tag">退潮确认信号（警戒）</span>
+          <h3 data-i18n="o3_t">涨停跌破 50 / 涨股比失守 50% / 高度不再</h3>
+          <p data-i18n="o3_d">09-08 涨停 74（90→74 连续回落）、连板高度 4 板（骤降）——若 09-09 涨停跌破 50 只或涨股比失守 50%，则「高位轮动」确认转为「退潮」，届时压缩风险敞口。</p>
+          <div class="oc-cond" data-i18n="o3_cond">注意：轮动转退潮的过程通常伴随创业板补跌带动指数走弱；确认前维持中性仓位，确认后执行防守纪律；右侧信号 = 缩量企稳 + 新主线高度重建。</div>
+        </div>
+      </div>
+
+      <div class="cat" style="padding-left:0;margin-top:18px;" data-i18n="o_rules_t">交易规则（09-09）</div>
+      <ul class="rules">
+        <li data-i18n="o_r1"><b>仓位</b>：高位轮动期维持中性仓位（≤5 成），不加杠杆；涨股比 63% 的宽度不构成加仓理由——449 板块「出货」提示上涨质量存疑。</li>
+        <li data-i18n="o_r2"><b>退潮确认</b>：涨停跌破 50 只或涨股比失守 50%，视为轮动转退潮，压缩至防守仓位；连板高度若重新向上（新龙头 5板+），视为情绪换挡成功。</li>
+        <li data-i18n="o_r3"><b>主线参与</b>：涨价链（农业/周期）仅作结构观察（主力净流入是否延续），涨停潮次日不追；电子硬件等暗盘流出方向回避，等待暗盘转正。</li>
+        <li data-i18n="o_r4"><b>回避清单</b>：暗盘连续流出的电子硬件高位方向、断板龙头（龙版传媒模式）、两融集中且杠杆不可视的方向、一日游题材追高。</li>
+        <li data-i18n="o_r5"><b>风控</b>：均线缠绕期不预判方向，以 BOLL 中轨（上证 3936）为多空分界；跌破中轨且涨停续降，执行防守；两融数据恢复前不加重杠杆。</li>
+      </ul>
+
+      <p class="note" style="margin-top:14px;font-size:.76rem;color:var(--muted)" data-i18n="o_compliance"><b>合规说明：</b>本展望仅给出板块方向与交易规则，不涉及具体个股推荐；群体心理定位与板块推断基于 2026-09-08 真实行情数据，市场有风险，决策须独立。</p>
+    </div>
+  </section>
+
+  <!-- Sources -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_source">数据来源与日期口径</span><span class="en">Data Sources & Time Caliber</span></h2>
+    <div class="card">
+      <ul class="src">
+        <li><b data-i18n="s_breadth">涨跌分布 / 总览</b><span data-i18n="s_breadth_v">iFinD search_securities 历史日筛选（09-08 涨 3414 / 跌 2025，平 = 总数−涨−跌）；2026-09-08 收盘（westock updown 快照当日缺，回补期替代源）</span></li>
+        <li><b data-i18n="s_portrait">市场画像 summary</b><span data-i18n="s_portrait_v">回补组装：iFinD 历史日筛选 + data_kline 自算 + sector_daily 当日快照；2026-09-08（涨股比 63%、高位轮动）</span></li>
+        <li><b data-i18n="s_index">指数表现</b><span data-i18n="s_index_v">westock data_kline 260 根自算（MA/BOLL/MACD/RSI/KDJ 与官方 market_statis_technical@09-07 锚点核验偏差 0.0000）；2026-09-08 收盘</span></li>
+        <li><b data-i18n="s_sector">板块排行 / 资金流</b><span data-i18n="s_sector_v">westock · data_sector 当日快照（quant/sector_daily/2026-09-08.json）；2026-09-08（926 板块，672 收红、449 出货）</span></li>
+        <li><b data-i18n="s_hot">热搜股票</b><span data-i18n="s_hot_v">westock · 领涨板块+涨停名单综合（data_hot 历史缺，回补期以板块领涨股替代）；2026-09-08（农业/周期/地产服务居前）</span></li>
+        <li><b data-i18n="s_macro">核心宏观</b><span data-i18n="s_macro_v">westock · data_macro 前期复核（月频）；PMI/产能/社融为前期值，CPI/M1-M2/10Y/LPR 沿用前期</span></li>
+        <li><b data-i18n="s_margin">两融（个股）</b><span data-i18n="s_margin_v">westock · 两融接口降级（service error）+ 历史回补窗口无快照，数据暂缺，未编造</span></li>
+        <li><b data-i18n="s_main">主力5日净流入</b><span data-i18n="s_main_v">westock · tool_ranking 降级期（service error）+ 历史快照缺，无法回补；当日主力行为由 sector_daily 板块资金（主力/散户/暗盘）呈现</span></li>
+        <li><b data-i18n="s_board">连板高度</b><span data-i18n="s_board_v">westock · tool_ranking 连板名单快照（quant/limitup/2026-09-08.json，涨停共 74 只）；2026-09-08（最高 4板：亚盛集团/百大集团/爱仕达）</span></li>
+        <li><b data-i18n="s_gap">数据缺口</b><span data-i18n="s_gap_v">两融余额、融资单日变动、主力5日排名、跌停家数在 09-08 回补窗口无真实数据源，均已如实标注、未编造；估值 PE_TTM 20.40 为 09-08 口径（中证全指，滞后一交易日发布）；涨跌分布为 iFinD 历史日筛选口径（与 westock updown 口径或有细微差异）</span></li>
+      </ul>
+      <div class="note" data-i18n="t_src_note">时间口径：所有时点按北京时间。宏观为月频 / 季频，与日频行情不可直接对齐，已分别标注。涨跌分布 / 指数 / 板块 / 连板名单均为 2026-09-08 当日真实数据（回补期：广度来自 iFinD 历史筛选、指数技术来自 K 线自算并经官方锚点核验）；两融、主力5日、跌停家数暂缺，均已标注。</div>
+    </div>
+  </section>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    <p data-i18n="disc1">免责声明：以上内容基于公开数据和量化分析，仅供参考，不构成投资建议。市场有风险，投资需谨慎。任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往表现不预示未来收益。</p>
+    <p style="margin-top:8px" data-i18n="disc2">本研判为「群体心理 / 条件框架」分析，非买卖指令；风险读数与偏差严重度为模型综合映射，须与价格结构、估值、资金流向交叉验证，不可单独作为交易依据。</p>
+  </div>
+
+  <div class="foot" data-i18n="t_foot">群体心理风险雷达 · 由 westock / iFinD 官方行情数据生成 · 仅供研究参考</div>
+</div>
+
+<script>
+  var I18N = {
+    zh:{
+      t_kicker:"A股 · 群体行为金融研判",
+      t_title:"群体心理风险雷达",
+      t_sub:"行为金融偏差 · 拥挤度 · 融资 · 热度 — 综合风险雷达。基于 westock 官方行情数据的真实查询结果。",
+      t_date:"数据截至",
+      t_path:"分析路径：群体心理分析（路径 C）",
+      t_tldr:"一句话结论",
+      t_headline:"一句话",
+      t_headline_sub:"2026-09-08 · 收盘",
+      hk_stage:"阶段定性",
+      hv_stage:"<b>高位轮动 / 沪强创弱</b>（09-08）",
+      hk_upratio:"涨股比",
+      hv_upratio:"<b>63%</b>（前次 09-07 57% · ↑ 6pct，广度维持偏多）",
+      hk_lim:"涨停 / 跌停",
+      hv_lim:"<b>74</b> / <b>—</b>（涨停由 90 回落，跌停数据源缺）",
+      hk_amt:"成交额",
+      hv_amt:"<b>¥1.96万亿</b>（微幅放量 +143亿，为 5 日均 103.3%）",
+      hk_cycle:"情绪周期",
+      hv_cycle:"<b>高位轮动 / 沪强创弱</b>",
+      hk_risk:"风险等级",
+      hv_risk:"<b class=\"hl-risk\">中</b>（维持）",
+      hk_flag:"关键提示",
+      hv_flag:"涨股比 57%→<b>63%</b> 维持偏多，但结构急变：09-07 领涨的电子硬件集体回落（半导体 −1.30%、消费电子 −1.79%、电池 −2.06%），资金切向农业链（种植业 +4.91%）与周期（焦炭Ⅱ +5.23%）；创业板 −1.15%（前日 +3.41% 大涨后回落）、上证 +0.20% 沪强创弱；连板高度由 6 板骤降至 4 板（龙版传媒断板），题材一日一换——<b>热度未散、轮动加速</b>；两融与跌停数据缺失，未编造。",
+      tk1:"阶段定性",
+      tv1:"A股 09-08 由 09-07「科技反攻 / 普涨回暖」转入「<b>高位轮动 / 沪强创弱</b>」：涨股比升至 <b>63%</b>（3414涨 / 2025跌 / 平123，由 57% 再升 6pct），涨停 <b>74</b>（由 90 回落 16 只）、跌停数据源缺失；上证 <b>+0.20%</b>（3940.55，盘中高 3951.32）收于 MA5（3937.37）/ MA20（3936.14）上方、MA10（3947.43）/ MA60（3950.33）下方，均线缠绕；深成 <b>−0.52%</b>（13703.21）、创业板 <b>−1.15%</b>（3359.72，前日 +3.41% 后回落）。与 09-07 的关键差异：<b>指数分化</b>——沪市靠周期与农业链接力，而前日领涨的电子硬件（09-07 反攻主力）集体休整；成交 ¥1.96万亿（5 日均 103.3%、环比 +143亿）量能平稳。情绪仍处高位，但<b>轮动加速本身就是过热后的分歧信号</b>。",
+      tk2:"广度维持偏多",
+      tv2:"涨股比 <b>63%</b>（前次 57% ↑6pct）· 涨停 <b>74</b>（90→74 回落）· 成交 <b>¥1.96万亿</b>（5 日均 103.3%、10 日均 99.6%、20 日均 94.2%，环比 +143亿）——广度连续第二日改善；但板块结构揭示分化：926 个板块 672 涨 / 250 跌（72.6% 收红）而个股层面 449 个板块呈主力「出货」，上涨由农业链（种植业 主力 +68.63亿建仓 / 农产品加工 +49.91亿抢筹）与周期（焦炭Ⅱ 抢筹）接力，<b>宽度在、主线散</b>。",
+      tk3:"技术缠绕未破位",
+      tv3:"上证 <b>+0.20%</b>（3940.55）收于 MA5（3937.37）/ MA20（3936.14）上方、MA10（3947.43）/ MA60（3950.33）下方——<b>四线缠绕、方向未选</b>；BOLL（上4001.07 / 中3936.14 / 下3871.21）中轨附近；MACD <b>+1.55</b>（DIF 6.82 / DEA 6.04，红柱较 09-07 的 +2.56 收窄，多头动能衰减）；RSI6 <b>51.09</b>（中性）、KDJ_J 33.97（K 50.73 下穿 D 59.10 死叉雏形）——<b>动能收敛但未破位</b>：创业板 −1.15% 回踩，深成 BOLL 中轨（13992.23）得而复失，短线结构转弱先行于沪市。",
+      tk4:"板块结构",
+      tv4:"<b>焦炭Ⅱ +5.23%</b>（主力 +5.61亿，抢筹）领涨，<b>农产品加工 +5.02%</b>（主力 +49.91亿 抢筹）/ <b>种植业 +4.91%</b>（主力 +68.63亿 建仓，亚盛集团涨停晋级4板）/ 油服工程 +4.71% / 房地产服务 +4.69% 跟随——<b>农业链 + 周期接力，低价与涨价预期成为避险方向</b>；<b>电池 −2.06%</b>（暗盘 −16.78亿 出货）/ <b>消费电子 −1.79%</b>（−32.38亿 出货）/ 计算机设备 −1.68% / 半导体 −1.30%——09-07 反攻的电子硬件全线休整，926 板块中 449 呈「出货」。",
+      tk5:"连板结构",
+      tv5:"连板高度由 09-07 的 6 板（龙版传媒）骤降至 <b>4 板</b>（龙版传媒断板退出），<b>亚盛集团 / 百大集团 / 爱仕达</b>由 3 板晋级 4 板，3板海欣食品 / 中国出版 / 敦煌种业，2板13只（中百集团 / 桂林旅游 / 华脉科技 / 科森科技等）；涨停共 74 只（90→74）——<b>龙头断板、高度降级但梯队厚度仍在</b>，农业（亚盛/敦煌种业/海欣食品）与消费（百大/中百）接棒，题材由科技切向农业消费，轮动极快。",
+      tk6:"资金：两融暂缺",
+      tv6:"两融数据接口降级（service error），<b>未编造</b>；从板块资金看：种植业 主力 +68.63亿（建仓）、农产品加工 +49.91亿（抢筹）、油服工程 +19.38亿——<b>主力在涨价链集中建仓</b>；而消费电子暗盘 −32.38亿、计算机设备 −27.60亿、电池 −16.78亿——<b>09-07 反攻的电子硬件遭主力兑现</b>；杠杆方向无法确认（两融缺），高位轮动期杠杆风险不可视，保持谨慎。",
+      tk7:"估值 / 风格",
+      tv7:"PE_TTM <b>20.40</b>（10年分位 <b>79.6%</b>、5年 79.68%、3年 66.14%，口径 09-08，较 09-07 的 20.39 微升）；风格：沪深300 5日 <b>+0.54%</b> vs 中证1000 5日 <b>+0.86%</b> 小盘略占优，但 20 日维度全指价值 <b>+3.24%</b> vs 全指成长 <b>−2.82%</b>（差 6.06pct）——<b>价值占优的中期主轴未变</b>，09-08 的农业/周期接力恰是价值防御逻辑的延续；创业板 −1.15% 回吐 09-07 涨幅，成长内部再度分化。",
+      tk8:"情绪周期",
+      tv8:"由 09-07「科技反攻 / 普涨回暖」转入「<b>高位轮动 / 沪强创弱</b>」：涨股比 63% 维持偏多、涨停 74 只热度仍在，但<b>连板高度 6板→4板、电子硬件休整、农业周期接力</b>——情绪未退潮、结构在换挡；MACD 红柱收窄 + KDJ 死叉雏形提示动能衰减；历史经验：主线一日一换的高位轮动往往是情绪顶部区的典型形态，需以「涨停是否跌破 50 + 涨股比是否失守 50%」作为退潮确认线，风险等级维持<b>中</b>。",
+      t_tldr_text:"A股 09-08 呈现「高位轮动 / 沪强创弱」：涨股比 57%→63%（3414涨/2025跌/平123），涨停 90→74、跌停数据源缺失；上证 +0.20%（3940.55）收于 MA5/20 上方、MA10/60 下方四线缠绕，MACD 红柱收窄（+1.55）、KDJ 死叉雏形；深成 −0.52%（13703.21）、创业板 −1.15%（3359.72，回吐前日 +3.41% 涨幅）。成交 ¥1.96万亿（5 日均 103.3%、环比 +143亿）量能平稳。焦炭Ⅱ +5.23%（抢筹）/ 农产品加工 +5.02%（主力 +49.91亿）/ 种植业 +4.91%（主力 +68.63亿 建仓，亚盛集团晋级4板）领涨——农业链+周期接力；电池 −2.06%（出货）/ 消费电子 −1.79%（−32.38亿 出货）/ 半导体 −1.30%——09-07 反攻的电子硬件集体休整；926 板块 672 涨但 449 呈「出货」。连板高度 6板→4板（龙版传媒断板，亚盛/百大/爱仕达晋级）。两融数据降级缺失（未编造）。估值 PE_TTM 20.40（10Y 分位 79.6%）。全指价值 20日 +3.24% vs 全指成长 −2.82%。热度未散、轮动加速，风险等级维持中。",
+      t_risk:"风险等级",
+      t_risk_hi:"中",
+      c_upratio:"涨股比",
+      c_limitup:"涨停",
+      c_board:"连板高度",
+      c_pe:"估值 PE分位",
+      c_pmi:"制造业PMI",
+      c_turn:"两市成交",
+      t_sec_bias:"行为偏差热力图",
+      t_cycle:"情绪周期定位（六阶段）",
+      r1:"绝望",
+      r2:"怀疑",
+      r3:"乐观",
+      r4:"狂热",
+      r5:"焦虑",
+      r6:"自满",
+      t_cycle_note:"注：上方「乐观 / 高位轮动」为实时群体心理定位（高位轮动 / 沪强创弱）——09-08 涨跌分布（涨股比 63%、涨停 74、成交 ¥1.96万亿）显示热度延续但动能收敛：连板高度 6板→4板、电子硬件休整、MACD 红柱收窄，情绪处「乐观→自满」过渡带；两融与跌停数据缺失。若 09-09 涨停跌破 50 只且涨股比失守 50%，确认退潮启动；若农业/周期接力失败且电子硬件无第二波，轮动将转为普跌。",
+      t_leg:"严重度（由数据综合映射）",
+      t_bias_note:"注：偏差严重度为基于下方真实数据的模型映射（1=低，5=高），用于呈现群体心理的脆弱点分布，并非对个股的买卖建议。",
+      t_sec_radar:"风险雷达",
+      t_radar_note:"六维风险读数（0–100，由下方真实数据综合映射，越高代表该维度群体脆弱性越强）：拥挤度 59 / 融资 67 / 换手 52 / 广度 45 / 媒体 58 / 估值 87。拥挤度由 58 升至 59（主线一日一换：电子硬件→农业周期，题材轮动加速但梯队厚度仍在）；融资由 70 降至 67（两融数据降级暂缺，杠杆无法确认，按轮动期中性偏谨慎回落）；换手由 54 降至 52（成交 ¥1.96万亿 与前日 1.95万亿 基本持平，量能平稳）；广度由 46 降至 45（涨股比 57%→63% 连续改善，涨跌结构仍偏多，但 449 板块「出货」提示内部分化，脆弱性维持低位）；媒体由 62 降至 58（涨停 90→74 回落、龙头断板，情绪温度自高位小幅降温）；估值 87 持平（PE_TTM 20.39→20.40 微升，10年分位 79.6% 高悬）。整体脆弱性由「估值 + 融资」主导——热度未散、估值高悬，轮动加速期最大的风险是追高换挡主线。",
+      ax_crowd:"拥挤度",
+      ax_margin:"融资",
+      ax_turn:"换手",
+      ax_breadth:"广度",
+      ax_media:"媒体情绪",
+      ax_val:"估值",
+      t_breadth:"市场涨跌分布（2026-09-10 收盘）",
+      b_up:"上涨",
+      b_down:"下跌",
+      b_flat:"平盘",
+      b_limitup:"涨停",
+      b_limitdn:"跌停",
+      b_amt:"成交额",
+      t_breadth_note:"涨股比 57%→63%（3414涨/2025跌/平123）连续第二日改善、涨停 90→74 回落；成交 ¥1.96万亿（5 日均 103.3%、环比 +143亿）平稳。上证 +0.20%（3940.55，四线缠绕）/ 深成 −0.52%（13703.21）/ 创业板 −1.15%（3359.72）沪强创弱；焦炭Ⅱ +5.23% / 农产品加工 +5.02% / 种植业 +4.91%（主力 +68.63亿）领涨，电池 −2.06% / 消费电子 −1.79% / 半导体 −1.30% 领跌——926 板块 672 收红但 449 呈主力「出货」，宽度在、主线散。",
+      t_sec_evidence:"关键证据表",
+      th_metric:"指标",
+      th_read:"真实读数",
+      th_interp:"行为金融解读",
+      ev_market:"一、市场广度与总览",
+      ev_upratio:"涨股比",
+      ev_upratio_i:"由 57% 升至 63%（+6pct），涨 3414 / 跌 2025 / 平 123，广度连续第二日改善、参与度偏多；但板块层面 449/926 呈主力「出货」，个股宽度与板块行为背离——上涨质量存疑",
+      ev_limit:"涨停 / 跌停",
+      ev_limit_i:"涨停 74（90→74 回落 16 只）、跌停家数历史数据源缺失（未编造）；连板高度 6板→4板（龙版传媒断板），亚盛集团/百大集团/爱仕达晋级4板——高度降级但梯队仍在，题材由科技切向农业消费",
+      ev_amount:"两市成交额",
+      ev_amount_i:"量能 ¥1.96万亿（5 日均 103.3%、10 日均 99.6%、20 日均 94.2%，环比 +143亿）——量能平稳、 neither 放量出清 nor 缩量避险，高位轮动期的「温水」量价结构",
+      ev_index:"二、核心指数表现（2026-09-08 收盘）",
+      ev_sh:"上证指数",
+      ev_sh_i:"+0.20%（3940.55，盘中高 3951.32 / 低 3925.72），收于 MA5（3937.37）/ MA20（3936.14）上方、MA10（3947.43）/ MA60（3950.33）下方，四线缠绕方向未选；MACD +1.55（DIF 6.82 / DEA 6.04，红柱自 09-07 的 +2.56 收窄）、RSI6 51.09 中性、KDJ_J 33.97（K/D 死叉雏形）；BOLL 中轨（3936.14）附近；PE_TTM 20.40（10年分位 79.6%）",
+      ev_sz:"深证成指",
+      ev_sz_i:"−0.52%（13703.21），BOLL 中轨（13992.23）得而复失，短线结构先行转弱；60 日维度仍深弱",
+      ev_cyb:"创业板指",
+      ev_cyb_i:"−1.15%（3359.72），回吐 09-07 +3.41% 大部分涨幅——科技反攻未能延续，成长风格内部资金再度流出（电池/消费电子/半导体暗盘齐出货）",
+      ev_sector:"三、板块排行与主线",
+      ev_secup:"领涨行业",
+      ev_secup_i:"焦炭Ⅱ +5.23%（主力 +5.61亿 抢筹）领涨，农产品加工 +5.02%（主力 +49.91亿 抢筹）/ 种植业 +4.91%（主力 +68.63亿 建仓，亚盛集团涨停晋级4板）/ 油服工程 +4.71% / 房地产服务 +4.69% 跟随——农业链 + 周期涨价预期接力，926 板块 672 收红（72.6%）",
+      ev_secdn:"领跌行业",
+      ev_secdn_i:"电池 −2.06%（暗盘 −16.78亿 出货）/ 消费电子 −1.79%（−32.38亿 出货）/ 计算机设备 −1.68%（−27.60亿 出货）/ 半导体 −1.30%——09-07 反攻主力电子硬件集体休整并遭主力兑现，领跌集中于前日强势方向",
+      ev_board:"极端题材",
+      ev_board_i:"连板高度 4板（亚盛集团 / 百大集团 / 爱仕达，由3板晋级）；3板：海欣食品 / 中国出版 / 敦煌种业；2板13只（中百集团 / 桂林旅游 / 华脉科技 / 科森科技等）；涨停共 74 只（90→74）——农业消费接棒科技，轮动极快",
+      ev_flow:"四、资金：连板 / 主力 / 两融",
+      ev_height:"连板高度",
+      ev_height_i:"高度 4板（亚盛集团 / 百大集团 / 爱仕达，2026-09-08 收盘，westock 连板名单口径，共 74 只涨停）；龙版传媒 6板断板退出——高度骤降但梯队厚度仍在，投机资金转向农业（亚盛/敦煌种业/海欣食品）与消费（百大/中百）",
+      ev_main:"主力5日净流入TOP",
+      ev_main_i:"主力5日净流入排名接口降级期（tool_ranking service error），无法更新、未编造；当日可见信号：种植业 主力 +68.63亿（建仓）/ 农产品加工 +49.91亿（抢筹）/ 油服工程 +19.38亿 集中流入涨价链，消费电子暗盘 −32.38亿 / 计算机设备 −27.60亿 流出——主力弃「昨日主线」、抢「涨价接力」",
+      ev_margin:"融资单日变动TOP",
+      ev_margin_i:"两融数据接口降级（service error），融资单日变动与两融余额均暂缺，<b>未编造</b>；高位轮动 + 均线缠绕下杠杆方向无法确认，谨慎对待——若融资盘仍集中于电子硬件，其休整将放大杠杆回撤",
+      ev_hot:"热搜 / 领涨TOP",
+      ev_hot_i:"热点由 TMT 切向农业/周期：亚盛集团 4板（种植业涨停）/ 焦炭Ⅱ +5.23%（云煤能源 +10.10%）/ 农产品加工 +5.02%（*ST广糖 +10.08%）/ 房地产服务 +4.69%（世联行 +10.17%）；与「全指价值 20日 +3.24% vs 全指成长 −2.82%」的价值占优主轴一致",
+      ev_margintotal:"市场两融余额",
+      ev_margintotal_i:"缺口：聚合两融余额与融资单日变动接口降级（service error），已如实标注、未编造；涨跌分布（iFinD 历史日筛选）/ 指数（K线自算，与官方锚点偏差0.0000）/ 板块 / 连板名单均为 2026-09-08 真实数据",
+      ev_macro:"五、核心宏观指标",
+      ev_pmi:"制造业PMI（7月）",
+      ev_pmi_i:"基本面收缩，与「高估值 + 高位轮动」组合共存——情绪热度缺乏基本面增量支撑，轮动加速即分歧信号",
+      ev_capu:"产能利用率（Q2）",
+      ev_capu_i:"实物经济动能走弱，涨价链（农业/周期）的预期缺乏产能端验证",
+      ev_cpi:"CPI（7月）",
+      ev_cpi_i:"低通胀、需求偏弱，农产品涨价的持续性待数据确认",
+      ev_social:"社融（7月）",
+      ev_social_i:"信用需求弱，资金绕道股市 = 流动性驱动特征，高位轮动期流动性预期敏感",
+      ev_m1m2:"M1-M2 剪刀差",
+      ev_m1m2_i:"活钱偏弱，资金空转，典型后周期现象",
+      ev_yield:"10Y 国债收益率",
+      ev_yield_i:"极低无风险利率，既支撑估值也反映增长担忧",
+      ev_lpr:"LPR",
+      ev_lpr_i:"宽松基调未变",
+      t_ev_note:"数据口径：宏观指标多截至 2026-07（月频）或沿用前期值；涨跌分布（iFinD 历史日筛选：涨3414/跌2025）/ 指数与成交（data_kline 自算，与官方 market_statis_technical@09-07 锚点核验偏差 0.0000）/ 板块（sector_daily 当日快照）/ 连板（westock 连板名单 74 只）均为 2026-09-08 真实数据。估值 PE_TTM 20.40 为 09-08 口径（中证全指，滞后一交易日发布，与 09-09 页引用一致）；两融与跌停家数缺失，已如实标注未编造。详见末尾「数据来源与日期口径」。",
+      t_sec_risk:"风险分层",
+      rc1_tag:"红线区 · 估值高悬 + 杠杆不可视",
+      rc1_t:"高位轮动下的估值与杠杆盲区",
+      rc1_d:"PE_TTM 10年分位 79.6% 高悬 + 两融数据缺失（杠杆方向不可视）+ 连板高度骤降（6板→4板）——情绪热度与估值风险错配：热度掩盖估值，一旦退潮估值回归与杠杆踩踏同步发生；涨股比 63% 的偏多宽度不构成安全垫。",
+      rc1_rep:"代表：两融集中且已现暗盘流出的电子硬件（消费电子 −32.38亿 / 计算机设备 −27.60亿）/ 高位连板接力（龙版传媒断板示范）",
+      rc1_cond:"条件框架：不追高换挡主线；对「昨日强势+今日暗盘流出」方向保持警惕；跌停与两融数据恢复前，杠杆暴露只减不加。",
+      rc2_tag:"黄线区 · 轮动加速的博弈",
+      rc2_t:"主线一日一换 vs 梯队厚度",
+      rc2_d:"连板高度 6板→4板但 2板仍有 13 只、涨停 74 只——高度降级、厚度仍在：投机情绪未死、只是换挡；农业（亚盛/敦煌种业/海欣食品）与消费（百大/中百）接棒电子硬件。轮动加速期 chase 容易两头挨打。",
+      rc2_rep:"代表：农业链（种植业/农产品加工/渔业）/ 周期涨价（焦炭Ⅱ/油服工程）/ 消费低位（百货）",
+      rc2_cond:"条件框架：轮动期只做观察跟踪，不追当日涨幅；确认信号 = 新主线连续 2 日主力净流入且高度重新向上；若接力失败（涨停跌破 50），转入防守。",
+      rc3_tag:"绿线区 · 涨价链主力建仓",
+      rc3_t:"农业 / 周期涨价链获主力真实建仓",
+      rc3_d:"种植业 主力 +68.63亿（建仓）、农产品加工 +49.91亿（抢筹）、油服工程 +19.38亿（建仓）、焦炭Ⅱ +5.61亿（抢筹）——主力在涨价预期方向真实投放筹码，与 20 日维度价值占优（+3.24% vs −2.82%）的中期主轴一致。",
+      rc3_rep:"代表：种植业（亚盛集团 4板）/ 农产品加工 / 焦炭Ⅱ / 油服工程 / 房地产服务",
+      rc3_cond:"条件框架：仅作结构跟踪，涨停潮次日不追高；确认信号 = 该方向主力净流入延续且板块换手不萎缩；若 CPI/产业数据证伪涨价预期，及时修正。",
+      t_sec_outlook:"下个交易日（09-09 周三）展望",
+      o_logic:"研判逻辑（基于 09-08 收盘 + 群体心理定位）",
+      o_logic_text:"由 09-08 的「高位轮动 / 沪强创弱」延伸：热度延续（涨股比 63%、涨停 74）但动能收敛（连板高度骤降、MACD 红柱收窄、KDJ 死叉雏形、电子硬件暗盘出货）——轮动加速期向「分化」演化的概率在上升。基于此推演 09-09 的板块方向与交易规则（<b>不涉及具体个股推荐</b>）。",
+      o1_tag:"涨价链接力方向（观察）",
+      o1_t:"种植业 / 农产品加工 / 焦炭Ⅱ / 油服工程",
+      o1_d:"09-08 获主力真实建仓/抢筹的方向（种植业 +68.63亿、农产品加工 +49.91亿），若 09-09 延续净流入，则轮动主线确认、情绪以「换挡」而非「退潮」消化。",
+      o1_cond:"注意：农业/周期题材对消息面敏感、持续性历史偏弱；确认标准 = 连续 2 日主力净流入 + 高度重新向上；若一日游，轮动将直接转入退潮。",
+      o2_tag:"电子硬件兑现方向（回避）",
+      o2_t:"消费电子 / 计算机设备 / 电池 / 高位连板",
+      o2_d:"09-07 反攻主力在 09-08 遭主力兑现（消费电子暗盘 −32.38亿、计算机设备 −27.60亿、电池 −16.78亿），创业板 −1.15% 同步回吐——若两融盘仍滞留其中，休整将放大为回撤。",
+      o2_cond:"注意：暗盘连续流出方向不做左侧承接；等待暗盘转正 + 缩量止跌；高位连板接力（龙头断板后）胜率显著下降。",
+      o3_tag:"退潮确认信号（警戒）",
+      o3_t:"涨停跌破 50 / 涨股比失守 50% / 高度不再",
+      o3_d:"09-08 涨停 74（90→74 连续回落）、连板高度 4 板（骤降）——若 09-09 涨停跌破 50 只或涨股比失守 50%，则「高位轮动」确认转为「退潮」，届时压缩风险敞口。",
+      o3_cond:"注意：轮动转退潮的过程通常伴随创业板补跌带动指数走弱；确认前维持中性仓位，确认后执行防守纪律；右侧信号 = 缩量企稳 + 新主线高度重建。",
+      o_rules_t:"交易规则（09-09）",
+      o_r1:"<b>仓位</b>：高位轮动期维持中性仓位（≤5 成），不加杠杆；涨股比 63% 的宽度不构成加仓理由——449 板块「出货」提示上涨质量存疑。",
+      o_r2:"<b>退潮确认</b>：涨停跌破 50 只或涨股比失守 50%，视为轮动转退潮，压缩至防守仓位；连板高度若重新向上（新龙头 5板+），视为情绪换挡成功。",
+      o_r3:"<b>主线参与</b>：涨价链（农业/周期）仅作结构观察（主力净流入是否延续），涨停潮次日不追；电子硬件等暗盘流出方向回避，等待暗盘转正。",
+      o_r4:"<b>回避清单</b>：暗盘连续流出的电子硬件高位方向、断板龙头（龙版传媒模式）、两融集中且杠杆不可视的方向、一日游题材追高。",
+      o_r5:"<b>风控</b>：均线缠绕期不预判方向，以 BOLL 中轨（上证 3936）为多空分界；跌破中轨且涨停续降，执行防守；两融数据恢复前不加重杠杆。",
+      o_compliance:"<b>合规说明：</b>本展望仅给出板块方向与交易规则，不涉及具体个股推荐；群体心理定位与板块推断基于 2026-09-08 真实行情数据，市场有风险，决策须独立。",
+      t_sec_source:"数据来源与日期口径",
+      s_breadth:"涨跌分布 / 总览",
+      s_breadth_v:"iFinD search_securities 历史日筛选（09-08 涨 3414 / 跌 2025，平 = 总数−涨−跌）；2026-09-08 收盘（westock updown 快照当日缺，回补期替代源）",
+      s_portrait:"市场画像 summary",
+      s_portrait_v:"回补组装：iFinD 历史日筛选 + data_kline 自算 + sector_daily 当日快照；2026-09-08（涨股比 63%、高位轮动）",
+      s_index:"指数表现",
+      s_index_v:"westock data_kline 260 根自算（MA/BOLL/MACD/RSI/KDJ 与官方 market_statis_technical@09-07 锚点核验偏差 0.0000）；2026-09-08 收盘",
+      s_sector:"板块排行 / 资金流",
+      s_sector_v:"westock · data_sector 当日快照（quant/sector_daily/2026-09-08.json）；2026-09-08（926 板块，672 收红、449 出货）",
+      s_hot:"热搜股票",
+      s_hot_v:"westock · 领涨板块+涨停名单综合（data_hot 历史缺，回补期以板块领涨股替代）；2026-09-08（农业/周期/地产服务居前）",
+      s_macro:"核心宏观",
+      s_macro_v:"westock · data_macro 前期复核（月频）；PMI/产能/社融为前期值，CPI/M1-M2/10Y/LPR 沿用前期",
+      s_margin:"两融（个股）",
+      s_margin_v:"westock · 两融接口降级（service error）+ 历史回补窗口无快照，数据暂缺，未编造",
+      s_main:"主力5日净流入",
+      s_main_v:"westock · tool_ranking 降级期（service error）+ 历史快照缺，无法回补；当日主力行为由 sector_daily 板块资金（主力/散户/暗盘）呈现",
+      s_board:"连板高度",
+      s_board_v:"westock · tool_ranking 连板名单快照（quant/limitup/2026-09-08.json，涨停共 74 只）；2026-09-08（最高 4板：亚盛集团/百大集团/爱仕达）",
+      s_gap:"数据缺口",
+      s_gap_v:"两融余额、融资单日变动、主力5日排名、跌停家数在 09-08 回补窗口无真实数据源，均已如实标注、未编造；估值 PE_TTM 20.40 为 09-08 口径（中证全指，滞后一交易日发布）；涨跌分布为 iFinD 历史日筛选口径（与 westock updown 口径或有细微差异）",
+      t_src_note:"时间口径：所有时点按北京时间。宏观为月频 / 季频，与日频行情不可直接对齐，已分别标注。涨跌分布 / 指数 / 板块 / 连板名单均为 2026-09-08 当日真实数据（回补期：广度来自 iFinD 历史筛选、指数技术来自 K 线自算并经官方锚点核验）；两融、主力5日、跌停家数暂缺，均已标注。",
+      disc1:"免责声明：以上内容基于公开数据和量化分析，仅供参考，不构成投资建议。市场有风险，投资需谨慎。任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往表现不预示未来收益。",
+      disc2:"本研判为「群体心理 / 条件框架」分析，非买卖指令；风险读数与偏差严重度为模型综合映射，须与价格结构、估值、资金流向交叉验证，不可单独作为交易依据。",
+      t_foot:"群体心理风险雷达 · 由 westock / iFinD 官方行情数据生成 · 仅供研究参考",
+    },
+    en:{
+      t_kicker:"A-share · Crowd Behavioral Finance",
+      t_title:"Crowd Psychology Risk Radar",
+      t_sub:"Behavioral bias · crowding · margin · heat — an integrated risk radar. Built on real queries via westock official market data.",
+      t_date:"Data as of",
+      t_path:"Path: Crowd Psychology Analysis (Path C)",
+      t_tldr:"Bottom Line",
+      t_headline:"Headline",
+      t_headline_sub:"2026-09-08 · Close",
+      hk_stage:"Stage",
+      hv_stage:"<b>High-level rotation / SH strong, ChiNext weak</b> (09-08)",
+      hk_upratio:"Up-ratio",
+      hv_upratio:"<b>63%</b> (prev 09-07 57% · ↑ 6pct, breadth stays positive)",
+      hk_lim:"Limit-up / -down",
+      hv_lim:"<b>74</b> / <b>—</b> (limit-up eases from 90, limit-down data missing)",
+      hk_amt:"Turnover",
+      hv_amt:"<b>¥1.96tn</b> (slightly expanding +¥14.3bn, 103.3% of 5d avg)",
+      hk_cycle:"Sentiment cycle",
+      hv_cycle:"<b>High-level rotation / SH strong, ChiNext weak</b>",
+      hk_risk:"Risk level",
+      hv_risk:"<b class=\"hl-risk\">Medium</b> (unchanged)",
+      hk_flag:"Key flag",
+      hv_flag:"Up-ratio 57%→<b>63%</b> stays positive but the structure swung hard: Monday's electronics leaders all paused (Semis −1.30%, Consumer Electronics −1.79%, Batteries −2.06%) as capital rotated into the agriculture chain (Planting +4.91%) and cyclicals (CokeⅡ +5.23%); ChiNext −1.15% (giving back Monday's +3.41%), SSE +0.20% — SH strong, growth weak; ladder height collapsed 6→4 boards (Longban Media broke) — <b>heat intact, rotation accelerating</b>; margin & limit-down data missing, not fabricated.",
+      tk1:"Stage",
+      tv1:"A-shares 09-08 shift from 09-07's 'tech counterattack / broad recovery' into '<b>high-level rotation / SH strong, ChiNext weak</b>': up-ratio rises to <b>63%</b> (3414 up / 2025 down / 123 flat, +6pct from 57%), limit-up <b>74</b> (down 16 from 90), limit-down data missing; SSE <b>+0.20%</b> (3940.55, intraday high 3951.32) closes above MA5 (3937.37) / MA20 (3936.14), below MA10 (3947.43) / MA60 (3950.33) — MAs intertwined; SZ <b>−0.52%</b> (13703.21), ChiNext <b>−1.15%</b> (3359.72, giving back Monday's +3.41%). Key difference vs 09-07: <b>index divergence</b> — SH carried by cyclicals and agriculture while the electronics hardware that led Monday's counterattack rested; turnover ¥1.96tn (103.3% of 5d avg, +¥14.3bn) steady. Sentiment still elevated, but <b>accelerating rotation itself is a divergence signal after overheating</b>.",
+      tk2:"Breadth stays positive",
+      tv2:"Up-ratio <b>63%</b> (prev 57%, ↑6pct) · limit-up <b>74</b> (90→74) · turnover <b>¥1.96tn</b> (103.3% of 5d avg, 99.6% of 10d, 94.2% of 20d, +¥14.3bn) — breadth improves a second day; but sector structure reveals divergence: 672 of 926 sectors green (72.6%) while 449 sectors show main-capital 'distribution' — gains led by agriculture (Planting main +¥6.86bn accumulation / Farm-Product Processing +¥4.99bn offensive buying) and cyclicals (CokeⅡ offensive buying), <b>breadth yes, clear main line no</b>.",
+      tk3:"Technicals intertwined, no breakdown",
+      tv3:"SSE <b>+0.20%</b> (3940.55) closes above MA5 (3937.37) / MA20 (3936.14), below MA10 (3947.43) / MA60 (3950.33) — <b>four MAs intertwined, direction unresolved</b>; near BOLL mid-band (3936.14 of 4001.07/3936.14/3871.21); MACD <b>+1.55</b> (DIF 6.82 / DEA 6.04, histogram narrowing from 09-07's +2.56, momentum fading); RSI6 <b>51.09</b> (neutral), KDJ_J 33.97 (K 50.73 crossing below D 59.10, nascent dead-cross) — <b>momentum converging but no breakdown</b>: ChiNext −1.15% pulls back, SZ lost the BOLL mid-band (13992.23) — short-term structure weakening ahead of the SH side.",
+      tk4:"Sector structure",
+      tv4:"<b>CokeⅡ +5.23%</b> (main +¥0.56bn, offensive buying) leads, <b>Farm-Product Processing +5.02%</b> (main +¥4.99bn offensive buying) / <b>Planting +4.91%</b> (main +¥6.86bn accumulation, Yasheng Group limit-up to 4 boards) / Oilfield Services +4.71% / Real-Estate Services +4.69% follow — <b>agriculture chain + cyclicals take the baton, low-price and price-hike expectations become the shelter</b>; <b>Batteries −2.06%</b> (dark −¥1.68bn distribution) / <b>Consumer Electronics −1.79%</b> (−¥3.24bn distribution) / Computer Equipment −1.68% / Semiconductors −1.30% — Monday's electronics counterattack pauses across the board, 449 of 926 sectors 'distributing'.",
+      tk5:"Limit-up ladder",
+      tv5:"Ladder height collapses from 09-07's 6 boards (Longban Media) to <b>4 boards</b> (Longban Media broke), <b>Yasheng Group / Baida Group / Aishida</b> advance 3→4 boards, 3-board Haixin Food / China Publishing / Dunhuang Seed, 13 two-board names (Zhongbai Group / Guilin Tourism / Huamai Tech / Kesun Tech etc.); 74 limit-ups total (90→74) — <b>leader broke, height down, but the ladder's base remains</b>; agriculture (Yasheng/Dunhuang/Haixin) and consumer (Baida/Zhongbai) take over from tech, rotation extremely fast.",
+      tk6:"Capital: margin missing",
+      tv6:"The margin interface is degraded (service error), <b>not fabricated</b>; from sector flows: Planting main +¥6.86bn (accumulation), Farm-Product Processing +¥4.99bn (offensive buying), Oilfield Services +¥1.94bn — <b>mains genuinely building in the price-hike chain</b>; while Consumer Electronics dark −¥3.24bn, Computer Equipment −¥2.76bn, Batteries −¥1.68bn — <b>Monday's electronics leaders are being distributed</b>; leverage direction unconfirmable (margin missing), stay cautious in a high-level rotation.",
+      tk7:"Valuation / style",
+      tv7:"PE_TTM <b>20.40</b> (10Y percentile <b>79.6%</b>, 5Y 79.68%, 3Y 66.14%; 09-08 basis, up slightly from 09-07's 20.39); style: HS300 5-day <b>+0.54%</b> vs CSI1000 5-day <b>+0.86%</b> — small caps slightly ahead; on 20 days All-Share Value <b>+3.24%</b> vs All-Share Growth <b>−2.82%</b> (6.06pct gap) — <b>the value-over-growth medium-term axis is intact</b>; the agriculture/cyclical relay is exactly the defensive-value logic continuing; ChiNext −1.15% gives back Monday's gain, growth diverging again internally.",
+      tk8:"Sentiment cycle",
+      tv8:"From 09-07's 'tech counterattack / broad recovery' into '<b>high-level rotation / SH strong, ChiNext weak</b>': up-ratio 63% stays positive, 74 limit-ups keep the heat, but <b>ladder 6→4 boards, electronics resting, agriculture/cyclicals relaying</b> — sentiment not ebbing, structure shifting gears; MACD histogram narrowing + nascent KDJ dead-cross flag fading momentum; historically, main lines changing daily in a high-level rotation is a classic top-zone pattern — use 'limit-ups below 50 + up-ratio losing 50%' as the ebbing confirmation line; risk stays <b>Medium</b>.",
+      t_tldr_text:"A-shares 09-08 = 'high-level rotation / SH strong, ChiNext weak': up-ratio 57%→63% (3414 up / 2025 down / 123 flat), limit-up 90→74, limit-down data missing; SSE +0.20% (3940.55) above MA5/20, below MA10/60 with MAs intertwined, MACD histogram narrowing (+1.55), nascent KDJ dead-cross; SZ −0.52% (13703.21), ChiNext −1.15% (3359.72, giving back +3.41%). Turnover ¥1.96tn (103.3% of 5d avg, +¥14.3bn) steady. CokeⅡ +5.23% (offensive buying) / Farm-Product Processing +5.02% (main +¥4.99bn) / Planting +4.91% (main +¥6.86bn, Yasheng to 4 boards) lead — agriculture + cyclicals relay; Batteries −2.06% (distribution) / Consumer Electronics −1.79% (−¥3.24bn) / Semis −1.30% — Monday's electronics leaders all pause; 672 of 926 sectors green but 449 distributing. Ladder 6→4 boards (Longban Media broke; Yasheng/Baida/Aishida advance). Margin data missing (not fabricated). PE_TTM 20.40 (10Y pctile 79.6%). All-Share Value 20d +3.24% vs Growth −2.82%. Heat intact, rotation accelerating; risk stays Medium.",
+      t_risk:"Risk level",
+      t_risk_hi:"Medium",
+      c_upratio:"Up-ratio",
+      c_limitup:"Limit-up",
+      c_board:"Ladder height",
+      c_pe:"PE pctile",
+      c_pmi:"Mfg PMI",
+      c_turn:"Turnover",
+      t_sec_bias:"Behavioral Bias Heatmap",
+      t_cycle:"Sentiment Cycle (6-stage)",
+      r1:"Despair",
+      r2:"Doubt",
+      r3:"Optimism",
+      r4:"Euphoria",
+      r5:"Anxiety",
+      r6:"Complacency",
+      t_cycle_note:"Note: the 'Optimism / high-level rotation' tag above is the live crowd-psychology position (high-level rotation / SH strong, ChiNext weak) — 09-08 breadth (up-ratio 63%, limit-up 74, turnover ¥1.96tn) shows heat continuing while momentum converges: ladder 6→4 boards, electronics resting, MACD histogram narrowing — the mood sits in the 'Optimism→Complacency' transition band; margin & limit-down data missing. If 09-09 sees limit-ups below 50 and up-ratio losing 50%, the ebb is confirmed; if the agriculture/cyclical relay fails and electronics find no second wave, rotation turns into a broad decline.",
+      t_leg:"Severity (model-mapped)",
+      t_bias_note:"Note: bias severity is a model mapping from the real data below (1=low, 5=high), used to show where crowd psychology is fragile — not a buy/sell recommendation for any stock.",
+      t_sec_radar:"Risk Radar",
+      t_radar_note:"Six-dimension risk readings (0–100, mapped from the real data below; higher = greater crowd fragility on that axis): crowding 59 / margin 67 / turnover 52 / breadth 45 / media 58 / valuation 87. Crowding 58→59 (main line changes daily: electronics→agriculture/cyclicals, rotation accelerating though the ladder base remains); margin 70→67 (margin data degraded and missing, leverage unconfirmable, eased to neutral-cautious for a rotation phase); turnover 54→52 (turnover ¥1.96tn roughly flat vs 1.95tn); breadth 46→45 (up-ratio 57%→63% improving a second day, structure still positive, yet 449 sectors 'distributing' hints at internal divergence — fragility stays low); media 62→58 (limit-ups 90→74, leader broke — temperature easing from the high); valuation 87 flat (PE_TTM 20.39→20.40, 10Y percentile 79.6% elevated). Fragility is led by 'valuation + margin' — heat intact with valuation stretched; the biggest risk in an accelerating rotation is chasing the shifting main line at the top.",
+      ax_crowd:"Crowding",
+      ax_margin:"Margin",
+      ax_turn:"Turnover",
+      ax_breadth:"Breadth",
+      ax_media:"Media mood",
+      ax_val:"Valuation",
+      t_breadth:"Market breadth (2026-09-10 close)",
+      b_up:"Up",
+      b_down:"Down",
+      b_flat:"Flat",
+      b_limitup:"Limit-up",
+      b_limitdn:"Limit-down",
+      b_amt:"Turnover",
+      t_breadth_note:"Up-ratio 57%→63% (3414 up / 2025 down / 123 flat) improves a second day, limit-ups 90→74 easing; turnover ¥1.96tn (103.3% of 5d avg, +¥14.3bn) steady. SSE +0.20% (3940.55, MAs intertwined) / SZ −0.52% (13703.21) / ChiNext −1.15% (3359.72) — SH strong, growth weak; CokeⅡ +5.23% / Farm-Product Processing +5.02% / Planting +4.91% (main +¥6.86bn) lead, Batteries −2.06% / Consumer Electronics −1.79% / Semis −1.30% lag — 672 of 926 sectors green while 449 'distribute': breadth yes, quality questionable.",
+      t_sec_evidence:"Key Evidence",
+      th_metric:"Metric",
+      th_read:"Real reading",
+      th_interp:"Behavioral read",
+      ev_market:"I. Market breadth & overview",
+      ev_upratio:"Up-ratio",
+      ev_upratio_i:"57%→63% (+6pct), 3414 up / 2025 down / 123 flat — breadth improves a second day, participation positive; yet 449/926 sectors show main-capital 'distribution' — stock breadth diverges from sector behaviour, quality of the advance is in question",
+      ev_limit:"Limit-up / -down",
+      ev_limit_i:"Limit-up 74 (90→74, −16), limit-down count missing for this historical window (not fabricated); ladder height 6→4 boards (Longban Media broke), Yasheng / Baida / Aishida advance to 4 — height down but base intact, themes rotating from tech to agriculture/consumer",
+      ev_amount:"Turnover",
+      ev_amount_i:"¥1.96tn (103.3% of 5d avg, 99.6% of 10d, 94.2% of 20d, +¥14.3bn) — volume steady, neither expanding wash-out nor shrinking shelter: the 'lukewarm' volume-price texture of a high-level rotation",
+      ev_index:"II. Core indices (2026-09-08 close)",
+      ev_sh:"SSE Composite",
+      ev_sh_i:"+0.20% (3940.55, high 3951.32 / low 3925.72), above MA5 (3937.37) / MA20 (3936.14), below MA10 (3947.43) / MA60 (3950.33) — four MAs intertwined, direction unresolved; MACD +1.55 (DIF 6.82 / DEA 6.04, histogram narrowing from +2.56), RSI6 51.09 neutral, KDJ_J 33.97 (K/D nascent dead-cross); near BOLL mid-band (3936.14); PE_TTM 20.40 (10Y pctile 79.6%)",
+      ev_sz:"SZ Component",
+      ev_sz_i:"−0.52% (13703.21), lost the BOLL mid-band (13992.23) — short-term structure weakening first; still deeply weak on 60 days",
+      ev_cyb:"ChiNext",
+      ev_cyb_i:"−1.15% (3359.72), giving back most of 09-07's +3.41% — the tech counterattack failed to extend, growth-style capital flowing out again (Batteries / Consumer Electronics / Semis dark flows all negative)",
+      ev_sector:"III. Sector ranking & main line",
+      ev_secup:"Leading sectors",
+      ev_secup_i:"CokeⅡ +5.23% (main +¥0.56bn offensive buying) leads, Farm-Product Processing +5.02% (main +¥4.99bn offensive buying) / Planting +4.91% (main +¥6.86bn accumulation, Yasheng limit-up to 4 boards) / Oilfield Services +4.71% / Real-Estate Services +4.69% follow — agriculture chain + cyclical price-hike expectations relay; 672 of 926 sectors green (72.6%)",
+      ev_secdn:"Lagging sectors",
+      ev_secdn_i:"Batteries −2.06% (dark −¥1.68bn distribution) / Consumer Electronics −1.79% (−¥3.24bn distribution) / Computer Equipment −1.68% (−¥2.76bn distribution) / Semiconductors −1.30% — Monday's electronics leaders pause collectively and are being distributed; laggards cluster in yesterday's strength",
+      ev_board:"Extreme themes",
+      ev_board_i:"Ladder height 4 boards (Yasheng Group / Baida Group / Aishida, advanced from 3); 3-board Haixin Food / China Publishing / Dunhuang Seed; 13 two-board names (Zhongbai / Guilin Tourism / Huamai / Kesun etc.); 74 limit-ups total (90→74) — agriculture & consumer take over from tech, rotation extremely fast",
+      ev_flow:"IV. Capital: ladder / main / margin",
+      ev_height:"Ladder height",
+      ev_height_i:"Height 4 boards (Yasheng / Baida / Aishida, 2026-09-08 close, westock ladder-list basis, 74 limit-ups total); Longban Media's 6-board run broke — height collapsed but the base holds; speculative money shifts to agriculture (Yasheng/Dunhuang/Haixin) and consumer (Baida/Zhongbai)",
+      ev_main:"Main capital 5d net inflow TOP",
+      ev_main_i:"Main-5d ranking interface degraded (tool_ranking service error) — cannot update, not fabricated; visible same-day signals: Planting main +¥6.86bn (accumulation) / Farm-Product Processing +¥4.99bn (offensive buying) / Oilfield Services +¥1.94bn concentrated into the price-hike chain; Consumer Electronics dark −¥3.24bn / Computer Equipment −¥2.76bn out — mains abandon 'yesterday's line' and grab the 'price-hike relay'",
+      ev_margin:"Daily margin change TOP",
+      ev_margin_i:"The margin interface is degraded (service error); daily margin change and aggregate balance both unavailable — <b>not fabricated</b>; with high-level rotation + intertwined MAs, the leverage direction is unconfirmable — if margin remains concentrated in electronics hardware, its pause would amplify the leveraged drawdown",
+      ev_hot:"Hot / top gainers",
+      ev_hot_i:"Hotspots rotate from TMT to agriculture/cyclicals: Yasheng Group 4 boards (Planting limit-up) / CokeⅡ +5.23% (Yunmei Energy +10.10%) / Farm-Product Processing +5.02% (*ST Guangtang +10.08%) / Real-Estate Services +4.69% (Shilianhang +10.17%); consistent with the value-over-growth axis (All-Share Value 20d +3.24% vs Growth −2.82%)",
+      ev_margintotal:"Aggregate margin balance",
+      ev_margintotal_i:"Gap: aggregate margin balance and daily margin change interfaces degraded (service error) — flagged honestly, not fabricated; breadth (iFinD historical-day screen) / indices (kline self-computed, 0.0000 deviation vs official anchor) / sectors / ladder list are all real 2026-09-08 data",
+      ev_macro:"V. Core macro indicators",
+      ev_pmi:"Mfg PMI (Jul)",
+      ev_pmi_i:"Fundamentals contract while 'high valuation + high-level rotation' coexist — sentiment heat lacks a fundamental catalyst; accelerating rotation = divergence signal",
+      ev_capu:"Capacity utilisation (Q2)",
+      ev_capu_i:"Real-economy momentum weakens; the price-hike chain's (agriculture/cyclicals) expectations lack capacity-side verification",
+      ev_cpi:"CPI (Jul)",
+      ev_cpi_i:"Low inflation, weak demand; the durability of agricultural price gains awaits data confirmation",
+      ev_social:"Social financing (Jul)",
+      ev_social_i:"Weak credit demand, capital detours into stocks = liquidity-driven; in a high-level rotation, liquidity expectations are sensitive",
+      ev_m1m2:"M1-M2 spread",
+      ev_m1m2_i:"Active money weak, capital idles, typical late-cycle phenomenon",
+      ev_yield:"10Y gov bond yield",
+      ev_yield_i:"Extremely low risk-free rate, supports valuation yet reflects growth worry",
+      ev_lpr:"LPR",
+      ev_lpr_i:"Accommodative stance unchanged",
+      t_ev_note:"Data basis: macro indicators are monthly (to 2026-07) or carried forward; breadth (iFinD historical-day screen: 3414 up / 2025 down) / indices & turnover (data_kline self-computed, 0.0000 deviation vs official market_statis_technical@09-07 anchor) / sectors (sector_daily same-day snapshot) / ladder (westock list, 74 limit-ups) are real 2026-09-08 data. Valuation PE_TTM 20.40 is 09-08 basis (CSI All-Share, published with a one-session lag, consistent with the 09-09 page citation); margin & limit-down count missing — flagged, not fabricated. See 'Sources and date basis' at the end.",
+      t_sec_risk:"Risk Stratification",
+      rc1_tag:"Red zone · Stretched valuation + invisible leverage",
+      rc1_t:"Valuation and leverage blind spots in a high-level rotation",
+      rc1_d:"PE_TTM 10Y percentile 79.6% elevated + margin data missing (leverage invisible) + ladder height collapsing (6→4 boards) — sentiment heat and valuation risk are mismatched: heat masks valuation, and once the ebb starts, mean-reversion and leveraged unwinding hit together; the positive 63% up-ratio is no safety cushion.",
+      rc1_rep:"Represented by: electronics hardware with dark-flow outflows (Consumer Electronics −¥3.24bn / Computer Equipment −¥2.76bn) / high-ladder relay (Longban Media's break as the showcase)",
+      rc1_cond:"Condition frame: do not chase the shifting main line at highs; stay wary of 'yesterday strong + today dark outflow' directions; until limit-down and margin data resume, leverage exposure only shrinks.",
+      rc2_tag:"Amber zone · Accelerating rotation",
+      rc2_t:"Main line changing daily vs ladder depth",
+      rc2_d:"Ladder height 6→4 boards but 13 two-board names and 74 limit-ups remain — height down, depth intact: speculative sentiment is not dead, just shifting gears; agriculture (Yasheng/Dunhuang/Haixin) and consumer (Baida/Zhongbai) take over from electronics. In an accelerating rotation, chasing both ways gets whipsawed.",
+      rc2_rep:"Represented by: agriculture chain (Planting / Farm-Product Processing / Fisheries) / cyclical price-hike (CokeⅡ / Oilfield Services) / low-position consumer (dept stores)",
+      rc2_cond:"Condition frame: rotation phases are for observation only, no chasing the day's gains; confirmation = the new line keeps main inflows 2 straight days and height rebuilds upward; if the relay fails (limit-ups below 50), switch to defence.",
+      rc3_tag:"Green zone · Main capital building in the price-hike chain",
+      rc3_t:"Agriculture / cyclical price-hike chain gets real accumulation",
+      rc3_d:"Planting main +¥6.86bn (accumulation), Farm-Product Processing +¥4.99bn (offensive buying), Oilfield Services +¥1.94bn (accumulation), CokeⅡ +¥0.56bn (offensive buying) — mains genuinely deploying into price-hike expectations, consistent with the 20-day value-over-growth axis (+3.24% vs −2.82%).",
+      rc3_rep:"Represented by: Planting (Yasheng 4 boards) / Farm-Product Processing / CokeⅡ / Oilfield Services / Real-Estate Services",
+      rc3_cond:"Condition frame: structure tracking only, no chasing the day after a limit-up wave; confirmation = sustained main inflows and unshrinking turnover; if CPI/industry data falsify the price-hike expectation, correct promptly.",
+      t_sec_outlook:"Next session (09-09 Wed) outlook",
+      o_logic:"Reasoning (based on the 09-08 close + crowd-psychology position)",
+      o_logic_text:"Extending 09-08's 'high-level rotation / SH strong, ChiNext weak': heat intact (up-ratio 63%, 74 limit-ups) but momentum converging (ladder collapse, MACD histogram narrowing, nascent KDJ dead-cross, dark outflows in electronics) — the odds of the rotation evolving into 'divergence' are rising. Sector directions and trading rules for 09-09 follow (<b>no individual stock recommendations</b>).",
+      o1_tag:"Price-hike relay (watch)",
+      o1_t:"Planting / Farm-Product Processing / CokeⅡ / Oilfield Services",
+      o1_d:"The direction with genuine main accumulation/offensive buying on 09-08 (Planting +¥6.86bn, Farm-Product Processing +¥4.99bn); if 09-09 keeps the inflows, the rotation main line is confirmed and sentiment digests via 'gear shift' rather than 'ebb'.",
+      o1_cond:"Caution: agriculture/cyclical themes are news-sensitive and historically short-lived; confirmation = 2 straight days of main inflows + height rebuilding; if it's a one-day wonder, the rotation turns straight into an ebb.",
+      o2_tag:"Electronics distribution (avoid)",
+      o2_t:"Consumer Electronics / Computer Equipment / Batteries / high-ladder names",
+      o2_d:"Monday's counterattack leaders were distributed on 09-08 (Consumer Electronics dark −¥3.24bn, Computer Equipment −¥2.76bn, Batteries −¥1.68bn) as ChiNext −1.15% gave back — if margin positions remain trapped there, the pause amplifies into a drawdown.",
+      o2_cond:"Caution: no left-side buying into directions with consecutive dark outflows; wait for dark flow to turn positive + shrinking-volume stabilisation; post-break ladder relay win-rates drop sharply.",
+      o3_tag:"Ebbing confirmation signals (alert)",
+      o3_t:"Limit-ups below 50 / up-ratio losing 50% / no height",
+      o3_d:"09-08 limit-ups 74 (falling from 90), ladder 4 boards (collapsed) — if 09-09 sees limit-ups below 50 or up-ratio losing 50%, the 'high-level rotation' confirms into an 'ebb'; cut risk exposure then.",
+      o3_cond:"Caution: rotation-to-ebb transitions usually come with ChiNext dragging the indices down; hold a neutral book until confirmed, defensive discipline after; right-side signal = shrinking-volume stabilisation + a new main line rebuilding height.",
+      o_rules_t:"Trading rules (09-09)",
+      o_r1:"<b>Position</b>: keep a neutral book (≤50%) in the rotation, no leverage; a 63% up-ratio is no reason to add — 449 'distributing' sectors question the quality of the advance.",
+      o_r2:"<b>Ebbing confirmation</b>: limit-ups below 50 or up-ratio losing 50% = rotation turns to ebb, cut to defensive; ladder height rebuilding upward (a new 5-board leader) = gear shift succeeded.",
+      o_r3:"<b>Main-line participation</b>: price-hike chain as structure observation only (do main inflows persist?), no chasing the day after limit-up waves; avoid dark-outflow electronics, wait for the dark flow to turn positive.",
+      o_r4:"<b>Avoid list</b>: electronics hardware with consecutive dark outflows, broken ladder leaders (the Longban Media pattern), margin-concentrated directions with invisible leverage, one-day-wonder chases.",
+      o_r5:"<b>Risk control</b>: with MAs intertwined, do not pre-judge direction — use the BOLL mid-band (SSE 3936) as the bull/bear line; below it with limit-ups still fading, execute defence; no added leverage until margin data resumes.",
+      o_compliance:"<b>Compliance:</b> this outlook gives sector directions and trading rules only, with no individual stock recommendations; the crowd-psychology position and sector inferences are based on real 2026-09-08 market data. Markets carry risk; decisions must be independent.",
+      t_sec_source:"Sources & date basis",
+      s_breadth:"Breadth / overview",
+      s_breadth_v:"iFinD search_securities historical-day screen (09-08: 3414 up / 2025 down, flat = total − up − down); 2026-09-08 close (same-day westock updown snapshot missing, backfill fallback)",
+      s_portrait:"Market portrait summary",
+      s_portrait_v:"Backfill assembly: iFinD historical-day screen + data_kline self-computed + sector_daily same-day snapshot; 2026-09-08 (up-ratio 63%, high-level rotation)",
+      s_index:"Index performance",
+      s_index_v:"westock data_kline 260 bars self-computed (MA/BOLL/MACD/RSI/KDJ cross-checked against the official market_statis_technical@09-07 anchor with 0.0000 deviation); 2026-09-08 close",
+      s_sector:"Sector ranking / flows",
+      s_sector_v:"westock · data_sector same-day snapshot (quant/sector_daily/2026-09-08.json); 2026-09-08 (926 sectors, 672 green, 449 distributing)",
+      s_hot:"Hot stocks",
+      s_hot_v:"westock · leading sectors + limit-up list composite (data_hot missing historically, backfill uses sector leaders); 2026-09-08 (agriculture / cyclicals / real-estate services on top)",
+      s_macro:"Core macro",
+      s_macro_v:"westock · data_macro carried forward (monthly); PMI/capacity/social-financing are prior values; CPI/M1-M2/10Y/LPR carried forward",
+      s_margin:"Margin (stocks)",
+      s_margin_v:"westock · margin interface degraded (service error) + no snapshot in the backfill window, data missing, not fabricated",
+      s_main:"Main capital 5d net inflow",
+      s_main_v:"westock · tool_ranking degraded (service error) + no historical snapshot, cannot backfill; same-day main behaviour shown via sector_daily sector flows (main/retail/dark)",
+      s_board:"Ladder height",
+      s_board_v:"westock · tool_ranking ladder-list snapshot (quant/limitup/2026-09-08.json, 74 limit-ups); 2026-09-08 (top 4 boards: Yasheng / Baida / Aishida)",
+      s_gap:"Data gaps",
+      s_gap_v:"Margin balance, daily margin change, main-5d ranking and limit-down count have no real data source in the 09-08 backfill window — all flagged, not fabricated; valuation PE_TTM 20.40 is 09-08 basis (CSI All-Share, one-session publication lag); breadth is the iFinD historical-screen basis (minor deviation from westock updown possible)",
+      t_src_note:"Timing: all timestamps are Beijing time. Macro data are monthly/quarterly and cannot be aligned directly with daily quotes; each is flagged. Breadth / indices / sectors / ladder list are real 2026-09-08 data (backfill: breadth from the iFinD historical screen, indices/technicals self-computed and anchor-verified); margin, main-5d and limit-down count missing — all flagged.",
+      disc1:"Disclaimer: the above is based on public data and quantitative analysis, for reference only, not investment advice. Markets carry risk; investment decisions should be made independently per your own risk tolerance, financial status and goals, and consult a licensed professional when necessary. Past performance does not predict future returns.",
+      disc2:"This assessment is 'crowd psychology / conditional framework' analysis, not a trading order; risk readings and bias severities are model mappings and must be cross-validated with price structure, valuation and flows, not used alone as a trade basis.",
+      t_foot:"Crowd Psychology Risk Radar · generated from westock / iFinD official market data · research reference only",
+    }
+  };
+
+  var BIAS = [
+    {zh:"过度自信",en:"Overconfidence",sev:4,zhd:"涨股比 63% 的连续改善让群体把「轮动」误读为「牛市换挡」，追涨换挡主线的自信膨胀——但连板高度 6板→4板、MACD 红柱收窄、KDJ 死叉雏形都在提示动能衰减，过度自信恰在数据转弱时最危险。",end:"Two days of improving up-ratio (63%) let the crowd misread 'rotation' as 'a bull-market gear shift', inflating confidence to chase the new line — while ladder 6→4 boards, a narrowing MACD histogram and a nascent KDJ dead-cross all flag fading momentum; overconfidence is most dangerous exactly when data weakens."},
+    {zh:"羊群效应",en:"Herding",sev:4,zhd:"主力一日内集体弃电子硬件、抢农业周期（种植业 主力 +68.63亿），群体跟随资金迁徙一拥而上——上一天还在追光模块，今天就追涨停潮农业，羊群在轮动中被反复收割。",end:"Mains collectively abandoned electronics for agriculture/cyclicals in one day (Planting main +¥6.86bn) and the herd stampedes after the migration — chasing optical modules one day, agricultural limit-up waves the next; the herd gets shorn repeatedly in rotation."},
+    {zh:"代表性启发",en:"Representativeness",sev:3,zhd:"把单日涨股比 63% 代表「市场强势」、把农业涨停潮代表「新主线确立」——09-07 电子硬件反攻次日即休整的样本近在眼前，单日样本外推的代表性错误正在重演。",end:"Reading one day's 63% up-ratio as 'market strength' or the agriculture limit-up wave as 'a new main line confirmed' — the sample of electronics' 09-07 counterattack pausing the very next day is right there; the representativeness error of single-day extrapolation is repeating."},
+    {zh:"锚定偏差",en:"Anchoring",sev:3,zhd:"一部分人锚定 09-07 电子硬件的涨停潮认为「回调即上车」，另一部分锚定上证 3950「没破位就没事」——均线缠绕（MA5/10/20/60 四线收敛于 3936–3950）时，锚点失效最快。",end:"Some anchor to 09-07's electronics limit-up wave ('a dip is a chance to board'), others to SSE 3950 ('no breakdown, no problem') — with four MAs converging in the 3936–3950 band, anchors fail fastest."},
+    {zh:"近因偏差",en:"Recency",sev:4,zhd:"把「连续两日涨股比改善」外推为「广度行情启动」，忽视 20 日均量占比仅 94.2%、量能实际处于收缩通道；同样有人把单日电子硬件休整外推为「科技行情终结」——两个方向的近因外推都在制造追涨杀跌。",end:"Extrapolating 'two days of improving breadth' into 'a breadth rally begins', ignoring that volume is only 94.2% of its 20-day average and actually shrinking; equally, some read one day of electronics pausing as 'the tech trade is over' — recent-bias extrapolation in both directions manufactures chases and panic sells."},
+    {zh:"处置效应",en:"Disposition",sev:3,zhd:"电子硬件的持仓者在 −1%~−2% 的回撤中倾向「再等等」（处置效应延迟止损），而农业追高者一旦浮盈立即兑现——两类行为的叠加会放大轮动末端的波动。",end:"Electronics holders tend to 'wait a bit more' on −1~−2% drawdowns (disposition delaying stops) while agriculture chasers take profits instantly — the combination amplifies volatility at the rotation's end."},
+    {zh:"心理账户/赌徒谬误",en:"Mental Acct / Gambler",sev:3,zhd:"把「涨停 74 只仍高于 50」记入「情绪无恙」账户并外推「退潮还很远」，忽视涨停已从 90 连续回落、高度从 6板骤降至 4板——趋势的斜率比绝对水平更早报警。",end:"Booking '74 limit-ups still above 50' into a 'sentiment fine' account and extrapolating 'the ebb is far away' ignores that limit-ups fell consecutively from 90 and height collapsed 6→4 — the slope warns earlier than the level."},
+    {zh:"确认偏误",en:"Confirmation Bias",sev:3,zhd:"多头只看涨股比 63%、672 板块收红，忽视 449 板块「出货」与 20 日量比 94.2%；空头只看高度骤降与电子暗盘流出，忽视梯队厚度（2板仍有13只）与主力在涨价链的真实建仓。",end:"Bulls watch only 63% up-ratio and 672 green sectors, ignoring 449 'distributing' sectors and the 94.2% 20-day volume ratio; bears watch only the collapsing height and electronics dark outflows, ignoring the ladder depth (13 two-board names) and genuine main accumulation in the price-hike chain."},
+    {zh:"叙事偏差",en:"Narrative",sev:3,zhd:"「农业涨价 + 反内卷」叙事一日内接管市场注意力，故事与资金短期共振；但 CPI（7月）偏弱、产能利用率走弱的基本面并不支持涨价叙事全面展开——叙事被证伪时的回撤同样剧烈。",end:"The 'agricultural price-hike + anti-involution' narrative captured market attention in a single day, story and capital resonating short-term; but weak July CPI and soft capacity utilisation do not support a full price-hike narrative — the drawdown when it is falsified would be just as sharp."},
+    {zh:"损失厌恶",en:"Loss Aversion",sev:2,zhd:"市场普涨偏多（63% 上涨）背景下损失厌恶处于低位，但电子硬件持仓者的「浮盈回吐厌恶」开始发酵——前日浮盈今日回吐的心理痛感会放大后续的抛售冲动。",end:"With the market broadly positive (63% up), loss aversion is low overall, but 'paper-profit give-back aversion' is fermenting among electronics holders — the psychological pain of yesterday's gains evaporating amplifies subsequent selling impulses."}
+  ];
+
+  var HEATCOL = {1:"var(--h1)",2:"var(--h2)",3:"var(--h3)",4:"var(--h4)",5:"var(--h5)"};
+
+  function buildHeat(lang){
+    var box = document.getElementById('heat');
+    box.innerHTML = '';
+    BIAS.forEach(function(b){
+      var d = document.createElement('div');
+      d.className = 'cell';
+      d.style.background = HEATCOL[b.sev];
+      var name = lang==='en' ? b.en : b.zh;
+      var desc = lang==='en' ? b.end : b.zhd;
+      d.innerHTML = '<div class="bn">'+name+'</div><div class="bd">'+desc+'</div><span class="sev">'+b.sev+' / 5</span>';
+      box.appendChild(d);
+    });
+  }
+
+  function applyLang(lang){
+    var dic = I18N[lang] || I18N.zh;
+    document.documentElement.lang = (lang==='en' ? 'en' : 'zh-CN');
+    var nodes = document.querySelectorAll('[data-i18n]');
+    for(var i=0;i<nodes.length;i++){
+      var k = nodes[i].getAttribute('data-i18n');
+      if(dic[k]!==undefined){ nodes[i].innerHTML = dic[k]; }
+    }
+    buildHeat(lang);
+    document.getElementById('btnZh').className = (lang==='zh'?'active':'');
+    document.getElementById('btnEn').className = (lang==='en'?'active':'');
+    document.title = (lang==='en' ? I18N.en.t_title : I18N.zh.t_title);
+  }
+
+  function setLang(lang){
+    applyLang(lang);
+    var url = new URL(window.location.href);
+    url.searchParams.set('lang', lang);
+    window.history.replaceState({}, '', url.toString());
+  }
+
+  (function(){
+    var p = new URL(window.location.href).searchParams.get('lang');
+    var lang = (p==='en') ? 'en' : 'zh';
+    applyLang(lang);
+  })();
+</script>
+
+
+
+
+
+<!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序脚本的表(th.sort 且非 data-wb)不接管，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset && c.dataset.val !== undefined) return c.dataset.val;
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别 */
+    ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--></body>
+</html>
