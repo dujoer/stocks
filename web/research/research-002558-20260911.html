@@ -66,9 +66,146 @@ ul{margin:8px 0;padding-left:20px}li{margin:5px 0}
 footer{color:var(--sub);font-size:12px;text-align:center;padding:8px 0 0}
 @media(max-width:640px){.wrap{padding:16px 12px 48px}section{padding:18px 16px}h1{font-size:20px}}
 
-</style></head><body>
+</style>
+
+
+
+<!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — 单一配色与骨架来源
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   作用：压过各生成器自带的零散 <style>，保证全站配色/导航完全一致。
+   ============================================================ */
+:root{
+  --bg:#f5f6f8; --card:#ffffff; --ink:#23262b; --muted:#6b7480;
+  --gold:#b8893b; --gold-2:#a9792f; --gold-soft:#fbf6ee; --gold-line:rgba(184,137,59,.28);
+  --red:#b8332a; --green:#1a9e5a; --line:#e7e9ee; --line-2:#f0f1f4;
+  --slate:#5b6670; --slate-soft:#eef0f2;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--gold);}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 18px 56px;}
+
+/* ---------- 顶部统一导航（金色药丸，!important 压制内联样式） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; gap:8px !important;
+  margin:0 0 18px !important; padding:10px 4px !important;
+  border-bottom:1px solid var(--gold-line) !important; font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--gold) !important;
+  text-decoration:none !important; padding:5px 13px !important;
+  border:1px solid var(--gold-line) !important; border-radius:20px !important;
+  white-space:nowrap !important; background:transparent !important;
+  transition:background .15s,color .15s !important;
+}
+.topnav a:hover{ background:var(--gold-soft) !important; }
+.topnav a.cur{
+  background:linear-gradient(90deg,#b8893b,#cf a4) !important;
+  background:linear-gradient(90deg,var(--gold),#d8b46a) !important;
+  color:#fff !important; border-color:transparent !important; font-weight:600 !important;
+}
+.topnav a.xlink{ opacity:.85; border-style:dashed !important; }
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:24px; margin:0 0 4px; letter-spacing:.5px;
+  background:linear-gradient(90deg,var(--gold),#d8b46a);
+  -webkit-background-clip:text; background-clip:text; color:var(--gold);
+  -webkit-text-fill-color:transparent;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片 ---------- */
+.section{
+  margin:26px 0; background:var(--card); border:1px solid var(--line);
+  border-radius:12px; padding:18px 18px 22px; box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.section > h2, .section > h3{
+  border-left:4px solid var(--gold); padding-left:12px; margin:0 0 14px;
+  font-size:17px; color:var(--ink); font-weight:700;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:#fcfcfd;
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:#fafbfc; }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头（通用，覆盖各页自带样式以统一观感） */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--gold); }
+th.sort.sorted{ color:var(--gold); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:#c2c9d1; }
+
+/* ---------- 每表搜索筛选框 ---------- */
+.wb-search{
+  width:100%; max-width:340px; padding:8px 12px; margin:4px 0 12px;
+  border:1px solid var(--line); border-radius:8px; font-size:13px; outline:none;
+  background:#fff; color:var(--ink);
+}
+.wb-search:focus{ border-color:var(--gold); box-shadow:0 0 0 2px var(--gold-soft); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章（统一配色） ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--gold-soft); color:var(--gold-2); border:1px solid #efe2c9;
+}
+.badge-s,.badge.bS{ background:#eaf6ef; color:var(--green); border-color:#cdeadd; }
+.badge-b,.badge.bB{ background:#fdeeec; color:var(--red); border-color:#f6d6d1; }
+/* 档位配色：A 金 / B 绿 / C 灰蓝 / D 灰 —— 消除原蓝色 C 档冲突 */
+.bA{ background:var(--gold-soft) !important; color:var(--gold-2) !important; border:1px solid #efe2c9 !important; }
+.bB{ background:#eaf6ef !important; color:var(--green) !important; border:1px solid #cdeadd !important; }
+.bC{ background:var(--slate-soft) !important; color:var(--slate) !important; border:1px solid #dfe3e8 !important; }
+.bD{ background:#f1f2f4 !important; color:#9aa3ad !important; border:1px solid #e4e7ea !important; }
+
+/* ---------- 说明/注释 ---------- */
+.note{
+  background:var(--gold-soft); border:1px solid #efe2c9; border-radius:10px;
+  padding:12px 14px; color:#6a5a3a; font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--gold-2); }
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制（消除历史页面蓝色/异色冲突） ---------- */
+.pg:hover{ border-color:var(--gold) !important; background:var(--gold-soft) !important; }
+.tag.ondemand{ background:var(--gold-soft) !important; color:var(--gold-2) !important; border-color:#efe2c9 !important; }
+
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:20px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav a{ padding:4px 10px; font-size:12px; }
+}
+
+</style><!--/WB_THEME-->
+</head><body>
 <!-- UNIFIED_NAV -->
-<div style='display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:12px 4px;border-bottom:1px solid rgba(184,137,59,.3);font-size:13px;'><a href='../market/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>每日总览</a><a href='../lhb/lhb.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>龙虎榜分析</a><a href='../market/hotmoney.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>游资看板</a><a href='../sector/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>板块强度</a><a href='../exec/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>高管增减持</a><a href='../block/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>大宗交易</a><a href='../psychology/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>群体心理</a><a href='index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>行业最强</a><a href='../shareholder/tracker.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>牛人追踪</a><a href='../picks/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>信号池</a><a href='../tplus/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>做T池</a><a href='../sections/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>版块总览</a><a href='../db/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>数据中心</a><a href='../../index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>返回主页</a></div>
+<div class='topnav'><a href='../market/index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='../market/hotmoney.html'>游资看板</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='index.html'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a><a href='../sections/index.html'>版块总览</a><a href='../db/index.html'>数据中心</a><a href='../../index.html'>返回主页</a></div>
 
 
 <div class="wrap">
@@ -91,7 +228,7 @@ footer{color:var(--sub);font-size:12px;text-align:center;padding:8px 0 0}
 <p class="lead">周线收盘（2025-08 至 2026-09，共 56 周）。这是一只「翻倍上涨 → 高位见顶 → 腰斩式下跌 → 缩量筑底」的完整周期，目前处在最后一段的末端。</p>
 <svg class="chart" viewBox="0 0 1000 240" preserveAspectRatio="xMidYMid meet"><polygon points="16.0,176.7 33.6,163.1 51.2,154.9 68.8,109.9 86.4,86.0 104.0,66.1 121.6,68.5 139.2,64.0 156.8,89.7 174.4,107.9 192.0,95.8 209.6,130.8 227.2,124.2 244.8,125.8 262.4,124.8 280.0,90.7 297.6,98.7 315.2,89.1 332.8,64.6 350.4,58.2 368.0,76.5 385.6,53.3 403.2,62.5 420.8,33.3 438.4,71.9 456.0,84.9 473.6,91.9 491.2,117.5 508.8,127.4 526.4,128.5 544.0,150.5 561.6,150.3 579.2,143.3 596.8,134.3 614.4,149.0 632.0,156.8 649.6,145.8 667.2,143.0 684.8,163.7 702.4,181.2 720.0,190.6 737.6,191.1 755.2,206.7 772.8,203.6 790.4,180.2 808.0,182.1 825.6,166.1 843.2,169.1 860.8,201.8 878.4,168.0 896.0,167.6 913.6,170.9 931.2,188.9 948.8,181.2 966.4,178.7 984.0,189.7 984.0,224.0 16.0,224.0" fill="#b8893b" opacity=".08"/><line x1="16" y1="174.7" x2="984" y2="174.7" stroke="#b8893b" stroke-width="1" stroke-dasharray="4 4" opacity=".8"/><text x="982" y="170.7" fill="#b8893b" font-size="10.5" text-anchor="end">28.27 布林上轨</text><line x1="16" y1="183.6" x2="984" y2="183.6" stroke="#9aa4b2" stroke-width="1" stroke-dasharray="4 4" opacity=".8"/><text x="982" y="179.6" fill="#9aa4b2" font-size="10.5" text-anchor="end">26.92 布林中轨</text><line x1="16" y1="192.5" x2="984" y2="192.5" stroke="#b8332a" stroke-width="1" stroke-dasharray="4 4" opacity=".8"/><text x="982" y="188.5" fill="#b8332a" font-size="10.5" text-anchor="end">25.58 布林下轨</text><polyline points="16.0,176.7 33.6,163.1 51.2,154.9 68.8,109.9 86.4,86.0 104.0,66.1 121.6,68.5 139.2,64.0 156.8,89.7 174.4,107.9 192.0,95.8 209.6,130.8 227.2,124.2 244.8,125.8 262.4,124.8 280.0,90.7 297.6,98.7 315.2,89.1 332.8,64.6 350.4,58.2 368.0,76.5 385.6,53.3 403.2,62.5 420.8,33.3 438.4,71.9 456.0,84.9 473.6,91.9 491.2,117.5 508.8,127.4 526.4,128.5 544.0,150.5 561.6,150.3 579.2,143.3 596.8,134.3 614.4,149.0 632.0,156.8 649.6,145.8 667.2,143.0 684.8,163.7 702.4,181.2 720.0,190.6 737.6,191.1 755.2,206.7 772.8,203.6 790.4,180.2 808.0,182.1 825.6,166.1 843.2,169.1 860.8,201.8 878.4,168.0 896.0,167.6 913.6,170.9 931.2,188.9 948.8,181.2 966.4,178.7 984.0,189.7" fill="none" stroke="#b8893b" stroke-width="2" stroke-linejoin="round"/><circle cx="984.0" cy="189.7" r="4" fill="#b8332a"/><text x="976.0" y="182.7" fill="#b8332a" font-size="12" font-weight="700" text-anchor="end">26.00</text><circle cx="420.8" cy="33.3" r="3.2" fill="#1a9e5a"/><text x="427.8" y="27.3" fill="#1a9e5a" font-size="11" font-weight="700">53.16 52周高</text></svg>
 <h3>阶段拆解</h3>
-<table><tr><th>阶段</th><th>区间</th><th>幅度</th><th>说明</th></tr>
+<table data-wb><tr><th>阶段</th><th>区间</th><th>幅度</th><th>说明</th></tr>
 <tr><td class="k">低位启动</td><td class="num">27.96 → 38.05</td><td class="up">+36%</td><td class="desc">2025-08-15 至 2025-09-05，四周内从 27.96 拉升至 38.05，周换手从 13% 升至 13.5%</td></tr>
 <tr><td class="k">主升浪</td><td class="num">38.05 → 53.16</td><td class="up">+40%</td><td class="desc">2025-09-12 至 2026-01-23，历时约 19 周，2026-01-23 当周触及 53.16（52 周高）</td></tr>
 <tr><td class="k">腰斩式下跌</td><td class="num">53.16 → 23.44</td><td class="dn">-56%</td><td class="desc">2026-01-30 至 2026-06-12，历时 5 个月，2026-06-12 当周触及 23.44（52 周低）</td></tr>
@@ -99,7 +236,7 @@ footer{color:var(--sub);font-size:12px;text-align:center;padding:8px 0 0}
 <tr><td class="k">二次回落</td><td class="num">31.20 → 26.00</td><td class="dn">-17%</td><td class="desc">2026-08 中旬以来持续回落，今日 −0.50%、量比 0.41 极度缩量</td></tr>
 </table>
 <h3>关键价位</h3>
-<table><tr><th>位置</th><th>价格</th><th>含义</th></tr>
+<table data-wb><tr><th>位置</th><th>价格</th><th>含义</th></tr>
 <tr><td class="k">强阻力</td><td class="num">31.20</td><td class="desc">2026-08-07 当周高点，也是本轮反弹的天花板</td></tr>
 <tr><td class="k">阻力</td><td class="num">28.27</td><td class="desc">布林上轨</td></tr>
 <tr><td class="k">中轨</td><td class="num">26.92</td><td class="desc"><b>布林中轨，多空分界</b>；现价 26.00 在其下方</td></tr>
@@ -113,13 +250,13 @@ footer{color:var(--sub);font-size:12px;text-align:center;padding:8px 0 0}
 <section><h2>基本面：单季拆分拆掉「同比」的假象</h2>
 <p class="lead">这只票没有需要拆穿的「假象」—— 业绩是真的，而且质量很高。</p>
 <h3>半年度口径</h3>
-<table><tr><th>报告期</th><th>营收</th><th>同比</th><th>归母净利</th><th>同比</th><th>毛利率</th></tr>
+<table data-wb><tr><th>报告期</th><th>营收</th><th>同比</th><th>归母净利</th><th>同比</th><th>毛利率</th></tr>
 <tr><td class="k">2024H1</td><td class="num">14.27 亿</td><td><span class="dn">-1.13%</span></td><td class="num">+7.177 亿</td><td><span class="up">+8.16%</span></td><td class="num">88.42%</td></tr>
 <tr><td class="k">2025H1</td><td class="num">16.62 亿</td><td><span class="up">+16.47%</span></td><td class="num">+7.770 亿</td><td><span class="up">+8.27%</span></td><td class="num">90.78%</td></tr>
 <tr><td class="k">2026H1</td><td class="num">46.89 亿</td><td><span class="up">+182.08%</span></td><td class="num">+21.443 亿</td><td><span class="up">+175.96%</span></td><td class="num">95.79%</td></tr>
 </table>
 <h3>单季口径（关键）</h3>
-<table><tr><th>单季</th><th>营收</th><th>同比</th><th>归母净利</th><th>同比</th></tr>
+<table data-wb><tr><th>单季</th><th>营收</th><th>同比</th><th>归母净利</th><th>同比</th></tr>
 <tr><td class="k">2025Q1</td><td class="num">7.238 亿</td><td><span class="up">+3.94%</span></td><td class="num">+3.479 亿</td><td><span class="dn">-1.29%</span></td></tr>
 <tr><td class="k">2025Q2</td><td class="num">9.384 亿</td><td><span class="up">+28.42%</span></td><td class="num">+4.292 亿</td><td><span class="up">+17.49%</span></td></tr>
 <tr><td class="k">2026Q1</td><td class="num">23.285 亿</td><td><span class="up">+221.70%</span></td><td class="num">+10.804 亿</td><td><span class="up">+210.58%</span></td></tr>
@@ -127,7 +264,7 @@ footer{color:var(--sub);font-size:12px;text-align:center;padding:8px 0 0}
 </table>
 <div class="note warn"><b>拆单季的结果：两个季度都是三位数增长，不存在单季失速。</b>Q1 营收 +221.70%、归母 +210.58%；Q2 营收 +151.52%、归母 +147.89% —— 增速虽从 Q1 到 Q2 有所回落，但仍是三位数量级。更关键的三点是：① <b>扣非归母 22.36 亿高于归母净利 21.44 亿</b>，说明利润没有依赖非经常性损益（这是与盈新发展最本质的区别）；② <b>毛利率从 90.78% 提升至 95.79%</b>（+5.01pct），是自研流水占比提升的典型特征；③ R&amp;D 投入 6.03 亿、占营收 12.9%，爆款期未削减研发。<b>规模、质量、投入三个维度同时向上。</b></div>
 <h3>质量与估值</h3>
-<table><tr><th>指标</th><th>数值</th><th>解读</th></tr>
+<table data-wb><tr><th>指标</th><th>数值</th><th>解读</th></tr>
 <tr><td class="k">ROE（TTM）</td><td class="num">18.55%</td><td class="desc">五只中最高；H1 加权 ROE 13.22%</td></tr>
 <tr><td class="k">扣非净利（H1）</td><td class="num">22.36 亿</td><td class="desc"><b>高于归母净利 21.44 亿</b> —— 利润含金量高，无一次性收益依赖</td></tr>
 <tr><td class="k">毛利率（H1）</td><td class="num">95.79%</td><td class="desc">同比 +5.01 个百分点，自研流水占比提升的直接证据</td></tr>
@@ -138,7 +275,7 @@ footer{color:var(--sub);font-size:12px;text-align:center;padding:8px 0 0}
 </section>
 <section><h2>股东结构与内部人行为</h2>
 <p class="lead">这只票的全部分歧，集中在「谁在卖、谁在买」这一件事上 —— 而且两个方向都很大。</p>
-<table><tr><th>股东</th><th>持股比例</th><th>本期变动</th><th>性质</th></tr>
+<table data-wb><tr><th>股东</th><th>持股比例</th><th>本期变动</th><th>性质</th></tr>
 <tr><td class="k">上海巨人投资管理有限公司</td><td class="num">29.69%</td><td class="fl">持平</td><td class="desc">控股股东 · 史玉柱系</td></tr>
 <tr><td class="k">香港中央结算有限公司</td><td class="num">10.40%</td><td class="up">+3,252 万股</td><td class="desc">北向资金 · 大幅增持</td></tr>
 <tr><td class="k">上海腾澎投资合伙企业(有限合伙)</td><td class="num">10.29%</td><td class="fl">持平</td><td class="desc">一致行动人</td></tr>
@@ -164,7 +301,7 @@ footer{color:var(--sub);font-size:12px;text-align:center;padding:8px 0 0}
 <p class="lead">资金流出的节奏与减持落地时点高度吻合 —— 这反而是个好消息。</p>
 <h3>主力净流入</h3>
 <svg class="chart" viewBox="0 0 1000 180" preserveAspectRatio="xMidYMid meet"><line x1="18" y1="134.0" x2="982" y2="134.0" stroke="#c9ced6" stroke-width="1"/><rect x="75.8" y="134.0" width="125.3" height="2.6" fill="#1a9e5a" rx="3"/><text x="138.5" y="149.6" fill="#1a9e5a" font-size="11.5" font-weight="700" text-anchor="middle">-848万</text><text x="138.5" y="172" fill="#6b7280" font-size="11.5" text-anchor="middle">今日</text><rect x="316.8" y="134.0" width="125.3" height="24.4" fill="#1a9e5a" rx="3"/><text x="379.5" y="171.4" fill="#1a9e5a" font-size="11.5" font-weight="700" text-anchor="middle">-8041万</text><text x="379.5" y="172" fill="#6b7280" font-size="11.5" text-anchor="middle">5日</text><rect x="557.8" y="134.0" width="125.3" height="79.1" fill="#1a9e5a" rx="3"/><text x="620.5" y="226.1" fill="#1a9e5a" font-size="11.5" font-weight="700" text-anchor="middle">-2.60亿</text><text x="620.5" y="172" fill="#6b7280" font-size="11.5" text-anchor="middle">10日</text><rect x="798.8" y="134.0" width="125.3" height="92.0" fill="#1a9e5a" rx="3"/><text x="861.5" y="239.0" fill="#1a9e5a" font-size="11.5" font-weight="700" text-anchor="middle">-3.03亿</text><text x="861.5" y="172" fill="#6b7280" font-size="11.5" text-anchor="middle">20日</text></svg>
-<table><tr><th>口径</th><th>净流入</th><th>解读</th></tr>
+<table data-wb><tr><th>口径</th><th>净流入</th><th>解读</th></tr>
 <tr><td class="k">今日</td><td class="dn">−848 万</td><td class="desc">成交额萎缩至 8.32 亿元（量比 0.41），抛压已显著衰减</td></tr>
 <tr><td class="k">近 5 日</td><td class="dn">−8,041 万</td><td class="desc">日均流出约 1,600 万，绝对额已不大</td></tr>
 <tr><td class="k">近 10 日</td><td class="dn">−2.60 亿</td><td class="desc">9/9 单日净流出 4.0 亿（<b>减持公告落地日</b>）</td></tr>
@@ -173,7 +310,7 @@ footer{color:var(--sub);font-size:12px;text-align:center;padding:8px 0 0}
 <div class="note warn">全市场主力净流入排名 <b>4,165 位</b>。关键是节奏：<b>9/9 减持公告日单日净流出 4.0 亿，9/10 骤降至 848 万、成交额萎缩至 8.32 亿（量比 0.41）</b> —— 这是「抛压释放完毕」的典型量能特征。但要客观：<b>资金面转正才是确认信号，当前的缩量只说明卖压衰竭，不代表买盘已经回来。</b>20 日累计流出 3.03 亿仅占流通市值 0.61%，相对于 494 亿的市值，这个流出量并不算大。</div>
 <h3>融资余额（亿元）· 杠杆与产业资本方向相反</h3>
 <svg class="chart" viewBox="0 0 1000 190" preserveAspectRatio="xMidYMid meet"><polyline points="18.0,154.6 105.6,133.5 193.3,112.9 280.9,111.1 368.5,84.4 456.2,65.4 543.8,99.1 631.5,132.0 719.1,104.7 806.7,67.0 894.4,100.1 982.0,37.2" fill="none" stroke="#b8332a" stroke-width="2" stroke-linejoin="round"/><circle cx="18.0" cy="154.6" r="3" fill="#b8332a"/><text x="18.0" y="146.6" fill="#6b7280" font-size="10.5" text-anchor="middle">16.244</text><circle cx="543.8" cy="99.1" r="3" fill="#b8332a"/><text x="543.8" y="91.1" fill="#6b7280" font-size="10.5" text-anchor="middle">17.022</text><circle cx="982.0" cy="37.2" r="3" fill="#b8332a"/><text x="982.0" y="29.2" fill="#6b7280" font-size="10.5" text-anchor="middle">17.889</text><text x="18" y="187" fill="#9aa4b2" font-size="10.5" text-anchor="start">8/25</text><text x="982" y="187" fill="#9aa4b2" font-size="10.5" text-anchor="end">9/09</text></svg>
-<table><tr><th>项目</th><th>数值</th><th>解读</th></tr>
+<table data-wb><tr><th>项目</th><th>数值</th><th>解读</th></tr>
 <tr><td class="k">融资余额（9/9）</td><td class="num">17.889 亿</td><td class="desc">占流通市值 3.62%；绝对额为五只中最大</td></tr>
 <tr><td class="k">8/25 以来变化</td><td class="up">+1.645 亿 (+10.1%)</td><td class="desc">16.244 亿 → 17.889 亿，与股价下跌方向相反</td></tr>
 <tr><td class="k">9/9 单日</td><td class="up">净买入约 8,801 万</td><td class="desc">当日买入 2.34 亿 / 偿还 1.46 亿；而股价当日 −4.64%</td></tr>
@@ -181,7 +318,7 @@ footer{color:var(--sub);font-size:12px;text-align:center;padding:8px 0 0}
 </table>
 <div class="note warn">融资盘在股价下跌 4.64% 的 9/9 逆势净买入约 8,801 万元，融资余额升至 17.889 亿的区间新高 —— <b>杠杆资金与产业资本方向完全相反</b>：实控人系在减、融资盘在加。这种结构的好处是筹码从产业资本转移到愿意承担风险的二级资金手里；坏处是一旦继续下行，17.889 亿的融资盘（占流通市值 3.62%）会形成第二波抛压。<b>把「融资余额跌破 16 亿」作为短线风险信号。</b></div>
 <h3>诊股五维评分</h3>
-<table><tr><th>维度</th><th>评分</th><th>周变动</th><th>月变动</th><th>条</th></tr><tr><td class="k">资金</td><td class="num">41.37</td><td class="dn">-5.87</td><td class="dn">-14.76</td><td><span class="bar"><i style="width:41%;background:#b8893b"></i></span></td></tr><tr><td class="k">技术</td><td class="num">48.65</td><td class="dn">-11.63</td><td class="dn">-31.77</td><td><span class="bar"><i style="width:49%;background:#b8893b"></i></span></td></tr><tr><td class="k">基本面</td><td class="num">95.87</td><td class="up">+0.16</td><td class="up">+3.45</td><td><span class="bar"><i style="width:96%;background:#b8332a"></i></span></td></tr><tr><td class="k">风险</td><td class="num">78.99</td><td class="up">+0.10</td><td class="up">+0.20</td><td><span class="bar"><i style="width:79%;background:#b8332a"></i></span></td></tr><tr><td class="k">综合</td><td class="num">79.09</td><td class="dn">-2.22</td><td class="dn">-3.29</td><td><span class="bar"><i style="width:79%;background:#b8332a"></i></span></td></tr></table>
+<table data-wb><tr><th>维度</th><th>评分</th><th>周变动</th><th>月变动</th><th>条</th></tr><tr><td class="k">资金</td><td class="num">41.37</td><td class="dn">-5.87</td><td class="dn">-14.76</td><td><span class="bar"><i style="width:41%;background:#b8893b"></i></span></td></tr><tr><td class="k">技术</td><td class="num">48.65</td><td class="dn">-11.63</td><td class="dn">-31.77</td><td><span class="bar"><i style="width:49%;background:#b8893b"></i></span></td></tr><tr><td class="k">基本面</td><td class="num">95.87</td><td class="up">+0.16</td><td class="up">+3.45</td><td><span class="bar"><i style="width:96%;background:#b8332a"></i></span></td></tr><tr><td class="k">风险</td><td class="num">78.99</td><td class="up">+0.10</td><td class="up">+0.20</td><td><span class="bar"><i style="width:79%;background:#b8332a"></i></span></td></tr><tr><td class="k">综合</td><td class="num">79.09</td><td class="dn">-2.22</td><td class="dn">-3.29</td><td><span class="bar"><i style="width:79%;background:#b8332a"></i></span></td></tr></table>
 <div class="note">这张评分表的分裂程度是五只中最大的：<b>基本面 95.87（五只最高），而技术 48.65、资金 41.37（两只最低）</b>。基本面与技术面相差 47 分 —— 说明诊断系统既认可利润的真实性，也清楚地看到价格趋势与资金流向的恶化。综合 79.09 主要靠基本面撑起，而资金月变动 −14.76、技术月变动 −31.77。<b>在恶化的是价格，不是生意。</b></div>
 </section>
 <section><h2>板块背景</h2>
@@ -197,7 +334,7 @@ footer{color:var(--sub);font-size:12px;text-align:center;padding:8px 0 0}
 </section>
 <section><h2>个股筛选七条标准对照</h2>
 <p class="lead">按既定框架逐条打分：<b>5 / 7 通过</b> —— 五只持仓中最高分，也是唯一达到「高胜率」门槛的。</p>
-<table><tr><th>标准</th><th>判定</th><th>依据</th></tr>
+<table data-wb><tr><th>标准</th><th>判定</th><th>依据</th></tr>
 <tr><td class="k">强趋势</td><td><span class="tag bad">不符</span></td><td class="desc">YTD −39.68%、20 日 −9.00%；60 日 +7.93% 是唯一为正的中期口径</td></tr>
 <tr><td class="k">相对低位</td><td><span class="tag ok">符合</span></td><td class="desc">26.00 距 52 周高 53.16 −51.1%，距 52 周低 23.44 +10.9%</td></tr>
 <tr><td class="k">量价健康</td><td><span class="tag mid">部分</span></td><td class="desc">今日量比 0.41 极度缩量，RSI2 8.21、KDJ 的 J 值 2.86 属极端超卖；但 20 日资金净流出 3.03 亿</td></tr>
@@ -209,7 +346,7 @@ footer{color:var(--sub);font-size:12px;text-align:center;padding:8px 0 0}
 <div class="note">结论：<b>高胜率标的 —— 五只持仓中唯一</b>。它在「相对低位、机构主导、订单业绩可验证、换手适中」四条上合格，「量价健康」与「瓶颈环节」部分合格，「强趋势」不合格。<b>这是典型的「基本面已经赢、价格还没赢」的状态</b> —— 与前四只「价格涨了、基本面没跟上」恰好相反。它的核心矛盾不在生意，而在于「产业资本兑现期是否已真正结束」。</div>
 </section>
 <section><h2>操作规则与风控</h2>
-<table><tr><th>周期</th><th>规则</th><th>触发条件</th></tr>
+<table data-wb><tr><th>周期</th><th>规则</th><th>触发条件</th></tr>
 <tr><td class="k">短线</td><td class="desc">可参与超卖反弹。RSI2 8.21、KDJ 的 J 值 2.86 是极端读数，历史上 RSI2 低于 10 通常对应短线底部区域。</td><td class="desc">跌破 25.58（布林下轨）止损；反弹第一目标 26.92（布林中轨），第二目标 28.27（布林上轨）</td></tr>
 <tr><td class="k">中线</td><td class="desc">可配置。条件是「减持届满后 1 个月内无新减持公告」+「出现单日主力净流入 &gt; 5,000 万」。</td><td class="desc">若 10 月内出现新一轮减持计划 → 中线逻辑作废，先减半</td></tr>
 <tr><td class="k">长线</td><td class="desc">可作核心仓，但须接受 2027 增速回落。一致预期 2026E +147.91% → 2027E +13.57% → 2028E +8.21%，<b>爆款峰值在 2026</b>。</td><td class="desc">《超自然行动组》月流水连续 2 个季度下滑，或 2027 新游不及预期 → 降低预期</td></tr>
@@ -231,4 +368,116 @@ footer{color:var(--sub);font-size:12px;text-align:center;padding:8px 0 0}
 <li>机构预期：30 家机构是否维持 2026E 净利 43.50 亿、目标价 41.21</li>
 </ul></section>
 <footer>数据来源：腾讯自选股（westock-mcp），收盘口径 2026-09-10，生成于 2026-09-11。本报告为研究记录，不构成投资建议。</footer>
-</div></body></html>
+</div>
+
+
+
+<!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序脚本的表(th.sort 且非 data-wb)不接管，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 */
+  try {
+    var here = location.pathname.split("/").pop() || "index.html";
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h) return;
+      var last = h.split("/").pop();
+      if (last === here && here !== "") a.classList.add("cur");
+    });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset && c.dataset.val !== undefined) return c.dataset.val;
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别 */
+    ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP-->
+</body></html>
