@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """统一顶部导航栏。
 
-所有 A股看板页面共用，保证跳转入口与位置一致，且都带「返回主页」。
-- topnav(): 依赖各生成器已定义的 .topnav CSS（build_dashboards / build_block / build_exec / build_sections 等）。
-- selfcontained_nav(): 自带内联样式，用于未定义 .topnav CSS 的页面（板块强度 / 心理雷达 / 行业最强榜等）。
+所有 A股看板页面共用，保证跳转入口与位置一致。
+- topnav(): 生成 <div class='topnav'>，依赖 _theme.css 中的 .topnav 样式。
+- selfcontained_nav(): 生成同样的 <div class='topnav'>，仅多带 UNIFIED_NAV 哨兵，
+  供旧生成器调用；最终由 _apply_theme.py 统一注入主题并确保唯一。
 
 链接采用「相对 web/ 根的规范路径」，按【当前页面所在子目录】动态计算相对链接，
 因此无论页面在 web/<板块>/ 下哪一层，导航都能正确跳转。
@@ -23,7 +24,7 @@
 from __future__ import annotations
 import os
 
-# 统一导航哨兵：selfcontained_nav 注入此注释，_apply_nav 借此做到幂等 + 自愈（不重复注入）。
+# 统一导航哨兵：selfcontained_nav 注入此注释，便于后续工具识别已统一处理。
 NAV_SENTINEL = "<!-- UNIFIED_NAV -->"
 
 # (标签, 相对 web/ 根的规范路径)
@@ -57,31 +58,23 @@ def _rel(link_web_path: str, from_web_dir: str) -> str:
 
 def topnav(current_web_dir: str = "", home: str = "../../index.html", prefix: str = "",
            extra: tuple = ()) -> str:
-    """依赖调用方已定义的 .topnav / .topnav a CSS（金色主题）。
+    """生成标准 <div class='topnav'> 导航条。
 
     extra: 追加的「板块内横链」[(标签, 相对 web/ 根的规范路径), ...]，
-    插在主导航之后、返回主页之前，用于串联同一板块下的多页链路（如股东四页）。
+    插在主导航之后、首页之前，用于串联同一板块下的多页链路。
     这些链接带 class='xlink'，调用方可自行加样式与主营导航区分。
     """
     items = "".join(
         f"<a href='{prefix}{_rel(p, current_web_dir)}'>{t}</a>" for t, p in SECTIONS)
     items += "".join(
         f"<a href='{prefix}{_rel(p, current_web_dir)}' class='xlink'>{t}</a>" for t, p in extra)
-    items += f"<a href='{home}'>返回主页</a>"
+    items += f"<a href='{home}' class='home'>首页</a>"
     return f"<div class='topnav'>{items}</div>"
 
 
 def selfcontained_nav(current_web_dir: str = "", home: str = "../../index.html", prefix: str = "",
                       extra: tuple = ()) -> str:
-    """自带内联样式，不依赖外部 CSS，可注入任意页面顶部。extra 语义同 topnav()。"""
-    bar = ("display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:12px 4px;"
-           "border-bottom:1px solid rgba(184,137,59,.3);font-size:13px;")
-    a = ("color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);"
-         "border-radius:20px;white-space:nowrap;")
-    items = "".join(
-        f"<a href='{prefix}{_rel(p, current_web_dir)}' style='{a}'>{t}</a>" for t, p in SECTIONS)
-    items += "".join(
-        f"<a href='{prefix}{_rel(p, current_web_dir)}' class='xlink' style='{a}'>{t}</a>"
-        for t, p in extra)
-    items += f"<a href='{home}' style='{a}'>返回主页</a>"
-    return f"{NAV_SENTINEL}\n<div style='{bar}'>{items}</div>"
+    """语义同 topnav()，仅多带 UNIFIED_NAV 哨兵，兼容旧生成器调用。
+    实际样式由 _theme.css 统一提供，不再内联金色药丸。
+    """
+    return f"{NAV_SENTINEL}\n{topnav(current_web_dir, home, prefix, extra)}"
