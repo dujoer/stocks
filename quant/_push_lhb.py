@@ -139,6 +139,13 @@ _AUTO_PATTERNS = [
     # 数据中心静态切片（查询页数据源，由 quant/db_export.py 生成）
     "web/data/*.json",
 ]
+# 覆盖度自检机制（2026-09-11 新增）：主题源 + 页面登记表 + 自检/归位/校验脚本
+for _p in ("quant/_theme.css", "quant/_app.js", "quant/_page_registry.py",
+           "quant/_coverage_check.py", "quant/_fix_orphans.py",
+           "quant/_js_check.py", "quant/_sync_all.py", "quant/_curl_gate.py",
+           "quant/_verify_psy_hub.py", "quant/_verify_psy_pages.py"):
+    if _p not in FILES:
+        FILES.append(_p)
 _AUTO_ADDED = []
 for _pat in _AUTO_PATTERNS:
     for _p in sorted(_glob.glob(os.path.join(ROOT, _pat), recursive=True)):
