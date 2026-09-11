@@ -59,12 +59,7 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
   color:#0071e3; border:1px solid rgba(0,113,227,.45); border-radius:50%;
   width:12px; height:12px; line-height:11px; text-align:center; }
 .chip[title], .badge[title], .score[title] { cursor:help; }
-</style>
-
-
-
-
-<!--WB_THEME--><style id='wb-theme'>
+</style><!--WB_THEME--><style id='wb-theme'>
 /* ============================================================
    统一设计系统 (A股看板) — 苹果风·朴素简约
    由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
@@ -200,29 +195,17 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 </style><!--/WB_THEME--></head><body>
 <div class='topnav'><a href='../market/index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='../market/hotmoney.html'>游资看板</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../research/index.html'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='index.html'>信号池</a><a href='../tplus/index.html'>做T池</a><a href='../sections/index.html'>版块总览</a><a href='../db/index.html'>数据中心</a><a href='../../index.html' class='home'>首页</a></div>
-
-
-
-
-
-
-
-
-
-
-
-
 <div class='wrap'>
 
 <header><h1><span>个股信号池</span> · 每日归档</h1>
 <div class='sub'>机构轨（波段）+ 游资轨（短线）双池输出建仓候选与买卖点，次日自动回填表现并统计胜率。</div></header>
 
-<div class='note'><b>最新一期：</b><a href='pick_2026-09-10.html'>2026-09-10</a> —— 机构轨 25 只（A 0 / B 8）· 游资轨 24 只（A 4 / B 4）。</div>
+<div class='note'><b>最新一期：</b><a href='pick_2026-09-11.html'>2026-09-11</a> —— 机构轨 25 只（A 0 / B 1）· 游资轨 25 只（A 2 / B 5）。</div>
 
 <div class='section' title='每一期的候选只数与次日回填表现：均涨 = 该期全部候选次日相对进场参考价的平均收益；触T1 / 触止损 = 区间内最高价触及目标一、最低价触及止损位的只数。'><h2>历史表现（多周期回填）</h2>
 <div class='note'>机构轨累计 <span class='muted'>首期尚无回填</span><br>游资轨累计 <span class='muted'>首期尚无回填</span></div>
 <table><thead><tr><th>日期</th><th title='该期该轨输出的候选只数（已通过 Gate 一票否决后剩余的数量）。'>机构轨</th><th title='次日（T+1）回填：均涨 = 全部候选相对进场参考价的平均收益；触T1 = 区间最高价触及目标一的只数；触止损 = 区间最低价跌破止损位的只数。'>机构轨次日</th><th title='该期该轨输出的候选只数（已通过 Gate 一票否决后剩余的数量）。'>游资轨</th><th title='次日（T+1）回填：均涨 = 全部候选相对进场参考价的平均收益；触T1 = 区间最高价触及目标一的只数；触止损 = 区间最低价跌破止损位的只数。'>游资轨次日</th></tr></thead>
-<tbody><tr><td><a href='pick_2026-09-10.html'>2026-09-10</a></td><td>10</td><td><span class='muted'>待回填</span></td><td>10</td><td><span class='muted'>待回填</span></td></tr></tbody></table></div>
+<tbody><tr><td><a href='pick_2026-09-11.html'>2026-09-11</a></td><td>10</td><td><span class='muted'>待回填</span></td><td>10</td><td><span class='muted'>待回填</span></td></tr><tr><td><a href='pick_2026-09-10.html'>2026-09-10</a></td><td>10</td><td><span class='muted'>待回填</span></td><td>10</td><td><span class='muted'>待回填</span></td></tr></tbody></table></div>
 
 <div class='section'><h2>双池评分模型</h2>
 <table data-wb><thead><tr><th class='tip' title='评分模型的组成维度，机构轨与游资轨权重不同。'>维度</th><th class='tip' title='该维度在机构轨总分中的满分值（机构轨满分 100）。'>机构轨</th><th class='tip' title='该维度在游资轨总分中的满分值（游资轨满分 100）。'>游资轨</th><th class='tip' title='该维度的具体计算方式与数据来源。'>口径</th></tr></thead><tbody>
@@ -245,12 +228,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <div class='note warn'><b>风险提示：</b>规则化输出，<b>不构成投资建议</b>。中报滞后、游资轨波动剧烈，务必自行核验基本面并严格执行止损。</div>
 
 <footer>数据源：westock-mcp · 中报十大流通股东（2026-06-30）· 仅供参考，不构成投资建议。</footer>
-</div>
-
-
-
-
-<!--WB_APP--><script id='wb-app'>
+</div><!--WB_APP--><script id='wb-app'>
 /* ============================================================
    通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
    功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
