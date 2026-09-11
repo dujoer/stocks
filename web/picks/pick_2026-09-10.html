@@ -59,9 +59,146 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
   color:#b8893b; border:1px solid rgba(184,137,59,.45); border-radius:50%;
   width:12px; height:12px; line-height:11px; text-align:center; }
 .chip[title], .badge[title], .score[title] { cursor:help; }
-</style></head><body>
+</style>
+
+
+
+<!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — 单一配色与骨架来源
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   作用：压过各生成器自带的零散 <style>，保证全站配色/导航完全一致。
+   ============================================================ */
+:root{
+  --bg:#f5f6f8; --card:#ffffff; --ink:#23262b; --muted:#6b7480;
+  --gold:#b8893b; --gold-2:#a9792f; --gold-soft:#fbf6ee; --gold-line:rgba(184,137,59,.28);
+  --red:#b8332a; --green:#1a9e5a; --line:#e7e9ee; --line-2:#f0f1f4;
+  --slate:#5b6670; --slate-soft:#eef0f2;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--gold);}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 18px 56px;}
+
+/* ---------- 顶部统一导航（金色药丸，!important 压制内联样式） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; gap:8px !important;
+  margin:0 0 18px !important; padding:10px 4px !important;
+  border-bottom:1px solid var(--gold-line) !important; font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--gold) !important;
+  text-decoration:none !important; padding:5px 13px !important;
+  border:1px solid var(--gold-line) !important; border-radius:20px !important;
+  white-space:nowrap !important; background:transparent !important;
+  transition:background .15s,color .15s !important;
+}
+.topnav a:hover{ background:var(--gold-soft) !important; }
+.topnav a.cur{
+  background:linear-gradient(90deg,#b8893b,#cf a4) !important;
+  background:linear-gradient(90deg,var(--gold),#d8b46a) !important;
+  color:#fff !important; border-color:transparent !important; font-weight:600 !important;
+}
+.topnav a.xlink{ opacity:.85; border-style:dashed !important; }
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:24px; margin:0 0 4px; letter-spacing:.5px;
+  background:linear-gradient(90deg,var(--gold),#d8b46a);
+  -webkit-background-clip:text; background-clip:text; color:var(--gold);
+  -webkit-text-fill-color:transparent;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片 ---------- */
+.section{
+  margin:26px 0; background:var(--card); border:1px solid var(--line);
+  border-radius:12px; padding:18px 18px 22px; box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.section > h2, .section > h3{
+  border-left:4px solid var(--gold); padding-left:12px; margin:0 0 14px;
+  font-size:17px; color:var(--ink); font-weight:700;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:#fcfcfd;
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:#fafbfc; }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头（通用，覆盖各页自带样式以统一观感） */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--gold); }
+th.sort.sorted{ color:var(--gold); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:#c2c9d1; }
+
+/* ---------- 每表搜索筛选框 ---------- */
+.wb-search{
+  width:100%; max-width:340px; padding:8px 12px; margin:4px 0 12px;
+  border:1px solid var(--line); border-radius:8px; font-size:13px; outline:none;
+  background:#fff; color:var(--ink);
+}
+.wb-search:focus{ border-color:var(--gold); box-shadow:0 0 0 2px var(--gold-soft); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章（统一配色） ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--gold-soft); color:var(--gold-2); border:1px solid #efe2c9;
+}
+.badge-s,.badge.bS{ background:#eaf6ef; color:var(--green); border-color:#cdeadd; }
+.badge-b,.badge.bB{ background:#fdeeec; color:var(--red); border-color:#f6d6d1; }
+/* 档位配色：A 金 / B 绿 / C 灰蓝 / D 灰 —— 消除原蓝色 C 档冲突 */
+.bA{ background:var(--gold-soft) !important; color:var(--gold-2) !important; border:1px solid #efe2c9 !important; }
+.bB{ background:#eaf6ef !important; color:var(--green) !important; border:1px solid #cdeadd !important; }
+.bC{ background:var(--slate-soft) !important; color:var(--slate) !important; border:1px solid #dfe3e8 !important; }
+.bD{ background:#f1f2f4 !important; color:#9aa3ad !important; border:1px solid #e4e7ea !important; }
+
+/* ---------- 说明/注释 ---------- */
+.note{
+  background:var(--gold-soft); border:1px solid #efe2c9; border-radius:10px;
+  padding:12px 14px; color:#6a5a3a; font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--gold-2); }
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制（消除历史页面蓝色/异色冲突） ---------- */
+.pg:hover{ border-color:var(--gold) !important; background:var(--gold-soft) !important; }
+.tag.ondemand{ background:var(--gold-soft) !important; color:var(--gold-2) !important; border-color:#efe2c9 !important; }
+
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:20px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav a{ padding:4px 10px; font-size:12px; }
+}
+
+</style><!--/WB_THEME-->
+</head><body>
 <div class='wrap'>
-<div class='topnav'><a href='../../index.html'>总门户</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../db/index.html'>数据中心</a><a href='index.html'>信号池</a><a href='backtest.html'>回测</a><a href='../tplus/index.html'>做T池</a><a href='../sections/index.html'>版块总览</a></div>
+<div class='topnav'><a href='../market/index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='../market/hotmoney.html'>游资看板</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../research/index.html'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='index.html'>信号池</a><a href='../tplus/index.html'>做T池</a><a href='../sections/index.html'>版块总览</a><a href='../db/index.html'>数据中心</a><a href='../../index.html'>返回主页</a></div>
 <header><h1><span>个股信号池</span> · 2026-09-10</h1>
 <div class='sub'>机构轨（波段 5~15 日）与 游资轨（短线 1~3 日）双池分轨打分，含板块闸门与筹码/资金流确认，每日盘后更新并回填次日表现。
 <div class='muted' style='margin-top:6px'>字段旁带 <span class='tip' style='border:none'>?</span> 或虚线下划线的均可悬浮查看计算口径。</div></div></header>
@@ -72,7 +209,7 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
 
 <div class='section'><h2>机构轨 · 波段<span class='trk i'>5~15 日</span></h2>
 <div class='muted' style='margin-bottom:8px'>机构方向 28（龙虎榜机构净买入 18 + 目标价空间 10）+ 机构评级 8 + 两融 6 + 主力资金 10 + 中报背景 8 + 高管 8 + 大宗 6 + 量价 20 + 筹码 6 − 风险 ≤12 − 热度反向 ≤4</div>
-<table><thead><tr><th class='tip' title='个股名称。候选来自三路信号（中报十大股东增减持 / 高管增减持 / 大宗交易）与龙虎榜机构、游资方向合流。'>名称</th><th class='tip' title='带市场前缀的代码：sh 沪市、sz 深市、bj 北交所。'>代码</th><th class='tip' title='申万一级行业，来自中报股东库的代码-行业映射。'>行业</th><th class='tip' title='该股所属板块当日的「主力行为」（抢筹 / 建仓 / 洗盘 / 出货）。行为为「出货」时触发 Gate0 板块闸门，直接剔除。'>板块</th><th class='tip' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>总分</th><th class='tip' title='数据日期的当日涨跌幅。'>当日</th><th class='tip' title='当日换手率（成交量 / 流通股本）。过高（&gt;20%）视为情绪过热，量价分打折。'>换手%</th><th class='tip' title='现价在近 52 周最高最低区间中的百分位，0 为最低、100 为最高。&gt;92 视为接近一年高位并扣分。'>52周位</th><th class='tip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘%</th><th class='tip' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'>止损</th><th class='tip' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'>目标一</th><th class='tip' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>档</th></tr></thead>
+<table data-wb><thead><tr><th class='tip' title='个股名称。候选来自三路信号（中报十大股东增减持 / 高管增减持 / 大宗交易）与龙虎榜机构、游资方向合流。'>名称</th><th class='tip' title='带市场前缀的代码：sh 沪市、sz 深市、bj 北交所。'>代码</th><th class='tip' title='申万一级行业，来自中报股东库的代码-行业映射。'>行业</th><th class='tip' title='该股所属板块当日的「主力行为」（抢筹 / 建仓 / 洗盘 / 出货）。行为为「出货」时触发 Gate0 板块闸门，直接剔除。'>板块</th><th class='tip' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>总分</th><th class='tip' title='数据日期的当日涨跌幅。'>当日</th><th class='tip' title='当日换手率（成交量 / 流通股本）。过高（&gt;20%）视为情绪过热，量价分打折。'>换手%</th><th class='tip' title='现价在近 52 周最高最低区间中的百分位，0 为最低、100 为最高。&gt;92 视为接近一年高位并扣分。'>52周位</th><th class='tip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘%</th><th class='tip' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'>止损</th><th class='tip' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'>目标一</th><th class='tip' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>档</th></tr></thead>
 <tbody><tr><td>长飞光纤</td><td class='muted'>sh601869</td><td>通信</td><td>—</td><td><b>68.7</b></td><td class='down'>-1.42%</td><td>2.79</td><td>69</td><td>83</td><td>382.8</td><td>452.78</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>思泉新材</td><td class='muted'>sz301489</td><td>电子</td><td>—</td><td><b>68.2</b></td><td class='down'>-3.78%</td><td>7.93</td><td>33</td><td>36</td><td>120.02</td><td>141.96</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>中谷物流</td><td class='muted'>sh603565</td><td>交通运输</td><td>—</td><td><b>65.1</b></td><td class='down'>-1.21%</td><td>1.18</td><td>69</td><td>81</td><td>11.86</td><td>13.56</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>惠泰医疗</td><td class='muted'>sh688617</td><td>医药生物</td><td>—</td><td><b>63.7</b></td><td class='up'>+0.29%</td><td>0.85</td><td>40</td><td>63</td><td>225.5</td><td>266.72</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>星网锐捷</td><td class='muted'>sz002396</td><td>通信</td><td>—</td><td><b>63.6</b></td><td class='up'>+0.50%</td><td>8.95</td><td>76</td><td>30</td><td>34.05</td><td>40.27</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>楚天龙</td><td class='muted'>sz003040</td><td>通信</td><td>—</td><td><b>63.0</b></td><td class='down'>-10.00%</td><td>15.55</td><td>67</td><td>15</td><td>18.83</td><td>22.27</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>光迅科技</td><td class='muted'>sz002281</td><td>通信</td><td>—</td><td><b>62.6</b></td><td class='down'>-1.86%</td><td>2.99</td><td>56</td><td>46</td><td>167.42</td><td>198.02</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>深南电路</td><td class='muted'>sz002916</td><td>电子</td><td>—</td><td><b>60.0</b></td><td class='up'>+2.35%</td><td>1.25</td><td>70</td><td>74</td><td>356.8</td><td>422.02</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>石药创新</td><td class='muted'>sz300765</td><td>医药生物</td><td>—</td><td><b>59.8</b></td><td class='up'>+2.18%</td><td>1.46</td><td>61</td><td>61</td><td>40.38</td><td>47.76</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>中石科技</td><td class='muted'>sz300684</td><td>电子</td><td>—</td><td><b>59.4</b></td><td class='down'>-0.19%</td><td>7.47</td><td>68</td><td>10</td><td>80.98</td><td>95.79</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>博汇股份</td><td class='muted'>sz300839</td><td>石油石化</td><td>—</td><td><b>59.0</b></td><td class='down'>-5.53%</td><td>4.74</td><td>31</td><td>44</td><td>12.49</td><td>14.34</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>英维克</td><td class='muted'>sz002837</td><td>机械设备</td><td>—</td><td><b>57.1</b></td><td class='down'>-2.16%</td><td>2.60</td><td>32</td><td>29</td><td>59.37</td><td>68.58</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>易点天下</td><td class='muted'>sz301171</td><td>传媒</td><td>—</td><td><b>55.4</b></td><td class='down'>-2.53%</td><td>8.93</td><td>35</td><td>17</td><td>34.76</td><td>41.11</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>恒宝股份</td><td class='muted'>sz002104</td><td>通信</td><td>—</td><td><b>53.3</b></td><td class='down'>-4.04%</td><td>11.79</td><td>19</td><td>18</td><td>11.96</td><td>14.14</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>千金药业</td><td class='muted'>sh600479</td><td>医药生物</td><td>—</td><td><b>51.5</b></td><td class='down'>-9.99%</td><td>20.49</td><td>60</td><td>9</td><td>12.36</td><td>14.62</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>福立旺</td><td class='muted'>sh688678</td><td>电子</td><td>—</td><td><b>50.8</b></td><td class='down'>-3.02%</td><td>3.02</td><td>55</td><td>68</td><td>20.04</td><td>23.71</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>高争民爆</td><td class='muted'>sz002827</td><td>基础化工</td><td>—</td><td><b>49.8</b></td><td class='down'>-5.87%</td><td>3.63</td><td>80</td><td>73</td><td>59.6</td><td>70.5</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>通鼎互联</td><td class='muted'>sz002491</td><td>通信</td><td>—</td><td><b>48.8</b></td><td class='down'>-5.40%</td><td>10.49</td><td>46</td><td>22</td><td>19.75</td><td>23.36</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>上海能源</td><td class='muted'>sh600508</td><td>煤炭</td><td>—</td><td><b>48.3</b></td><td class='down'>-2.50%</td><td>3.61</td><td>71</td><td>56</td><td>10.9</td><td>12.57</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>光洋股份</td><td class='muted'>sz002708</td><td>汽车</td><td>—</td><td><b>48.0</b></td><td class='down'>-0.42%</td><td>7.87</td><td>92</td><td>82</td><td>13.84</td><td>16.37</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>浪潮信息</td><td class='muted'>sz000977</td><td>计算机</td><td>—</td><td><b>46.9</b></td><td class='down'>-1.33%</td><td>3.61</td><td>37</td><td>2</td><td>67.19</td><td>79.47</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>沃森生物</td><td class='muted'>sz300142</td><td>医药生物</td><td>—</td><td><b>42.7</b></td><td class='down'>-3.35%</td><td>3.73</td><td>36</td><td>9</td><td>12.24</td><td>14.48</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>速达股份</td><td class='muted'>sz001277</td><td>机械设备</td><td>洗盘</td><td><b>39.8</b></td><td class='down'>-2.41%</td><td>3.60</td><td>22</td><td>9</td><td>28.58</td><td>33.81</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>万向德农</td><td class='muted'>sh600371</td><td>农林牧渔</td><td>—</td><td><b>39.2</b></td><td class='down'>-8.12%</td><td>21.45</td><td>77</td><td>25</td><td>13.01</td><td>15.38</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>神奇制药</td><td class='muted'>sh600613</td><td>医药生物</td><td>—</td><td><b>35.0</b></td><td class='down'>-5.65%</td><td>23.42</td><td>50</td><td>8</td><td>8.27</td><td>9.78</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr></tbody></table>
 
   <div class='card hi'>
@@ -278,7 +415,7 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
 
 <div class='section'><h2>游资轨 · 短线<span class='trk y'>1~3 日</span></h2>
 <div class='muted' style='margin-bottom:8px'>游资方向 30（知名席位 18 + 买入额 8 + 席位家数 4）+ 主力资金 10 + 量价 28 + 筹码 9 + 两融 8 + 中报 5 + 高管 5 + 大宗 5 − 风险 ≤12 − 热度反向 ≤4</div>
-<table><thead><tr><th class='tip' title='个股名称。候选来自三路信号（中报十大股东增减持 / 高管增减持 / 大宗交易）与龙虎榜机构、游资方向合流。'>名称</th><th class='tip' title='带市场前缀的代码：sh 沪市、sz 深市、bj 北交所。'>代码</th><th class='tip' title='申万一级行业，来自中报股东库的代码-行业映射。'>行业</th><th class='tip' title='该股所属板块当日的「主力行为」（抢筹 / 建仓 / 洗盘 / 出货）。行为为「出货」时触发 Gate0 板块闸门，直接剔除。'>板块</th><th class='tip' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>总分</th><th class='tip' title='数据日期的当日涨跌幅。'>当日</th><th class='tip' title='当日换手率（成交量 / 流通股本）。过高（&gt;20%）视为情绪过热，量价分打折。'>换手%</th><th class='tip' title='现价在近 52 周最高最低区间中的百分位，0 为最低、100 为最高。&gt;92 视为接近一年高位并扣分。'>52周位</th><th class='tip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘%</th><th class='tip' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'>止损</th><th class='tip' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'>目标一</th><th class='tip' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>档</th></tr></thead>
+<table data-wb><thead><tr><th class='tip' title='个股名称。候选来自三路信号（中报十大股东增减持 / 高管增减持 / 大宗交易）与龙虎榜机构、游资方向合流。'>名称</th><th class='tip' title='带市场前缀的代码：sh 沪市、sz 深市、bj 北交所。'>代码</th><th class='tip' title='申万一级行业，来自中报股东库的代码-行业映射。'>行业</th><th class='tip' title='该股所属板块当日的「主力行为」（抢筹 / 建仓 / 洗盘 / 出货）。行为为「出货」时触发 Gate0 板块闸门，直接剔除。'>板块</th><th class='tip' title='该轨 11 维加权总分（0~100），已扣除风险扣分与热度反向分。机构轨与游资轨分开打分，同一只票在两轨分数不同。'>总分</th><th class='tip' title='数据日期的当日涨跌幅。'>当日</th><th class='tip' title='当日换手率（成交量 / 流通股本）。过高（&gt;20%）视为情绪过热，量价分打折。'>换手%</th><th class='tip' title='现价在近 52 周最高最低区间中的百分位，0 为最低、100 为最高。&gt;92 视为接近一年高位并扣分。'>52周位</th><th class='tip' title='筹码分布中处于盈利状态的持仓占比。&gt;90% 视为抛压极大并一票否决，&gt;85% 扣分。'>获利盘%</th><th class='tip' title='机构轨：在 MA20×0.97、平均成本×0.97、mid×0.93 三个候选里取「低于 mid 且最接近 mid」的一个，并夹在 mid 的 90%~97% 之间；游资轨：min(MA5×0.97, mid×0.95)。括号内为止损位相对 mid 的百分比。收盘跌破即无条件离场。'>止损</th><th class='tip' title='目标一 = mid×1.10（机构轨）/ mid×1.05（游资轨）；目标二 = mid×1.15 / mid×1.08。为固定比例，不含个股基本面与阻力位判断，实际操作中建议结合前高压力位修正。'>目标一</th><th class='tip' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>档</th></tr></thead>
 <tbody><tr><td>星网锐捷</td><td class='muted'>sz002396</td><td>通信</td><td>—</td><td><b>78.5</b></td><td class='up'>+0.50%</td><td>8.95</td><td>76</td><td>30</td><td>34.36</td><td>37.98</td><td><span class='badge bA' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>A</span></td></tr><tr><td>福立旺</td><td class='muted'>sh688678</td><td>电子</td><td>—</td><td><b>77.6</b></td><td class='down'>-3.02%</td><td>3.02</td><td>55</td><td>68</td><td>20.26</td><td>22.39</td><td><span class='badge bA' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>A</span></td></tr><tr><td>石药创新</td><td class='muted'>sz300765</td><td>医药生物</td><td>—</td><td><b>73.6</b></td><td class='up'>+2.18%</td><td>1.46</td><td>61</td><td>61</td><td>40.7</td><td>44.99</td><td><span class='badge bA' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>A</span></td></tr><tr><td>楚天龙</td><td class='muted'>sz003040</td><td>通信</td><td>—</td><td><b>72.2</b></td><td class='down'>-10.00%</td><td>15.55</td><td>67</td><td>15</td><td>18.04</td><td>19.94</td><td><span class='badge bA' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>A</span></td></tr><tr><td>通鼎互联</td><td class='muted'>sz002491</td><td>通信</td><td>—</td><td><b>66.7</b></td><td class='down'>-5.40%</td><td>10.49</td><td>46</td><td>22</td><td>20.07</td><td>22.18</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>深南电路</td><td class='muted'>sz002916</td><td>电子</td><td>—</td><td><b>62.8</b></td><td class='up'>+2.35%</td><td>1.25</td><td>70</td><td>74</td><td>359.85</td><td>402.9</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>中谷物流</td><td class='muted'>sh603565</td><td>交通运输</td><td>—</td><td><b>61.8</b></td><td class='down'>-1.21%</td><td>1.18</td><td>69</td><td>81</td><td>11.71</td><td>12.94</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>千金药业</td><td class='muted'>sh600479</td><td>医药生物</td><td>—</td><td><b>60.7</b></td><td class='down'>-9.99%</td><td>20.49</td><td>60</td><td>9</td><td>12.13</td><td>13.41</td><td><span class='badge bB' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>B</span></td></tr><tr><td>长飞光纤</td><td class='muted'>sh601869</td><td>通信</td><td>—</td><td><b>58.8</b></td><td class='down'>-1.42%</td><td>2.79</td><td>69</td><td>83</td><td>402.34</td><td>448.92</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>恒宝股份</td><td class='muted'>sz002104</td><td>通信</td><td>—</td><td><b>58.3</b></td><td class='down'>-4.04%</td><td>11.79</td><td>19</td><td>18</td><td>11.8</td><td>13.04</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>思泉新材</td><td class='muted'>sz301489</td><td>电子</td><td>—</td><td><b>54.3</b></td><td class='down'>-3.78%</td><td>7.93</td><td>33</td><td>36</td><td>119.25</td><td>131.8</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>高争民爆</td><td class='muted'>sz002827</td><td>基础化工</td><td>—</td><td><b>54.0</b></td><td class='down'>-5.87%</td><td>3.63</td><td>80</td><td>73</td><td>58.97</td><td>65.17</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>上海能源</td><td class='muted'>sh600508</td><td>煤炭</td><td>—</td><td><b>51.6</b></td><td class='down'>-2.50%</td><td>3.61</td><td>71</td><td>56</td><td>10.82</td><td>11.96</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>光迅科技</td><td class='muted'>sz002281</td><td>通信</td><td>—</td><td><b>51.0</b></td><td class='down'>-1.86%</td><td>2.99</td><td>56</td><td>46</td><td>171.02</td><td>189.02</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>中石科技</td><td class='muted'>sz300684</td><td>电子</td><td>—</td><td><b>50.7</b></td><td class='down'>-0.19%</td><td>7.47</td><td>68</td><td>10</td><td>79.72</td><td>88.11</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>神奇制药</td><td class='muted'>sh600613</td><td>医药生物</td><td>—</td><td><b>50.6</b></td><td class='down'>-5.65%</td><td>23.42</td><td>50</td><td>8</td><td>8.12</td><td>8.98</td><td><span class='badge bC' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>C</span></td></tr><tr><td>博汇股份</td><td class='muted'>sz300839</td><td>石油石化</td><td>—</td><td><b>48.3</b></td><td class='down'>-5.53%</td><td>4.74</td><td>31</td><td>44</td><td>12.23</td><td>13.52</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>易点天下</td><td class='muted'>sz301171</td><td>传媒</td><td>—</td><td><b>46.1</b></td><td class='down'>-2.53%</td><td>8.93</td><td>35</td><td>17</td><td>34.6</td><td>38.24</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>万向德农</td><td class='muted'>sh600371</td><td>农林牧渔</td><td>—</td><td><b>46.1</b></td><td class='down'>-8.12%</td><td>21.45</td><td>77</td><td>25</td><td>13.51</td><td>14.93</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>英维克</td><td class='muted'>sz002837</td><td>机械设备</td><td>—</td><td><b>44.3</b></td><td class='down'>-2.16%</td><td>2.60</td><td>32</td><td>29</td><td>58.32</td><td>64.45</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>沃森生物</td><td class='muted'>sz300142</td><td>医药生物</td><td>—</td><td><b>41.3</b></td><td class='down'>-3.35%</td><td>3.73</td><td>36</td><td>9</td><td>12.41</td><td>13.72</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>光洋股份</td><td class='muted'>sz002708</td><td>汽车</td><td>—</td><td><b>37.2</b></td><td class='down'>-0.42%</td><td>7.87</td><td>92</td><td>82</td><td>15.59</td><td>17.23</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>浪潮信息</td><td class='muted'>sz000977</td><td>计算机</td><td>—</td><td><b>36.0</b></td><td class='down'>-1.33%</td><td>3.61</td><td>37</td><td>2</td><td>67.24</td><td>74.32</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr><tr><td>速达股份</td><td class='muted'>sz001277</td><td>机械设备</td><td>洗盘</td><td><b>31.2</b></td><td class='down'>-2.41%</td><td>3.60</td><td>22</td><td>9</td><td>28.98</td><td>32.03</td><td><span class='badge bD' title='A ≥70 分（8%~10% 仓位）· B 60~70（5%~7%）· C 50~60（≤3%）· D &lt;50 不建仓。'>D</span></td></tr></tbody></table>
 
   <div class='card hi'>
@@ -487,4 +624,116 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
 
 <footer>数据源：westock-mcp（行情 / 技术指标 / 资金流 / 筹码 / 一致预期 / 龙虎榜 / 高管变动 / 大宗）· 中报十大流通股东（2026-06-30）<br>
 生成脚本 <code>quant/gen_picks.py</code> + <code>quant/build_picks.py</code> · 仅供参考，不构成投资建议。</footer>
-</div></body></html>
+</div>
+
+
+
+<!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序脚本的表(th.sort 且非 data-wb)不接管，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 */
+  try {
+    var here = location.pathname.split("/").pop() || "index.html";
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h) return;
+      var last = h.split("/").pop();
+      if (last === here && here !== "") a.classList.add("cur");
+    });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset && c.dataset.val !== undefined) return c.dataset.val;
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别 */
+    ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP-->
+</body></html>
