@@ -6,8 +6,8 @@
 <title>群体心理风险雷达 · A股</title>
 <style>
   :root{
-    --bg:#f6f4ef; --card:#ffffff; --ink:#1c1b19; --muted:#6b675f; --line:#e7e2d8;
-    --accent:#b8332a; --accent2:#1f4e5f; --gold:#b8893b;
+    --bg:#f5f5f7; --card:#ffffff; --ink:#1c1b19; --muted:#6b675f; --line:#e7e2d8;
+    --accent:#b8332a; --accent2:#1f4e5f; --gold:#0071e3;
     --up:#d8392b; --down:#1a9e5a;
     --h1:#a5d6a7; --h2:#fff59d; --h3:#ffcc80; --h4:#ef9a9a; --h5:#e53935;
     --shadow:0 1px 3px rgba(28,27,25,.08),0 8px 24px rgba(28,27,25,.06);
@@ -21,7 +21,7 @@
   .masthead{background:linear-gradient(135deg,#221f1c 0%,#3a3026 100%);color:#f7f3ea;
     border-radius:0 0 18px 18px;padding:30px 26px 24px;position:relative;overflow:hidden;}
   .masthead:before{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;
-    background:radial-gradient(circle,rgba(184,137,59,.35),transparent 70%);}
+    background:radial-gradient(circle,rgba(0,113,227,.35),transparent 70%);}
   .kicker{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:700;}
   .masthead h1{font-size:2.05rem;font-weight:800;letter-spacing:-.01em;margin:6px 0 4px;line-height:1.1;}
   .masthead .sub{font-size:.92rem;color:#cfc6b6;max-width:640px;}
@@ -103,17 +103,18 @@
 
 
 
+
 <!--WB_THEME--><style id='wb-theme'>
 /* ============================================================
-   统一设计系统 (A股看板) — 单一配色与骨架来源
+   统一设计系统 (A股看板) — 苹果风·朴素简约
    由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
-   作用：压过各生成器自带的零散 <style>，保证全站配色/导航完全一致。
+   配色：浅灰白底 + 深灰文字 + 蓝色强调，禁用金色系。
    ============================================================ */
 :root{
-  --bg:#f5f6f8; --card:#ffffff; --ink:#23262b; --muted:#6b7480;
-  --gold:#b8893b; --gold-2:#a9792f; --gold-soft:#fbf6ee; --gold-line:rgba(184,137,59,.28);
-  --red:#b8332a; --green:#1a9e5a; --line:#e7e9ee; --line-2:#f0f1f4;
-  --slate:#5b6670; --slate-soft:#eef0f2;
+  --bg:#fbfbfd; --surface:#ffffff; --ink:#1d1d1f; --muted:#6e6e73;
+  --accent:#0071e3; --accent-soft:#e8f4fd; --accent-ink:#005bb5;
+  --red:#ff3b30; --green:#34c759;
+  --line:#d2d2d7; --line-2:#e8e8ed; --hover:#f5f5f7;
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
@@ -122,48 +123,51 @@ body{
   font:14px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
   -webkit-font-smoothing:antialiased;
 }
-a{color:var(--gold);}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
 .wrap{max-width:1180px;margin:0 auto;padding:24px 18px 56px;}
 
-/* ---------- 顶部统一导航（金色药丸，!important 压制内联样式） ---------- */
+/* ---------- 顶部统一导航（单行、不折行、滚动兜底） ---------- */
 .topnav{
-  display:flex !important; flex-wrap:wrap !important; gap:8px !important;
-  margin:0 0 18px !important; padding:10px 4px !important;
-  border-bottom:1px solid var(--gold-line) !important; font-size:13px !important;
+  display:flex !important; align-items:center !important; gap:2px !important;
+  margin:0 0 20px !important; padding:8px 0 !important;
+  border-bottom:1px solid var(--line) !important;
+  font-size:12px !important; white-space:nowrap !important;
+  flex-wrap:nowrap !important; overflow-x:auto !important;
+  -webkit-overflow-scrolling:touch !important;
+  scrollbar-width:none !important;
 }
+.topnav::-webkit-scrollbar{display:none !important;}
 .topnav a{
-  display:inline-block !important; color:var(--gold) !important;
-  text-decoration:none !important; padding:5px 13px !important;
-  border:1px solid var(--gold-line) !important; border-radius:20px !important;
-  white-space:nowrap !important; background:transparent !important;
-  transition:background .15s,color .15s !important;
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:6px 10px !important;
+  border-radius:6px !important; white-space:nowrap !important;
+  background:transparent !important; transition:background .15s,color .15s !important;
+  flex-shrink:0 !important;
 }
-.topnav a:hover{ background:var(--gold-soft) !important; }
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; }
 .topnav a.cur{
-  background:linear-gradient(90deg,#b8893b,#cf a4) !important;
-  background:linear-gradient(90deg,var(--gold),#d8b46a) !important;
-  color:#fff !important; border-color:transparent !important; font-weight:600 !important;
+  background:var(--accent) !important; color:#fff !important;
+  font-weight:500 !important;
 }
-.topnav a.xlink{ opacity:.85; border-style:dashed !important; }
+.topnav a.home{ margin-left:auto !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
 
 /* ---------- 页头 ---------- */
 header{margin:0 0 8px;}
 header h1{
-  font-size:24px; margin:0 0 4px; letter-spacing:.5px;
-  background:linear-gradient(90deg,var(--gold),#d8b46a);
-  -webkit-background-clip:text; background-clip:text; color:var(--gold);
-  -webkit-text-fill-color:transparent;
+  font-size:26px; font-weight:700; margin:0 0 6px; letter-spacing:-.3px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
 }
 header .sub{color:var(--muted); font-size:13px;}
 
 /* ---------- 区块卡片 ---------- */
 .section{
-  margin:26px 0; background:var(--card); border:1px solid var(--line);
-  border-radius:12px; padding:18px 18px 22px; box-shadow:0 1px 3px rgba(0,0,0,.04);
+  margin:24px 0; background:var(--surface); border:1px solid var(--line-2);
+  border-radius:16px; padding:20px; box-shadow:0 1px 2px rgba(0,0,0,.03);
 }
 .section > h2, .section > h3{
-  border-left:4px solid var(--gold); padding-left:12px; margin:0 0 14px;
-  font-size:17px; color:var(--ink); font-weight:700;
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:700;
 }
 .section > h3{ font-size:15px; opacity:.92; }
 
@@ -171,23 +175,23 @@ header .sub{color:var(--muted); font-size:13px;}
 table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
 caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
 thead th{
-  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line);
-  color:var(--muted); font-weight:600; white-space:nowrap; background:#fcfcfd;
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--hover);
 }
 tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
-tbody tr:hover{ background:#fafbfc; }
+tbody tr:hover{ background:var(--hover); }
 .num{ text-align:right !important; font-variant-numeric:tabular-nums; }
 .up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
 .buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
 .prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
 
-/* 排序表头（通用，覆盖各页自带样式以统一观感） */
+/* 排序表头 */
 th.sort{ cursor:pointer; user-select:none; position:relative; }
-th.sort:hover{ color:var(--gold); }
-th.sort.sorted{ color:var(--gold); }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
 th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
 th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
-th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:#c2c9d1; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:#c7c7cc; }
 
 /* ---------- 每表搜索筛选框 ---------- */
 .wb-search{
@@ -195,51 +199,51 @@ th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:#c2c9d1; }
   border:1px solid var(--line); border-radius:8px; font-size:13px; outline:none;
   background:#fff; color:var(--ink);
 }
-.wb-search:focus{ border-color:var(--gold); box-shadow:0 0 0 2px var(--gold-soft); }
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,113,227,.12); }
 .wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
 
-/* ---------- 星级/标签/徽章（统一配色） ---------- */
+/* ---------- 星级/标签/徽章 ---------- */
 .chip,.badge{
   display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
-  background:var(--gold-soft); color:var(--gold-2); border:1px solid #efe2c9;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
 }
-.badge-s,.badge.bS{ background:#eaf6ef; color:var(--green); border-color:#cdeadd; }
-.badge-b,.badge.bB{ background:#fdeeec; color:var(--red); border-color:#f6d6d1; }
-/* 档位配色：A 金 / B 绿 / C 灰蓝 / D 灰 —— 消除原蓝色 C 档冲突 */
-.bA{ background:var(--gold-soft) !important; color:var(--gold-2) !important; border:1px solid #efe2c9 !important; }
-.bB{ background:#eaf6ef !important; color:var(--green) !important; border:1px solid #cdeadd !important; }
-.bC{ background:var(--slate-soft) !important; color:var(--slate) !important; border:1px solid #dfe3e8 !important; }
-.bD{ background:#f1f2f4 !important; color:#9aa3ad !important; border:1px solid #e4e7ea !important; }
+/* 档位配色：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #cfe6fb !important; }
+.bB{ background:#e8f9ec !important; color:#1a7a34 !important; border:1px solid #c5efd0 !important; }
+.bC{ background:#f2f2f7 !important; color:var(--muted) !important; border:1px solid var(--line-2) !important; }
+.bD{ background:#fafafa !important; color:#a1a1a6 !important; border:1px solid var(--line-2) !important; }
 
 /* ---------- 说明/注释 ---------- */
 .note{
-  background:var(--gold-soft); border:1px solid #efe2c9; border-radius:10px;
-  padding:12px 14px; color:#6a5a3a; font-size:13px; margin:12px 0; line-height:1.7;
+  background:var(--hover); border:1px solid var(--line-2); border-radius:12px;
+  padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
 }
-.note b{ color:var(--gold-2); }
+.note b{ color:var(--ink); }
 
 /* ---------- 页脚 ---------- */
 footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
 
-/* ---------- 杂色压制（消除历史页面蓝色/异色冲突） ---------- */
-.pg:hover{ border-color:var(--gold) !important; background:var(--gold-soft) !important; }
-.tag.ondemand{ background:var(--gold-soft) !important; color:var(--gold-2) !important; border-color:#efe2c9 !important; }
-
+/* ---------- 杂色压制（把历史页面残留的金/蓝冲突统一回灰蓝） ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
 
 /* ---------- 响应式 ---------- */
 @media (max-width:700px){
   .wrap{ padding:16px 12px 40px; }
-  header h1{ font-size:20px; }
+  header h1{ font-size:22px; }
   table{ font-size:12px; }
   thead th,tbody td{ padding:7px 7px; }
-  .topnav a{ padding:4px 10px; font-size:12px; }
+  .topnav a{ padding:5px 8px; font-size:11px; }
 }
 
-</style><!--/WB_THEME-->
-</head>
+</style><!--/WB_THEME--></head>
 <body>
-<!-- UNIFIED_NAV -->
-<div class='topnav'><a href='../market/index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='../market/hotmoney.html'>游资看板</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='index.html'>群体心理</a><a href='../research/index.html'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a><a href='../sections/index.html'>版块总览</a><a href='../db/index.html'>数据中心</a><a href='../../index.html'>返回主页</a></div>
+<div class='topnav'><a href='../market/index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='../market/hotmoney.html'>游资看板</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='index.html'>群体心理</a><a href='../research/index.html'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a><a href='../sections/index.html'>版块总览</a><a href='../db/index.html'>数据中心</a><a href='../../index.html' class='home'>首页</a></div>
+
+
+
+
+
 
 
 
@@ -662,6 +666,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 
 
+
 <!--WB_APP--><script id='wb-app'>
 /* ============================================================
    通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
@@ -769,6 +774,5 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
   });
 })();
 
-</script><!--/WB_APP-->
-</body>
+</script><!--/WB_APP--></body>
 </html>
