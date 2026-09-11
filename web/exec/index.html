@@ -69,11 +69,148 @@ tr:last-child td { border-bottom:none; }
 .filterbar .warn { color:#b8332a; font-weight:600; }
 footer { margin-top:34px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08);
   font-size:12px; color:#7b8794; line-height:1.8; }</style>
+
+
+
+
+<!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — 单一配色与骨架来源
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   作用：压过各生成器自带的零散 <style>，保证全站配色/导航完全一致。
+   ============================================================ */
+:root{
+  --bg:#f5f6f8; --card:#ffffff; --ink:#23262b; --muted:#6b7480;
+  --gold:#b8893b; --gold-2:#a9792f; --gold-soft:#fbf6ee; --gold-line:rgba(184,137,59,.28);
+  --red:#b8332a; --green:#1a9e5a; --line:#e7e9ee; --line-2:#f0f1f4;
+  --slate:#5b6670; --slate-soft:#eef0f2;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--gold);}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 18px 56px;}
+
+/* ---------- 顶部统一导航（金色药丸，!important 压制内联样式） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; gap:8px !important;
+  margin:0 0 18px !important; padding:10px 4px !important;
+  border-bottom:1px solid var(--gold-line) !important; font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--gold) !important;
+  text-decoration:none !important; padding:5px 13px !important;
+  border:1px solid var(--gold-line) !important; border-radius:20px !important;
+  white-space:nowrap !important; background:transparent !important;
+  transition:background .15s,color .15s !important;
+}
+.topnav a:hover{ background:var(--gold-soft) !important; }
+.topnav a.cur{
+  background:linear-gradient(90deg,#b8893b,#cf a4) !important;
+  background:linear-gradient(90deg,var(--gold),#d8b46a) !important;
+  color:#fff !important; border-color:transparent !important; font-weight:600 !important;
+}
+.topnav a.xlink{ opacity:.85; border-style:dashed !important; }
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:24px; margin:0 0 4px; letter-spacing:.5px;
+  background:linear-gradient(90deg,var(--gold),#d8b46a);
+  -webkit-background-clip:text; background-clip:text; color:var(--gold);
+  -webkit-text-fill-color:transparent;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片 ---------- */
+.section{
+  margin:26px 0; background:var(--card); border:1px solid var(--line);
+  border-radius:12px; padding:18px 18px 22px; box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.section > h2, .section > h3{
+  border-left:4px solid var(--gold); padding-left:12px; margin:0 0 14px;
+  font-size:17px; color:var(--ink); font-weight:700;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:#fcfcfd;
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:#fafbfc; }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头（通用，覆盖各页自带样式以统一观感） */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--gold); }
+th.sort.sorted{ color:var(--gold); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:#c2c9d1; }
+
+/* ---------- 每表搜索筛选框 ---------- */
+.wb-search{
+  width:100%; max-width:340px; padding:8px 12px; margin:4px 0 12px;
+  border:1px solid var(--line); border-radius:8px; font-size:13px; outline:none;
+  background:#fff; color:var(--ink);
+}
+.wb-search:focus{ border-color:var(--gold); box-shadow:0 0 0 2px var(--gold-soft); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章（统一配色） ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--gold-soft); color:var(--gold-2); border:1px solid #efe2c9;
+}
+.badge-s,.badge.bS{ background:#eaf6ef; color:var(--green); border-color:#cdeadd; }
+.badge-b,.badge.bB{ background:#fdeeec; color:var(--red); border-color:#f6d6d1; }
+/* 档位配色：A 金 / B 绿 / C 灰蓝 / D 灰 —— 消除原蓝色 C 档冲突 */
+.bA{ background:var(--gold-soft) !important; color:var(--gold-2) !important; border:1px solid #efe2c9 !important; }
+.bB{ background:#eaf6ef !important; color:var(--green) !important; border:1px solid #cdeadd !important; }
+.bC{ background:var(--slate-soft) !important; color:var(--slate) !important; border:1px solid #dfe3e8 !important; }
+.bD{ background:#f1f2f4 !important; color:#9aa3ad !important; border:1px solid #e4e7ea !important; }
+
+/* ---------- 说明/注释 ---------- */
+.note{
+  background:var(--gold-soft); border:1px solid #efe2c9; border-radius:10px;
+  padding:12px 14px; color:#6a5a3a; font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--gold-2); }
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制（消除历史页面蓝色/异色冲突） ---------- */
+.pg:hover{ border-color:var(--gold) !important; background:var(--gold-soft) !important; }
+.tag.ondemand{ background:var(--gold-soft) !important; color:var(--gold-2) !important; border-color:#efe2c9 !important; }
+
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:20px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav a{ padding:4px 10px; font-size:12px; }
+}
+
+</style><!--/WB_THEME-->
 </head>
 <body>
 <div class='wrap'>
 
-<div class='topnav'><a href='../market/index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='../market/hotmoney.html'>游资看板</a><a href='../sector/index.html'>板块强度</a><a href='index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../research/index.html'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../sections/index.html'>版块总览</a><a href='../db/index.html'>数据中心</a><a href='../../index.html'>返回主页</a></div>
+<div class='topnav'><a href='../market/index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='../market/hotmoney.html'>游资看板</a><a href='../sector/index.html'>板块强度</a><a href='index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../research/index.html'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a><a href='../sections/index.html'>版块总览</a><a href='../db/index.html'>数据中心</a><a href='../../index.html'>返回主页</a></div>
 
 <header>
   <h1>高管增减持（董监高）</h1>
@@ -158,7 +295,7 @@ footer { margin-top:34px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08)
     <div class='tab fbtn' data-dir='s' onclick='setDir("s")'>仅减持</div>
   </div>
 
-  <div class='pane' id='p_latest'><div class='scroll'><table>
+  <div class='pane' id='p_latest'><div class='scroll'><table data-wb>
     <thead><tr><th>股票</th><th>代码</th><th>申万一级</th><th>申万二级</th><th>高管</th><th style='text-align:center'>方向</th><th class='num'>变动股数(万股)</th><th class='num'>均价(元)</th><th class='num'>变动金额(万元)</th><th>披露日</th><th class='num'>当日涨跌</th></tr></thead><tbody><tr data-dir='s' data-sw1='基础化工'><td><b>丰山集团</b></td><td style='color:#8a929c;font-size:12px'>sh603810</td><td>基础化工</td><td style='color:#6b7280;font-size:12px'>农化制品</td><td>殷平</td><td style='text-align:center'><span class='badge-s'>减持</span></td><td class='num sell'>-32.63</td><td class='num'>12.62</td><td class='num sell'>411.8</td><td style='color:#6b7280;font-size:12px'>2026-09-09</td><td class='num '>—</td></tr>
 <tr data-dir='s' data-sw1='电力设备'><td><b>科威尔</b></td><td style='color:#8a929c;font-size:12px'>sh688551</td><td>电力设备</td><td style='color:#6b7280;font-size:12px'>其他电源设备Ⅱ</td><td>夏亚平</td><td style='text-align:center'><span class='badge-s'>减持</span></td><td class='num sell'>-9.00</td><td class='num'>38.59</td><td class='num sell'>347.3</td><td style='color:#6b7280;font-size:12px'>2026-09-09</td><td class='num '>—</td></tr>
 <tr data-dir='s' data-sw1='电力设备'><td><b>科威尔</b></td><td style='color:#8a929c;font-size:12px'>sh688551</td><td>电力设备</td><td style='color:#6b7280;font-size:12px'>其他电源设备Ⅱ</td><td>夏亚平</td><td style='text-align:center'><span class='badge-s'>减持</span></td><td class='num sell'>-8.50</td><td class='num'>38.97</td><td class='num sell'>331.2</td><td style='color:#6b7280;font-size:12px'>2026-09-09</td><td class='num '>—</td></tr>
@@ -184,7 +321,7 @@ footer { margin-top:34px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08)
 <tr data-dir='s' data-sw1='建筑材料'><td><b>山东玻纤</b></td><td style='color:#8a929c;font-size:12px'>sh605006</td><td>建筑材料</td><td style='color:#6b7280;font-size:12px'>玻璃玻纤</td><td>张善俊</td><td style='text-align:center'><span class='badge-s'>减持</span></td><td class='num sell'>-0.20</td><td class='num'>15.05</td><td class='num sell'>3.0</td><td style='color:#6b7280;font-size:12px'>2026-09-09</td><td class='num '>—</td></tr>
 <tr data-dir='b' data-sw1='机械设备'><td><b>优利德</b></td><td style='color:#8a929c;font-size:12px'>sh688628</td><td>机械设备</td><td style='color:#6b7280;font-size:12px'>通用设备</td><td>龙基智</td><td style='text-align:center'><span class='badge-b'>增持</span></td><td class='num buy'>+0.30</td><td class='num'>0.00</td><td class='num buy'>0.0</td><td style='color:#6b7280;font-size:12px'>2026-09-09</td><td class='num '>—</td></tr></tbody></table></div></div>
 
-  <div class='pane hide' id='p_buy'><div class='scroll'><table>
+  <div class='pane hide' id='p_buy'><div class='scroll'><table data-wb>
     <thead><tr><th>股票</th><th>代码</th><th>申万一级</th><th>申万二级</th><th>高管</th><th style='text-align:center'>方向</th><th class='num'>变动股数(万股)</th><th class='num'>均价(元)</th><th class='num'>变动金额(万元)</th><th>披露日</th><th class='num'>当日涨跌</th></tr></thead><tbody><tr data-dir='b' data-sw1='计算机'><td><b>税友股份</b></td><td style='color:#8a929c;font-size:12px'>sh603171</td><td>计算机</td><td style='color:#6b7280;font-size:12px'>IT服务Ⅱ</td><td>张镇潮</td><td style='text-align:center'><span class='badge-b'>增持</span></td><td class='num buy'>+2,050.00</td><td class='num'>35.59</td><td class='num buy'>72,959.5</td><td style='color:#6b7280;font-size:12px'>2026-09-02</td><td class='num '>—</td></tr>
 <tr data-dir='b' data-sw1='机械设备'><td><b>九州一轨</b></td><td style='color:#8a929c;font-size:12px'>sh688485</td><td>机械设备</td><td style='color:#6b7280;font-size:12px'>轨交设备Ⅱ</td><td>陶为银</td><td style='text-align:center'><span class='badge-b'>增持</span></td><td class='num buy'>+265.14</td><td class='num'>54.07</td><td class='num buy'>14,336.0</td><td style='color:#6b7280;font-size:12px'>2026-08-17</td><td class='num '>—</td></tr>
 <tr data-dir='b' data-sw1='美容护理'><td><b>倍加洁</b></td><td style='color:#8a929c;font-size:12px'>sh603059</td><td>美容护理</td><td style='color:#6b7280;font-size:12px'>个护用品</td><td>张文生</td><td style='text-align:center'><span class='badge-b'>增持</span></td><td class='num buy'>+507.30</td><td class='num'>21.47</td><td class='num buy'>10,891.7</td><td style='color:#6b7280;font-size:12px'>2026-09-04</td><td class='num '>—</td></tr>
@@ -246,7 +383,7 @@ footer { margin-top:34px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08)
 <tr data-dir='b' data-sw1='食品饮料'><td><b>百润股份</b></td><td style='color:#8a929c;font-size:12px'>sz002568</td><td>食品饮料</td><td style='color:#6b7280;font-size:12px'>非白酒</td><td>马良</td><td style='text-align:center'><span class='badge-b'>增持</span></td><td class='num buy'>+9.96</td><td class='num'>19.65</td><td class='num buy'>195.7</td><td style='color:#6b7280;font-size:12px'>2026-08-12</td><td class='num '>—</td></tr>
 <tr data-dir='b' data-sw1='汽车'><td><b>乔路铭</b></td><td style='color:#8a929c;font-size:12px'>bj920079</td><td>汽车</td><td style='color:#6b7280;font-size:12px'>汽车零部件</td><td>黄胜全</td><td style='text-align:center'><span class='badge-b'>增持</span></td><td class='num buy'>+13.91</td><td class='num'>13.99</td><td class='num buy'>194.7</td><td style='color:#6b7280;font-size:12px'>2026-08-27</td><td class='num '>—</td></tr></tbody></table></div></div>
 
-  <div class='pane hide' id='p_sell'><div class='scroll'><table>
+  <div class='pane hide' id='p_sell'><div class='scroll'><table data-wb>
     <thead><tr><th>股票</th><th>代码</th><th>申万一级</th><th>申万二级</th><th>高管</th><th style='text-align:center'>方向</th><th class='num'>变动股数(万股)</th><th class='num'>均价(元)</th><th class='num'>变动金额(万元)</th><th>披露日</th><th class='num'>当日涨跌</th></tr></thead><tbody><tr data-dir='s' data-sw1='电力设备'><td><b>天合光能</b></td><td style='color:#8a929c;font-size:12px'>sh688599</td><td>电力设备</td><td style='color:#6b7280;font-size:12px'>光伏设备</td><td>高纪凡</td><td style='text-align:center'><span class='badge-s'>减持</span></td><td class='num sell'>-3,610.00</td><td class='num'>12.59</td><td class='num sell'>45,449.9</td><td style='color:#6b7280;font-size:12px'>2026-08-21</td><td class='num '>—</td></tr>
 <tr data-dir='s' data-sw1='计算机'><td><b>同花顺</b></td><td style='color:#8a929c;font-size:12px'>sz300033</td><td>计算机</td><td style='color:#6b7280;font-size:12px'>软件开发</td><td>王进</td><td style='text-align:center'><span class='badge-s'>减持</span></td><td class='num sell'>-121.90</td><td class='num'>223.54</td><td class='num sell'>27,249.5</td><td style='color:#6b7280;font-size:12px'>2026-08-26</td><td class='num '>—</td></tr>
 <tr data-dir='s' data-sw1='计算机'><td><b>同花顺</b></td><td style='color:#8a929c;font-size:12px'>sz300033</td><td>计算机</td><td style='color:#6b7280;font-size:12px'>软件开发</td><td>于浩淼</td><td style='text-align:center'><span class='badge-s'>减持</span></td><td class='num sell'>-110.50</td><td class='num'>223.20</td><td class='num sell'>24,663.6</td><td style='color:#6b7280;font-size:12px'>2026-08-26</td><td class='num '>—</td></tr>
@@ -308,7 +445,7 @@ footer { margin-top:34px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08)
 <tr data-dir='s' data-sw1='机械设备'><td><b>深科达</b></td><td style='color:#8a929c;font-size:12px'>sh688328</td><td>机械设备</td><td style='color:#6b7280;font-size:12px'>专用设备</td><td>黄奕宏</td><td style='text-align:center'><span class='badge-s'>减持</span></td><td class='num sell'>-12.00</td><td class='num'>78.50</td><td class='num sell'>942.0</td><td style='color:#6b7280;font-size:12px'>2026-09-02</td><td class='num '>—</td></tr>
 <tr data-dir='s' data-sw1='基础化工'><td><b>长江材料</b></td><td style='color:#8a929c;font-size:12px'>sz001296</td><td>基础化工</td><td style='color:#6b7280;font-size:12px'>非金属材料Ⅱ</td><td>熊杰</td><td style='text-align:center'><span class='badge-s'>减持</span></td><td class='num sell'>-49.45</td><td class='num'>18.97</td><td class='num sell'>938.0</td><td style='color:#6b7280;font-size:12px'>2026-09-02</td><td class='num '>—</td></tr></tbody></table></div></div>
 
-  <div class='pane hide' id='p_agg'><div class='scroll'><table>
+  <div class='pane hide' id='p_agg'><div class='scroll'><table data-wb>
     <thead><tr><th>股票</th><th>代码</th><th>申万一级</th><th>申万二级</th>
     <th class='num'>变动笔数</th><th class='num'>增持</th><th class='num'>减持</th>
     <th class='num'>净变动金额(万元)</th><th>最近披露日</th><th class='num'>当日涨跌</th></tr></thead>
@@ -394,7 +531,7 @@ footer { margin-top:34px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08)
 <tr data-dir='s' data-sw1='电子'><td><b>华勤技术</b></td><td style='color:#8a929c;font-size:12px'>sh603296</td><td>电子</td><td style='color:#6b7280;font-size:12px'>消费电子</td><td class='num'>4</td><td class='num buy'>0</td><td class='num sell'>4</td><td class='num '>0.0</td><td style='color:#6b7280;font-size:12px'>2026-08-21</td><td class='num '>—</td></tr></tbody></table></div>
     <div class='note'>净变动金额 = Σ(变动股数 × 成交均价)，正=净增持、负=净减持；按净额从高到低排序。</div></div>
 
-  <div class='pane hide' id='p_all'><div class='scroll'><table>
+  <div class='pane hide' id='p_all'><div class='scroll'><table data-wb>
     <thead><tr><th>股票</th><th>代码</th><th>申万一级</th><th>申万二级</th><th>高管</th><th style='text-align:center'>方向</th><th class='num'>变动股数(万股)</th><th class='num'>均价(元)</th><th class='num'>变动金额(万元)</th><th>披露日</th><th class='num'>当日涨跌</th></tr></thead><tbody><tr data-dir='b' data-sw1='机械设备'><td><b>优利德</b></td><td style='color:#8a929c;font-size:12px'>sh688628</td><td>机械设备</td><td style='color:#6b7280;font-size:12px'>通用设备</td><td>龙基智</td><td style='text-align:center'><span class='badge-b'>增持</span></td><td class='num buy'>+0.30</td><td class='num'>0.00</td><td class='num buy'>0.0</td><td style='color:#6b7280;font-size:12px'>2026-09-09</td><td class='num '>—</td></tr>
 <tr data-dir='s' data-sw1='建筑材料'><td><b>山东玻纤</b></td><td style='color:#8a929c;font-size:12px'>sh605006</td><td>建筑材料</td><td style='color:#6b7280;font-size:12px'>玻璃玻纤</td><td>张善俊</td><td style='text-align:center'><span class='badge-s'>减持</span></td><td class='num sell'>-0.20</td><td class='num'>15.05</td><td class='num sell'>3.0</td><td style='color:#6b7280;font-size:12px'>2026-09-09</td><td class='num '>—</td></tr>
 <tr data-dir='b' data-sw1='机械设备'><td><b>优利德</b></td><td style='color:#8a929c;font-size:12px'>sh688628</td><td>机械设备</td><td style='color:#6b7280;font-size:12px'>通用设备</td><td>李志海</td><td style='text-align:center'><span class='badge-b'>增持</span></td><td class='num buy'>+0.24</td><td class='num'>17.35</td><td class='num buy'>4.2</td><td style='color:#6b7280;font-size:12px'>2026-09-09</td><td class='num '>—</td></tr>
@@ -1189,7 +1326,7 @@ footer { margin-top:34px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08)
 <div class='section'>
   <h2>知名牛散 / 私募 · 关联重点标注</h2>
   <div class='note'>以下知名主体同时现身于「近 1 月高管增减持」个股的<b>前十大流通股东</b>（交叉核对自 Q2 十大股东快照）。按需求，与高管增持有关系的主体在此重点标注；完整「行业知名 Top20 私募 / 牛散」玩家图谱见 <a href='../shareholder/top-elite.html'>行业知名 Top20 页面</a>。</div>
-  <table style='width:100%;border-collapse:collapse;margin-top:8px;font-size:13px'>
+  <table style='width:100%;border-collapse:collapse;margin-top:8px;font-size:13px' data-wb>
     <thead><tr><th style='text-align:left;padding:8px;border-bottom:2px solid #e7e9ee'>知名主体</th><th style='text-align:left;padding:8px;border-bottom:2px solid #e7e9ee'>关联个股（亦现高管增减持）</th><th style='text-align:left;padding:8px;border-bottom:2px solid #e7e9ee'>类型</th></tr></thead>
     <tbody><tr><td style='padding:8px;border-bottom:1px solid #eef0f3'><b>高毅资产</b></td><td style='padding:8px;border-bottom:1px solid #eef0f3'>松井股份、信科移动-U</td><td style='padding:8px;border-bottom:1px solid #eef0f3'><span class='badge-b'>私募</span></td></tr><tr><td style='padding:8px;border-bottom:1px solid #eef0f3'><b>睿远基金</b></td><td style='padding:8px;border-bottom:1px solid #eef0f3'>巨星科技</td><td style='padding:8px;border-bottom:1px solid #eef0f3'><span class='badge-b'>私募</span></td></tr><tr><td style='padding:8px;border-bottom:1px solid #eef0f3'><b>盘京投资</b></td><td style='padding:8px;border-bottom:1px solid #eef0f3'>正帆科技</td><td style='padding:8px;border-bottom:1px solid #eef0f3'><span class='badge-b'>私募</span></td></tr><tr><td style='padding:8px;border-bottom:1px solid #eef0f3'><b>九坤投资</b></td><td style='padding:8px;border-bottom:1px solid #eef0f3'>天力复合</td><td style='padding:8px;border-bottom:1px solid #eef0f3'><span class='badge-b'>量化私募</span></td></tr><tr><td style='padding:8px;border-bottom:1px solid #eef0f3'><b>陈发树</b></td><td style='padding:8px;border-bottom:1px solid #eef0f3'>森特股份</td><td style='padding:8px;border-bottom:1px solid #eef0f3'><span class='badge-s'>牛散</span></td></tr><tr><td style='padding:8px;border-bottom:1px solid #eef0f3'><b>蒋仕波</b></td><td style='padding:8px;border-bottom:1px solid #eef0f3'>必得科技</td><td style='padding:8px;border-bottom:1px solid #eef0f3'><span class='badge-s'>牛散</span></td></tr><tr><td style='padding:8px;border-bottom:1px solid #eef0f3'><b>屠文斌</b></td><td style='padding:8px;border-bottom:1px solid #eef0f3'>可川科技</td><td style='padding:8px;border-bottom:1px solid #eef0f3'><span class='badge-s'>牛散</span></td></tr><tr><td style='padding:8px;border-bottom:1px solid #eef0f3'><b>王萍</b></td><td style='padding:8px;border-bottom:1px solid #eef0f3'>新泉股份</td><td style='padding:8px;border-bottom:1px solid #eef0f3'><span class='badge-s'>牛散</span></td></tr><tr><td style='padding:8px;border-bottom:1px solid #eef0f3'><b>魏巍</b></td><td style='padding:8px;border-bottom:1px solid #eef0f3'>金科股份</td><td style='padding:8px;border-bottom:1px solid #eef0f3'><span class='badge-s'>牛散</span></td></tr></tbody>
   </table>
@@ -1267,5 +1404,117 @@ document.addEventListener('DOMContentLoaded', function(){
   refreshFilterBar();
 });
 </script>
+
+
+
+
+<!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序脚本的表(th.sort 且非 data-wb)不接管，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 */
+  try {
+    var here = location.pathname.split("/").pop() || "index.html";
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h) return;
+      var last = h.split("/").pop();
+      if (last === here && here !== "") a.classList.add("cur");
+    });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset && c.dataset.val !== undefined) return c.dataset.val;
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别 */
+    ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP-->
 </body>
 </html>
