@@ -38,7 +38,8 @@ def _load_token():
 TOKEN = _load_token()
 
 # 强制排除名单（路径含以下任一子串即跳过）—— 不对外展示个人持仓 / 选股
-EXCLUDE_FRAGMENTS = ("portfolio", "bottom-up", "portfolio_analysis", "_all_store")
+# 2026-09-11：补充 web/research —— 个股调研页含个人持仓快照，按项目硬性边界一律不对外推送。
+EXCLUDE_FRAGMENTS = ("portfolio", "bottom-up", "portfolio_analysis", "_all_store", "web/research")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
