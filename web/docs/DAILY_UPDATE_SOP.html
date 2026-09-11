@@ -145,6 +145,18 @@ th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:#c7c7cc; }
 .bC{ background:#f2f2f7 !important; color:var(--muted) !important; border:1px solid var(--line-2) !important; }
 .bD{ background:#fafafa !important; color:#a1a1a6 !important; border:1px solid var(--line-2) !important; }
 
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 10px; border-radius:8px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line-2); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--hover); text-decoration:none;
+}
+
 /* ---------- 说明/注释 ---------- */
 .note{
   background:var(--hover); border:1px solid var(--line-2); border-radius:12px;
@@ -171,6 +183,8 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </style><!--/WB_THEME--></head>
 <body>
 <div class='topnav'><a href='../market/index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='../market/hotmoney.html'>游资看板</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../research/index.html'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a><a href='../sections/index.html'>版块总览</a><a href='../db/index.html'>数据中心</a><a href='../../index.html' class='home'>首页</a></div>
+
+
 
 
 
@@ -312,16 +326,49 @@ python market-trend/_build_{DATE}.py
 <li><b>趋势图</b>：点数 = 期数；末点日期 = 最新</li>
 <li><b>无残留旧值</b>：must_present / must_gone 断言通过（旧日期、旧数值不得残留）</li>
 <li><b>回链</b>：各子系统页均有「← 返回总门户」指向 <code>../index.html</code></li>
+<li><b>覆盖度（新增·必做）</b>：<code>python quant/_coverage_check.py --until YYYYMMDD</code> 输出 <code>ALL_COVERED</code>；非 0 退出码必须当天处理或记录为已知断档</li>
 </ul>
 </div>
 
-<h2>五、推送</h2>
-<div class="danger"><b>⚠️ 当前 GitHub 推送被两处鉴权阻塞（需你侧处理）：</b>
+<h2 id="coverage">五、全站覆盖度自检（每日收尾必跑）</h2>
+<div class="card">
+<p>目的：确保「每个该更新的页面族都更新到了目标交易日」，并揪出两类隐性残缺——<b>日期断档</b>与<b>孤儿页</b>（存在但没有任何页面链过去，用户点不到）。</p>
 <ul>
-<li>旧 PAT 已撤销 → REST 脚本推送 401；</li>
-<li>GitHub MCP 连接器 <code>push_files</code> 返回 403（App 未获授权访问 dujoer/stocks）。</li>
+<li><b>唯一权威来源</b>：<code>quant/_page_registry.py</code>。新增页面必须在此登记，否则自检报 <code>UNREGISTERED</code>。</li>
+<li><b>自检脚本</b>：<code>python quant/_coverage_check.py --until YYYYMMDD [--since YYYYMMDD] [--json]</code></li>
 </ul>
-<p>解法（任选）：① 在 dujoer 账号重新授权 GitHub MCP 连接器 App 后重试；② 提供具备 repo 权限的新 PAT，用 stdlib REST 脚本推送；③ 本地 git / 网页手动上传 <code>web/</code> 与 <code>market-trend/</code>。</p></div>
+<h3>检查项</h3>
+<ul>
+<li><b>A 未登记页面</b>：扫描到的 HTML 不在登记表内 → 补登记 or 删除</li>
+<li><b>B/C 日期缺口与新鲜度</b>：按日归档的族（status / lhb / sector / block / psychology / picks / tplus）逐日比对交易日集合（自动剔除周末），缺期或最新日期≠目标日即报 GAP</li>
+<li><b>D 孤儿页</b>：无任何静态入链的页面；已排除 archive / db / docs 白名单</li>
+<li><b>E 导航入口</b>：<code>_nav.SECTIONS</code> 14 项必须全部存在</li>
+</ul>
+<h3>孤儿页归位</h3>
+<p><code>python quant/_fix_orphans.py</code>：按目录把孤儿页以「历史归档 / 相关页面」链接块（<code>.section + .arch</code>）插回所属索引页，带哨兵注释、可重复运行。跑完须重跑 <code>_apply_theme.py</code> 注入样式。</p>
+<h3>退出码</h3>
+<ul>
+<li><code>0</code> 全部通过（<code>ALL_COVERED</code>）</li>
+<li><code>1</code> 存在覆盖缺口（B/C/D）→ 当天补或记录为已知断档</li>
+<li><code>2</code> 结构性问题（A/E）→ 必须立即修</li>
+</ul>
+<div class="danger"><b>⚠️ 两类缺口要区分对待：</b>
+<ul>
+<li><b>页面未生成</b>（数据在本地、只是没跑生成器）→ 直接补跑生成器；</li>
+<li><b>原始数据就没落盘</b>（如 08-18 / 08-28 的 lhb / limitup / market_overview 全缺）→ 属历史漏采，补数据成本高，应登记为已知断档并在页面注明，<b>绝不编造</b>；板块强度（sector_daily）为前瞻累积，漏一天即<b>永久断档</b>，无法回补。</li>
+</ul></div>
+</div>
+
+<h2 id="push">六、推送</h2>
+<div class="card">
+<p><b>通道</b>：GitHub Contents API（<code>urllib</code> 逐文件 PUT），PAT 存于仓库外的 <code>~/.workbuddy/gh_pat.txt</code>；目标仓库 <code>dujoer/stocks@main</code>。</p>
+<ul>
+<li><code>python quant/_push_lhb.py</code>：全量推送（<code>os.walk(web)</code> 兜底，单跑即推全部 web HTML）；推送时自动剥离 <code>data-page-node-id</code> 污染。</li>
+<li><b>禁止并发推送</b>：分批并发会 409 抢写。收尾必跑 <code>python quant/_sync_all.py</code>，逐文件比对本地 git blob sha 与远程 sha，不一致才串行重推，一次收敛。</li>
+<li><b>沙箱</b>：Bash 沙箱会拦截 GitHub 外网，推送须关闭沙箱执行，否则无输出。</li>
+<li><b>推送后抽检</b>：<code>python quant/_curl_gate.py</code>，关键页（index / exec / picks / tplus / db 的 index.html、lhb_{D}、block_{D}、sector-strength-YYYYMMDD）须全 200。Pages 构建有约 1 分钟延迟。</li>
+</ul>
+</div>
 
 <footer>
 数据来源：腾讯自选股 westock-mcp（盘后公开数据，滞后且非未来收益承诺）。<br>
