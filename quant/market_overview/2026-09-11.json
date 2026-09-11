@@ -1,0 +1,138 @@
+{
+ "data": [
+  {
+   "listCode": "market_statis_summary",
+   "row": {}
+  },
+  {
+   "listCode": "market_statis_daily_trade",
+   "row": {
+    "CLOSE_PRICE_SZZS": 3888.11,
+    "CHANGE_PCT_SZZS": -1.1765,
+    "OPEN_PRICE_SZZS": 3910.92,
+    "HIGH_PRICE_SZZS": 3912.32,
+    "LOW_PRICE_SZZS": 3852.03,
+    "CLOSE_PRICE_SZCZ": 13471.26,
+    "CHANGE_PCT_SZCZ": -1.0751,
+    "OPEN_PRICE_SZCZ": 13483.63,
+    "HIGH_PRICE_SZCZ": 13522.3,
+    "LOW_PRICE_SZCZ": 13263.35,
+    "CLOSE_PRICE_CYBZ": 3322.04,
+    "CHANGE_PCT_CYBZ": -0.4907,
+    "OPEN_PRICE_CYBZ": 3310.01,
+    "HIGH_PRICE_CYBZ": 3335.81,
+    "LOW_PRICE_CYBZ": 3261.1,
+    "MONEY": 19718.98,
+    "MONEY_5DAVG": 18733.382,
+    "MONEY_5DAVG_RATIO": 105.26,
+    "MONEY_10DAVG": 19111.886,
+    "MONEY_10DAVG_RATIO": 103.18,
+    "MONEY_20DAVG": 20167.098,
+    "MONEY_20DAVG_RATIO": 97.78,
+    "MONEY_60DAVG": null,
+    "MONEY_60DAVG_RATIO": null,
+    "MONEY_120DAVG": null,
+    "MONEY_120DAVG_RATIO": null,
+    "MONEY_250DAVG": null,
+    "MONEY_250DAVG_RATIO": null
+   }
+  },
+  {
+   "listCode": "market_statis_interval_trade",
+   "row": {}
+  },
+  {
+   "listCode": "market_statis_technical",
+   "row": {
+    "MA_5": 3929.454,
+    "MA_10": 3942.7059999999997,
+    "MA_20": 3934.8035000000004,
+    "MA_60": 3941.7188333333334,
+    "MA_120": 3997.599166666667,
+    "MA_250": 3988.4458,
+    "BOLL_MID": 3934.8035000000004,
+    "BOLL_UPPER": 4003.260013826394,
+    "BOLL_LOWER": 3866.346986173607,
+    "MACD": -7.233590023167411,
+    "DIF": 1.7963656285519392,
+    "DEA": 5.4131606401356445,
+    "KDJ_K": 35.485574316468686,
+    "KDJ_D": 45.61987862997668,
+    "KDJ_J": 15.216965689452692,
+    "RSI_6": 28.431228756999317,
+    "RSI_12": 41.32877425679285,
+    "RSI_24": 45.757925623924095,
+    "NINETURN_GREEN9": null,
+    "NINETURN_RED9": null
+   }
+  },
+  {
+   "listCode": "market_statis_updown",
+   "row": {
+    "CNT_RED": 643,
+    "CNT_GREEN": 4870,
+    "CNT_ZERO": 49,
+    "CNT_TOTAL": 5562,
+    "CNT_REACH_UPLIMIT": 40,
+    "CNT_REACH_DNLIMIT": 21,
+    "RATIO_UP": 11.66,
+    "RATIO_DOWN": 88.34,
+    "RATIO_UPDOWN": 0.132,
+    "RATIO_UPLIMIT": 0.72,
+    "RATIO_DOWNLIMIT": 0.38,
+    "CNT_HIGH5": null,
+    "CNT_LOW5": null,
+    "CNT_HIGH10": null,
+    "CNT_LOW10": null,
+    "CNT_HIGH20": null,
+    "CNT_LOW20": null,
+    "CNT_HIGH60": null,
+    "CNT_LOW60": null,
+    "CNT_HIGH120": null,
+    "CNT_LOW120": null,
+    "CNT_HIGH250": null,
+    "CNT_LOW250": null
+   }
+  },
+  {
+   "listCode": "market_statis_margin_chg",
+   "row": {}
+  },
+  {
+   "listCode": "market_statis_valuation",
+   "row": {
+    "PE_TTM": 20.0897,
+    "PB_LF": 1.7834,
+    "DIV_TTM": 2.0153,
+    "PS_TTM": null,
+    "PCF_TTM": null,
+    "PE_TTM_PCT_3Y": null,
+    "PE_TTM_PCT_5Y": null,
+    "PE_TTM_PCT_10Y": null,
+    "PE_TTM_PCT_52W": 33.9
+   }
+  },
+  {
+   "listCode": "market_statis_rotation",
+   "row": {
+    "CHG_5D_HS300": -0.8331,
+    "CHG_20D_HS300": -3.3374,
+    "CHG_5D_ZZ1000": -1.0768,
+    "CHG_20D_ZZ1000": -4.4091,
+    "CHG_5D_QZCZ": -1.7833,
+    "CHG_20D_QZCZ": -4.2717,
+    "CHG_5D_QZJZ": -1.4467,
+    "CHG_20D_QZJZ": 3.1874
+   }
+  }
+ ],
+ "_source": {
+  "note": "westock data_market_overview 降级期替代快照（2026-09-11）",
+  "daily_trade": "westock data_kline 上证/深成指/创业板 OHLC + 本地均量口径",
+  "technical": "westock data_kline 上证日K自算（与原生 17 项偏差 0.0000）",
+  "updown": "westock data_changedist（与原生口径一致）",
+  "rotation": "westock data_kline 四指数自算（与原生逐项一致）",
+  "valuation": "ifind-mcp 中证全指（3/5/10 年分位无源）",
+  "summary": "无源（westock 私有复合评分），留空"
+ }
+}
