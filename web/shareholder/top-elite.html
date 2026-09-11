@@ -51,7 +51,144 @@ header h1{font-size:24px;margin-bottom:6px}
 .k-r{color:#5a6270}
 footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
 .disc{background:#fff;border:1px dashed #d9c79a;border-radius:10px;padding:12px 16px;font-size:12px;color:#6b7280;margin-top:26px}
-</style></head>
+</style>
+
+
+
+<!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — 单一配色与骨架来源
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   作用：压过各生成器自带的零散 <style>，保证全站配色/导航完全一致。
+   ============================================================ */
+:root{
+  --bg:#f5f6f8; --card:#ffffff; --ink:#23262b; --muted:#6b7480;
+  --gold:#b8893b; --gold-2:#a9792f; --gold-soft:#fbf6ee; --gold-line:rgba(184,137,59,.28);
+  --red:#b8332a; --green:#1a9e5a; --line:#e7e9ee; --line-2:#f0f1f4;
+  --slate:#5b6670; --slate-soft:#eef0f2;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--gold);}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 18px 56px;}
+
+/* ---------- 顶部统一导航（金色药丸，!important 压制内联样式） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; gap:8px !important;
+  margin:0 0 18px !important; padding:10px 4px !important;
+  border-bottom:1px solid var(--gold-line) !important; font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--gold) !important;
+  text-decoration:none !important; padding:5px 13px !important;
+  border:1px solid var(--gold-line) !important; border-radius:20px !important;
+  white-space:nowrap !important; background:transparent !important;
+  transition:background .15s,color .15s !important;
+}
+.topnav a:hover{ background:var(--gold-soft) !important; }
+.topnav a.cur{
+  background:linear-gradient(90deg,#b8893b,#cf a4) !important;
+  background:linear-gradient(90deg,var(--gold),#d8b46a) !important;
+  color:#fff !important; border-color:transparent !important; font-weight:600 !important;
+}
+.topnav a.xlink{ opacity:.85; border-style:dashed !important; }
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:24px; margin:0 0 4px; letter-spacing:.5px;
+  background:linear-gradient(90deg,var(--gold),#d8b46a);
+  -webkit-background-clip:text; background-clip:text; color:var(--gold);
+  -webkit-text-fill-color:transparent;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片 ---------- */
+.section{
+  margin:26px 0; background:var(--card); border:1px solid var(--line);
+  border-radius:12px; padding:18px 18px 22px; box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.section > h2, .section > h3{
+  border-left:4px solid var(--gold); padding-left:12px; margin:0 0 14px;
+  font-size:17px; color:var(--ink); font-weight:700;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:#fcfcfd;
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:#fafbfc; }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头（通用，覆盖各页自带样式以统一观感） */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--gold); }
+th.sort.sorted{ color:var(--gold); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:#c2c9d1; }
+
+/* ---------- 每表搜索筛选框 ---------- */
+.wb-search{
+  width:100%; max-width:340px; padding:8px 12px; margin:4px 0 12px;
+  border:1px solid var(--line); border-radius:8px; font-size:13px; outline:none;
+  background:#fff; color:var(--ink);
+}
+.wb-search:focus{ border-color:var(--gold); box-shadow:0 0 0 2px var(--gold-soft); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章（统一配色） ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--gold-soft); color:var(--gold-2); border:1px solid #efe2c9;
+}
+.badge-s,.badge.bS{ background:#eaf6ef; color:var(--green); border-color:#cdeadd; }
+.badge-b,.badge.bB{ background:#fdeeec; color:var(--red); border-color:#f6d6d1; }
+/* 档位配色：A 金 / B 绿 / C 灰蓝 / D 灰 —— 消除原蓝色 C 档冲突 */
+.bA{ background:var(--gold-soft) !important; color:var(--gold-2) !important; border:1px solid #efe2c9 !important; }
+.bB{ background:#eaf6ef !important; color:var(--green) !important; border:1px solid #cdeadd !important; }
+.bC{ background:var(--slate-soft) !important; color:var(--slate) !important; border:1px solid #dfe3e8 !important; }
+.bD{ background:#f1f2f4 !important; color:#9aa3ad !important; border:1px solid #e4e7ea !important; }
+
+/* ---------- 说明/注释 ---------- */
+.note{
+  background:var(--gold-soft); border:1px solid #efe2c9; border-radius:10px;
+  padding:12px 14px; color:#6a5a3a; font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--gold-2); }
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制（消除历史页面蓝色/异色冲突） ---------- */
+.pg:hover{ border-color:var(--gold) !important; background:var(--gold-soft) !important; }
+.tag.ondemand{ background:var(--gold-soft) !important; color:var(--gold-2) !important; border-color:#efe2c9 !important; }
+
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:20px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav a{ padding:4px 10px; font-size:12px; }
+}
+
+</style><!--/WB_THEME-->
+</head>
 <body>
 <!-- UNIFIED_NAV -->
 <div style='display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:12px 4px;border-bottom:1px solid rgba(184,137,59,.3);font-size:13px;'><a href='../market/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>每日总览</a><a href='../lhb/lhb.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>龙虎榜分析</a><a href='../market/hotmoney.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>游资看板</a><a href='../sector/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>板块强度</a><a href='../exec/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>高管增减持</a><a href='../block/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>大宗交易</a><a href='../psychology/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>群体心理</a><a href='../research/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>个股调研</a><a href='2026-q2-industry-elite.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>行业最强</a><a href='tracker.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>牛人追踪</a><a href='../picks/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>信号池</a><a href='../sections/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>版块总览</a><a href='../db/index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>数据中心</a><a href='../../index.html' style='color:#b8893b;text-decoration:none;padding:5px 12px;border:1px solid rgba(184,137,59,.35);border-radius:20px;white-space:nowrap;'>返回主页</a></div>
@@ -62,18 +199,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
 
 
 
-<div class='topnav'>
-  <a href="../market/index.html">每日总览</a>
-  <a href="../lhb/lhb.html">龙虎榜分析</a>
-  <a href="../market/hotmoney.html">游资看板</a>
-  <a href="../sector/index.html">板块强度</a>
-  <a href="2026-q2-industry-elite.html">股东动向</a>
-  <a href="stock-accumulation.html">增持扫描</a>
-  <a href="../exec/index.html">高管增减持</a>
-  <a href="../block/index.html">大宗交易</a>
-  <a href="../sections/index.html">版块总览</a>
-  <a href="../../index.html">返回主页</a>
-</div>
+<div class='topnav'><a href='../market/index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='../market/hotmoney.html'>游资看板</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../research/index.html'>个股调研</a><a href='2026-q2-industry-elite.html'>行业最强</a><a href='tracker.html'>牛人追踪</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a><a href='../sections/index.html'>版块总览</a><a href='../db/index.html'>数据中心</a><a href='../../index.html'>返回主页</a></div>
 <div class="wrap">
   <header>
     <h1>行业知名 Top20 私募 / Top20 牛散 · 玩家图谱 + 机会扫描</h1>
@@ -90,7 +216,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
       <h2>机会扫描 · 增持/减持信号总榜</h2>
       <div class="sub">40 家主体全部 Q2 中报十大流通股东持仓聚合（278 条）· 默认按「参考市值」降序 · 点击表头可重排 · 红色=增持/买入信号，绿色=减持</div>
       <div class="scanhint">用法：先看「增持」行（红），按市值或季度增持量排序，圈出有实力主体重仓且本季加仓的票，再回看下方主体卡片的详细持仓与中报后关联。</div>
-      <table class="ptbl scan-tbl" id="scantbl">
+      <table class="ptbl scan-tbl" id="scantbl" data-wb>
         <thead><tr>
           <th onclick="sortScan(0)">#</th>
           <th onclick="sortScan(1)">主体</th>
@@ -124,7 +250,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         <div class="xref">🔗 中报后关联（高管增减持）：松井股份、信科移动-U</div>
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（17 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">安琪酵母</td><td class="num">0.0</td><td class="num">3.63</td><td class="num up">+300.0</td><td class="num up">增持</td><td class="num">41.98</td><td class="num">0.00</td></tr><tr><td class="stk">万华化学</td><td class="num">0.0</td><td class="num">0.8</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">77.66</td><td class="num">0.00</td></tr><tr><td class="stk">紫金矿业</td><td class="num">0.0</td><td class="num">0.35</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">33.35</td><td class="num">0.00</td></tr><tr><td class="stk">益丰药房</td><td class="num">0.0</td><td class="num">11.67</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">22.90</td><td class="num">0.00</td></tr><tr><td class="stk">传音控股</td><td class="num">0.0</td><td class="num">1.52</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">56.78</td><td class="num">0.00</td></tr><tr><td class="stk">爱博医疗</td><td class="num">0.0</td><td class="num">1.81</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">39.33</td><td class="num">0.00</td></tr><tr><td class="stk">松井股份</td><td class="num">0.0</td><td class="num">3.84</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">19.33</td><td class="num">0.00</td></tr><tr><td class="stk">信科移动-U</td><td class="num">0.0</td><td class="num">0.25</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">12.50</td><td class="num">0.00</td></tr><tr><td class="stk">TCL科技</td><td class="num">0.0</td><td class="num">0.82</td><td class="num down">-1400.0</td><td class="num down">减持</td><td class="num">4.80</td><td class="num">0.00</td></tr><tr><td class="stk">TCL科技</td><td class="num">0.0</td><td class="num">0.69</td><td class="num down">-1400.0</td><td class="num down">减持</td><td class="num">4.80</td><td class="num">0.00</td></tr><tr><td class="stk">北新建材</td><td class="num">0.0</td><td class="num">0.42</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">16.28</td><td class="num">0.00</td></tr><tr><td class="stk">北新建材</td><td class="num">0.0</td><td class="num">0.39</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">16.28</td><td class="num">0.00</td></tr><tr><td class="stk">海康威视</td><td class="num">0.0</td><td class="num">1.23</td><td class="num down">-8700.0</td><td class="num down">减持</td><td class="num">34.87</td><td class="num">0.00</td></tr><tr><td class="stk">潮宏基</td><td class="num">0.0</td><td class="num">1.15</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">9.67</td><td class="num">0.00</td></tr><tr><td class="stk">龙佰集团</td><td class="num">0.0</td><td class="num">1.15</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">15.85</td><td class="num">0.00</td></tr><tr><td class="stk">瑞丰新材</td><td class="num">0.0</td><td class="num">4.18</td><td class="num up">+300.0</td><td class="num up">增持</td><td class="num">29.49</td><td class="num">0.00</td></tr><tr><td class="stk">中伟新材</td><td class="num">0.0</td><td class="num">0.72</td><td class="num down">-1550.0</td><td class="num down">减持</td><td class="num">39.40</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -143,7 +269,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（3 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">健信超导</td><td class="num">0.0</td><td class="num">0.58</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">41.39</td><td class="num">0.00</td></tr><tr><td class="stk">石基信息</td><td class="num">0.0</td><td class="num">0.5</td><td class="num down">-432.4</td><td class="num down">减持</td><td class="num">8.04</td><td class="num">0.00</td></tr><tr><td class="stk">融捷健康</td><td class="num">0.0</td><td class="num">1.69</td><td class="num up">+610.0</td><td class="num up">增持</td><td class="num">3.74</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -181,7 +307,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（26 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">保利发展</td><td class="num">0.0</td><td class="num">0.36</td><td class="num down">-893.8</td><td class="num down">减持</td><td class="num">5.25</td><td class="num">0.00</td></tr><tr><td class="stk">大东方</td><td class="num">0.0</td><td class="num">1.57</td><td class="num up">+110.0</td><td class="num up">增持</td><td class="num">3.95</td><td class="num">0.00</td></tr><tr><td class="stk">中再资环</td><td class="num">0.0</td><td class="num">1.1</td><td class="num up">+191.0</td><td class="num up">增持</td><td class="num">3.25</td><td class="num">0.00</td></tr><tr><td class="stk">陕建股份</td><td class="num">0.0</td><td class="num">0.81</td><td class="num up">+30.0</td><td class="num up">增持</td><td class="num">2.90</td><td class="num">0.00</td></tr><tr><td class="stk">中恒集团</td><td class="num">0.0</td><td class="num">0.26</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">2.22</td><td class="num">0.00</td></tr><tr><td class="stk">丽尚国潮</td><td class="num">0.0</td><td class="num">0.92</td><td class="num up">+36.0</td><td class="num up">增持</td><td class="num">4.37</td><td class="num">0.00</td></tr><tr><td class="stk">银座股份</td><td class="num">0.0</td><td class="num">0.62</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">5.09</td><td class="num">0.00</td></tr><tr><td class="stk">浙文影业</td><td class="num">0.0</td><td class="num">1.16</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">3.30</td><td class="num">0.00</td></tr><tr><td class="stk">福元医药</td><td class="num">0.0</td><td class="num">1.35</td><td class="num up">+137.9</td><td class="num up">增持</td><td class="num">16.28</td><td class="num">0.00</td></tr><tr><td class="stk">福元医药</td><td class="num">0.0</td><td class="num">0.27</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">16.28</td><td class="num">0.00</td></tr><tr><td class="stk">海通发展</td><td class="num">0.0</td><td class="num">0.66</td><td class="num up">+127.6</td><td class="num up">增持</td><td class="num">14.64</td><td class="num">0.00</td></tr><tr><td class="stk">圣湘生物</td><td class="num">0.0</td><td class="num">1.01</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">15.98</td><td class="num">0.00</td></tr><tr><td class="stk">国投丰乐</td><td class="num">0.0</td><td class="num">1.25</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">6.55</td><td class="num">0.00</td></tr><tr><td class="stk">华媒控股</td><td class="num">0.0</td><td class="num">0.82</td><td class="num up">+165.0</td><td class="num up">增持</td><td class="num">3.81</td><td class="num">0.00</td></tr><tr><td class="stk">富奥股份</td><td class="num">0.0</td><td class="num">0.91</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">4.05</td><td class="num">0.00</td></tr><tr><td class="stk">航材股份</td><td class="num">0.0</td><td class="num">0.39</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">52.91</td><td class="num">0.00</td></tr><tr><td class="stk">通程控股</td><td class="num">0.0</td><td class="num">0.77</td><td class="num down">-157.0</td><td class="num down">减持</td><td class="num">5.14</td><td class="num">0.00</td></tr><tr><td class="stk">山东路桥</td><td class="num">0.0</td><td class="num">1.57</td><td class="num down">-47.0</td><td class="num down">减持</td><td class="num">4.97</td><td class="num">0.00</td></tr><tr><td class="stk">中南股份</td><td class="num">0.0</td><td class="num">1.23</td><td class="num up">+97.0</td><td class="num up">增持</td><td class="num">2.27</td><td class="num">0.00</td></tr><tr><td class="stk">和展能源</td><td class="num">0.0</td><td class="num">0.95</td><td class="num down">-624.0</td><td class="num down">减持</td><td class="num">3.37</td><td class="num">0.00</td></tr><tr><td class="stk">海康威视</td><td class="num">0.0</td><td class="num">0.67</td><td class="num up">+786.7</td><td class="num up">增持</td><td class="num">34.87</td><td class="num">0.00</td></tr><tr><td class="stk">海康威视</td><td class="num">0.0</td><td class="num">0.57</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">34.87</td><td class="num">0.00</td></tr><tr><td class="stk">ST天圣</td><td class="num">0.0</td><td class="num">1.55</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">5.81</td><td class="num">0.00</td></tr><tr><td class="stk">华阳集团</td><td class="num">0.0</td><td class="num">0.39</td><td class="num down">-14.6</td><td class="num down">减持</td><td class="num">28.45</td><td class="num">0.00</td></tr><tr><td class="stk">富煌钢构</td><td class="num">0.0</td><td class="num">1.59</td><td class="num up">+44.0</td><td class="num up">增持</td><td class="num">4.89</td><td class="num">0.00</td></tr><tr><td class="stk">尚荣医疗</td><td class="num">0.0</td><td class="num">0.95</td><td class="num up">+181.0</td><td class="num up">增持</td><td class="num">3.31</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -299,7 +425,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（3 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">德力佳</td><td class="num">0.0</td><td class="num">0.75</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">41.68</td><td class="num">0.00</td></tr><tr><td class="stk">赛分科技</td><td class="num">0.0</td><td class="num">1.45</td><td class="num down">-119.8</td><td class="num down">减持</td><td class="num">26.40</td><td class="num">0.00</td></tr><tr><td class="stk">泰诺麦博-U</td><td class="num">0.0</td><td class="num">3.94</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">23.04</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -318,7 +444,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（7 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">富安娜</td><td class="num">0.0</td><td class="num">0.99</td><td class="num down">-34.0</td><td class="num down">减持</td><td class="num">6.30</td><td class="num">0.00</td></tr><tr><td class="stk">好想你</td><td class="num">0.0</td><td class="num">0.62</td><td class="num up">+62.3</td><td class="num up">增持</td><td class="num">10.33</td><td class="num">0.00</td></tr><tr><td class="stk">好想你</td><td class="num">0.0</td><td class="num">0.46</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">10.33</td><td class="num">0.00</td></tr><tr><td class="stk">好想你</td><td class="num">0.0</td><td class="num">0.43</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">10.33</td><td class="num">0.00</td></tr><tr><td class="stk">天壕能源</td><td class="num">0.0</td><td class="num">0.82</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">5.03</td><td class="num">0.00</td></tr><tr><td class="stk">天壕能源</td><td class="num">0.0</td><td class="num">0.8</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">5.03</td><td class="num">0.00</td></tr><tr><td class="stk">洲明科技</td><td class="num">0.0</td><td class="num">0.5</td><td class="num up">+10.0</td><td class="num up">增持</td><td class="num">5.57</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -356,7 +482,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（16 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">鸿仕达</td><td class="num">0.0</td><td class="num">1.73</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">128.05</td><td class="num">0.00</td></tr><tr><td class="stk">鸿仕达</td><td class="num">0.0</td><td class="num">0.45</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">128.05</td><td class="num">0.00</td></tr><tr><td class="stk">长裕集团</td><td class="num">0.0</td><td class="num">0.11</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">52.31</td><td class="num">0.00</td></tr><tr><td class="stk">杭可科技</td><td class="num">0.0</td><td class="num">0.37</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">20.53</td><td class="num">0.00</td></tr><tr><td class="stk">固德威</td><td class="num">0.0</td><td class="num">0.94</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">61.22</td><td class="num">0.00</td></tr><tr><td class="stk">泰金新能</td><td class="num">0.0</td><td class="num">0.15</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">102.31</td><td class="num">0.00</td></tr><tr><td class="stk">粤桂股份</td><td class="num">0.0</td><td class="num">0.63</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">19.84</td><td class="num">0.00</td></tr><tr><td class="stk">炜冈科技</td><td class="num">0.0</td><td class="num">0.93</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">22.36</td><td class="num">0.00</td></tr><tr><td class="stk">东方锆业</td><td class="num">0.0</td><td class="num">0.56</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">15.24</td><td class="num">0.00</td></tr><tr><td class="stk">大族激光</td><td class="num">0.0</td><td class="num">0.64</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">87.67</td><td class="num">0.00</td></tr><tr><td class="stk">意华股份</td><td class="num">0.0</td><td class="num">0.5</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">57.35</td><td class="num">0.00</td></tr><tr><td class="stk">意华股份</td><td class="num">0.0</td><td class="num">0.4</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">57.35</td><td class="num">0.00</td></tr><tr><td class="stk">意华股份</td><td class="num">0.0</td><td class="num">0.35</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">57.35</td><td class="num">0.00</td></tr><tr><td class="stk">锦浪科技</td><td class="num">0.0</td><td class="num">0.75</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">58.30</td><td class="num">0.00</td></tr><tr><td class="stk">阳光电源</td><td class="num">0.0</td><td class="num">0.48</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">88.43</td><td class="num">0.00</td></tr><tr><td class="stk">云意电气</td><td class="num">0.0</td><td class="num">0.54</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">11.97</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -375,7 +501,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         <div class="xref">🔗 中报后关联（高管增减持）：正帆科技</div>
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（8 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">柳钢股份</td><td class="num">0.0</td><td class="num">0.11</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">3.77</td><td class="num">0.00</td></tr><tr><td class="stk">正帆科技</td><td class="num">0.0</td><td class="num">0.77</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">60.40</td><td class="num">0.00</td></tr><tr><td class="stk">鲁西化工</td><td class="num">0.0</td><td class="num">0.52</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">12.74</td><td class="num">0.00</td></tr><tr><td class="stk">中南股份</td><td class="num">0.0</td><td class="num">0.2</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">2.27</td><td class="num">0.00</td></tr><tr><td class="stk">宝武镁业</td><td class="num">0.0</td><td class="num">0.62</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">12.00</td><td class="num">0.00</td></tr><tr><td class="stk">华菱钢铁</td><td class="num">0.0</td><td class="num">0.56</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">3.64</td><td class="num">0.00</td></tr><tr><td class="stk">首钢股份</td><td class="num">0.0</td><td class="num">0.17</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">3.72</td><td class="num">0.00</td></tr><tr><td class="stk">川恒股份</td><td class="num">0.0</td><td class="num">0.68</td><td class="num down">-70.1</td><td class="num down">减持</td><td class="num">33.60</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -441,7 +567,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         <div class="xref">🔗 中报后关联（高管增减持）：天力复合</div>
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（8 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">永大股份</td><td class="num">0.0</td><td class="num">0.24</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">10.72</td><td class="num">0.00</td></tr><tr><td class="stk">永大股份</td><td class="num">0.0</td><td class="num">0.19</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">10.72</td><td class="num">0.00</td></tr><tr><td class="stk">永大股份</td><td class="num">0.0</td><td class="num">0.18</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">10.72</td><td class="num">0.00</td></tr><tr><td class="stk">彩客科技</td><td class="num">0.0</td><td class="num">0.19</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">44.70</td><td class="num">0.00</td></tr><tr><td class="stk">新睿电子</td><td class="num">0.0</td><td class="num">0.16</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">97.59</td><td class="num">0.00</td></tr><tr><td class="stk">新睿电子</td><td class="num">0.0</td><td class="num">0.13</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">97.59</td><td class="num">0.00</td></tr><tr><td class="stk">新睿电子</td><td class="num">0.0</td><td class="num">0.12</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">97.59</td><td class="num">0.00</td></tr><tr><td class="stk">天力复合</td><td class="num">0.0</td><td class="num">0.15</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">40.42</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -460,7 +586,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（13 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">楚天高速</td><td class="num">0.0</td><td class="num">0.38</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">3.71</td><td class="num">0.00</td></tr><tr><td class="stk">宁沪高速</td><td class="num">0.0</td><td class="num">0.19</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">12.42</td><td class="num">0.00</td></tr><tr><td class="stk">中国国贸</td><td class="num">0.0</td><td class="num">0.25</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">18.95</td><td class="num">0.00</td></tr><tr><td class="stk">中原高速</td><td class="num">0.0</td><td class="num">0.57</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">3.90</td><td class="num">0.00</td></tr><tr><td class="stk">中原高速</td><td class="num">0.0</td><td class="num">0.23</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">3.90</td><td class="num">0.00</td></tr><tr><td class="stk">三角轮胎</td><td class="num">0.0</td><td class="num">0.49</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">12.44</td><td class="num">0.00</td></tr><tr><td class="stk">宁波港</td><td class="num">0.0</td><td class="num">0.14</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">3.47</td><td class="num">0.00</td></tr><tr><td class="stk">林平发展</td><td class="num">0.0</td><td class="num">0.13</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">41.48</td><td class="num">0.00</td></tr><tr><td class="stk">元祖股份</td><td class="num">0.0</td><td class="num">1.14</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">12.64</td><td class="num">0.00</td></tr><tr><td class="stk">元祖股份</td><td class="num">0.0</td><td class="num">0.45</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">12.64</td><td class="num">0.00</td></tr><tr><td class="stk">东莞控股</td><td class="num">0.0</td><td class="num">0.28</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">10.07</td><td class="num">0.00</td></tr><tr><td class="stk">天海电子</td><td class="num">0.0</td><td class="num">0.04</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">34.05</td><td class="num">0.00</td></tr><tr><td class="stk">富森美</td><td class="num">0.0</td><td class="num">0.33</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">11.03</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -485,7 +611,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（3 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">江淮汽车</td><td class="num">0.0</td><td class="num">1.35</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">20.62</td><td class="num">0.00</td></tr><tr><td class="stk">兆易创新</td><td class="num">0.0</td><td class="num">2.34</td><td class="num up">+18.5</td><td class="num up">增持</td><td class="num">371.88</td><td class="num">0.00</td></tr><tr><td class="stk">沐曦股份-U</td><td class="num">0.0</td><td class="num">3.58</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">631.10</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -504,7 +630,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（5 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">亨通光电</td><td class="num">0.0</td><td class="num">1.4</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">62.22</td><td class="num">0.00</td></tr><tr><td class="stk">杭电股份</td><td class="num">0.0</td><td class="num">3.52</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">36.46</td><td class="num">0.00</td></tr><tr><td class="stk">云南锗业</td><td class="num">0.0</td><td class="num">1.02</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">87.09</td><td class="num">0.00</td></tr><tr><td class="stk">中际旭创</td><td class="num">0.0</td><td class="num">0.53</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">814.00</td><td class="num">0.00</td></tr><tr><td class="stk">科翔股份</td><td class="num">0.0</td><td class="num">2.17</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">86.00</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -523,7 +649,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（10 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">渤海轮渡</td><td class="num">0.0</td><td class="num">0.61</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">8.15</td><td class="num">0.00</td></tr><tr><td class="stk">盛景微</td><td class="num">0.0</td><td class="num">0.79</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">43.40</td><td class="num">0.00</td></tr><tr><td class="stk">纵横股份</td><td class="num">0.0</td><td class="num">3.62</td><td class="num up">+30.0</td><td class="num up">增持</td><td class="num">36.05</td><td class="num">0.00</td></tr><tr><td class="stk">东芯股份</td><td class="num">0.0</td><td class="num">1.24</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">112.94</td><td class="num">0.00</td></tr><tr><td class="stk">格灵深瞳</td><td class="num">0.0</td><td class="num">1.54</td><td class="num down">-50.0</td><td class="num down">减持</td><td class="num">17.20</td><td class="num">0.00</td></tr><tr><td class="stk">盟科药业-U</td><td class="num">0.0</td><td class="num">1.22</td><td class="num down">-540.0</td><td class="num down">减持</td><td class="num">5.55</td><td class="num">0.00</td></tr><tr><td class="stk">震有科技</td><td class="num">0.0</td><td class="num">2.49</td><td class="num up">+150.0</td><td class="num up">增持</td><td class="num">31.45</td><td class="num">0.00</td></tr><tr><td class="stk">香山股份</td><td class="num">0.0</td><td class="num">0.83</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">53.00</td><td class="num">0.00</td></tr><tr><td class="stk">洲明科技</td><td class="num">0.0</td><td class="num">1.82</td><td class="num up">+78.0</td><td class="num up">增持</td><td class="num">5.57</td><td class="num">0.00</td></tr><tr><td class="stk">锦盛新材</td><td class="num">0.0</td><td class="num">2</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">23.06</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -542,7 +668,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（22 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">菲达环保</td><td class="num">0.0</td><td class="num">0.81</td><td class="num up">+232.0</td><td class="num up">增持</td><td class="num">4.65</td><td class="num">0.00</td></tr><tr><td class="stk">冠城新材</td><td class="num">0.0</td><td class="num">0.73</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">2.86</td><td class="num">0.00</td></tr><tr><td class="stk">ST海泰</td><td class="num">0.0</td><td class="num">0.97</td><td class="num down">-314.0</td><td class="num down">减持</td><td class="num">2.99</td><td class="num">0.00</td></tr><tr><td class="stk">青松建化</td><td class="num">0.0</td><td class="num">1.41</td><td class="num up">+300.0</td><td class="num up">增持</td><td class="num">3.72</td><td class="num">0.00</td></tr><tr><td class="stk">维维股份</td><td class="num">0.0</td><td class="num">1.3</td><td class="num up">+285.0</td><td class="num up">增持</td><td class="num">3.27</td><td class="num">0.00</td></tr><tr><td class="stk">哈空调</td><td class="num">0.0</td><td class="num">0.79</td><td class="num down">-28.0</td><td class="num down">减持</td><td class="num">5.11</td><td class="num">0.00</td></tr><tr><td class="stk">阳光照明</td><td class="num">0.0</td><td class="num">0.73</td><td class="num up">+192.0</td><td class="num up">增持</td><td class="num">3.21</td><td class="num">0.00</td></tr><tr><td class="stk">广电网络</td><td class="num">0.0</td><td class="num">1.42</td><td class="num down">-473.0</td><td class="num down">减持</td><td class="num">3.40</td><td class="num">0.00</td></tr><tr><td class="stk">光大嘉宝</td><td class="num">0.0</td><td class="num">1.58</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">2.46</td><td class="num">0.00</td></tr><tr><td class="stk">电子城</td><td class="num">0.0</td><td class="num">0.87</td><td class="num up">+298.0</td><td class="num up">增持</td><td class="num">4.17</td><td class="num">0.00</td></tr><tr><td class="stk">天地科技</td><td class="num">0.0</td><td class="num">0.57</td><td class="num up">+392.0</td><td class="num up">增持</td><td class="num">4.74</td><td class="num">0.00</td></tr><tr><td class="stk">益佰制药</td><td class="num">0.0</td><td class="num">0.61</td><td class="num down">-1242.0</td><td class="num down">减持</td><td class="num">3.73</td><td class="num">0.00</td></tr><tr><td class="stk">建研院</td><td class="num">0.0</td><td class="num">2.13</td><td class="num up">+6.0</td><td class="num up">增持</td><td class="num">4.88</td><td class="num">0.00</td></tr><tr><td class="stk">曲美家居</td><td class="num">0.0</td><td class="num">1.29</td><td class="num up">+5.0</td><td class="num up">增持</td><td class="num">3.81</td><td class="num">0.00</td></tr><tr><td class="stk">中兴商业</td><td class="num">0.0</td><td class="num">0.65</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">5.68</td><td class="num">0.00</td></tr><tr><td class="stk">陕国投Ａ</td><td class="num">0.0</td><td class="num">1.14</td><td class="num down">-560.0</td><td class="num down">减持</td><td class="num">3.04</td><td class="num">0.00</td></tr><tr><td class="stk">东北制药</td><td class="num">0.0</td><td class="num">0.71</td><td class="num up">+442.0</td><td class="num up">增持</td><td class="num">4.78</td><td class="num">0.00</td></tr><tr><td class="stk">振华科技</td><td class="num">0.0</td><td class="num">0.51</td><td class="num down">-68.0</td><td class="num down">减持</td><td class="num">40.28</td><td class="num">0.00</td></tr><tr><td class="stk">新兴铸管</td><td class="num">0.0</td><td class="num">0.51</td><td class="num down">-87.0</td><td class="num down">减持</td><td class="num">3.71</td><td class="num">0.00</td></tr><tr><td class="stk">海鸥住工</td><td class="num">0.0</td><td class="num">0.84</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">7.10</td><td class="num">0.00</td></tr><tr><td class="stk">天虹股份</td><td class="num">0.0</td><td class="num">0.84</td><td class="num up">+158.0</td><td class="num up">增持</td><td class="num">4.78</td><td class="num">0.00</td></tr><tr><td class="stk">峰璟股份</td><td class="num">0.0</td><td class="num">1.04</td><td class="num down">-24.0</td><td class="num down">减持</td><td class="num">3.30</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -580,7 +706,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（7 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">杭萧钢构</td><td class="num">0.0</td><td class="num">0.71</td><td class="num up">+400.0</td><td class="num up">增持</td><td class="num">2.48</td><td class="num">0.00</td></tr><tr><td class="stk">瑞奇智造</td><td class="num">0.0</td><td class="num">3.15</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">6.03</td><td class="num">0.00</td></tr><tr><td class="stk">悦龙科技</td><td class="num">0.0</td><td class="num">0.69</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">23.20</td><td class="num">0.00</td></tr><tr><td class="stk">衢州发展</td><td class="num">0.0</td><td class="num">0.5</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">2.91</td><td class="num">0.00</td></tr><tr><td class="stk">恒星科技</td><td class="num">0.0</td><td class="num">1.2</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">4.19</td><td class="num">0.00</td></tr><tr><td class="stk">浙江永强</td><td class="num">0.0</td><td class="num">1.69</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">2.80</td><td class="num">0.00</td></tr><tr><td class="stk">力源信息</td><td class="num">0.0</td><td class="num">0.34</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">11.71</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -599,7 +725,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         <div class="xref">🔗 中报后关联（高管增减持）：森特股份</div>
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（8 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">恒合股份</td><td class="num">0.0</td><td class="num">8.08</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">10.90</td><td class="num">0.00</td></tr><tr><td class="stk">伊利股份</td><td class="num">0.0</td><td class="num">0.99</td><td class="num up">+200.0</td><td class="num up">增持</td><td class="num">26.86</td><td class="num">0.00</td></tr><tr><td class="stk">森特股份</td><td class="num">0.0</td><td class="num">1.16</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">10.85</td><td class="num">0.00</td></tr><tr><td class="stk">云南白药</td><td class="num">0.0</td><td class="num">0.7</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">51.02</td><td class="num">0.00</td></tr><tr><td class="stk">新 华 都</td><td class="num">0.0</td><td class="num">8.17</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">6.92</td><td class="num">0.00</td></tr><tr><td class="stk">必创科技</td><td class="num">0.0</td><td class="num">7.91</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">14.57</td><td class="num">0.00</td></tr><tr><td class="stk">亿联网络</td><td class="num">0.0</td><td class="num">0.6</td><td class="num down">-237.7</td><td class="num down">减持</td><td class="num">42.08</td><td class="num">0.00</td></tr><tr><td class="stk">雷电微力</td><td class="num">0.0</td><td class="num">8.85</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">29.06</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -618,7 +744,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         <div class="xref">🔗 中报后关联（高管增减持）：必得科技</div>
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（9 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">东睦股份</td><td class="num">0.0</td><td class="num">1.26</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">28.88</td><td class="num">0.00</td></tr><tr><td class="stk">广誉远</td><td class="num">0.0</td><td class="num">1.61</td><td class="num down">-31.1</td><td class="num down">减持</td><td class="num">13.73</td><td class="num">0.00</td></tr><tr><td class="stk">金石资源</td><td class="num">0.0</td><td class="num">0.5</td><td class="num down">-595.2</td><td class="num down">减持</td><td class="num">15.33</td><td class="num">0.00</td></tr><tr><td class="stk">杰普特</td><td class="num">0.0</td><td class="num">2.9</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">361.29</td><td class="num">0.00</td></tr><tr><td class="stk">必得科技</td><td class="num">0.0</td><td class="num">0.75</td><td class="num down">-10.0</td><td class="num down">减持</td><td class="num">48.70</td><td class="num">0.00</td></tr><tr><td class="stk">浙海德曼</td><td class="num">0.0</td><td class="num">2.4</td><td class="num up">+106.8</td><td class="num up">增持</td><td class="num">43.02</td><td class="num">0.00</td></tr><tr><td class="stk">大禹节水</td><td class="num">0.0</td><td class="num">0.63</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">4.09</td><td class="num">0.00</td></tr><tr><td class="stk">聚灿光电</td><td class="num">0.0</td><td class="num">0.59</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">8.54</td><td class="num">0.00</td></tr><tr><td class="stk">冠昊生物</td><td class="num">0.0</td><td class="num">1.75</td><td class="num down">-32.6</td><td class="num down">减持</td><td class="num">11.54</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -637,7 +763,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（17 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">大东方</td><td class="num">0.0</td><td class="num">1.57</td><td class="num up">+110.0</td><td class="num up">增持</td><td class="num">3.95</td><td class="num">0.00</td></tr><tr><td class="stk">中再资环</td><td class="num">0.0</td><td class="num">1.1</td><td class="num up">+191.0</td><td class="num up">增持</td><td class="num">3.25</td><td class="num">0.00</td></tr><tr><td class="stk">陕建股份</td><td class="num">0.0</td><td class="num">0.81</td><td class="num up">+30.0</td><td class="num up">增持</td><td class="num">2.90</td><td class="num">0.00</td></tr><tr><td class="stk">中恒集团</td><td class="num">0.0</td><td class="num">0.26</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">2.22</td><td class="num">0.00</td></tr><tr><td class="stk">丽尚国潮</td><td class="num">0.0</td><td class="num">0.92</td><td class="num up">+36.0</td><td class="num up">增持</td><td class="num">4.37</td><td class="num">0.00</td></tr><tr><td class="stk">银座股份</td><td class="num">0.0</td><td class="num">0.62</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">5.09</td><td class="num">0.00</td></tr><tr><td class="stk">浙文影业</td><td class="num">0.0</td><td class="num">1.16</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">3.30</td><td class="num">0.00</td></tr><tr><td class="stk">国投丰乐</td><td class="num">0.0</td><td class="num">1.25</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">6.55</td><td class="num">0.00</td></tr><tr><td class="stk">华媒控股</td><td class="num">0.0</td><td class="num">0.82</td><td class="num up">+165.0</td><td class="num up">增持</td><td class="num">3.81</td><td class="num">0.00</td></tr><tr><td class="stk">富奥股份</td><td class="num">0.0</td><td class="num">0.91</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">4.05</td><td class="num">0.00</td></tr><tr><td class="stk">通程控股</td><td class="num">0.0</td><td class="num">0.77</td><td class="num down">-157.0</td><td class="num down">减持</td><td class="num">5.14</td><td class="num">0.00</td></tr><tr><td class="stk">山东路桥</td><td class="num">0.0</td><td class="num">1.57</td><td class="num down">-47.0</td><td class="num down">减持</td><td class="num">4.97</td><td class="num">0.00</td></tr><tr><td class="stk">中南股份</td><td class="num">0.0</td><td class="num">1.23</td><td class="num up">+97.0</td><td class="num up">增持</td><td class="num">2.27</td><td class="num">0.00</td></tr><tr><td class="stk">和展能源</td><td class="num">0.0</td><td class="num">0.95</td><td class="num down">-624.0</td><td class="num down">减持</td><td class="num">3.37</td><td class="num">0.00</td></tr><tr><td class="stk">ST天圣</td><td class="num">0.0</td><td class="num">1.55</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">5.81</td><td class="num">0.00</td></tr><tr><td class="stk">富煌钢构</td><td class="num">0.0</td><td class="num">1.59</td><td class="num up">+44.0</td><td class="num up">增持</td><td class="num">4.89</td><td class="num">0.00</td></tr><tr><td class="stk">尚荣医疗</td><td class="num">0.0</td><td class="num">0.95</td><td class="num up">+181.0</td><td class="num up">增持</td><td class="num">3.31</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -656,7 +782,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         <div class="xref">🔗 中报后关联（高管增减持）：金科股份</div>
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（16 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">亚星化学</td><td class="num">0.0</td><td class="num">3.4</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">6.52</td><td class="num">0.00</td></tr><tr><td class="stk">宁科生物</td><td class="num">0.0</td><td class="num">1.73</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">3.14</td><td class="num">0.00</td></tr><tr><td class="stk">返利科技</td><td class="num">0.0</td><td class="num">0.82</td><td class="num down">-62.3</td><td class="num down">减持</td><td class="num">10.30</td><td class="num">0.00</td></tr><tr><td class="stk">松发股份</td><td class="num">0.0</td><td class="num">0.41</td><td class="num up">+2.2</td><td class="num up">增持</td><td class="num">192.60</td><td class="num">0.00</td></tr><tr><td class="stk">欧莱新材</td><td class="num">0.0</td><td class="num">1.16</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">53.90</td><td class="num">0.00</td></tr><tr><td class="stk">金科股份</td><td class="num">0.0</td><td class="num">0.32</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">1.25</td><td class="num">0.00</td></tr><tr><td class="stk">德明利</td><td class="num">0.0</td><td class="num">1.42</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">391.30</td><td class="num">0.00</td></tr><tr><td class="stk">ST得润</td><td class="num">0.0</td><td class="num">0.84</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">6.18</td><td class="num">0.00</td></tr><tr><td class="stk">*ST和科</td><td class="num">0.0</td><td class="num">0.8</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">23.00</td><td class="num">0.00</td></tr><tr><td class="stk">世纪华通</td><td class="num">0.0</td><td class="num">1.32</td><td class="num up">+110.1</td><td class="num up">增持</td><td class="num">15.73</td><td class="num">0.00</td></tr><tr><td class="stk">中公教育</td><td class="num">0.0</td><td class="num">0.9</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">2.03</td><td class="num">0.00</td></tr><tr><td class="stk">中矿资源</td><td class="num">0.0</td><td class="num">0.94</td><td class="num down">-923.1</td><td class="num down">减持</td><td class="num">48.39</td><td class="num">0.00</td></tr><tr><td class="stk">传智教育</td><td class="num">0.0</td><td class="num">1.21</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">9.72</td><td class="num">0.00</td></tr><tr><td class="stk">农尚环境</td><td class="num">0.0</td><td class="num">1.53</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">9.15</td><td class="num">0.00</td></tr><tr><td class="stk">胜宏科技</td><td class="num">0.0</td><td class="num">0.36</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">219.50</td><td class="num">0.00</td></tr><tr><td class="stk">名家汇</td><td class="num">0.0</td><td class="num">3.88</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">5.00</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -675,7 +801,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（19 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">福日电子</td><td class="num">0.0</td><td class="num">0.54</td><td class="num up">+48.7</td><td class="num up">增持</td><td class="num">11.00</td><td class="num">0.00</td></tr><tr><td class="stk">四川长虹</td><td class="num">0.0</td><td class="num">0.21</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">6.95</td><td class="num">0.00</td></tr><tr><td class="stk">新疆众和</td><td class="num">0.0</td><td class="num">1.06</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">9.87</td><td class="num">0.00</td></tr><tr><td class="stk">浙大网新</td><td class="num">0.0</td><td class="num">0.74</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">6.96</td><td class="num">0.00</td></tr><tr><td class="stk">三六零</td><td class="num">0.0</td><td class="num">0.66</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">8.98</td><td class="num">0.00</td></tr><tr><td class="stk">金杯汽车</td><td class="num">0.0</td><td class="num">1.61</td><td class="num up">+70.0</td><td class="num up">增持</td><td class="num">3.35</td><td class="num">0.00</td></tr><tr><td class="stk">天下秀</td><td class="num">0.0</td><td class="num">1.25</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">4.88</td><td class="num">0.00</td></tr><tr><td class="stk">智度股份</td><td class="num">0.0</td><td class="num">2.02</td><td class="num up">+1132.2</td><td class="num up">增持</td><td class="num">7.10</td><td class="num">0.00</td></tr><tr><td class="stk">万  科Ａ</td><td class="num">0.0</td><td class="num">0.25</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">3.24</td><td class="num">0.00</td></tr><tr><td class="stk">国新健康</td><td class="num">0.0</td><td class="num">0.5</td><td class="num up">+26.6</td><td class="num up">增持</td><td class="num">7.03</td><td class="num">0.00</td></tr><tr><td class="stk">奥飞娱乐</td><td class="num">0.0</td><td class="num">0.83</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">8.48</td><td class="num">0.00</td></tr><tr><td class="stk">北纬科技</td><td class="num">0.0</td><td class="num">0.55</td><td class="num up">+33.3</td><td class="num up">增持</td><td class="num">6.43</td><td class="num">0.00</td></tr><tr><td class="stk">广电运通</td><td class="num">0.0</td><td class="num">0.97</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">9.85</td><td class="num">0.00</td></tr><tr><td class="stk">石基信息</td><td class="num">0.0</td><td class="num">0.59</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">8.04</td><td class="num">0.00</td></tr><tr><td class="stk">海南发展</td><td class="num">0.0</td><td class="num">0.3</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">9.11</td><td class="num">0.00</td></tr><tr><td class="stk">紫光股份</td><td class="num">0.0</td><td class="num">0.6</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">35.27</td><td class="num">0.00</td></tr><tr><td class="stk">哈尔斯</td><td class="num">0.0</td><td class="num">7.87</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">6.54</td><td class="num">0.00</td></tr><tr><td class="stk">儒意电影</td><td class="num">0.0</td><td class="num">0.62</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">8.46</td><td class="num">0.00</td></tr><tr><td class="stk">无线传媒</td><td class="num">0.0</td><td class="num">0.37</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">22.20</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -694,7 +820,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（13 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">宝钛股份</td><td class="num">0.0</td><td class="num">0.33</td><td class="num up">+8.7</td><td class="num up">增持</td><td class="num">26.75</td><td class="num">0.00</td></tr><tr><td class="stk">四方科技</td><td class="num">0.0</td><td class="num">1.76</td><td class="num up">+270.4</td><td class="num up">增持</td><td class="num">12.54</td><td class="num">0.00</td></tr><tr><td class="stk">爱科科技</td><td class="num">0.0</td><td class="num">1.57</td><td class="num down">-86.6</td><td class="num down">减持</td><td class="num">22.78</td><td class="num">0.00</td></tr><tr><td class="stk">上声电子</td><td class="num">0.0</td><td class="num">0.66</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">20.12</td><td class="num">0.00</td></tr><tr><td class="stk">炬申股份</td><td class="num">0.0</td><td class="num">1.09</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">14.30</td><td class="num">0.00</td></tr><tr><td class="stk">奥士康</td><td class="num">0.0</td><td class="num">0.71</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">61.00</td><td class="num">0.00</td></tr><tr><td class="stk">鸿特科技</td><td class="num">0.0</td><td class="num">1.26</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">4.53</td><td class="num">0.00</td></tr><tr><td class="stk">三鑫医疗</td><td class="num">0.0</td><td class="num">1.41</td><td class="num up">+41.0</td><td class="num up">增持</td><td class="num">9.17</td><td class="num">0.00</td></tr><tr><td class="stk">玉禾田</td><td class="num">0.0</td><td class="num">0.69</td><td class="num up">+55.5</td><td class="num up">增持</td><td class="num">15.16</td><td class="num">0.00</td></tr><tr><td class="stk">金三江</td><td class="num">0.0</td><td class="num">1.46</td><td class="num down">-64.1</td><td class="num down">减持</td><td class="num">12.26</td><td class="num">0.00</td></tr><tr><td class="stk">星源卓镁</td><td class="num">0.0</td><td class="num">1.16</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">35.70</td><td class="num">0.00</td></tr><tr><td class="stk">维科精密</td><td class="num">0.0</td><td class="num">0.21</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">24.62</td><td class="num">0.00</td></tr><tr><td class="stk">强达电路</td><td class="num">0.0</td><td class="num">0.45</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">107.00</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -713,7 +839,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（9 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">天目药业</td><td class="num">0.0</td><td class="num">0.82</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">21.88</td><td class="num">0.00</td></tr><tr><td class="stk">纵横股份</td><td class="num">0.0</td><td class="num">0.68</td><td class="num down">-40.0</td><td class="num down">减持</td><td class="num">36.05</td><td class="num">0.00</td></tr><tr><td class="stk">利扬芯片</td><td class="num">0.0</td><td class="num">2.14</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">27.35</td><td class="num">0.00</td></tr><tr><td class="stk">格灵深瞳</td><td class="num">0.0</td><td class="num">2.32</td><td class="num up">+100.0</td><td class="num up">增持</td><td class="num">17.20</td><td class="num">0.00</td></tr><tr><td class="stk">慧智微-U</td><td class="num">0.0</td><td class="num">2.82</td><td class="num up">+216.0</td><td class="num up">增持</td><td class="num">13.39</td><td class="num">0.00</td></tr><tr><td class="stk">震有科技</td><td class="num">0.0</td><td class="num">1.3</td><td class="num up">+120.0</td><td class="num up">增持</td><td class="num">31.45</td><td class="num">0.00</td></tr><tr><td class="stk">健信超导</td><td class="num">0.0</td><td class="num">6.54</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">41.39</td><td class="num">0.00</td></tr><tr><td class="stk">南风股份</td><td class="num">0.0</td><td class="num">0.76</td><td class="num down">-487.6</td><td class="num down">减持</td><td class="num">8.71</td><td class="num">0.00</td></tr><tr><td class="stk">阳普医疗</td><td class="num">0.0</td><td class="num">4.95</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">6.82</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -732,7 +858,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（10 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">杭萧钢构</td><td class="num">0.0</td><td class="num">0.37</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">2.48</td><td class="num">0.00</td></tr><tr><td class="stk">精工钢构</td><td class="num">0.0</td><td class="num">1.6</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">3.34</td><td class="num">0.00</td></tr><tr><td class="stk">瑞奇智造</td><td class="num">0.0</td><td class="num">2.26</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">6.03</td><td class="num">0.00</td></tr><tr><td class="stk">鼎智科技</td><td class="num">0.0</td><td class="num">0.4</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">24.22</td><td class="num">0.00</td></tr><tr><td class="stk">珠免集团</td><td class="num">0.0</td><td class="num">0.33</td><td class="num up">+75.0</td><td class="num up">增持</td><td class="num">5.48</td><td class="num">0.00</td></tr><tr><td class="stk">思维列控</td><td class="num">0.0</td><td class="num">11.06</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">21.35</td><td class="num">0.00</td></tr><tr><td class="stk">浙江永强</td><td class="num">0.0</td><td class="num">1.8</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">2.80</td><td class="num">0.00</td></tr><tr><td class="stk">瑞康医药</td><td class="num">0.0</td><td class="num">0.29</td><td class="num down">-332.2</td><td class="num down">减持</td><td class="num">3.22</td><td class="num">0.00</td></tr><tr><td class="stk">力源信息</td><td class="num">0.0</td><td class="num">1.06</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">11.71</td><td class="num">0.00</td></tr><tr><td class="stk">山大电力</td><td class="num">0.0</td><td class="num">3.73</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">32.26</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -751,7 +877,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（6 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">浙文互联</td><td class="num">0.0</td><td class="num">0.79</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">7.56</td><td class="num">0.00</td></tr><tr><td class="stk">璞泰来</td><td class="num">0.0</td><td class="num">0.44</td><td class="num up">+19.0</td><td class="num up">增持</td><td class="num">22.45</td><td class="num">0.00</td></tr><tr><td class="stk">和展能源</td><td class="num">0.0</td><td class="num">0.54</td><td class="num up">+45.9</td><td class="num up">增持</td><td class="num">3.37</td><td class="num">0.00</td></tr><tr><td class="stk">怡达股份</td><td class="num">0.0</td><td class="num">0.81</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">21.66</td><td class="num">0.00</td></tr><tr><td class="stk">*ST纳川</td><td class="num">0.0</td><td class="num">0.93</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">2.47</td><td class="num">0.00</td></tr><tr><td class="stk">东宝生物</td><td class="num">0.0</td><td class="num">0.7</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">5.09</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -770,7 +896,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         <div class="xref">🔗 中报后关联（高管增减持）：新泉股份</div>
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（12 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">江淮汽车</td><td class="num">0.0</td><td class="num">1.1</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">20.62</td><td class="num">0.00</td></tr><tr><td class="stk">禾望电气</td><td class="num">0.0</td><td class="num">1.97</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">30.94</td><td class="num">0.00</td></tr><tr><td class="stk">新泉股份</td><td class="num">0.0</td><td class="num">1.04</td><td class="num down">-548.6</td><td class="num down">减持</td><td class="num">39.45</td><td class="num">0.00</td></tr><tr><td class="stk">佳力图</td><td class="num">0.0</td><td class="num">0.37</td><td class="num up">+0.4</td><td class="num up">增持</td><td class="num">9.15</td><td class="num">0.00</td></tr><tr><td class="stk">兆易创新</td><td class="num">0.0</td><td class="num">1.23</td><td class="num up">+103.3</td><td class="num up">增持</td><td class="num">371.88</td><td class="num">0.00</td></tr><tr><td class="stk">索通发展</td><td class="num">0.0</td><td class="num">11.25</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">16.97</td><td class="num">0.00</td></tr><tr><td class="stk">铂力特</td><td class="num">0.0</td><td class="num">1.83</td><td class="num up">+13.7</td><td class="num up">增持</td><td class="num">109.09</td><td class="num">0.00</td></tr><tr><td class="stk">神工股份</td><td class="num">0.0</td><td class="num">0.85</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">93.18</td><td class="num">0.00</td></tr><tr><td class="stk">中材科技</td><td class="num">0.0</td><td class="num">0.44</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">47.44</td><td class="num">0.00</td></tr><tr><td class="stk">云南锗业</td><td class="num">0.0</td><td class="num">0.87</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">87.09</td><td class="num">0.00</td></tr><tr><td class="stk">英维克</td><td class="num">0.0</td><td class="num">0.69</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">63.91</td><td class="num">0.00</td></tr><tr><td class="stk">麦格米特</td><td class="num">0.0</td><td class="num">6.2</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">121.17</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -789,7 +915,7 @@ footer{text-align:center;color:#9aa1ab;font-size:12px;padding:24px}
         <div class="xref">🔗 中报后关联（高管增减持）：可川科技</div>
         <div class="posbox">
       <div class="poscap">中报十大流通股东持仓（3 只 · 按持股排序）</div>
-      <table class="ptbl">
+      <table class="ptbl" data-wb>
         <thead><tr><th>股票</th><th>持股(万)</th><th>占比%</th><th>季度变动(万)</th><th>类型</th><th>参考价</th><th>市值(亿)</th></tr></thead>
         <tbody><tr><td class="stk">可川科技</td><td class="num">0.0</td><td class="num">1.53</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">55.08</td><td class="num">0.00</td></tr><tr><td class="stk">腾龙股份</td><td class="num">0.0</td><td class="num">0.92</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">11.12</td><td class="num">0.00</td></tr><tr><td class="stk">拓尔思</td><td class="num">0.0</td><td class="num">0.87</td><td class="num flat">0</td><td class="num flat">不变</td><td class="num">13.79</td><td class="num">0.00</td></tr></tbody>
       </table></div>
@@ -865,4 +991,116 @@ function sortScan(col) {
   tbl.setAttribute('data-asc', asc?'1':'0');
 }
 </script>
+
+
+
+
+<!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序脚本的表(th.sort 且非 data-wb)不接管，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 */
+  try {
+    var here = location.pathname.split("/").pop() || "index.html";
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h) return;
+      var last = h.split("/").pop();
+      if (last === here && here !== "") a.classList.add("cur");
+    });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset && c.dataset.val !== undefined) return c.dataset.val;
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别 */
+    ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP-->
 </body></html>
