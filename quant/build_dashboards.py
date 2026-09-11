@@ -256,13 +256,16 @@ bar_html = (f"<div class='bar'>"
             f"<div style='background:linear-gradient(90deg,#7d9682,#1a9e5a);width:{rp(grn):.1f}%'>"
             f"跌 {grn}<br><span style='font-size:10px;opacity:.9'>{rp(grn):.1f}%</span></div></div>")
 
+def nz(v, dash="—"):
+    """缺失值占位：替代口径下新高新低家数等字段无源时显示破折号，而非 None。"""
+    return dash if v is None else v
 chip_html = (f"<div class='chiprow'>"
-             f"<div class='chip'><div class='ck'>涨停</div><div class='cv up'>{updown.get('CNT_REACH_UPLIMIT')}</div></div>"
-             f"<div class='chip'><div class='ck'>跌停</div><div class='cv down'>{updown.get('CNT_REACH_DNLIMIT')}</div></div>"
-             f"<div class='chip'><div class='ck'>涨跌比</div><div class='cv' style='color:#b8893b'>{updown.get('RATIO_UPDOWN')}</div></div>"
-             f"<div class='chip'><div class='ck'>5日新高/低</div><div class='cv' style='color:#8b9bb5'>{updown.get('CNT_HIGH5')}/{updown.get('CNT_LOW5')}</div></div>"
-             f"<div class='chip'><div class='ck'>20日新高/低</div><div class='cv' style='color:#6b5b95'>{updown.get('CNT_HIGH20')}/{updown.get('CNT_LOW20')}</div></div>"
-             f"<div class='chip'><div class='ck'>60日新高/低</div><div class='cv' style='color:#8aaab3'>{updown.get('CNT_HIGH60')}/{updown.get('CNT_LOW60')}</div></div>"
+             f"<div class='chip'><div class='ck'>涨停</div><div class='cv up'>{nz(updown.get('CNT_REACH_UPLIMIT'))}</div></div>"
+             f"<div class='chip'><div class='ck'>跌停</div><div class='cv down'>{nz(updown.get('CNT_REACH_DNLIMIT'))}</div></div>"
+             f"<div class='chip'><div class='ck'>涨跌比</div><div class='cv' style='color:#b8893b'>{nz(updown.get('RATIO_UPDOWN'))}</div></div>"
+             f"<div class='chip'><div class='ck'>5日新高/低</div><div class='cv' style='color:#8b9bb5'>{nz(updown.get('CNT_HIGH5'))}/{nz(updown.get('CNT_LOW5'))}</div></div>"
+             f"<div class='chip'><div class='ck'>20日新高/低</div><div class='cv' style='color:#6b5b95'>{nz(updown.get('CNT_HIGH20'))}/{nz(updown.get('CNT_LOW20'))}</div></div>"
+             f"<div class='chip'><div class='ck'>60日新高/低</div><div class='cv' style='color:#8aaab3'>{nz(updown.get('CNT_HIGH60'))}/{nz(updown.get('CNT_LOW60'))}</div></div>"
              f"</div>")
 
 money = trade.get("MONEY"); avg5 = trade.get("MONEY_5DAVG"); avg20 = trade.get("MONEY_20DAVG")
@@ -294,6 +297,11 @@ tag_html = "<div class='chiprow'>"
 for label, st in status_pairs:
     if st:
         tag_html += f"<span class='pill' title='{label}：{st}'><b>{label}</b> {short_status(st)}</span>"
+# 评分块缺失（westock data_market_overview 故障期）如实标注，不套用第三方口径
+SUMM_MISSING = not any(st for _, st in status_pairs)
+if SUMM_MISSING:
+    tag_html += ("<span class='pill' style='color:#8a929c'>"
+                 "市场评分标签暂缺 · 数据源故障，且无第三方等价口径</span>")
 tag_html += "</div>"
 
 rot_rows = [
@@ -308,11 +316,19 @@ for n, a, b in rot_rows:
 rot_html += "</table>"
 
 # val_date 已在文件顶部按 --val-date / (DATE - 1) 计算
+def pctile(v):
+    """估值分位缺失时显示「暂缺」，不套用其他口径分位避免误导。"""
+    if v is None:
+        return "<span style='color:#8a929c'>暂缺</span>"
+    return str(v) + "%"
+_p3 = val.get('PE_TTM_PCT_3Y')
+_p5 = val.get('PE_TTM_PCT_5Y')
+_p10 = val.get('PE_TTM_PCT_10Y')
 val_html = (f"<div class='amberbox' style='color:#1c2430'><b style='color:#1c2430'>中证全指估值</b>（口径 {val_date}）："
             f"PE_TTM <span style='font-size:16px;font-weight:700'>{val.get('PE_TTM')}</span> · "
-            f"3年分位 <span class='up'>{val.get('PE_TTM_PCT_3Y')}%</span> · "
-            f"5年分位 <span class='up'>{val.get('PE_TTM_PCT_5Y')}%</span> · "
-            f"10年分位 <span class='up'>{val.get('PE_TTM_PCT_10Y')}%</span> "
+            f"3年分位 <span class='up'>{pctile(_p3)}</span> · "
+            f"5年分位 <span class='up'>{pctile(_p5)}</span> · "
+            f"10年分位 <span class='up'>{pctile(_p10)}</span> "
             f"<span style='color:#8a929c;font-size:12px'>(PB {val.get('PB_LF')} · 股息率 {val.get('DIV_TTM')}%)</span></div>")
 
 news_html = "<ul style='margin:0;padding-left:18px;color:#6b7280'>"
@@ -337,19 +353,55 @@ for it in news:
                   f"style='color:#b8893b;font-size:11px;text-decoration:none;margin-left:4px'>↗ 看原文</a></li>")
 news_html += "</ul>"
 
+def _num(v):
+    try:
+        return float(v)
+    except Exception:
+        return None
+
+def _macd_txt(v):
+    f = _num(v)
+    if f is None:
+        return "数据暂缺"
+    return "MACD 红柱（大于 0），多头动能占优" if f > 0 else "MACD 绿柱（小于 0），空头动能占优"
+
+def _cross_txt(dif, dea):
+    a, b = _num(dif), _num(dea)
+    if a is None or b is None:
+        return "数据暂缺"
+    return "DIF 在 DEA 上方，金叉状态" if a >= b else "DIF 在 DEA 下方，死叉状态"
+
+def _osc_txt(v, name, hi=80, lo=20):
+    # 注意：此串直接进 HTML，不可出现裸 '<'（会被解析为标签），故用「高于/低于」表述
+    f = _num(v)
+    if f is None:
+        return "数据暂缺"
+    if f > hi:
+        return f"{name} 处于超买区（高于 {hi}），警惕回调"
+    if f < lo:
+        return f"{name} 处于超卖区（低于 {lo}），关注反弹"
+    return f"{name} 处于中性区间"
+
+def _ma_txt(a, b):
+    x, y = _num(a), _num(b)
+    if x is None or y is None:
+        return "数据暂缺"
+    return "短周期均线在 MA20 上方，短期偏多" if x > y else "短周期均线在 MA20 下方，短期偏弱"
+
+# 解读列改为按实际数值动态生成，避免静态文案与数值背离（如 MACD 为负仍写「多头动能占优」）
 tech_defs = [
-    ("MACD", tech.get("MACD"), "MACD>0，多头动能占优"),
-    ("DIF", tech.get("DIF"), "DIF>DEA，金叉多头信号"),
-    ("DEA", tech.get("DEA"), "DEA 为 DIF 的 9 日平滑，中期趋势"),
-    ("KDJ-K", tech.get("KDJ_K"), "K>80 超买区，警惕回调"),
-    ("KDJ-D", tech.get("KDJ_D"), "D 线为 K 线平滑，慢速随机"),
-    ("KDJ-J", tech.get("KDJ_J"), "J 线放大 K/D 乖离，极端值提示转折"),
-    ("RSI6", tech.get("RSI_6"), "RSI6 中性区域"),
-    ("MA5", tech.get("MA_5"), "短周期在 MA20 上方，短期偏多"),
+    ("MACD", tech.get("MACD"), _macd_txt(tech.get("MACD"))),
+    ("DIF", tech.get("DIF"), _cross_txt(tech.get("DIF"), tech.get("DEA"))),
+    ("DEA", tech.get("DEA"), "DEA 为 DIF 的 9 日平滑，代表中期趋势"),
+    ("KDJ-K", tech.get("KDJ_K"), _osc_txt(tech.get("KDJ_K"), "KDJ-K")),
+    ("KDJ-D", tech.get("KDJ_D"), "D 线为 K 线平滑，慢速随机指标"),
+    ("KDJ-J", tech.get("KDJ_J"), _osc_txt(tech.get("KDJ_J"), "KDJ-J", 100, 0)),
+    ("RSI6", tech.get("RSI_6"), _osc_txt(tech.get("RSI_6"), "RSI6")),
+    ("MA5", tech.get("MA_5"), _ma_txt(tech.get("MA_5"), tech.get("MA_20"))),
     ("MA20", tech.get("MA_20"), "20 日均线，中期趋势参考"),
     ("MA60", tech.get("MA_60"), "60 日均线，中长期趋势参考"),
     ("布林下轨", tech.get("BOLL_LOWER"), "弱势支撑位"),
-    ("布林中轨", tech.get("BOLL_MID"), "多空分水岭"),
+    ("布林中轨", tech.get("BOLL_MID"), "多空分水岭（20 日均线）"),
     ("布林上轨", tech.get("BOLL_UPPER"), "强势压力位"),
 ]
 tech_html = "<table><tr><th>指标</th><th class='num'>数值</th><th>专业解读</th></tr>"
@@ -357,22 +409,44 @@ for n, v, d in tech_defs:
     tech_html += f"<tr><td style='color:#8a929c;font-size:12px'>{n}</td><td class='num' style='font-weight:700;color:#1c2430'>{fnum(v)}</td><td style='color:#6b7280;font-size:12px'>{d}</td></tr>"
 tech_html += "</table>"
 
-review = (f"{vol_label}，{short_status(summ.get('SENTIMENT_STATUS'))}，{short_status(summ.get('STOCK_WIDTH_STATUS'))}，"
-          f"{short_status(summ.get('CAP_ROTATION_STATUS'))}，{short_status(summ.get('STYLE_ROTATION_STATUS'))}，"
-          f"{short_status(summ.get('VALUATION_STATUS'))}，涨跌比 {updown.get('RATIO_UPDOWN')}，"
-          f"短期{short_status(summ.get('TREND_SHORT_DIRECTION_STATUS'))}。")
-outlook = (f"量能{'平稳' if ratio5 and 98<=float(ratio5)<=102 else ('放大' if ratio5 and float(ratio5)>102 else '收窄')}，"
-           f"明日大概率维持震荡；MACD 红柱/正值；DIF 上穿 DEA，短期偏多；"
-           f"KDJ 超买，短线有回调压力；MA5 在 MA20 上方；情绪偏高，次日分歧可能加大；"
-           f"估值处于历史高位，追高风险大。")
+if SUMM_MISSING:
+    # 评分块无源：复盘只用全部可核验的客观指标，措辞中不出现任何评分结论
+    review = (f"{vol_label}，涨跌比 {updown.get('RATIO_UPDOWN')}"
+              f"（涨 {updown.get('CNT_RED')} / 跌 {updown.get('CNT_GREEN')}），"
+              f"涨停 {updown.get('CNT_REACH_UPLIMIT')} / 跌停 {updown.get('CNT_REACH_DNLIMIT')}，"
+              f"上证 {pct(trade.get('CHANGE_PCT_SZZS'))}、深成指 {pct(trade.get('CHANGE_PCT_SZCZ'))}，"
+              f"成交额 {fnum(money)} 亿（5 日均量比 {ratio5}%）。")
+    outlook = (f"技术面：MACD {fnum(tech.get('MACD'))}、DIF {fnum(tech.get('DIF'))}、"
+               f"KDJ-J {fnum(tech.get('KDJ_J'))}、RSI6 {fnum(tech.get('RSI_6'))}、"
+               f"MA5 {fnum(tech.get('MA_5'))} / MA20 {fnum(tech.get('MA_20'))}。"
+               f"（市场评分与次日展望依赖 westock 评分接口，故障期暂缺，不做推测。）")
+else:
+    review = (f"{vol_label}，{short_status(summ.get('SENTIMENT_STATUS'))}，{short_status(summ.get('STOCK_WIDTH_STATUS'))}，"
+              f"{short_status(summ.get('CAP_ROTATION_STATUS'))}，{short_status(summ.get('STYLE_ROTATION_STATUS'))}，"
+              f"{short_status(summ.get('VALUATION_STATUS'))}，涨跌比 {updown.get('RATIO_UPDOWN')}，"
+              f"短期{short_status(summ.get('TREND_SHORT_DIRECTION_STATUS'))}。")
+    outlook = (f"量能{'平稳' if ratio5 and 98<=float(ratio5)<=102 else ('放大' if ratio5 and float(ratio5)>102 else '收窄')}，"
+               f"明日大概率维持震荡；MACD 红柱/正值；DIF 上穿 DEA，短期偏多；"
+               f"KDJ 超买，短线有回调压力；MA5 在 MA20 上方；情绪偏高，次日分歧可能加大；"
+               f"估值处于历史高位，追高风险大。")
 review_html = (f"<div class='amberbox'><div style='margin-bottom:8px'><b>📌 专业点评：</b>{review}</div>"
                f"<div style='border-top:1px dashed rgba(201,166,107,.25);padding-top:8px'>"
                f"<b>🔮 次日展望：</b>{outlook}</div></div>")
 
+# 数据来源注脚：故障期如实披露替代口径，不与原生数据混淆
+if SUMM_MISSING:
+    mo_note = ("本页量价 / 技术 / 风格数据在 westock-mcp data_market_overview 故障期由替代口径生成："
+               "指数与涨跌幅、技术指标取自 westock data_kline 自算（与原生逐项核验偏差 0）；"
+               "涨跌家数与成交额取自 data_changedist；估值取自同花顺 iFinD；"
+               "市场评分标签无第三方等价口径，暂缺。")
+else:
+    mo_note = "以上标签由 westock-mcp data_market_overview 按全市场量价/估值/风格自动生成"
+mo_note += f"（聚合/收盘口径 {SNAP_DATE}；估值口径滞后至 {val_date}）。"
+
 market_overview_html = (
     f"<div class='section'><h2>📈 当日大盘概览 — {SNAP_DATE}（快照）</h2>"
     f"{idx_html}{bar_html}{chip_html}{money_html}"
-    f"<div class='note' style='color:#8a929c'>以上标签由 westock-mcp data_market_overview 按全市场量价/估值/风格自动生成（聚合/收盘口径 {SNAP_DATE}；估值口径滞后至 {val_date}）。</div>"
+    f"<div class='note' style='color:#8a929c'>{mo_note}</div>"
     f"{tag_html}"
     f"<div style='font-size:13px;font-weight:700;color:#1c2430;margin:14px 0 8px'>风格 / 规模</div>{rot_html}"
     f"{val_html}"
