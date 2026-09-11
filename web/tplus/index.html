@@ -158,6 +158,18 @@ th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:#c7c7cc; }
 .bC{ background:#f2f2f7 !important; color:var(--muted) !important; border:1px solid var(--line-2) !important; }
 .bD{ background:#fafafa !important; color:#a1a1a6 !important; border:1px solid var(--line-2) !important; }
 
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 10px; border-radius:8px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line-2); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--hover); text-decoration:none;
+}
+
 /* ---------- 说明/注释 ---------- */
 .note{
   background:var(--hover); border:1px solid var(--line-2); border-radius:12px;
@@ -184,6 +196,8 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </style><!--/WB_THEME--></head>
 <body>
 <div class='topnav'><a href='../market/index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='../market/hotmoney.html'>游资看板</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../research/index.html'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../picks/index.html'>信号池</a><a href='index.html'>做T池</a><a href='../sections/index.html'>版块总览</a><a href='../db/index.html'>数据中心</a><a href='../../index.html' class='home'>首页</a></div>
+
+
 
 
 
@@ -1397,7 +1411,16 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 <footer>本页为规则化量化输出，不构成投资建议。数据来源：westock（行情/技术/K线）+ 2026-Q2 十大流通股东。
 做T有风险，务必先有底仓、严设止损。</footer>
-</div><!--WB_APP--><script id='wb-app'>
+</div><!--ARCHIVE_LINKS-->
+<div class="section">
+<h2>历史归档</h2>
+<div class="arch">
+  <a href="tplus-2026-09-11.html">09-11 做T池</a>
+  <a href="tplus-2026-09-10.html">09-10 做T池</a>
+</div>
+</div>
+<!--/ARCHIVE_LINKS-->
+<!--WB_APP--><script id='wb-app'>
 /* ============================================================
    通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
    功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
