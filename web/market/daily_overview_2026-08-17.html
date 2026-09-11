@@ -254,6 +254,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 
 
+
 <div class='wrap'>
 
 <header>
@@ -660,14 +661,25 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 (function () {
   "use strict";
 
-  /* ① 当前页导航高亮 */
+  /* ① 当前页导航高亮（按完整路径匹配，避免同名 index.html 误点亮多个） */
   try {
-    var here = location.pathname.split("/").pop() || "index.html";
+    function normalize(p) {
+      return p.replace(/^\/stocks\//, "").replace(/^\/+/, "").replace(/\.html$/, "");
+    }
+    var curPath = normalize(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
     document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
-      var h = a.getAttribute("href") || "";
-      if (!h) return;
-      var last = h.split("/").pop();
-      if (last === here && here !== "") a.classList.add("cur");
+      var h = (a.getAttribute("href") || "").trim();
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var clean = h.split("#")[0];
+      var base = normalize(clean.split("?")[0]);
+      var linkSearch = "";
+      var q = clean.indexOf("?");
+      if (q > -1) linkSearch = clean.slice(q).toLowerCase();
+      if (base !== curPath) return;
+      if (curSearch && !linkSearch) return;
+      if (linkSearch && curSearch.indexOf(linkSearch) < 0) return;
+      a.classList.add("cur");
     });
   } catch (e) {}
 
