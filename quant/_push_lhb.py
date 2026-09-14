@@ -215,7 +215,7 @@ def push_file(rel):
     content = base64.b64encode(raw).decode("ascii")
     sha = get_sha(rel)
     body = {
-        "message": f"refactor: 全站 web/ 分层重构 + 统一导航与门户（{rel})",
+        "message": f"daily: 2026-09-14 每日数据快照更新（{rel})",
         "content": content,
         "branch": BRANCH,
     }
