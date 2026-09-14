@@ -32,8 +32,23 @@ ul{margin:8px 0;padding-left:20px}li{margin:4px 0}
 .kpi div{flex:1;min-width:120px;background:var(--hover);border-radius:10px;padding:10px 14px}
 .kpi b{display:block;font-size:20px;color:var(--accent)}
 .kpi span{font-size:12px;color:var(--muted)}
-.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.scroll table{min-width:860px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:78vh;overflow-y:auto}
+.scroll table{min-width:1180px}
+thead th{position:sticky;top:0;z-index:2}
+th[data-k]{cursor:pointer;user-select:none}
+th[data-k]:hover{color:var(--accent)}
+th.sorted-asc:after{content:" ▴";color:var(--accent)}
+th.sorted-desc:after{content:" be";color:var(--accent)}
+.num{text-align:right}
+.hist{display:inline-block;font-size:10.5px;font-weight:700;color:#137333;background:#e6f4ea;border:1px solid #b7e1c3;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
+.newb{display:inline-block;font-size:10.5px;font-weight:700;color:#1a73e8;background:#e8f0fe;border:1px solid #c6dafc;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
+.histcol{white-space:normal;min-width:158px;max-width:215px}
+.note-inline{color:var(--muted)}
+.cmp{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.cmp div{flex:1;min-width:130px;border-radius:10px;padding:10px 14px;background:var(--hover)}
+.cmp b{display:block;font-size:19px}
+.cmp span{font-size:12px;color:var(--muted)}
+.cmp .cnew b{color:#1a73e8}.cmp .ccont b{color:#137333}.cmp .cout b{color:#a8071a}
 </style><!--WB_THEME--><style id='wb-theme'>
 /* ============================================================
    统一设计系统 (A股看板) — Google Material 风·朴素简洁
@@ -199,12 +214,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 </style><!--/WB_THEME--></head>
 <body>
-<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='index.html'>MACD金叉</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
-
-
-
-
-<div class="wrap">
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='index.html'>MACD金叉</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div><div class="wrap">
 <h1>MACD 水上金叉 + 20 日主力净流入 · 方法论</h1>
 <div class="sub">常驻 Playbook：筛选口径 / 概念详解 / 增强列读法 / 常见误区 / 介入纪律（每日随数据重扫，方法不变）</div>
 
@@ -248,7 +258,20 @@ MACD 由 DIF（快线）、DEA（慢线）、MACD 柱（红绿柱）组成。当
 </ul></div>
 </div>
 
-<h2>四、常见误区</h2>
+<h2>四、跨期对比怎么用（新进 / 连续 / 退出）</h2>
+<div class="card">
+候选池每天重扫，<b>逐期名单的差异比单期名单更有信息量</b>。候选池页「与上一期对比」给出三个名单，对应三种完全不同的读法：
+<table data-wb>
+<tr><th>名单</th><th>含义</th><th>怎么用</th></tr>
+<tr><td><b>新进</b>（蓝徽标「新」）</td><td>本期首次同时满足三层漏斗（上期不在池内）</td><td>信号最"新"，但需辨别是「趋势刚启动」还是「破位后反抽重新满足」——查增强列的 52 周分位与 60 日涨幅，高位 + 60 日为负 = 伪新进。</td></tr>
+<tr><td><b>连续在榜</b>（绿徽标 + 历史入选列）</td><td>两期同时入选，趋势与资金连续同向</td><td>信号稳定性最好的正面证据，但<b>不等于可以放松止损</b>；连榜期数越多、位置越高的标的，反而越要警惕趋势末端。</td></tr>
+<tr><td><b>上期已退出</b></td><td>上期在池、本期不再同时满足漏斗</td><td><b>对持仓者而言这是最该优先看的名单</b>：退出意味着 MACD 水上金叉破位（DIF/DEA/柱任一转负）或 20 日主力净流入转负，对应退出纪律中的「跌破 MA20 / MACD 死叉离场」。</td></tr>
+</table>
+<div class="box red"><b>纪律：</b>退出名单的优先级高于新进名单。不要因为一只票「连榜多期」就把它当作低风险，也不要因为「新进」就急于介入——先看它为什么新进、位置在哪。<br>
+<b>徽标读法：</b>名称后 <span class="newb">新</span> = 本期首次入选；<span class="hist">09-11</span> = 此前（不含今日）曾入选，鼠标悬停显示<b>全部</b>入选日期与池别（MACD 观察池 / 信号池·机构轨 / 信号池·游资轨）；「历史入选」列列出同一信息并支持排序。</div>
+</div>
+
+<h2>五、常见误区</h2>
 <div class="card">
 <table data-wb>
 <tr><th>误区</th><th>真相</th></tr>
@@ -260,7 +283,7 @@ MACD 由 DIF（快线）、DEA（慢线）、MACD 柱（红绿柱）组成。当
 </table>
 </div>
 
-<h2>五、介入纪律（账户级）</h2>
+<h2>六、介入纪律（账户级）</h2>
 <div class="box red"><ul style="margin:8px 0 0;padding-left:20px;font-size:13.5px">
 <li>本页为<b>量化筛选结果</b>，非个股推荐、非买卖建议；决策责任在账户本人。</li>
 <li>水上金叉后若量能不济或大盘转弱，仍可能假突破；须结合板块与大盘情绪综合判断。</li>
