@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>底部反转选股 · 板块</title><style>:root{--bg:#fbfbfd;--card:#fff;--text:#1d1d1f;--muted:#6e6e73;--line:#e5e5e7;
-  --up:#ff3b30;--dn:#34c759;--blue:#0071e3;--gold:#0071e3;--orange:#ff9500;--purple:#af52de;}
+  --up:#ff3b30;--dn:#34c759;--blue:#0071e3;--gold:#1a73e8;--orange:#ff9500;--purple:#af52de;}
 *{box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
   background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:0}
@@ -31,6 +31,27 @@ th{color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa}
 .step{font-size:13.5px;margin:8px 0;padding:10px 14px;background:#fafafa;border-radius:10px;border-left:3px solid var(--purple)}
 .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
 ul{margin:8px 0;padding-left:20px}li{margin:4px 0}
+
+.xh-badge{display:inline-block;font-size:10.5px;font-weight:700;color:#137333;background:#e6f4ea;
+  border:1px solid #b7e1c3;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
+.xh-new{display:inline-block;font-size:10.5px;font-weight:700;color:#1a73e8;background:#e8f0fe;
+  border:1px solid #c6dafc;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
+.xh-tag{display:inline-block;font-size:10.5px;padding:1px 6px;border-radius:8px;margin:1px 2px;white-space:nowrap}
+.xh-tag.g{background:#e6f4ea;color:#137333}
+.xh-tag.y{background:#fef7e0;color:#8a6d00}
+.xh-tag.t{background:#e3f2f1;color:#0b6b63}
+.xh-tag.r{background:#f0e9fb;color:#5b3fa8}
+.xh-col{white-space:normal;min-width:150px;max-width:215px}
+.xh-dim{color:#9aa0a6}
+.xh-cmp{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.xh-cmp div{flex:1;min-width:130px;border-radius:10px;padding:10px 14px;background:#f1f3f4}
+.xh-cmp b{display:block;font-size:19px}
+.xh-cmp span{font-size:12px;color:#5f6368}
+.xh-cmp .cnew b{color:#1a73e8}.xh-cmp .ccont b{color:#137333}.xh-cmp .cout b{color:#a8071a}
+.xh-sort{cursor:pointer;user-select:none}
+.xh-sort:hover{color:#1a73e8}
+.xh-sort.xh-asc:after{content:" \25b4";color:#1a73e8}
+.xh-sort.xh-desc:after{content:" \25be";color:#1a73e8}
 </style><!--WB_THEME--><style id='wb-theme'>
 /* ============================================================
    统一设计系统 (A股看板) — Google Material 风·朴素简洁
@@ -53,13 +74,13 @@ body{
 }
 a{color:var(--accent); text-decoration:none;}
 a:hover{text-decoration:underline;}
-.wrap{max-width:1180px;margin:0 auto;padding:24px 18px 56px;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
 
 /* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
 .topnav{
   display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
   gap:8px 10px !important;
-  max-width:1180px !important; margin:0 auto 22px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
   padding:14px 16px !important;
   background:var(--surface) !important;
   border:1px solid var(--line) !important; border-radius:12px !important;
@@ -197,43 +218,31 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </style><!--/WB_THEME--></head>
 <body>
 <div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='index.html'>底部反转</a><a href='../macd/index.html'>MACD金叉</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-</div>
-</div>
 <div class="wrap">
 <h1>底部反转选股 · 板块</h1>
-<div class="sub">数据基准：2026-09-11 收盘｜ 每日随数据更新重扫 ｜ 六步 Playbook（低位 + 小盘 + 资金正 + 反转共振）</div>
+<div class="sub">数据基准：2026-09-14 收盘｜ 每日随数据更新重扫 ｜ 六步 Playbook（低位 + 小盘 + 资金正 + 反转共振）</div>
 
 <div class="box gold">
 <b>核心：</b>真底部反转 = <b>资金面（主力持续流入）</b> × <b>技术面（站上 MA20 + 量价配合）</b> × <b>基本面/催化（扣非反转或公开事件）</b> 三者共振。
-当前市场严格合格仅 <b>1 只</b>（A 类），宁可少选、不错选。
+当前市场严格合格仅 <b>7 只</b>（A 类），宁可少选、不错选。
 </div>
 
 <h2>方法论（六步 Playbook）</h2>
-<div class="card"><div class='step'><b>步骤 1 · 初筛（westock tool_filter）</b><br>交叉三个预设：困境反转 turnaround / 主力流入 main_inflow / 低市净率 low_pb。取交集，限制 max_pb≤4、min_inflow≥0.5 亿。</div><div class='step'><b>步骤 2 · 流通盘过滤</b><br>保留流通市值 &lt; 100 亿（弹性大、易被推动）。剔除中大盘（如大金 222.7 亿，只适合机构波段，不适合散户博反转）。</div><div class='step'><b>步骤 3 · 位置过滤</b><br>保留距 52 周高回撤 &gt; 30% 或 YTD &lt; 0（真低位）。剔除已涨至高点附近的（如松发距高点 −2.9%，已过击球区）。</div><div class='step'><b>步骤 4 · 扣非 PE 验证（防陷阱）</b><br>拉 data_quote 看 pe_ratio(TTM) 与 pe_lyr(去年)。两者差异巨大 = 一次性收益假象，直接剔除。保留扣非 PE 合理（与行业比不夸张）的。</div><div class='step'><b>步骤 5 · 资金面验证</b><br>拉 data_fund_flow：要求 20 日主力净流入为正或显著收窄、散户净流出；要求主力净流入排名前 500。20 日仍大幅流出的一律淘汰。</div><div class='step'><b>步骤 6 · 技术面 + 催化验证</b><br>拉 data_technical：MA20 走平/上翘、MACD 金叉、量价配合。再用 data_finsearch 确认重估事件/行业景气有公开依据。排序打分，加入观察池等信号。</div>
+<div class="card"><div class='step'><b>步骤 1 · 种子筛选（westock tool_filter 表达式）</b><br>一步取得：单季净利同比 &gt; 50% ＋ 0 &lt; PE(TTM) &lt; 50 ＋ 总市值 &lt; 100 亿。保证「困境反转 + 估值不夸张 + 小盘弹性」三重前提。</div><div class='step'><b>步骤 2 · 位置过滤（低位）</b><br>保留距 52 周高回撤 ≥ 20% 者。剔除已涨至高点附近、击球区已过的标的。</div><div class='step'><b>步骤 3 · 资金面验证（data_fund_flow）</b><br>看 20 日主力净流入：为正 = 资金已确认；仍大幅流出的直接降级或淘汰。辅以 5 日 / 10 日同号判断持续性。</div><div class='step'><b>步骤 4 · 技术面验证（data_technical）</b><br>MACD 金叉（DIF &gt; DEA）＋ 站上 MA20 为双确认；均线走平 / 上翘优先。未金叉或未站上 MA20 的降为 B / C。</div><div class='step'><b>步骤 5 · 六维评分分级</b><br>①流通&lt;100亿 ②距52高回撤&gt;25% ③扣非PE合理 ④20日主力正 ⑤MACD金叉 ⑥站上MA20。A=≥5分且资金+技术双确认；B=4分边缘；C=≤3分淘汰。</div><div class='step'><b>步骤 6 · 介入纪律（账户级）</b><br>A 类列入一档观察，等缩量回踩不破 ＋ 再次放量再试仓 3–5%；B 类监控不介入；C 类不纳入任何仓位。宁可少选、不错选。</div>
 <div class="note"><a href="method.html" style="color:var(--blue);text-decoration:none;font-weight:600">→ 完整方法论 Playbook（确定性分级 / 技术·资金·基本面硬条件 / 介入三档 / 正反案例）</a></div>
 </div>
 
-<h2>最新观察池（2026-09-11）</h2>
-<div class="card"><table data-wb>
-<tr><th>代码</th><th>名称</th><th>流通亿</th><th>距52高</th><th>YTD</th><th>20日主力</th><th>档</th></tr>
-<tr><td>000532</td><td>华金资本</td><td class='am num'>41.7</td><td class='num dn'>-35.9%</td><td class='num dn'>-24.2%</td><td class='num up'>+3869万</td><td><span class='tag A'>A</span></td></tr><tr><td>300358</td><td>楚天科技</td><td class='am num'>56.3</td><td class='num dn'>-41.4%</td><td class='num dn'>-17.9%</td><td class='num dn'>−1.53亿</td><td><span class='tag B'>B</span></td></tr><tr><td>301216</td><td>万凯新材</td><td class='am num'>94.2</td><td class='num dn'>-44.7%</td><td class='num up'>+3.5%</td><td class='num up'>+1.61亿</td><td><span class='tag B'>B</span></td></tr><tr><td>000567</td><td>海德股份</td><td class='am num'>120.7</td><td class='num dn'>-26.2%</td><td class='num dn'>-3.6%</td><td class='num up'>+5278万</td><td><span class='tag B'>B</span></td></tr><tr><td>002194</td><td>武汉凡谷</td><td class='am num'>59.0</td><td class='num dn'>-24.4%</td><td class='num dn'>-12.2%</td><td class='num up'>+1.09亿</td><td><span class='tag B'>B</span></td></tr></table>
-<div class="note"><a href="watchlist_20260911.html" style="color:var(--blue);text-decoration:none;font-weight:600">→ 查看完整 2026-09-11 观察池（16 只验证 / A·B·C 分级 / 介入建议）</a></div>
+<h2>最新观察池（2026-09-14）</h2>
+<div class="card">
+<div class="note" style="border:none;padding:0;margin:0 0 8px">名称后徽标 = 跨池历史入选日期（悬停看全部）。<b>各列可点击表头排序。</b></div>
+<table class="sortable" data-wb>
+<thead><tr><th data-k="code" data-t="s">代码</th><th data-k="name" data-t="s">名称</th>
+<th data-k="fmv" data-t="n">流通亿</th><th data-k="d52" data-t="n">距52高</th>
+<th data-k="ytd" data-t="n">YTD</th><th data-k="m20" data-t="n">20日主力</th>
+<th data-k="score" data-t="n">分</th><th data-k="tier" data-t="s">档</th>
+<th data-k="hist" data-t="s">历史入选</th></tr></thead>
+<tbody><tr><td class='num' data-v="605580">605580</td><td>恒盛能源</td><td class='am num' data-v="66.1">66.1</td><td class='num dn' data-v="-47.2">-47.2%</td><td class='num up' data-v="6.02">+6.0%</td><td class='num up' data-v="0.6055">+6055万</td><td class='num' data-v="6">6</td><td><span class='tag A'>A</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="603926">603926</td><td>铁流股份</td><td class='am num' data-v="39.0">39.0</td><td class='num dn' data-v="-39.8">-39.8%</td><td class='num dn' data-v="-0.24">-0.2%</td><td class='num up' data-v="0.5415">+5415万</td><td class='num' data-v="6">6</td><td><span class='tag A'>A</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="002108">002108</td><td>沧州明珠</td><td class='am num' data-v="75.0">75.0</td><td class='num dn' data-v="-28.8">-28.8%</td><td class='num dn' data-v="-3.6">-3.6%</td><td class='num up' data-v="0.29400000000000004">+2940万</td><td class='num' data-v="6">6</td><td><span class='tag A'>A</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="605277">605277</td><td>新亚电子</td><td class='am num' data-v="69.4">69.4</td><td class='num dn' data-v="-24.8">-24.8%</td><td class='num dn' data-v="-1.09">-1.1%</td><td class='num up' data-v="0.8314">+8314万</td><td class='num' data-v="5">5</td><td><span class='tag A'>A</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="002328">002328</td><td>新朋股份</td><td class='am num' data-v="47.8">47.8</td><td class='num dn' data-v="-37.8">-37.8%</td><td class='num up' data-v="28.89">+28.9%</td><td class='num up' data-v="0.46590000000000004">+4659万</td><td class='num' data-v="5">5</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="600841">600841</td><td>动力新科</td><td class='am num' data-v="59.9">59.9</td><td class='num dn' data-v="-49.3">-49.3%</td><td class='num dn' data-v="-5.75">-5.8%</td><td class='num up' data-v="0.29410000000000003">+2941万</td><td class='num' data-v="5">5</td><td><span class='tag A'>A</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="000957">000957</td><td>中通客车</td><td class='am num' data-v="62.4">62.4</td><td class='num dn' data-v="-18.2">-18.2%</td><td class='num dn' data-v="-7.4">-7.4%</td><td class='num up' data-v="0.17470000000000002">+1747万</td><td class='num' data-v="5">5</td><td><span class='tag A'>A</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="603209">603209</td><td>兴通股份</td><td class='am num' data-v="47.2">47.2</td><td class='num dn' data-v="-18.1">-18.1%</td><td class='num dn' data-v="-1.82">-1.8%</td><td class='num up' data-v="0.1728">+1728万</td><td class='num' data-v="5">5</td><td><span class='tag A'>A</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="002259">002259</td><td>升达林业</td><td class='am num' data-v="31.4">31.4</td><td class='num dn' data-v="-34.8">-34.8%</td><td class='num up' data-v="10.58">+10.6%</td><td class='num up' data-v="0.1562">+1562万</td><td class='num' data-v="5">5</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="603101">603101</td><td>汇嘉时代</td><td class='am num' data-v="35.8">35.8</td><td class='num dn' data-v="-43.0">-43.0%</td><td class='num dn' data-v="-20.3">-20.3%</td><td class='num up' data-v="0.0646">+646万</td><td class='num' data-v="5">5</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="605169">605169</td><td>洪通燃气</td><td class='am num' data-v="35.6">35.6</td><td class='num dn' data-v="-29.2">-29.2%</td><td class='num dn' data-v="-2.96">-3.0%</td><td class='num up' data-v="0.0634">+634万</td><td class='num' data-v="5">5</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="603489">603489</td><td>八方股份</td><td class='am num' data-v="67.5">67.5</td><td class='num dn' data-v="-28.8">-28.8%</td><td class='num dn' data-v="-5.49">-5.5%</td><td class='num up' data-v="0.0068000000000000005">+68万</td><td class='num' data-v="5">5</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="002441">002441</td><td>众业达</td><td class='am num' data-v="32.4">32.4</td><td class='num dn' data-v="-27.0">-27.0%</td><td class='num dn' data-v="-8.65">-8.7%</td><td class='num dn' data-v="-0.062200000000000005">-622万</td><td class='num' data-v="5">5</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="603681">603681</td><td>永冠新材</td><td class='am num' data-v="43.9">43.9</td><td class='num dn' data-v="-35.5">-35.5%</td><td class='num dn' data-v="-2.17">-2.2%</td><td class='num dn' data-v="-0.0801">-801万</td><td class='num' data-v="5">5</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="600373">600373</td><td>中文传媒</td><td class='am num' data-v="99.8">99.8</td><td class='num dn' data-v="-37.7">-37.7%</td><td class='num dn' data-v="-18.93">-18.9%</td><td class='num dn' data-v="-0.1275">-1275万</td><td class='num' data-v="5">5</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="300590">300590</td><td>移为通信</td><td class='am num' data-v="40.5">40.5</td><td class='num dn' data-v="-31.0">-31.0%</td><td class='num dn' data-v="-9.95">-9.9%</td><td class='num dn' data-v="-0.1564">-1564万</td><td class='num' data-v="5">5</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="000151">000151</td><td>中成股份</td><td class='am num' data-v="32.5">32.5</td><td class='num dn' data-v="-31.2">-31.2%</td><td class='num dn' data-v="-11.28">-11.3%</td><td class='num dn' data-v="-0.159">-1590万</td><td class='num' data-v="5">5</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="600609">600609</td><td>金杯汽车</td><td class='am num' data-v="45.9">45.9</td><td class='num dn' data-v="-34.3">-34.3%</td><td class='num dn' data-v="-23.59">-23.6%</td><td class='num dn' data-v="-0.1794">-1794万</td><td class='num' data-v="5">5</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="000601">000601</td><td>韶能股份</td><td class='am num' data-v="67.0">67.0</td><td class='num dn' data-v="-35.2">-35.2%</td><td class='num up' data-v="37.2">+37.2%</td><td class='num dn' data-v="-0.8522000000000001">-8522万</td><td class='num' data-v="5">5</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="603045">603045</td><td>福达合金</td><td class='am num' data-v="66.2">66.2</td><td class='num dn' data-v="-48.6">-48.6%</td><td class='num up' data-v="150.64">+150.6%</td><td class='num up' data-v="3.43">+3.43亿</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="301216">301216</td><td>万凯新材<span class='xh-badge' title='入选记录：2026-09-10 做T池；2026-09-11 做T池；2026-09-11 反转池'>09-11</span></td><td class='am num' data-v="93.2">93.2</td><td class='num dn' data-v="-45.3">-45.3%</td><td class='num up' data-v="2.45">+2.5%</td><td class='num up' data-v="1.12">+1.12亿</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-tag t'>09-10 做T池</span> <span class='xh-tag t'>09-11 做T池</span> <span class='xh-tag r'>09-11 反转池</span></td></tr><tr><td class='num' data-v="688379">688379</td><td>华光新材</td><td class='am num' data-v="48.6">48.6</td><td class='num dn' data-v="-44.5">-44.5%</td><td class='num dn' data-v="-1.1">-1.1%</td><td class='num up' data-v="1.09">+1.09亿</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="600969">600969</td><td>郴电国际</td><td class='am num' data-v="37.0">37.0</td><td class='num dn' data-v="-19.7">-19.7%</td><td class='num dn' data-v="-1.03">-1.0%</td><td class='num up' data-v="1.01">+1.01亿</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="605299">605299</td><td>舒华体育</td><td class='am num' data-v="49.1">49.1</td><td class='num dn' data-v="-56.4">-56.4%</td><td class='num up' data-v="6.72">+6.7%</td><td class='num up' data-v="0.6897">+6897万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="688410">688410</td><td>山外山</td><td class='am num' data-v="41.9">41.9</td><td class='num dn' data-v="-28.2">-28.2%</td><td class='num dn' data-v="-11.18">-11.2%</td><td class='num up' data-v="0.5028">+5028万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="003010">003010</td><td>若羽臣<span class='xh-badge' title='入选记录：2026-09-11 做T池'>09-11</span></td><td class='am num' data-v="65.9">65.9</td><td class='num dn' data-v="-40.0">-40.0%</td><td class='num dn' data-v="-15.96">-16.0%</td><td class='num up' data-v="0.47150000000000003">+4715万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-tag t'>09-11 做T池</span></td></tr><tr><td class='num' data-v="002169">002169</td><td>智光电气</td><td class='am num' data-v="93.0">93.0</td><td class='num dn' data-v="-38.2">-38.2%</td><td class='num up' data-v="6.35">+6.3%</td><td class='num up' data-v="0.40940000000000004">+4094万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="603125">603125</td><td>常青科技</td><td class='am num' data-v="92.4">92.4</td><td class='num dn' data-v="-32.9">-32.9%</td><td class='num up' data-v="35.57">+35.6%</td><td class='num up' data-v="0.3151">+3151万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="002016">002016</td><td>世荣兆业</td><td class='am num' data-v="37.1">37.1</td><td class='num dn' data-v="-36.1">-36.1%</td><td class='num dn' data-v="-20.34">-20.3%</td><td class='num up' data-v="0.1963">+1963万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="688628">688628</td><td>优利德</td><td class='am num' data-v="85.7">85.7</td><td class='num dn' data-v="-35.7">-35.7%</td><td class='num up' data-v="147.07">+147.1%</td><td class='num up' data-v="0.1897">+1897万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="301033">301033</td><td>迈普医学</td><td class='am num' data-v="29.2">29.2</td><td class='num dn' data-v="-43.3">-43.3%</td><td class='num dn' data-v="-22.52">-22.5%</td><td class='num up' data-v="0.15610000000000002">+1561万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="002420">002420</td><td>毅昌科技</td><td class='am num' data-v="24.3">24.3</td><td class='num dn' data-v="-33.8">-33.8%</td><td class='num dn' data-v="-21.72">-21.7%</td><td class='num up' data-v="0.0988">+988万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="688162">688162</td><td>巨一科技</td><td class='am num' data-v="31.8">31.8</td><td class='num dn' data-v="-38.2">-38.2%</td><td class='num dn' data-v="-24.15">-24.1%</td><td class='num up' data-v="0.0648">+648万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="002054">002054</td><td>德美化工</td><td class='am num' data-v="27.3">27.3</td><td class='num dn' data-v="-40.9">-40.9%</td><td class='num dn' data-v="-2.87">-2.9%</td><td class='num up' data-v="0.0555">+555万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="600191">600191</td><td>华资实业<span class='xh-badge' title='入选记录：2026-09-11 做T池'>09-11</span></td><td class='am num' data-v="45.2">45.2</td><td class='num dn' data-v="-34.5">-34.5%</td><td class='num dn' data-v="-27.35">-27.4%</td><td class='num up' data-v="0.047400000000000005">+474万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-tag t'>09-11 做T池</span></td></tr><tr><td class='num' data-v="603969">603969</td><td>银龙股份</td><td class='am num' data-v="64.9">64.9</td><td class='num dn' data-v="-33.5">-33.5%</td><td class='num dn' data-v="-24.1">-24.1%</td><td class='num up' data-v="0.0285">+285万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="688755">688755</td><td>汉邦科技</td><td class='am num' data-v="20.4">20.4</td><td class='num dn' data-v="-28.9">-28.9%</td><td class='num dn' data-v="-15.68">-15.7%</td><td class='num up' data-v="0.012100000000000001">+121万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="603282">603282</td><td>亚光股份</td><td class='am num' data-v="22.1">22.1</td><td class='num dn' data-v="-31.5">-31.5%</td><td class='num dn' data-v="-15.61">-15.6%</td><td class='num dn' data-v="-0.0166">-166万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="600335">600335</td><td>国机汽车</td><td class='am num' data-v="77.7">77.7</td><td class='num dn' data-v="-27.2">-27.2%</td><td class='num dn' data-v="-18.79">-18.8%</td><td class='num dn' data-v="-0.0631">-631万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="002363">002363</td><td>隆基机械</td><td class='am num' data-v="28.4">28.4</td><td class='num dn' data-v="-39.3">-39.3%</td><td class='num dn' data-v="-31.74">-31.7%</td><td class='num dn' data-v="-0.0806">-806万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="000886">000886</td><td>海南高速</td><td class='am num' data-v="46.2">46.2</td><td class='num dn' data-v="-42.9">-42.9%</td><td class='num dn' data-v="-31.05">-31.1%</td><td class='num dn' data-v="-0.10650000000000001">-1065万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="600738">600738</td><td>丽尚国潮</td><td class='am num' data-v="34.7">34.7</td><td class='num dn' data-v="-20.1">-20.1%</td><td class='num dn' data-v="-9.88">-9.9%</td><td class='num dn' data-v="-0.1762">-1762万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="600746">600746</td><td>江苏索普</td><td class='am num' data-v="82.5">82.5</td><td class='num dn' data-v="-34.5">-34.5%</td><td class='num up' data-v="3.22">+3.2%</td><td class='num dn' data-v="-0.1776">-1776万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="601968">601968</td><td>宝钢包装</td><td class='am num' data-v="58.7">58.7</td><td class='num dn' data-v="-28.6">-28.6%</td><td class='num dn' data-v="-13.37">-13.4%</td><td class='num dn' data-v="-0.25720000000000004">-2572万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="002111">002111</td><td>威海广泰</td><td class='am num' data-v="47.9">47.9</td><td class='num dn' data-v="-14.4">-14.4%</td><td class='num dn' data-v="-4.67">-4.7%</td><td class='num dn' data-v="-0.45740000000000003">-4574万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="600035">600035</td><td>楚天高速</td><td class='am num' data-v="59.1">59.1</td><td class='num dn' data-v="-10.5">-10.5%</td><td class='num dn' data-v="-1.34">-1.3%</td><td class='num dn' data-v="-0.7393000000000001">-7393万</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr><tr><td class='num' data-v="688518">688518</td><td>联赢激光</td><td class='am num' data-v="70.4">70.4</td><td class='num dn' data-v="-38.4">-38.4%</td><td class='num dn' data-v="-14.58">-14.6%</td><td class='num dn' data-v="-1.67">-1.67亿</td><td class='num' data-v="4">4</td><td><span class='tag B'>B</span></td><td class='xh-col'><span class='xh-dim'>—</span></td></tr></tbody></table>
+<div class="note"><a href="watchlist_20260914.html" style="color:var(--blue);text-decoration:none;font-weight:600">→ 查看完整 2026-09-14 观察池（106 只验证 / A·B·C 分级 / 介入建议）</a></div>
 </div>
 
 <h2>方法验证案例</h2>
@@ -243,10 +252,50 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <div class='arch'>· <a href='songfa_verify_20260911.html'>候选真实性复核 + 胜率评估</a></div></div>
 
 <h2>历史观察池归档</h2>
-<div class="card"><div class='arch'>· <a href='watchlist_20260911.html'>2026-09-11 观察池</a></div></div>
+<div class="card"><div class='arch'>· <a href='watchlist_20260914.html'>2026-09-14 观察池</a></div>
+<div class='arch'>· <a href='watchlist_20260911.html'>2026-09-11 观察池</a></div></div>
 
 <div class="foot">本版块为基于 westock 实拉数据的量化筛选与方法论沉淀，非个股推荐、非买卖建议。决策责任在账户本人。</div>
-</div><!--WB_APP--><script id='wb-app'>
+</div><script>
+(function(){
+  function cellVal(tr, idx, type){
+    var td = tr.cells[idx];
+    if(!td) return type==='n' ? -Infinity : '';
+    var raw = td.getAttribute('data-v');
+    var txt = (raw!==null? raw : td.textContent).trim();
+    if(type==='n'){
+      var v = parseFloat(txt.replace(/[,%\u00b7\u4e07\u4ebf+]/g,''));
+      return isNaN(v) ? -Infinity : v;
+    }
+    return txt;
+  }
+  document.querySelectorAll('table.sortable').forEach(function(tb){
+    var ths = tb.querySelectorAll('thead th[data-k]');
+    ths.forEach(function(th, ci){
+      th.classList.add('xh-sort');
+      th.addEventListener('click', function(){
+        var tbody = tb.tBodies[0];
+        if(!tbody) return;
+        var arr = Array.prototype.slice.call(tbody.rows);
+        var type = th.getAttribute('data-t') || 'n';
+        var cur = th.getAttribute('data-dir');
+        var dir = (cur === 'asc') ? 'desc' : 'asc';
+        ths.forEach(function(o){ o.removeAttribute('data-dir'); o.classList.remove('xh-asc','xh-desc'); });
+        th.setAttribute('data-dir', dir);
+        th.classList.add(dir==='asc' ? 'xh-asc' : 'xh-desc');
+        arr.sort(function(a,b){
+          var va = cellVal(a, ci, type), vb = cellVal(b, ci, type);
+          if(va < vb) return dir==='asc' ? -1 : 1;
+          if(va > vb) return dir==='asc' ? 1 : -1;
+          return 0;
+        });
+        arr.forEach(function(tr){ tbody.appendChild(tr); });
+      });
+    });
+  });
+})();
+</script>
+<!--WB_APP--><script id='wb-app'>
 /* ============================================================
    通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
    功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
