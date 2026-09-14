@@ -8,16 +8,16 @@ body { margin:0; background:#f5f6f8; color:#23262b;
 .wrap { max-width:1180px; margin:0 auto; padding:28px 20px 60px; }
 .topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
   border-bottom:1px solid #e6e9ee; }
-.topnav a { color:#0071e3; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
-  border:1px solid rgba(0,113,227,.35); }
-.topnav a.cur { background:#0071e3; color:#fff; border-color:#0071e3; }
-.topnav a:hover { background:rgba(0,113,227,.10); }
+.topnav a { color:#1a73e8; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(26,115,232,.35); }
+.topnav a.cur { background:#1a73e8; color:#fff; border-color:#1a73e8; }
+.topnav a:hover { background:rgba(26,115,232,.10); }
 header h1 { font-size:26px; margin:0 0 6px; }
-header h1 span { background:linear-gradient(90deg,#0071e3,#8a6428); -webkit-background-clip:text;
+header h1 span { background:linear-gradient(90deg,#1a73e8,#8a6428); -webkit-background-clip:text;
   -webkit-text-fill-color:transparent; }
 .sub { color:#6b7480; font-size:13.5px; }
 .section { margin-top:30px; }
-.section h2 { font-size:19px; margin:0 0 14px; padding-left:12px; border-left:4px solid #0071e3; }
+.section h2 { font-size:19px; margin:0 0 14px; padding-left:12px; border-left:4px solid #1a73e8; }
 .trk { display:inline-block; font-size:12px; padding:2px 10px; border-radius:20px; margin-left:8px; }
 .trk.i { background:#e6f1fb; color:#185fa5; } .trk.y { background:#fcebeb; color:#a32d2d; }
 table { width:100%; border-collapse:collapse; background:#fff; font-size:13px;
@@ -27,14 +27,14 @@ th { background:#fafbfc; color:#5a6573; font-weight:600; font-size:12.5px; }
 tr:last-child td { border-bottom:none; }
 .up { color:#b8332a; } .down { color:#1a9e5a; }
 .card { background:#fff; border:1px solid #e6e9ee; border-radius:12px; padding:16px 18px; margin-bottom:12px; }
-.card.hi { border-left:4px solid #0071e3; }
+.card.hi { border-left:4px solid #1a73e8; }
 .chead { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
 .cname { font-size:17px; font-weight:700; }
 .ccode { color:#8a929c; font-size:13px; }
 .badge { font-size:11.5px; padding:2px 9px; border-radius:20px; font-weight:700; }
 .bA { background:#fdecea; color:#b8332a; } .bB { background:#fdf3e0; color:#b7791f; }
 .bC { background:#eef4fa; color:#2b6cb0; } .bD { background:#eef0f2; color:#6b7480; }
-.score { font-size:22px; font-weight:800; color:#0071e3; }
+.score { font-size:22px; font-weight:800; color:#1a73e8; }
 .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:9px; margin-top:11px; }
 .kv { background:#fafbfc; border:1px solid #eef1f4; border-radius:8px; padding:7px 10px; }
 .kv .k { font-size:11.5px; color:#8a929c; }
@@ -44,7 +44,7 @@ tr:last-child td { border-bottom:none; }
 .sig b { color:#23262b; }
 .chip { display:inline-block; background:#f4f6f8; border:1px solid #e6e9ee; border-radius:14px;
   padding:1px 9px; font-size:11.5px; margin:2px 4px 2px 0; color:#5a6573; }
-.note { background:#fffaf0; border-left:4px solid #0071e3; padding:12px 16px; border-radius:0 8px 8px 0;
+.note { background:#fffaf0; border-left:4px solid #1a73e8; padding:12px 16px; border-radius:0 8px 8px 0;
   font-size:13px; color:#6b4f2a; margin:14px 0; }
 .warn { background:#fdecea; border-left-color:#b8332a; color:#8c2b22; }
 .veto { background:#f4f6f8; border:1px dashed #c8ced6; border-radius:10px; padding:12px 16px;
@@ -56,7 +56,7 @@ footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-s
 .tip { cursor:help; border-bottom:1px dotted #c3cad3; }
 .kv.tipbox:hover { background:#fdf8ef; border-color:#e6d3ae; }
 .kv .k.tipk::after { content:"?"; display:inline-block; margin-left:3px; font-size:10px;
-  color:#0071e3; border:1px solid rgba(0,113,227,.45); border-radius:50%;
+  color:#1a73e8; border:1px solid rgba(26,115,232,.45); border-radius:50%;
   width:12px; height:12px; line-height:11px; text-align:center; }
 .chip[title], .badge[title], .score[title] { cursor:help; }
 </style><!--WB_THEME--><style id='wb-theme'>
@@ -224,35 +224,18 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 </style><!--/WB_THEME--></head><body>
 <div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../macd/index.html'>MACD金叉</a><a href='index.html'>信号池</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
-
-
-
-
-
-
-
-
-
-
-</div>
-</div>
-</div>
-
-
-
-
-
 <div class='wrap'>
 
 <header><h1><span>个股信号池</span> · 每日归档</h1>
 <div class='sub'>机构轨（波段）+ 游资轨（短线）双池输出建仓候选与买卖点，次日自动回填表现并统计胜率。</div></header>
 
-<div class='note'><b>最新一期：</b><a href='pick_2026-09-11.html'>2026-09-11</a> —— 机构轨 25 只（A 0 / B 1）· 游资轨 25 只（A 2 / B 5）。</div>
+<div class='note'><b>最新一期：</b><a href='pick_2026-09-14.html'>2026-09-14</a> —— 机构轨 23 只（A 0 / B 0）· 游资轨 24 只（A 2 / B 11）。</div>
+<div class='note'><b>高胜率候选池（多因子扫描）：</b><a href='highwin_20260914.html'>2026-09-14</a> —— 以 MACD 水上金叉池为基底，叠加趋势/位置/量价/资金/筹码/板块/龙虎榜/高管大宗八维打分与分层（核心 / 观察 / 备选 / 回避），另附「历史入选」标记。</div>
 
 <div class='section' title='每一期的候选只数与次日回填表现：均涨 = 该期全部候选次日相对进场参考价的平均收益；触T1 / 触止损 = 区间内最高价触及目标一、最低价触及止损位的只数。'><h2>历史表现（多周期回填）</h2>
 <div class='note'>机构轨累计 <span class='muted'>首期尚无回填</span><br>游资轨累计 <span class='muted'>首期尚无回填</span></div>
-<table><thead><tr><th>日期</th><th title='该期该轨输出的候选只数（已通过 Gate 一票否决后剩余的数量）。'>机构轨</th><th title='次日（T+1）回填：均涨 = 全部候选相对进场参考价的平均收益；触T1 = 区间最高价触及目标一的只数；触止损 = 区间最低价跌破止损位的只数。'>机构轨次日</th><th title='该期该轨输出的候选只数（已通过 Gate 一票否决后剩余的数量）。'>游资轨</th><th title='次日（T+1）回填：均涨 = 全部候选相对进场参考价的平均收益；触T1 = 区间最高价触及目标一的只数；触止损 = 区间最低价跌破止损位的只数。'>游资轨次日</th></tr></thead>
-<tbody><tr><td><a href='pick_2026-09-11.html'>2026-09-11</a></td><td>10</td><td><span class='muted'>待回填</span></td><td>10</td><td><span class='muted'>待回填</span></td></tr><tr><td><a href='pick_2026-09-10.html'>2026-09-10</a></td><td>10</td><td><span class='muted'>待回填</span></td><td>10</td><td><span class='muted'>待回填</span></td></tr></tbody></table></div>
+<table data-wb><thead><tr><th>日期</th><th title='该期该轨输出的候选只数（已通过 Gate 一票否决后剩余的数量）。'>机构轨</th><th title='次日（T+1）回填：均涨 = 全部候选相对进场参考价的平均收益；触T1 = 区间最高价触及目标一的只数；触止损 = 区间最低价跌破止损位的只数。'>机构轨次日</th><th title='该期该轨输出的候选只数（已通过 Gate 一票否决后剩余的数量）。'>游资轨</th><th title='次日（T+1）回填：均涨 = 全部候选相对进场参考价的平均收益；触T1 = 区间最高价触及目标一的只数；触止损 = 区间最低价跌破止损位的只数。'>游资轨次日</th></tr></thead>
+<tbody><tr><td><a href='pick_2026-09-14.html'>2026-09-14</a></td><td>10</td><td><span class='muted'>待回填</span></td><td>10</td><td><span class='muted'>待回填</span></td></tr><tr><td><a href='pick_2026-09-11.html'>2026-09-11</a></td><td>10</td><td><span class='muted'>待回填</span></td><td>10</td><td><span class='muted'>待回填</span></td></tr><tr><td><a href='pick_2026-09-10.html'>2026-09-10</a></td><td>10</td><td><span class='muted'>待回填</span></td><td>10</td><td><span class='muted'>待回填</span></td></tr></tbody></table></div>
 
 <div class='section'><h2>双池评分模型</h2>
 <table data-wb><thead><tr><th class='tip' title='评分模型的组成维度，机构轨与游资轨权重不同。'>维度</th><th class='tip' title='该维度在机构轨总分中的满分值（机构轨满分 100）。'>机构轨</th><th class='tip' title='该维度在游资轨总分中的满分值（游资轨满分 100）。'>游资轨</th><th class='tip' title='该维度的具体计算方式与数据来源。'>口径</th></tr></thead><tbody>
