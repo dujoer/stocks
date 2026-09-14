@@ -61,8 +61,7 @@ FAMILIES = [
 
     dict(key='sector_entry', label='板块强度入口/趋势',
          patterns=['sector/index.html', 'sector/trend.html',
-                   'sector/sector-strength-trend.html',
-                   'sector-strength-trend.html'],
+                   'sector/sector-strength-trend.html'],
          entry='sector/index.html', script='run_daily_sector.py', freq='daily',
          dated=False, start=None, date_re=None, need='同 sector'),
 
@@ -124,6 +123,38 @@ FAMILIES = [
          script=None, freq='on_demand', dated=False, start=None,
          date_re=None, need=None),
 
+    dict(key='reversal', label='底部反转观察池（每日扫描）',
+         patterns=['reversal/watchlist_*.html'],
+         entry='reversal/index.html', script='gen_watchlist.py', freq='daily',
+         dated=True, start='20260911', date_re=r'(\d{8})',
+         need='六步法：tool_filter 三预设交叉 → 流通<100亿 → 低位 → 扣非PE → 20日主力净流入 → 技术金叉；agent 实拉落盘 watchlist_scan_{DATE}.json 后跑 gen_watchlist.py'),
+
+    dict(key='reversal_entry', label='底部反转板块入口',
+         patterns=['reversal/index.html'], entry='reversal/index.html',
+         script='gen_watchlist.py', freq='daily', dated=False, start=None,
+         date_re=None, need='同 reversal（滚动更新最新观察池 + 归档）'),
+
+    dict(key='reversal_method', label='底部反转方法论 Playbook',
+         patterns=['reversal/method.html'], entry='reversal/index.html',
+         script=None, freq='on_demand', dated=False, start=None,
+         date_re=None, need='六步法常驻方法论，随框架迭代更新'),
+
+    dict(key='reversal_cases', label='底部反转案例（松发/候选/复核/大金）',
+         patterns=['reversal/songfa*.html', 'reversal/dajin_*.html'],
+         entry='reversal/index.html', script=None, freq='on_demand',
+         dated=False, start=None, date_re=None, need='方法验证案例，随讨论补充'),
+
+    dict(key='macd', label='MACD水上金叉观察池（每日扫描）',
+         patterns=['macd/watchlist_*.html'],
+         entry='macd/index.html', script='macd_build.py;gen_macd.py', freq='daily',
+         dated=True, start='20260911', date_re=r'(\d{8})',
+         need='三层漏斗：tool_filter(main_inflow,min_inflow=0.3亿,market=hs) → data_technical(水上金叉 DIF>0&DEA>0&MACD红柱>0) → data_fund_flow(MainNetFlow20D>0)；agent 实拉落盘 macd_scan_{DATE}.json 后跑 gen_macd.py'),
+
+    dict(key='macd_entry', label='MACD板块入口/方法论',
+         patterns=['macd/index.html', 'macd/method.html'],
+         entry='macd/index.html', script='gen_macd.py', freq='daily',
+         dated=False, start=None, date_re=None, need='同 macd（滚动更新最新观察池 + 归档 + 方法论常驻页）'),
+
     dict(key='shareholder', label='行业最强/牛人', patterns=['shareholder/*.html'],
          entry='shareholder/2026-q2-industry-elite.html', script=None,
          freq='quarterly', dated=False, start=None, date_re=None,
@@ -134,9 +165,11 @@ FAMILIES = [
          freq='daily', dated=False, start=None, date_re=None,
          need='各模块 JSON 落盘'),
 
-    dict(key='sections', label='版块总览', patterns=['sections/*.html'],
-         entry='sections/index.html', script='build_sections.py', freq='daily',
-         dated=False, start=None, date_re=None, need='各模块页已生成'),
+    dict(key='sections', label='版块总览（已合并到总门户，保留重定向）',
+         patterns=['sections/*.html'],
+         entry='sections/index.html', script='build_sections.py', freq='ad_hoc',
+         dated=False, start=None, date_re=None,
+         need='内容已合并至首页门户；本页自动重定向，避免旧书签失效'),
 
     dict(key='docs', label='说明文档', patterns=['docs/*.html'],
          entry=None, script=None, freq='ad_hoc', dated=False, start=None,
@@ -149,6 +182,7 @@ ORPHAN_WHITELIST_SUBSTR = (
     'archive',
     '/db/',
     'docs/',
+    'sections/',
 )
 
 
