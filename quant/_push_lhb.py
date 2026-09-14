@@ -215,7 +215,7 @@ def push_file(rel):
     content = base64.b64encode(raw).decode("ascii")
     sha = get_sha(rel)
     body = {
-        "message": f"daily: 2026-09-14 每日数据快照更新（{rel})",
+        "message": f"feat: 做T池加箱体最大理论涨幅列 · 选股模块统一加宽 1440 · 修复排序双重绑定（{rel})",
         "content": content,
         "branch": BRANCH,
     }
