@@ -27,22 +27,55 @@ import os
 # 统一导航哨兵：selfcontained_nav 注入此注释，便于后续工具识别已统一处理。
 NAV_SENTINEL = "<!-- UNIFIED_NAV -->"
 
-# (标签, 相对 web/ 根的规范路径)
+# (标签, 相对 web/ 根的规范路径) —— 扁平全清单，供 _coverage_check 导航存在性校验。
+# 单一来源：由下方 MODULES 展开生成，二者保持同步。
 SECTIONS = [
     ("每日总览", "market/index.html"),
-    ("龙虎榜分析", "lhb/lhb.html"),
-    ("游资看板", "market/hotmoney.html"),
     ("板块强度", "sector/index.html"),
+    ("龙虎榜", "lhb/lhb.html"),
+    ("游资看板", "market/hotmoney.html"),
     ("高管增减持", "exec/index.html"),
     ("大宗交易", "block/index.html"),
     ("群体心理", "psychology/index.html"),
-    ("个股调研", "research/index.html"),
     ("行业最强", "shareholder/2026-q2-industry-elite.html"),
     ("牛人追踪", "shareholder/tracker.html"),
+    ("个股调研", "research/index.html"),
+    ("底部反转", "reversal/index.html"),
+    ("MACD金叉", "macd/index.html"),
     ("信号池", "picks/index.html"),
     ("做T池", "tplus/index.html"),
-    ("版块总览", "sections/index.html"),
     ("数据中心", "db/index.html"),
+]
+
+# 大模块分组（导航按模块展示，叶子链接路径与 SECTIONS 完全一致；高亮按路径精确匹配）。
+# 重组依据：大盘与情绪（看大势/情绪）→ 板块与资金（看钱往哪去）→ 牛人与股东（看谁在持仓）
+#          → 选股与策略（自下而上筛票）→ 数据与工具（查历史/自检）。
+MODULES = [
+    ("大盘与情绪", [
+        ("每日总览", "market/index.html"),
+        ("群体心理", "psychology/index.html"),
+    ]),
+    ("板块与资金", [
+        ("板块强度", "sector/index.html"),
+        ("龙虎榜", "lhb/lhb.html"),
+        ("游资看板", "market/hotmoney.html"),
+        ("高管增减持", "exec/index.html"),
+        ("大宗交易", "block/index.html"),
+    ]),
+    ("牛人与股东", [
+        ("行业最强", "shareholder/2026-q2-industry-elite.html"),
+        ("牛人追踪", "shareholder/tracker.html"),
+    ]),
+    ("选股与策略", [
+        ("个股调研", "research/index.html"),
+        ("底部反转", "reversal/index.html"),
+        ("MACD金叉", "macd/index.html"),
+        ("信号池", "picks/index.html"),
+        ("做T池", "tplus/index.html"),
+    ]),
+    ("数据与工具", [
+        ("数据中心", "db/index.html"),
+    ]),
 ]
 
 
@@ -64,12 +97,16 @@ def topnav(current_web_dir: str = "", home: str = "../../index.html", prefix: st
     插在主导航之后、首页之前，用于串联同一板块下的多页链路。
     这些链接带 class='xlink'，调用方可自行加样式与主营导航区分。
     """
-    items = "".join(
-        f"<a href='{prefix}{_rel(p, current_web_dir)}'>{t}</a>" for t, p in SECTIONS)
-    items += "".join(
+    groups = []
+    for glabel, gsecs in MODULES:
+        g_items = "".join(
+            f"<a href='{prefix}{_rel(p, current_web_dir)}'>{t}</a>" for t, p in gsecs)
+        groups.append(
+            f"<div class='navgrp'><span class='navgrp-l'>{glabel}</span>{g_items}</div>")
+    extra_items = "".join(
         f"<a href='{prefix}{_rel(p, current_web_dir)}' class='xlink'>{t}</a>" for t, p in extra)
-    items += f"<a href='{home}' class='home'>首页</a>"
-    return f"<div class='topnav'>{items}</div>"
+    home_item = f"<a href='{home}' class='home'>首页</a>"
+    return f"<div class='topnav'>{''.join(groups)}{extra_items}{home_item}</div>"
 
 
 def selfcontained_nav(current_web_dir: str = "", home: str = "../../index.html", prefix: str = "",
