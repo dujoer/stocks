@@ -10,30 +10,30 @@ body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-
 .wrap { max-width:1180px; margin:0 auto; padding:40px 20px 60px; }
 .topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
   border-bottom:1px solid rgba(0,0,0,.08); }
-.topnav a { color:#0071e3; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
-  border:1px solid rgba(0,113,227,.35); transition:.2s; }
-.topnav a:hover { background:rgba(0,113,227,.10); }
-.topnav a.cur { background:#0071e3; color:#fff; border-color:#0071e3; }
+.topnav a { color:#1a73e8; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(26,115,232,.35); transition:.2s; }
+.topnav a:hover { background:rgba(26,115,232,.10); }
+.topnav a.cur { background:#1a73e8; color:#fff; border-color:#1a73e8; }
 header { display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:12px; }
-header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#0071e3,#b8332a,#6b5b95);
+header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#1a73e8,#b8332a,#6b5b95);
   -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
 header p { margin:4px 0; color:#8a929c; font-size:13px; line-height:1.6; }
 .datebadge { display:inline-block; font-size:22px; font-weight:800; color:#fff;
-  background:linear-gradient(135deg,#0071e3,#b8332a); padding:10px 20px; border-radius:14px;
-  letter-spacing:.5px; box-shadow:0 6px 18px rgba(0,113,227,.25); white-space:nowrap; }
+  background:linear-gradient(135deg,#1a73e8,#b8332a); padding:10px 20px; border-radius:14px;
+  letter-spacing:.5px; box-shadow:0 6px 18px rgba(26,115,232,.25); white-space:nowrap; }
 .datebadge small { display:block; font-size:11px; font-weight:600; opacity:.85; letter-spacing:1px; }
 .meta { margin:14px 0 24px; font-size:12px; color:#6b7280; line-height:1.7; }
-.meta b { color:#0071e3; }
+.meta b { color:#1a73e8; }
 .section { background:#ffffff; border:1px solid rgba(0,0,0,.08); border-radius:20px;
   padding:18px 20px; margin:0 0 22px; }
-.section h2 { font-size:19px; margin:0 0 14px; padding-left:12px; border-left:5px solid #0071e3; }
+.section h2 { font-size:19px; margin:0 0 14px; padding-left:12px; border-left:5px solid #1a73e8; }
 .idxrow { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; }
 .idx { background:#fafbfc; border:1px solid #eef1f4; border-radius:14px; padding:14px 16px; }
 .idx .k { font-size:12px; color:#7b8794; }
 .idx .v { font-size:24px; font-weight:800; margin-top:4px; color:#23262b; }
-.idx .v.up { color:#b8332a; } .idx .v.down { color:#1a9e5a; } .idx .v.gold { color:#0071e3; }
+.idx .v.up { color:#b8332a; } .idx .v.down { color:#1a9e5a; } .idx .v.gold { color:#1a73e8; }
 .idx a { color:#23262b; text-decoration:none; display:block; }
-.idx a:hover .v { color:#0071e3; }
+.idx a:hover .v { color:#1a73e8; }
 table { width:100%; border-collapse:collapse; font-size:13px; }
 th { text-align:left; padding:9px 10px; background:#f7f8fa; color:#5a6573; font-weight:700;
   border-bottom:2px solid #e3e7ec; white-space:nowrap; }
@@ -42,7 +42,7 @@ tr:hover td { background:#fcfbf8; }
 .num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
 .up { color:#b8332a; font-weight:700; } .down { color:#1a9e5a; font-weight:700; } .flat { color:#8a929c; }
 .beh-qiang { color:#b8332a; font-weight:700; }
-.beh-jian  { color:#0071e3; font-weight:700; }
+.beh-jian  { color:#1a73e8; font-weight:700; }
 .beh-xi    { color:#3b6fd1; font-weight:700; }
 .beh-chu   { color:#1a9e5a; font-weight:700; }
 .empty { padding:8px; color:#9aa2ad; font-size:12px; }
@@ -50,77 +50,92 @@ footer { margin-top:40px; padding-top:18px; border-top:1px solid #e3e7ec;
   font-size:12px; color:#7b8794; line-height:1.8; }
 th.sort { cursor:pointer; user-select:none; position:relative; }
 th.sort:hover { background:#eef0f3; color:#3b4453; }
-th.sort.sorted { color:#0071e3; }
+th.sort.sorted { color:#1a73e8; }
 th.sort.sorted[data-asc="1"]::after { content:" \25B2"; font-size:10px; }
 th.sort.sorted[data-asc="0"]::after { content:" \25BC"; font-size:10px; }
 th.sort:not(.sorted)::after { content:" \2195"; font-size:10px; color:#c2c9d1; }
 </style>
 <!--WB_THEME--><style id='wb-theme'>
 /* ============================================================
-   统一设计系统 (A股看板) — 苹果风·朴素简约
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
    由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
-   配色：浅灰白底 + 深灰文字 + 蓝色强调，禁用金色系。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
    ============================================================ */
 :root{
-  --bg:#fbfbfd; --surface:#ffffff; --ink:#1d1d1f; --muted:#6e6e73;
-  --accent:#0071e3; --accent-soft:#e8f4fd; --accent-ink:#005bb5;
-  --red:#ff3b30; --green:#34c759;
-  --line:#d2d2d7; --line-2:#e8e8ed; --hover:#f5f5f7;
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
   background:var(--bg); color:var(--ink);
-  font:14px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
   -webkit-font-smoothing:antialiased;
 }
 a{color:var(--accent); text-decoration:none;}
 a:hover{text-decoration:underline;}
 .wrap{max-width:1180px;margin:0 auto;padding:24px 18px 56px;}
 
-/* ---------- 顶部统一导航（单行、不折行、滚动兜底，宽度与内容区对齐） ---------- */
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
 .topnav{
-  display:flex !important; align-items:center !important; gap:2px !important;
-  max-width:1180px !important; margin:0 auto 20px !important;
-  padding:8px 18px !important;
-  border-bottom:1px solid var(--line) !important;
-  font-size:12px !important; white-space:nowrap !important;
-  flex-wrap:nowrap !important; overflow-x:auto !important;
-  -webkit-overflow-scrolling:touch !important;
-  scrollbar-width:none !important;
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1180px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
 }
-.topnav::-webkit-scrollbar{display:none !important;}
 .topnav a{
   display:inline-block !important; color:var(--ink) !important;
-  text-decoration:none !important; padding:6px 10px !important;
-  border-radius:6px !important; white-space:nowrap !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
   background:transparent !important; border:none !important;
-  transition:background .15s,color .15s !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
   flex-shrink:0 !important;
 }
-.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; border:none !important; }
-.topnav a.cur{
-  background:var(--accent) !important; color:#fff !important;
-  font-weight:500 !important; border:none !important;
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
 }
-.topnav a.home{ margin-left:auto !important; }
+.topnav a.home:hover{ background:#1765cc !important; }
 .topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
 
 /* ---------- 页头 ---------- */
 header{margin:0 0 8px;}
 header h1{
-  font-size:26px; font-weight:700; margin:0 0 6px; letter-spacing:-.3px;
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
   color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
 }
 header .sub{color:var(--muted); font-size:13px;}
 
-/* ---------- 区块卡片 ---------- */
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
 .section{
-  margin:24px 0; background:var(--surface); border:1px solid var(--line-2);
-  border-radius:16px; padding:20px; box-shadow:0 1px 2px rgba(0,0,0,.03);
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
 }
 .section > h2, .section > h3{
-  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:700;
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
 }
 .section > h3{ font-size:15px; opacity:.92; }
 
@@ -129,7 +144,7 @@ table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
 caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
 thead th{
   text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
-  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--hover);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
 }
 tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
 tbody tr:hover{ background:var(--hover); }
@@ -144,15 +159,15 @@ th.sort:hover{ color:var(--accent); }
 th.sort.sorted{ color:var(--accent); }
 th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
 th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
-th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:#c7c7cc; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
 
-/* ---------- 每表搜索筛选框 ---------- */
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
 .wb-search{
-  width:100%; max-width:340px; padding:8px 12px; margin:4px 0 12px;
-  border:1px solid var(--line); border-radius:8px; font-size:13px; outline:none;
-  background:#fff; color:var(--ink);
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
 }
-.wb-search:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,113,227,.12); }
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
 .wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
 
 /* ---------- 星级/标签/徽章 ---------- */
@@ -160,35 +175,35 @@ th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:#c7c7cc; }
   display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
   background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
 }
-/* 档位配色：A 蓝 / B 绿 / C 灰 / D 浅灰 */
-.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #cfe6fb !important; }
-.bB{ background:#e8f9ec !important; color:#1a7a34 !important; border:1px solid #c5efd0 !important; }
-.bC{ background:#f2f2f7 !important; color:var(--muted) !important; border:1px solid var(--line-2) !important; }
-.bD{ background:#fafafa !important; color:#a1a1a6 !important; border:1px solid var(--line-2) !important; }
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
 
 /* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
 .arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
 .arch a{
-  display:inline-block; padding:5px 10px; border-radius:8px; font-size:12px;
-  background:var(--surface); border:1px solid var(--line-2); color:var(--ink);
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
   text-decoration:none; white-space:nowrap;
 }
 .arch a:hover{
   border-color:var(--accent); color:var(--accent);
-  background:var(--hover); text-decoration:none;
+  background:var(--accent-soft); text-decoration:none;
 }
 
-/* ---------- 说明/注释 ---------- */
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
 .note{
-  background:var(--hover); border:1px solid var(--line-2); border-radius:12px;
-  padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
 }
 .note b{ color:var(--ink); }
 
 /* ---------- 页脚 ---------- */
 footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
 
-/* ---------- 杂色压制（把历史页面残留的金/蓝冲突统一回灰蓝） ---------- */
+/* ---------- 杂色压制兜底 ---------- */
 .pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
 .tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
 
@@ -198,18 +213,14 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
   header h1{ font-size:22px; }
   table{ font-size:12px; }
   thead th,tbody td{ padding:7px 7px; }
-  .topnav a{ padding:5px 8px; font-size:11px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  .navgrp{ padding:5px 6px 5px 5px !important; }
 }
 
 </style><!--/WB_THEME--></head>
 <body>
-<div class='topnav'><a href='../market/index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='../market/hotmoney.html'>游资看板</a><a href='index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../research/index.html'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a><a href='../sections/index.html'>版块总览</a><a href='../db/index.html'>数据中心</a><a href='../../index.html' class='home'>首页</a></div>
-
-
-
-
-
-
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../macd/index.html'>MACD金叉</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
 
 <div class='wrap'>
 
@@ -218,22 +229,22 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
     <h1>📊 板块强度 · 看板中心</h1>
     <p>暗盘资金 = 主力净流入 − 散户净流入 ｜ 板块强度 = 暗盘 ÷ 板块总成交额 × 100 ｜ 每日盘后真实快照累积（因 westock 接口 date 无效，按拉取日固化、不回溯不编造）。</p>
   </div>
-  <div class='datebadge'><small>最新交易日</small>2026-09-11</div>
+  <div class='datebadge'><small>最新交易日</small>2026-09-14</div>
 </header>
 <div class='meta'>
-最新一日 <b>2026-09-11</b> ｜ 全市场暗盘净额 <b>-13075.0亿</b> ｜ 均强 <b>-3.120</b> ｜ 上涨占比 <b>3.6%</b><br>
-区间累计：暗盘净额 <b>-66785.5亿</b> ｜ 主力抢筹板块 <b>1225</b> / 出货板块 <b>5850</b> ｜ 共 <b>11</b> 个数据点。
+最新一日 <b>2026-09-14</b> ｜ 全市场暗盘净额 <b>-5791.9亿</b> ｜ 均强 <b>-0.998</b> ｜ 上涨占比 <b>67.4%</b><br>
+区间累计：暗盘净额 <b>-72577.4亿</b> ｜ 主力抢筹板块 <b>1323</b> / 出货板块 <b>6334</b> ｜ 共 <b>12</b> 个数据点。
 </div>
 <div class='section'>
   <h2>概览</h2>
   <div class='idxrow'>
-    <div class='idx'><div class='k'>区间累计暗盘净额</div><div class='v down'>-66785.5<span style='font-size:13px;color:#7b8794'>亿</span></div></div>
-    <div class='idx'><div class='k'>数据点（交易日）</div><div class='v gold'>11</div></div>
+    <div class='idx'><div class='k'>区间累计暗盘净额</div><div class='v down'>-72577.4<span style='font-size:13px;color:#7b8794'>亿</span></div></div>
+    <div class='idx'><div class='k'>数据点（交易日）</div><div class='v gold'>12</div></div>
     <div class='idx'><div class='k'>日均板块数</div><div class='v'>926</div></div>
-    <div class='idx'><div class='k'>主力抢筹板块（累计）</div><div class='v up'>1225</div></div>
-    <div class='idx'><div class='k'>主力出货板块（累计）</div><div class='v down'>5850</div></div>
-    <div class='idx'><div class='k'>最新一日均强</div><div class='v'>-3.120</div></div>
-    <div class='idx'><div class='k'>最新一日上涨占比</div><div class='v'>3.6%</div></div>
+    <div class='idx'><div class='k'>主力抢筹板块（累计）</div><div class='v up'>1323</div></div>
+    <div class='idx'><div class='k'>主力出货板块（累计）</div><div class='v down'>6334</div></div>
+    <div class='idx'><div class='k'>最新一日均强</div><div class='v'>-0.998</div></div>
+    <div class='idx'><div class='k'>最新一日上涨占比</div><div class='v'>67.4%</div></div>
     <div class='idx'><a href='trend.html'><div class='k'>趋势看板（日/周/月）</div><div class='v gold'>查看 →</div></a></div>
   </div>
 </div>
@@ -251,7 +262,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
       <th class='num sort' data-c='7'>主力洗盘</th>
       <th class='num sort' data-c='8'>主力出货</th>
     </tr></thead>
-    <tbody><tr><td data-val='2026-09-11'><a href='sector-strength-20260911.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-11</a></td><td class='num' data-val='927'>927</td><td class='num' data-val='-13075.00'>-13075.0亿</td><td class='num' data-val='-3.120'>-3.120</td><td class='num' data-val='3.60'>3.6%</td><td class='num beh-qiang' data-val='31'>31</td><td class='num beh-jian'  data-val='46'>46</td><td class='num beh-xi'    data-val='117'>117</td><td class='num beh-chu'   data-val='733'>733</td></tr><tr><td data-val='2026-09-10'><a href='sector-strength-20260910.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-10</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='-10749.60'>-10749.6亿</td><td class='num' data-val='-2.979'>-2.979</td><td class='num' data-val='5.80'>5.8%</td><td class='num beh-qiang' data-val='45'>45</td><td class='num beh-jian'  data-val='45'>45</td><td class='num beh-xi'    data-val='128'>128</td><td class='num beh-chu'   data-val='708'>708</td></tr><tr><td data-val='2026-09-09'><a href='sector-strength-20260909.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-09</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='-441.50'>-441.5亿</td><td class='num' data-val='-1.348'>-1.348</td><td class='num' data-val='29.60'>29.6%</td><td class='num beh-qiang' data-val='129'>129</td><td class='num beh-jian'  data-val='127'>127</td><td class='num beh-xi'    data-val='184'>184</td><td class='num beh-chu'   data-val='486'>486</td></tr><tr><td data-val='2026-09-08'><a href='sector-strength-20260908.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-08</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='-5547.70'>-5547.7亿</td><td class='num' data-val='-0.749'>-0.749</td><td class='num' data-val='72.60'>72.6%</td><td class='num beh-qiang' data-val='124'>124</td><td class='num beh-jian'  data-val='130'>130</td><td class='num beh-xi'    data-val='223'>223</td><td class='num beh-chu'   data-val='449'>449</td></tr><tr><td data-val='2026-09-07'><a href='sector-strength-20260907.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-07</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='11675.80'>+11675.8亿</td><td class='num' data-val='0.423'>0.423</td><td class='num' data-val='80.10'>80.1%</td><td class='num beh-qiang' data-val='235'>235</td><td class='num beh-jian'  data-val='143'>143</td><td class='num beh-xi'    data-val='193'>193</td><td class='num beh-chu'   data-val='355'>355</td></tr><tr><td data-val='2026-09-04'><a href='sector-strength-20260904.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-04</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='-13765.00'>-13765.0亿</td><td class='num' data-val='-1.354'>-1.354</td><td class='num' data-val='46.50'>46.5%</td><td class='num beh-qiang' data-val='144'>144</td><td class='num beh-jian'  data-val='106'>106</td><td class='num beh-xi'    data-val='157'>157</td><td class='num beh-chu'   data-val='519'>519</td></tr><tr><td data-val='2026-09-03'><a href='sector-strength-20260903.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-03</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='-5635.20'>-5635.2亿</td><td class='num' data-val='-1.084'>-1.084</td><td class='num' data-val='26.90'>26.9%</td><td class='num beh-qiang' data-val='98'>98</td><td class='num beh-jian'  data-val='111'>111</td><td class='num beh-xi'    data-val='214'>214</td><td class='num beh-chu'   data-val='503'>503</td></tr><tr><td data-val='2026-09-02'><a href='sector-strength-20260902.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-02</a></td><td class='num' data-val='925'>925</td><td class='num' data-val='-16297.70'>-16297.7亿</td><td class='num' data-val='-3.484'>-3.484</td><td class='num' data-val='6.90'>6.9%</td><td class='num beh-qiang' data-val='40'>40</td><td class='num beh-jian'  data-val='41'>41</td><td class='num beh-xi'    data-val='103'>103</td><td class='num beh-chu'   data-val='741'>741</td></tr><tr><td data-val='2026-08-31'><a href='sector-strength-20260831.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-08-31</a></td><td class='num' data-val='925'>925</td><td class='num' data-val='1756.40'>+1756.4亿</td><td class='num' data-val='0.085'>0.085</td><td class='num' data-val='70.30'>70.3%</td><td class='num beh-qiang' data-val='178'>178</td><td class='num beh-jian'  data-val='160'>160</td><td class='num beh-xi'    data-val='224'>224</td><td class='num beh-chu'   data-val='363'>363</td></tr><tr><td data-val='2026-08-28'><a href='sector-strength-20260828.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-08-28</a></td><td class='num' data-val='925'>925</td><td class='num' data-val='-10787.00'>-10787.0亿</td><td class='num' data-val='-0.942'>-0.942</td><td class='num' data-val='59.50'>59.5%</td><td class='num beh-qiang' data-val='89'>89</td><td class='num beh-jian'  data-val='140'>140</td><td class='num beh-xi'    data-val='197'>197</td><td class='num beh-chu'   data-val='499'>499</td></tr><tr><td data-val='2026-08-27'><a href='sector-strength-20260827.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-08-27</a></td><td class='num' data-val='925'>925</td><td class='num' data-val='-3919.00'>-3919.0亿</td><td class='num' data-val='-0.948'>-0.948</td><td class='num' data-val='68.00'>68.0%</td><td class='num beh-qiang' data-val='112'>112</td><td class='num beh-jian'  data-val='103'>103</td><td class='num beh-xi'    data-val='216'>216</td><td class='num beh-chu'   data-val='494'>494</td></tr></tbody>
+    <tbody><tr><td data-val='2026-09-14'><a href='sector-strength-20260914.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-14</a></td><td class='num' data-val='927'>927</td><td class='num' data-val='-5791.90'>-5791.9亿</td><td class='num' data-val='-0.998'>-0.998</td><td class='num' data-val='67.40'>67.4%</td><td class='num beh-qiang' data-val='98'>98</td><td class='num beh-jian'  data-val='124'>124</td><td class='num beh-xi'    data-val='221'>221</td><td class='num beh-chu'   data-val='484'>484</td></tr><tr><td data-val='2026-09-11'><a href='sector-strength-20260911.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-11</a></td><td class='num' data-val='927'>927</td><td class='num' data-val='-13075.00'>-13075.0亿</td><td class='num' data-val='-3.120'>-3.120</td><td class='num' data-val='3.60'>3.6%</td><td class='num beh-qiang' data-val='31'>31</td><td class='num beh-jian'  data-val='46'>46</td><td class='num beh-xi'    data-val='117'>117</td><td class='num beh-chu'   data-val='733'>733</td></tr><tr><td data-val='2026-09-10'><a href='sector-strength-20260910.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-10</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='-10749.60'>-10749.6亿</td><td class='num' data-val='-2.979'>-2.979</td><td class='num' data-val='5.80'>5.8%</td><td class='num beh-qiang' data-val='45'>45</td><td class='num beh-jian'  data-val='45'>45</td><td class='num beh-xi'    data-val='128'>128</td><td class='num beh-chu'   data-val='708'>708</td></tr><tr><td data-val='2026-09-09'><a href='sector-strength-20260909.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-09</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='-441.50'>-441.5亿</td><td class='num' data-val='-1.348'>-1.348</td><td class='num' data-val='29.60'>29.6%</td><td class='num beh-qiang' data-val='129'>129</td><td class='num beh-jian'  data-val='127'>127</td><td class='num beh-xi'    data-val='184'>184</td><td class='num beh-chu'   data-val='486'>486</td></tr><tr><td data-val='2026-09-08'><a href='sector-strength-20260908.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-08</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='-5547.70'>-5547.7亿</td><td class='num' data-val='-0.749'>-0.749</td><td class='num' data-val='72.60'>72.6%</td><td class='num beh-qiang' data-val='124'>124</td><td class='num beh-jian'  data-val='130'>130</td><td class='num beh-xi'    data-val='223'>223</td><td class='num beh-chu'   data-val='449'>449</td></tr><tr><td data-val='2026-09-07'><a href='sector-strength-20260907.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-07</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='11675.80'>+11675.8亿</td><td class='num' data-val='0.423'>0.423</td><td class='num' data-val='80.10'>80.1%</td><td class='num beh-qiang' data-val='235'>235</td><td class='num beh-jian'  data-val='143'>143</td><td class='num beh-xi'    data-val='193'>193</td><td class='num beh-chu'   data-val='355'>355</td></tr><tr><td data-val='2026-09-04'><a href='sector-strength-20260904.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-04</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='-13765.00'>-13765.0亿</td><td class='num' data-val='-1.354'>-1.354</td><td class='num' data-val='46.50'>46.5%</td><td class='num beh-qiang' data-val='144'>144</td><td class='num beh-jian'  data-val='106'>106</td><td class='num beh-xi'    data-val='157'>157</td><td class='num beh-chu'   data-val='519'>519</td></tr><tr><td data-val='2026-09-03'><a href='sector-strength-20260903.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-03</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='-5635.20'>-5635.2亿</td><td class='num' data-val='-1.084'>-1.084</td><td class='num' data-val='26.90'>26.9%</td><td class='num beh-qiang' data-val='98'>98</td><td class='num beh-jian'  data-val='111'>111</td><td class='num beh-xi'    data-val='214'>214</td><td class='num beh-chu'   data-val='503'>503</td></tr><tr><td data-val='2026-09-02'><a href='sector-strength-20260902.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-02</a></td><td class='num' data-val='925'>925</td><td class='num' data-val='-16297.70'>-16297.7亿</td><td class='num' data-val='-3.484'>-3.484</td><td class='num' data-val='6.90'>6.9%</td><td class='num beh-qiang' data-val='40'>40</td><td class='num beh-jian'  data-val='41'>41</td><td class='num beh-xi'    data-val='103'>103</td><td class='num beh-chu'   data-val='741'>741</td></tr><tr><td data-val='2026-08-31'><a href='sector-strength-20260831.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-08-31</a></td><td class='num' data-val='925'>925</td><td class='num' data-val='1756.40'>+1756.4亿</td><td class='num' data-val='0.085'>0.085</td><td class='num' data-val='70.30'>70.3%</td><td class='num beh-qiang' data-val='178'>178</td><td class='num beh-jian'  data-val='160'>160</td><td class='num beh-xi'    data-val='224'>224</td><td class='num beh-chu'   data-val='363'>363</td></tr><tr><td data-val='2026-08-28'><a href='sector-strength-20260828.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-08-28</a></td><td class='num' data-val='925'>925</td><td class='num' data-val='-10787.00'>-10787.0亿</td><td class='num' data-val='-0.942'>-0.942</td><td class='num' data-val='59.50'>59.5%</td><td class='num beh-qiang' data-val='89'>89</td><td class='num beh-jian'  data-val='140'>140</td><td class='num beh-xi'    data-val='197'>197</td><td class='num beh-chu'   data-val='499'>499</td></tr><tr><td data-val='2026-08-27'><a href='sector-strength-20260827.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-08-27</a></td><td class='num' data-val='925'>925</td><td class='num' data-val='-3919.00'>-3919.0亿</td><td class='num' data-val='-0.948'>-0.948</td><td class='num' data-val='68.00'>68.0%</td><td class='num beh-qiang' data-val='112'>112</td><td class='num beh-jian'  data-val='103'>103</td><td class='num beh-xi'    data-val='216'>216</td><td class='num beh-chu'   data-val='494'>494</td></tr></tbody>
   </table>
   <div class='empty'>提示：点击表头可排序；点击交易日可进入当日完整明细。</div>
 </div>
@@ -284,14 +295,6 @@ document.querySelectorAll('th.sort').forEach(function(t){
   t.addEventListener('click',function(){ sortTable(t.parentNode.parentNode.parentNode.id, t); });
 });
 </script>
-<!--ARCHIVE_LINKS-->
-<div class="section">
-<h2>相关页面</h2>
-<div class="arch">
-  <a href="sector-strength-trend.html">板块强度</a>
-</div>
-</div>
-<!--/ARCHIVE_LINKS-->
 <!--WB_APP--><script id='wb-app'>
 /* ============================================================
    通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
