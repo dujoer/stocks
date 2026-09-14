@@ -98,70 +98,85 @@ table tr:hover td{background:#f0f2f5}
 
 <!--WB_THEME--><style id='wb-theme'>
 /* ============================================================
-   统一设计系统 (A股看板) — 苹果风·朴素简约
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
    由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
-   配色：浅灰白底 + 深灰文字 + 蓝色强调，禁用金色系。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
    ============================================================ */
 :root{
-  --bg:#fbfbfd; --surface:#ffffff; --ink:#1d1d1f; --muted:#6e6e73;
-  --accent:#0071e3; --accent-soft:#e8f4fd; --accent-ink:#005bb5;
-  --red:#ff3b30; --green:#34c759;
-  --line:#d2d2d7; --line-2:#e8e8ed; --hover:#f5f5f7;
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
   background:var(--bg); color:var(--ink);
-  font:14px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
   -webkit-font-smoothing:antialiased;
 }
 a{color:var(--accent); text-decoration:none;}
 a:hover{text-decoration:underline;}
 .wrap{max-width:1180px;margin:0 auto;padding:24px 18px 56px;}
 
-/* ---------- 顶部统一导航（单行、不折行、滚动兜底，宽度与内容区对齐） ---------- */
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
 .topnav{
-  display:flex !important; align-items:center !important; gap:2px !important;
-  max-width:1180px !important; margin:0 auto 20px !important;
-  padding:8px 18px !important;
-  border-bottom:1px solid var(--line) !important;
-  font-size:12px !important; white-space:nowrap !important;
-  flex-wrap:nowrap !important; overflow-x:auto !important;
-  -webkit-overflow-scrolling:touch !important;
-  scrollbar-width:none !important;
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1180px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
 }
-.topnav::-webkit-scrollbar{display:none !important;}
 .topnav a{
   display:inline-block !important; color:var(--ink) !important;
-  text-decoration:none !important; padding:6px 10px !important;
-  border-radius:6px !important; white-space:nowrap !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
   background:transparent !important; border:none !important;
-  transition:background .15s,color .15s !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
   flex-shrink:0 !important;
 }
-.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; border:none !important; }
-.topnav a.cur{
-  background:var(--accent) !important; color:#fff !important;
-  font-weight:500 !important; border:none !important;
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
 }
-.topnav a.home{ margin-left:auto !important; }
+.topnav a.home:hover{ background:#1765cc !important; }
 .topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
 
 /* ---------- 页头 ---------- */
 header{margin:0 0 8px;}
 header h1{
-  font-size:26px; font-weight:700; margin:0 0 6px; letter-spacing:-.3px;
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
   color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
 }
 header .sub{color:var(--muted); font-size:13px;}
 
-/* ---------- 区块卡片 ---------- */
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
 .section{
-  margin:24px 0; background:var(--surface); border:1px solid var(--line-2);
-  border-radius:16px; padding:20px; box-shadow:0 1px 2px rgba(0,0,0,.03);
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
 }
 .section > h2, .section > h3{
-  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:700;
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
 }
 .section > h3{ font-size:15px; opacity:.92; }
 
@@ -170,7 +185,7 @@ table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
 caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
 thead th{
   text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
-  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--hover);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
 }
 tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
 tbody tr:hover{ background:var(--hover); }
@@ -185,15 +200,15 @@ th.sort:hover{ color:var(--accent); }
 th.sort.sorted{ color:var(--accent); }
 th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
 th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
-th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:#c7c7cc; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
 
-/* ---------- 每表搜索筛选框 ---------- */
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
 .wb-search{
-  width:100%; max-width:340px; padding:8px 12px; margin:4px 0 12px;
-  border:1px solid var(--line); border-radius:8px; font-size:13px; outline:none;
-  background:#fff; color:var(--ink);
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
 }
-.wb-search:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,113,227,.12); }
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
 .wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
 
 /* ---------- 星级/标签/徽章 ---------- */
@@ -201,35 +216,35 @@ th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:#c7c7cc; }
   display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
   background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
 }
-/* 档位配色：A 蓝 / B 绿 / C 灰 / D 浅灰 */
-.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #cfe6fb !important; }
-.bB{ background:#e8f9ec !important; color:#1a7a34 !important; border:1px solid #c5efd0 !important; }
-.bC{ background:#f2f2f7 !important; color:var(--muted) !important; border:1px solid var(--line-2) !important; }
-.bD{ background:#fafafa !important; color:#a1a1a6 !important; border:1px solid var(--line-2) !important; }
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
 
 /* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
 .arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
 .arch a{
-  display:inline-block; padding:5px 10px; border-radius:8px; font-size:12px;
-  background:var(--surface); border:1px solid var(--line-2); color:var(--ink);
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
   text-decoration:none; white-space:nowrap;
 }
 .arch a:hover{
   border-color:var(--accent); color:var(--accent);
-  background:var(--hover); text-decoration:none;
+  background:var(--accent-soft); text-decoration:none;
 }
 
-/* ---------- 说明/注释 ---------- */
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
 .note{
-  background:var(--hover); border:1px solid var(--line-2); border-radius:12px;
-  padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
 }
 .note b{ color:var(--ink); }
 
 /* ---------- 页脚 ---------- */
 footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
 
-/* ---------- 杂色压制（把历史页面残留的金/蓝冲突统一回灰蓝） ---------- */
+/* ---------- 杂色压制兜底 ---------- */
 .pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
 .tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
 
@@ -239,12 +254,30 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
   header h1{ font-size:22px; }
   table{ font-size:12px; }
   thead th,tbody td{ padding:7px 7px; }
-  .topnav a{ padding:5px 8px; font-size:11px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  .navgrp{ padding:5px 6px 5px 5px !important; }
 }
 
 </style><!--/WB_THEME--></head>
 <body>
-<div class='topnav'><a href='../market/index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='../market/hotmoney.html'>游资看板</a><a href='index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../research/index.html'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a><a href='../sections/index.html'>版块总览</a><a href='../db/index.html'>数据中心</a><a href='../../index.html' class='home'>首页</a></div>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../macd/index.html'>MACD金叉</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+
+
+
+
+
+
+
+
+
+
+</div>
+</div>
+</div>
+
+
+
 
 
 
