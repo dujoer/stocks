@@ -195,12 +195,23 @@ val = row("market_statis_valuation")
 tech = row("market_statis_technical")
 rot = row("market_statis_rotation")
 
-board = load(os.path.join(QUANT, "board_hot", f"{DATE}.json"))["data"]["rankResult"]
-news = load(os.path.join(QUANT, "news.json"))[DATE]
-store = load(os.path.join(ROOT, "deliverables", "trading-agent", "_all_store.json"))
-quotes = load(os.path.join(QUANT, "quotes", f"{DATE}.json"))["data"]
-lu = load(os.path.join(QUANT, "limitup", f"{DATE}.json"))["data"]
-lhb = load(os.path.join(QUANT, "lhb", f"{DATE}.json"))
+def _safe_load(p, *keys):
+    try:
+        d = load(p)
+        for k in keys:
+            d = d[k]
+        return d
+    except Exception:
+        return None
+
+board = _safe_load(os.path.join(QUANT, "board_hot", f"{DATE}.json"), "data", "rankResult") or []
+news_raw = _safe_load(os.path.join(QUANT, "news.json"))
+news = news_raw.get(DATE, []) if isinstance(news_raw, dict) else []
+# 个人持仓不对外：_all_store 仅在本地计算组合快照变量（不落盘发布），缺失则跳过组合相关计算
+store = _safe_load(os.path.join(ROOT, "deliverables", "trading-agent", "_all_store.json")) or {"stocks": []}
+quotes = (_safe_load(os.path.join(QUANT, "quotes", f"{DATE}.json"), "data")) or {}
+lu = _safe_load(os.path.join(QUANT, "limitup", f"{DATE}.json"), "data") or {"stocks": [], "totalStocks": 0}
+lhb = _safe_load(os.path.join(QUANT, "lhb", f"{DATE}.json")) or {}
 if isinstance(lhb, dict) and "data" in lhb:
     lhb = lhb["data"]
 
@@ -455,16 +466,20 @@ market_overview_html = (
     f"{review_html}</div>")
 
 # ---------- 板块热度 ----------
-boards_sorted = sorted(board, key=lambda x: float(x.get("zdf", 0)), reverse=True)
+boards_sorted = sorted(board, key=lambda x: float(x.get("zdf", 0)), reverse=True) if board else []
 btags = ""
 for b in boards_sorted[:18]:
     z = float(b.get("zdf", 0))
     kind = "hot" if z > 0 else "cold"
     btags += f"<span class='tag {kind}'>{b.get('name')} {pct(z)}</span>"
+if board:
+    sec_note = (f"共 {len(board)} 个板块入选排行；领涨：{('、'.join(b['name']+' '+pct(float(b['zdf'])) for b in boards_sorted[:3]))}；"
+                f"领跌：{('、'.join(b['name']+' '+pct(float(b['zdf'])) for b in boards_sorted[-3:]))}（数据来源：腾讯自选股板块排行）。")
+else:
+    sec_note = "板块热度数据接口降级（data_hot 未拉取 %s 快照），暂缺；接口恢复后重跑 build_dashboards.py 即回填。" % DATE
 sector_html = (f"<div class='section'><h2>🔥 板块热度 — {DATE} 收盘</h2>"
                f"<div>{btags}</div>"
-               f"<div class='note'>共 {len(board)} 个板块入选排行；领涨：{('、'.join(b['name']+' '+pct(float(b['zdf'])) for b in boards_sorted[:3]))}；"
-               f"领跌：{('、'.join(b['name']+' '+pct(float(b['zdf'])) for b in boards_sorted[-3:]))}（数据来源：腾讯自选股板块排行）。</div></div>")
+               f"<div class='note'>{sec_note}</div></div>")
 
 # ---------- 连板梯队 ----------
 tier_label = {t: (f"{t}连板" if t >= 2 else "首板") for t in range(8, 0, -1)}
@@ -480,11 +495,17 @@ for t in [t for t in range(8, 0, -1) if TIERS[t]]:
         names_html = "".join(f"<span class='namechip'>{n}</span>" for n, _ in names)
     ladder_html += (f"<div class='ladder'><span class='badge {tier_cls[t]}'>{tier_label[t]}</span>"
                      f"<span style='color:#8a929c;font-size:11px'>({len(names)}只)</span>：{names_html}</div>")
-leader_html = (f"<div class='section'><h2>👑 当日连板梯队（多口径）— {DATE}</h2>"
-               f"<div class='note' style='color:#8a929c'>口径：全市场连续涨停天数（westock-mcp tool_ranking limitup_days）。"
-               f"共 {LIMITUP_TOTAL_TXT}{held_lu_txt}。</div>"
-               f"{ladder_html}"
-               f"<div class='note'>资金龙头 / 板块龙头（按龙虎榜净买排序）见下方龙虎榜速览与龙虎榜分析页。</div></div>")
+if LIMITUP_TOTAL == 0:
+    leader_html = (f"<div class='section'><h2>👑 当日连板梯队（多口径）— {DATE}</h2>"
+                   f"<div class='note' style='color:#b8893b'>连板梯队数据接口降级"
+                   f"（westock-mcp tool_ranking limitup_days 故障期未拉取 {DATE} 快照），暂缺；"
+                   f"接口恢复后重跑 build_dashboards.py 即回填。</div></div>")
+else:
+    leader_html = (f"<div class='section'><h2>👑 当日连板梯队（多口径）— {DATE}</h2>"
+                   f"<div class='note' style='color:#8a929c'>口径：全市场连续涨停天数（westock-mcp tool_ranking limitup_days）。"
+                   f"共 {LIMITUP_TOTAL_TXT}{held_lu_txt}。</div>"
+                   f"{ladder_html}"
+                   f"<div class='note'>资金龙头 / 板块龙头（按龙虎榜净买排序）见下方龙虎榜速览与龙虎榜分析页。</div></div>")
 
 # ---------- 组合快照 ----------
 held = [s for s in store["stocks"] if s["held"]]
