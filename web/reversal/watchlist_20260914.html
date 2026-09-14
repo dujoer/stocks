@@ -229,13 +229,14 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 <h2>一、初筛漏斗：从 228 只种子到 A 类 7 只</h2>
 <div class="card"><table data-wb>
-<tr><th>步骤</th><th>条件</th><th>剩余</th></tr>
-<tr><td>种子</td><td>单季净利同比 &gt; 50% ＋ 0 &lt; PE(TTM) &lt; 50 ＋ 总市值 &lt; 100 亿</td><td class="num">228</td></tr>
-<tr><td>位置过滤</td><td>距 52 周高回撤 ≥ 20%（真低位）</td><td class="num">106</td></tr>
-<tr><td>资金过滤</td><td>20 日主力净流入 &gt; 0</td><td class="num">31</td></tr>
-<tr><td>技术过滤</td><td>MACD 金叉（DIF &gt; DEA）</td><td class="num">17</td></tr>
-<tr><td>技术过滤</td><td>站上 MA20</td><td class="num">30</td></tr>
-</table><div class="note">口径说明：种子由服务端表达式一步取得。westock <code>tool_filter</code> 的 <code>date</code> 参数会被忽略（只返当日快照），故<b>反转池无法回溯历史日期</b>，本页为 2026-09-14 当日实拉。</div></div>
+<tr><th>步骤</th><th>条件</th><th>数量</th></tr>
+<tr><td>① 种子（服务端表达式）</td><td>单季净利同比 &gt; 50% ＋ 0 &lt; PE(TTM) &lt; 50 ＋ 总市值 &lt; 100 亿</td><td class="num">228</td></tr>
+<tr><td>② 位置过滤（硬过滤）</td><td>距 52 周高回撤 ≥ 20%（真低位）</td><td class="num">106</td></tr>
+<tr><td>③ 资金验证（命中数）</td><td>20 日主力净流入 &gt; 0</td><td class="num">31</td></tr>
+<tr><td>④ 技术验证（命中数）</td><td>MACD 金叉（DIF &gt; DEA）</td><td class="num">17</td></tr>
+<tr><td>⑤ 技术验证（命中数）</td><td>站上 MA20</td><td class="num">30</td></tr>
+<tr><td>⑥ 分级结果</td><td>A 较确定区 / B 边缘观察 / C 淘汰</td><td class="num">7 / 40 / 59</td></tr>
+</table><div class="note">口径说明：②为硬过滤（真过滤），③④⑤是对 ② 的<b>命中计数</b>，<b>不作硬过滤</b>，仅参与打分与分级，故各数值之间不构成递减关系。种子由服务端表达式一步取得。westock <code>tool_filter</code> 的 <code>date</code> 参数会被忽略（只返当日快照），故<b>反转池无法回溯历史日期</b>，本页为 2026-09-14 当日实拉。</div></div>
 
 <h2>二、观察池总表（106 只实测）</h2>
 <div class='xh-cmp'><div class='cnew'><b>105</b><span>本期与上期不重叠</span></div><div class='ccont'><b>1</b><span>连续在榜</span></div><div class='cout'><b>15</b><span>上期已退出</span></div></div><div class='note' style='border:none;padding:0;margin:0 0 6px'>口径提示：上一期（20260914 前最近一期）为人工精选、样本远小于本期的机械筛选，「新进 / 退出」多为口径差异而非基本面变化，<b>对比仅供参考</b>；真正可比的是名称后的历史入选徽标。</div>
@@ -317,7 +318,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
    通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
    功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
         ③ 每表上方搜索框做全表筛选。
-   对已有自备排序脚本的表(th.sort 且非 data-wb)不接管，避免重复绑定。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
    ============================================================ */
 (function () {
   "use strict";
@@ -394,7 +395,10 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
   function cellText(tr, ci) {
     var c = tr.children[ci];
     if (!c) return "";
-    if (c.dataset && c.dataset.val !== undefined) return c.dataset.val;
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
     return c.textContent || "";
   }
 
@@ -433,8 +437,11 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
       });
     } catch (e) {}
 
-    /* 排序：列级数值自动识别 */
-    ths.forEach(function (th, ci) {
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
       if (th.dataset && th.dataset.noSort !== undefined) return;
       th.style.cursor = "pointer";
       th.classList.add("sort");
