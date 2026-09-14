@@ -36,70 +36,85 @@ ul { margin:8px 0; padding-left:22px; } li { margin:5px 0; }
 
 <!--WB_THEME--><style id='wb-theme'>
 /* ============================================================
-   统一设计系统 (A股看板) — 苹果风·朴素简约
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
    由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
-   配色：浅灰白底 + 深灰文字 + 蓝色强调，禁用金色系。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
    ============================================================ */
 :root{
-  --bg:#fbfbfd; --surface:#ffffff; --ink:#1d1d1f; --muted:#6e6e73;
-  --accent:#0071e3; --accent-soft:#e8f4fd; --accent-ink:#005bb5;
-  --red:#ff3b30; --green:#34c759;
-  --line:#d2d2d7; --line-2:#e8e8ed; --hover:#f5f5f7;
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
   background:var(--bg); color:var(--ink);
-  font:14px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
   -webkit-font-smoothing:antialiased;
 }
 a{color:var(--accent); text-decoration:none;}
 a:hover{text-decoration:underline;}
 .wrap{max-width:1180px;margin:0 auto;padding:24px 18px 56px;}
 
-/* ---------- 顶部统一导航（单行、不折行、滚动兜底，宽度与内容区对齐） ---------- */
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
 .topnav{
-  display:flex !important; align-items:center !important; gap:2px !important;
-  max-width:1180px !important; margin:0 auto 20px !important;
-  padding:8px 18px !important;
-  border-bottom:1px solid var(--line) !important;
-  font-size:12px !important; white-space:nowrap !important;
-  flex-wrap:nowrap !important; overflow-x:auto !important;
-  -webkit-overflow-scrolling:touch !important;
-  scrollbar-width:none !important;
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1180px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
 }
-.topnav::-webkit-scrollbar{display:none !important;}
 .topnav a{
   display:inline-block !important; color:var(--ink) !important;
-  text-decoration:none !important; padding:6px 10px !important;
-  border-radius:6px !important; white-space:nowrap !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
   background:transparent !important; border:none !important;
-  transition:background .15s,color .15s !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
   flex-shrink:0 !important;
 }
-.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; border:none !important; }
-.topnav a.cur{
-  background:var(--accent) !important; color:#fff !important;
-  font-weight:500 !important; border:none !important;
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
 }
-.topnav a.home{ margin-left:auto !important; }
+.topnav a.home:hover{ background:#1765cc !important; }
 .topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
 
 /* ---------- 页头 ---------- */
 header{margin:0 0 8px;}
 header h1{
-  font-size:26px; font-weight:700; margin:0 0 6px; letter-spacing:-.3px;
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
   color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
 }
 header .sub{color:var(--muted); font-size:13px;}
 
-/* ---------- 区块卡片 ---------- */
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
 .section{
-  margin:24px 0; background:var(--surface); border:1px solid var(--line-2);
-  border-radius:16px; padding:20px; box-shadow:0 1px 2px rgba(0,0,0,.03);
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
 }
 .section > h2, .section > h3{
-  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:700;
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
 }
 .section > h3{ font-size:15px; opacity:.92; }
 
@@ -108,7 +123,7 @@ table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
 caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
 thead th{
   text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
-  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--hover);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
 }
 tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
 tbody tr:hover{ background:var(--hover); }
@@ -123,15 +138,15 @@ th.sort:hover{ color:var(--accent); }
 th.sort.sorted{ color:var(--accent); }
 th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
 th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
-th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:#c7c7cc; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
 
-/* ---------- 每表搜索筛选框 ---------- */
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
 .wb-search{
-  width:100%; max-width:340px; padding:8px 12px; margin:4px 0 12px;
-  border:1px solid var(--line); border-radius:8px; font-size:13px; outline:none;
-  background:#fff; color:var(--ink);
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
 }
-.wb-search:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,113,227,.12); }
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
 .wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
 
 /* ---------- 星级/标签/徽章 ---------- */
@@ -139,35 +154,35 @@ th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:#c7c7cc; }
   display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
   background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
 }
-/* 档位配色：A 蓝 / B 绿 / C 灰 / D 浅灰 */
-.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #cfe6fb !important; }
-.bB{ background:#e8f9ec !important; color:#1a7a34 !important; border:1px solid #c5efd0 !important; }
-.bC{ background:#f2f2f7 !important; color:var(--muted) !important; border:1px solid var(--line-2) !important; }
-.bD{ background:#fafafa !important; color:#a1a1a6 !important; border:1px solid var(--line-2) !important; }
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
 
 /* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
 .arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
 .arch a{
-  display:inline-block; padding:5px 10px; border-radius:8px; font-size:12px;
-  background:var(--surface); border:1px solid var(--line-2); color:var(--ink);
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
   text-decoration:none; white-space:nowrap;
 }
 .arch a:hover{
   border-color:var(--accent); color:var(--accent);
-  background:var(--hover); text-decoration:none;
+  background:var(--accent-soft); text-decoration:none;
 }
 
-/* ---------- 说明/注释 ---------- */
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
 .note{
-  background:var(--hover); border:1px solid var(--line-2); border-radius:12px;
-  padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
 }
 .note b{ color:var(--ink); }
 
 /* ---------- 页脚 ---------- */
 footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
 
-/* ---------- 杂色压制（把历史页面残留的金/蓝冲突统一回灰蓝） ---------- */
+/* ---------- 杂色压制兜底 ---------- */
 .pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
 .tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
 
@@ -177,52 +192,14 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
   header h1{ font-size:22px; }
   table{ font-size:12px; }
   thead th,tbody td{ padding:7px 7px; }
-  .topnav a{ padding:5px 8px; font-size:11px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  .navgrp{ padding:5px 6px 5px 5px !important; }
 }
 
 </style><!--/WB_THEME--></head>
 <body>
-<div class='topnav'><a href='../market/index.html'>每日总览</a><a href='../lhb/lhb.html'>龙虎榜分析</a><a href='../market/hotmoney.html'>游资看板</a><a href='../sector/index.html'>板块强度</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a><a href='../psychology/index.html'>群体心理</a><a href='../research/index.html'>个股调研</a><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a><a href='../sections/index.html'>版块总览</a><a href='../db/index.html'>数据中心</a><a href='../../index.html' class='home'>首页</a></div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../macd/index.html'>MACD金叉</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
 
 
 
@@ -237,13 +214,15 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 <h2>一、系统总览与依赖</h2>
 <div class="card">
-<p><b>4 个子系统，统一由 <code>G:\ai\股票\index.html</code>（总门户）入口：</b></p>
+<p><b>6 个子系统，统一由 <code>G:\ai\股票\index.html</code>（总门户）入口：</b></p>
 <table data-wb>
 <tr><th>子系统</th><th>入口页</th><th>数据最新</th><th>生成器</th><th>数据来源</th></tr>
 <tr><td>① 龙虎榜主看板</td><td><code>web/lhb/index.html</code></td><td id="d1">—</td><td><code>quant/build_dashboards.py</code></td><td>market_overview / board_hot / quotes / limitup / lhb / news.json</td></tr>
 <tr><td>② 板块强度</td><td><code>web/sector/index.html</code></td><td id="d2">—</td><td><code>quant/run_daily_sector.py</code></td><td>data_sector（industry+concept 最新快照）</td></tr>
 <tr><td>③ 群体心理风险雷达</td><td><code>web/psychology/index.html</code></td><td id="d3">—</td><td><code>market-trend/_build_*.py</code></td><td>data_market_overview / data_changedist / data_sector / tool_ranking</td></tr>
 <tr><td>④ 自下而上选股</td><td><code>web/bottom-up-stock-picks-YYYYMMDD.html</code></td><td id="d4">—</td><td>选股范式（手动）</td><td>data_finance / data_consensus / data_technical 等</td></tr>
+<tr><td>⑤ 底部反转选股（每日重扫）</td><td><code>web/reversal/index.html</code><br><code>web/reversal/watchlist_{DATE}.html</code></td><td id="d5">—</td><td><code>quant/gen_watchlist.py</code></td><td>westock tool_filter / data_quote / data_fund_flow / data_technical（agent 经 MCP 实拉 → <code>watchlist_scan_{DATE}.json</code>）</td></tr>
+<tr><td>⑥ MACD 水上金叉观察池（每日重扫）</td><td><code>web/macd/index.html</code><br><code>web/macd/watchlist_{DATE}.html</code></td><td id="d6">—</td><td><code>quant/macd_build.py</code> + <code>quant/gen_macd.py</code></td><td>westock tool_filter / data_technical / data_fund_flow（agent 经 MCP 实拉 → <code>macd_raw_*_{DATE}.json</code>）+ 增强列 data_quote / data_chip / data_fund_flow</td></tr>
 </table>
 <p style="margin-top:10px;color:#5a6573;font-size:13px">总门户本身由 <code>quant/build_portal.py</code> 扫描上述各子系统最新文件自动生成，无需手写。</p>
 </div>
@@ -294,7 +273,43 @@ python market-trend/_build_{DATE}.py
 <pre>python build_picks.py --date {DATE}   # 或手动产出 web/bottom-up-stock-picks-{YYYYMMDD}.html</pre>
 </div>
 
-<h3>⑥ 刷新总门户 + 校验</h3>
+<h3>⑤ 底部反转选股（每日重扫，必做）</h3>
+<div class="card">
+<p><b>目标</b>：每个交易日收盘后，用「六步 Playbook」重新扫描全市场，刷新观察池，让 <code>web/reversal/</code> 常驻版块始终保持最新。方法论常驻页 <code>web/reversal/method.html</code> 不变，只刷新观察池明细与入口摘要。</p>
+<p><b>1. 经 westock 六步法实拉并落盘</b>（由 agent 通过 MCP 执行，Python 脚本不可直接调 westock）：</p>
+<pre># agent 跑六步 MCP 扫描，结果落盘为纯 JSON（不可带 Python 注释头，否则 json.load 失败）
+quant/watchlist_scan_{DATE}.json
+# 字段：data_date / presets{turnaround,main_inflow,low_pb} / candidates[{code,name,price,
+#   float_mv,dist_52hi,ytd,pe,main20,rank,tier,score,logic,action}]</pre>
+<p class="note">⚠️ 落盘 JSON 必须是<b>纯 JSON</b>：第一行起即为 <code>{</code>，任何 <code>#</code> 注释或 <code>"""docstring"""</code> 都会让 <code>gen_watchlist.py</code> 的 <code>json.load</code> 直接失败；说明文字请放进 <code>"_doc"</code> 字段。</p>
+<p><b>2. 生成</b>：</p>
+<pre>cd G:\ai\股票\quant
+python gen_watchlist.py {DATE}      # 读 watchlist_scan_{DATE}.json
+                                # 产出 web/reversal/watchlist_{DATE}.html（明细）+ web/reversal/index.html（入口滚动更新）
+# 不带参数则自动取 quant/ 下最新 watchlist_scan_*.json</pre>
+<p><b>3. 注入导航 + 主题 + 校验</b>（与其他版块统一门禁）：</p>
+<pre>python _apply_theme.py          # 统一导航/主题/排序注入（reversal 已登记，自动覆盖）
+python _link_check.py           # 0 断链门禁
+python _coverage_check.py --until {DATE}   # 校验 reversal 族 0 缺口、0 未登记、0 孤儿页</pre>
+<p class="note">⚠️ <code>gen_watchlist.py</code> 的 <code>scan_cases()</code> 会扫描 <code>web/reversal/</code> 下 <code>songfa*.html</code> / <code>dajin_*.html</code> 自动补入链消除孤儿页，<b>案例页迁移到 <code>web/reversal/</code> 后勿再放 <code>web/research/</code></b>，否则覆盖度自检会报孤儿。</p>
+</div>
+
+<h3>⑥ MACD 水上金叉观察池（每日，自动化）</h3>
+<div class="card">
+<p>三层漏斗每日重扫，输出「趋势转多 × 资金进场」共振的强势候选（非个股推荐）：</p>
+<pre>cd G:\ai\股票\quant
+# 1) Agent 经 westock-mcp 实拉并落盘（或复用既有 macd_raw_*.json）
+python macd_build.py --raw      # 读 macd_raw_pool/tech/flow_{DATE}.json → 水上金叉 + 20日净流入为正
+# 1b) 增强诊断列（记录项，不参与筛选）：另拉 data_quote + data_chip（对最终 35~51 只，约 2 次调用）
+#     落 quant/macd_extra_{DATE}.json（字段 pos52/量比/换手/5D主力/归一化强度/60日涨幅/获利盘/集中度）
+python _build_macd_extra_{DATE}.py   # 或由 Agent 直接按同一结构写盘（模板见 _build_macd_extra_0911.py）
+# 2) 渲染 web/macd/index.html + watchlist_{DATE}.html + method.html
+python gen_macd.py {DATE}</pre>
+<p class="note">⚠️ 严格三层漏斗：<code>tool_filter(main_inflow, min_inflow=0.3亿, market=hs)</code> → <code>data_technical</code>(水上金叉 DIF&gt;0&amp;DEA&gt;0&amp;MACD红柱&gt;0) → <code>data_fund_flow</code>(MainNetFlow20D&gt;0)。剔除「当日热、20 日撤」的伪强势。全市场初筛约 1488 只 → 水上金叉 51 → 最终 35 只。</p>
+<p class="note">📌 增强诊断列（52周分位 / 量比 / 换手 / 5日主力 / 归一化强度 / 60日涨幅 / 获利盘 / 集中度90）<b>仅记录与标红警示，不参与筛选</b>。原因：单期样本直接硬化阈值等于过拟合；先记录、累积 20~30 个交易日后回测分组胜率，再决定哪几条升级为硬条件。增强列缺失时页面自动降级显示「—」。另：候选表涨跌幅统一取 <code>data_quote</code> 收盘口径（初筛接口为盘中口径，个别股符号相反）。</p>
+</div>
+
+<h3>⑦ 刷新总门户 + 校验</h3>
 <div class="card">
 <pre>python build_portal.py    # 重建总门户，自动带出各子系统最新日期与新鲜度</pre>
 <p>随后做 <a href="#check">第四节校验清单</a>。</p>
@@ -340,9 +355,9 @@ python market-trend/_build_{DATE}.py
 <h3>检查项</h3>
 <ul>
 <li><b>A 未登记页面</b>：扫描到的 HTML 不在登记表内 → 补登记 or 删除</li>
-<li><b>B/C 日期缺口与新鲜度</b>：按日归档的族（status / lhb / sector / block / psychology / picks / tplus）逐日比对交易日集合（自动剔除周末），缺期或最新日期≠目标日即报 GAP</li>
+<li><b>B/C 日期缺口与新鲜度</b>：按日归档的族（status / lhb / sector / block / psychology / picks / tplus / reversal / macd）逐日比对交易日集合（自动剔除周末），缺期或最新日期≠目标日即报 GAP</li>
 <li><b>D 孤儿页</b>：无任何静态入链的页面；已排除 archive / db / docs 白名单</li>
-<li><b>E 导航入口</b>：<code>_nav.SECTIONS</code> 14 项必须全部存在</li>
+<li><b>E 导航入口</b>：<code>_nav.SECTIONS</code> 15 项必须全部存在（含「底部反转」）</li>
 </ul>
 <h3>孤儿页归位</h3>
 <p><code>python quant/_fix_orphans.py</code>：按目录把孤儿页以「历史归档 / 相关页面」链接块（<code>.section + .arch</code>）插回所属索引页，带哨兵注释、可重复运行。跑完须重跑 <code>_apply_theme.py</code> 注入样式。</p>
