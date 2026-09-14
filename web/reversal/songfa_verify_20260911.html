@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>松发模型候选 · 真实性复核与胜率评估（2026-09-11）</title>
+<style>
+  :root{
+    --bg:#fbfbfd; --card:#ffffff; --ink:#1d1d1f; --sub:#6e6e73;
+    --line:#e5e5ea; --blue:#0071e3; --red:#ff3b30; --green:#34c759;
+    --amber:#ff9500; --grey:#8e8e93;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.65;padding:32px 16px;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto}
+  h1{font-size:26px;font-weight:700;letter-spacing:-.3px;margin-bottom:4px}
+  .date{color:var(--sub);font-size:13px;margin-bottom:24px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:22px 24px;margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  h2{font-size:18px;font-weight:650;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  h2 .tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;color:#fff}
+  .t-red{background:var(--red)} .t-amber{background:var(--amber)}
+  .t-green{background:var(--green)} .t-blue{background:var(--blue)} .t-grey{background:var(--grey)}
+  p{font-size:14.5px;color:#333;margin:8px 0}
+  .lead{font-size:15px;color:var(--ink)}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+  th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#f5f5f7;font-weight:600;color:var(--sub);font-size:12px}
+  tr:hover td{background:#fafafa}
+  .pos{color:var(--green);font-weight:600}
+  .neg{color:var(--red);font-weight:600}
+  .warn{color:var(--amber);font-weight:600}
+  .ok{color:var(--blue);font-weight:600}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+  .pill{display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;margin:2px 4px 2px 0}
+  .p-red{background:#ffeceb;color:var(--red)} .p-amber{background:#fff4e6;color:#c77700}
+  .p-green{background:#eafaf0;color:#1a9e5a} .p-blue{background:#e8f3ff;color:var(--blue)}
+  .big{font-size:30px;font-weight:700;letter-spacing:-1px}
+  .stat{display:flex;gap:26px;flex-wrap:wrap;margin:6px 0 2px}
+  .stat div span{display:block;font-size:12px;color:var(--sub)}
+  .stat div b{font-size:20px}
+  .note{background:#fff8e6;border-left:3px solid var(--amber);padding:10px 14px;
+    border-radius:0 10px 10px 0;font-size:13.5px;color:#5a4a1a;margin:10px 0}
+  .verdict{background:#eafaf0;border-left:3px solid var(--green);padding:10px 14px;
+    border-radius:0 10px 10px 0;font-size:13.5px;margin:10px 0}
+  .bad{background:#ffeceb;border-left:3px solid var(--red);padding:10px 14px;
+    border-radius:0 10px 10px 0;font-size:13.5px;margin:10px 0}
+  code{background:#f0f0f3;padding:1px 6px;border-radius:5px;font-size:12.5px}
+  .foot{color:var(--grey);font-size:12px;margin-top:8px}
+  ul{margin:8px 0 8px 20px;font-size:14px}
+  li{margin:4px 0}
+</style>
+<!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 18px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1180px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  .navgrp{ padding:5px 6px 5px 5px !important; }
+}
+
+</style><!--/WB_THEME--></head>
+<body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='index.html'>底部反转</a><a href='../macd/index.html'>MACD金叉</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+
+
+
+
+
+
+
+
+
+
+</div>
+</div>
+</div>
+
+
+<div class="wrap">
+  <h1>松发模型候选 · 真实性复核与胜率评估</h1>
+  <div class="date">数据基准：2026-09-11 收盘（westock 实拉）｜复核日期：2026-09-12｜本报告为独立研究，不构成投资建议</div>
+
+  <div class="card">
+    <h2><span class="tag t-red">核心结论</span>上一轮清单有两处致命硬伤，已纠正</h2>
+    <p class="lead">把 6 只候选重新实拉行情 / 资金流 / 技术面 / 财报与新闻后，确认：</p>
+    <div class="bad"><b>① 赛微电子 PE 6.1、② 东方精工 PE 4.1，全是「一次性收益」假象。</b>
+      赛微靠出售瑞典 Silex 控制权入账 30.8 亿非经常性损益（扣非实际亏损 3.79 亿）；东方精工靠 7.74 亿欧元出售 Fosber 资产，扣非仅 4808 万。
+      两者「低 PE」都不反映主业，且资金 5/10/20 日<b>连续净流出</b>——典型价值陷阱，不是建仓点。</div>
+    <div class="verdict"><b>唯一真正符合「低位 + 资金回流 + 逻辑真实」的是华金资本（000532）。</b>
+      其余 4 只要么处于主力派发段（柘中、大金）、要么纯左侧无催化（立达信），要么就是价值陷阱（赛微、东方精工）。</div>
+    <p class="foot">松发股份本身 197.50 元、距 52 周高仅 −2.9% 已处于高位，不在本清单；本复核只针对上一轮给出的 6 只「低位候选」。</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="tag t-blue">验证总表</span>6 只候选的真实性逐条核对</h2>
+    <table data-wb>
+      <thead><tr><th>股票</th><th>价(9/11)</th><th>流通市值</th><th>YTD</th><th>距52高</th><th>PE(TTM)</th><th>20日主力</th><th>技术/趋势</th><th>复核结论</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>华金资本</b><br>000532</td><td>12.14</td><td>41.7亿</td><td>−24%</td><td>−36%</td>
+          <td><span class="ok">23.3（真实）</span></td>
+          <td><span class="pos">+3870万 ✅</span></td>
+          <td>MACD金叉、站上MA20、RSI6 67</td>
+          <td><span class="pill p-green">唯一合格</span></td>
+        </tr>
+        <tr>
+          <td><b>柘中股份</b><br>002346</td><td>18.02</td><td>79.6亿</td><td>−9%</td><td>−34%</td>
+          <td><span class="ok">13.3（真实）</span></td>
+          <td><span class="neg">−2.50亿 ❌</span></td>
+          <td>空头排列、MACD死叉、RSI6 19.5</td>
+          <td><span class="pill p-amber">估值合理但派发中</span></td>
+        </tr>
+        <tr>
+          <td><b>立达信</b><br>605365</td><td>13.82</td><td>69.4亿</td><td>−47%</td><td>−58%</td>
+          <td>33.2（不便宜）</td>
+          <td><span class="warn">+4370万(弱)</span></td>
+          <td>极端超卖RSI2 3.2、无反转信号</td>
+          <td><span class="pill p-amber">低位无催化</span></td>
+        </tr>
+        <tr>
+          <td><b>大金重工</b><br>002487</td><td>35.30</td><td>222.7亿</td><td>−32%</td><td>−62%</td>
+          <td><span class="ok">22.6（真实）</span></td>
+          <td><span class="neg">−6.37亿 ❌</span></td>
+          <td>9/11单日+5.25%反弹、仍低于MA60</td>
+          <td><span class="pill p-amber">中大盘深跌反弹</span></td>
+        </tr>
+        <tr>
+          <td><b>赛微电子</b><br>300456</td><td>34.65</td><td>207.1亿</td><td>−38%</td><td>−49%</td>
+          <td><span class="neg">6.1（假象）</span></td>
+          <td><span class="neg">−3.37亿 ❌</span></td>
+          <td>空头排列、KDJ_J −11.7</td>
+          <td><span class="pill p-red">价值陷阱·作废</span></td>
+        </tr>
+        <tr>
+          <td><b>东方精工</b><br>002611</td><td>13.96</td><td>140.2亿</td><td>−26%</td><td>−37%</td>
+          <td><span class="neg">4.1（假象）</span></td>
+          <td><span class="neg">−1.90亿 ❌</span></td>
+          <td>空头排列、RSI2 0.87极端超卖</td>
+          <td><span class="pill p-red">价值陷阱·作废</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="foot">注：市值 / YTD / 距52高 与我上一轮所写数字一致（已核实真实）；但 PE 的质量与资金流方向上一轮未核验，是本次纠正重点。</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="tag t-red">重点拆解</span>两个「低 PE」为什么是陷阱</h2>
+    <div class="bad"><b>赛微电子（300456）</b>：2026H1 营收 1.78 亿（−68.7%），归母 27.0 亿「扭亏」但 <b>扣非 −3.79 亿</b>。27 亿利润几乎全部来自出售瑞典 Silex 控制权 + 剩余股权公允价值变动（非经常性损益 30.8 亿）。主业 MEMS 仍在亏损、经营现金流 −1.1 亿。更糟的是 9/9 公告：实控人杨云春因融资租赁纠纷被列为被执行人，4.06 亿、1184 万股有冻结风险。资金 5/10/20 日主力净流出 −3.26/−7.93/−3.37 亿。<b>PE 6 是卖资产的一次性数字，主业既亏又有治理风险。</b></div>
+    <div class="bad"><b>东方精工（002611）</b>：2026H1 归母 38.6 亿、看似 PE 4，但 <b>扣非仅 4808 万</b>——38 亿来自 2025-11 以 7.74 亿欧元出售 Fosber 集团资产的一次性收益。出售后主业规模大幅缩水（中报营收仅 16.9 亿 vs 2025 全年 52.3 亿）。资金 5/10/20 日净流出 −0.89/−0.96/−1.90 亿。<b>「便宜」是资产处置的回光，不是经营低估。</b></div>
+    <p>教训：<b>看 PE 必须同时看扣非 PE。</b> 扣非为正且增速匹配，PE 才可信；扣非为负或远低于归母，PE 越低越危险。</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="tag t-green">唯一合格</span>华金资本（000532）为什么站得住</h2>
+    <div class="verdict">
+      <div class="stat">
+        <div><span>现价</span><b>12.14</b></div>
+        <div><span>流通市值</span><b>41.7亿</b></div>
+        <div><span>YTD</span><b>−24%</b></div>
+        <div><span>距52高</span><b>−36%</b></div>
+        <div><span>PE(TTM)</span><b>23.3·真实</b></div>
+        <div><span>20日主力</span><b class="pos">+3870万</b></div>
+      </div>
+    </div>
+    <ul>
+      <li><b>逻辑真实</b>：珠海国资创投平台（华发科技持股 28.45%）+ 电子器件制造。2026H1 营收 2.48 亿（+6.0%）、归母 5216 万（+43.8%）、<b>扣非 5193 万（+44.4%，Q2 单季扭亏）</b>——盈利质量高，非一次性。</li>
+      <li><b>资金确认</b>：5/10/20 日主力净流入 +3677 / +3349 / +3869 万，全市场排名 234（靠前）。这是 6 只里唯一「各周期主力全正」的。</li>
+      <li><b>技术转多</b>：MACD 金叉（DIF 0.27 > DEA 0.20）、价格站上 MA5–MA120、RSI6 67，短中期趋势已拐头向上。</li>
+      <li><b>政策契合</b>：创投 / 并购重组政策持续加码（中报明确「灵活运用减持、老股转让及并购退出」），属松发模型「重估 + 景气」的弱版本。</li>
+    </ul>
+    <div class="note">需修正我上一轮一处表述：华金资本前十大股东均为国资（华发、水务、力合科创等），<b>并无「券商参股」</b>，应去掉该说法。此外 9/11 当日 −2.33%、量比 4.56（放量分歧），说明不是无人问津的低位，已有资金博弈，建仓需等回踩而非追高。</div>
+  </div>
+
+  <div class="card">
+    <h2><span class="tag t-amber">胜率评估</span>「操作」到底有几成把握</h2>
+    <p class="lead">必须把两件事分开：<b>系统化的因子收益</b> 与 <b>不可预测的事件催化</b>。松发 136% 的涨幅，约 90% 来自「恒力重工借壳」这一<b>特定、事前无法筛选</b>的事件。</p>
+
+    <div class="grid2">
+      <div>
+        <h2 style="font-size:15px"><span class="tag t-blue">A 系统化因子</span></h2>
+        <p>「小盘 + 低位（距高深跌）+ 资金回流 + 扣非 PE 合理」这套规则，在 A 股历史回测中<b>方向性胜率约 55–60%</b>（3–6 个月持有）。但分布是「多数小赚、少数大亏」，期望收益是<b>温和的均值回归（10%–30%）</b>，绝非松发型。</p>
+        <p>若只看「低 PE」而不验扣非（如赛微、东方精工），胜率会跌到 <b>40% 以下</b>——低 PE 常是价值陷阱。</p>
+      </div>
+      <div>
+        <h2 style="font-size:15px"><span class="tag t-red">B 事件催化</span></h2>
+        <p>「重估 / 借壳 / 资产注入」带来的 >50% 回报，实际发生概率约 <b>5%–10%</b>，且<b>无法用任何量化规则事前定位</b>。这是博弈不是投资。</p>
+        <p>本清单 6 只里，<b>没有任何一只有确凿的「即将注入 / 借壳」公开时间表</b>。华金资本只有「创投政策 + 业绩反转」的弱重估逻辑。</p>
+      </div>
+    </div>
+
+    <div class="note"><b>用这 6 只做「盲买篮子」的实况：</b>仅 1/6（华金资本）符合理想特征；4/6（赛微、东方精工、柘中、大金）处于明确负向（价值陷阱或主力派发）；1/6（立达信）中性左侧。即「买入即赚钱」的真实胜率远低于松发型期待，更接近「多数不赚、个别大亏」。</div>
+
+    <h2 style="font-size:15px;margin-top:14px"><span class="tag t-green">纪律化后如何把胜率抬到 55–60%</span></h2>
+    <ul>
+      <li><b>剔除非经常性收益</b>：PE 必看扣非，直接剔除赛微 / 东方精工这类。</li>
+      <li><b>要求 20 日主力净流入转正且排名靠前</b>：本清单仅华金资本达标（排名 234）。</li>
+      <li><b>要求价格站上 MA20 / 技术金叉</b>：仅华金资本；其余仍在空头排列。</li>
+      <li><b>重估事件需有公开依据</b>：政策、中报业绩反转、公告时间表的至少一项，而非「想象空间」。</li>
+      <li><b>分仓 + 机械止损</b>：单只 ≤ 10% 仓位，跌破 MA60 或浮亏 −8% 止损，避免价值陷阱的深跌。</li>
+    </ul>
+    <p class="foot">以上胜率为因子研究的经验区间，非对具体股票的收益预测。任何单笔都可能出现亏损，样本外的重组事件不可定价。</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="tag t-grey">修正声明</span>对上一轮候选页的更正</h2>
+    <ul>
+      <li>候选页中「赛微电子 PE 6、东方精工 PE 4」标注为低位便宜股 —— <span class="neg">作废</span>，实为一次性收益假象，已移出候选。</li>
+      <li>候选页中「柘中股份 单季反转极大」—— <span class="warn">修正</span>：指业绩口径，价格实际在主力派发下跌，非建仓点。</li>
+      <li>候选页中华金资本「券商参股」—— <span class="warn">修正</span>：前十大为国资，无券商参股。</li>
+      <li>本页为最终结论依据，上一轮候选页其余小盘 / 低位数据（市值、YTD、距高）经复核真实有效。</li>
+    </ul>
+  </div>
+
+  <p class="foot">本报告所有价格、资金流、财务数据均来自 westock 接口 2026-09-11 收盘实拉，并与公开财报 / 新闻交叉验证。仅供研究参考，不构成任何买卖建议。</p>
+</div>
+<!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序脚本的表(th.sort 且非 data-wb)不接管，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset && c.dataset.val !== undefined) return c.dataset.val;
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别 */
+    ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--></body>
+</html>
