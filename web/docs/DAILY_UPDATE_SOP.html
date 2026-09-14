@@ -203,6 +203,10 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 
 
+
+
+
+
 <div class="wrap">
 <header class="top">
   <div class="kicker">A股量化助理 · 每日盘后</div>
@@ -214,15 +218,17 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 <h2>一、系统总览与依赖</h2>
 <div class="card">
-<p><b>6 个子系统，统一由 <code>G:\ai\股票\index.html</code>（总门户）入口：</b></p>
+<p><b>8 个子系统，统一由 <code>G:\ai\股票\index.html</code>（总门户）入口：</b></p>
 <table data-wb>
 <tr><th>子系统</th><th>入口页</th><th>数据最新</th><th>生成器</th><th>数据来源</th></tr>
 <tr><td>① 龙虎榜主看板</td><td><code>web/lhb/index.html</code></td><td id="d1">—</td><td><code>quant/build_dashboards.py</code></td><td>market_overview / board_hot / quotes / limitup / lhb / news.json</td></tr>
 <tr><td>② 板块强度</td><td><code>web/sector/index.html</code></td><td id="d2">—</td><td><code>quant/run_daily_sector.py</code></td><td>data_sector（industry+concept 最新快照）</td></tr>
 <tr><td>③ 群体心理风险雷达</td><td><code>web/psychology/index.html</code></td><td id="d3">—</td><td><code>market-trend/_build_*.py</code></td><td>data_market_overview / data_changedist / data_sector / tool_ranking</td></tr>
 <tr><td>④ 自下而上选股</td><td><code>web/bottom-up-stock-picks-YYYYMMDD.html</code></td><td id="d4">—</td><td>选股范式（手动）</td><td>data_finance / data_consensus / data_technical 等</td></tr>
-<tr><td>⑤ 底部反转选股（每日重扫）</td><td><code>web/reversal/index.html</code><br><code>web/reversal/watchlist_{DATE}.html</code></td><td id="d5">—</td><td><code>quant/gen_watchlist.py</code></td><td>westock tool_filter / data_quote / data_fund_flow / data_technical（agent 经 MCP 实拉 → <code>watchlist_scan_{DATE}.json</code>）</td></tr>
-<tr><td>⑥ MACD 水上金叉观察池（每日重扫）</td><td><code>web/macd/index.html</code><br><code>web/macd/watchlist_{DATE}.html</code></td><td id="d6">—</td><td><code>quant/macd_build.py</code> + <code>quant/gen_macd.py</code></td><td>westock tool_filter / data_technical / data_fund_flow（agent 经 MCP 实拉 → <code>macd_raw_*_{DATE}.json</code>）+ 增强列 data_quote / data_chip / data_fund_flow</td></tr>
+<tr><td>⑤ 个股信号池（机构轨+游资轨）</td><td><code>web/picks/index.html</code><br><code>web/picks/pick_{DATE}.html</code></td><td id="d7">—</td><td><code>quant/gen_picks.py</code> + <code>quant/build_picks.py</code></td><td>本地三路信号（中报/高管 exec_chg/大宗 block_chg）+ 龙虎榜 jg/yyb；打分需 data_quote / data_technical / data_chip / data_fund_flow / data_fund_margin</td></tr>
+<tr><td>⑥ 做T池（底仓网格）</td><td><code>web/tplus/index.html</code><br><code>web/tplus/tplus-{DATE}.html</code></td><td id="d8">—</td><td><code>quant/gen_tplus.py</code> + <code>quant/build_tplus.py</code></td><td>本地 q2_full（机构底仓池 → universe）；打分需 data_quote + data_kline（约 848 只 × 60 根）</td></tr>
+<tr><td>⑦ 底部反转选股（每日重扫）</td><td><code>web/reversal/index.html</code><br><code>web/reversal/watchlist_{DATE}.html</code></td><td id="d5">—</td><td><code>quant/gen_watchlist.py</code></td><td>westock tool_filter / data_quote / data_fund_flow / data_technical（agent 经 MCP 实拉 → <code>watchlist_scan_{DATE}.json</code>）</td></tr>
+<tr><td>⑧ MACD 水上金叉观察池（每日重扫）</td><td><code>web/macd/index.html</code><br><code>web/macd/watchlist_{DATE}.html</code></td><td id="d6">—</td><td><code>quant/macd_build.py</code> + <code>quant/gen_macd.py</code></td><td>westock tool_filter / data_technical / data_fund_flow（agent 经 MCP 实拉 → <code>macd_raw_*_{DATE}.json</code>）+ 增强列 data_quote / data_chip / data_fund_flow</td></tr>
 </table>
 <p style="margin-top:10px;color:#5a6573;font-size:13px">总门户本身由 <code>quant/build_portal.py</code> 扫描上述各子系统最新文件自动生成，无需手写。</p>
 </div>
@@ -269,11 +275,52 @@ python market-trend/_build_{DATE}.py
 
 <h3>④ 自下而上选股（可选，每日一期）</h3>
 <div class="card">
-<p>依选股方法论（财务硬门槛 → 剔除周期顶点/低基数暴增/现金含量&lt;0.5 → 逐只核 <code>data_consensus</code> 看 2027E/2028E 能否延续）：</p>
-<pre>python build_picks.py --date {DATE}   # 或手动产出 web/bottom-up-stock-picks-{YYYYMMDD}.html</pre>
+<p>依选股方法论（财务硬门槛 → 剔除周期顶点/低基数暴增/现金含量&lt;0.5 → 逐只核 <code>data_consensus</code> 看 2027E/2028E 能否延续），产出常驻页：</p>
+<pre>web/bottom-up-stock-picks-{YYYYMMDD}.html   # 手动/半自动产出，不参与自动化门禁</pre>
+<p class="note">⚠️ 与「个股信号池」（下一步）区分：本步是<b>基本面自下而上</b>的深度调研，频次可低；信号池是<b>资金/信号驱动</b>的每日双轨打分，必须每日跑。</p>
 </div>
 
-<h3>⑤ 底部反转选股（每日重扫，必做）</h3>
+<h3>⑤ 个股信号池（机构轨 + 游资轨，每日，必做）</h3>
+<div class="card">
+<p><b>第一步 · 候选聚合（纯本地数据，不依赖任何外网接口，最容易被漏跑）：</b></p>
+<pre>cd G:\ai\股票\quant
+python gen_picks.py --date {DATE} --window 20 --top 40
+# 读：quant/q2_full/_merged_shareholder.json（中报十大股东）
+#     quant/exec_chg/{DATE}.json（高管增减持，近 20 交易日）
+#     quant/block_chg/{DATE}.json（大宗交易，近 20 交易日）
+#     quant/lhb/{DATE}.json（龙虎榜 jg 机构席位 / yyb 营业部）
+# 产出：quant/picks/candidates_{DATE}.json + quant/picks/_codes_{DATE}.txt（每批 25 只）</pre>
+<p><b>第二步 · 补拉打分数据（agent 经 MCP，按 <code>_codes_{DATE}.txt</code> 分批）：</b></p>
+<pre># 每批 ≤25 只（data_technical / data_chip 限频）
+data_quote        → quant/picks/quotes_{DATE}.json
+data_technical    → quant/picks/technical_{DATE}.json   (group=ma,macd,rsi,kdj,boll)
+data_chip         → quant/picks/chip_{DATE}.json
+data_fund_flow    → quant/picks/fundflow_{DATE}.json
+data_fund_margin  → quant/picks/margin_{DATE}.json
+data_hot(kind=stock) → quant/picks/hot_{DATE}.json
+# 字段映射见 quant/_relay_picks_0914.py（可复用为 relay 模板）</pre>
+<p><b>第三步 · 双轨打分出页：</b></p>
+<pre>python build_picks.py --date {DATE}
+# 产出 web/picks/pick_{DATE}.html + web/picks/index.html；回填 history.json 次日/3日/5日表现</pre>
+<p class="note">⚠️ 缺失数据自动降级为 0 分项，<b>但 <code>quotes_{DATE}.json</code> 缺失会导致 0 行输出</b>（无 price 直接跳过）。<code>data_rating</code> / <code>data_consensus</code> 为单码接口，逐只拉成本高，可略（对应维度记 0）；<code>data_risk</code> 降级时风险闸门与质押扣分不生效，需在页面标注。</p>
+</div>
+
+<h3>⑥ 做T池（机构底仓网格，每日，必做）</h3>
+<div class="card">
+<p><b>第一步 · 候选池（纯本地 q2_full 中报，机构底仓口径）：</b></p>
+<pre>cd G:\ai\股票\quant
+python gen_tplus.py --date {DATE} --min-fund 5.0
+# 产出 quant/tplus/codes_{DATE}.txt + quant/tplus/universe_{DATE}.json（约 850 只）</pre>
+<p><b>第二步 · 补拉行情 + 日K（agent 经 MCP，按 codes 分批）：</b></p>
+<pre>data_quote → quant/tplus/quotes_{DATE}.json     # 848 只 ≈ 5 批（≥180/次）
+data_kline → quant/tplus/kline_{DATE}.json      # 848 只 × 60 根，数据量大，建议专门跑一轮</pre>
+<p><b>第三步 · 打分出页：</b></p>
+<pre>python build_tplus.py --date {DATE}
+# 产出 web/tplus/index.html + web/tplus/tplus-{DATE}.html</pre>
+<p class="note">⚠️ 本环节是<b>数据量最大</b>的每日任务（约 848×60 根 K 线）。全量拉取耗时且占接口额度，建议与其他子系统分开、单独一轮完成；漏跑会导致做T池停更在上一交易日。</p>
+</div>
+
+<h3>⑦ 底部反转选股（每日重扫，必做）</h3>
 <div class="card">
 <p><b>目标</b>：每个交易日收盘后，用「六步 Playbook」重新扫描全市场，刷新观察池，让 <code>web/reversal/</code> 常驻版块始终保持最新。方法论常驻页 <code>web/reversal/method.html</code> 不变，只刷新观察池明细与入口摘要。</p>
 <p><b>1. 经 westock 六步法实拉并落盘</b>（由 agent 通过 MCP 执行，Python 脚本不可直接调 westock）：</p>
@@ -294,7 +341,7 @@ python _coverage_check.py --until {DATE}   # 校验 reversal 族 0 缺口、0 �
 <p class="note">⚠️ <code>gen_watchlist.py</code> 的 <code>scan_cases()</code> 会扫描 <code>web/reversal/</code> 下 <code>songfa*.html</code> / <code>dajin_*.html</code> 自动补入链消除孤儿页，<b>案例页迁移到 <code>web/reversal/</code> 后勿再放 <code>web/research/</code></b>，否则覆盖度自检会报孤儿。</p>
 </div>
 
-<h3>⑥ MACD 水上金叉观察池（每日，自动化）</h3>
+<h3>⑧ MACD 水上金叉观察池（每日，自动化）</h3>
 <div class="card">
 <p>三层漏斗每日重扫，输出「趋势转多 × 资金进场」共振的强势候选（非个股推荐）：</p>
 <pre>cd G:\ai\股票\quant
@@ -305,14 +352,15 @@ python macd_build.py --raw      # 读 macd_raw_pool/tech/flow_{DATE}.json → �
 python _build_macd_extra_{DATE}.py   # 或由 Agent 直接按同一结构写盘（模板见 _build_macd_extra_0911.py）
 # 2) 渲染 web/macd/index.html + watchlist_{DATE}.html + method.html
 python gen_macd.py {DATE}</pre>
-<p class="note">⚠️ 严格三层漏斗：<code>tool_filter(main_inflow, min_inflow=0.3亿, market=hs)</code> → <code>data_technical</code>(水上金叉 DIF&gt;0&amp;DEA&gt;0&amp;MACD红柱&gt;0) → <code>data_fund_flow</code>(MainNetFlow20D&gt;0)。剔除「当日热、20 日撤」的伪强势。全市场初筛约 1488 只 → 水上金叉 51 → 最终 35 只。</p>
+<p class="note">⚠️ 严格三层漏斗：<code>tool_filter(main_inflow, min_inflow=0.3亿, market=hs)</code> → <code>data_technical</code>(水上金叉 DIF&gt;0&amp;DEA&gt;0&amp;MACD红柱&gt;0) → <code>data_fund_flow</code>(MainNetFlow20D&gt;0)。剔除「当日热、20 日撤」的伪强势。</p>
+<p class="note">📊 <b>各层数量随行情浮动，不写死</b>：全市场初筛规模约 1500~2100 只（`tool_filter` 当日主力流入 &gt; 0.3 亿的结果数），水上金叉层约 30~60 只，资金确认层再筛掉「20 日净流出」的伪强势。页面 KPI 与漏斗文案均由 <code>gen_macd.py</code> 用当日 <code>pool_total</code> / <code>above_water</code> 动态渲染，<b>严禁在模板里硬编码某一天的数字</b>（曾误写死「1488 只」与实际池 2092 只矛盾）。</p>
 <p class="note">📌 增强诊断列（52周分位 / 量比 / 换手 / 5日主力 / 归一化强度 / 60日涨幅 / 获利盘 / 集中度90）<b>仅记录与标红警示，不参与筛选</b>。原因：单期样本直接硬化阈值等于过拟合；先记录、累积 20~30 个交易日后回测分组胜率，再决定哪几条升级为硬条件。增强列缺失时页面自动降级显示「—」。另：候选表涨跌幅统一取 <code>data_quote</code> 收盘口径（初筛接口为盘中口径，个别股符号相反）。</p>
 </div>
 
-<h3>⑦ 刷新总门户 + 校验</h3>
+<h3>⑨ 刷新总门户 + 校验</h3>
 <div class="card">
 <pre>python build_portal.py    # 重建总门户，自动带出各子系统最新日期与新鲜度</pre>
-<p>随后做 <a href="#check">第四节校验清单</a>。</p>
+<p>随后做 <a href="#check">第四节校验清单</a>。任何显示「非当日」的子系统即为<b>漏跑项</b>，必须当天补齐（或按降级说明诚实标注），不得放任累积。</p>
 </div>
 
 <h2>三、已知坑（务必先看，避免重蹈覆辙）</h2>
@@ -324,6 +372,15 @@ python gen_macd.py {DATE}</pre>
 <div class="note"><b>⚠️ 估值(PE 分位)接口滞后</b>：最新快照常比主数据晚 1~2 天，生成器中用 <code>--val-date</code> 单独指定并在页面标注。</div>
 
 <div class="note"><b>⚠️ data_sector 的 date 参数被忽略</b>：只返最新一个交易日快照，无法按 date 回溯；整月历史回溯不可行，必须前瞻累积。</div>
+
+<div class="danger"><b>⚠️ 接口降级会直接打断日更（须每日核对新鲜度）</b>：<code>tool_ranking(limitup_days / margin_chg_d)</code>、<code>tool_event</code>（解禁/减持/质押）、<code>data_market_overview</code> 一旦返回 <code>error_type=2</code>，会连锁导致：
+<ul>
+<li><b>③ 群体心理雷达</b>：连板梯队 / 两融环比 / 指数聚合缺失 → 无法整期重建（模板 130+ 键写死），只能停更；</li>
+<li><b>⑤ 个股信号池</b>：<code>quotes</code> 拉不到 → 0 行输出；<code>data_risk</code> 缺失 → 风险闸门失效；</li>
+<li><b>⑥ 做T池</b>：<code>data_kline</code> 大批量拉取受限 → 池子停更；</li>
+<li><b>⑧ MACD / ⑦ 反转</b>：<code>tool_filter</code> 正常时不受影响，降级时同步停更。</li>
+</ul>
+<b>纪律</b>：每日收尾跑 <code>python quant/_coverage_check.py --until {DATE}</code>，凡「最新日期 ≠ {DATE}」的子系统即为漏跑/降级项 —— 能补的当天补；确因接口降级补不了的，必须在总门户诚实标注「接口降级·停更于 YYYY-MM-DD」，<b>绝不可以用旧数据冒充当日、也不可静默跳过</b>。</div>
 
 <div class="note"><b>⚠️ I18N 键覆盖校验</b>：用 <code>re.finditer(r'([A-Za-z0-9_]+)\s*:')</code> 抓取每行全部键；若用 <code>re.match</code> 只抓首键会误报大量"missing"。</div>
 
