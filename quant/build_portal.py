@@ -81,8 +81,13 @@ try:
         _h = json.load(open(_hp, encoding="utf-8"))
         if _h:
             pick_d = datetime.date.fromisoformat(_h[-1]["date"])
-            _n = _h[-1].get("n", 0)
-            pick_stat = f"候选 {_n} 只 ｜ 每日交易计划"
+            _ni = _h[-1].get("nInst")
+            _ny = _h[-1].get("nYouzi")
+            if _ni is None and _ny is None:
+                _n = _h[-1].get("n", 0)
+                pick_stat = f"候选 {_n} 只 ｜ 每日交易计划"
+            else:
+                pick_stat = f"机构轨 {_ni or 0} 只 ｜ 游资轨 {_ny or 0} 只 ｜ 每日交易计划"
 except Exception:
     pick_d = None
 
@@ -568,14 +573,17 @@ _n_cards = sum(len(z["cards"]) for z in ZONES)
 
 # ---- 每日更新清单 ----
 update_steps = [
-    ("① 拉取当日快照", "用 westock-mcp 拉取 market_overview / board_hot / quotes / limitup / lhb / news，分别落盘到 quant 对应子目录的 <b>{DATE}.json</b>；再补 lhb 个股明细（分 3 批）。"),
-    ("② 高管增减持", "<code>tool_event(manager_sharechg)</code> + <code>data_quote</code> → <code>python quant\\gen_exec.py --date {DATE}</code> → <code>python quant\\build_exec.py --date {DATE}</code>。T+1 口径，接口快照日为前一交易日。"),
-    ("③ 大宗交易", "<code>tool_event(names=block_past_30, limit=3000)</code>（<b>limit 必须给足</b>，默认 500 会截断当日数据）→ <code>data_quote</code> 补涨跌幅 → <code>python quant\\gen_block.py --date {DATE} --src &lt;事件落盘&gt; --quotes &lt;行情落盘&gt;</code> → <code>python quant\\build_block.py --date {DATE}</code>。"),
-    ("④ 生成龙虎榜主看板", "<code>python quant\\build_dashboards.py --date {DATE}</code> → 重写 web/ 下各页面（<b>会重建 web/lhb/index.html</b>）。"),
+    ("① 拉取当日快照", "用 westock-mcp 拉取 market_overview / board_hot / quotes / limitup / lhb / news，分别落盘到 quant 对应子目录的 <b>{DATE}.json</b>；再补 lhb 个股明细（分 3 批）。<b>降级期</b> market_overview / limitup / board_hot 可能返回 error_type=2，缺失即诚实标注，不得伪造。"),
+    ("② 高管增减持", "<b>降级期</b>经东财 <code>RPT_EXECUTIVE_HOLD_DETAILS</code> 回补（变动日口径、覆盖约 76%）→ 落 <code>quant/exec_chg/{DATE}.json</code> → <code>python quant\\build_exec.py --date {DATE}</code>；westock 恢复后回归 <code>tool_event(manager_sharechg)</code> 原口径。"),
+    ("③ 大宗交易", "<b>降级期</b>经东财 <code>RPT_DATA_BLOCKTRADE</code>（pageSize=5000；折扣 <code>discount=-PREMIUM_RATIO*100</code>，正=折价）回补 → 落 <code>quant/block_chg/{DATE}.json</code> → <code>python quant\\build_block.py --date {DATE}</code>。"),
+    ("④ 生成龙虎榜主看板", "<code>python quant\\build_dashboards.py --date {DATE}</code> → 重写 web/ 下各页面（<b>会重建 web/lhb/index.html</b>）；缺失快照自动降级标注。"),
     ("⑤ 板块强度（必做 · 不可回溯）", "拉 industry + concept 快照 → <code>python quant\\gen_sector_raw.py</code> → <code>python quant\\run_daily_sector.py --date {DATE} --industry &lt;绝对路径&gt; --concept &lt;绝对路径&gt;</code>。<b>漏跑一天该交易日永久断档</b>。"),
-    ("⑥ 心理风险雷达（按需）", "按 web/psychology 既有 _build 范式生成 crowd-psychology-risk-radar-{DATE}.html 并入 web/psychology/index.html。数据内嵌在 _build 脚本内。"),
-    ("⑦ 刷新门户与总览", "<code>python quant\\build_portal.py</code> → <code>python quant\\build_sections.py</code> → <code>python quant\\_apply_nav.py</code>（统一导航自愈）→ 各卡片自动带出最新日期与新鲜度。"),
-    ("⑧ 校验与推送", "合规扫描（产物内不得出现个人持有信息、账户盈亏、自下而上选股等敏感内容，关键词清单见项目约定）；<code>python quant\\_link_check.py</code> 须 0 断链；经 GitHub Contents API 推送（<code>python quant\\_push_lhb.py</code>）。"),
+    ("⑥ 个股信号池（每日 · 双轨）", "<code>python quant\\gen_picks.py --date {DATE} --window 20 --top 40</code>（纯本地三路信号）→ agent 经 MCP 按 <code>_codes_{DATE}.txt</code> 补拉 quote/technical/chip/fund_flow/margin/hot（relay 模板 <code>_relay_picks_0914.py</code>）→ <code>python quant\\build_picks.py --date {DATE}</code>。"),
+    ("⑦ 做T池（每日 · 底仓网格）", "<code>python quant\\gen_tplus.py --date {DATE}</code>（本地 q2_full 机构底仓池，约 848 只）→ 补拉 <code>data_quote</code> + <code>data_kline</code>（约 848×60 根，<b>数据量最大，建议单独跑一轮</b>）→ <code>python quant\\build_tplus.py --date {DATE}</code>。"),
+    ("⑧ 反转 / MACD / 高胜率（每日扫描）", "三者均以当日 <code>tool_filter</code> 实拉落盘后再渲染：<code>gen_watchlist.py {DATE}</code> / <code>macd_build.py --raw</code> + <code>gen_macd.py {DATE}</code> / <code>build_highwin_0914.py</code> + <code>gen_highwin.py</code>。"),
+    ("⑨ 心理风险雷达（按需/每日）", "沿用 <code>web/psychology</code> 既有 <code>_build_*.py</code> 范式生成 <code>crowd-psychology-risk-radar-{DATE}.html</code> 并入索引。<b>依赖 tool_ranking(limitup_days/margin_chg_d)，降级期会停更</b>。"),
+    ("⑩ 刷新门户与总览", "<code>python quant\\build_portal.py</code> → <code>python quant\\build_sections.py</code> → <code>python quant\\_apply_theme.py</code>（统一导航/主题注入）→ 各卡片自动带出最新日期与新鲜度；<b>凡显示「非当日」的卡片即为漏跑项，须当天补齐或诚实标注降级</b>。"),
+    ("⑪ 校验与推送", "合规扫描（产物内不得出现个人持有信息、账户盈亏等敏感内容）；<code>python quant\\_link_check.py</code> 须 0 断链、<code>python quant\\_coverage_check.py --until {DATE}</code> 无新增缺口；经 GitHub Contents API 推送（<code>python quant\\_push_lhb.py</code>）。"),
 ]
 
 steps_html = "\n".join(
