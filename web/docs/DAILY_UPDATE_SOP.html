@@ -213,6 +213,9 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 
 
+
+
+
 <div class="wrap">
 <header class="top">
   <div class="kicker">A股量化助理 · 每日盘后</div>
@@ -229,7 +232,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr><th>子系统</th><th>入口页</th><th>数据最新</th><th>生成器</th><th>数据来源</th></tr>
 <tr><td>① 龙虎榜主看板</td><td><code>web/lhb/index.html</code></td><td id="d1">—</td><td><code>quant/build_dashboards.py</code></td><td>market_overview / board_hot / quotes / limitup / lhb / news.json</td></tr>
 <tr><td>② 板块强度</td><td><code>web/sector/index.html</code></td><td id="d2">—</td><td><code>quant/run_daily_sector.py</code></td><td>data_sector（industry+concept 最新快照）</td></tr>
-<tr><td>③ 群体心理风险雷达</td><td><code>web/psychology/index.html</code></td><td id="d3">—</td><td><code>market-trend/_build_*.py</code></td><td>data_market_overview / data_changedist / data_sector / tool_ranking</td></tr>
+<tr><td>③ 群体心理风险雷达</td><td><code>web/psychology/index.html</code></td><td id="d3">—</td><td><code>quant/build_psychology.py</code></td><td>data_market_overview / data_changedist / data_sector / tool_ranking</td></tr>
 <tr><td>④ 自下而上选股</td><td><code>web/bottom-up-stock-picks-YYYYMMDD.html</code></td><td id="d4">—</td><td>选股范式（手动）</td><td>data_finance / data_consensus / data_technical 等</td></tr>
 <tr><td>⑤ 个股信号池（机构轨+游资轨）</td><td><code>web/picks/index.html</code><br><code>web/picks/pick_{DATE}.html</code></td><td id="d7">—</td><td><code>quant/gen_picks.py</code> + <code>quant/build_picks.py</code></td><td>本地三路信号（中报/高管 exec_chg/大宗 block_chg）+ 龙虎榜 jg/yyb；打分需 data_quote / data_technical / data_chip / data_fund_flow / data_fund_margin</td></tr>
 <tr><td>⑥ 做T池（底仓网格）</td><td><code>web/tplus/index.html</code><br><code>web/tplus/tplus-{DATE}.html</code></td><td id="d8">—</td><td><code>quant/gen_tplus.py</code> + <code>quant/build_tplus.py</code></td><td>本地 q2_full（机构底仓池 → universe）；打分需 data_quote + data_kline（约 848 只 × 60 根）</td></tr>
@@ -267,17 +270,24 @@ python run_daily_sector.py --date {DATE} --industry &lt;file&gt; --concept &lt;f
 <p class="note">⚠️ 固化后务必 <code>cat sector_trend.json</code> 校验两天值<strong>不同</strong>；若雷同说明当日页用了旧数据，需重拉当日 industry+concept 重建。</p>
 </div>
 
-<h3>③ 群体心理风险雷达（可选，单篇 + 索引）</h3>
-<div class="card">
-<p>采用 <code>market-trend/_build_*.py</code> 模板复制法：</p>
-<pre># 以最近一期为模板，复制为新日期文件后定向改写静态值
-cp market-trend/crowd-psychology-risk-radar-{PREV}.html \
-   market-trend/crowd-psychology-risk-radar-{DATE}.html
-# 用 _build_{DATE}.py 整块替换 I18N、BIAS 数组，并对 30+ 处静态值做断言替换
-python market-trend/_build_{DATE}.py
-# 同步更新 web/psychology/index.html（REPORTS 追加、stats、趋势图加第 N 点、notes）</pre>
-<p>硬性约束：所有数字来自真实查询、单文件离线 0 外链、右上角中英切换 + <code>?lang=</code>、<code>applyLang</code> 用 <code>innerHTML</code>。</p>
-</div>
+<h3>③ 群体心理风险雷达（每日，必做 —— 已全自动化）</h3>
+<p><b>已由「手抄文案」改为数据驱动生成器</b>。旧方式 <code>market-trend/_build_*.py</code>（复制上一期页面 → 手抄 400+ 条中英文案 → 对 30~60 处<b>精确字符串</b>做 old→new 替换）已废弃，原因：替换锚点是「上一期的值」，上一期页面一旦被主题注入 / i18n 回写改动，锚点就<b>静默失配</b>（脚本只打印未命中），于是残留旧数据或直接放弃当日更新 —— 这正是该子系统历史上反复停更的根因。</p>
+<pre><code># 前置（① 步已落盘）：quant/market_overview/{DATE}.json
+# 前置（② 步产出）：quant/sector_strength_data_{YYYYMMDD}.json
+# 连板梯队（当日，MCP 拉取后落盘）：
+tool_ranking(metric=limitup_days, date={DATE}) → quant/psy/limitup_{DATE}.json
+
+# 一键生成（无需手写任何文案）：
+python quant/build_psychology.py --date {DATE}
+# 节假日/调休导致下一交易日不是自然次日时：
+python quant/build_psychology.py --date {DATE} --next {NEXT_DATE}
+
+# 产出：
+#   web/psychology/crowd-psychology-risk-radar-{YYYYMMDD}.html
+#   自动追加 web/psychology/index.html 的 REPORTS 条目
+#   自动写入 quant/psy/history.json（供下期环比与雷达融资维平移）</code></pre>
+<p><b>数据流</b>：广度 / 指数 / 技术 / 估值 / 风格 ← <code>data_market_overview</code>；板块领涨领跌与主力行为 ← 板块强度 <code>sector_strength_data_{YYYYMMDD}.json</code>；连板梯队 ← <code>tool_ranking(limitup_days)</code>。阶段定性（恐慌扩散 / 退潮加速 / 广度修复 / 情绪回暖 / 指数分化 / 缩量震荡）、风险等级、雷达六维均由脚本内的<b>显式规则</b>计算；中英文叙述由模板按真实数据拼装。任一数据缺失即如实标注「接口降级，未编造」。</p>
+<p><b>校验</b>：脚本收尾会打印「残留旧数据」，必须为「<b>无</b>」。若不为无，说明固定骨架 <code>quant/psy/_skeleton.html</code> 的某处正则锚点失配，修对应位置的正则即可（骨架只读，不可改数值）。</p>
 
 <h3>④ 自下而上选股（可选，每日一期）</h3>
 <div class="card">
