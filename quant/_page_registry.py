@@ -105,6 +105,14 @@ FAMILIES = [
          entry='picks/index.html', script='build_picks.py', freq='daily',
          dated=False, start=None, date_re=None, need='同 picks'),
 
+    dict(key='highwin', label='高胜率候选池（每日多因子扫描）',
+         patterns=['picks/highwin_*.html'],
+         entry='picks/index.html',
+         script='build_highwin_0914.py;gen_highwin.py',
+         freq='daily', dated=True, start='20260914',
+         date_re=r'(\d{8})',
+         need='基底=MACD水上金叉池(macd_scan_{DATE}.json)；增强=data_quote→_raw_extract/quote_{DATE}.json、data_technical→tech、data_chip→chip + sector_daily + lhb + exec_chg + block_chg'),
+
     dict(key='tplus', label='做T池日页', patterns=['tplus/tplus-*.html'],
          entry='tplus/index.html', script='build_tplus.py', freq='daily',
          dated=True, start='20260910', date_re=r'(\d{4}-\d{2}-\d{2})',
