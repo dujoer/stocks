@@ -302,7 +302,7 @@ def main():
 
 <div class='meta'>
 交易日 <b>{DATE}</b> ｜ 接口快照日 <b>{d.get('snapDate') or DATE}</b><br>
-数据口径：westock 事件 <b>大宗交易一月内（block_past_30）</b>中按 <b>TradeDay={DATE.replace('-','')}</b> 筛选，
+数据口径：东方财富 <b>RPT_DATA_BLOCKTRADE</b>（盘后公开披露大宗交易）按 <b>TRADE_DATE={DATE}</b> 筛选，
 共 <b>{d['count']}</b> 笔、覆盖 <b>{d['stockCount']}</b> 只股票、合计 <b>{yi(d['totalValue'])}</b> 亿元；
 「当日涨跌」为交易日行情快照（已补齐 <b>{d.get('quoteMatched',0)}/{d['count']}</b> 笔）。
 折溢价为相对当日收盘价：<b>正=折价成交</b>，<b>负=溢价成交</b>。
@@ -324,7 +324,7 @@ def main():
 </div>
 
 <footer>
-数据来源：腾讯自选股 <b>westock-mcp</b>（盘后公开数据）。<br>
+数据来源：东方财富数据中心 <b>RPT_DATA_BLOCKTRADE</b>（盘后公开披露，与历史区间逐字段核验一致）。<br>
 本页面由 A股量化助理自动生成 · 仅供参考，<b>不构成投资建议</b> · 市场有风险，投资需谨慎。
 </footer>
 </div>
@@ -421,7 +421,7 @@ def build_index():
   <div class='empty' style='padding:8px;color:#9aa2ad'>提示：点击表头可排序</div>
 </div>
 <footer>
-数据来源：腾讯自选股 <b>westock-mcp</b>（盘后公开数据）。<br>
+数据来源：东方财富数据中心 <b>RPT_DATA_BLOCKTRADE</b>（盘后公开披露，与历史区间逐字段核验一致）。<br>
 本页面由 A股量化助理自动生成 · 仅供参考，<b>不构成投资建议</b> · 市场有风险，投资需谨慎。
 </footer>
 </div>
