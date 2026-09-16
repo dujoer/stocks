@@ -248,6 +248,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 
 
+
 <div class="wrap">
 <header class="top">
   <div class="kicker">A股量化助理 · 每日盘后</div>
@@ -390,7 +391,10 @@ python _coverage_check.py --until {DATE}   # 校验 reversal 族 0 缺口、0 �
 <div class="card">
 <p>三层漏斗每日重扫，输出「趋势转多 × 资金进场」共振的强势候选（非个股推荐）：</p>
 <pre># 1) Agent 经 westock-mcp 实拉并落盘（或复用既有 macd_raw_*.json）
-python quant/macd_build.py --raw      # 读 macd_raw_pool/tech/flow_{DATE}.json → 水上金叉 + 20日净流入为正
+python quant/macd_build.py {YYYYMMDD} --raw   # 读 macd_raw_pool/tech/flow_{DATE}.json → 水上金叉 + 20日净流入为正
+python quant/build_macd_extra.py --date {DATE} # ← 必跑：生成增强诊断列（52周分位/量比/换手/5日主力/归一化强度/获利盘/集中度）
+python quant/macd_build.py {YYYYMMDD} --raw   # 带上 extra 复算并入 macd_scan_{YYYYMMDD}.json
+python quant/gen_macd.py {YYYYMMDD}
 # 1b) 增强诊断列（记录项，不参与筛选）：另拉 data_quote + data_chip（对最终 35~51 只，约 2 次调用）
 #     落 quant/macd_extra_{DATE}.json（字段 pos52/量比/换手/5D主力/归一化强度/60日涨幅/获利盘/集中度）
 python _build_macd_extra_{DATE}.py   # 或由 Agent 直接按同一结构写盘（模板见 _build_macd_extra_0911.py）

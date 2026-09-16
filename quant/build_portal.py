@@ -581,16 +581,22 @@ update_steps = [
     ("⑥ 群体心理风险雷达（每日必做 · 已全自动化）", "<code>python quant/build_psychology.py --date {DATE}</code>（节假日用 <code>--next {NEXT}</code>）。读①②③④⑤ 的产物自动出页 + 写入索引 + 累积 <code>quant/psy/history.json</code>；<b>旧的手抄文案法 <code>_build_*_{MMDD}.py</code> 已废弃</b>。"),
     ("⑦ 个股信号池（每日 · 双轨）", "<code>python quant/gen_picks.py --date {DATE} --window 20 --top 40</code>（纯本地三路信号）→ agent 经 MCP 按 <code>_codes_{DATE}.txt</code> 以 25 只/批补拉 quote/technical/chip/fund_flow/margin/hot → <code>python quant/build_picks.py --date {DATE}</code> → <code>python quant/backtest_picks.py</code>（累积胜率）。<b><code>quotes_{DATE}.json</code> 缺失会导致 0 行输出</b>。"),
     ("⑧ 做T池（每日 · 底仓网格）", "<code>python quant/gen_tplus.py --date {DATE}</code>（本地 q2_full 机构底仓池，约 848 只）→ 补拉 <code>data_quote</code> + <code>data_kline</code>（约 848×60 根，<b>数据量最大，建议单独跑一轮</b>）→ <code>python quant/build_tplus.py --date {DATE}</code>。"),
-    ("⑨ 反转 / MACD / 高胜率（每日扫描）", "三者均以当日 <code>tool_filter</code> 实拉落盘后再渲染：<code>python quant/gen_watchlist.py {DATE}</code> / <code>python quant/macd_build.py --raw</code> + <code>python quant/gen_macd.py {DATE}</code> / <code>python quant/build_highwin.py --date {DATE}</code> + <code>python quant/gen_highwin.py --date {DATE}</code>。"),
+    ("⑨ 反转 / MACD / 高胜率（每日扫描）", "三者均以当日 <code>tool_filter</code> 实拉落盘后再渲染：<code>python quant/gen_watchlist.py {DATE}</code> / <code>python quant/macd_build.py {DS} --raw</code> + <code>python quant/build_macd_extra.py --date {DATE}</code> + <code>python quant/macd_build.py {DS} --raw</code> + <code>python quant/gen_macd.py {DS}</code> / <code>python quant/build_highwin.py --date {DATE}</code> + <code>python quant/gen_highwin.py --date {DATE}</code>。<b>增强诊断列（52周分位 / 量比 / 换手 / 5日主力 / 归一化强度 / 获利盘 / 集中度）由 <code>build_macd_extra.py</code> 经 MCP 实拉 data_quote + data_chip + data_fund_flow 生成</b>，必须在 <code>macd_build.py</code> 之前跑，否则该表整列显示「无增强数据」；<b>高胜率须早于 <code>build_picks.py</code></b>，否则 picks/index 入链停在上期。"),
     ("⑩ 当日要闻", "<code>data_hot(kind=news)</code> 榜单落 <code>quant/_news_seed/{DATE}.json</code> → <code>python quant/add_news.py --date {DATE}</code>（可加 <code>--expect 50</code> 校验条数）。<b>不再每天新建一个脚本</b>。"),
     ("⑪ 数据库与门户重建", "<code>python quant/db_update.py {DATE}</code> → <code>python quant/db_export.py</code> → <code>python quant/build_portal.py</code> → <code>python quant/build_sections.py</code> → <code>python quant/_apply_theme.py</code>。门户卡片自动带出最新日期与新鲜度；<b>凡显示「非当日」的卡片即为漏跑项，须当天补齐或诚实标注降级</b>。"),
     ("⑫ 校验与推送", "合规扫描（产物内不得出现个人持有信息、账户盈亏等敏感内容）；<code>python quant/_link_check.py</code> 须 0 断链、<code>python quant/_coverage_check.py --until {DATE}</code> 无新增缺口、<code>python quant/_js_check.py --all</code> 通过；推送须<b>关闭沙箱</b>执行 <code>python quant/_push_lhb.py</code> → <code>python quant/_sync_all.py</code> 收敛 → <code>python quant/_curl_gate.py</code> 抽检核心页 200。"),
 ]
 
+_LATEST = TODAY.strftime("%Y-%m-%d")
 steps_html = "\n".join(
     f"<div class='step'><div class='no'>{i+1}</div><div><b>{t}</b><br><span class='sd'>{d}</span></div></div>"
     for i, (t, d) in enumerate(update_steps)
 )
+# 之前 {DATE} / {DS} / {NEXT} 占位符从未被替换，会原样输出到门户页面 —— 这里统一落地
+steps_html = (steps_html
+              .replace("{DATE}", _LATEST)
+              .replace("{DS}", TODAY.strftime("%Y%m%d"))
+              .replace("{NEXT}", (TODAY + __import__("datetime").timedelta(days=1)).strftime("%Y-%m-%d")))
 
 # ---- 合并自原 build_sections.py 的参考信息 ----
 RELATIONSHIPS = [
