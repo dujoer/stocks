@@ -1,0 +1,480 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MACD 水上金叉 + 20日主力净流入 · 2026-09-16</title><style>.wrap{max-width:1180px}
+h1{font-size:23px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+h2{font-size:18px;font-weight:600;margin:28px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--accent)}
+h3{font-size:15px;font-weight:600;margin:18px 0 8px}
+.sub{color:var(--muted);font-size:13px;margin-bottom:8px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:12px 0;
+  box-shadow:0 1px 2px rgba(60,64,67,.10)}
+.box{border-left:4px solid var(--accent);background:var(--accent-soft);padding:14px 18px;border-radius:0 10px 10px 0;margin:14px 0}
+.box.gold{border-color:var(--accent);background:var(--accent-soft)}
+.box.red{border-color:var(--green);background:#e6f4ea}
+.box.amber{border-color:#e37400;background:#fef7e0}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line-2);text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:11.5px;background:var(--hover)}
+tbody tr:hover{background:var(--hover)}
+.num{font-variant-numeric:tabular-nums}
+.up{color:var(--red)}.dn{color:var(--green)}.am{color:var(--accent)}
+.warn{color:#a8071a;font-weight:600}.amber-t{color:#b06000;font-weight:600}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;margin:1px 2px;white-space:nowrap}
+.tag.r{background:#fce8e6;color:#a8071a}
+.tag.y{background:#fef7e0;color:#8a6d00}
+.tag.g{background:#e6f4ea;color:#137333}
+.note{font-size:12px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px dashed var(--line-2)}
+.arch{font-size:13px;margin:4px 0}
+.arch a{color:var(--accent);text-decoration:none}
+.arch a:hover{text-decoration:underline}
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
+ul{margin:8px 0;padding-left:20px}li{margin:4px 0}
+.kpi{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.kpi div{flex:1;min-width:120px;background:var(--hover);border-radius:10px;padding:10px 14px}
+.kpi b{display:block;font-size:20px;color:var(--accent)}
+.kpi span{font-size:12px;color:var(--muted)}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:78vh;overflow-y:auto}
+.scroll table{min-width:1180px}
+thead th{position:sticky;top:0;z-index:2}
+th[data-k]{cursor:pointer;user-select:none}
+th[data-k]:hover{color:var(--accent)}
+th.sorted-asc:after{content:" ▴";color:var(--accent)}
+th.sorted-desc:after{content:" be";color:var(--accent)}
+.num{text-align:right}
+.hist{display:inline-block;font-size:10.5px;font-weight:700;color:#137333;background:#e6f4ea;border:1px solid #b7e1c3;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
+.newb{display:inline-block;font-size:10.5px;font-weight:700;color:#1a73e8;background:#e8f0fe;border:1px solid #c6dafc;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
+.histcol{white-space:normal;min-width:158px;max-width:215px}
+.note-inline{color:var(--muted)}
+.cmp{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.cmp div{flex:1;min-width:130px;border-radius:10px;padding:10px 14px;background:var(--hover)}
+.cmp b{display:block;font-size:19px}
+.cmp span{font-size:12px;color:var(--muted)}
+.cmp .cnew b{color:#1a73e8}.cmp .ccont b{color:#137333}.cmp .cout b{color:#a8071a}
+</style><!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  .navgrp{ padding:5px 6px 5px 5px !important; }
+}
+
+</style><!--/WB_THEME--></head>
+<body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='index.html'>MACD金叉</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div><div class="wrap">
+<h1>MACD 水上金叉 + 20 日主力净流入 · 候选池</h1>
+<div class="sub">数据基准：2026-09-16 收盘｜ 方法：主力流入初筛 → 水上金叉 → 20 日净流入为正 ｜ 全市场 2321 → 最终 37 只</div>
+
+<div class="box gold"><b>一句话：</b>本批经三层漏斗，全市场约 2321 只主力流入股中，仅 <b>37 只</b>同时满足
+<b>MACD 零轴上方金叉</b> 与 <b>20 日主力净流入为正</b>。这两个条件同时成立，意味着「趋势已转多 + 资金持续进场」，是相对稀缺的强势共振组合。</div>
+
+<div class='kpi'><div><b class='num'>2321</b><span>全市场主力流入初筛（&gt;0.3亿）</span></div><div><b class='num'>47</b><span>技术验证·水上金叉</span></div><div><b class='num'>37</b><span>20日净流入为正·最终入选</span></div><div><b class='num'>2026-09-16</b><span>数据基准（收盘）</span></div></div>
+
+<h2>一、筛选口径（三层漏斗）</h2>
+<div class='box' style='border-color:var(--accent);background:var(--accent-soft)'><b>初筛 · 主力流入池</b><br>westock tool_filter：preset=main_inflow，min_inflow=0.3 亿，market=hs。全市场约 2321 只满足，取前 200 进入技术验证。</div><div class='box' style='border-color:var(--accent);background:var(--accent-soft)'><b>技术 · 水上金叉</b><br>data_technical 取 MACD：要求 DIF &gt; 0 且 DEA &gt; 0 且 MACD 红柱 &gt; 0。三者同时在零轴上方 = 多头趋势已确立的真金叉，区别于零轴下方的「水下金叉」（仅是下跌中继反弹）。</div><div class='box' style='border-color:var(--accent);background:var(--accent-soft)'><b>资金 · 20 日净流入为正</b><br>data_fund_flow 取 MainNetFlow20D：要求 20 日主力净流入 &gt; 0。剔除「当日拉升热、近 20 日却在撤」的伪强势（如亨通光电 20 日净流出 −41 亿、风语筑 −1.6 亿，均被剔除）。</div>
+
+<h2>二、与上一期对比（2026-09-15 → 2026-09-16）</h2><div class='cmp'><div class='cnew'><b>27</b><span>本期新进（上期不在池内）</span></div><div class='ccont'><b>10</b><span>连续在榜（两期同时入选）</span></div><div class='cout'><b>29</b><span>上期已退出（本期不再满足）</span></div><div><b>39 → 37</b><span>入选数变化</span></div></div><div class='note'>名称后的 <span class='newb'>新</span> 蓝徽标 = 本期<b>首次入选</b>；<span class='hist'>09-11</span> 绿徽标 = 该标的<b>此前（不含今日）</b>曾入选，悬停可看全部记录；对应「历史入选」列（可排序）列出全部日期与池别（MACD 观察池 / 信号池双轨）。</div><h3>上期已退出（29 只 · 2026-09-15 在池、本期不再满足）</h3><div class='card'><div class='scroll' style='max-height:44vh'><table class='sortable' data-wb><thead><tr><th data-k='code' data-t='s'>代码</th><th data-k='name' data-t='s'>名称</th><th data-k='f20' data-t='n'>上期20日主力(亿)</th><th data-k='chg' data-t='n'>上期涨跌幅</th><th data-k='rank' data-t='n'>上期主力排名</th></tr></thead><tbody><tr><td class='am num' data-v='sh603186'>sh603186</td><td>华正新材</td><td class='num' data-v='22.99'>+22.99</td><td class='num' data-v='10.0'>+10.00%</td><td class='num' data-v='3'>3</td></tr><tr><td class='am num' data-v='sz002636'>sz002636</td><td>金安国纪</td><td class='num' data-v='12.17'>+12.17</td><td class='num' data-v='1.81'>+1.81%</td><td class='num' data-v='70'>70</td></tr><tr><td class='am num' data-v='sh601872'>sh601872</td><td>招商轮船</td><td class='num' data-v='9.6'>+9.60</td><td class='num' data-v='2.5'>+2.50%</td><td class='num' data-v='69'>69</td></tr><tr><td class='am num' data-v='sh603920'>sh603920</td><td>世运电路</td><td class='num' data-v='7.67'>+7.67</td><td class='num' data-v='-2.23'>-2.23%</td><td class='num' data-v='110'>110</td></tr><tr><td class='am num' data-v='sh603938'>sh603938</td><td>三孚股份</td><td class='num' data-v='7.34'>+7.34</td><td class='num' data-v='6.43'>+6.43%</td><td class='num' data-v='72'>72</td></tr><tr><td class='am num' data-v='sz002897'>sz002897</td><td>意华股份</td><td class='num' data-v='7.31'>+7.31</td><td class='num' data-v='5.04'>+5.04%</td><td class='num' data-v='93'>93</td></tr><tr><td class='am num' data-v='sz300395'>sz300395</td><td>菲利华</td><td class='num' data-v='6.76'>+6.76</td><td class='num' data-v='1.56'>+1.56%</td><td class='num' data-v='99'>99</td></tr><tr><td class='am num' data-v='sz300499'>sz300499</td><td>高澜股份</td><td class='num' data-v='6.43'>+6.43</td><td class='num' data-v='3.16'>+3.16%</td><td class='num' data-v='136'>136</td></tr><tr><td class='am num' data-v='sh603115'>sh603115</td><td>海星股份</td><td class='num' data-v='4.26'>+4.26</td><td class='num' data-v='5.82'>+5.82%</td><td class='num' data-v='132'>132</td></tr><tr><td class='am num' data-v='sz002212'>sz002212</td><td>天融信</td><td class='num' data-v='4.21'>+4.21</td><td class='num' data-v='5.0'>+5.00%</td><td class='num' data-v='96'>96</td></tr><tr><td class='am num' data-v='sh601579'>sh601579</td><td>会稽山</td><td class='num' data-v='4.14'>+4.14</td><td class='num' data-v='10.0'>+10.00%</td><td class='num' data-v='100'>100</td></tr><tr><td class='am num' data-v='sh688519'>sh688519</td><td>南亚新材</td><td class='num' data-v='3.85'>+3.85</td><td class='num' data-v='4.55'>+4.55%</td><td class='num' data-v='83'>83</td></tr><tr><td class='am num' data-v='sh688333'>sh688333</td><td>铂力特</td><td class='num' data-v='3.61'>+3.61</td><td class='num' data-v='-0.51'>-0.51%</td><td class='num' data-v='128'>128</td></tr><tr><td class='am num' data-v='sh603353'>sh603353</td><td>和顺石油</td><td class='num' data-v='3.41'>+3.41</td><td class='num' data-v='10.01'>+10.01%</td><td class='num' data-v='98'>98</td></tr><tr><td class='am num' data-v='sz300806'>sz300806</td><td>斯迪克</td><td class='num' data-v='2.99'>+2.99</td><td class='num' data-v='9.35'>+9.35%</td><td class='num' data-v='17'>17</td></tr><tr><td class='am num' data-v='sh600792'>sh600792</td><td>云煤能源</td><td class='num' data-v='1.93'>+1.93</td><td class='num' data-v='7.09'>+7.09%</td><td class='num' data-v='46'>46</td></tr><tr><td class='am num' data-v='sh601890'>sh601890</td><td>亚星锚链</td><td class='num' data-v='1.76'>+1.76</td><td class='num' data-v='1.43'>+1.43%</td><td class='num' data-v='160'>160</td></tr><tr><td class='am num' data-v='sh605162'>sh605162</td><td>新中港</td><td class='num' data-v='1.27'>+1.27</td><td class='num' data-v='10.0'>+10.00%</td><td class='num' data-v='38'>38</td></tr><tr><td class='am num' data-v='sz002734'>sz002734</td><td>利民股份</td><td class='num' data-v='1.13'>+1.13</td><td class='num' data-v='2.03'>+2.03%</td><td class='num' data-v='183'>183</td></tr><tr><td class='am num' data-v='sz300221'>sz300221</td><td>银禧科技</td><td class='num' data-v='0.89'>+0.89</td><td class='num' data-v='4.79'>+4.79%</td><td class='num' data-v='158'>158</td></tr><tr><td class='am num' data-v='sh688216'>sh688216</td><td>气派科技</td><td class='num' data-v='0.86'>+0.86</td><td class='num' data-v='15.93'>+15.93%</td><td class='num' data-v='133'>133</td></tr><tr><td class='am num' data-v='sz300850'>sz300850</td><td>新强联</td><td class='num' data-v='0.31'>+0.31</td><td class='num' data-v='7.01'>+7.01%</td><td class='num' data-v='127'>127</td></tr><tr><td class='am num' data-v='sh600163'>sh600163</td><td>中闽能源</td><td class='num' data-v='0.26'>+0.26</td><td class='num' data-v='9.97'>+9.97%</td><td class='num' data-v='37'>37</td></tr><tr><td class='am num' data-v='sz301630'>sz301630</td><td>同宇新材</td><td class='num' data-v='0.26'>+0.26</td><td class='num' data-v='7.6'>+7.60%</td><td class='num' data-v='187'>187</td></tr><tr><td class='am num' data-v='sh600228'>sh600228</td><td>返利科技</td><td class='num' data-v='0.16'>+0.16</td><td class='num' data-v='6.21'>+6.21%</td><td class='num' data-v='169'>169</td></tr><tr><td class='am num' data-v='sh601218'>sh601218</td><td>吉鑫科技</td><td class='num' data-v='0.1'>+0.10</td><td class='num' data-v='9.98'>+9.98%</td><td class='num' data-v='94'>94</td></tr><tr><td class='am num' data-v='sz002362'>sz002362</td><td>汉王科技</td><td class='num' data-v='0.09'>+0.09</td><td class='num' data-v='9.99'>+9.99%</td><td class='num' data-v='117'>117</td></tr><tr><td class='am num' data-v='sh603138'>sh603138</td><td>海量数据</td><td class='num' data-v='0.08'>+0.08</td><td class='num' data-v='5.47'>+5.47%</td><td class='num' data-v='58'>58</td></tr><tr><td class='am num' data-v='sh603686'>sh603686</td><td>福龙马</td><td class='num' data-v='0.07'>+0.07</td><td class='num' data-v='5.65'>+5.65%</td><td class='num' data-v='71'>71</td></tr></tbody></table></div><div class='note'>退出 = 本期不再同时满足三层漏斗（<b>MACD 水上金叉破位</b>：DIF/DEA/柱 任一转负；或 <b>20 日主力净流入转负</b>）。对持仓者而言，这是比「新进」更该优先看的名单 —— 它对应 <b>趋势或资金已经转向</b> 的标的。</div></div>
+
+<h2>三、候选总表（37 只 · 默认按 20 日主力净流入排序 · <span style="color:var(--accent)">点击任意列头切换排序</span>）</h2>
+<div class="card"><div class="scroll"><table class="sortable" data-wb>
+<thead><tr><th data-k="code" data-t="s">代码</th><th data-k="name" data-t="s">名称</th><th data-k="hist" data-t="s">历史入选</th><th data-k="close" data-t="n">现价</th><th data-k="chg" data-t="n">涨跌幅</th><th data-k="dif" data-t="n">DIF</th><th data-k="dea" data-t="n">DEA</th><th data-k="macd" data-t="n">MACD柱</th><th data-k="f20" data-t="n">20日主力(亿)</th><th data-k="fd" data-t="n">当日主力(亿)</th><th data-k="circ" data-t="n">流通占比%</th><th data-k="rank" data-t="n">主力排名</th></tr></thead>
+<tbody><tr><td class='am num' data-v='sh600183'>sh600183</td><td>生益科技<span class='hist' title='入选记录：2026-09-15 MACD观察池'>09-15</span></td><td class='histcol' data-v='2026-09-15'><span class='tag g'>09-15 MACD</span></td><td class='num' data-v='154.48'>154.48</td><td class='num up' data-v='2.82'>+2.82%</td><td class='num' data-v='4.3311'>4.331</td><td class='num' data-v='3.5306'>3.531</td><td class='num up' data-v='1.601'>1.601</td><td class='num up' data-v='28.23'>+28.23</td><td class='num up' data-v='+7.1161'>+7.12</td><td class='num' data-v='0.19'>0.19</td><td class='num am' data-v='14'>14</td></tr><tr><td class='am num' data-v='sh688801'>sh688801</td><td>C燧原-U<span class='hist' title='入选记录：2026-09-15 MACD观察池'>09-15</span></td><td class='histcol' data-v='2026-09-15'><span class='tag g'>09-15 MACD</span></td><td class='num' data-v='477.0'>477.0</td><td class='num up' data-v='7.2'>+7.20%</td><td class='num' data-v='10.6078'>10.608</td><td class='num' data-v='3.2808'>3.281</td><td class='num up' data-v='14.6539'>14.654</td><td class='num up' data-v='26.19'>+26.19</td><td class='num up' data-v='+0.8165'>+0.82</td><td class='num' data-v='0.96'>0.96</td><td class='num am' data-v='198'>198</td></tr><tr><td class='am num' data-v='sh688835'>sh688835</td><td>高凯技术<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='333.0'>333.0</td><td class='num up' data-v='8.16'>+8.16%</td><td class='num' data-v='16.3914'>16.391</td><td class='num' data-v='11.654'>11.654</td><td class='num up' data-v='9.4749'>9.475</td><td class='num up' data-v='22.58'>+22.58</td><td class='num up' data-v='+2.8016'>+2.80</td><td class='num' data-v='4.48'>4.48</td><td class='num am' data-v='42'>42</td></tr><tr><td class='am num' data-v='sz002436'>sz002436</td><td>兴森科技<span class='hist' title='入选记录：2026-09-14 MACD观察池；2026-09-15 MACD观察池'>09-15</span></td><td class='histcol' data-v='2026-09-15'><span class='tag g'>09-14 MACD</span> <span class='tag g'>09-15 MACD</span></td><td class='num' data-v='42.8'>42.8</td><td class='num up' data-v='4.75'>+4.75%</td><td class='num' data-v='1.6753'>1.675</td><td class='num' data-v='0.942'>0.942</td><td class='num up' data-v='1.4665'>1.466</td><td class='num up' data-v='17.84'>+17.84</td><td class='num up' data-v='+4.6434'>+4.64</td><td class='num' data-v='0.71'>0.71</td><td class='num am' data-v='22'>22</td></tr><tr><td class='am num' data-v='sh601869'>sh601869</td><td>长飞光纤<span class='hist' title='入选记录：2026-09-10 信号池·机构轨；2026-09-10 信号池·游资轨；2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-15 MACD观察池'>09-15</span></td><td class='histcol' data-v='2026-09-15'><span class='tag y'>09-10 机构轨</span> <span class='tag y'>09-10 游资轨</span> <span class='tag g'>09-11 MACD</span> <span class='tag g'>09-14 MACD</span> <span class='tag g'>09-15 MACD</span></td><td class='num' data-v='461.0'>461.0</td><td class='num dn' data-v='-0.22'>-0.22%</td><td class='num' data-v='24.3075'>24.308</td><td class='num' data-v='18.4063'>18.406</td><td class='num up' data-v='11.8025'>11.803</td><td class='num up' data-v='15.88'>+15.88</td><td class='num up' data-v='+1.5200'>+1.52</td><td class='num' data-v='0.08'>0.08</td><td class='num am' data-v='107'>107</td></tr><tr><td class='am num' data-v='sz002463'>sz002463</td><td>沪电股份<span class='hist' title='入选记录：2026-09-15 MACD观察池'>09-15</span></td><td class='histcol' data-v='2026-09-15'><span class='tag g'>09-15 MACD</span></td><td class='num' data-v='127.8'>127.8</td><td class='num up' data-v='1.57'>+1.57%</td><td class='num' data-v='1.988'>1.988</td><td class='num' data-v='1.1301'>1.130</td><td class='num up' data-v='1.7158'>1.716</td><td class='num up' data-v='14.66'>+14.66</td><td class='num up' data-v='+0.9299'>+0.93</td><td class='num' data-v='0.04'>0.04</td><td class='num am' data-v='170'>170</td></tr><tr><td class='am num' data-v='sz002579'>sz002579</td><td>中京电子<span class='newb' title='本期首次入选（上一期不在池内）'>新</span><span class='hist' title='入选记录：2026-09-11 信号池·机构轨；2026-09-14 MACD观察池；2026-09-15 信号池·机构轨'>09-15</span></td><td class='histcol' data-v='2026-09-15'><span class='tag y'>09-11 机构轨</span> <span class='tag g'>09-14 MACD</span> <span class='tag y'>09-15 机构轨</span></td><td class='num' data-v='19.65'>19.65</td><td class='num up' data-v='5.65'>+5.65%</td><td class='num' data-v='1.1378'>1.138</td><td class='num' data-v='0.6243'>0.624</td><td class='num up' data-v='1.027'>1.027</td><td class='num up' data-v='12.11'>+12.11</td><td class='num up' data-v='+2.3769'>+2.38</td><td class='num' data-v='2.07'>2.07</td><td class='num am' data-v='54'>54</td></tr><tr><td class='am num' data-v='sh603083'>sh603083</td><td>剑桥科技<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='223.63'>223.63</td><td class='num up' data-v='3.34'>+3.34%</td><td class='num' data-v='12.9509'>12.951</td><td class='num' data-v='10.4445'>10.444</td><td class='num up' data-v='5.0127'>5.013</td><td class='num up' data-v='11.15'>+11.15</td><td class='num up' data-v='+2.5854'>+2.59</td><td class='num' data-v='0.42'>0.42</td><td class='num am' data-v='48'>48</td></tr><tr><td class='am num' data-v='sz000592'>sz000592</td><td>平潭发展<span class='newb' title='本期首次入选（上一期不在池内）'>新</span><span class='hist' title='入选记录：2026-09-14 MACD观察池'>09-14</span></td><td class='histcol' data-v='2026-09-14'><span class='tag g'>09-14 MACD</span></td><td class='num' data-v='8.71'>8.71</td><td class='num up' data-v='9.97'>+9.97%</td><td class='num' data-v='0.4937'>0.494</td><td class='num' data-v='0.3697'>0.370</td><td class='num up' data-v='0.248'>0.248</td><td class='num up' data-v='9.42'>+9.42</td><td class='num up' data-v='+7.8939'>+7.89</td><td class='num' data-v='4.73'>4.73</td><td class='num am' data-v='12'>12</td></tr><tr><td class='am num' data-v='sz003006'>sz003006</td><td>百亚股份<span class='hist' title='入选记录：2026-09-14 MACD观察池；2026-09-15 MACD观察池'>09-15</span></td><td class='histcol' data-v='2026-09-15'><span class='tag g'>09-14 MACD</span> <span class='tag g'>09-15 MACD</span></td><td class='num' data-v='19.42'>19.42</td><td class='num up' data-v='6.82'>+6.82%</td><td class='num' data-v='1.232'>1.232</td><td class='num' data-v='0.7121'>0.712</td><td class='num up' data-v='1.0398'>1.040</td><td class='num up' data-v='7.18'>+7.18</td><td class='num up' data-v='+1.8670'>+1.87</td><td class='num' data-v='2.24'>2.24</td><td class='num am' data-v='82'>82</td></tr><tr><td class='am num' data-v='sz300903'>sz300903</td><td>科翔股份<span class='newb' title='本期首次入选（上一期不在池内）'>新</span><span class='hist' title='入选记录：2026-09-14 MACD观察池'>09-14</span></td><td class='histcol' data-v='2026-09-14'><span class='tag g'>09-14 MACD</span></td><td class='num' data-v='111.95'>111.95</td><td class='num up' data-v='2.31'>+2.31%</td><td class='num' data-v='7.6038'>7.604</td><td class='num' data-v='5.4933'>5.493</td><td class='num up' data-v='4.2211'>4.221</td><td class='num up' data-v='6.02'>+6.02</td><td class='num up' data-v='+1.5302'>+1.53</td><td class='num' data-v='0.39'>0.39</td><td class='num am' data-v='105'>105</td></tr><tr><td class='am num' data-v='sh603011'>sh603011</td><td>合锻智能<span class='hist' title='入选记录：2026-09-15 MACD观察池'>09-15</span></td><td class='histcol' data-v='2026-09-15'><span class='tag g'>09-15 MACD</span></td><td class='num' data-v='28.35'>28.35</td><td class='num up' data-v='4.69'>+4.69%</td><td class='num' data-v='0.9797'>0.980</td><td class='num' data-v='0.8277'>0.828</td><td class='num up' data-v='0.304'>0.304</td><td class='num up' data-v='5.99'>+5.99</td><td class='num up' data-v='+2.0109'>+2.01</td><td class='num' data-v='1.43'>1.43</td><td class='num am' data-v='73'>73</td></tr><tr><td class='am num' data-v='sh688205'>sh688205</td><td>德科立<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='219.0'>219.0</td><td class='num up' data-v='5.29'>+5.29%</td><td class='num' data-v='16.9865'>16.986</td><td class='num' data-v='14.5082'>14.508</td><td class='num up' data-v='4.9565'>4.957</td><td class='num up' data-v='4.75'>+4.75</td><td class='num up' data-v='+1.6765'>+1.68</td><td class='num' data-v='0.48'>0.48</td><td class='num am' data-v='97'>97</td></tr><tr><td class='am num' data-v='sh601208'>sh601208</td><td>东材科技<span class='hist' title='入选记录：2026-09-15 MACD观察池'>09-15</span></td><td class='histcol' data-v='2026-09-15'><span class='tag g'>09-15 MACD</span></td><td class='num' data-v='54.31'>54.31</td><td class='num up' data-v='10.01'>+10.01%</td><td class='num' data-v='0.9882'>0.988</td><td class='num' data-v='0.4992'>0.499</td><td class='num up' data-v='0.9779'>0.978</td><td class='num up' data-v='4.6'>+4.60</td><td class='num up' data-v='+7.6511'>+7.65</td><td class='num' data-v='1.39'>1.39</td><td class='num am' data-v='13'>13</td></tr><tr><td class='am num' data-v='sh600330'>sh600330</td><td>天通股份<span class='newb' title='本期首次入选（上一期不在池内）'>新</span><span class='hist' title='入选记录：2026-09-14 MACD观察池'>09-14</span></td><td class='histcol' data-v='2026-09-14'><span class='tag g'>09-14 MACD</span></td><td class='num' data-v='30.85'>30.85</td><td class='num up' data-v='6.27'>+6.27%</td><td class='num' data-v='1.3467'>1.347</td><td class='num' data-v='1.2795'>1.280</td><td class='num up' data-v='0.1344'>0.134</td><td class='num up' data-v='4.3'>+4.30</td><td class='num up' data-v='+4.4457'>+4.45</td><td class='num' data-v='1.17'>1.17</td><td class='num am' data-v='25'>25</td></tr><tr><td class='am num' data-v='sh600601'>sh600601</td><td>方正科技<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='15.18'>15.18</td><td class='num up' data-v='4.4'>+4.40%</td><td class='num' data-v='0.7956'>0.796</td><td class='num' data-v='0.6036'>0.604</td><td class='num up' data-v='0.3841'>0.384</td><td class='num up' data-v='3.97'>+3.97</td><td class='num up' data-v='+1.8637'>+1.86</td><td class='num' data-v='0.29'>0.29</td><td class='num am' data-v='83'>83</td></tr><tr><td class='am num' data-v='sz301071'>sz301071</td><td>力量钻石<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='69.44'>69.44</td><td class='num up' data-v='5.21'>+5.21%</td><td class='num' data-v='1.2'>1.200</td><td class='num' data-v='0.2365'>0.236</td><td class='num up' data-v='1.927'>1.927</td><td class='num up' data-v='3.43'>+3.43</td><td class='num up' data-v='+2.0789'>+2.08</td><td class='num' data-v='1.6'>1.60</td><td class='num am' data-v='71'>71</td></tr><tr><td class='am num' data-v='sh688700'>sh688700</td><td>东威科技<span class='hist' title='入选记录：2026-09-15 MACD观察池'>09-15</span></td><td class='histcol' data-v='2026-09-15'><span class='tag g'>09-15 MACD</span></td><td class='num' data-v='67.27'>67.27</td><td class='num up' data-v='2.37'>+2.37%</td><td class='num' data-v='1.4056'>1.406</td><td class='num' data-v='0.3328'>0.333</td><td class='num up' data-v='2.1457'>2.146</td><td class='num up' data-v='3.42'>+3.42</td><td class='num up' data-v='+1.0837'>+1.08</td><td class='num' data-v='0.54'>0.54</td><td class='num am' data-v='146'>146</td></tr><tr><td class='am num' data-v='sh688170'>sh688170</td><td>德龙激光<span class='hist' title='入选记录：2026-09-15 MACD观察池'>09-15</span></td><td class='histcol' data-v='2026-09-15'><span class='tag g'>09-15 MACD</span></td><td class='num' data-v='73.4'>73.4</td><td class='num up' data-v='6.59'>+6.59%</td><td class='num' data-v='4.2164'>4.216</td><td class='num' data-v='2.5372'>2.537</td><td class='num up' data-v='3.3584'>3.358</td><td class='num up' data-v='2.95'>+2.95</td><td class='num up' data-v='+0.8734'>+0.87</td><td class='num' data-v='1.15'>1.15</td><td class='num am' data-v='184'>184</td></tr><tr><td class='am num' data-v='sz300300'>sz300300</td><td>海峡创新<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='9.43'>9.43</td><td class='num up' data-v='10.81'>+10.81%</td><td class='num' data-v='0.3407'>0.341</td><td class='num' data-v='0.2571'>0.257</td><td class='num up' data-v='0.1671'>0.167</td><td class='num up' data-v='2.38'>+2.38</td><td class='num up' data-v='+1.2678'>+1.27</td><td class='num' data-v='2.02'>2.02</td><td class='num am' data-v='124'>124</td></tr><tr><td class='am num' data-v='sz301486'>sz301486</td><td>致尚科技<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='214.34'>214.34</td><td class='num up' data-v='20.0'>+20.00%</td><td class='num' data-v='6.9583'>6.958</td><td class='num' data-v='5.1347'>5.135</td><td class='num up' data-v='3.6472'>3.647</td><td class='num up' data-v='2.38'>+2.38</td><td class='num up' data-v='+2.5999'>+2.60</td><td class='num' data-v='1.66'>1.66</td><td class='num am' data-v='47'>47</td></tr><tr><td class='am num' data-v='sh600059'>sh600059</td><td>古越龙山<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='9.77'>9.77</td><td class='num up' data-v='10.02'>+10.02%</td><td class='num' data-v='0.2838'>0.284</td><td class='num' data-v='0.2203'>0.220</td><td class='num up' data-v='0.1269'>0.127</td><td class='num up' data-v='2.34'>+2.34</td><td class='num up' data-v='+1.4655'>+1.47</td><td class='num' data-v='1.65'>1.65</td><td class='num am' data-v='112'>112</td></tr><tr><td class='am num' data-v='sz002787'>sz002787</td><td>华源控股<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='25.4'>25.4</td><td class='num up' data-v='10.0'>+10.00%</td><td class='num' data-v='0.5243'>0.524</td><td class='num' data-v='0.3391'>0.339</td><td class='num up' data-v='0.3704'>0.370</td><td class='num up' data-v='2.11'>+2.11</td><td class='num up' data-v='+1.3452'>+1.35</td><td class='num' data-v='2.13'>2.13</td><td class='num am' data-v='119'>119</td></tr><tr><td class='am num' data-v='sz002300'>sz002300</td><td>太阳电缆<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='8.38'>8.38</td><td class='num up' data-v='9.97'>+9.97%</td><td class='num' data-v='0.2906'>0.291</td><td class='num' data-v='0.2418'>0.242</td><td class='num up' data-v='0.0976'>0.098</td><td class='num up' data-v='1.64'>+1.64</td><td class='num up' data-v='+1.8392'>+1.84</td><td class='num' data-v='3.04'>3.04</td><td class='num am' data-v='85'>85</td></tr><tr><td class='am num' data-v='sz300548'>sz300548</td><td>长芯博创<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='233.47'>233.47</td><td class='num up' data-v='12.95'>+12.95%</td><td class='num' data-v='6.5643'>6.564</td><td class='num' data-v='5.4408'>5.441</td><td class='num up' data-v='2.2469'>2.247</td><td class='num up' data-v='1.58'>+1.58</td><td class='num up' data-v='+1.5517'>+1.55</td><td class='num' data-v='0.23'>0.23</td><td class='num am' data-v='102'>102</td></tr><tr><td class='am num' data-v='sh601985'>sh601985</td><td>中国核电<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='9.1'>9.1</td><td class='num up' data-v='0.89'>+0.89%</td><td class='num' data-v='0.0559'>0.056</td><td class='num' data-v='0.0434'>0.043</td><td class='num up' data-v='0.0251'>0.025</td><td class='num up' data-v='1.58'>+1.58</td><td class='num up' data-v='+1.0693'>+1.07</td><td class='num' data-v='0.06'>0.06</td><td class='num am' data-v='147'>147</td></tr><tr><td class='am num' data-v='sz000993'>sz000993</td><td>闽东电力<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='18.48'>18.48</td><td class='num up' data-v='10.0'>+10.00%</td><td class='num' data-v='1.5504'>1.550</td><td class='num' data-v='0.7005'>0.701</td><td class='num up' data-v='1.6996'>1.700</td><td class='num up' data-v='1.58'>+1.58</td><td class='num up' data-v='+1.3371'>+1.34</td><td class='num' data-v='1.58'>1.58</td><td class='num am' data-v='120'>120</td></tr><tr><td class='am num' data-v='sz002218'>sz002218</td><td>拓日新能<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='4.42'>4.42</td><td class='num up' data-v='5.74'>+5.74%</td><td class='num' data-v='0.0777'>0.078</td><td class='num' data-v='0.0366'>0.037</td><td class='num up' data-v='0.0822'>0.082</td><td class='num up' data-v='1.54'>+1.54</td><td class='num up' data-v='+1.8146'>+1.81</td><td class='num' data-v='2.96'>2.96</td><td class='num am' data-v='88'>88</td></tr><tr><td class='am num' data-v='sz301123'>sz301123</td><td>奕东电子<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='80.43'>80.43</td><td class='num up' data-v='1.95'>+1.95%</td><td class='num' data-v='0.5892'>0.589</td><td class='num' data-v='0.3039'>0.304</td><td class='num up' data-v='0.5705'>0.571</td><td class='num up' data-v='1.38'>+1.38</td><td class='num up' data-v='+0.9222'>+0.92</td><td class='num' data-v='0.69'>0.69</td><td class='num am' data-v='172'>172</td></tr><tr><td class='am num' data-v='sh600644'>sh600644</td><td>乐山电力<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='10.38'>10.38</td><td class='num up' data-v='9.96'>+9.96%</td><td class='num' data-v='0.1438'>0.144</td><td class='num' data-v='0.0096'>0.010</td><td class='num up' data-v='0.2684'>0.268</td><td class='num up' data-v='1.1'>+1.10</td><td class='num up' data-v='+2.4599'>+2.46</td><td class='num' data-v='4.1'>4.10</td><td class='num am' data-v='52'>52</td></tr><tr><td class='am num' data-v='sz002383'>sz002383</td><td>合众思壮<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='8.16'>8.16</td><td class='num up' data-v='9.97'>+9.97%</td><td class='num' data-v='0.2495'>0.249</td><td class='num' data-v='0.187'>0.187</td><td class='num up' data-v='0.1251'>0.125</td><td class='num up' data-v='1.09'>+1.09</td><td class='num up' data-v='+1.7771'>+1.78</td><td class='num' data-v='2.94'>2.94</td><td class='num am' data-v='90'>90</td></tr><tr><td class='am num' data-v='sz002584'>sz002584</td><td>西陇科学<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='9.55'>9.55</td><td class='num up' data-v='10.02'>+10.02%</td><td class='num' data-v='0.1305'>0.131</td><td class='num' data-v='0.0389'>0.039</td><td class='num up' data-v='0.1832'>0.183</td><td class='num up' data-v='0.91'>+0.91</td><td class='num up' data-v='+1.3614'>+1.36</td><td class='num' data-v='2.96'>2.96</td><td class='num am' data-v='118'>118</td></tr><tr><td class='am num' data-v='sz301251'>sz301251</td><td>威尔高<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='81.78'>81.78</td><td class='num up' data-v='20.0'>+20.00%</td><td class='num' data-v='6.7066'>6.707</td><td class='num' data-v='4.6065'>4.606</td><td class='num up' data-v='4.2003'>4.200</td><td class='num up' data-v='0.81'>+0.81</td><td class='num up' data-v='+1.1119'>+1.11</td><td class='num' data-v='0.78'>0.78</td><td class='num am' data-v='144'>144</td></tr><tr><td class='am num' data-v='sz002303'>sz002303</td><td>美盈森<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='5.79'>5.79</td><td class='num up' data-v='10.08'>+10.08%</td><td class='num' data-v='0.1509'>0.151</td><td class='num' data-v='0.15'>0.150</td><td class='num up' data-v='0.0017'>0.002</td><td class='num up' data-v='0.74'>+0.74</td><td class='num up' data-v='+0.9722'>+0.97</td><td class='num' data-v='1.57'>1.57</td><td class='num am' data-v='164'>164</td></tr><tr><td class='am num' data-v='sz000753'>sz000753</td><td>漳州发展<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='5.5'>5.5</td><td class='num up' data-v='10.0'>+10.00%</td><td class='num' data-v='0.1261'>0.126</td><td class='num' data-v='0.1022'>0.102</td><td class='num up' data-v='0.0479'>0.048</td><td class='num up' data-v='0.22'>+0.22</td><td class='num up' data-v='+1.1436'>+1.14</td><td class='num' data-v='2.1'>2.10</td><td class='num am' data-v='142'>142</td></tr><tr><td class='am num' data-v='sz002068'>sz002068</td><td>黑猫股份<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='10.14'>10.14</td><td class='num up' data-v='9.98'>+9.98%</td><td class='num' data-v='0.4102'>0.410</td><td class='num' data-v='0.1939'>0.194</td><td class='num up' data-v='0.4327'>0.433</td><td class='num up' data-v='0.21'>+0.21</td><td class='num up' data-v='+1.9780'>+1.98</td><td class='num' data-v='2.65'>2.65</td><td class='num am' data-v='74'>74</td></tr><tr><td class='am num' data-v='sz002961'>sz002961</td><td>瑞达期货<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='histcol' data-v=''><span class='note-inline'>—</span></td><td class='num' data-v='20.97'>20.97</td><td class='num up' data-v='10.02'>+10.02%</td><td class='num' data-v='0.1519'>0.152</td><td class='num' data-v='0.1502'>0.150</td><td class='num up' data-v='0.0033'>0.003</td><td class='num up' data-v='0.17'>+0.17</td><td class='num up' data-v='+1.0179'>+1.02</td><td class='num' data-v='1.02'>1.02</td><td class='num am' data-v='159'>159</td></tr></tbody></table></div>
+<div class="note">读法：DIF/DEA/MACD柱 均为正 = 水上金叉；20日主力(亿) 与 当日主力(亿) 为正 = 资金净流入；流通占比% 越高说明主力介入越深；主力排名 = 全市场 20 日主力净流入名次（越小越强）。<b>涨跌幅以 data_quote 收盘口径为准</b>（初筛接口为盘中口径，已统一）。<br>
+<b>排序：</b>所有列均可点击表头排序（数值列按真实数值比较，不受 %、单位、文本干扰）；<b>历史入选</b>列按最近一次入选日期排序。</div></div>
+
+<h2>四、增强诊断列（0 只，记录项 · 不参与筛选）</h2>
+<div class="box amber"><b>为什么是「记录」而不是「筛选条件」：</b>目前仅有 1 期样本（37 只），若直接把阈值变成硬条件，等于用一次观测去拟合规则（过拟合）。
+因此本批先把这些字段<b>如实记录并标红</b>，累积 20~30 个交易日后回测各阈值的分组表现，再决定哪几条升级为硬条件。
+本表顺序与总表一致，便于对照。<b>本表同样支持点击表头排序。</b></div>
+<div class="card"><div class="scroll"><table class="sortable" data-wb>
+<thead><tr><th data-k="code" data-t="s">代码</th><th data-k="name" data-t="s">名称</th><th data-k="pos52" data-t="n">52周分位</th><th data-k="vr" data-t="n">量比</th><th data-k="turn" data-t="n">换手%</th><th data-k="mf5" data-t="n">5日主力(亿)</th><th data-k="norm" data-t="n">20日÷流通市值%</th><th data-k="chg60" data-t="n">60日涨幅</th><th data-k="profit" data-t="n">获利盘%</th><th data-k="conc" data-t="n">集中度90</th><th data-k="tag" data-t="s">解读</th></tr></thead>
+<tbody><tr><td class='am num' data-v='sh600183'>sh600183</td><td>生益科技<span class='hist' title='入选记录：2026-09-15 MACD观察池'>09-15</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh688801'>sh688801</td><td>C燧原-U<span class='hist' title='入选记录：2026-09-15 MACD观察池'>09-15</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh688835'>sh688835</td><td>高凯技术<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002436'>sz002436</td><td>兴森科技<span class='hist' title='入选记录：2026-09-14 MACD观察池；2026-09-15 MACD观察池'>09-15</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh601869'>sh601869</td><td>长飞光纤<span class='hist' title='入选记录：2026-09-10 信号池·机构轨；2026-09-10 信号池·游资轨；2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-15 MACD观察池'>09-15</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002463'>sz002463</td><td>沪电股份<span class='hist' title='入选记录：2026-09-15 MACD观察池'>09-15</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002579'>sz002579</td><td>中京电子<span class='newb' title='本期首次入选（上一期不在池内）'>新</span><span class='hist' title='入选记录：2026-09-11 信号池·机构轨；2026-09-14 MACD观察池；2026-09-15 信号池·机构轨'>09-15</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh603083'>sh603083</td><td>剑桥科技<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz000592'>sz000592</td><td>平潭发展<span class='newb' title='本期首次入选（上一期不在池内）'>新</span><span class='hist' title='入选记录：2026-09-14 MACD观察池'>09-14</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz003006'>sz003006</td><td>百亚股份<span class='hist' title='入选记录：2026-09-14 MACD观察池；2026-09-15 MACD观察池'>09-15</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz300903'>sz300903</td><td>科翔股份<span class='newb' title='本期首次入选（上一期不在池内）'>新</span><span class='hist' title='入选记录：2026-09-14 MACD观察池'>09-14</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh603011'>sh603011</td><td>合锻智能<span class='hist' title='入选记录：2026-09-15 MACD观察池'>09-15</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh688205'>sh688205</td><td>德科立<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh601208'>sh601208</td><td>东材科技<span class='hist' title='入选记录：2026-09-15 MACD观察池'>09-15</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh600330'>sh600330</td><td>天通股份<span class='newb' title='本期首次入选（上一期不在池内）'>新</span><span class='hist' title='入选记录：2026-09-14 MACD观察池'>09-14</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh600601'>sh600601</td><td>方正科技<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz301071'>sz301071</td><td>力量钻石<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh688700'>sh688700</td><td>东威科技<span class='hist' title='入选记录：2026-09-15 MACD观察池'>09-15</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh688170'>sh688170</td><td>德龙激光<span class='hist' title='入选记录：2026-09-15 MACD观察池'>09-15</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz300300'>sz300300</td><td>海峡创新<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz301486'>sz301486</td><td>致尚科技<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh600059'>sh600059</td><td>古越龙山<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002787'>sz002787</td><td>华源控股<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002300'>sz002300</td><td>太阳电缆<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz300548'>sz300548</td><td>长芯博创<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh601985'>sh601985</td><td>中国核电<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz000993'>sz000993</td><td>闽东电力<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002218'>sz002218</td><td>拓日新能<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz301123'>sz301123</td><td>奕东电子<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh600644'>sh600644</td><td>乐山电力<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002383'>sz002383</td><td>合众思壮<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002584'>sz002584</td><td>西陇科学<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz301251'>sz301251</td><td>威尔高<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002303'>sz002303</td><td>美盈森<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz000753'>sz000753</td><td>漳州发展<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002068'>sz002068</td><td>黑猫股份<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002961'>sz002961</td><td>瑞达期货<span class='newb' title='本期首次入选（上一期不在池内）'>新</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr></tbody></table></div>
+<div class="note"><b>阈值口径：</b>粗体/彩色为越界警示 —— <span class="warn">红</span>=高风险特征（高位追涨 / 缩量金叉 / 60日背离 / 近5日净流出），<span class="amber-t">橙</span>=需留意（位置偏高 / 换手过热 / 获利盘过高）。<br>
+<b>本批警示分布：</b>无。</div>
+<div class="note">字段来源：data_quote + data_chip + data_fund_flow（同一交易日收盘）。归一化强度 = 20 日主力净额 ÷ 流通市值 × 100，用于横向可比（绝对净额会被大盘股系统性放大）。</div></div>
+
+<h2>五、诊断列判定规则</h2>
+<div class="card"><table data-wb>
+<tr><th>字段</th><th>定义 / 来源字段</th><th>警示触发条件</th></tr>
+<tr><td>52 周分位</td><td>pos52 = (现价 − 52周低) ÷ (52周高 − 52周低)</td><td>≥ 80% 标红（高位追涨）；≥ 70% 标橙</td></tr><tr><td>量比</td><td>volume_ratio</td><td>&lt; 1 标红：缩量金叉，无量突破易假</td></tr><tr><td>换手率</td><td>turnover_rate</td><td>&gt; 15% 标橙：换手过热，筹码剧烈易手</td></tr><tr><td>5 日主力净额</td><td>MainNetFlow5D</td><td>≤ 0 且 20 日仍为正 → 标红：资金减速 / 疑似派发</td></tr><tr><td>归一化强度</td><td>MainNetFlow20D ÷ 流通市值 × 100</td><td>横向可比口径，绝对值不可比</td></tr><tr><td>60 日涨幅</td><td>chg_60d</td><td>20 日为正而 60 日仍为负 → 标红：疑似反弹非趋势</td></tr><tr><td>获利盘</td><td>chipProfitRate</td><td>≥ 95% 标橙：全员获利，兑现压力集中</td></tr><tr><td>筹码集中度 90</td><td>chipConcentration90</td><td>越小越集中（辅助观察，不设阈值）</td></tr>
+</table>
+<div class="note">深入读法与常见误读见 <a href="method.html" style="color:var(--accent);text-decoration:none;font-weight:600">方法论页</a>。</div></div>
+
+<h2>六、关键概念说明</h2>
+<div class="card">
+<b>① 什么是 MACD 水上金叉？</b><br>
+MACD 由 DIF（快线）、DEA（慢线）、MACD 柱（红绿柱）组成。当 DIF 与 DEA 都位于 <b>零轴（0）上方</b> 且 DIF 上穿 DEA（金叉），称为「水上金叉」。它代表股价已站上中期成本、多头趋势确立后的回踩再进攻，成功率远高于零轴下方的「水下金叉」（后者多是下跌途中的技术反弹）。<br><br>
+<b>② 20 日主力净流入怎么看？</b><br>
+主力净流入 = 大单/机构主动买入额 − 主动卖出额。<b>注意它是「净额」不是「净值」，是流量不是存量</b>；口径为按单笔委托金额分档的大单净额，机构拆单会低估、对倒会高估，且累计值会掩盖时序（20 日为正可能是「前 15 日灌、近 5 日撤」）。因此它只能作<b>弱辅助信号</b>：转负可提示警惕，为正不能确认趋势 —— 这正是「5 日主力」列存在的意义。<br><br>
+<b>③ 两个条件为何要叠加？</b><br>
+单看水上金叉，可能已涨高、追涨风险大；单看主力流入，可能是短线游资一日游。两者共振 = 趋势与资金同向，才构成可跟踪的强势候选。<br><br>
+<b>④ 为什么加「位置」和「量能」？</b><br>
+水上金叉本质是趋势中继，但若发生在 52 周分位 80% 以上的极端位置，回撤风险显著抬升；若金叉当天量比不足 1（缩量），突破缺乏成交确认、更易假突破。这两条与「60 日涨幅仍为负」（疑似反弹）共同构成三道最常见的伪强势过滤网。
+</div>
+
+<h2>七、风险提示</h2>
+<div class="box red"><ul style="margin:8px 0 0;padding-left:20px;font-size:13.5px">
+<li>本页为<b>量化筛选结果</b>，非个股推荐、非买卖建议。入选仅代表同时满足筛选条件，不等于一定上涨。</li>
+<li><b>入选 ≠ 可买入</b>：增强列的告警若集中出现（如高位 + 缩量 + 60 日背离同时命中），应视为风险叠加，而非利好。</li>
+<li>退出规则比入场筛选更决定最终盈亏：建议跌破 MA20 或 MACD 死叉离场、单笔止损 −8%、盈利分批止盈。</li>
+<li>强势股波动大，介入须自设止损与仓位上限（本账户纪律：单票 ≤ 总资金 5%–8%，整体回撤 ≤ 15%）。</li>
+<li>数据每日变化，须按上述口径动态重扫复核。决策责任在账户本人。</li>
+</ul></div>
+
+<div class="foot">数据基准 2026-09-16 收盘；页面生成 2026-09-16。本候选池为量化筛选，非投资建议。</div>
+</div><script>
+(function(){
+  function cellVal(tr, idx, type){
+    var td = tr.cells[idx];
+    if(!td) return type==='n' ? -Infinity : '';
+    var raw = td.getAttribute('data-v');
+    var txt = (raw!==null? raw : td.textContent).trim();
+    if(type==='n'){
+      var v = parseFloat(txt.replace(/[,%\u00b7\u4e07\u4ebf+]/g,''));
+      return isNaN(v) ? -Infinity : v;
+    }
+    return txt;
+  }
+  document.querySelectorAll('table.sortable').forEach(function(tb){
+    var ths = tb.querySelectorAll('thead th[data-k]');
+    ths.forEach(function(th, ci){
+      th.addEventListener('click', function(){
+        var tbody = tb.tBodies[0];
+        if(!tbody) return;
+        var arr = Array.prototype.slice.call(tbody.rows);
+        var type = th.getAttribute('data-t') || 'n';
+        var cur = th.getAttribute('data-dir');
+        var dir = (cur === 'asc') ? 'desc' : 'asc';
+        ths.forEach(function(o){ o.removeAttribute('data-dir'); o.classList.remove('sorted-asc','sorted-desc'); });
+        th.setAttribute('data-dir', dir);
+        th.classList.add(dir==='asc' ? 'sorted-asc' : 'sorted-desc');
+        arr.sort(function(a,b){
+          var va = cellVal(a, ci, type), vb = cellVal(b, ci, type);
+          if(va < vb) return dir==='asc' ? -1 : 1;
+          if(va > vb) return dir==='asc' ? 1 : -1;
+          return 0;
+        });
+        arr.forEach(function(tr){ tbody.appendChild(tr); });
+      });
+    });
+  });
+})();
+</script>
+<!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--></body></html>
