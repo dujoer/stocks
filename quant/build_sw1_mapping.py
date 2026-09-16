@@ -1,7 +1,8 @@
 import json, re, os
 
-Q = r"G:/ai/股票/quant"
-F = r"C:/Users/nonoy/.workbuddy/projects/g-ai-股票/e3ab6e4e-351f-47a8-a451-53f648954b46/tool-results/mcp-westock-mcp-data_sector-1788282121297-f5af83.txt"
+_WBROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+Q = os.path.join(_WBROOT, 'quant')   # 原写死：G:/ai/股票/quant
+F = os.path.join(os.environ.get("WB_TOOL_RESULTS") or "", 'mcp-westock-mcp-data_sector-1788282121297-f5af83.txt')   # 原写死：C:/Users/nonoy/.workbuddy/projects/g-ai-股票/e3ab6e4e-351f-47a8-a451-53f648954b46/tool-results/mcp-westock-mcp-data_sector-1788282121297-f5af83.txt
 
 # 1) sw1 constituents (name -> member stock names)
 raw = json.load(open(F, encoding="utf-8"))["data"]

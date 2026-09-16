@@ -23,7 +23,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 Q = os.path.join(ROOT, "quant")
 
 # MCP 大响应自动落盘目录（本次 668 条全量落盘于此）
-TOOL_RESULTS = r"C:/Users/nonoy/.workbuddy/projects/g-ai-股票/e3ab6e4e-351f-47a8-a451-53f648954b46/tool-results"
+_WBROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+TOOL_RESULTS = os.environ.get("WB_TOOL_RESULTS") or ""   # 原写死：C:/Users/nonoy/.workbuddy/projects/g-ai-股票/e3ab6e4e-351f-47a8-a451-53f648954b46/tool-results
 
 
 def load(p):

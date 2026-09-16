@@ -253,6 +253,11 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 
 
+
+
+
+
+
 </div>
 </div>
 </div>
@@ -287,13 +292,13 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <header class='head'>
   <h1>数据更新维度与时间分类</h1>
   <div class='sub'>把全站 15 个数据维度按「更新频率」归为四档，标明触发条件、数据源/脚本、最近更新日期与易漏提示，供每日手动更新时对照。</div>
-  <div class='updated'>整理于 2026-09-10 · 各「最近更新」为当前仓库真实文件日期</div>
+  <div class='updated'>整理于 2026-09-15 · 各「最近更新」为当前仓库真实文件日期</div>
 </header>
 
 <div class='section'>
   <h2>📊 更新节奏总览（四档）</h2>
   <div class='tiers'>
-    <div class='tier daily'><h3>① 每日必做</h3><div class='cnt'>10</div><p>交易日盘后 20:00–21:00 跑齐：龙虎榜 / 板块强度 / 高管增减持 / 大宗 / 心理雷达 / <b>个股信号池</b> / <b>信号池回测</b> / <b>做T池</b> / 数据库累积 / 看板门户重建</p></div>
+    <div class='tier daily'><h3>① 每日必做</h3><div class='cnt'>14</div><p>交易日盘后 20:00–21:00 跑齐：龙虎榜 / 板块强度 / 高管增减持 / 大宗 / 心理雷达 / <b>个股信号池</b> / <b>信号池回测</b> / <b>做T池</b> / <b>底部反转</b> / <b>MACD金叉</b> / <b>高胜率</b> / <b>当日要闻</b> / 数据库累积 / 看板门户重建</p></div>
     <div class='tier periodic'><h3>② 季频 · 定期</h3><div class='cnt'>5</div><p>随季报（中报/年报/一季报/三季报）刷新：行业最强榜、知名Top20、增持扫描、量价健康度、牛人追踪（股东部分）</p></div>
     <div class='tier ondemand'><h3>③ 按需 · 事件</h3><div class='cnt'>1</div><p>用户指定个股时触发：个股三周期调研</p></div>
     <div class='tier gate'><h3>④ 推送门禁</h3><div class='cnt'>每次</div><p>每次推送前后：断链0 / 污染0 / curl 200 三道门禁</p></div>
@@ -321,70 +326,98 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
         <td class='dim'>龙虎榜主看板</td><td><span class='tag daily'>每日</span></td>
         <td>交易日盘后 20:00–21:00（龙虎榜公布后）</td>
         <td>westock <code>data_lhb</code> 5接口 + 4分项(jg/yyb/gslmr/gslxw) + <code>lhb_detail</code>席位明细 → <code>_merge_lhb_subtabs.py</code> → <code>build_lhb_enriched</code> → <code>build_dashboards</code></td>
-        <td>2026-09-09</td>
-        <td class='hint'>席位明细与 build_lhb_enriched 最易漏；漏跑则全榜表从 9 列退化 6 列（丢上榜原因/行业/游资介入度/席位）</td>
+        <td>2026-09-14</td>
+        <td class='hint'>席位明细与 build_lhb_enriched 最易漏；漏跑则全榜表从 9 列退化 6 列（丢上榜原因/行业/游资介入度/席位）。<b>⚠ 2026-09-14 实测：board_hot / limitup / lhb_detail 席位未跟上，停更于 2026-09-11，须补拉或标注降级</b></td>
       </tr>
       <tr data-tier='daily'>
         <td class='dim'>板块强度</td><td><span class='tag daily'>每日·红线</span></td>
         <td><b>T日 20:00 或 T+1 09:15 前</b>（开盘后接口只返最新快照，不可回溯）</td>
         <td>westock <code>data_sector</code> industry(ranking,limit=300)+concept(limit=1000) → <code>gen_sector_raw</code> → <code>run_daily_sector</code></td>
-        <td>2026-09-09</td>
+        <td>2026-09-14</td>
         <td class='hint'>date 参数被忽略，只能前向累积；<b>漏跑即永久断档不可补</b></td>
       </tr>
       <tr data-tier='daily'>
         <td class='dim'>高管增减持（董监高）</td><td><span class='tag daily'>每日</span></td>
         <td>盘后</td>
         <td>westock <code>tool_event(manager_sharechg,limit=700)</code> + <code>data_quote</code> → <code>gen_exec</code> → <code>build_exec</code></td>
-        <td>2026-09-09</td>
+        <td>2026-09-14</td>
         <td class='hint'>limit=700 覆盖全市场；<code>db_update</code> 会累积历史</td>
       </tr>
       <tr data-tier='daily'>
         <td class='dim'>大宗交易</td><td><span class='tag daily'>每日必做</span></td>
         <td>盘后</td>
         <td>westock <code>tool_event(block_past_30,limit=必须3000)</code> + <code>data_quote(codes=当日去重)</code> → <code>gen_block</code> → <code>build_block</code></td>
-        <td>2026-09-09</td>
+        <td>2026-09-14</td>
         <td class='hint'>limit 必须 3000；Discount=(收盘价−成交价)/收盘价×100，正=折价 负=溢价</td>
       </tr>
       <tr data-tier='daily'>
         <td class='dim'>群体心理风险雷达</td><td><span class='tag daily'>每日</span></td>
         <td>盘后 ~21:00（原「按需」已改为每日必做）</td>
-        <td>以最近一期 HTML 为 SRC 模板，字典合并覆盖动态键 → <code>_build_{MMDD}.py</code> → <code>_update_index_{MMDD}.py</code></td>
-        <td>2026-09-09</td>
-        <td class='hint'>hub 条目须以闭合 <code>}</code> 结尾否则 index 整页瘫痪；改完必须 node <code>new Function</code> 校验</td>
+        <td><code>build_psychology.py --date D</code>（节假日加 <code>--next N</code>）——自动出页 + 写入索引 + 累积 <code>quant/psy/history.json</code></td>
+        <td>2026-09-14</td>
+        <td class='hint'><b>已全自动化，不再手抄文案</b>；旧的「复制上一期 HTML + 精确字符串替换」法（<code>_build_{MMDD}.py</code>）已废弃——锚点一旦失配会静默残留旧数据。数据缺失时脚本如实标注「接口降级，未编造」</td>
       </tr>
       <tr data-tier='daily'>
         <td class='dim'>个股信号池（次日建仓候选）</td><td><span class='tag daily'>每日</span></td>
         <td>盘后（须在行情 / 大宗 / 高管跑完后）</td>
         <td><code>gen_picks.py --date D</code> → 拉 <code>data_quote</code> + <code>data_technical</code> + <code>data_fund_flow</code> + <code>data_chip</code> + <code>data_consensus</code> + <code>data_rating</code> + <code>data_fund_margin</code> + <code>data_risk</code> + <code>data_hot</code> + <code>tool_event</code>（25 只/批）→ <code>build_picks.py --date D</code></td>
-        <td>2026-09-10</td>
+        <td>2026-09-14</td>
         <td class='hint'><b>依赖上游</b>：须在 高管增减持 / 大宗交易 当日跑完后执行。11 维评分（机构轨/游资轨）+ 一票否决（板块出货 / 获利盘 / 破 MA60 / 解禁 ≥1% / 计划减持窗口 / 质押 &gt;30%）。<code>history.json</code> 自动累积，次日行情存在时自动回填 <b>T+1/T+3/T+5</b> 表现与胜率</td>
       </tr>
       <tr data-tier='daily'>
         <td class='dim'>信号池回测</td><td><span class='tag daily'>每日</span></td>
         <td>build_picks 之后（同一串命令里跑）</td>
         <td><code>backtest_picks.py</code>（无参数）</td>
-        <td>2026-09-10（累积中）</td>
+        <td>2026-09-14（累积中）</td>
         <td class='hint'>读 <code>history.json</code> 按「档位 × 周期」统计平均收益 / 胜率 / 触 T1·T2·止损，产出 <code>web/picks/backtest.html</code>。<b>建议累积 20 个交易日后再据其校准权重</b>——重点看 A 档是否优于 C 档、机构轨 T+5 是否优于 T+1</td>
       </tr>
       <tr data-tier='daily'>
         <td class='dim'>做T池（可反复做T候选）</td><td><span class='tag daily'>每日</span></td>
         <td>盘后（与信号池同批）</td>
         <td><code>gen_tplus.py --date D</code> → 拉 <code>data_quote</code>（≈200 只/批）+ <code>data_kline</code>（60 日）→ <code>build_tplus.py --date D</code></td>
-        <td>2026-09-10</td>
+        <td>2026-09-14</td>
         <td class='hint'>从<b>机构底仓池</b>（公募持股 ≥5% 或 社保/养老/险资 ≥2 家，约 848 只）中筛出高波动 + 高流动性 + <b>区间震荡</b>标的，按网格 / 均值回归 / 底仓+卫星仓给出网格 5 档价位与波段买卖点。做T须先有底仓；破箱体下沿无条件清仓</td>
+      </tr>
+      <tr data-tier='daily'>
+        <td class='dim'>底部反转观察池</td><td><span class='tag daily'>每日</span></td>
+        <td>盘后（与 MACD 同批）</td>
+        <td><code>tool_filter</code> 当日六步法实拉 → 落 <code>quant/watchlist_scan_{DATE}.json</code>（<b>必须是纯 JSON，禁止注释行</b>）→ <code>python quant/gen_watchlist.py {DATE}</code></td>
+        <td>2026-09-14</td>
+        <td class='hint'>每个交易日<b>全市场重扫</b>刷新观察池，方法论页 <code>web/reversal/method.html</code> 不变只刷明细。<code>gen_watchlist.py</code> 会自动把 <code>web/reversal/</code> 下的案例页接回索引；<b>案例页勿放 <code>web/research/</code></b>，否则覆盖度自检报孤儿</td>
+      </tr>
+      <tr data-tier='daily'>
+        <td class='dim'>MACD 水上金叉池</td><td><span class='tag daily'>每日</span></td>
+        <td>盘后</td>
+        <td><code>tool_filter(main_inflow,min_inflow=0.3亿)</code> → <code>data_technical</code>(水上金叉) → <code>data_fund_flow</code>(20日净流入&gt;0) → <code>python quant/macd_build.py --raw</code> → <code>python quant/gen_macd.py {DATE}</code></td>
+        <td>2026-09-14</td>
+        <td class='hint'>三层漏斗剔除「当日热、20 日撤」的伪强势。<b>各层数量随行情浮动，页面 KPI 与漏斗文案均由脚本动态渲染，严禁在模板里硬编码某一天的数字</b>。增强诊断列（52周分位/量比/获利盘/集中度）仅记录标红，不参与筛选</td>
+      </tr>
+      <tr data-tier='daily'>
+        <td class='dim'>高胜率候选池</td><td><span class='tag daily'>每日</span></td>
+        <td>盘后（须在 MACD 之后）</td>
+        <td><code>python quant/build_highwin.py --date {DATE}</code> → <code>python quant/gen_highwin.py --date {DATE}</code></td>
+        <td>2026-09-14</td>
+        <td class='hint'>基底 = 当日 MACD 水上金叉 + 20 日主力净流入&gt;0（需 <code>quant/macd_scan_{YYYYMMDD}.json</code>）；8 维打分（趋势25/位置15/资金20/筹码15/板块12/龙虎榜8/高管大宗5）。<b>旧的 <code>build_highwin_0914.py</code>（日期写死）已归档</b>，不要再每天改文件名</td>
+      </tr>
+      <tr data-tier='daily'>
+        <td class='dim'>当日要闻</td><td><span class='tag daily'>每日</span></td>
+        <td>盘后（18:00 后）</td>
+        <td><code>data_hot(kind=news)</code> 榜单 → 落 <code>quant/_news_seed/{DATE}.json</code> → <code>python quant/add_news.py --date {DATE}</code></td>
+        <td>2026-09-14</td>
+        <td class='hint'>种子文件结构：<code>[["来源","标题"], ...]</code>。<b>不再每天新建一个 <code>_add_news_MMDD.py</code> 脚本</b>；可用 <code>--expect 50</code> 校验条数、<code>--list</code> 查看已有期号</td>
       </tr>
       <tr data-tier='daily'>
         <td class='dim'>本地数据库累积</td><td><span class='tag daily'>每日</span></td>
         <td>盘后（随每日更新）</td>
         <td><code>db_update.py [DATE?]</code> → <code>db_export.py</code>（列式压缩分片至 web/data）</td>
-        <td>2026-09-09</td>
-        <td class='hint'>INSERT OR REPLACE 幂等，历史自动留存；导出 web/data 分片供查询页</td>
+        <td>2026-09-14</td>
+        <td class='hint'>INSERT OR REPLACE 幂等，历史自动留存；导出 web/data 分片供查询页。<b>⚠ 2026-09-14 实测：lhb_seat / limitup / board_hot 三表停在 2026-09-11</b></td>
       </tr>
       <tr data-tier='daily'>
         <td class='dim'>看板/门户/导航/版块总览重建</td><td><span class='tag daily'>每日收尾</span></td>
         <td>各数据跑完后</td>
-        <td><code>build_dashboards</code> → <code>build_portal</code> → <code>build_sections</code> → <code>_apply_nav</code> → <code>_link_check</code></td>
-        <td>2026-09-09</td>
+        <td><code>build_dashboards</code> → <code>build_portal</code> → <code>build_sections</code> → <code>_apply_theme</code>（含导航注入）→ <code>_link_check</code> → <code>_coverage_check</code></td>
+        <td>2026-09-15</td>
         <td class='hint'>补跑历史日须最后再跑最新交易日，否则 index.html 停在旧日期；build_portal 须在 dashboards 之后跑还原门户版</td>
       </tr>
       <tr data-tier='periodic'>
@@ -426,7 +459,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
         <td class='dim'>个股调研（三周期）</td><td><span class='tag ondemand'>按需</span></td>
         <td>用户指定个股时</td>
         <td>westock 单只调研（短线/中线/长线）→ <code>research-{code}-{date}.html</code></td>
-        <td>2026-09-04 (2只)</td>
+        <td>2026-09-11</td>
         <td class='hint'>季频/按需；只输出板块与交易规则，不荐个股</td>
       </tr>
       <tr data-tier='gate'>
@@ -450,15 +483,18 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <div class='section'>
   <h2>✅ 每日必做勾选清单（可勾选 · 本地保存）</h2>
   <ul class='chk' id='dailyChk'>
-    <li><input type='checkbox' data-k='lhb'><div><div class='t'>① 龙虎榜：5接口 + 4分项 + lhb_detail席位明细 + build_lhb_enriched</div><div class='d'>漏跑全榜表从9列退化6列</div></div></li>
-    <li><input type='checkbox' data-k='sector'><div><div class='t'>② 板块强度（红线：T日20:00 或 T+1 09:15 前）</div><div class='d'>date参数忽略，前向累积；漏跑永久断档</div></div></li>
-    <li><input type='checkbox' data-k='exec'><div><div class='t'>③ 高管增减持：manager_sharechg(limit=700) + data_quote → gen_exec → build_exec</div></div></li>
-    <li><input type='checkbox' data-k='block'><div><div class='t'>④ 大宗交易：block_past_30(limit=必须3000) + data_quote → gen_block → build_block</div></div></li>
-    <li><input type='checkbox' data-k='psy'><div><div class='t'>⑤ 心理雷达：_build_{MMDD}.py → _update_index_{MMDD}.py（hub须闭合}）</div></div></li>
-    <li><input type='checkbox' data-k='tplus'><div><div class='t'>⑥ 做T池：gen_tplus.py → 拉 data_quote(~200/批) + data_kline(60日) → build_tplus.py</div><div class='d'>机构底仓池筛震荡箱体；做T须先有底仓，破箱体下沿清仓</div></div></li>
-    <li><input type='checkbox' data-k='db'><div><div class='t'>⑦ 本地数据库：db_update.py → db_export.py</div></div></li>
-    <li><input type='checkbox' data-k='portal'><div><div class='t'>⑧ 重建：build_dashboards → build_portal → build_sections → _apply_nav → _link_check</div></div></li>
-    <li><input type='checkbox' data-k='push'><div><div class='t'>⑨ 推送门禁：_push_lhb（dangerouslyDisableSandbox=true）→ 断链0 / 污染0 / curl 200</div></div></li>
+    <li><input type='checkbox' data-k='lhb'><div><div class='t'>① 拉取当日快照：market_overview / board_hot / quotes / limitup / lhb / news + 席位 3 批 + 分项 4 次 type</div><div class='d'>降级期缺失即诚实标注，<b>不得用旧数据冒充当日</b></div></div></li>
+    <li><input type='checkbox' data-k='dash'><div><div class='t'>② 龙虎榜主看板：build_lhb_enriched → build_dashboards --date D</div><div class='d'>席位明细最易漏，漏跑则全榜表从 9 列退化 6 列</div></div></li>
+    <li><input type='checkbox' data-k='exec'><div><div class='t'>③ 高管增减持：manager_sharechg(limit=700) → gen_exec → build_exec</div></div></li>
+    <li><input type='checkbox' data-k='block'><div><div class='t'>④ 大宗交易：block_past_30(limit=必须3000) → gen_block → build_block</div></div></li>
+    <li><input type='checkbox' data-k='sector'><div><div class='t'>⑤ 板块强度（红线：T日20:00 或 T+1 09:15 前）：gen_sector_raw → run_daily_sector</div><div class='d'>date 参数被忽略，前向累积；漏跑永久断档</div></div></li>
+    <li><input type='checkbox' data-k='psy'><div><div class='t'>⑥ 心理雷达：build_psychology.py --date D（已全自动，旧手抄法废弃）</div></div></li>
+    <li><input type='checkbox' data-k='picks'><div><div class='t'>⑦ 个股信号池：gen_picks → MCP 25只/批补拉 → build_picks → backtest_picks</div><div class='d'>quotes_{D}.json 缺失会 0 行输出</div></div></li>
+    <li><input type='checkbox' data-k='tplus'><div><div class='t'>⑧ 做T池：gen_tplus → data_quote + data_kline(848×60) → build_tplus</div><div class='d'>数据量最大，建议单独跑一轮；破箱体下沿无条件清仓</div></div></li>
+    <li><input type='checkbox' data-k='scan'><div><div class='t'>⑨ 反转 / MACD / 高胜率：tool_filter 实拉 → gen_watchlist / macd_build+gen_macd / build_highwin+gen_highwin</div><div class='d'>三者均加 --date D，切勿再用写死日期的 _0914 脚本</div></div></li>
+    <li><input type='checkbox' data-k='news'><div><div class='t'>⑩ 当日要闻：data_hot(kind=news) → _news_seed/{D}.json → add_news.py --date D</div></div></li>
+    <li><input type='checkbox' data-k='portal'><div><div class='t'>⑪ 数据库与门户：db_update → db_export → build_portal → build_sections → _apply_theme</div><div class='d'>凡显示「非当日」的卡片即为漏跑项</div></div></li>
+    <li><input type='checkbox' data-k='push'><div><div class='t'>⑫ 门禁与推送：_link_check 0断链 / _coverage_check 无新增缺口 / _js_check --all → _push_lhb → _sync_all → _curl_gate</div><div class='d'>推送必须 dangerouslyDisableSandbox=true，否则被沙箱 SIGTERM</div></div></li>
   </ul>
   <div style='margin-top:10px'><button class='btn' id='resetChk'>重置今日勾选</button><span class='muted' style='margin-left:10px'>勾选状态仅存本机浏览器，换设备不共享</span></div>
 </div>
@@ -483,7 +519,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
   <h2>🚧 关键时间红线（不可逾越）</h2>
   <div class='warn'>
     <b>1. 板块强度窗口：</b>T日 20:00–21:00 全量更新；若漏跑，必须在 <b>T+1 09:15 之前</b>补跑——开盘后 <code>data_sector</code> 只返回当日最新快照，历史不可回溯，漏一天即永久断档。<br>
-    <b>2. 心理雷达：</b>已改为每日必做，盘后 ~21:00 产出；hub 条目必须以闭合 <code>}</code> 结尾，否则 index 整页 JS 瘫痪。<br>
+    <b>2. 心理雷达：</b>每日必做，盘后 ~21:00 产出，统一走 <code>python quant/build_psychology.py --date D</code>（节假日 <code>--next N</code>）。<b>旧的「复制上一期 HTML + 精确字符串替换」模板法已废弃</b>——锚点失配会静默残留旧数据，是该子系统历史反复停更的根因。<br>
     <b>3. 推送外网：</b><code>_push_lhb.py</code> 必须 <code>dangerouslyDisableSandbox=true</code> 运行，否则被沙箱 SIGTERM 且无输出。<br>
     <b>4. 推送后校验：</b>GitHub Pages 有 ~1 分钟构建延迟，新建/改动页首测常 404，复测即 200；务必 curl 抽检关键页，且<b>不可信 <code>|tail</code> 截断的推送日志</b>。
   </div>

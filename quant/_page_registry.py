@@ -108,7 +108,7 @@ FAMILIES = [
     dict(key='highwin', label='高胜率候选池（每日多因子扫描）',
          patterns=['picks/highwin_*.html'],
          entry='picks/index.html',
-         script='build_highwin_0914.py;gen_highwin.py',
+         script='build_highwin.py --date {DATE};gen_highwin.py --date {DATE}',
          freq='daily', dated=True, start='20260914',
          date_re=r'(\d{8})',
          need='基底=MACD水上金叉池(macd_scan_{DATE}.json)；增强=data_quote→_raw_extract/quote_{DATE}.json、data_technical→tech、data_chip→chip + sector_daily + lhb + exec_chg + block_chg'),

@@ -215,13 +215,6 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </style><!--/WB_THEME--></head>
 <body>
 <div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='index.html'>MACD金叉</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
-
-
-
-
-
-
-
 <div class="wrap">
 <h1>MACD 水上金叉 + 20 日主力净流入 · 方法论</h1>
 <div class="sub">常驻 Playbook：筛选口径 / 概念详解 / 增强列读法 / 常见误区 / 介入纪律（每日随数据重扫，方法不变）</div>
@@ -229,7 +222,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <div class="box gold"><b>核心结论：</b>真强势 = <b>技术面（MACD 零轴上方金叉）</b> × <b>资金面（20 日主力净流入为正）</b> 两者共振。本页只讲方法，不荐个股。</div>
 
 <h2>一、筛选口径（三层漏斗）</h2>
-<div class="card"><div class='box' style='border-color:var(--accent);background:var(--accent-soft)'><b>初筛 · 主力流入池</b><br>westock tool_filter：preset=main_inflow，min_inflow=0.3 亿，market=hs。全市场约 2092 只满足，取前 200 进入技术验证。</div><div class='box' style='border-color:var(--accent);background:var(--accent-soft)'><b>技术 · 水上金叉</b><br>data_technical 取 MACD：要求 DIF &gt; 0 且 DEA &gt; 0 且 MACD 红柱 &gt; 0。三者同时在零轴上方 = 多头趋势已确立的真金叉，区别于零轴下方的「水下金叉」（仅是下跌中继反弹）。</div><div class='box' style='border-color:var(--accent);background:var(--accent-soft)'><b>资金 · 20 日净流入为正</b><br>data_fund_flow 取 MainNetFlow20D：要求 20 日主力净流入 &gt; 0。剔除「当日拉升热、近 20 日却在撤」的伪强势（如亨通光电 20 日净流出 −41 亿、风语筑 −1.6 亿，均被剔除）。</div></div>
+<div class="card"><div class='box' style='border-color:var(--accent);background:var(--accent-soft)'><b>初筛 · 主力流入池</b><br>westock tool_filter：preset=main_inflow，min_inflow=0.3 亿，market=hs。全市场约 1870 只满足，取前 200 进入技术验证。</div><div class='box' style='border-color:var(--accent);background:var(--accent-soft)'><b>技术 · 水上金叉</b><br>data_technical 取 MACD：要求 DIF &gt; 0 且 DEA &gt; 0 且 MACD 红柱 &gt; 0。三者同时在零轴上方 = 多头趋势已确立的真金叉，区别于零轴下方的「水下金叉」（仅是下跌中继反弹）。</div><div class='box' style='border-color:var(--accent);background:var(--accent-soft)'><b>资金 · 20 日净流入为正</b><br>data_fund_flow 取 MainNetFlow20D：要求 20 日主力净流入 &gt; 0。剔除「当日拉升热、近 20 日却在撤」的伪强势（如亨通光电 20 日净流出 −41 亿、风语筑 −1.6 亿，均被剔除）。</div></div>
 
 <h2>二、关键概念详解</h2>
 <div class="card">

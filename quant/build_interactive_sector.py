@@ -3,8 +3,9 @@
 数据源：quant/sector_strength_data.json（由 extract_sector_data.py 从原始内联 HTML 提取）。"""
 import json, os
 
-DATA_FILE = r'G:\ai\股票\quant\sector_strength_data.json'
-OUT = r'G:\ai\股票\web\sector-strength-20260827.html'
+_WBROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+DATA_FILE = os.path.join(_WBROOT, 'quant', 'sector_strength_data.json')   # 原写死：G:\ai\股票\quant\sector_strength_data.json
+OUT = os.path.join(_WBROOT, 'web', 'sector-strength-20260827.html')   # 原写死：G:\ai\股票\web\sector-strength-20260827.html
 
 with open(DATA_FILE, encoding='utf-8') as f:
     data = json.load(f)

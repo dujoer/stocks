@@ -2,7 +2,8 @@
 """抽取 HTML 内联 <script> 并用 node --check 校验语法"""
 import re, io, os, subprocess, sys, tempfile
 
-NODE = r'C:/Users/nonoy/.workbuddy/binaries/node/versions/22.22.2-3/node.exe'
+_WBROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+NODE = os.environ.get("WB_NODE") or "node"   # 原写死：C:/Users/nonoy/.workbuddy/binaries/node/versions/22.22.2-3/node.exe
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 targets = [a for a in sys.argv[1:] if not a.startswith('--')]
