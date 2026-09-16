@@ -216,6 +216,11 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 
 
+
+
+
+
+
 <div class="wrap">
 <header class="top">
   <div class="kicker">A股量化助理 · 每日盘后</div>
@@ -227,7 +232,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 <h2>一、系统总览与依赖</h2>
 <div class="card">
-<p><b>8 个子系统，统一由 <code>G:\ai\股票\index.html</code>（总门户）入口：</b></p>
+<p><b>10 个子系统，统一由项目根目录的 <code>index.html</code>（总门户）入口。</b>本机为 macOS 时项目根是 <code>/Users/&lt;user&gt;/Downloads/workbuddy/股票</code>；<b>所有脚本已改为由 <code>__file__</code> 推导路径</b>，无需再改盘符，在项目根执行 <code>python quant/xxx.py</code> 即可。</p>
 <table data-wb>
 <tr><th>子系统</th><th>入口页</th><th>数据最新</th><th>生成器</th><th>数据来源</th></tr>
 <tr><td>① 龙虎榜主看板</td><td><code>web/lhb/index.html</code></td><td id="d1">—</td><td><code>quant/build_dashboards.py</code></td><td>market_overview / board_hot / quotes / limitup / lhb / news.json</td></tr>
@@ -238,6 +243,8 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr><td>⑥ 做T池（底仓网格）</td><td><code>web/tplus/index.html</code><br><code>web/tplus/tplus-{DATE}.html</code></td><td id="d8">—</td><td><code>quant/gen_tplus.py</code> + <code>quant/build_tplus.py</code></td><td>本地 q2_full（机构底仓池 → universe）；打分需 data_quote + data_kline（约 848 只 × 60 根）</td></tr>
 <tr><td>⑦ 底部反转选股（每日重扫）</td><td><code>web/reversal/index.html</code><br><code>web/reversal/watchlist_{DATE}.html</code></td><td id="d5">—</td><td><code>quant/gen_watchlist.py</code></td><td>westock tool_filter / data_quote / data_fund_flow / data_technical（agent 经 MCP 实拉 → <code>watchlist_scan_{DATE}.json</code>）</td></tr>
 <tr><td>⑧ MACD 水上金叉观察池（每日重扫）</td><td><code>web/macd/index.html</code><br><code>web/macd/watchlist_{DATE}.html</code></td><td id="d6">—</td><td><code>quant/macd_build.py</code> + <code>quant/gen_macd.py</code></td><td>westock tool_filter / data_technical / data_fund_flow（agent 经 MCP 实拉 → <code>macd_raw_*_{DATE}.json</code>）+ 增强列 data_quote / data_chip / data_fund_flow</td></tr>
+<tr><td>⑨ 高胜率候选池（每日重扫）</td><td><code>web/picks/highwin_{YYYYMMDD}.html</code></td><td id="d9">—</td><td><code>quant/build_highwin.py --date {DATE}</code> + <code>quant/gen_highwin.py --date {DATE}</code></td><td>基底 = 当日 MACD 水上金叉 + 20 日主力净流入&gt;0（<code>quant/macd_scan_{YYYYMMDD}.json</code>）；增强：data_quote / data_technical(MA·RSI) / data_chip / 板块强度 / 龙虎榜 / 高管·大宗</td></tr>
+<tr><td>⑩ 当日要闻</td><td>（无独立页，进龙虎榜看板）</td><td id="d10">—</td><td><code>quant/add_news.py --date {DATE}</code></td><td>westock <code>data_hot(kind=news)</code> 榜单 → 落 <code>quant/_news_seed/{DATE}.json</code> → 写入 <code>quant/news.json</code>。<b>不再每天新建一个脚本</b></td></tr>
 </table>
 <p style="margin-top:10px;color:#5a6573;font-size:13px">总门户本身由 <code>quant/build_portal.py</code> 扫描上述各子系统最新文件自动生成，无需手写。</p>
 </div>
@@ -255,17 +262,15 @@ quant/limitup/{DATE}.json           # tool_ranking(metric=limitup_days)
 quant/lhb/{DATE}.json               # data_lhb
 quant/news.json                     # 要闻，按 DATE 作 key 写入</pre>
 <p><b>2. 生成</b>：</p>
-<pre>cd G:\ai\股票\quant
-python build_dashboards.py --date {DATE}</pre>
+<pre>python quant/build_dashboards.py --date {DATE}</pre>
 <p>产出 7 个页面：<code>daily_overview / portfolio / hotmoney / lhb / lhb_{DATE}（归档）/ status_{DATE} / index</code>（均在 <code>web/</code>）。</p>
 </div>
 
 <h3>② 板块强度（可选，前瞻累积）</h3>
 <div class="card">
 <p>接口 <code>data_sector</code> 的 <code>date</code> 参数被忽略、只返「最新一个交易日」快照，故<b>不回溯历史、不编造</b>，走「前瞻累积」管道：</p>
-<pre>cd G:\ai\股票\quant
-python collect_sector.py            # industry+concept 原始 JSON -> sector_strength_data_{DATE}.json
-python run_daily_sector.py --date {DATE} --industry &lt;file&gt; --concept &lt;file&gt;
+<pre>python quant/collect_sector.py            # industry+concept 原始 JSON -> sector_strength_data_{DATE}.json
+python quant/run_daily_sector.py --date {DATE} --industry &lt;file&gt; --concept &lt;file&gt;
 # 生成 web/sector-strength-{YYYYMMDD}.html(增强每日页) + sector-strength-trend.html + sector-strength-index.html</pre>
 <p class="note">⚠️ 固化后务必 <code>cat sector_trend.json</code> 校验两天值<strong>不同</strong>；若雷同说明当日页用了旧数据，需重拉当日 industry+concept 重建。</p>
 </div>
@@ -299,8 +304,7 @@ python quant/build_psychology.py --date {DATE} --next {NEXT_DATE}
 <h3>⑤ 个股信号池（机构轨 + 游资轨，每日，必做）</h3>
 <div class="card">
 <p><b>第一步 · 候选聚合（纯本地数据，不依赖任何外网接口，最容易被漏跑）：</b></p>
-<pre>cd G:\ai\股票\quant
-python gen_picks.py --date {DATE} --window 20 --top 40
+<pre>python quant/gen_picks.py --date {DATE} --window 20 --top 40
 # 读：quant/q2_full/_merged_shareholder.json（中报十大股东）
 #     quant/exec_chg/{DATE}.json（高管增减持，近 20 交易日）
 #     quant/block_chg/{DATE}.json（大宗交易，近 20 交易日）
@@ -316,7 +320,7 @@ data_fund_margin  → quant/picks/margin_{DATE}.json
 data_hot(kind=stock) → quant/picks/hot_{DATE}.json
 # 字段映射见 quant/_relay_picks_0914.py（可复用为 relay 模板）</pre>
 <p><b>第三步 · 双轨打分出页：</b></p>
-<pre>python build_picks.py --date {DATE}
+<pre>python quant/build_picks.py --date {DATE}
 # 产出 web/picks/pick_{DATE}.html + web/picks/index.html；回填 history.json 次日/3日/5日表现</pre>
 <p class="note">⚠️ 缺失数据自动降级为 0 分项，<b>但 <code>quotes_{DATE}.json</code> 缺失会导致 0 行输出</b>（无 price 直接跳过）。<code>data_rating</code> / <code>data_consensus</code> 为单码接口，逐只拉成本高，可略（对应维度记 0）；<code>data_risk</code> 降级时风险闸门与质押扣分不生效，需在页面标注。</p>
 </div>
@@ -324,14 +328,13 @@ data_hot(kind=stock) → quant/picks/hot_{DATE}.json
 <h3>⑥ 做T池（机构底仓网格，每日，必做）</h3>
 <div class="card">
 <p><b>第一步 · 候选池（纯本地 q2_full 中报，机构底仓口径）：</b></p>
-<pre>cd G:\ai\股票\quant
-python gen_tplus.py --date {DATE} --min-fund 5.0
+<pre>python quant/gen_tplus.py --date {DATE} --min-fund 5.0
 # 产出 quant/tplus/codes_{DATE}.txt + quant/tplus/universe_{DATE}.json（约 850 只）</pre>
 <p><b>第二步 · 补拉行情 + 日K（agent 经 MCP，按 codes 分批）：</b></p>
 <pre>data_quote → quant/tplus/quotes_{DATE}.json     # 848 只 ≈ 5 批（≥180/次）
 data_kline → quant/tplus/kline_{DATE}.json      # 848 只 × 60 根，数据量大，建议专门跑一轮</pre>
 <p><b>第三步 · 打分出页：</b></p>
-<pre>python build_tplus.py --date {DATE}
+<pre>python quant/build_tplus.py --date {DATE}
 # 产出 web/tplus/index.html + web/tplus/tplus-{DATE}.html</pre>
 <p class="note">⚠️ 本环节是<b>数据量最大</b>的每日任务（约 848×60 根 K 线）。全量拉取耗时且占接口额度，建议与其他子系统分开、单独一轮完成；漏跑会导致做T池停更在上一交易日。</p>
 </div>
@@ -346,8 +349,7 @@ quant/watchlist_scan_{DATE}.json
 #   float_mv,dist_52hi,ytd,pe,main20,rank,tier,score,logic,action}]</pre>
 <p class="note">⚠️ 落盘 JSON 必须是<b>纯 JSON</b>：第一行起即为 <code>{</code>，任何 <code>#</code> 注释或 <code>"""docstring"""</code> 都会让 <code>gen_watchlist.py</code> 的 <code>json.load</code> 直接失败；说明文字请放进 <code>"_doc"</code> 字段。</p>
 <p><b>2. 生成</b>：</p>
-<pre>cd G:\ai\股票\quant
-python gen_watchlist.py {DATE}      # 读 watchlist_scan_{DATE}.json
+<pre>python quant/gen_watchlist.py {DATE}      # 读 watchlist_scan_{DATE}.json
                                 # 产出 web/reversal/watchlist_{DATE}.html（明细）+ web/reversal/index.html（入口滚动更新）
 # 不带参数则自动取 quant/ 下最新 watchlist_scan_*.json</pre>
 <p><b>3. 注入导航 + 主题 + 校验</b>（与其他版块统一门禁）：</p>
@@ -360,22 +362,41 @@ python _coverage_check.py --until {DATE}   # 校验 reversal 族 0 缺口、0 �
 <h3>⑧ MACD 水上金叉观察池（每日，自动化）</h3>
 <div class="card">
 <p>三层漏斗每日重扫，输出「趋势转多 × 资金进场」共振的强势候选（非个股推荐）：</p>
-<pre>cd G:\ai\股票\quant
-# 1) Agent 经 westock-mcp 实拉并落盘（或复用既有 macd_raw_*.json）
-python macd_build.py --raw      # 读 macd_raw_pool/tech/flow_{DATE}.json → 水上金叉 + 20日净流入为正
+<pre># 1) Agent 经 westock-mcp 实拉并落盘（或复用既有 macd_raw_*.json）
+python quant/macd_build.py --raw      # 读 macd_raw_pool/tech/flow_{DATE}.json → 水上金叉 + 20日净流入为正
 # 1b) 增强诊断列（记录项，不参与筛选）：另拉 data_quote + data_chip（对最终 35~51 只，约 2 次调用）
 #     落 quant/macd_extra_{DATE}.json（字段 pos52/量比/换手/5D主力/归一化强度/60日涨幅/获利盘/集中度）
 python _build_macd_extra_{DATE}.py   # 或由 Agent 直接按同一结构写盘（模板见 _build_macd_extra_0911.py）
 # 2) 渲染 web/macd/index.html + watchlist_{DATE}.html + method.html
-python gen_macd.py {DATE}</pre>
+python quant/gen_macd.py {DATE}</pre>
 <p class="note">⚠️ 严格三层漏斗：<code>tool_filter(main_inflow, min_inflow=0.3亿, market=hs)</code> → <code>data_technical</code>(水上金叉 DIF&gt;0&amp;DEA&gt;0&amp;MACD红柱&gt;0) → <code>data_fund_flow</code>(MainNetFlow20D&gt;0)。剔除「当日热、20 日撤」的伪强势。</p>
 <p class="note">📊 <b>各层数量随行情浮动，不写死</b>：全市场初筛规模约 1500~2100 只（`tool_filter` 当日主力流入 &gt; 0.3 亿的结果数），水上金叉层约 30~60 只，资金确认层再筛掉「20 日净流出」的伪强势。页面 KPI 与漏斗文案均由 <code>gen_macd.py</code> 用当日 <code>pool_total</code> / <code>above_water</code> 动态渲染，<b>严禁在模板里硬编码某一天的数字</b>（曾误写死「1488 只」与实际池 2092 只矛盾）。</p>
 <p class="note">📌 增强诊断列（52周分位 / 量比 / 换手 / 5日主力 / 归一化强度 / 60日涨幅 / 获利盘 / 集中度90）<b>仅记录与标红警示，不参与筛选</b>。原因：单期样本直接硬化阈值等于过拟合；先记录、累积 20~30 个交易日后回测分组胜率，再决定哪几条升级为硬条件。增强列缺失时页面自动降级显示「—」。另：候选表涨跌幅统一取 <code>data_quote</code> 收盘口径（初筛接口为盘中口径，个别股符号相反）。</p>
 </div>
 
-<h3>⑨ 刷新总门户 + 校验</h3>
+<h3>⑨ 高胜率候选池（每日重扫）</h3>
 <div class="card">
-<pre>python build_portal.py    # 重建总门户，自动带出各子系统最新日期与新鲜度</pre>
+<p>以当日 MACD 水上金叉 + 20 日主力净流入&gt;0 为基底（须先跑完 ⑧），叠加 8 维打分输出「核心 / 观察 / 备选 / 回避」四档。</p>
+<pre>python quant/build_highwin.py --date {DATE}   # 打分 → quant/picks/highwin_{DATE}.json
+python quant/gen_highwin.py  --date {DATE}   # 渲染 → web/picks/highwin_{YYYYMMDD}.html（不带 --date 自动取最新一期）</pre>
+<p class="note">⚠️ 旧的 <code>build_highwin_0914.py</code> 把日期和路径<b>写死在脚本里</b>，每天要改文件名，现已归档。基底文件 <code>quant/macd_scan_{YYYYMMDD}.json</code> 缺失会输出 0 行；增强数据缺失时对应维度自动记 0，页面上显示「—」。</p>
+</div>
+
+<h3>⑩ 当日要闻 + 数据库累积</h3>
+<div class="card">
+<pre># data_hot(kind=news) 榜单落盘（结构：[["来源","标题"], …]）
+python quant/add_news.py --date {DATE} --expect 50
+python quant/add_news.py --list                  # 查看已有期号
+
+python quant/db_update.py {DATE}   # SQLite 主库幂等 upsert（9 张表）
+python quant/db_export.py          # 导出列式分片到 web/data/，供查询页</pre>
+</div>
+
+<h3>⑪ 刷新总门户 + 校验</h3>
+<div class="card">
+<pre>python quant/build_portal.py     # 重建总门户，自动带出各子系统最新日期与新鲜度
+python quant/build_sections.py   # 生成跳转页（内容已并入门户）
+python quant/_apply_theme.py     # 统一导航/主题/排序/搜索注入（改任何页面样式后必跑）</pre>
 <p>随后做 <a href="#check">第四节校验清单</a>。任何显示「非当日」的子系统即为<b>漏跑项</b>，必须当天补齐（或按降级说明诚实标注），不得放任累积。</p>
 </div>
 
@@ -397,6 +418,10 @@ python gen_macd.py {DATE}</pre>
 <li><b>⑧ MACD / ⑦ 反转</b>：<code>tool_filter</code> 正常时不受影响，降级时同步停更。</li>
 </ul>
 <b>纪律</b>：每日收尾跑 <code>python quant/_coverage_check.py --until {DATE}</code>，凡「最新日期 ≠ {DATE}」的子系统即为漏跑/降级项 —— 能补的当天补；确因接口降级补不了的，必须在总门户诚实标注「接口降级·停更于 YYYY-MM-DD」，<b>绝不可以用旧数据冒充当日、也不可静默跳过</b>。</div>
+
+<div class="danger"><b>⚠️ 跨平台执行（2026-09-15 起）</b>：本机已从 Windows 迁到 macOS（项目根 <code>/Users/&lt;user&gt;/Downloads/workbuddy/股票</code>）。历史脚本里有 73 个写死 <code>G:/ai/股票</code> 或 <code>C:/Users/nonoy/…</code>，现已统一治理：<b>项目根由 <code>__file__</code> 推导</b>（每日链路上的脚本全部可跨机运行）；需要外部落盘目录的旧 relay 脚本改用环境变量 <code>WB_TOOL_RESULTS</code> / <code>WB_SESSION_JSONL</code> / <code>WB_NODE</code>。<b>新增脚本一律不许再写绝对路径</b>。</div>
+
+<div class="danger"><b>⚠️ 别再造「日期后缀一次性脚本」</b>：<code>_add_news_MMDD.py</code> / <code>build_highwin_MMDD.py</code> / <code>_relay_*_MMDD.py</code> 这类每天复制一份改日期的做法，曾让 <code>quant/</code> 堆到 200 多个脚本且无法回溯。已归档 49 个到 <code>quant/_legacy/</code>。<b>新需求一律做成 <code>--date</code> 参数化的通用脚本</b>，数据放 JSON 种子文件。</div>
 
 <div class="note"><b>⚠️ I18N 键覆盖校验</b>：用 <code>re.finditer(r'([A-Za-z0-9_]+)\s*:')</code> 抓取每行全部键；若用 <code>re.match</code> 只抓首键会误报大量"missing"。</div>
 
