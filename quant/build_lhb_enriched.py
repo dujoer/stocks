@@ -76,9 +76,11 @@ def main():
 
     # 席位明细：按 {DATE}_batch*.json 全部合并；缺失则为空（降级：无游资/席位）
     detail = {}
-    dfiles = sorted(glob.glob(os.path.join(Q, "lhb_detail", f"{date}_batch*.json")))
+    dfiles = sorted(glob.glob(os.path.join(Q, "lhb_detail", f"{date}_batch*.json"))
+                    + glob.glob(os.path.join(Q, "lhb_detail", date, "*.json")))
     for fp in dfiles:
-        detail.update(load(os.path.join("lhb_detail", os.path.basename(fp))).get("data", {}))
+        rel = os.path.relpath(fp, Q)
+        detail.update(load(rel).get("data", {}))
     print(f"席位明细文件: {len(dfiles)} 个, 覆盖 {len(detail)} 只"
           + ("" if detail else "  → 降级：游资标签/席位将留空（行业列仍可用）"))
 
