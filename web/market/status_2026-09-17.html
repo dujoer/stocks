@@ -1,55 +1,115 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MACD 水上金叉 + 20日主力净流入 · 方法论</title><style>.wrap{max-width:1180px}
-h1{font-size:23px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
-h2{font-size:18px;font-weight:600;margin:28px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--accent)}
-h3{font-size:15px;font-weight:600;margin:18px 0 8px}
-.sub{color:var(--muted);font-size:13px;margin-bottom:8px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:12px 0;
-  box-shadow:0 1px 2px rgba(60,64,67,.10)}
-.box{border-left:4px solid var(--accent);background:var(--accent-soft);padding:14px 18px;border-radius:0 10px 10px 0;margin:14px 0}
-.box.gold{border-color:var(--accent);background:var(--accent-soft)}
-.box.red{border-color:var(--green);background:#e6f4ea}
-.box.amber{border-color:#e37400;background:#fef7e0}
-table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0}
-th,td{padding:8px 6px;border-bottom:1px solid var(--line-2);text-align:left;vertical-align:top}
-th{color:var(--muted);font-weight:600;font-size:11.5px;background:var(--hover)}
-tbody tr:hover{background:var(--hover)}
-.num{font-variant-numeric:tabular-nums}
-.up{color:var(--red)}.dn{color:var(--green)}.am{color:var(--accent)}
-.warn{color:#a8071a;font-weight:600}.amber-t{color:#b06000;font-weight:600}
-.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;margin:1px 2px;white-space:nowrap}
-.tag.r{background:#fce8e6;color:#a8071a}
-.tag.y{background:#fef7e0;color:#8a6d00}
-.tag.g{background:#e6f4ea;color:#137333}
-.note{font-size:12px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px dashed var(--line-2)}
-.arch{font-size:13px;margin:4px 0}
-.arch a{color:var(--accent);text-decoration:none}
-.arch a:hover{text-decoration:underline}
-.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
-ul{margin:8px 0;padding-left:20px}li{margin:4px 0}
-.kpi{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
-.kpi div{flex:1;min-width:120px;background:var(--hover);border-radius:10px;padding:10px 14px}
-.kpi b{display:block;font-size:20px;color:var(--accent)}
-.kpi span{font-size:12px;color:var(--muted)}
-.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:78vh;overflow-y:auto}
-.scroll table{min-width:1180px}
-thead th{position:sticky;top:0;z-index:2}
-th[data-k]{cursor:pointer;user-select:none}
-th[data-k]:hover{color:var(--accent)}
-th.sorted-asc:after{content:" ▴";color:var(--accent)}
-th.sorted-desc:after{content:" be";color:var(--accent)}
-.num{text-align:right}
-.hist{display:inline-block;font-size:10.5px;font-weight:700;color:#137333;background:#e6f4ea;border:1px solid #b7e1c3;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
-.newb{display:inline-block;font-size:10.5px;font-weight:700;color:#1a73e8;background:#e8f0fe;border:1px solid #c6dafc;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
-.histcol{white-space:normal;min-width:158px;max-width:215px}
-.note-inline{color:var(--muted)}
-.cmp{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
-.cmp div{flex:1;min-width:130px;border-radius:10px;padding:10px 14px;background:var(--hover)}
-.cmp b{display:block;font-size:19px}
-.cmp span{font-size:12px;color:var(--muted)}
-.cmp .cnew b{color:#1a73e8}.cmp .ccont b{color:#137333}.cmp .cout b{color:#a8071a}
-</style><!--WB_THEME--><style id='wb-theme'>
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>状态报告</title>
+<style>* { box-sizing: border-box; }
+body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:#f5f6f8; color:#23262b; min-height:100vh; }
+.wrap { max-width:1040px; margin:0 auto; padding:40px 20px 60px; }
+.topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
+  border-bottom:1px solid rgba(0,0,0,.08); }
+.topnav a { color:#1a73e8; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(26,115,232,.35); transition:.2s; }
+.topnav a:hover { background:rgba(26,115,232,.10); }
+header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#1a73e8,#b8332a,#6b5b95);
+  -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
+header p { margin:4px 0; color:#8a929c; font-size:13px; line-height:1.6; }
+.meta { margin:14px 0 24px; font-size:12px; color:#6b7280; line-height:1.7; }
+.meta b { color:#1a73e8; }
+.section { background:#ffffff;
+  border:1px solid rgba(0,0,0,.08); border-radius:20px; padding:18px 20px; margin:0 0 22px;
+  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); }
+.section h2 { font-size:17px; margin:0 0 14px; color:#1c2430; display:flex; align-items:center; gap:8px; }
+.section h2:before { content:""; width:4px; height:16px; background:#1a73e8; border-radius:3px; }
+.idxrow { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px; }
+.idx { flex:1; min-width:200px; background:linear-gradient(135deg,rgba(184,51,42,.08),rgba(184,51,42,.03));
+  border:1px solid rgba(184,51,42,.20); border-radius:14px; padding:13px 10px; text-align:center;
+  box-shadow:0 1px 3px rgba(184,51,42,.06); }
+.idx .k { font-size:11px; color:#6b7280; letter-spacing:.3px; }
+.idx .v { font-size:22px; font-weight:800; color:#1c2430; margin:5px 0 2px; }
+.idx .c { font-size:13px; font-weight:700; }
+.idx .hl { font-size:10px; color:#8a929c; margin-top:4px; }
+.bar { display:flex; height:34px; border-radius:8px; overflow:hidden; margin:10px 0; font-size:12px;
+  color:#ffffff; text-align:center; line-height:34px; box-shadow:0 2px 6px rgba(0,0,0,.12); }
+.chiprow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+.chip { background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06); border-radius:12px;
+  padding:10px 6px; text-align:center; min-width:74px; backdrop-filter:blur(6px); box-shadow:0 1px 3px rgba(20,30,50,.04); }
+.chip .ck { font-size:10px; color:#8a929c; }
+.chip .cv { font-size:16px; font-weight:800; margin-top:3px; }
+.tag { display:inline-block; border-radius:20px; padding:3px 11px; font-size:12px; margin:3px 4px 3px 0;
+  background:#eef2f8; color:#33414f; }
+.tag.hot { background:#fdeceb; color:#d8392b; }
+.tag.cold { background:#e9f6ef; color:#1a9e5a; }
+.pill { display:inline-block; background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06);
+  border-radius:20px; padding:4px 11px; font-size:12px; color:#3a4048; margin:3px 4px 3px 0; cursor:help; }
+.pill b { color:#1a73e8; font-weight:700; }
+table { width:100%; border-collapse:collapse; font-size:13px; background:rgba(0,0,0,.03);
+  border:1px solid rgba(0,0,0,.05); border-radius:12px; overflow:hidden; margin:10px 0; }
+th,td { padding:8px 10px; text-align:left; border-bottom:1px solid rgba(0,0,0,.04); }
+th { background:rgba(20,30,50,.06); color:#3a4048; font-weight:600; font-size:12px; }
+td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+.up { color:#b8332a; } .down { color:#1a9e5a; }
+.note { color:#8a929c; font-size:12px; margin-top:8px; line-height:1.6; }
+.amberbox { font-size:13px; color:#1a73e8; background:linear-gradient(135deg,rgba(26,115,232,.10),rgba(26,115,232,.04));
+  border:1px solid rgba(26,115,232,.18); border-radius:12px; padding:12px 16px; margin:12px 0; line-height:1.6; }
+.ladder { margin:6px 0; padding:8px 10px; background:rgba(0,0,0,.03); border:1px solid rgba(0,0,0,.08);
+  border-radius:8px; font-size:13px; }
+.ladder .badge { display:inline-block; border-radius:6px; padding:1px 8px; margin-right:8px; font-weight:700; font-size:12px; }
+.ladder .b5 { background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.35); color:#b8332a; }
+.ladder .b6 { background:rgba(184,51,42,.16); border:1px solid rgba(184,51,42,.55); color:#b8332a; }
+.ladder .b5 { background:rgba(184,51,42,.12); border:1px solid rgba(184,51,42,.42); color:#b8332a; }
+.ladder .b4 { background:rgba(184,51,42,.08); border:1px solid rgba(184,51,42,.30); color:#b8332a; }
+.ladder .b3 { background:rgba(26,115,232,.14); border:1px solid rgba(26,115,232,.40); color:#d8bd8a; }
+.ladder .b2 { background:rgba(26,115,232,.14); border:1px solid rgba(26,115,232,.40); color:#d8bd8a; }
+.ladder .b1 { background:rgba(90,107,128,.12); border:1px solid rgba(90,107,128,.35); color:#a7b4c9; }
+.namechip { display:inline-block; color:#3a4048; margin:2px 6px 2px 0; font-size:13px; }
+.empty { color:#8a929c; text-align:center; padding:38px 0; font-size:14px; line-height:1.8; }
+.empty b { color:#1a73e8; }
+footer { margin-top:40px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08);
+  font-size:12px; color:#8a929c; line-height:1.8; }
+a.inlink { color:#1a73e8; text-decoration:none; border:1px solid rgba(201,166,107,.5);
+  border-radius:10px; padding:6px 14px; font-size:13px; font-weight:700; display:inline-block; margin:4px 6px 4px 0; }
+a.inlink:hover { background:rgba(201,166,107,.16); }
+.wrap.landing { max-width:880px; text-align:center; }
+.landing header h1 { font-size:34px; }
+.landing header p { margin:6px 0; color:#8a929c; font-size:14px; }
+.date { margin:18px 0 30px; font-size:13px; color:#1a73e8; letter-spacing:.5px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; text-align:left; }
+.card { display:block; text-decoration:none; color:#23262b; background:#ffffff;
+  border:1px solid rgba(0,0,0,.08); border-radius:18px; padding:20px 18px;
+  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); transition:.2s; }
+.card:hover { border-color:rgba(26,115,232,.50); transform:translateY(-2px); background:linear-gradient(135deg,rgba(26,115,232,.08),rgba(255,255,255,.03)); }
+.card .ic { font-size:26px; }
+.card .t { font-size:17px; font-weight:700; margin:10px 0 6px; color:#1c2430; }
+.card .d { font-size:12.5px; color:#8a929c; line-height:1.6; }
+.hist { margin-top:30px; font-size:12.5px; color:#6b7280; }
+.hist a { color:#1a73e8; text-decoration:none; border:1px solid rgba(201,166,107,.4); border-radius:10px; padding:5px 12px; display:inline-block; margin:4px; }
+.foot { margin-top:42px; font-size:12px; color:#8a929c; line-height:1.8; }
+.lhb { table-layout:fixed; }
+.lhb th, .lhb td { font-size:12.5px; vertical-align:top; }
+.lhb td.reason { color:#6b7280; width:150px; font-size:11.5px; line-height:1.4; }
+.lhb td.sec { font-size:12px; white-space:nowrap; }
+.hm { text-align:center; }
+.hm-high { color:#f2a65a; font-weight:800; }
+.hm-mid { color:#1a73e8; font-weight:700; }
+.hm-low { color:#8a93a3; }
+.hmtags { margin-top:3px; }
+.hmtag { display:inline-block; background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.30); color:#b8332a; border-radius:10px; padding:1px 7px; font-size:10.5px; margin:2px 2px 0 0; }
+.toggle { color:#1a73e8; cursor:pointer; font-size:12px; user-select:none; }
+.toggle:hover { text-decoration:underline; }
+.seats { display:flex; gap:24px; flex-wrap:wrap; padding:6px 4px; }
+.seats .buys, .seats .sells { flex:1; min-width:260px; }
+.seat-h { font-weight:700; margin-bottom:6px; font-size:13px; }
+.seat-h.up { color:#b8332a; } .seat-h.down { color:#1a9e5a; }
+.seats ul { list-style:none; margin:0; padding:0; }
+.seats li { display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px dashed rgba(0,0,0,.04); font-size:12px; }
+.seats li .nm { flex:1; color:#3a4048; }
+.seats li .amt { font-variant-numeric:tabular-nums; font-weight:700; }
+tr.detail td { background:rgba(0,0,0,.03); }
+</style>
+<!--WB_THEME--><style id='wb-theme'>
 /* ============================================================
    统一设计系统 (A股看板) — Google Material 风·朴素简洁
    由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
@@ -236,87 +296,36 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 </style><!--/WB_THEME--></head>
 <body>
-<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='index.html'>MACD金叉</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../macd/index.html'>MACD金叉</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class='wrap'>
 
-<div class="wrap">
-<h1>MACD 水上金叉 + 20 日主力净流入 · 方法论</h1>
-<div class="sub">常驻 Playbook：筛选口径 / 概念详解 / 增强列读法 / 常见误区 / 介入纪律（每日随数据重扫，方法不变）</div>
-
-<div class="box gold"><b>核心结论：</b>真强势 = <b>技术面（MACD 零轴上方金叉）</b> × <b>资金面（20 日主力净流入为正）</b> 两者共振。本页只讲方法，不荐个股。</div>
-
-<h2>一、筛选口径（三层漏斗）</h2>
-<div class="card"><div class='box' style='border-color:var(--accent);background:var(--accent-soft)'><b>初筛 · 主力流入池</b><br>westock tool_filter：preset=main_inflow，min_inflow=0.3 亿，market=hs。全市场约 2128 只满足，取前 200 进入技术验证。</div><div class='box' style='border-color:var(--accent);background:var(--accent-soft)'><b>技术 · 水上金叉</b><br>data_technical 取 MACD：要求 DIF &gt; 0 且 DEA &gt; 0 且 MACD 红柱 &gt; 0。三者同时在零轴上方 = 多头趋势已确立的真金叉，区别于零轴下方的「水下金叉」（仅是下跌中继反弹）。</div><div class='box' style='border-color:var(--accent);background:var(--accent-soft)'><b>资金 · 20 日净流入为正</b><br>data_fund_flow 取 MainNetFlow20D：要求 20 日主力净流入 &gt; 0。剔除「当日拉升热、近 20 日却在撤」的伪强势（如亨通光电 20 日净流出 −41 亿、风语筑 −1.6 亿，均被剔除）。</div></div>
-
-<h2>二、关键概念详解</h2>
-<div class="card">
-<b>① 什么是 MACD 水上金叉？</b><br>
-MACD 由 DIF（快线）、DEA（慢线）、MACD 柱（红绿柱）组成。当 DIF 与 DEA 都位于 <b>零轴（0）上方</b> 且 DIF 上穿 DEA（金叉），称为「水上金叉」。它代表股价已站上中期成本、多头趋势确立后的回踩再进攻，成功率远高于零轴下方的「水下金叉」（后者多是下跌途中的技术反弹）。<br><br>
-<b>② 20 日主力净流入：是「净额」不是「净值」</b><br>
-主力净流入 = 大单/机构主动买入额 − 主动卖出额，是<b>流量</b>而非存量。它有三层先天噪声：<br>
-&nbsp;&nbsp;1) <b>口径噪声</b>：「主力」按单笔委托金额分档推断，机构用冰山单/VWAP 拆成中小单会被低估，游资用大单对倒会被高估；<br>
-&nbsp;&nbsp;2) <b>被动资金</b>：大宗交易、ETF 申赎、指数调仓带来的流入与「看好」无关；一字板无成交时净额严重失真；<br>
-&nbsp;&nbsp;3) <b>累计掩盖时序</b>：20 日为正可能是「前 15 日猛灌 + 近 5 日连续撤」，趋势其实已在转弱。<br>
-&nbsp;&nbsp;→ 因此它只能作<b>弱辅助信号（不否决级）</b>：<b>转负可以提示警惕，为正不能确认趋势</b>。既是趋势向好的非充分条件（高位对倒诱多即是反例），也是非必要条件（缩量筑底期净额≈0 但趋势转好）。<br><br>
-<b>③ 两个条件为何要叠加？</b><br>
-单看水上金叉，可能已涨高、追涨风险大；单看主力流入，可能是短线游资一日游。两者共振 = 趋势与资金同向，才构成可跟踪的强势候选。
+<header>
+<h1>📋 状态报告</h1>
+<p>2026-09-17 · 龙虎榜手动更新 + 全量数据刷新</p>
+</header>
+<div class='section'>
+<h2>✅ 本轮完成情况</h2>
+<div class='amberbox' style='color:#1c2430'>1. <b>龙虎榜数据</b>：通过 westock-mcp data_lhb 拉取 2026-09-17 真实龙虎榜（机构榜 32 只、游资席位 89 个、机构+游资共振 21 只、席位胜率 29 条；龙虎榜全榜上榜 53 只）。已渲染 lhb.html（机构榜/共振/胜率）与 hotmoney.html（席位净买榜/胜率）。<br>2. <b>大盘/板块/连板刷新</b>：data_market_overview(2026-09-17)、data_hot(board)、tool_ranking(limitup_days) 全部更新为 2026-09-17（估值口径 2026-09-16）。<br>4. <b>推送</b>：本地已生成 6 个页面（含导航 index.html、龙虎榜归档页 lhb_2026-09-17.html），待经 GitHub 连接器推送至 dujoer/stocks 的 web/ 目录（main 分支，需仓库写权限）。注：早期 08-14 窗口收益/共振/Alpha 回测为远程分析页，本地未保留，本系统以龙虎榜机构榜、共振、席位胜率为核心。</div>
 </div>
-
-<h2>三、增强诊断列怎么读（去伪存真）</h2>
-<div class="card"><table data-wb>
-<tr><th>字段</th><th>定义 / 来源字段</th><th>警示触发条件</th></tr>
-<tr><td>52 周分位</td><td>pos52 = (现价 − 52周低) ÷ (52周高 − 52周低)</td><td>≥ 80% 标红（高位追涨）；≥ 70% 标橙</td></tr><tr><td>量比</td><td>volume_ratio</td><td>&lt; 1 标红：缩量金叉，无量突破易假</td></tr><tr><td>换手率</td><td>turnover_rate</td><td>&gt; 15% 标橙：换手过热，筹码剧烈易手</td></tr><tr><td>5 日主力净额</td><td>MainNetFlow5D</td><td>≤ 0 且 20 日仍为正 → 标红：资金减速 / 疑似派发</td></tr><tr><td>归一化强度</td><td>MainNetFlow20D ÷ 流通市值 × 100</td><td>横向可比口径，绝对值不可比</td></tr><tr><td>60 日涨幅</td><td>chg_60d</td><td>20 日为正而 60 日仍为负 → 标红：疑似反弹非趋势</td></tr><tr><td>获利盘</td><td>chipProfitRate</td><td>≥ 95% 标橙：全员获利，兑现压力集中</td></tr><tr><td>筹码集中度 90</td><td>chipConcentration90</td><td>越小越集中（辅助观察，不设阈值）</td></tr>
-</table>
-<h3>三道最有效的伪强势过滤网</h3>
-<ul>
-<li><b>位置过滤</b>：52 周分位 &gt; 80% 时，水上金叉多为「趋势末端的中继」，与本账户 ≤15% 最大回撤的风险预算直接冲突。低位净流入（建仓）远比高位净流入可信。</li>
-<li><b>量能过滤</b>：量比 &lt; 1 的「缩量金叉」缺乏成交确认，假突破概率显著更高；反之放量突破且换手适中（约 2%–15%）质量更好。</li>
-<li><b>时序过滤</b>：5 日净额与 20 日净额必须同号且同为正。20 日为正而 5 日转负 = 资金减速/疑似派发；20 日为正而 60 日涨幅仍为负 = 疑似反弹而非趋势。</li>
-</ul>
-<h3>为什么这些列「只记录、不筛选」</h3>
-<div class="box amber"><b>避免过拟合。</b>样本仅有单期（约 35 只）。若立刻把这些阈值写成硬条件，本质是用一次观测拟合规则，无法验证其真实增益。
-正确顺序是：<b>先如实记录 → 累积 20~30 个交易日 → 回测各阈值的分组胜率 → 再把验证有效的升级为硬条件</b>。这是唯一能稳定修正胜率的路径，而非堆指标。</div>
-<h3>比加指标更重要的一件事</h3>
-<div class="box red"><ul style="margin:8px 0 0;padding-left:20px;font-size:13px">
-<li><b>退出纪律 &gt; 入场筛选。</b>入场筛选决定「看不看」，退出规则决定「赚不赚」。再好的筛选也无法替代止损。</li>
-<li>建议规则：跌破 MA20 或 MACD 死叉离场；单笔止损 −8%；盈利分批止盈，不追求卖在最高点。</li>
-</ul></div>
+<div class='section'>
+<h2>📁 产出文件</h2>
+<div class='chiprow'>
+<span class='pill'>index.html</span>
+<span class='pill'>daily_overview.html</span>
+<span class='pill'>lhb.html</span>
+<span class='pill'>hotmoney.html</span>
+<span class='pill'>lhb_2026-09-17.html</span>
+<span class='pill'>status_2026-09-17.html</span>
 </div>
-
-<h2>四、跨期对比怎么用（新进 / 连续 / 退出）</h2>
-<div class="card">
-候选池每天重扫，<b>逐期名单的差异比单期名单更有信息量</b>。候选池页「与上一期对比」给出三个名单，对应三种完全不同的读法：
-<table data-wb>
-<tr><th>名单</th><th>含义</th><th>怎么用</th></tr>
-<tr><td><b>新进</b>（蓝徽标「新」）</td><td>本期首次同时满足三层漏斗（上期不在池内）</td><td>信号最"新"，但需辨别是「趋势刚启动」还是「破位后反抽重新满足」——查增强列的 52 周分位与 60 日涨幅，高位 + 60 日为负 = 伪新进。</td></tr>
-<tr><td><b>连续在榜</b>（绿徽标 + 历史入选列）</td><td>两期同时入选，趋势与资金连续同向</td><td>信号稳定性最好的正面证据，但<b>不等于可以放松止损</b>；连榜期数越多、位置越高的标的，反而越要警惕趋势末端。</td></tr>
-<tr><td><b>上期已退出</b></td><td>上期在池、本期不再同时满足漏斗</td><td><b>对持仓者而言这是最该优先看的名单</b>：退出意味着 MACD 水上金叉破位（DIF/DEA/柱任一转负）或 20 日主力净流入转负，对应退出纪律中的「跌破 MA20 / MACD 死叉离场」。</td></tr>
-</table>
-<div class="box red"><b>纪律：</b>退出名单的优先级高于新进名单。不要因为一只票「连榜多期」就把它当作低风险，也不要因为「新进」就急于介入——先看它为什么新进、位置在哪。<br>
-<b>徽标读法：</b>名称后 <span class="newb">新</span> = 本期首次入选；<span class="hist">09-11</span> = 此前（不含今日）曾入选，鼠标悬停显示<b>全部</b>入选日期与池别（MACD 观察池 / 信号池·机构轨 / 信号池·游资轨）；「历史入选」列列出同一信息并支持排序。</div>
+<div class='note'>数据落盘：quant/market_overview、board_hot、quotes、news.json、limitup、lhb（均为 2026-09-17）。生成脚本：quant/build_dashboards.py。</div>
 </div>
-
-<h2>五、常见误区</h2>
-<div class="card">
-<table data-wb>
-<tr><th>误区</th><th>真相</th></tr>
-<tr><td>金叉 = 必涨</td><td>零轴下方金叉多是下跌中继反弹；只有在零轴上方、且量能与大盘配合才有效。</td></tr>
-<tr><td>主力净流入为正 = 机构看好</td><td>它是按单笔金额分档的大单净额，可被拆单低估、被对倒高估；且累计值掩盖时序。只能作弱辅助。</td></tr>
-<tr><td>净额越大越强</td><td>绝对净额不可横向比较：20 亿对 300 亿流通盘是 6.7%，对 3000 亿盘只有 0.67%。须看归一化强度。</td></tr>
-<tr><td>入选 = 可买入</td><td>入选仅代表满足筛选条件，不等于一定上涨；增强列告警集中出现时应视为风险叠加。</td></tr>
-<tr><td>信号越多越准</td><td>本筛选刻意「稀缺化」（全市场约 1500–2000 只初筛 → 最终约 30–55 只），追求共振质量而非数量。</td></tr>
-</table>
+<div class='section'>
+<h2>⚠️ 口径说明</h2>
+<div class='empty' style='text-align:left'>· 估值（PE 分位）接口最新快照为 2026-09-16，其余均为 2026-09-17。<br>· 窗口收益(alpha)回测未内置，链接至远程历史分析页。<br>· 所有资金数据为盘后公开龙虎榜，滞后且非未来收益承诺。</div>
 </div>
-
-<h2>六、介入纪律（账户级）</h2>
-<div class="box red"><ul style="margin:8px 0 0;padding-left:20px;font-size:13.5px">
-<li>本页为<b>量化筛选结果</b>，非个股推荐、非买卖建议；决策责任在账户本人。</li>
-<li>水上金叉后若量能不济或大盘转弱，仍可能假突破；须结合板块与大盘情绪综合判断。</li>
-<li>强势股波动大，介入须自设止损与仓位上限（本账户纪律：单票 ≤ 总资金 5%–8%，整体回撤 ≤ 15%）。</li>
-<li>数据每日变化，须按上述口径动态重扫复核，不刻舟求剑。</li>
-</ul></div>
-
-<div class="foot">方法常驻页；候选池每日重扫见 <a href="index.html" style="color:var(--accent);text-decoration:none;font-weight:600">板块入口</a>。本方法为量化筛选，非投资建议。</div>
-</div><!--WB_APP--><script id='wb-app'>
+<footer>由 A 股量化助理生成 · 仅供参考，不构成投资建议。</footer>
+</div>
+<!--WB_APP--><script id='wb-app'>
 /* ============================================================
    通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
    功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
@@ -480,4 +489,5 @@ MACD 由 DIF（快线）、DEA（慢线）、MACD 柱（红绿柱）组成。当
   });
 })();
 
-</script><!--/WB_APP--></body></html>
+</script><!--/WB_APP--></body>
+</html>
