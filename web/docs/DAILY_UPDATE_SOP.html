@@ -252,6 +252,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 
 
+
 <div class="wrap">
 <header class="top">
   <div class="kicker">A股量化助理 · 每日盘后</div>
@@ -350,9 +351,15 @@ data_fund_flow    → quant/picks/fundflow_{DATE}.json
 data_fund_margin  → quant/picks/margin_{DATE}.json
 data_hot(kind=stock) → quant/picks/hot_{DATE}.json
 # 字段映射见 quant/_relay_picks_0914.py（可复用为 relay 模板）</pre>
-<p><b>第三步 · 双轨打分出页：</b></p>
+<p><b>第三步 · 建日K价格档案（沙箱外，必做 —— 漏跑则次日无法回填昨日选股）：</b></p>
+<pre>python quant/fetch_pick_klines.py --end {DATE}
+# 产出 quant/picks/price_archive.json（逐码 × 逐日 OHLC，data_kline 拉取）</pre>
+<p class="note">⚠️ 回填的价格源是这份档案，不是 <code>quotes_{DATE}.json</code>。<code>quotes</code> 只含<b>当日候选</b>，用它回填的话只有「连续两日都入选」的票才有 T+1/T+3/T+5，多数票永远无回测 —— 这正是历史上回测长期缺数的根因。</p>
+<p><b>第四步 · 双轨打分出页：</b></p>
 <pre>python quant/build_picks.py --date {DATE}
-# 产出 web/picks/pick_{DATE}.html + web/picks/index.html；回填 history.json 次日/3日/5日表现</pre>
+# 产出 web/picks/pick_{DATE}.html + web/picks/index.html；
+# backfill 读 price_archive，按真实交易日历把<b>每只票</b>的次日/3日/5日表现回填（昨日选股今日结算），
+# 并用真实同日收盘 + MA5 校正入场/止损/目标基准，消除陈旧 MA5 造成的收益虚高</pre>
 <p class="note">⚠️ 缺失数据自动降级为 0 分项，<b>但 <code>quotes_{DATE}.json</code> 缺失会导致 0 行输出</b>（无 price 直接跳过）。<code>data_rating</code> / <code>data_consensus</code> 为单码接口，逐只拉成本高，可略（对应维度记 0）；<code>data_risk</code> 降级时风险闸门与质押扣分不生效，需在页面标注。</p>
 </div>
 
