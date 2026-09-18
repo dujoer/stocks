@@ -152,16 +152,16 @@ FAMILIES = [
          entry='reversal/index.html', script=None, freq='on_demand',
          dated=False, start=None, date_re=None, need='方法验证案例，随讨论补充'),
 
-    dict(key='macd', label='MACD水上金叉观察池（每日扫描）',
+    dict(key='macd', label='MACD水上金叉观察池（已并入精选池 · 停更于 2026-09-18）',
          patterns=['macd/watchlist_*.html'],
-         entry='macd/index.html', script='macd_build.py;gen_macd.py', freq='daily',
+         entry='macd/index.html', script='macd_build.py;gen_macd.py', freq='archived',
          dated=True, start='20260911', date_re=r'(\d{8})',
-         need='三层漏斗：tool_filter(main_inflow,min_inflow=0.3亿,market=hs) → data_technical(水上金叉 DIF>0&DEA>0&MACD红柱>0) → data_fund_flow(MainNetFlow20D>0)；agent 实拉落盘 macd_scan_{DATE}.json 后跑 gen_macd.py'),
+         need='【2026-09-19 起停更·仅归档】原三层漏斗的后两层（水上金叉 DIF>0&DEA>0&MACD红柱>0、MainNetFlow20D>0）已并入精选池 build_picks.py 作为技术确认门槛；本板块不再独立日更，页面已注入停更横幅'),
 
-    dict(key='macd_entry', label='MACD板块入口/方法论',
+    dict(key='macd_entry', label='MACD板块入口/方法论（已并入精选池 · 停更）',
          patterns=['macd/index.html', 'macd/method.html'],
-         entry='macd/index.html', script='gen_macd.py', freq='daily',
-         dated=False, start=None, date_re=None, need='同 macd（滚动更新最新观察池 + 归档 + 方法论常驻页）'),
+         entry='macd/index.html', script='gen_macd.py', freq='archived',
+         dated=False, start=None, date_re=None, need='同 macd（归档入口 + 方法论常驻页，已标注停更并跳转精选池）'),
 
     dict(key='shareholder', label='行业最强/牛人', patterns=['shareholder/*.html'],
          entry='shareholder/2026-q2-industry-elite.html', script=None,

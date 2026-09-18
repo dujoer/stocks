@@ -251,7 +251,10 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 </style><!--/WB_THEME--></head>
 <body>
-<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../macd/index.html'>MACD金叉</a><a href='../picks/index.html'>信号池</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../macd/index.html'>MACD池·已并入</a><a href='../picks/index.html'>精选池</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+
+
+
 
 
 
@@ -395,7 +398,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
         <td class='hint'><b>已全自动化，不再手抄文案</b>；旧的「复制上一期 HTML + 精确字符串替换」法（<code>_build_{MMDD}.py</code>）已废弃——锚点一旦失配会静默残留旧数据。数据缺失时脚本如实标注「接口降级，未编造」</td>
       </tr>
       <tr data-tier='daily'>
-        <td class='dim'>个股信号池（次日建仓候选）</td><td><span class='tag daily'>每日</span></td>
+        <td class='dim'>精选池（原个股信号池 · 次日建仓候选，含技术确认出池）</td><td><span class='tag daily'>每日</span></td>
         <td>盘后（须在行情 / 大宗 / 高管跑完后）</td>
         <td><code>gen_picks.py --date D</code> → 拉 <code>data_quote</code> + <code>data_technical</code> + <code>data_fund_flow</code> + <code>data_chip</code> + <code>data_consensus</code> + <code>data_rating</code> + <code>data_fund_margin</code> + <code>data_risk</code> + <code>data_hot</code> + <code>tool_event</code>（25 只/批）→ <b><code>fetch_pick_klines.py --end D</code>（沙箱外，建 <code>price_archive.json</code> 日K价格档案）</b> → <code>build_picks.py --date D</code></td>
         <td>2026-09-14</td>
@@ -423,7 +426,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
         <td class='hint'>每个交易日<b>全市场重扫</b>刷新观察池，方法论页 <code>web/reversal/method.html</code> 不变只刷明细。<code>gen_watchlist.py</code> 会自动把 <code>web/reversal/</code> 下的案例页接回索引；<b>案例页勿放 <code>web/research/</code></b>，否则覆盖度自检报孤儿</td>
       </tr>
       <tr data-tier='daily'>
-        <td class='dim'>MACD 水上金叉池</td><td><span class='tag daily'>每日</span></td>
+        <td class='dim'>MACD 水上金叉池（已并入精选池 · 技术基底）</td><td><span class='tag daily'>每日</span></td>
         <td>盘后</td>
         <td><code>tool_filter(main_inflow,min_inflow=0.3亿)</code> → <code>data_technical</code>(水上金叉) → <code>data_fund_flow</code>(20日净流入&gt;0) → <code>python quant/macd_build.py {YYYYMMDD} --raw</code> → <code>python quant/build_macd_extra.py --date {DATE}</code>（<b>增强诊断列，漏跑则该表整列「无增强数据」</b>）→ <code>macd_build.py --raw</code> 复算 → <code>python quant/gen_macd.py {YYYYMMDD}</code></td>
         <td>2026-09-14</td>
@@ -526,7 +529,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
     <li><input type='checkbox' data-k='block'><div><div class='t'>④ 大宗交易：block_past_30(limit=必须3000) → gen_block → build_block</div></div></li>
     <li><input type='checkbox' data-k='sector'><div><div class='t'>⑤ 板块强度（红线：T日20:00 或 T+1 09:15 前）：gen_sector_raw → run_daily_sector</div><div class='d'>date 参数被忽略，前向累积；漏跑永久断档</div></div></li>
     <li><input type='checkbox' data-k='psy'><div><div class='t'>⑥ 心理雷达：build_psychology.py --date D（已全自动，旧手抄法废弃）</div></div></li>
-    <li><input type='checkbox' data-k='picks'><div><div class='t'>⑦ 个股信号池：gen_picks → MCP 25只/批补拉 → <b>fetch_pick_klines --end D（建日K价格档案）</b> → build_picks（按真实交易日历回填每票 T+1/3/5）→ backtest_picks</div><div class='d'>quotes_{D}.json 缺失会 0 行输出；fetch_pick_klines 漏跑则次日无法回填昨日选股</div></div></li>
+    <li><input type='checkbox' data-k='picks'><div><div class='t'>⑦ 精选池（原个股信号池）：gen_picks → MCP 25只/批补拉 → <b>fetch_pick_klines --end D（建日K价格档案）</b> → build_picks（按真实交易日历回填每票 T+1/3/5）→ backtest_picks</div><div class='d'>quotes_{D}.json 缺失会 0 行输出；fetch_pick_klines 漏跑则次日无法回填昨日选股。<b>出池门槛（2026-09-19 起）：最高档直接出池，次高档须 20 日主力净流入&gt;0 才出池，无合格标的则明示空仓等待</b></div></div></li>
     <li><input type='checkbox' data-k='tplus'><div><div class='t'>⑧ 做T池：gen_tplus → data_quote + data_kline(848×60) → build_tplus</div><div class='d'>数据量最大，建议单独跑一轮；破箱体下沿无条件清仓</div></div></li>
     <li><input type='checkbox' data-k='scan'><div><div class='t'>⑨ 反转 / MACD / 高胜率：tool_filter 实拉 → gen_watchlist / macd_build+gen_macd / build_highwin+gen_highwin</div><div class='d'>三者均加 --date D，切勿再用写死日期的 _0914 脚本</div></div></li>
     <li><input type='checkbox' data-k='news'><div><div class='t'>⑩ 当日要闻：data_hot(kind=news) → _news_seed/{D}.json → add_news.py --date D</div></div></li>

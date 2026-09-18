@@ -41,8 +41,8 @@ SECTIONS = [
     ("牛人追踪", "shareholder/tracker.html"),
     ("个股调研", "research/index.html"),
     ("底部反转", "reversal/index.html"),
-    ("MACD金叉", "macd/index.html"),
-    ("信号池", "picks/index.html"),
+    ("MACD池·已并入", "macd/index.html"),
+    ("精选池", "picks/index.html"),
     ("做T池", "tplus/index.html"),
     ("数据中心", "db/index.html"),
 ]
@@ -69,8 +69,8 @@ MODULES = [
     ("选股与策略", [
         ("个股调研", "research/index.html"),
         ("底部反转", "reversal/index.html"),
-        ("MACD金叉", "macd/index.html"),
-        ("信号池", "picks/index.html"),
+        ("MACD池·已并入", "macd/index.html"),
+        ("精选池", "picks/index.html"),
         ("做T池", "tplus/index.html"),
     ]),
     ("数据与工具", [
