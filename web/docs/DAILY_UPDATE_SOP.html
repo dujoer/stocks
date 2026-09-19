@@ -221,7 +221,14 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 </style><!--/WB_THEME--></head>
 <body>
-<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>强势精选</a><a href='../picks/index.html'>精选池</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+
+
+
+
+
+
+
 
 
 
@@ -287,7 +294,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr><td>④ 自下而上选股</td><td><code>web/bottom-up-stock-picks-YYYYMMDD.html</code></td><td id="d4">—</td><td>选股范式（手动）</td><td>data_finance / data_consensus / data_technical 等</td></tr>
 <tr><td>⑤ 精选池（原个股信号池 · 机构轨+游资轨 · 含技术确认出池）</td><td><code>web/picks/index.html</code><br><code>web/picks/pick_{DATE}.html</code></td><td id="d7">—</td><td><code>quant/gen_picks.py</code> + <code>quant/build_picks.py</code></td><td>本地三路信号（中报/高管 exec_chg/大宗 block_chg）+ 龙虎榜 jg/yyb；打分需 data_quote / data_technical / data_chip / data_fund_flow / data_fund_margin。<b>2026-09-19 起出池门槛：</b>最高档直接出池，次高档须 <code>mainNetFlow20D&gt;0</code>（MACD 漏斗第 C 层）才出池，无合格标的则明示空仓</td></tr>
 <tr><td>⑥ 做T池（底仓网格）</td><td><code>web/tplus/index.html</code><br><code>web/tplus/tplus-{DATE}.html</code></td><td id="d8">—</td><td><code>quant/gen_tplus.py</code> + <code>quant/build_tplus.py</code></td><td>本地 q2_full（机构底仓池 → universe）；打分需 data_quote + data_kline（约 848 只 × 60 根）</td></tr>
-<tr><td>⑦ 底部反转选股（每日重扫）</td><td><code>web/reversal/index.html</code><br><code>web/reversal/watchlist_{DATE}.html</code></td><td id="d5">—</td><td><code>quant/gen_watchlist.py</code></td><td>westock tool_filter / data_quote / data_fund_flow / data_technical（agent 经 MCP 实拉 → <code>watchlist_scan_{DATE}.json</code>）</td></tr>
+<tr><td>⑦ 底部反转选股（每日重扫）</td><td><code>web/reversal/index.html</code><br><code>web/reversal/watchlist_{DATE}.html</code></td><td id="d5">—</td><td><code>quant/rev_pool.py run</code> + <code>quant/gen_watchlist.py</code></td><td>本地腾讯前复权日K（220 只种子，离线缓存）→ 硬门槛内 9 特征横截面分位组合；模型由 <code>_rev_lab.py</code> 样本外实证冻结，证据页 <code>web/reversal/lab.html</code></td></tr>
 <tr><td>⑧ MACD 水上金叉观察池（每日重扫 · <b>已并入精选池</b>）</td><td><code>web/macd/index.html</code><br><code>web/macd/watchlist_{DATE}.html</code></td><td id="d6">—</td><td><code>quant/macd_build.py</code> + <code>quant/gen_macd.py</code></td><td>westock tool_filter / data_technical / data_fund_flow（agent 经 MCP 实拉 → <code>macd_raw_*_{DATE}.json</code>）+ 增强列 data_quote / data_chip / data_fund_flow。<b>2026-09-19 起：</b>不再单独荐股，两层条件并入精选池作技术确认门槛；本扫描继续日更（同时是⑨高胜率池的基底）</td></tr>
 <tr><td>⑨ 高胜率候选池（每日重扫）</td><td><code>web/picks/highwin_{YYYYMMDD}.html</code></td><td id="d9">—</td><td><code>quant/build_highwin.py --date {DATE}</code> + <code>quant/gen_highwin.py --date {DATE}</code></td><td>基底 = 当日 MACD 水上金叉 + 20 日主力净流入&gt;0（<code>quant/macd_scan_{YYYYMMDD}.json</code>）；增强：data_quote / data_technical(MA·RSI) / data_chip / 板块强度 / 龙虎榜 / 高管·大宗</td></tr>
 <tr><td>⑩ 当日要闻</td><td>（无独立页，进龙虎榜看板）</td><td id="d10">—</td><td><code>quant/add_news.py --date {DATE}</code></td><td>westock <code>data_hot(kind=news)</code> 榜单 → 落 <code>quant/_news_seed/{DATE}.json</code> → 写入 <code>quant/news.json</code>。<b>不再每天新建一个脚本</b></td></tr>
@@ -393,18 +400,19 @@ data_kline → quant/tplus/kline_{DATE}.json      # 848 只 × 60 根，数据�
 
 <h3>⑦ 底部反转选股（每日重扫，必做）</h3>
 <div class="card">
-<p><b>目标</b>：每个交易日收盘后，用「六步 Playbook」重新扫描全市场，刷新观察池，让 <code>web/reversal/</code> 常驻版块始终保持最新。方法论常驻页 <code>web/reversal/method.html</code> 不变，只刷新观察池明细与入口摘要。</p>
-<p><b>1. 经 westock 六步法实拉并落盘</b>（由 agent 通过 MCP 执行，Python 脚本不可直接调 westock）：</p>
-<pre># agent 跑六步 MCP 扫描，结果落盘为纯 JSON（不可带 Python 注释头，否则 json.load 失败）
-quant/watchlist_scan_{DATE}.json
-# 字段：data_date / presets{turnaround,main_inflow,low_pb} / candidates[{code,name,price,
-#   float_mv,dist_52hi,ytd,pe,main20,rank,tier,score,logic,action}]</pre>
-<p class="note">⚠️ 落盘 JSON 必须是<b>纯 JSON</b>：第一行起即为 <code>{</code>，任何 <code>#</code> 注释或 <code>"""docstring"""</code> 都会让 <code>gen_watchlist.py</code> 的 <code>json.load</code> 直接失败；说明文字请放进 <code>"_doc"</code> 字段。</p>
-<p><b>2. 生成</b>：</p>
-<pre>python quant/gen_watchlist.py {DATE}      # 读 watchlist_scan_{DATE}.json
-                                # 产出 web/reversal/watchlist_{DATE}.html（明细）+ web/reversal/index.html（入口滚动更新）
-# 不带参数则自动取 quant/ 下最新 watchlist_scan_*.json</pre>
-<p><b>3. 注入导航 + 主题 + 校验</b>（与其他版块统一门禁）：</p>
+<p><b>目标</b>：每个交易日收盘后重扫种子宇宙，按<b>横截面分位组合</b>定档刷新观察池，让 <code>web/reversal/</code> 常驻版块始终保持最新。方法论常驻页 <code>web/reversal/method.html</code>、实证页 <code>web/reversal/lab.html</code> 不随日刷新。</p>
+<p><b>1. 选股（本地日K，不经 westock）</b>：</p>
+<pre>python quant/rev_pool.py run        # 腾讯前复权日K（220 只种子，离线缓存 _txk_cache.json）
+                                    # 产出 quant/watchlist_scan_{DATE}.json + web/reversal/watchlist_{DATE}.html
+                                    # 档位 = 硬门槛内 9 特征横截面分位排序（A=前20% / B=20~50% / C=其余）</pre>
+<p><b>2. 入口页</b>：</p>
+<pre>python quant/gen_watchlist.py {DATE}   # 只重建 web/reversal/index.html（入口滚动更新）
+                                       # 检测到 rev_pool v4 的 scan 时会自动跳过明细，避免覆盖</pre>
+<p class="note">⚠️ 两个脚本都写 <code>web/reversal/watchlist_{DATE}.html</code>，<code>gen_watchlist.py</code> 已加 <code>_doc</code> 含「v4」即跳过明细的守卫；<b>顺序必须 rev_pool 在前</b>，否则入口页取不到当期 scan。落盘 JSON 必须是<b>纯 JSON</b>（第一行起即为 <code>{</code>，任何 <code>#</code> 注释都会让 <code>json.load</code> 失败），说明文字放进 <code>"_doc"</code>。</p>
+<p><b>3. 模型维护（按需，不是每日）</b>：</p>
+<pre>python quant/_rev_lab.py            # 重建样本外面板并重估特征功效 → 刷新 web/reversal/lab.html + quant/_rev_model.json
+                                    # 首次或数据大幅更新时加 --panel /tmp/_p.json 强制重建面板（约 1~2 分钟）</pre>
+<p><b>4. 注入导航 + 主题 + 校验</b>（与其他版块统一门禁）：</p>
 <pre>python _apply_theme.py          # 统一导航/主题/排序注入（reversal 已登记，自动覆盖）
 python _link_check.py           # 0 断链门禁
 python _coverage_check.py --until {DATE}   # 校验 reversal 族 0 缺口、0 未登记、0 孤儿页</pre>

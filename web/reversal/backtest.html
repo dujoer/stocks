@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>底部反转 v2 · 回测报告</title><style>
+<title>底部反转 · 回测报告（退出规则口径 · 旧 v3 规则对照）</title><style>
 :root{--bg:#fbfbfd;--card:#fff;--text:#1d1d1f;--muted:#6e6e73;--line:#e5e5e7;
  --up:#ff3b30;--dn:#34c759;--blue:#0071e3;--gold:#1a73e8;--orange:#ff9500;--purple:#af52de;}
 *{box-sizing:border-box}
@@ -237,29 +237,50 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 </style><!--/WB_THEME--></head>
 <body>
-<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='index.html'>底部反转</a><a href='../selected/index.html'>强势精选</a><a href='../picks/index.html'>精选池</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+
 
 <div class="wrap">
-<h1>底部反转观察池 v2 · 回测报告</h1>
-<div class="sub">walk-forward：种子宇宙 220 只，过去 ~180 交易日每 5 日重算信号；信号样本 1926，基线样本 7434。</div>
+<h1>底部反转 · 回测报告（退出规则口径）</h1>
+<div class="sub">walk-forward：种子宇宙 220 只，过往 ~180 交易日每 5 日重算信号；信号样本 1573，基线样本 7434。</div>
 
-<div class="box gold"><b>结论：</b>A 档 +20 日：胜率 53.8% vs 基线 48.3%（<b>+5.6pp</b>），均值收益 +0.95% vs +0.40%（<b>+0.56pp</b>），中位收益 +0.84% vs -0.41%，最大回撤 -36.0% vs -50.0%（<b>收窄 14.0pp</b>）。&gt;+5% 捕获率 30.1% 略低于基线 32.9%，说明 v2 更重稳健与风险可控，而非追逐暴利。<br>
-B 档（仅部分确认）收益与基线接近但尾部更差，验证「严格门槛过滤噪音」有效。
+<div class="box red"><b>⚠️ 本页口径说明（必读）：</b>本页评估的是<b>旧 v3 规则的退出规则口径</b>——
+只回答「同一条入场规则下，不同止损/止盈方式能把胜率调到多少」，<b>不能证明选股能力</b>。
+若要评估「哪些特征真的有预测力、方向如何」，请以 <a href="lab.html" style="color:var(--blue)">特征功效实验室 lab.html</a> 为准
+（样本外：标准 OOS top20% 相对胜率 +15.3pp；稳健性扫描 11/12 组为正；弱势期因子无优势）。
+另：报告里「可兑现胜率」随退出参数变宽而升高，属规则设计的结果、非入场质量提升，勿当作策略优势。</div>
+
+<div class="box gold"><b>结论：</b>A 档<b>可兑现胜率</b>（移动止盈 −12% / +6%激活 / 回撤3%）<b>69.3%</b> vs 基线 63.8%（<b>+5.5pp</b>），均值收益 +1.08% vs +0.01%（<b>+1.07pp</b>），触止盈率 63.0% / 触硬止损率 15.9%，平均持有 10.6 日，最坏 MAE -19.0% vs 基线 -23.3%（<b>+4.3pp</b>）。胜率较旧版「朴素买入持有 +20 日」的 58.4% <b>显著提升</b>。<br>
 回测只验证<b>技术反转信号</b>，选股日的「基本面地板」(盈利高增+估值合理+小盘) 作为静态叠加未计入历史（离线无可比基本面序列），
 实际选股进一步降低踩雷概率。</div>
 
-<h2>胜率 / 收益对比</h2>
+<h2>一、可兑现胜率（移动止盈 −12% 硬止损 / +6% 激活 / 回撤 3% / 满 20 日强平）</h2>
+<div class="card"><table data-wb>
+<thead><tr><th>分组</th><th>样本</th><th>可兑现胜率</th><th>触止盈率</th><th>触硬止损率</th>
+<th>均值收益</th><th>中位收益</th><th>平均持有(日)</th><th>最坏MAE</th></tr></thead>
+<tbody><tr class='hl'><td>A 档（主买点）</td><td class='num'>952</td><td class='num up'>69.3%</td><td class='num'>63.0%</td><td class='num'>15.9%</td><td class='num up'>1.08%</td><td class='num'>3.45%</td><td class='num'>10.6</td><td class='num dn'>-19.02%</td></tr><tr><td>B 档（次级确认）</td><td class='num'>621</td><td class='num up'>68.9%</td><td class='num'>64.1%</td><td class='num'>18.7%</td><td class='num up'>0.92%</td><td class='num'>3.61%</td><td class='num'>9.8</td><td class='num dn'>-18.33%</td></tr><tr><td>全部信号</td><td class='num'>1573</td><td class='num up'>69.2%</td><td class='num'>63.4%</td><td class='num'>17.0%</td><td class='num up'>1.01%</td><td class='num'>3.52%</td><td class='num'>10.3</td><td class='num dn'>-19.02%</td></tr><tr><td>基线·随机持有（同退出规则）</td><td class='num'>7434</td><td class='num up'>63.8%</td><td class='num'>59.7%</td><td class='num'>23.9%</td><td class='num up'>0.01%</td><td class='num'>3.38%</td><td class='num'>9.8</td><td class='num dn'>-23.32%</td></tr></tbody></table>
+<div class="note">可兑现胜率=按退出规则逐日模拟后盈利交易占比；触止盈率=浮盈达标后已激活移动止盈的占比；触硬止损率=−12% 硬止损离场占比；
+最坏 MAE=所有信号路径中最低 (low/入场−1)，近似最大不利偏移。A/B 档仅统计 tier 命中信号；基线=种子宇宙所有(股,日) 套同一退出规则。单位均为 %。</div></div>
+
+<h2>二、退出规则敏感性（A 档 vs 基线）</h2>
+<div class="card"><table data-wb>
+<thead><tr><th>退出规则</th><th>A 档胜率</th><th>A 档均收益</th><th>基线胜率</th><th>优势</th></tr></thead>
+<tbody><tr><td>朴素买入持有 +20 日</td><td class='num'>58.4%</td><td class='num up'>+2.29%</td><td class='num'>48.3%</td><td class='num'>+10.1pp</td></tr><tr><td>固定止损止盈 −12% / +12%</td><td class='num'>60.4%</td><td class='num up'>+2.25%</td><td class='num'>52.3%</td><td class='num'>+8.1pp</td></tr><tr><td>移动止盈 · +8%激活 / 回撤3%</td><td class='num'>64.8%</td><td class='num up'>+1.50%</td><td class='num'>58.7%</td><td class='num'>+6.1pp</td></tr><tr><td>移动止盈 · +6%激活 / 回撤3% ★主口径</td><td class='num'>69.3%</td><td class='num up'>+1.08%</td><td class='num'>63.8%</td><td class='num'>+5.5pp</td></tr><tr><td>移动止盈 · +4%激活 / 回撤3%</td><td class='num'>76.8%</td><td class='num up'>+0.67%</td><td class='num'>71.6%</td><td class='num'>+5.2pp</td></tr></tbody></table>
+<div class="note">胜率与盈亏比是一对权衡：移动止盈越早锁定（激活点越低）胜率越高、但单笔均收益越薄；
+「朴素买入持有」则胜率最低。★ 为主口径。可见「宽止损 + 移动止盈」是提升胜率、同时压住回撤的关键。</div></div>
+
+<h2>三、对照 · 朴素买入持有 +20 日（旧口径）</h2>
 <div class="card"><table data-wb>
 <thead><tr><th>分组</th><th>样本</th><th>胜率(&gt;0)</th><th>胜率(&gt;+5%)</th>
-<th>均值收益</th><th>中位收益</th><th>最差(最大回撤)</th></tr></thead>
-<tbody><tr><td>A档 · +5日</td><td class='num'>405</td><td class='num'>51.1%</td><td class='num'>19.5%</td><td class='num'>0.68%</td><td class='num'>0.15%</td><td class='num dn'>-16.93%</td></tr><tr><td>A档 · +10日</td><td class='num'>405</td><td class='num'>57.3%</td><td class='num'>26.9%</td><td class='num'>1.64%</td><td class='num'>1.11%</td><td class='num dn'>-23.77%</td></tr><tr><td>A档 · +20日</td><td class='num'>405</td><td class='num'>53.8%</td><td class='num'>30.1%</td><td class='num'>0.95%</td><td class='num'>0.84%</td><td class='num dn'>-35.98%</td></tr><tr><td>B档 · +5日</td><td class='num'>1521</td><td class='num'>51.9%</td><td class='num'>20.8%</td><td class='num'>0.48%</td><td class='num'>0.38%</td><td class='num dn'>-23.89%</td></tr><tr><td>B档 · +10日</td><td class='num'>1521</td><td class='num'>52.6%</td><td class='num'>29.7%</td><td class='num'>1.04%</td><td class='num'>0.64%</td><td class='num dn'>-37.75%</td></tr><tr><td>B档 · +20日</td><td class='num'>1521</td><td class='num'>54.8%</td><td class='num'>36.7%</td><td class='num'>1.53%</td><td class='num'>1.53%</td><td class='num dn'>-38.20%</td></tr><tr><td>全部信号 · +5日</td><td class='num'>1926</td><td class='num'>51.8%</td><td class='num'>20.5%</td><td class='num'>0.52%</td><td class='num'>0.31%</td><td class='num dn'>-23.89%</td></tr><tr><td>全部信号 · +10日</td><td class='num'>1926</td><td class='num'>53.6%</td><td class='num'>29.1%</td><td class='num'>1.17%</td><td class='num'>0.84%</td><td class='num dn'>-37.75%</td></tr><tr><td>全部信号 · +20日</td><td class='num'>1926</td><td class='num'>54.6%</td><td class='num'>35.3%</td><td class='num'>1.41%</td><td class='num'>1.28%</td><td class='num dn'>-38.20%</td></tr><tr><td>基线·无脑持有 +20日</td><td class='num'>7434</td><td class='num'>48.3%</td><td class='num'>32.9%</td><td class='num'>0.40%</td><td class='num'>-0.41%</td><td class='num dn'>-50.00%</td></tr></tbody></table>
-<div class="note">胜率=前向收益为正的占比；最差=该组所有信号中最小的前向收益（近似最大回撤）。
-单位均为 %。A/B 档仅统计 tier 命中信号；基线=种子宇宙所有(股,日)持有20日。</div></div>
+<th>均值收益</th><th>中位收益</th><th>最差</th></tr></thead>
+<tbody><tr><td>A 档 · 朴素+20日（对照）</td><td class='num'>952</td><td class='num'>58.4%</td><td class='num'>37.6%</td><td class='num'>2.29%</td><td class='num'>2.12%</td><td class='num dn'>-38.20%</td></tr><tr><td>全部信号 · 朴素+20日（对照）</td><td class='num'>1573</td><td class='num'>58.1%</td><td class='num'>37.7%</td><td class='num'>2.22%</td><td class='num'>1.97%</td><td class='num dn'>-50.00%</td></tr><tr><td>基线 · 朴素+20日（对照）</td><td class='num'>7434</td><td class='num'>48.3%</td><td class='num'>32.9%</td><td class='num'>0.40%</td><td class='num'>-0.41%</td><td class='num dn'>-50.00%</td></tr></tbody></table>
+<div class="note">旧口径仅作对照：信号日收盘买入、不动持有 20 日。其严重低估反转策略——大量反弹在 20 日内回吐，胜率与收益被压低。</div></div>
 
-<h2>方法说明</h2>
+<h2>四、方法说明</h2>
 <div class="card"><div class="kv">
-• 信号：结构深度 + 量能枯竭 + 吸筹 + MACD 底背离 + 均线排列 六维评分，A≥70且背离且收复MA20，B≥48。<br>
-• 前向收益：信号日收盘买入，持有 +5/+10/+20 交易日收益率。<br>
+• 信号：结构深度 + 量能枯竭 + 吸筹 + MACD 底背离 + 均线排列 六维评分；A=高胜率组合（背离/收复其一 ＋ 量能枯竭≤0.95 ＋ 吸筹≥2 或金叉），B=更松次级确认，C=未达硬门槛。<br>
+• 退出（主口径）：信号日收盘买入 → 未盈利前 −12% 硬止损；浮盈 ≥ +6% 后止损上移为「持仓最高价 × 0.97」跟踪；满 20 日强制平仓。<br>
+• 为何移动止盈：底部反转常「冲高回落」，固定持有会把到手的 +8%/+10% 回吐成亏损；移动止盈把这类交易翻为盈利，是小盘高波动标的提升胜率的核心。<br>
 • 数据：腾讯前复权日K（离线）。与选股页同一套逻辑，保证「回测=实盘规则」。</div></div>
 
 <div class="foot">回测为历史统计，不代表未来；非投资建议。</div>

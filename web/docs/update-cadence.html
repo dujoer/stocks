@@ -251,7 +251,14 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 </style><!--/WB_THEME--></head>
 <body>
-<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>强势精选</a><a href='../picks/index.html'>精选池</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+
+
+
+
+
+
+
 
 
 
@@ -427,9 +434,9 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
       <tr data-tier='daily'>
         <td class='dim'>底部反转观察池</td><td><span class='tag daily'>每日</span></td>
         <td>盘后（与 MACD 同批）</td>
-        <td><code>tool_filter</code> 当日六步法实拉 → 落 <code>quant/watchlist_scan_{DATE}.json</code>（<b>必须是纯 JSON，禁止注释行</b>）→ <code>python quant/gen_watchlist.py {DATE}</code></td>
-        <td>2026-09-14</td>
-        <td class='hint'>每个交易日<b>全市场重扫</b>刷新观察池，方法论页 <code>web/reversal/method.html</code> 不变只刷明细。<code>gen_watchlist.py</code> 会自动把 <code>web/reversal/</code> 下的案例页接回索引；<b>案例页勿放 <code>web/research/</code></b>，否则覆盖度自检报孤儿</td>
+        <td><code>rev_pool.py run</code>（本地腾讯前复权日K → 横截面分位组合 / 分位档）→ <code>gen_watchlist.py {DATE}</code>（仅重建入口页，v4 scan 自动跳过明细覆盖）</td>
+        <td>2026-09-18</td>
+        <td class='hint'>每个交易日重扫种子宇宙（220 只）刷新观察池，方法论页 <code>web/reversal/method.html</code> 与实证页 <code>web/reversal/lab.html</code> 不随日刷新。<code>gen_watchlist.py</code> 会自动把 <code>web/reversal/</code> 下的案例页接回索引；<b>案例页勿放 <code>web/research/</code></b>，否则覆盖度自检报孤儿</td>
       </tr>
       <tr data-tier='daily'>
         <td class='dim'>MACD 水上金叉池（已并入精选池 · 技术基底）</td><td><span class='tag daily'>每日</span></td>
@@ -537,7 +544,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
     <li><input type='checkbox' data-k='psy'><div><div class='t'>⑥ 心理雷达：build_psychology.py --date D（已全自动，旧手抄法废弃）</div></div></li>
     <li><input type='checkbox' data-k='picks'><div><div class='t'>⑦ 精选池（原个股信号池）：gen_picks → MCP 25只/批补拉 → <b>fetch_pick_klines --end D（建日K价格档案）</b> → build_picks（按真实交易日历回填每票 T+1/3/5）→ backtest_picks</div><div class='d'>quotes_{D}.json 缺失会 0 行输出；fetch_pick_klines 漏跑则次日无法回填昨日选股。<b>出池门槛（2026-09-19 起）：最高档直接出池，次高档须 20 日主力净流入&gt;0 才出池，无合格标的则明示空仓等待</b></div></div></li>
     <li><input type='checkbox' data-k='tplus'><div><div class='t'>⑧ 做T池：gen_tplus → data_quote + data_kline(848×60) → build_tplus</div><div class='d'>数据量最大，建议单独跑一轮；破箱体下沿无条件清仓</div></div></li>
-    <li><input type='checkbox' data-k='scan'><div><div class='t'>⑨ 反转 / MACD / 高胜率：tool_filter 实拉 → gen_watchlist / macd_build+gen_macd / build_highwin+gen_highwin</div><div class='d'>三者均加 --date D，切勿再用写死日期的 _0914 脚本</div></div></li>
+    <li><input type='checkbox' data-k='scan'><div><div class='t'>⑨ 反转 / MACD / 高胜率：反转 rev_pool.py run + gen_watchlist.py / MACD macd_build+build_macd_extra+gen_macd / 高胜率 build_highwin+gen_highwin</div><div class='d'>三者均加 --date D，切勿再用写死日期的 _0914 脚本</div></div></li>
     <li><input type='checkbox' data-k='news'><div><div class='t'>⑩ 当日要闻：data_hot(kind=news) → _news_seed/{D}.json → add_news.py --date D</div></div></li>
     <li><input type='checkbox' data-k='portal'><div><div class='t'>⑪ 数据库与门户：db_update → db_export → build_portal → build_sections → _apply_theme</div><div class='d'>凡显示「非当日」的卡片即为漏跑项</div></div></li>
     <li><input type='checkbox' data-k='push'><div><div class='t'>⑫ 门禁与推送：_link_check 0断链 / _coverage_check 无新增缺口 / _js_check --all → _push_lhb → _sync_all → _curl_gate</div><div class='d'>推送必须 dangerouslyDisableSandbox=true，否则被沙箱 SIGTERM</div></div></li>

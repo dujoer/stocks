@@ -266,15 +266,17 @@ def stat_macd():
 
 
 def stat_selected():
-    """强势精选合并页（MACD 水上金叉 + 精选池）：MACD 入选数 / 精选池候选数"""
-    if not selected_d or not selected_f:
+    """主升精选合并页（MACD 水上金叉 + 精选池，出池门槛过滤后）：双池共振 / 已出池 / 趋势观察"""
+    if not selected_d:
         return ""
-    d = _load_json(os.path.join(QUANT, "macd_scan_%s.json" % selected_d.strftime("%Y%m%d")))
-    pc = _load_json(os.path.join(QUANT, "picks", "candidates_%s.json" % selected_d.strftime("%Y-%m-%d")))
-    n_macd = d.get("final_count", "—") if d else "—"
-    n_picks = len(pc.get("candidates", [])) if pc else 0
-    return (f"MACD 水上金叉 <b>{n_macd}</b> 只 ｜ 精选池 <b>{n_picks}</b> 只 ｜ "
-            f"合并交易计划（带买卖点）")
+    st = _load_json(os.path.join(WEB, "selected", "stat_%s.json" % selected_d.strftime("%Y%m%d")))
+    if not st:
+        return "合并交易计划（带买卖点）"
+    both = st.get("both", "—"); rel = st.get("released", "—")
+    trend = st.get("trend", "—"); excl = st.get("excluded", 0)
+    env = st.get("env") or "未知"
+    return (f"双池共振 <b>{both}</b> ｜ 已出池 <b>{rel}</b> ｜ 趋势观察 {trend} ｜ "
+            f"剔除低确定性 {excl} ｜ 环境 <b>{env}</b> ｜ 带买卖点")
 
 
 def stat_industry_elite():
@@ -491,21 +493,15 @@ ZONES = [
         "cards": [
             {
                 "ic": "📈", "t": "底部反转观察池", "href": "web/reversal/index.html",
-                "func": "六步法（turnaround / main_inflow / low_pb 交叉 → 流通 < 100 亿 → 低位 → 扣非 PE → 20 日主力净流入 → 技术金叉）每日重扫，输出 A/B/C 分级观察池与方法论常驻页。",
-                "rel": "← 全市场初筛（tool_filter） → 逐只验证（quote / fund_flow / technical）",
+                "func": "v4 横截面分位组合：种子（净利高增 / 0<PE<50 / 市值<100亿）在硬门槛内按 9 个样本外验证特征做日内分位排序定档，方向全部为「距低点越近·量能越枯竭·波动越低·箱体越窄·均线越未修复」。附特征功效实验室（样本外实证页）与六步法方法论常驻页。",
+                "rel": "← 本地日K（220 只种子）横截面分位 → 输出 A/B/C 分位档 + 买卖点；选股能力以 lab.html 为准",
                 "stat": STAT["reversal"], "date": fmt(reversal_d), "fresh": badge(reversal_cls, reversal_txt),
             },
             {
-                "ic": "🎯", "t": "强势精选 · MACD + 精选池合并", "href": "web/selected/index.html",
-                "func": "将 MACD 水上金叉池（趋势 + 资金强势共振）与精选池（机构 / 游资 / 大宗 / Q2 / 高管多信号高胜率）合并为单页：逐只说明入选原因，并用腾讯日K 量化推算预估买区 / 止损 / 目标位 / 盈亏比。双池共振标的确定性最高，优先跟踪。",
-                "rel": "← MACD 水上金叉（tool_filter→data_technical→data_fund_flow）+ 精选池（三路上游）→ 个股调研（选中后深挖）。",
+                "ic": "🎯", "t": "主升精选 · 趋势+资金双确认", "href": "web/selected/index.html",
+                "func": "把「趋势已转多」与「主力真金白银介入」两路信号合一：MACD 水上金叉（趋势强势延续）+ 精选池（机构/游资/大宗/Q2/高管多信号）。只保留双池共振与已过出池门槛的高确定性标的，剔除未出池低确定性票，并接大盘环境门控（弱势/破位只留双池共振与最高档）。逐只给出买区/止损/目标/盈亏比。",
+                "rel": "← MACD 水上金叉 + 精选池（三路上游）→ 个股调研（选中后深挖）；逐票完整打分见精选池明细页。",
                 "stat": STAT["selected"], "date": fmt(selected_d) if selected_d else "—", "fresh": badge("fresh", "每日" if selected_d else "—"),
-            },
-            {
-                "ic": "🎯", "t": "精选池 · 每日出池", "href": "web/picks/index.html",
-                "func": "每日盘后输出【实际出池】标的与逐只交易计划：进场区间 / 止损 / 目标位 / 盈亏比 / 建议仓位。出池门槛：最高档直接出，次高档须通过「20 日主力净流入为正」技术确认；当日无合格标的则明示空仓等待。含评分模型说明与历史胜率归档。",
-                "rel": "← 高管增减持 + 大宗交易 + 中报（三路上游）+ MACD 技术确认 → 个股调研（选中后深挖）。",
-                "stat": STAT["pick"], "date": fmt(pick_d), "fresh": badge(pick_cls, pick_txt),
             },
             {
                 "ic": "📉", "t": "信号池回测", "href": "web/picks/backtest.html",
@@ -596,7 +592,7 @@ update_steps = [
     ("⑥ 群体心理风险雷达（每日必做 · 已全自动化）", "<code>python quant/build_psychology.py --date {DATE}</code>（节假日用 <code>--next {NEXT}</code>）。读①②③④⑤ 的产物自动出页 + 写入索引 + 累积 <code>quant/psy/history.json</code>；<b>旧的手抄文案法 <code>_build_*_{MMDD}.py</code> 已废弃</b>。"),
     ("⑦ 精选池（原信号池 · 每日 · 双轨 + 技术确认出池）", "<code>python quant/gen_picks.py --date {DATE} --window 20 --top 40</code>（纯本地三路信号）→ agent 经 MCP 按 <code>_codes_{DATE}.txt</code> 以 25 只/批补拉 quote/technical/chip/fund_flow/margin/hot → <b><code>python quant/fetch_pick_klines.py --end {DATE}</code>（沙箱外；为全部选股码建 <code>quant/picks/price_archive.json</code> 日K价格档案，漏跑则次日无法回填昨日选股）</b> → <code>python quant/build_picks.py --date {DATE}</code>（backfill 读该档案按真实交易日历回填每只票 T+1/T+3/T+5，昨日选股今日结算；并用真实同日收盘+MA5 校正入场/止损/目标基准）→ <code>python quant/backtest_picks.py</code>（累积胜率）。<b><code>quotes_{DATE}.json</code> 缺失会导致 0 行输出</b>。<b>2026-09-19 起出池门槛：</b>最高档直接出池；次高档须通过「20 日主力净流入为正」（MACD 三层漏斗第 C 层，读 <code>fundflow_{DATE}.json</code> 的 <code>mainNetFlow20D</code>）才出池；其余一律折叠为仅跟踪。当日无出池标的时页面明示<b>空仓等待</b>——实测最高档 T+3 胜率 83%，次高档仅 47%，故不硬凑。"),
     ("⑧ 做T池（每日 · 底仓网格）", "<code>python quant/gen_tplus.py --date {DATE}</code>（本地 q2_full 机构底仓池，约 848 只）→ 补拉 <code>data_quote</code> + <code>data_kline</code>（约 848×60 根，<b>数据量最大，建议单独跑一轮</b>）→ <code>python quant/build_tplus.py --date {DATE}</code>。<b>2026-09-19 起加大盘环境门控（<code>quant/_idxkline.py</code>）</b>：市场画像评分 × 55% + 上证指数均线状态 × 45%，强势 ≥3.8 / 震荡 3.0~3.8 / 弱势 2.2~3.0 / 破位 &lt;2.2；强势放行 A/B/C、震荡放行 A/B、<b>弱势只放行 A 档</b>并附加「一年分位 ≤70% · MA20 斜率 ≥−1% · 箱体高度 ≤40%」，仓位按环境打 0.55~1.0 折，<b>破位不放行新开仓</b>；卖区改为 1.2×ATR 驱动（不再死等箱体上沿）。"),
-    ("⑨ 反转 / MACD / 高胜率（每日扫描）", "三者均以当日 <code>tool_filter</code> 实拉落盘后再渲染：<code>python quant/gen_watchlist.py {DATE}</code> / <code>python quant/macd_build.py {DS} --raw</code> + <code>python quant/build_macd_extra.py --date {DATE}</code> + <code>python quant/macd_build.py {DS} --raw</code> + <code>python quant/gen_macd.py {DS}</code> / <code>python quant/build_highwin.py --date {DATE}</code> + <code>python quant/gen_highwin.py --date {DATE}</code>。<b>增强诊断列（52周分位 / 量比 / 换手 / 5日主力 / 归一化强度 / 获利盘 / 集中度）由 <code>build_macd_extra.py</code> 经 MCP 实拉 data_quote + data_chip + data_fund_flow 生成</b>，必须在 <code>macd_build.py</code> 之前跑，否则该表整列显示「无增强数据」；<b>高胜率须早于 <code>build_picks.py</code></b>，否则 picks/index 入链停在上期。"),
+    ("⑨ 反转 / MACD / 高胜率（每日扫描）", "三者均以当日数据实拉落盘后再渲染：反转 = <code>python quant/rev_pool.py run</code>（本地日K，220 只种子 → 横截面分位组合/分位档）→ <code>python quant/gen_watchlist.py {DATE}</code>（仅重建入口页）；模型失效时 <code>python quant/_rev_lab.py</code> 重跑样本外实证并刷新 <code>web/reversal/lab.html</code>。MACD = <code>python quant/macd_build.py {DS} --raw</code> + <code>python quant/build_macd_extra.py --date {DATE}</code> + <code>python quant/gen_macd.py {DS}</code>；高胜率 = <code>python quant/build_highwin.py --date {DATE}</code> + <code>python quant/gen_highwin.py --date {DATE}</code>。<b>增强诊断列（52周分位 / 量比 / 换手 / 5日主力 / 归一化强度 / 获利盘 / 集中度）由 <code>build_macd_extra.py</code> 经 MCP 实拉 data_quote + data_chip + data_fund_flow 生成</b>，必须在 <code>macd_build.py</code> 之前跑，否则该表整列显示「无增强数据」；<b>高胜率须早于 <code>build_picks.py</code></b>，否则 picks/index 入链停在上期。"),
     ("⑩ 当日要闻", "<code>data_hot(kind=news)</code> 榜单落 <code>quant/_news_seed/{DATE}.json</code> → <code>python quant/add_news.py --date {DATE}</code>（可加 <code>--expect 50</code> 校验条数）。<b>不再每天新建一个脚本</b>。"),
     ("⑪ 数据库与门户重建", "<code>python quant/db_update.py {DATE}</code> → <code>python quant/db_export.py</code> → <code>python quant/build_portal.py</code> → <code>python quant/build_sections.py</code> → <code>python quant/_apply_theme.py</code>。门户卡片自动带出最新日期与新鲜度；<b>凡显示「非当日」的卡片即为漏跑项，须当天补齐或诚实标注降级</b>。"),
     ("⑫ 校验与推送", "合规扫描（产物内不得出现个人持有信息、账户盈亏等敏感内容）；<code>python quant/_link_check.py</code> 须 0 断链、<code>python quant/_coverage_check.py --until {DATE}</code> 无新增缺口、<code>python quant/_js_check.py --all</code> 通过；推送须<b>关闭沙箱</b>执行 <code>python quant/_push_lhb.py</code> → <code>python quant/_sync_all.py</code> 收敛 → <code>python quant/_curl_gate.py</code> 抽检核心页 200。"),

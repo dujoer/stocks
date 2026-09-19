@@ -138,9 +138,11 @@ FAMILIES = [
          need='六步法：tool_filter 三预设交叉 → 流通<100亿 → 低位 → 扣非PE → 20日主力净流入 → 技术金叉；agent 实拉落盘 watchlist_scan_{DATE}.json 后跑 gen_watchlist.py'),
 
     dict(key='reversal_entry', label='底部反转板块入口',
-         patterns=['reversal/index.html', 'reversal/backtest.html'], entry='reversal/index.html',
+         patterns=['reversal/index.html', 'reversal/backtest.html', 'reversal/lab.html'],
+         entry='reversal/index.html',
          script='gen_watchlist.py', freq='daily', dated=False, start=None,
-         date_re=None, need='同 reversal（滚动更新最新观察池 + 归档）；backtest.html 为 v2 六维因子 walk-forward 回测页'),
+         date_re=None, need='同 reversal（滚动更新最新观察池 + 归档）；backtest.html 为退出规则口径回测（参考）；'
+                            'lab.html 为特征功效实验室（样本外实证，选股能力以此为准，由 _rev_lab.py 生成）'),
 
     dict(key='reversal_method', label='底部反转方法论 Playbook',
          patterns=['reversal/method.html'], entry='reversal/index.html',
@@ -163,12 +165,11 @@ FAMILIES = [
          entry='macd/index.html', script='gen_macd.py', freq='archived',
          dated=False, start=None, date_re=None, need='同 macd（归档入口 + 方法论常驻页，已标注停更并跳转精选池）'),
 
-    dict(key='selected', label='强势精选合并页（MACD 水上金叉 + 精选池 · 带买卖点）',
+    dict(key='selected', label='主升精选合并页（MACD 水上金叉 + 精选池 · 趋势+资金双确认）',
          patterns=['selected/combined_*.html', 'selected/index.html'],
          entry='selected/index.html', script='build_selected.py', freq='daily',
          dated=True, start='20260918', date_re=r'(\d{8})',
-         need='macd_scan_{DATE}.json（MACD 水上金叉池）+ picks/candidates_{DATE}.json（精选池）+ 腾讯日K 推算预估买区/止损/目标位/盈亏比'),
-
+         need='macd_scan_{DATE}.json（MACD 水上金叉池）+ picks/candidates_{DATE}.json（精选池）+ picks/history.json（出池门槛 grade/release）+ 腾讯日K 推算买卖点；环境门控来自 _idxkline'),
     dict(key='shareholder', label='行业最强/牛人', patterns=['shareholder/*.html'],
          entry='shareholder/2026-q2-industry-elite.html', script=None,
          freq='quarterly', dated=False, start=None, date_re=None,
