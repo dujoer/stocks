@@ -67,6 +67,7 @@ psy_d, psy_f = latest(r"^crowd-psychology-risk-radar-(\d{8})\.html$", os.path.jo
 research_d, research_f = latest(r"^research-.*?-(\d{8})\.html$", os.path.join(WEB, "research"))
 reversal_d, reversal_f = latest(r"^watchlist_(\d{8})\.html$", os.path.join(WEB, "reversal"))
 macd_d, macd_f = latest(r"^watchlist_(\d{8})\.html$", os.path.join(WEB, "macd"))
+selected_d, selected_f = latest(r"^combined_(\d{8})\.html$", os.path.join(WEB, "selected"))
 exec_d, exec_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "exec_chg"))
 blk_d, blk_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "block_chg"))
 # 每日总览（大盘看板）：取 market_overview 最新快照日期
@@ -264,6 +265,18 @@ def stat_macd():
             f"初筛 <b>{d.get('pool_total', '—')}</b> 只")
 
 
+def stat_selected():
+    """强势精选合并页（MACD 水上金叉 + 精选池）：MACD 入选数 / 精选池候选数"""
+    if not selected_d or not selected_f:
+        return ""
+    d = _load_json(os.path.join(QUANT, "macd_scan_%s.json" % selected_d.strftime("%Y%m%d")))
+    pc = _load_json(os.path.join(QUANT, "picks", "candidates_%s.json" % selected_d.strftime("%Y-%m-%d")))
+    n_macd = d.get("final_count", "—") if d else "—"
+    n_picks = len(pc.get("candidates", [])) if pc else 0
+    return (f"MACD 水上金叉 <b>{n_macd}</b> 只 ｜ 精选池 <b>{n_picks}</b> 只 ｜ "
+            f"合并交易计划（带买卖点）")
+
+
 def stat_industry_elite():
     """行业最强榜：行业数 / 标的数"""
     p = os.path.join(WEB, "shareholder", "2026-q2-industry-elite.html")
@@ -341,6 +354,7 @@ STAT = {
     "research": stat_research(),
     "reversal": stat_reversal(),
     "macd": stat_macd(),
+    "selected": stat_selected(),
 }
 
 lhb_txt, lhb_cls = freshness(lhb_d)
@@ -349,6 +363,7 @@ sec_txt, sec_cls = freshness(sec_d)
 psy_txt, psy_cls = freshness(psy_d)
 research_txt, research_cls = freshness(research_d)
 reversal_txt, reversal_cls = freshness(reversal_d)
+selected_txt, selected_cls = freshness(selected_d) if selected_d else ("—", "stale")
 exec_txt, exec_cls = freshness(exec_d)
 blk_txt, blk_cls = freshness(blk_d)
 pick_txt, pick_cls = freshness(pick_d) if pick_d else ("—", "stale")
@@ -481,10 +496,10 @@ ZONES = [
                 "stat": STAT["reversal"], "date": fmt(reversal_d), "fresh": badge(reversal_cls, reversal_txt),
             },
             {
-                "ic": "📊", "t": "MACD 金叉池（已并入精选池）", "href": "web/macd/index.html",
-                "func": "三层漏斗（主力流入初筛 → MACD 零轴上方金叉 → 20 日主力净流入为正）每日重扫，输出趋势转多 × 资金进场共振的强势候选。2026-09-19 起不再单独荐股：其两层条件已并入精选池作技术确认门槛，本页保留为技术面观察归档 + 高胜率池基底。",
-                "rel": "← 全市场初筛（tool_filter）→ data_technical（水上金叉）→ data_fund_flow（20 日净流入）→ 并入精选池",
-                "stat": STAT["macd"], "date": fmt(macd_d) if macd_d else "—", "fresh": badge("fresh", "每日" if macd_d else "—"),
+                "ic": "🎯", "t": "强势精选 · MACD + 精选池合并", "href": "web/selected/index.html",
+                "func": "将 MACD 水上金叉池（趋势 + 资金强势共振）与精选池（机构 / 游资 / 大宗 / Q2 / 高管多信号高胜率）合并为单页：逐只说明入选原因，并用腾讯日K 量化推算预估买区 / 止损 / 目标位 / 盈亏比。双池共振标的确定性最高，优先跟踪。",
+                "rel": "← MACD 水上金叉（tool_filter→data_technical→data_fund_flow）+ 精选池（三路上游）→ 个股调研（选中后深挖）。",
+                "stat": STAT["selected"], "date": fmt(selected_d) if selected_d else "—", "fresh": badge("fresh", "每日" if selected_d else "—"),
             },
             {
                 "ic": "🎯", "t": "精选池 · 每日出池", "href": "web/picks/index.html",

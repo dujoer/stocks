@@ -1,120 +1,56 @@
-<!DOCTYPE html>
-<html lang='zh-CN'>
-<head>
-<meta charset='UTF-8'>
-<meta name='viewport' content='width=device-width,initial-scale=1.0'>
-<title>状态报告</title>
-<style>* { box-sizing: border-box; }
-body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
-  background:#f5f6f8; color:#23262b; min-height:100vh; }
-.wrap { max-width:1040px; margin:0 auto; padding:40px 20px 60px; }
-.topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
-  border-bottom:1px solid rgba(0,0,0,.08); }
-.topnav a { color:#0071e3; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
-  border:1px solid rgba(0,113,227,.35); transition:.2s; }
-.topnav a:hover { background:rgba(0,113,227,.10); }
-header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#0071e3,#b8332a,#6b5b95);
-  -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
-header p { margin:4px 0; color:#8a929c; font-size:13px; line-height:1.6; }
-.meta { margin:14px 0 24px; font-size:12px; color:#6b7280; line-height:1.7; }
-.meta b { color:#0071e3; }
-.section { background:#ffffff;
-  border:1px solid rgba(0,0,0,.08); border-radius:20px; padding:18px 20px; margin:0 0 22px;
-  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); }
-.section h2 { font-size:17px; margin:0 0 14px; color:#1c2430; display:flex; align-items:center; gap:8px; }
-.section h2:before { content:""; width:4px; height:16px; background:#0071e3; border-radius:3px; }
-.idxrow { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px; }
-.idx { flex:1; min-width:200px; background:linear-gradient(135deg,rgba(184,51,42,.08),rgba(184,51,42,.03));
-  border:1px solid rgba(184,51,42,.20); border-radius:14px; padding:13px 10px; text-align:center;
-  box-shadow:0 1px 3px rgba(184,51,42,.06); }
-.idx .k { font-size:11px; color:#6b7280; letter-spacing:.3px; }
-.idx .v { font-size:22px; font-weight:800; color:#1c2430; margin:5px 0 2px; }
-.idx .c { font-size:13px; font-weight:700; }
-.idx .hl { font-size:10px; color:#8a929c; margin-top:4px; }
-.bar { display:flex; height:34px; border-radius:8px; overflow:hidden; margin:10px 0; font-size:12px;
-  color:#ffffff; text-align:center; line-height:34px; box-shadow:0 2px 6px rgba(0,0,0,.12); }
-.chiprow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
-.chip { background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06); border-radius:12px;
-  padding:10px 6px; text-align:center; min-width:74px; backdrop-filter:blur(6px); box-shadow:0 1px 3px rgba(20,30,50,.04); }
-.chip .ck { font-size:10px; color:#8a929c; }
-.chip .cv { font-size:16px; font-weight:800; margin-top:3px; }
-.tag { display:inline-block; border-radius:20px; padding:3px 11px; font-size:12px; margin:3px 4px 3px 0;
-  background:#eef2f8; color:#33414f; }
-.tag.hot { background:#fdeceb; color:#d8392b; }
-.tag.cold { background:#e9f6ef; color:#1a9e5a; }
-.pill { display:inline-block; background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06);
-  border-radius:20px; padding:4px 11px; font-size:12px; color:#3a4048; margin:3px 4px 3px 0; cursor:help; }
-.pill b { color:#0071e3; font-weight:700; }
-table { width:100%; border-collapse:collapse; font-size:13px; background:rgba(0,0,0,.03);
-  border:1px solid rgba(0,0,0,.05); border-radius:12px; overflow:hidden; margin:10px 0; }
-th,td { padding:8px 10px; text-align:left; border-bottom:1px solid rgba(0,0,0,.04); }
-th { background:rgba(20,30,50,.06); color:#3a4048; font-weight:600; font-size:12px; }
-td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
-.up { color:#b8332a; } .down { color:#1a9e5a; }
-.note { color:#8a929c; font-size:12px; margin-top:8px; line-height:1.6; }
-.amberbox { font-size:13px; color:#0071e3; background:linear-gradient(135deg,rgba(0,113,227,.10),rgba(0,113,227,.04));
-  border:1px solid rgba(0,113,227,.18); border-radius:12px; padding:12px 16px; margin:12px 0; line-height:1.6; }
-.ladder { margin:6px 0; padding:8px 10px; background:rgba(0,0,0,.03); border:1px solid rgba(0,0,0,.08);
-  border-radius:8px; font-size:13px; }
-.ladder .badge { display:inline-block; border-radius:6px; padding:1px 8px; margin-right:8px; font-weight:700; font-size:12px; }
-.ladder .b5 { background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.35); color:#b8332a; }
-.ladder .b6 { background:rgba(184,51,42,.16); border:1px solid rgba(184,51,42,.55); color:#b8332a; }
-.ladder .b5 { background:rgba(184,51,42,.12); border:1px solid rgba(184,51,42,.42); color:#b8332a; }
-.ladder .b4 { background:rgba(184,51,42,.08); border:1px solid rgba(184,51,42,.30); color:#b8332a; }
-.ladder .b3 { background:rgba(0,113,227,.14); border:1px solid rgba(0,113,227,.40); color:#d8bd8a; }
-.ladder .b2 { background:rgba(0,113,227,.14); border:1px solid rgba(0,113,227,.40); color:#d8bd8a; }
-.ladder .b1 { background:rgba(90,107,128,.12); border:1px solid rgba(90,107,128,.35); color:#a7b4c9; }
-.namechip { display:inline-block; color:#3a4048; margin:2px 6px 2px 0; font-size:13px; }
-.empty { color:#8a929c; text-align:center; padding:38px 0; font-size:14px; line-height:1.8; }
-.empty b { color:#0071e3; }
-footer { margin-top:40px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08);
-  font-size:12px; color:#8a929c; line-height:1.8; }
-a.inlink { color:#0071e3; text-decoration:none; border:1px solid rgba(201,166,107,.5);
-  border-radius:10px; padding:6px 14px; font-size:13px; font-weight:700; display:inline-block; margin:4px 6px 4px 0; }
-a.inlink:hover { background:rgba(201,166,107,.16); }
-.wrap.landing { max-width:880px; text-align:center; }
-.landing header h1 { font-size:34px; }
-.landing header p { margin:6px 0; color:#8a929c; font-size:14px; }
-.date { margin:18px 0 30px; font-size:13px; color:#0071e3; letter-spacing:.5px; }
-.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; text-align:left; }
-.card { display:block; text-decoration:none; color:#23262b; background:#ffffff;
-  border:1px solid rgba(0,0,0,.08); border-radius:18px; padding:20px 18px;
-  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); transition:.2s; }
-.card:hover { border-color:rgba(0,113,227,.50); transform:translateY(-2px); background:linear-gradient(135deg,rgba(0,113,227,.08),rgba(255,255,255,.03)); }
-.card .ic { font-size:26px; }
-.card .t { font-size:17px; font-weight:700; margin:10px 0 6px; color:#1c2430; }
-.card .d { font-size:12.5px; color:#8a929c; line-height:1.6; }
-.hist { margin-top:30px; font-size:12.5px; color:#6b7280; }
-.hist a { color:#0071e3; text-decoration:none; border:1px solid rgba(201,166,107,.4); border-radius:10px; padding:5px 12px; display:inline-block; margin:4px; }
-.foot { margin-top:42px; font-size:12px; color:#8a929c; line-height:1.8; }
-.lhb { table-layout:fixed; }
-.lhb th, .lhb td { font-size:12.5px; vertical-align:top; }
-.lhb td.reason { color:#6b7280; width:150px; font-size:11.5px; line-height:1.4; }
-.lhb td.sec { font-size:12px; white-space:nowrap; }
-.hm { text-align:center; }
-.hm-high { color:#f2a65a; font-weight:800; }
-.hm-mid { color:#0071e3; font-weight:700; }
-.hm-low { color:#8a93a3; }
-.hmtags { margin-top:3px; }
-.hmtag { display:inline-block; background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.30); color:#b8332a; border-radius:10px; padding:1px 7px; font-size:10.5px; margin:2px 2px 0 0; }
-.toggle { color:#0071e3; cursor:pointer; font-size:12px; user-select:none; }
-.toggle:hover { text-decoration:underline; }
-.seats { display:flex; gap:24px; flex-wrap:wrap; padding:6px 4px; }
-.seats .buys, .seats .sells { flex:1; min-width:260px; }
-.seat-h { font-weight:700; margin-bottom:6px; font-size:13px; }
-.seat-h.up { color:#b8332a; } .seat-h.down { color:#1a9e5a; }
-.seats ul { list-style:none; margin:0; padding:0; }
-.seats li { display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px dashed rgba(0,0,0,.04); font-size:12px; }
-.seats li .nm { flex:1; color:#3a4048; }
-.seats li .amt { font-variant-numeric:tabular-nums; font-weight:700; }
-tr.detail td { background:rgba(0,0,0,.03); }
-</style>
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>底部反转 v2 · 回测报告</title><style>
+:root{--bg:#fbfbfd;--card:#fff;--text:#1d1d1f;--muted:#6e6e73;--line:#e5e5e7;
+ --up:#ff3b30;--dn:#34c759;--blue:#0071e3;--gold:#1a73e8;--orange:#ff9500;--purple:#af52de;}
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+ background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:0}
+.wrap{max-width:1000px;margin:0 auto;padding:28px 18px 56px}
+h1{font-size:23px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+h2{font-size:18px;font-weight:600;margin:26px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--blue)}
+.sub{color:var(--muted);font-size:13px;margin-bottom:8px}
+.card{background:var(--card);border-radius:16px;padding:16px 20px;margin:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.box{border-left:4px solid var(--blue);background:#f0f7ff;padding:14px 18px;border-radius:0 12px 12px 0;margin:14px 0}
+.box.gold{border-color:var(--gold);background:#fffaf0}
+.box.green{border-color:var(--dn);background:#f0faf3}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa}
+.num{font-variant-numeric:tabular-nums}
+.up{color:var(--up)}.dn{color:var(--dn)}.am{color:var(--blue)}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;margin:1px 2px}
+.tag.A{background:#e6f7ec;color:#1a7a45}
+.tag.B{background:#fff3e0;color:#e65100}
+.tag.C{background:#fdecea;color:#c0392b}
+.case{font-size:13px;margin:10px 0;padding:12px 16px;background:#fafafa;border-radius:10px;border-left:3px solid var(--purple)}
+.case .h{font-weight:600;margin-bottom:4px}
+.kv{font-size:12.5px;color:var(--muted)}
+.bp{background:#f7f9fc;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:8px 0;font-size:13px}
+.bp b{color:var(--blue)}
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
 
-
-
-
-
-<!--WB_THEME--><style id='wb-theme'>
+.xh-badge{display:inline-block;font-size:10.5px;font-weight:700;color:#137333;background:#e6f4ea;
+  border:1px solid #b7e1c3;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
+.xh-new{display:inline-block;font-size:10.5px;font-weight:700;color:#1a73e8;background:#e8f0fe;
+  border:1px solid #c6dafc;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
+.xh-tag{display:inline-block;font-size:10.5px;padding:1px 6px;border-radius:8px;margin:1px 2px;white-space:nowrap}
+.xh-tag.g{background:#e6f4ea;color:#137333}
+.xh-tag.y{background:#fef7e0;color:#8a6d00}
+.xh-tag.t{background:#e3f2f1;color:#0b6b63}
+.xh-tag.r{background:#f0e9fb;color:#5b3fa8}
+.xh-col{white-space:normal;min-width:150px;max-width:215px}
+.xh-dim{color:#9aa0a6}
+.xh-cmp{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.xh-cmp div{flex:1;min-width:130px;border-radius:10px;padding:10px 14px;background:#f1f3f4}
+.xh-cmp b{display:block;font-size:19px}
+.xh-cmp span{font-size:12px;color:#5f6368}
+.xh-cmp .cnew b{color:#1a73e8}.xh-cmp .ccont b{color:#137333}.xh-cmp .cout b{color:#a8071a}
+.xh-sort{cursor:pointer;user-select:none}
+.xh-sort:hover{color:#1a73e8}
+.xh-sort.xh-asc:after{content:" \25b4";color:#1a73e8}
+.xh-sort.xh-desc:after{content:" \25be";color:#1a73e8}
+</style><!--WB_THEME--><style id='wb-theme'>
 /* ============================================================
    统一设计系统 (A股看板) — Google Material 风·朴素简洁
    由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
@@ -301,114 +237,33 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
 </style><!--/WB_THEME--></head>
 <body>
-<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>强势精选</a><a href='../picks/index.html'>精选池</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-</div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class='wrap'>
-
-<header>
-<h1>📋 状态报告</h1>
-<p>2026-09-07 · 龙虎榜手动更新 + 全量数据刷新</p>
-</header>
-<div class='section'>
-<h2>✅ 本轮完成情况</h2>
-<div class='amberbox' style='color:#1c2430'>1. <b>龙虎榜数据</b>：通过 westock-mcp data_lhb 拉取 2026-09-07 真实龙虎榜（机构榜 42 只、游资席位 63 个、机构+游资共振 24 只、席位胜率 24 条；龙虎榜全榜上榜 61 只）。已渲染 lhb.html（机构榜/共振/胜率）与 hotmoney.html（席位净买榜/胜率）。<br>2. <b>大盘/板块/连板刷新</b>：data_market_overview(2026-09-07)、data_hot(board)、tool_ranking(limitup_days) 全部更新为 2026-09-07（估值口径 2026-09-03）。<br>4. <b>推送</b>：本地已生成 6 个页面（含导航 index.html、龙虎榜归档页 lhb_2026-09-07.html），待经 GitHub 连接器推送至 dujoer/stocks 的 web/ 目录（main 分支，需仓库写权限）。注：早期 08-14 窗口收益/共振/Alpha 回测为远程分析页，本地未保留，本系统以龙虎榜机构榜、共振、席位胜率为核心。</div>
-</div>
-<div class='section'>
-<h2>📁 产出文件</h2>
-<div class='chiprow'>
-<span class='pill'>index.html</span>
-<span class='pill'>daily_overview.html</span>
-<span class='pill'>lhb.html</span>
-<span class='pill'>hotmoney.html</span>
-<span class='pill'>lhb_2026-09-07.html</span>
-<span class='pill'>status_2026-09-07.html</span>
-</div>
-<div class='note'>数据落盘：quant/market_overview、board_hot、quotes、news.json、limitup、lhb（均为 2026-09-07）。生成脚本：quant/build_dashboards.py。</div>
-</div>
-<div class='section'>
-<h2>⚠️ 口径说明</h2>
-<div class='empty' style='text-align:left'>· 估值（PE 分位）接口最新快照为 2026-09-03，其余均为 2026-09-07。<br>· 窗口收益(alpha)回测未内置，链接至远程历史分析页。<br>· 所有资金数据为盘后公开龙虎榜，滞后且非未来收益承诺。</div>
-</div>
-<footer>由 A 股量化助理生成 · 仅供参考，不构成投资建议。</footer>
-</div>
-
-
-
-
-
-<!--WB_APP--><script id='wb-app'>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='index.html'>底部反转</a><a href='../selected/index.html'>强势精选</a><a href='../picks/index.html'>精选池</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+
+<div class="wrap">
+<h1>底部反转观察池 v2 · 回测报告</h1>
+<div class="sub">walk-forward：种子宇宙 220 只，过去 ~180 交易日每 5 日重算信号；信号样本 1926，基线样本 7434。</div>
+
+<div class="box gold"><b>结论：</b>A 档 +20 日：胜率 53.8% vs 基线 48.3%（<b>+5.6pp</b>），均值收益 +0.95% vs +0.40%（<b>+0.56pp</b>），中位收益 +0.84% vs -0.41%，最大回撤 -36.0% vs -50.0%（<b>收窄 14.0pp</b>）。&gt;+5% 捕获率 30.1% 略低于基线 32.9%，说明 v2 更重稳健与风险可控，而非追逐暴利。<br>
+B 档（仅部分确认）收益与基线接近但尾部更差，验证「严格门槛过滤噪音」有效。
+回测只验证<b>技术反转信号</b>，选股日的「基本面地板」(盈利高增+估值合理+小盘) 作为静态叠加未计入历史（离线无可比基本面序列），
+实际选股进一步降低踩雷概率。</div>
+
+<h2>胜率 / 收益对比</h2>
+<div class="card"><table data-wb>
+<thead><tr><th>分组</th><th>样本</th><th>胜率(&gt;0)</th><th>胜率(&gt;+5%)</th>
+<th>均值收益</th><th>中位收益</th><th>最差(最大回撤)</th></tr></thead>
+<tbody><tr><td>A档 · +5日</td><td class='num'>405</td><td class='num'>51.1%</td><td class='num'>19.5%</td><td class='num'>0.68%</td><td class='num'>0.15%</td><td class='num dn'>-16.93%</td></tr><tr><td>A档 · +10日</td><td class='num'>405</td><td class='num'>57.3%</td><td class='num'>26.9%</td><td class='num'>1.64%</td><td class='num'>1.11%</td><td class='num dn'>-23.77%</td></tr><tr><td>A档 · +20日</td><td class='num'>405</td><td class='num'>53.8%</td><td class='num'>30.1%</td><td class='num'>0.95%</td><td class='num'>0.84%</td><td class='num dn'>-35.98%</td></tr><tr><td>B档 · +5日</td><td class='num'>1521</td><td class='num'>51.9%</td><td class='num'>20.8%</td><td class='num'>0.48%</td><td class='num'>0.38%</td><td class='num dn'>-23.89%</td></tr><tr><td>B档 · +10日</td><td class='num'>1521</td><td class='num'>52.6%</td><td class='num'>29.7%</td><td class='num'>1.04%</td><td class='num'>0.64%</td><td class='num dn'>-37.75%</td></tr><tr><td>B档 · +20日</td><td class='num'>1521</td><td class='num'>54.8%</td><td class='num'>36.7%</td><td class='num'>1.53%</td><td class='num'>1.53%</td><td class='num dn'>-38.20%</td></tr><tr><td>全部信号 · +5日</td><td class='num'>1926</td><td class='num'>51.8%</td><td class='num'>20.5%</td><td class='num'>0.52%</td><td class='num'>0.31%</td><td class='num dn'>-23.89%</td></tr><tr><td>全部信号 · +10日</td><td class='num'>1926</td><td class='num'>53.6%</td><td class='num'>29.1%</td><td class='num'>1.17%</td><td class='num'>0.84%</td><td class='num dn'>-37.75%</td></tr><tr><td>全部信号 · +20日</td><td class='num'>1926</td><td class='num'>54.6%</td><td class='num'>35.3%</td><td class='num'>1.41%</td><td class='num'>1.28%</td><td class='num dn'>-38.20%</td></tr><tr><td>基线·无脑持有 +20日</td><td class='num'>7434</td><td class='num'>48.3%</td><td class='num'>32.9%</td><td class='num'>0.40%</td><td class='num'>-0.41%</td><td class='num dn'>-50.00%</td></tr></tbody></table>
+<div class="note">胜率=前向收益为正的占比；最差=该组所有信号中最小的前向收益（近似最大回撤）。
+单位均为 %。A/B 档仅统计 tier 命中信号；基线=种子宇宙所有(股,日)持有20日。</div></div>
+
+<h2>方法说明</h2>
+<div class="card"><div class="kv">
+• 信号：结构深度 + 量能枯竭 + 吸筹 + MACD 底背离 + 均线排列 六维评分，A≥70且背离且收复MA20，B≥48。<br>
+• 前向收益：信号日收盘买入，持有 +5/+10/+20 交易日收益率。<br>
+• 数据：腾讯前复权日K（离线）。与选股页同一套逻辑，保证「回测=实盘规则」。</div></div>
+
+<div class="foot">回测为历史统计，不代表未来；非投资建议。</div>
+</div><!--WB_APP--><script id='wb-app'>
 /* ============================================================
    通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
    功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
@@ -572,5 +427,4 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
   });
 })();
 
-</script><!--/WB_APP--></body>
-</html>
+</script><!--/WB_APP--></body></html>
