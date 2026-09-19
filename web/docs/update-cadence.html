@@ -368,9 +368,9 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
       <tr data-tier='daily'>
         <td class='dim'>做T池（可反复做T候选）</td><td><span class='tag daily'>每日</span></td>
         <td>盘后（与信号池同批）</td>
-        <td><code>gen_tplus.py --date D</code> → 拉 <code>data_quote</code>（≈200 只/批）+ <code>data_kline</code>（60 日）→ <code>build_tplus.py --date D</code></td>
-        <td>2026-09-14</td>
-        <td class='hint'>从<b>机构底仓池</b>（公募持股 ≥5% 或 社保/养老/险资 ≥2 家，约 848 只）中筛出高波动 + 高流动性 + <b>区间震荡</b>标的，按网格 / 均值回归 / 底仓+卫星仓给出网格 5 档价位与波段买卖点。做T须先有底仓；破箱体下沿无条件清仓</td>
+        <td><code>scan_strong.py --date D</code>（全市场强势扫描）→ <code>gen_tplus.py --date D</code>（<b>三源并集</b>）→ <code>fetch_tplus_offline.py D</code>（腾讯离线补 quotes/kline）→ <code>build_tplus.py --date D</code></td>
+        <td>2026-09-18</td>
+        <td class='hint'>候选为<b>三源并集</b>：机构底仓（公募 ≥3% 或 社保/险资 ≥2 家）／龙虎榜（近 10 交易日上榜且净买为正或 ≥2 次）／强势（20 日超额 ≥5pp 且站上 MA20），约 1600 只。打分 7 维含<b>龙虎榜共振（8）</b>与<b>强势结构（12）</b>；页面含<b>强势股分析</b>（只做回踩、不逆势）与<b>龙虎榜视角</b>（净买方向 / 游资等级 / 对倒识别）两个板块。做T须先有底仓；破箱体下沿无条件清仓</td>
       </tr>
       <tr data-tier='daily'>
         <td class='dim'>底部反转观察池</td><td><span class='tag daily'>每日</span></td>
@@ -484,7 +484,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
     <li><input type='checkbox' data-k='sector'><div><div class='t'>⑤ 板块强度（红线：T日20:00 或 T+1 09:15 前）：gen_sector_raw → run_daily_sector</div><div class='d'>date 参数被忽略，前向累积；漏跑永久断档</div></div></li>
     <li><input type='checkbox' data-k='psy'><div><div class='t'>⑥ 心理雷达：build_psychology.py --date D（已全自动，旧手抄法废弃）</div></div></li>
     <li><input type='checkbox' data-k='picks'><div><div class='t'>⑦ 精选池（原个股信号池）：gen_picks → MCP 25只/批补拉 → <b>fetch_pick_klines --end D（建日K价格档案）</b> → build_picks（按真实交易日历回填每票 T+1/3/5）→ backtest_picks</div><div class='d'>quotes_{D}.json 缺失会 0 行输出；fetch_pick_klines 漏跑则次日无法回填昨日选股。<b>出池门槛（2026-09-19 起）：最高档直接出池，次高档须 20 日主力净流入&gt;0 才出池，无合格标的则明示空仓等待</b></div></div></li>
-    <li><input type='checkbox' data-k='tplus'><div><div class='t'>⑧ 做T池：gen_tplus → data_quote + data_kline(848×60) → build_tplus</div><div class='d'>数据量最大，建议单独跑一轮；破箱体下沿无条件清仓</div></div></li>
+    <li><input type='checkbox' data-k='tplus'><div><div class='t'>⑧ 做T池：scan_strong（全市场强势扫描）→ gen_tplus（三源并集 ≈1600 只）→ fetch_tplus_offline（腾讯离线补数）→ build_tplus</div><div class='d'>候选含机构底仓 / 龙虎榜 / 强势三源；走离线腾讯通道避开 MCP 限频；破箱体下沿无条件清仓</div></div></li>
     <li><input type='checkbox' data-k='scan'><div><div class='t'>⑨ 反转 / MACD / 高胜率：反转 rev_pool.py run + gen_watchlist.py / MACD macd_build+build_macd_extra+gen_macd / 高胜率 build_highwin+gen_highwin</div><div class='d'>三者均加 --date D，切勿再用写死日期的 _0914 脚本</div></div></li>
     <li><input type='checkbox' data-k='news'><div><div class='t'>⑩ 当日要闻：data_hot(kind=news) → _news_seed/{D}.json → add_news.py --date D</div></div></li>
     <li><input type='checkbox' data-k='portal'><div><div class='t'>⑪ 数据库与门户：db_update → db_export → build_portal → build_sections → _apply_theme</div><div class='d'>凡显示「非当日」的卡片即为漏跑项</div></div></li>
