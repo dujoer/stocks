@@ -247,8 +247,7 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 
 </style><!--/WB_THEME--></head>
 <body>
-<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
-<div class="wrap">
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div><div class="wrap">
 <h1>底部反转选股 · 板块</h1>
 <div class="sub">数据基准：2026-09-18 收盘｜ 每日随数据更新重扫 ｜ <b>v5</b>：全市场深跌域 ＋ 先验固定因子集横截面分位 ＋ 域内分位分档</div>
 
@@ -308,12 +307,20 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 特别注意：<b>收复 MA20 / 短均线多头排列 / 吸筹天数这类「确认信号」在相对胜率上是负向的</b>
 （越像已经确认反转的票越跑不赢篮子）。</div>
 <div class="step"><b>第 4 步 · 用「买区 / 止损 / 目标T1」执行退出纪律</b><br>
-<b>不追高</b>：等缩量回踩买区不破再试仓；<b>跌破止损无条件离场</b>，不抱「等反弹」；
-到 T1 分批止盈、T2 清。买区与止损由近 20 日基底、MA20 与 ATR 推得，不是主观价位。</div>
+<b>不追高</b>：等缩量回踩买区不破再试仓。<b>止损分两层</b>：跌破<b>结构位</b>（近 20 日基底，表里那一列）
+<b>先减半</b>，跌到 <b>−15% 全出</b>；目标是 T1 / T2（52 周高回撤 0.382 / 0.618），且
+<b>+8%~+10% 先止盈一半</b>。买区与结构位由近 20 日基底、MA20 与 ATR 推得，不是主观价位。</div>
 </div>
 
+<div class="box red" style="border-color:#b00020"><b>⚠️ 为什么止损要放到 −15%（实验室唯一跨期稳定的结论）：</b>
+把「止损 × 目标位」两半对照：<b>止损 −15% / 目标 +8%</b> 两半胜率最高（训练半 <b>54.7%</b> / 测试半 <b>55.8%</b>），
+而<b>最紧的 −6% 止损只有 41.3% / 36.3%</b>。原因是组合分前 10% 的<b>平均最大不利偏移（MAE）已达 −7.7%</b>
+—— 贴着 −5% 设止损会被日常波动扫掉，属于「被噪声请出场」。<br>
+<b>同时要诚实说清代价</b>：网格里<b>胜率与单笔均值是一对权衡</b>（宽止损 + 早止盈赢得多、但单笔薄），
+所以不要只看胜率，要连「RR」一列一起看。完整网格见 <a href="lab.html" style="color:var(--blue)">lab.html</a> 第十一节。</div>
+
 <div class="box warn"><b>仓位与退出纪律（红线）：</b>
-单笔试仓 ≤ 总资金 <b>3–5%</b>；单笔最大亏损 ≤ 总资金 <b>0.5%</b>；B 档不建仓。
+单笔试仓 <b>3%（可至 5%）</b>，按 −15% 硬止损折算 = 单笔最大亏损约 <b>总资金 0.45%~0.75%</b>；B 档<b>不建仓</b>。
 总暴露再乘当日的<b>仓位系数</b>（广度 &lt;35% → 0.4× / 35~55% → 0.7× / ≥55% → 1.0×），
 该系数<b>只控 β、不改选股排序</b>。反转策略靠「多次小亏换一次大赚」，
 <b>退出纪律 &gt; 入场筛选</b>——本页所有价位都是量化参考区间，不是买卖建议。</div>
