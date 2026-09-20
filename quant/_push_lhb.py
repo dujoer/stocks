@@ -109,6 +109,11 @@ FILES = [
     "quant/_tx_fetch.py",            # 腾讯离线行情（快照/日K，带 _txk_cache）
     "quant/fetch_fin_snapshot.py",   # 东财全市场财务快照（季度频率）
     "quant/fetch_pick_klines.py",    # 精选池日K价格档案（腾讯离线优先）
+    # —— 精选池样本外实验室（2026-09-21）：因子功效检验 + 稳健分落地 ——
+    "quant/_pick_lab.py",            # 实验室（面板/特征功效/五道检验/环境门控）
+    "quant/pick_score.py",           # 稳健分（先验固定因子集，供 build_picks 消费）
+    "quant/_pick_model.json",        # 冻结模型 + 样本外证据摘要
+    "quant/_pick_lab_result.json",   # 实验室完整结果（供审计/复现）
     "quant/fetch_rev_flow.py",       # 反转池主力资金流（MCP 优先 · 新浪离线兜底）
     "quant/fetch_rev_enrich.py",     # 反转池补数（名称/流通市值/PE + 资金流合并）
     "quant/_wsmcp.py",               # MCP 客户端（磁盘缓存 + 限频熔断）

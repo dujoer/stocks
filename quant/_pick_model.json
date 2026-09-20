@@ -1,0 +1,93 @@
+{
+ "version": "pick_lab_v2",
+ "label": "beat5",
+ "label_desc": "前向 5 日收益 > 同期异动域等权中位数（相对胜率，剔除行情 beta）",
+ "source": "先验因子集（方向由经济逻辑给定，等权、不按回测调权重）",
+ "built_from": {
+  "start": "2025-11-07",
+  "end": "2026-08-21",
+  "n_dates": 65,
+  "n_rows": 13630,
+  "domain": "每日量比前 8% 异动域"
+ },
+ "features": [
+  {
+   "name": "vol_day",
+   "dir": -1,
+   "cn": "当日量比"
+  },
+  {
+   "name": "pullback_dry",
+   "dir": -1,
+   "cn": "回调缩量"
+  },
+  {
+   "name": "dist_hi20",
+   "dir": 1,
+   "cn": "距20日高"
+  },
+  {
+   "name": "ovn20",
+   "dir": 1,
+   "cn": "隔夜贡献"
+  },
+  {
+   "name": "atr_comp",
+   "dir": -1,
+   "cn": "波动收缩"
+  },
+  {
+   "name": "grow_rev",
+   "dir": 1,
+   "cn": "营收同比"
+  },
+  {
+   "name": "grow_q",
+   "dir": 1,
+   "cn": "单季净利同比"
+  },
+  {
+   "name": "roe",
+   "dir": 1,
+   "cn": "ROE"
+  },
+  {
+   "name": "mv_log",
+   "dir": -1,
+   "cn": "市值(对数)"
+  },
+  {
+   "name": "ep",
+   "dir": 1,
+   "cn": "盈利收益率"
+  },
+  {
+   "name": "bp",
+   "dir": 1,
+   "cn": "账面市值比"
+  },
+  {
+   "name": "amt20_log",
+   "dir": -1,
+   "cn": "20日均额"
+  }
+ ],
+ "evidence": {
+  "style_base_lift_test": -5.595026642984024,
+  "auto_select_lift_test": 0.5230941741111792,
+  "looseg_win": "0/4",
+  "walkforward_win": "3/6",
+  "priorset_lift_test": 4.341921882814553,
+  "priorset_edge_abs_test": 1.0495579158475437,
+  "priorset_segs_pos": 6,
+  "env_abs_winrate_weak": 40.88929635571854,
+  "env_abs_winrate_strong": 51.09313511149978
+ },
+ "caveats": [
+  "域近似而非名单复现（候选名单历史仅 7 期）",
+  "前向窗口重叠 → 样本非独立，差异按日期聚类理解",
+  "覆盖 2025-11-07~2026-08-21，换年份是否成立无法验证",
+  "基本面因子取最新报告期，对历史存在前视（对全部标的同等作用，相对 lift 仍有效）",
+  "MAE 需与相对收益一同看待"
+ ]
+}

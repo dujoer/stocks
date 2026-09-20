@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang='zh-CN'><head><meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>精选池 · 因子功效样本外实验室</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f5f6f8;color:#23262b;font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;line-height:1.75}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 60px}
+.topnav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid #e6e9ee}
+.topnav a{color:#1a73e8;text-decoration:none;font-size:13px;padding:4px 12px;border-radius:20px;border:1px solid rgba(26,115,232,.35)}
+.topnav a.cur{background:#1a73e8;color:#fff;border-color:#1a73e8}
+header h1{font-size:26px;margin:0 0 6px}
+header h1 span{background:linear-gradient(90deg,#1a73e8,#8a6428);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{color:#6b7480;font-size:13.5px}
+.section{margin-top:30px}
+.section h2{font-size:19px;margin:0 0 14px;padding-left:12px;border-left:4px solid #1a73e8}
+.section h3{font-size:15px;margin:18px 0 8px;color:#3d434b}
+.kb{background:#fff;border:1px solid #e6e9ee;border-radius:12px;padding:14px 16px}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.kt{font-size:12.5px;color:#6b7480}
+.kv{font-size:23px;font-weight:700;margin:4px 0}
+.kd{font-size:12px;color:#8a929c}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:13px;border:1px solid #e6e9ee;border-radius:10px;overflow:hidden;margin-top:10px}
+th,td{padding:7px 9px;text-align:left;border-bottom:1px solid #eef1f4;vertical-align:middle}
+th{background:#fafbfc;color:#5a6573;font-weight:600;font-size:12.5px}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.mini{white-space:nowrap}
+.up{color:#b8332a} .down{color:#1a9e5a} .dim{color:#9aa3ad}
+.note{background:#fffaf0;border-left:4px solid #b7791f;padding:12px 16px;border-radius:0 8px 8px 0;font-size:13.5px;color:#6b4f2a;margin:14px 0}
+.warn{background:#fdecea;border-left:4px solid #c0392b;padding:12px 16px;border-radius:0 8px 8px 0;font-size:13.5px;color:#7d2b23;margin:14px 0}
+.ok{background:#e8f6ee;border-left:4px solid #1a7a45;padding:12px 16px;border-radius:0 8px 8px 0;font-size:13.5px;color:#14562f;margin:14px 0}
+code{background:#f2f4f7;padding:1px 5px;border-radius:4px;font-size:12.5px}
+footer{margin-top:38px;padding-top:16px;border-top:1px solid #e6e9ee;font-size:12px;color:#8a929c}
+</style><!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  .navgrp{ padding:5px 6px 5px 5px !important; }
+}
+
+</style><!--/WB_THEME--></head><body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class='wrap'>
+<header><h1><span>精选池 · 因子功效样本外实验室</span></h1>
+<div class='sub'>用 13 个月、13,630 个样本点检验「哪些指标真的能选股」，并把 alpha 从行情 beta 里剥出来。
+结论以<b>相对胜率</b>（个股前向收益 &gt; 同期同域等权中位数）为准 —— 绝对胜率在普涨行情里会虚高。</div></header>
+
+<div class='section'><h2>一、先说结论</h2>
+<div class='kgrid'><div class='kb'><div class='kt'>现有 11 维思路（可离线近似）</div><div class='kv dn'>-5.6pp</div><div class='kd'>样本外相对胜率增量｜训练 -7.3pp</div></div><div class='kb'><div class='kt'>自动筛因子（严格样本外）</div><div class='kv dn'>+0.5pp</div><div class='kd'>只由前 60% 数据筛因子 → 后 40% 测试</div></div><div class='kb'><div class='kt'>先验因子集（价量+基本面）</div><div class='kv up'>+4.3pp</div><div class='kd'>绝对胜率 +1.0pp｜6 段滚动全正</div></div><div class='kb'><div class='kt'>环境决定的空间</div><div class='kv up'>10.1pp</div><div class='kd'>弱势期绝对胜率 40.9% vs 强势期 51.1%</div></div></div>
+<div class='warn'><b>为什么必须做这件事：</b>回测页自己已经露出破绽 —— <b>机构轨 B 档 T+1 胜率仅 36%，而最低的 D 档 T+5 反而 +5.74%、胜率 83%</b>，
+分档与收益几乎反向。根因是 <code>build_picks.py</code> 在 2026-09-18「按近 5 期实测归因重调权重」——
+5 期 × 约 20 只 ≈ 100 个样本、且全落在同一波行情里，属于典型的样本内过拟合。</div>
+<div class='ok'><b>可用的结论：</b>「从一堆因子里自动挑出有效的」这个动作本身就是噪声源（严格样本外只剩 +0.5pp）。
+可行的做法是<b>因子固定、方向由逻辑给定、等权、横截面分位</b> —— 价量 5 项 + 基本面 7 项在留出段 相对胜率
++4.3pp、绝对胜率 +1.0pp，6 段滚动全部为正。
+落地见 <code>quant/pick_score.py</code>。</div></div>
+
+<div class='section'><h2>二、面板怎么建的</h2>
+<table><tbody>
+<tr><td>标的域</td><td>每日按<b>量比排名取前 8%</b>（≈200 只/日）—— 精选池候选来自龙虎榜/增减持/大宗，都是放量异动票，用异动域近似</td></tr>
+<tr><td>时间跨度</td><td>2025-11-07 ~ 2026-08-21，共 <b>65 个截面</b>（每 3 个交易日取一个），13,630 个样本点</td></tr>
+<tr><td>特征</td><td><b>47 个</b>：价量/形态/波动 34 个 + 规模·隔夜日内分解·量价关系 6 个 + 基本面 7 个</td></tr>
+<tr><td>标签</td><td>前向 5/10/20 日收益；<b>主口径 = 5 日相对胜率</b>（≈精选池 1~5 日持有周期）；另记绝对胜率、MAE</td></tr>
+<tr><td>无前视</td><td>所有特征只用到截至当日的数据；分位切点只用训练集算；市场状态量（广度/指数偏离）均为滞后量</td></tr>
+</tbody></table>
+<div class='note'><b>域近似而非名单复现：</b>精选池候选名单历史只存了 7 期，无法回溯重建。故本页结论描述的是
+「<b>在异动票里，哪些指标能筛出跑赢同类的</b>」这一选股能力，不直接等于「精选池历史名单的真实收益」。</div></div>
+
+<div class='section'><h2>三、单特征功效（训练前 60% / 测试后 40%）</h2>
+<div class='sub'>每个连续特征按<b>训练集</b>分位切成 5 桶（切点不看测试集），条形表示该桶的相对胜率，中线 50%。</div>
+<table data-wb><thead><tr><th>特征</th><th>训练集 5 桶相对胜率</th><th>测试集 5 桶相对胜率</th><th>训练边缘</th><th>测试边缘</th><th>跨期同向</th></tr></thead>
+<tbody><tr><td><b>vol_ratio_pct</b><br><span class='dim'>量比历史分位</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:11.538461538461533%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:42.038216560509554%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:56.86274509803919%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:49.246987951807206%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:56.926293779404055%;top:0;bottom:0;width:1px;background:#b8332a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:0%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:39.38679245283019%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:36.059479553903344%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:58.50995504174694%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:57.35294117647059%;top:0;bottom:0;width:1px;background:#b8332a'></i></span></td><td class='num'>+9.1</td><td class='num'>+51.5</td><td>—</td></tr><tr><td><b>ovn20</b><br><span class='dim'>隔夜贡献</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:27.473219911783247%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:46.061751732829244%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:66.68765743073048%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:58.03402646502839%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:49.6851385390428%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:44.05029187247418%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:51.8440463645943%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:47.319034852546906%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:60.49868766404198%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:53.22101090188305%;top:0;bottom:0;width:1px;background:#b8332a'></i></span></td><td class='num'>+4.4</td><td class='num'>+1.8</td><td>—</td></tr><tr><td><b>grow_rev</b><br><span class='dim'>营收同比</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:31.37626262626263%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:38.035264483627174%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:49.842470069313194%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:59.14249684741485%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:69.35179358086849%;top:0;bottom:0;width:1px;background:#b8332a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:47.12171052631579%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:49.745158002038714%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:33.69116432700249%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:54.92716366752355%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:63.70170709793349%;top:0;bottom:0;width:1px;background:#b8332a'></i></span></td><td class='num'>+7.6</td><td class='num'>+3.3</td><td>✔</td></tr><tr><td><b>range_comp</b><br><span class='dim'>振幅收缩</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:46.061751732829244%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:66.22558286074354%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:47.79596977329973%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:58.979206049149305%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:28.904282115869005%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:54.09836065573771%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:36.36363636363637%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:48.492678725236864%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:49.51923076923077%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:69.52526799387442%;top:0;bottom:0;width:1px;background:#b8332a'></i></span></td><td class='num'>-3.4</td><td class='num'>+3.1</td><td>—</td></tr><tr><td><b>intra20</b><br><span class='dim'>日内贡献</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:57.088846880907376%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:58.03402646502839%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:57.55667506297228%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:53.93824826717075%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:21.34760705289672%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:57.43494423791823%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:66.57060518731988%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:63.219741480611056%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:52.56916996047429%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:29.939125622578867%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='num'>-7.1</td><td class='num'>-5.5</td><td>✔</td></tr><tr><td><b>ma5_dev</b><br><span class='dim'>距MA5</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:39.760554505356005%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:70.00630119722746%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:49.055415617128446%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:55.198487712665376%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:33.94206549118387%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:43.1340872374798%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:50.8214676889376%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:54.323499491353%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:44.64285714285712%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:55.03822098679642%;top:0;bottom:0;width:1px;background:#b8332a'></i></span></td><td class='num'>-1.2</td><td class='num'>+2.4</td><td>—</td></tr><tr><td><b>dist_hi20</b><br><span class='dim'>距20日高</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:24.952741020793958%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:48.26717076244485%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:57.24181360201509%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:56.77378701953373%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:60.70528967254407%;top:0;bottom:0;width:1px;background:#b8332a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:55.56261919898283%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:34.86159169550174%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:60.73619631901839%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:44.55337690631808%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:50.93632958801499%;top:0;bottom:0;width:1px;background:#b8332a'></i></span></td><td class='num'>+7.2</td><td class='num'>-0.9</td><td>—</td></tr><tr><td><b>macd_hist</b><br><span class='dim'>MACD柱</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:55.198487712665376%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:68.43100189035918%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:41.813602015113354%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:48.26717076244485%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:34.256926952141065%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:41.57844080846967%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:59.3833780160858%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:60.176017601760165%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:44.02092675635277%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:48.94641782059001%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='num'>-4.2</td><td class='num'>+1.5</td><td>—</td></tr><tr><td><b>rs5</b><br><span class='dim'>5日超额</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:54.88342785129176%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:57.566204287515745%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:56.13593455003147%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:55.82860743541275%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:23.55163727959699%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:37.93337865397689%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:58.2184517497349%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:64.18242491657395%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:58.6529466791394%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:39.13043478260871%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='num'>-6.3</td><td class='num'>+0.2</td><td>—</td></tr><tr><td><b>atr_comp</b><br><span class='dim'>波动收缩</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:52.46062992125985%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:57.4142724745134%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:58.186397984886604%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:53.93824826717075%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:24.181360201511346%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:54.14937759336098%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:68.28012358393411%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:42.567567567567544%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:51.55520995334367%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:34.87903225806452%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='num'>-5.7</td><td class='num'>-3.9</td><td>—</td></tr><tr><td><b>hi52_gap</b><br><span class='dim'>离52周高</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:28.733459357277873%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:50.47258979206048%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:51.25944584382871%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:56.14366729678639%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:61.33501259445847%;top:0;bottom:0;width:1px;background:#b8332a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:46.90210656753408%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:50.31766200762391%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:51.81818181818183%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:54.23728813559322%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:57.11892797319933%;top:0;bottom:0;width:1px;background:#b8332a'></i></span></td><td class='num'>+6.5</td><td class='num'>+2.0</td><td>✔</td></tr><tr><td><b>vwap_dev</b><br><span class='dim'>距20日VWAP</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:38.50031505986138%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:70.6364209199748%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:49.6851385390428%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:47.63705103969755%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:41.49874055415619%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:48.96093100581879%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:60.58201058201057%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:56.020942408376975%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:44.3137254901961%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:45.01329787234042%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='num'>+0.6</td><td class='num'>-0.8</td><td>—</td></tr><tr><td><b>gap_up</b><br><span class='dim'>高开幅度</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:31.568998109640813%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:57.71896660365468%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:62.27959697732999%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:56.77378701953373%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:39.60957178841312%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:41.525423728813564%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:50.92764378478666%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:59.67540574282151%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:50.841750841750866%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:52.81873373807458%;top:0;bottom:0;width:1px;background:#b8332a'></i></span></td><td class='num'>+1.6</td><td class='num'>+2.3</td><td>—</td></tr><tr><td><b>up20</b><br><span class='dim'>20日涨幅</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:50.47258979206048%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:69.06112161310645%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:46.85138539042821%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:42.911153119092624%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:38.66498740554157%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:63.50308641975306%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:66.15746180963573%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:45.1716738197425%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:47.01873935264054%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:32.29166666666668%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='num'>-2.4</td><td class='num'>-6.2</td><td>—</td></tr><tr><td><b>ma20_dev</b><br><span class='dim'>距MA20</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:50.47258979206048%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:67.48582230623818%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:37.40554156171285%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:55.51354757403904%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:37.09068010075569%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:46.84077506318449%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:65.3664302600473%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:57.65054294175715%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:47.021445591739486%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:38.83285302593659%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='num'>-2.7</td><td class='num'>-1.6</td><td>—</td></tr><tr><td><b>up60</b><br><span class='dim'>60日涨幅</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:44.816586921850075%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:57.03125%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:59.76070528967256%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:54.25330812854441%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:29.534005037783366%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:48.26317940335105%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:45.594713656387675%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:55.00000000000001%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:59.34861278648974%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:43.33619948409286%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='num'>-3.1</td><td class='num'>-1.0</td><td>—</td></tr><tr><td><b>up5</b><br><span class='dim'>5日涨幅</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:56.77378701953373%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:63.24085750315256%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:44.17872876022656%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:49.842470069313194%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:33.94206549118387%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:47.25738396624472%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:51.1415525114155%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:53.35397316821467%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:56.463719766472096%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:42.48633879781419%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='num'>-4.6</td><td class='num'>-1.0</td><td>—</td></tr><tr><td><b>rs20</b><br><span class='dim'>20日超额</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:48.26717076244485%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:64.65028355387521%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:58.50125944584384%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:40.70573408947702%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:35.83123425692694%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:61.34244872591672%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:78.38164251207729%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:54.189944134078196%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:19.42446043165468%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:38.9911929543635%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='num'>-2.5</td><td class='num'>-4.5</td><td>—</td></tr><tr><td><b>rs60</b><br><span class='dim'>60日超额</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:57.403906742281016%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:60.239445494643995%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:48.11083123425693%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:50.787649653434144%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:31.42317380352644%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:56.35179153094463%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:58.20379965457686%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:47.88732394366196%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:40.63517915309447%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:43.47212420606919%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='num'>-5.2</td><td class='num'>-2.6</td><td>—</td></tr><tr><td><b>atr_pct</b><br><span class='dim'>波动幅度</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:58.979206049149305%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:59.294265910523016%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:51.88916876574308%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:47.32199117832387%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:30.478589420654924%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:31.95876288659793%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:63.9123102866779%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:54.91266375545851%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:56.33995887594242%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:42.193919474116655%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='num'>-5.7</td><td class='num'>+2.0</td><td>—</td></tr><tr><td><b>pullback_dry</b><br><span class='dim'>回调缩量</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:55.198487712665376%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:49.21235034656586%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:58.50125944584384%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:32.27611940298505%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:47.74132192106517%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:72.648835202761%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:49.79114452798662%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:46.928746928746925%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:29.372937293729358%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:42.052980132450344%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span></td><td class='num'>-1.5</td><td class='num'>-6.1</td><td>—</td></tr><tr><td><b>grow_q</b><br><span class='dim'>单季净利同比</span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:42.42424242424242%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:36.5930599369085%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:45.28301886792452%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:62.75992438563328%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:60.70528967254407%;top:0;bottom:0;width:1px;background:#b8332a'></i></span></td><td class='mini'><span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:54.26482534524772%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:45.9090909090909%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:38.799283154121866%;top:0;bottom:0;width:1px;background:#1a9e5a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:54.042553191489375%;top:0;bottom:0;width:1px;background:#b8332a'></i></span> <span style='display:inline-block;position:relative;width:90px;height:11px;background:#eef1f4;border-radius:3px;vertical-align:middle'><i style='position:absolute;left:54.22138836772984%;top:0;bottom:0;width:1px;background:#b8332a'></i></span></td><td class='num'>+3.7</td><td class='num'>-0.0</td><td>—</td></tr></tbody></table>
+<div class='note'>训练/测试<b>基线</b>：相对胜率均为 49.9%（按构造），绝对胜率 45.8% → 43.0%。
+注意测试段绝对胜率只有 43.0%、均涨 -0.72%、MAE -14.2% ——
+<b>这段行情本身「随便买异动票」是亏的</b>，所以绝对胜率 70% 之类的数字只是 beta。</div></div>
+
+<div class='section'><h2>四、分段一致率（把时间切成 6 段，逐段看方向）</h2>
+<div class='sub'>比两段切分更严格：<b>因子必须在每一段子期都同向</b>才算稳定。右侧一致率 ≥0.83 且平均边缘 ≥2pp 记为「通过」。</div>
+<table data-wb><thead><tr><th>特征</th><th>段1</th><th>段2</th><th>段3</th><th>段4</th><th>段5</th><th>段6</th><th>一致率</th><th>平均边缘</th><th>判定</th></tr></thead>
+<tbody><tr><td><b>atr_comp</b> <span class='dim'>波动收缩</span></td><td class='dim'>—</td><td class='num down'>-5.0</td><td class='num down'>-12.7</td><td class='num down'>-0.1</td><td class='num down'>-0.6</td><td class='num down'>-5.3</td><td class='num'>1.00</td><td class='num'>-4.7</td><td>✔ 通过</td></tr><tr><td><b>ovn20</b> <span class='dim'>隔夜贡献</span></td><td class='num up'>+1.3</td><td class='num up'>+5.5</td><td class='num down'>-0.9</td><td class='num up'>+14.1</td><td class='num up'>+3.1</td><td class='num up'>+1.7</td><td class='num'>0.83</td><td class='num'>+4.1</td><td>✔ 通过</td></tr><tr><td><b>grow_rev</b> <span class='dim'>营收同比</span></td><td class='num up'>+1.8</td><td class='num up'>+3.8</td><td class='num up'>+5.6</td><td class='num up'>+10.7</td><td class='num up'>+6.7</td><td class='num down'>-3.7</td><td class='num'>0.83</td><td class='num'>+4.1</td><td>✔ 通过</td></tr><tr><td><b>vol_day</b> <span class='dim'>当日量比</span></td><td class='num down'>-4.6</td><td class='num down'>-7.0</td><td class='num down'>-1.6</td><td class='num up'>+0.7</td><td class='num down'>-4.6</td><td class='num down'>-3.7</td><td class='num'>0.83</td><td class='num'>-3.5</td><td>✔ 通过</td></tr><tr><td><b>pullback_dry</b> <span class='dim'>回调缩量</span></td><td class='num down'>-1.1</td><td class='num down'>-4.9</td><td class='num up'>+0.8</td><td class='num down'>-3.1</td><td class='num down'>-9.7</td><td class='num down'>-2.7</td><td class='num'>0.83</td><td class='num'>-3.4</td><td>✔ 通过</td></tr><tr><td><b>dist_hi20</b> <span class='dim'>距20日高</span></td><td class='num up'>+1.1</td><td class='num up'>+4.8</td><td class='num up'>+12.0</td><td class='num up'>+4.3</td><td class='num up'>+5.4</td><td class='num down'>-10.1</td><td class='num'>0.83</td><td class='num'>+2.9</td><td>✔ 通过</td></tr><tr><td><b>grow_q</b> <span class='dim'>单季净利同比</span></td><td class='num up'>+0.8</td><td class='num up'>+3.5</td><td class='num up'>+1.8</td><td class='num up'>+9.4</td><td class='num up'>+3.9</td><td class='num down'>-3.5</td><td class='num'>0.83</td><td class='num'>+2.6</td><td>✔ 通过</td></tr><tr><td><b>clv5</b> <span class='dim'>承接强度</span></td><td class='num down'>-1.8</td><td class='num up'>+0.6</td><td class='num down'>-0.9</td><td class='num down'>-0.3</td><td class='num down'>-0.4</td><td class='num down'>-5.9</td><td class='num'>0.83</td><td class='num'>-1.5</td><td>—</td></tr><tr><td><b>vol_ratio_pct</b> <span class='dim'>量比历史分位</span></td><td class='dim'>—</td><td class='num down'>-1.1</td><td class='num up'>+11.0</td><td class='num up'>+3.2</td><td class='num up'>+4.4</td><td class='num up'>+2.9</td><td class='num'>0.80</td><td class='num'>+4.1</td><td>—</td></tr><tr><td><b>vol_dry</b> <span class='dim'>量能20/60</span></td><td class='dim'>—</td><td class='num down'>-1.5</td><td class='num down'>-6.4</td><td class='num up'>+1.7</td><td class='num down'>-0.4</td><td class='num down'>-3.7</td><td class='num'>0.80</td><td class='num'>-2.1</td><td>—</td></tr><tr><td><b>vola_pct</b> <span class='dim'>波动分位</span></td><td class='dim'>—</td><td class='num down'>-2.8</td><td class='num down'>-0.5</td><td class='num down'>-2.7</td><td class='num up'>+4.2</td><td class='num down'>-0.4</td><td class='num'>0.80</td><td class='num'>-0.4</td><td>—</td></tr><tr><td><b>intra20</b> <span class='dim'>日内贡献</span></td><td class='num down'>-13.4</td><td class='num down'>-0.9</td><td class='num down'>-8.9</td><td class='num up'>+3.7</td><td class='num up'>+2.6</td><td class='num down'>-19.6</td><td class='num'>0.67</td><td class='num'>-6.1</td><td>—</td></tr><tr><td><b>slope20</b> <span class='dim'>MA20斜率</span></td><td class='num down'>-9.7</td><td class='num down'>-1.9</td><td class='num down'>-12.0</td><td class='num up'>+7.7</td><td class='num up'>+0.6</td><td class='num down'>-18.3</td><td class='num'>0.67</td><td class='num'>-5.6</td><td>—</td></tr><tr><td><b>dist_lo20</b> <span class='dim'>离20日低</span></td><td class='num down'>-12.3</td><td class='num down'>-1.3</td><td class='num down'>-12.3</td><td class='num up'>+12.2</td><td class='num up'>+1.6</td><td class='num down'>-15.6</td><td class='num'>0.67</td><td class='num'>-4.6</td><td>—</td></tr><tr><td><b>atr_pct</b> <span class='dim'>波动幅度</span></td><td class='num down'>-9.7</td><td class='num up'>+1.1</td><td class='num down'>-19.0</td><td class='num up'>+6.8</td><td class='num down'>-2.9</td><td class='num down'>-1.3</td><td class='num'>0.67</td><td class='num'>-4.2</td><td>—</td></tr><tr><td><b>ma20_dev</b> <span class='dim'>距MA20</span></td><td class='num down'>-11.8</td><td class='num down'>-1.9</td><td class='num down'>-8.1</td><td class='num up'>+13.4</td><td class='num up'>+3.2</td><td class='num down'>-14.8</td><td class='num'>0.67</td><td class='num'>-3.3</td><td>—</td></tr><tr><td><b>macd_hist</b> <span class='dim'>MACD柱</span></td><td class='num down'>-9.9</td><td class='num down'>-4.7</td><td class='num down'>-7.5</td><td class='num up'>+9.6</td><td class='num up'>+0.8</td><td class='num down'>-7.0</td><td class='num'>0.67</td><td class='num'>-3.1</td><td>—</td></tr><tr><td><b>hi52_gap</b> <span class='dim'>离52周高</span></td><td class='num down'>-0.7</td><td class='num up'>+3.5</td><td class='num up'>+3.3</td><td class='num up'>+12.1</td><td class='num up'>+9.9</td><td class='num down'>-10.4</td><td class='num'>0.67</td><td class='num'>+2.9</td><td>—</td></tr><tr><td><b>rs5</b> <span class='dim'>5日超额</span></td><td class='num down'>-7.0</td><td class='num down'>-3.9</td><td class='num down'>-8.3</td><td class='num up'>+7.1</td><td class='num up'>+1.3</td><td class='num down'>-6.0</td><td class='num'>0.67</td><td class='num'>-2.8</td><td>—</td></tr><tr><td><b>vol5_20</b> <span class='dim'>量能5/20</span></td><td class='num down'>-5.0</td><td class='num down'>-7.3</td><td class='num up'>+0.8</td><td class='num down'>-2.9</td><td class='num up'>+1.2</td><td class='num down'>-3.8</td><td class='num'>0.67</td><td class='num'>-2.8</td><td>—</td></tr><tr><td><b>roe</b> <span class='dim'>ROE</span></td><td class='num up'>+0.2</td><td class='num down'>-0.6</td><td class='num up'>+7.3</td><td class='num up'>+8.0</td><td class='num up'>+7.5</td><td class='num down'>-5.4</td><td class='num'>0.67</td><td class='num'>+2.8</td><td>—</td></tr><tr><td><b>bp</b> <span class='dim'>账面市值比</span></td><td class='num down'>+0.0</td><td class='num up'>+3.5</td><td class='num up'>+10.3</td><td class='num down'>-9.0</td><td class='num up'>+5.4</td><td class='num up'>+6.1</td><td class='num'>0.67</td><td class='num'>+2.7</td><td>—</td></tr></tbody></table>
+<div class='warn'><b>关键现象：</b>第 4 段（2026-04 ~ 05）几乎所有价量因子<b>集体反向</b> —— 这是风格切换，不是数据噪声。
+任何「固定方向 + 固定权重」的组合都会在某类行情里失效，这正是 walk-forward 不通过的根因。</div></div>
+
+<div class='section'><h2>五、五道检验的对照（本页最该被引用的部分）</h2>
+<table data-wb><thead><tr><th style='width:34%'>检验方式</th><th>相对胜率 lift</th><th>绝对胜率 lift</th><th>结论</th></tr></thead>
+<tbody><tr><td><b>① 两段切分 · 全量筛因子</b><br><span class='dim'>筛因子时看到了后 40% 的数据 → 有前视</span></td><td class='num up'>+8.2pp</td><td class='num'>+3.5pp</td><td><b class='down'>不可信</b></td></tr><tr><td><b>② 严格样本外 · 前 60% 筛→后 40% 测</b><br><span class='dim'>无前视，但因子由数据挑出 → 筛出的是噪声</span></td><td class='num '>+0.5pp</td><td class='num'>+0.3pp</td><td><b class='down'>≈ 无增益</b></td></tr><tr><td><b>③ 留一分段交叉（6 段）</b><br><span class='dim'>每段重筛因子｜0/4 段胜出</span></td><td class='num down'>-5.0pp</td><td class='num'>None</td><td><b class='down'>全败</b></td></tr><tr><td><b>④ 扩窗 walk-forward</b><br><span class='dim'>按月扩窗重学方向｜3/6 期胜出</span></td><td class='num down'>-1.1pp</td><td class='num'>None</td><td><b class='down'>不稳</b></td></tr><tr><td><b>⑤ 先验因子集（不筛、等权）</b><br><span class='dim'>因子与方向由经济逻辑给定，不来自数据</span></td><td class='num up'>+4.3pp</td><td class='num'>+1.0pp</td><td><b class='up'>唯一可用的路</b></td></tr></tbody></table>
+<div class='note'>第 ① 行与第 ② 行的差额 <b>7.6pp</b>，
+就是「筛因子时偷看了测试集」带来的虚高 —— 也就是过拟合的量化值。
+第 ⑤ 行之所以可信，是因为它的因子集<b>不是数据挑的</b>，所以拿它测任何一段都不算偷看。</div></div>
+
+<div class='section'><h2>六、先验因子集明细</h2>
+<div class='sub'>方向全部由经济逻辑给定，等权、不拟合权重。测试段 = 后 40% 交易日；滚动列 = 6 段中正 edge 的段数。</div>
+<table data-wb><thead><tr><th>因子集</th><th>测试段全体</th><th>测试段 Top20%</th><th>相对 lift</th><th>绝对 lift</th><th>滚动</th></tr></thead>
+<tbody><tr><td><b>基本面 7 项</b><br><span class='dim'>营收同比·单季净利同比·ROE·小市值·盈利收益率·账面市值比·小成交额</span></td><td class='num'>49.9%</td><td class='num up'>52.1%</td><td class='num'>+2.2pp</td><td class='num'>-0.2pp</td><td class='num'>5/6</td></tr><tr><td><b>价量 5 项</b><br><span class='dim'>量比·缩量回调·贴近20日高·隔夜承接·波动收敛</span></td><td class='num'>49.9%</td><td class='num up'>53.7%</td><td class='num'>+3.8pp</td><td class='num'>+2.6pp</td><td class='num'>6/6</td></tr><tr><td><b>价量 + 基本面 12 项</b><br><span class='dim'>← pick_score.py 采用的口径</span></td><td class='num'>49.9%</td><td class='num up'>54.3%</td><td class='num'>+4.3pp</td><td class='num'>+1.0pp</td><td class='num'>6/6</td></tr></tbody></table>
+<div class='ok'><b>落地口径</b>：<code>quant/pick_score.py</code> 采用「价量 + 基本面」12 因子等权，
+在当日候选内做横截面分位（不使用任何绝对阈值，天然自适应市场中枢漂移）。</div></div>
+
+<div class='section'><h2>七、合成组合的十分位</h2>
+<div class='sub'>每日在域内按合成分排序切十分位后聚合（<b>分位在日内算</b>；全局排序会把「日期」混进分位、量到的是 beta）。</div>
+<div style='display:grid;grid-template-columns:1fr 1fr;gap:14px'>
+<div><table data-wb><thead><tr><th>训练集十分位</th><th>相对胜率</th><th>绝对胜率</th><th>均涨</th><th>n</th></tr></thead><tbody><tr><td>D1</td><td class='num'>40.1%</td><td class='num'>38.4%</td><td class='num'>-0.78%</td><td class='dim'>768</td></tr><tr><td>D2</td><td class='num'>48.0%</td><td class='num'>44.3%</td><td class='num'>+0.58%</td><td class='dim'>804</td></tr><tr><td>D3</td><td class='num'>43.6%</td><td class='num'>38.5%</td><td class='num'>-0.66%</td><td class='dim'>795</td></tr><tr><td>D4</td><td class='num'>51.1%</td><td class='num'>47.0%</td><td class='num'>+1.19%</td><td class='dim'>791</td></tr><tr><td>D5</td><td class='num'>48.3%</td><td class='num'>44.5%</td><td class='num'>+1.03%</td><td class='dim'>804</td></tr><tr><td>D6</td><td class='num'>51.5%</td><td class='num'>47.9%</td><td class='num'>+0.98%</td><td class='dim'>781</td></tr><tr><td>D7</td><td class='num'>51.5%</td><td class='num'>47.8%</td><td class='num'>+0.63%</td><td class='dim'>791</td></tr><tr><td>D8</td><td class='num'>52.6%</td><td class='num'>47.4%</td><td class='num'>+1.71%</td><td class='dim'>795</td></tr><tr><td>D9</td><td class='num'>54.4%</td><td class='num'>48.6%</td><td class='num'>+1.65%</td><td class='dim'>804</td></tr><tr><td>D10</td><td class='num'>57.8%</td><td class='num'>53.6%</td><td class='num'>+2.00%</td><td class='dim'>804</td></tr></tbody></table></div>
+<div><table data-wb><thead><tr><th>测试集十分位</th><th>相对胜率</th><th>绝对胜率</th><th>均涨</th><th>n</th></tr></thead><tbody><tr><td>D1</td><td class='num'>45.7%</td><td class='num'>41.2%</td><td class='num'>-1.14%</td><td class='dim'>554</td></tr><tr><td>D2</td><td class='num'>47.4%</td><td class='num'>42.1%</td><td class='num'>-0.94%</td><td class='dim'>572</td></tr><tr><td>D3</td><td class='num'>48.3%</td><td class='num'>41.1%</td><td class='num'>-0.69%</td><td class='dim'>572</td></tr><tr><td>D4</td><td class='num'>48.8%</td><td class='num'>40.4%</td><td class='num'>-1.23%</td><td class='dim'>572</td></tr><tr><td>D5</td><td class='num'>51.4%</td><td class='num'>42.1%</td><td class='num'>-1.04%</td><td class='dim'>572</td></tr><tr><td>D6</td><td class='num'>49.2%</td><td class='num'>43.5%</td><td class='num'>-0.62%</td><td class='dim'>563</td></tr><tr><td>D7</td><td class='num'>51.0%</td><td class='num'>43.5%</td><td class='num'>-0.68%</td><td class='dim'>572</td></tr><tr><td>D8</td><td class='num'>48.4%</td><td class='num'>43.2%</td><td class='num'>-1.15%</td><td class='dim'>572</td></tr><tr><td>D9</td><td class='num'>52.8%</td><td class='num'>44.6%</td><td class='num'>-0.46%</td><td class='dim'>572</td></tr><tr><td>D10</td><td class='num'>56.1%</td><td class='num'>48.3%</td><td class='num'>+0.74%</td><td class='dim'>572</td></tr></tbody></table></div></div></div>
+
+<div class='section'><h2>八、环境门控（比选股更大的杠杆）</h2>
+<div class='sub'>按当日<b>全市场广度</b>（站上 MA20 占比）分桶 —— 滞后量，实盘收盘后可算。</div>
+<table data-wb><thead><tr><th>环境</th><th>n</th><th>交易日</th><th>相对胜率 全体→Top20%</th><th>edge</th><th>绝对胜率 全体→Top20%</th><th>Top MAE</th></tr></thead>
+<tbody><tr><td><b>弱势(广度低)</b> <span class='dim'>广度 -1~32.4%</span></td><td class='num'>4363</td><td class='num'>20</td><td class='num'>49.9%→56.9%</td><td class='num up'>+7.0pp</td><td class='num'>40.9%→46.5%</td><td class='num'>-10.1%</td></tr><tr><td><b>中性</b> <span class='dim'>广度 32.4~56.7%</span></td><td class='num'>4573</td><td class='num'>21</td><td class='num'>49.9%→56.6%</td><td class='num up'>+6.7pp</td><td class='num'>42.0%→47.0%</td><td class='num'>-10.7%</td></tr><tr><td><b>强势(广度高)</b> <span class='dim'>广度 56.7~999%</span></td><td class='num'>4574</td><td class='num'>21</td><td class='num'>49.9%→54.1%</td><td class='num up'>+4.2pp</td><td class='num'>51.1%→55.2%</td><td class='num'>-6.4%</td></tr></tbody></table>
+<div class='warn'><b>这才是最大的可控变量：</b>弱势环境中「随便买异动票」的绝对胜率只有 40.9%，强势环境 51.1% ——
+<b>差 10.1pp，比选股本身带来的 1~3pp 大得多</b>。所以结论不是「弱势期继续精挑细选」，
+而是「<b>弱势期降低暴露甚至停手</b>」。<code>pick_score.env_state()</code> 已按广度输出仓位系数（≥55% → 1.0 / ≥35% → 0.7 / 否则 0.4）。</div></div>
+
+<div class='section'><h2>九、参数稳健性网格</h2>
+<div class='sub'>特征入选阈值 × 分期间数 的网格，看优势符号是否稳定。</div>
+<table data-wb><thead><tr><th>筛选阈值(pp)</th><th>分期间数</th><th>有效期数</th><th>lift</th><th>胜出期数</th></tr></thead>
+<tbody><tr><td>2.0</td><td>4</td><td class='num'>4</td><td class='num down'>-2.13pp</td><td class='num'>2/4</td></tr><tr><td>2.0</td><td>5</td><td class='num'>5</td><td class='num down'>-0.68pp</td><td class='num'>2/5</td></tr><tr><td>2.0</td><td>6</td><td class='num'>6</td><td class='num down'>-1.08pp</td><td class='num'>3/6</td></tr><tr><td>2.0</td><td>8</td><td class='num'>6</td><td class='num down'>-1.08pp</td><td class='num'>3/6</td></tr><tr><td>3.0</td><td>4</td><td class='num'>4</td><td class='num down'>-2.13pp</td><td class='num'>2/4</td></tr><tr><td>3.0</td><td>5</td><td class='num'>5</td><td class='num down'>-0.68pp</td><td class='num'>2/5</td></tr><tr><td>3.0</td><td>6</td><td class='num'>6</td><td class='num down'>-1.08pp</td><td class='num'>3/6</td></tr><tr><td>3.0</td><td>8</td><td class='num'>6</td><td class='num down'>-1.08pp</td><td class='num'>3/6</td></tr><tr><td>4.0</td><td>4</td><td class='num'>4</td><td class='num down'>-2.13pp</td><td class='num'>2/4</td></tr><tr><td>4.0</td><td>5</td><td class='num'>5</td><td class='num down'>-0.68pp</td><td class='num'>2/5</td></tr><tr><td>4.0</td><td>6</td><td class='num'>6</td><td class='num down'>-1.08pp</td><td class='num'>3/6</td></tr><tr><td>4.0</td><td>8</td><td class='num'>6</td><td class='num down'>-1.08pp</td><td class='num'>3/6</td></tr><tr><td>5.0</td><td>4</td><td class='num'>4</td><td class='num down'>-2.13pp</td><td class='num'>2/4</td></tr><tr><td>5.0</td><td>5</td><td class='num'>5</td><td class='num down'>-0.68pp</td><td class='num'>2/5</td></tr><tr><td>5.0</td><td>6</td><td class='num'>6</td><td class='num down'>-1.08pp</td><td class='num'>3/6</td></tr><tr><td>5.0</td><td>8</td><td class='num'>6</td><td class='num down'>-1.08pp</td><td class='num'>3/6</td></tr></tbody></table>
+<div class='note'>共 16 个网格，正优势 <b>0</b> 个 —— 符号不稳定，再次说明「按回测调参」不可行。</div></div>
+
+<div class='section'><h2>十、必须一起读的局限</h2>
+<div class='warn'>
+① <b>域近似而非名单复现</b>：候选名单历史仅 7 期，本页用价格异动域近似，结论是「选股能力」而非「历史名单真实收益」。<br>
+② <b>前视偏差（基本面）</b>：财务因子取自最新报告期快照，对更早的价格行为存在前视；该偏差对所有标的同等作用，故<b>相对 lift 仍有效</b>。<br>
+③ <b>窗口重叠</b>：前向 5/10/20 日窗口互相重叠 → 样本非独立；所有差异应按<b>日期聚类</b>理解（有效独立样本数 ≈ 65 个截面，不是 13,630）。<br>
+④ <b>样本跨度</b>：覆盖 2025-11-07 ~ 2026-08-21，未包含完整牛熊周期，<b>换年份是否成立无法验证</b>。<br>
+⑤ <b>MAE 必须与收益同看</b>：Top 组在弱势环境 MAE 约 −10%，高相对收益若伴随深回撤则不可用。<br>
+⑥ <b>本页不构成任何收益承诺</b>，实验室结论只用于「去掉明显无效的做法」，不用于承诺胜率。
+</div></div>
+
+<footer>面板 13,630 行 / 65 个截面 · 覆盖 2025-11-07 ~ 2026-08-21 · 特征 47 个 ·
+由 <code>quant/_pick_lab.py</code> 生成 · 消费方 <code>quant/pick_score.py</code> · 不构成投资建议</footer>
+</div><!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--></body></html>
