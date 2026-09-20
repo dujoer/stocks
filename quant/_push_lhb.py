@@ -39,7 +39,8 @@ TOKEN = _load_token()
 
 # 强制排除名单（路径含以下任一子串即跳过）—— 不对外展示个人持仓 / 选股
 # 2026-09-11：补充 web/research —— 个股调研页含个人持仓快照，按项目硬性边界一律不对外推送。
-EXCLUDE_FRAGMENTS = ("portfolio", "bottom-up", "portfolio_analysis", "_all_store", "web/research")
+EXCLUDE_FRAGMENTS = ("portfolio", "bottom-up", "portfolio_analysis", "_all_store", "web/research",
+                     "_mcp_cache")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -104,6 +105,16 @@ FILES = [
     "quant/db.py",
     "quant/db_export.py",
     "quant/db_update.py",
+    # —— 离线数据层 + MCP 客户端 + 个股外链（2026-09-20：降限额的三件套，便于复现）——
+    "quant/_tx_fetch.py",            # 腾讯离线行情（快照/日K，带 _txk_cache）
+    "quant/fetch_fin_snapshot.py",   # 东财全市场财务快照（季度频率）
+    "quant/fetch_pick_klines.py",    # 精选池日K价格档案（腾讯离线优先）
+    "quant/fetch_rev_flow.py",       # 反转池主力资金流（MCP 优先 · 新浪离线兜底）
+    "quant/fetch_rev_enrich.py",     # 反转池补数（名称/流通市值/PE + 资金流合并）
+    "quant/_wsmcp.py",               # MCP 客户端（磁盘缓存 + 限频熔断）
+    "quant/_wsboot.py",              # MCP 引导（live 端口优先，本地文件仅兜底）
+    "quant/_emlink.py",              # 东财个股页 URL + 全市场名称表
+    "quant/linkify.py",              # 全站个股名称外链后处理器
 ]
 
 # 自动纳入「带日期/版块」的页面与数据源，保证每一页都带统一导航、且数据可复现。
