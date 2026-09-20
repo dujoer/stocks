@@ -249,7 +249,7 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <tr><td>⑤ 精选池（原个股信号池 · 机构轨+游资轨 · 含技术确认出池）</td><td><code>web/picks/index.html</code><br><code>web/picks/pick_{DATE}.html</code><br><code>web/picks/backtest.html</code></td><td id="d7">—</td><td><code>quant/gen_picks.py</code> + <code>quant/build_picks.py</code> + <code>quant/backtest_picks.py</code> + <code>quant/pick_score.py</code></td><td>本地三路信号（中报/高管 exec_chg/大宗 block_chg）+ 龙虎榜 jg/yyb；打分需 data_quote / data_technical / data_chip / data_fund_flow / data_fund_margin。<b>2026-09-19 起出池门槛：</b>最高档直接出池，次高档须 <code>mainNetFlow20D&gt;0</code>（MACD 漏斗第 C 层）才出池，无合格标的则明示空仓。<b>2026-09-21 起</b>新增「稳健分」列（<code>pick_score.py</code>，来自 ⑤b 实验室的先验固定因子集）与顶部环境门控横幅；<b>权重不再按回测分档胜率调整</b>（见 ⑤b）</td></tr>
 <tr><td>⑤b 精选池 · 因子功效<b>样本外实验室</b></td><td><code>web/picks/lab.html</code></td><td id="d7b">—</td><td><code>quant/_pick_lab.py</code></td><td>13 个月 / 13,630 个样本点，检验「哪些指标真的能选股」并把 alpha 从行情 beta 剥出：单特征分桶功效 · 6 段一致率 · 日内十分位 · <b>五道独立检验对照</b>（两段切分 / 严格样本外 / 留一段交叉 / 扩窗 walk-forward / 先验因子集）· 环境门控 · 稳健性网格 · 完整局限。结论驱动 <code>quant/pick_score.py</code> 的「稳健分」，被 <code>build_picks.py</code> 消费</td></tr>
 <tr><td>⑤c 全市场<b>稳健分选股</b></td><td><code>web/picks/stable_{DATE}.html</code></td><td id="d7c">—</td><td><code>quant/scan_stable.py</code></td><td>把「稳健分」用回它的正确用法：在<b>可交易域</b>（剔除 ST/退市、停牌、20 日均额 &lt;5000 万、低价）内做先验 12 因子的<b>全市场横截面排序</b>，而不是只在约 40 只事件驱动候选里排队（实测精选池内最高稳健分仅 66.6，全市场可达 79+）。输出环境门控横幅 + Top 名单 + 分数十分位 + 局限声明。<b>须排在 <code>build_picks.py</code> 之后</b>——归档首页只在 stable 页已存在时才加入链</td></tr>
-<tr><td>⑥ 做T池（三源并集网格）</td><td><code>web/tplus/index.html</code><br><code>web/tplus/tplus-{DATE}.html</code></td><td id="d8">—</td><td><code>quant/scan_strong.py</code> + <code>quant/gen_tplus.py</code> + <code>quant/fetch_tplus_offline.py</code> + <code>quant/build_tplus.py</code></td><td>三源并集（机构底仓 ≥3% ／ 龙虎榜近 10 日 ／ 强势 20 日超额 ≥5pp）约 1600 只；行情走腾讯离线通道（缓存 <code>_txk_cache.json</code>），避开 MCP 限频</td></tr>
+<tr><td>⑥ 做T池（三源并集网格 · v6 先验分位）</td><td><code>web/tplus/index.html</code><br><code>web/tplus/tplus-{DATE}.html</code><br><code>web/tplus/lab.html</code>（实证页）</td><td id="d8">—</td><td><code>quant/scan_strong.py</code> + <code>quant/gen_tplus.py</code> + <code>quant/fetch_tplus_offline.py</code> + <code>quant/build_tplus.py</code>；口径变更时 <code>quant/_tplus_lab.py</code></td><td>三源并集（机构底仓 ≥3% ／ 龙虎榜近 10 日 ／ 强势 20 日超额 ≥5pp）约 1600 只；行情走腾讯离线通道（缓存 <code>_txk_cache.json</code>），避开 MCP 限频。打分 v6 = 9 个先验固定因子的当日域内横截面分位、等权 ×100，档位按分位（A 前 10% / B 前 25%）。<b>做T方向须与环境配对</b>：偏弱/弱势做反T、偏强做正T，反向配对为最差档</td></tr>
 <tr><td>⑦ 底部反转选股（每日重扫）</td><td><code>web/reversal/index.html</code><br><code>web/reversal/watchlist_{DATE}.html</code></td><td id="d5">—</td><td><code>quant/rev_pool.py run</code> + <code>quant/fetch_rev_flow.py</code> + <code>quant/fetch_rev_enrich.py --render</code> + <code>quant/gen_watchlist.py</code></td><td>本地腾讯前复权日K（220 只种子，离线缓存）→ 硬门槛内 9 特征横截面分位组合；<b>名称/流通市值</b>走腾讯离线、<b>1·5·10·20 日主力净流入</b>走 MCP（限频转新浪离线兜底）补全，缺这步则相关列为空；模型由 <code>_rev_lab.py</code> 样本外实证冻结，证据页 <code>web/reversal/lab.html</code></td></tr>
 <tr><td>⑧ MACD 水上金叉观察池（每日重扫 · <b>已并入精选池</b>）</td><td><code>web/macd/index.html</code><br><code>web/macd/watchlist_{DATE}.html</code></td><td id="d6">—</td><td><code>quant/macd_build.py</code> + <code>quant/gen_macd.py</code></td><td>westock tool_filter / data_technical / data_fund_flow（agent 经 MCP 实拉 → <code>macd_raw_*_{DATE}.json</code>）+ 增强列 data_quote / data_chip / data_fund_flow。<b>2026-09-19 起：</b>不再单独荐股，两层条件并入精选池作技术确认门槛；本扫描继续日更（同时是⑨高胜率池的基底）</td></tr>
 <tr><td>⑨ 高胜率候选池（每日重扫）</td><td><code>web/picks/highwin_{YYYYMMDD}.html</code></td><td id="d9">—</td><td><code>quant/build_highwin.py --date {DATE}</code> + <code>quant/gen_highwin.py --date {DATE}</code></td><td>基底 = 当日 MACD 水上金叉 + 20 日主力净流入&gt;0（<code>quant/macd_scan_{YYYYMMDD}.json</code>）；增强：data_quote / data_technical(MA·RSI) / data_chip / 板块强度 / 龙虎榜 / 高管·大宗</td></tr>
@@ -372,7 +372,7 @@ python quant/scan_stable.py --date {DATE}     # 全市场稳健分选股 → web
 一律 <code>×100</code>，让科创板成交额虚高 100 倍。凡「按板块跨标的比较绝对量」的地方都要先换算。</p>
 </div>
 
-<h3>⑥ 做T池（三源并集网格，每日，必做）</h3>
+<h3>⑥ 做T池（三源并集网格 · v6 先验分位，每日，必做）</h3>
 <div class="card">
 <p><b>第一步 · 全市场强势扫描（离线，腾讯公开接口，约 50 秒）：</b></p>
 <pre>python quant/scan_strong.py --date {DATE}
@@ -391,9 +391,26 @@ python quant/scan_stable.py --date {DATE}     # 全市场稳健分选股 → web
 <p><b>第四步 · 打分出页：</b></p>
 <pre>python quant/build_tplus.py --date {DATE}
 # 产出 web/tplus/index.html + web/tplus/tplus-{DATE}.html
-# 打分 7 维：波动24 + 流动16 + 区间20 + 资金底仓12 + 稳定8 + 龙虎榜共振8 + 强势结构12 − 风险
+# 打分 v6（2026-09-21 起）：9 个先验固定因子的「当日域内横截面分位」等权 × 100
+#   箱体窄 / 带宽低 / 均线粘合 / 波动规律 / 振幅适中 / ATR 适中 / 横盘 / 支撑被验 / 流动性
+#   档位 = 域内分位（A 前 10% / B 前 25% / C 其余）；解禁/减持 → D（风险否决·仅跟踪）
+#   风险项（破MA60/RSI超买/额不足/MA20陡峭/龙虎榜净卖）只作卡片提示、不参与排序
+#   ⚠️ 不再按「分数 ≥80/70」定档：绝对阈值随行情漂移，分位不会
+#   旧 7 维手调绝对分保留在 v5score 字段备查
 # 页面板块：做T榜单(全量) / 强势股分析 / 龙虎榜视角 / 网格手册 / 波段手册 / 方法论 / 归档</pre>
 <p class="note">⚠️ 三源并集后候选约 1600 只（原 848 只），<b>务必走离线腾讯通道</b>（<code>fetch_tplus_offline.py</code>），MCP <code>data_kline</code> 拉 1600×250 根会严重限频。日K缓存 <code>quant/_txk_cache.json</code> 是关键，缺失时会显著变慢。漏跑会导致做T池停更在上一交易日。</p>
+<p><b>第五步 · 实证页（口径变更时重跑，非每日）：</b></p>
+<pre>python quant/_tplus_lab.py
+# 复用 quant/_tplus_lab_panel.json（约 30 秒）；加 --rebuild 全量重建面板约 5 分钟
+# 产出 web/tplus/lab.html（14 节）+ quant/_tplus_lab_result.json
+# 全市场可做T域 9.3 万样本 / 10 个月，前 60% 训练 / 后 40% 测试</pre>
+<p class="note">🔁 <b>2026-09-21 起 v6 的打分依据来自该实验室，不凭手感调参</b>。核心结论（证据见 <code>lab.html</code>）：<br>
+① <b>做T不能用涨跌幅衡量</b> —— 赚的是箱体波动差价，主指标是「完成一轮率 / 破止损率 / <b>可兑现期望收益</b>」（逐笔模拟，未成交记 0 = 空仓等待不算亏）；「完成一轮率」是有偏指标（随参数放宽而虚高但期望反而更差），故以期望收益为主判据。<br>
+② <b>默认参数在全市场域是负期望</b>（期望 −0.43%，成交后胜率仅 39.3%）—— 根因是盈亏比失配（赚 2.5~4%、亏 6%），且破止损样本多于完成一轮样本。<br>
+③ <b>「安静」比「强势」更能提高确定性</b> —— 箱体高度 / BOLL 带宽 / 均线粘合度单特征全部「两半同向」稳定单调；而旧口径挑「波动大、贴下沿」的票，完成一轮率虽高（D1 17.0% → D10 4.0%），<b>期望收益反而更差</b>（D1 −0.71% vs D10 −0.07%）。这就是把打分器换成先验收敛集的原因。<br>
+④ <b>★做T方向必须与环境配对（最硬的一条）</b> —— 12 个「参数组合 × 环境档」里只有 4 个做到「top10% 与域均期望同时为正」，且全部符合同一规律：指数近 20 日<b>偏弱（−3%~0）或弱势（&lt;−3%）时做反T</b>（先低吸后高抛）、<b>偏强（0~+3%）时做正T</b>（先高抛后低吸补回）；反向配对（弱环境做正T、强环境做反T）是全表最差档。<b>不知道当天处于哪一档时默认不做。</b><br>
+⑤ <b>参数侧才是抓手</b> —— 反T 最优组合「贴支撑买 + 近目标 0.4×ATR 卖 + 紧止损 −2%」两半都 ≈0（训练 +0.03% / 测试 −0.11%），是唯一不亏也不赚的组合；正T 组合测试段为正但训练段为负，说明赚的是近期行情不是能力。<b>绝对赚钱依赖行情，相对更会做T才是稳定的。</b><br>
+⑥ <b>纪律</b>：不追高 + 给噪声留容错 + 早止盈；单笔亏损预算 = 仓位 × 止损宽度 ≤ 账户 0.5%。</p>
 </div>
 
 <h3>⑦ 底部反转选股（每日重扫，必做 · v5 全市场域）</h3>

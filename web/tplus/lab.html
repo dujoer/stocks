@@ -1,0 +1,621 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>做T池 · 特征功效实验室 · 2026-09-03</title><style>
+:root{--bg:#fbfbfd;--card:#fff;--text:#1d1d1f;--muted:#6e6e73;--line:#e5e5e7;
+ --up:#ff3b30;--dn:#34c759;--blue:#0071e3;--gold:#1a73e8;--orange:#ff9500;--purple:#af52de;}
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+ background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:0}
+.wrap{max-width:1000px;margin:0 auto;padding:28px 18px 56px}
+h1{font-size:23px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+h2{font-size:18px;font-weight:600;margin:26px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--blue)}
+h3{font-size:15px;font-weight:600;margin:18px 0 8px}
+.sub{color:var(--muted);font-size:13px;margin-bottom:8px}
+.card{background:var(--card);border-radius:16px;padding:16px 20px;margin:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.box{border-left:4px solid var(--blue);background:#f0f7ff;padding:14px 18px;border-radius:0 12px 12px 0;margin:14px 0}
+.box.gold{border-color:var(--gold);background:#fffaf0}
+.box.red{border-color:#c0392b;background:#fdf1f0}
+.box.green{border-color:var(--dn);background:#f0faf3}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{white-space:nowrap;color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa}
+.num{font-variant-numeric:tabular-nums}
+.up{color:var(--up)}.dn{color:var(--dn)}.am{color:var(--blue)}.dim{color:#b0b3b8}
+.note{font-size:12.5px;color:var(--muted);margin-top:8px}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;margin:1px 2px}
+.tag.A{background:#e6f7ec;color:#1a7a45}
+.tag.B{background:#fff3e0;color:#e65100}
+.tag.C{background:#fdecea;color:#c0392b}
+code{background:#f1f3f4;border-radius:4px;padding:1px 5px;font-size:12px}
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
+ul{padding-left:20px}
+li{margin:4px 0}
+</style><!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  .navgrp{ padding:5px 6px 5px 5px !important; }
+}
+
+</style><!--/WB_THEME--></head>
+<body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class="wrap">
+<h1>做T池 · 特征功效实验室</h1>
+<div class="sub">目的：用<b>样本外实证</b>回答「做T的因子有没有预测力、方向如何、买卖点该怎么设」，
+替代「照 347 样本小结回测手调阈值」。面板：<b>全市场 3,891 只 A 股</b>
+（<code>_txk_cache.json</code> 全量正股，剔 ST/退）过做T硬门槛 → <b>93,331 个「股票×交易日」样本</b>
+（2025-11-11 ~ 2026-09-03，步长 3 交易日）。时间切分：前 60%（至 <b>2026-05-15</b>）训练，后 40% 测试。</div>
+
+<div class="box red"><b>⚠️ 口径先说清楚（做T的胜率 ≠ 涨跌幅，也 ≠ 完成一轮率）：</b>
+做T赚的是箱体内的波动差价，所以本页不用「T+3 涨跌」衡量（那量的是 β）。
+本页同时报三个指标，<b>并且以「可兑现期望收益」为主判断</b>：
+<b>完成一轮率</b>（先低吸 → 后高抛、中途未破止损）、<b>破止损率</b>、<b>可兑现期望收益</b>
+（逐笔模拟：未成交记 0 = 空仓等待不算亏）。<br>
+<b style="color:#b00020">为什么不能只看完成一轮率</b>：它随「参数放宽」单调上升
+（把止损放宽到 −12%、目标缩到 0.4×ATR，完成一轮率能从 16% 抬到 33%），
+但同期<b>期望收益反而更差</b> —— 它衡量的是「有没有走完一个来回」，不是「赚不赚钱」。
+三个保守假设对所有参数组同等作用，故<b>组间比较有效、绝对值偏保守</b>：
+①买价取买区上沿 ②同日既成交又破位时按「止损优先」 ③到期未触卖区按当日收盘平仓。忽略滑点与手续费。</div>
+
+<div class="box gold"><b>核心结论（v6 · 全市场域 · 93,331 样本）：</b>
+① <b>现行做T框架在全市场域是负期望</b>：默认参数（买区 +2% · 卖区 1.2×ATR · 止损 −6% · T+5）
+下完成一轮 <b>11.9%</b>、破止损 <b>23.9%</b>，
+期望收益 <b>-0.43%</b>；成交后胜率仅 <b>39.3%</b>。
+根因不是「选不到票」，而是<b>盈亏比失配</b>：赚一次 2.5~4%，亏一次 6%，
+且破止损样本多于完成一轮样本。<br>
+② <b>打分器排序力其实很强，但优化的东西错了</b>：十分位 D1 完成一轮 <b>18.0%</b>
+→ D10 <b>5.1%</b>（<b>+12.9pp</b>，
+低吸命中 73.4% vs 44.4%），
+<b>但期望收益 D1 -0.42% 反而比 D10 -0.13% 更差</b> ——
+现行打分挑出来的是「波动大、贴下沿、最容易成交也最容易破位」的票。
+③ <b>「安静」比「强势」更能提高确定性</b>：单特征上箱体高度 / BOLL 带宽 / 均线粘合度全部
+<b>单调且两半同向</b>（箱体最窄档完成一轮 18% vs 最宽档
+6%），而「MA20 向上 / 相对强度高」并无稳定增益 ——
+做T赚的是区间往复，不是趋势。<br>
+④ <b>参数侧才是抓手</b>：12 个「先验集 × 参数」组合里，测试段前 10% 期望收益为正的有
+<b>4 个</b>，最好的是「正T · 高抛 0.4×ATR → 补回（−1%）/ T+3」→ 测试段前 10% 期望 <b>+1.07%</b>。<br>
+⑤ 逐月稳健性：10 个月里 <b>10 个月</b>完成一轮率优于域均
+（edge +2.0pp ~ +7.5pp）——
+<b>「相对更会做T」是稳定的，「绝对赚钱」不是</b>（见第七节期望收益列的符号）。</div>
+
+<h2>一、两条先验假设的对照（谁更对，由训练段决定、测试段验证）</h2>
+<div class="card"><table>
+<thead><tr><th>半段</th><th>假设</th><th>n_top</th><th>top 完成一轮</th><th>域均完成一轮</th>
+<th>top 期望收益</th><th>top 破止损</th><th>edge（期望收益）</th></tr></thead>
+<tbody><tr><td>收敛派 A</td><td class='num'>11027</td><td class='num'>18.3%</td><td class='num'>13.0%</td><td class='num dim'>—</td><td class='num'>24.9%</td><td class='num dn'>-0.0pp</td></tr><tr><td>支撑派 B</td><td class='num'>11027</td><td class='num'>15.9%</td><td class='num'>13.0%</td><td class='num dim'>—</td><td class='num'>23.7%</td><td class='num up'>+0.0pp</td></tr></tbody></table>
+<div class="note">做T有两条互相竞争的经济假设，都能事先讲清楚，故都用「训练段择优、测试段验证」的方式比较，
+而不是拍脑袋选一组：<br>
+<b>收敛派 A</b>（9 因子）：<i>做T赚的是区间往复 → 越安静越好</i> —— 箱体窄、BOLL 带宽低、
+均线粘合、振幅规律、斜率平、下沿被反复验证。<br>
+<b>支撑派 B</b>（8 因子）：<i>做T赚的是支撑有效 → 越强越好</i> —— MA20 向上、相对强度高、
+贴下沿、下沿被验证。<br>
+判据 = 复合分（<b>完成一轮率 edge ÷ 5 + 期望收益 edge ÷ 0.5</b>，两者按典型量级标准化后等权）：
+收敛派 +0.99 vs 支撑派
++0.63
+（完成一轮率 edge +5.3pp /
++2.9pp；期望收益 edge
+-0.04pp /
++0.02pp）→
+选定 <b>收敛派 A</b>。
+<b style="color:#b00020">⚠️ 两派复合分差 &lt; 0.4，属于噪声范围</b> —— 选定只是「按训练段排序取前者」，不代表它显著更优；真正稳健的结论是<b>两派共同包含的那些因子（箱体窄、波动规律、均线粘合、下沿被验证、流动性）</b>。
+其测试段结果见第五节。</div></div>
+
+<h2>二、最终先验固定因子集（9 个，等权、方向全为「越小越好」）</h2>
+<div class="card"><table data-wb>
+<thead><tr><th>因子</th><th>方向</th><th>dir</th><th>做T逻辑</th></tr></thead>
+<tbody><tr><td>box_dev</td><td>越小越好</td><td class='num'>-1</td><td>偏离理想箱体 |箱高−20%|（收敛派：箱体要够窄，一轮才做得完）</td></tr><tr><td>bwidth</td><td>越小越好</td><td class='num'>-1</td><td>BOLL 带宽 4σ/MA20（收敛派：带宽低 = 波动收敛）</td></tr><tr><td>cohesion</td><td>越小越好</td><td class='num'>-1</td><td>均线粘合度 MA5/10/20（收敛派：粘合 = 无趋势 = 适合网格）</td></tr><tr><td>amp_cv</td><td>越小越好</td><td class='num'>-1</td><td>振幅变异系数（收敛派：波动越规律越可预期）</td></tr><tr><td>amp_dev</td><td>越小越好</td><td class='num'>-1</td><td>偏离理想振幅 |amp20−6%|（收敛派：太小没空间、太大是单边）</td></tr><tr><td>atr_dev</td><td>越小越好</td><td class='num'>-1</td><td>偏离理想 ATR |ATR%−5%|（收敛派）</td></tr><tr><td>slope_abs</td><td>越小越好</td><td class='num'>-1</td><td>|MA20 二十日斜率|（收敛派：越横盘越好）</td></tr><tr><td>neg_tests</td><td>越小越好</td><td class='num'>-1</td><td>负的「近 60 日下沿被测试次数」（两派共用：被验证过的支撑更可靠）</td></tr><tr><td>neg_amt</td><td>越小越好</td><td class='num'>-1</td><td>负的 20 日均成交额（两派共用：流动性下限）</td></tr></tbody></table>
+<div class="note">全部等权、<b>不筛因子、不调权重</b> → 全期都是干净样本外，这是「确定性」的来源。
+命名里 <code>neg_*</code> = 原本「越大越好」的量已取负，统一成「越小越好」。
+⚠️ 首轮的「贴箱体下沿最好」（<code>pos</code>）假设<b>已被实证否证</b>（见第三节 V 形），未进入最终集。</div></div>
+
+<h2>三、单特征功效（训练段分 5 桶 → 套测试段；数值 = 完成一轮率 %）</h2>
+<div class="card"><table data-wb>
+<thead><tr><th>因子</th><th>训练 5 桶（低→高）</th><th>测试 5 桶</th><th>训练极差</th><th>测试极差</th><th>跨期一致性</th></tr></thead>
+<tbody><tr style='background:#fffaf0'><td>bwidth</td><td class='num'>23 16 12 9 6</td><td class='num'>18 14 12 10 6</td><td class='num'>-17.2pp</td><td class='num'>-11.8pp</td><td>★稳定</td></tr><tr><td>pos</td><td class='num'>19 7 19 16 4</td><td class='num'>15 5 14 13 3</td><td class='num'>-14.6pp</td><td class='num'>-11.4pp</td><td>★稳定</td></tr><tr><td>box_h</td><td class='num'>23 15 12 9 6</td><td class='num'>18 14 12 10 7</td><td class='num'>-17.1pp</td><td class='num'>-11.4pp</td><td>★稳定</td></tr><tr style='background:#fffaf0'><td>cohesion</td><td class='num'>20 17 13 10 5</td><td class='num'>16 13 12 10 6</td><td class='num'>-15.5pp</td><td class='num'>-9.6pp</td><td>★稳定</td></tr><tr><td>rsi14</td><td class='num'>15 13 19 15 3</td><td class='num'>11 11 15 11 3</td><td class='num'>-11.3pp</td><td class='num'>-8.8pp</td><td>★稳定</td></tr><tr style='background:#fffaf0'><td>box_dev</td><td class='num'>16 17 16 10 6</td><td class='num'>14 14 14 10 7</td><td class='num'>-10.6pp</td><td class='num'>-7.5pp</td><td>★稳定</td></tr><tr><td>amp20</td><td class='num'>17 15 13 11 9</td><td class='num'>15 12 13 11 8</td><td class='num'>-8.9pp</td><td class='num'>-7.1pp</td><td>★稳定</td></tr><tr><td>neg_rs</td><td class='num'>5 11 16 18 16</td><td class='num'>6 10 12 13 12</td><td class='num'>+10.7pp</td><td class='num'>+6.4pp</td><td>★稳定</td></tr><tr><td>rs20</td><td class='num'>16 18 16 11 5</td><td class='num'>12 13 12 10 6</td><td class='num'>-10.7pp</td><td class='num'>-6.4pp</td><td>★稳定</td></tr><tr><td>atr_pct</td><td class='num'>19 14 13 11 8</td><td class='num'>14 12 12 11 8</td><td class='num'>-10.6pp</td><td class='num'>-6.2pp</td><td>★稳定</td></tr><tr style='background:#fffaf0'><td>amp_cv</td><td class='num'>16 15 14 12 9</td><td class='num'>12 11 9 9 7</td><td class='num'>-7.1pp</td><td class='num'>-4.9pp</td><td>★稳定</td></tr><tr><td>turn</td><td class='num'>15 15 14 12 9</td><td class='num'>13 12 11 9 8</td><td class='num'>-6.3pp</td><td class='num'>-4.8pp</td><td>★稳定</td></tr><tr><td>pos52</td><td class='num'>17 15 13 12 8</td><td class='num'>11 10 10 10 8</td><td class='num'>-8.1pp</td><td class='num'>-3.3pp</td><td>★稳定</td></tr><tr style='background:#fffaf0'><td>atr_dev</td><td class='num'>13 13 14 15 10</td><td class='num'>12 12 11 11 9</td><td class='num'>-2.9pp</td><td class='num'>-3.1pp</td><td>⚠️反向</td></tr><tr style='background:#fffaf0'><td>neg_tests</td><td class='num'>13 14 13 13 12</td><td class='num'>11 12 12 10 9</td><td class='num'>-1.4pp</td><td class='num'>-2.0pp</td><td>★稳定</td></tr><tr><td>neg_slope</td><td class='num'>9 13 14 14 15</td><td class='num'>9 11 11 10 11</td><td class='num'>+5.7pp</td><td class='num'>+1.8pp</td><td>★稳定</td></tr></tbody></table>
+<div class="note">行底色 = 进入最终先验集。★稳定 = 训练与测试单调方向一致（可作依据）；⚠️反向 = 两期方向相反
+（该因子的「预测力」只是市场状态的代理）。<b>桶序是「因子值从低到高」</b>；
+最终先验集里所有因子 dir = −1，理想形态是完成一轮率<b>随桶序号递减</b>。<br>
+注意 <code>pos</code>（箱内位置）呈 <b>V 形</b>（贴下沿与中枢都好、20%~40% 那段最差）→ 单调先验不成立；
+<code>rsi14</code> 同理（中段最好）。这两个都不进最终集。</div></div>
+
+<h2>四、十分位（按最终先验组合分降序：D1 = 分数最高）</h2>
+<div class="card"><table data-wb>
+<thead><tr><th>分位</th><th>n</th><th>低吸命中</th><th>完成一轮</th><th>破止损</th>
+<th>成交后胜率</th><th>正收益占比</th><th>期望收益</th></tr></thead>
+<tbody><tr><td>D1</td><td class='num'>9137</td><td class='num'>73.4%</td><td class='num'>18.0%</td><td class='num'>30.0%</td><td class='num'>40.7%</td><td class='num'>29.9%</td><td class='num dn'>-0.42%</td></tr><tr><td>D2</td><td class='num'>9167</td><td class='num'>70.6%</td><td class='num'>15.9%</td><td class='num'>27.1%</td><td class='num'>40.0%</td><td class='num'>28.3%</td><td class='num dn'>-0.59%</td></tr><tr><td>D3</td><td class='num'>9161</td><td class='num'>67.9%</td><td class='num'>15.3%</td><td class='num'>25.7%</td><td class='num'>40.8%</td><td class='num'>27.7%</td><td class='num dn'>-0.51%</td></tr><tr><td>D4</td><td class='num'>9165</td><td class='num'>66.2%</td><td class='num'>14.5%</td><td class='num'>24.3%</td><td class='num'>40.8%</td><td class='num'>27.0%</td><td class='num dn'>-0.44%</td></tr><tr><td>D5</td><td class='num'>9171</td><td class='num'>63.4%</td><td class='num'>13.5%</td><td class='num'>23.7%</td><td class='num'>40.9%</td><td class='num'>25.9%</td><td class='num dn'>-0.43%</td></tr><tr><td>D6</td><td class='num'>9154</td><td class='num'>61.7%</td><td class='num'>11.3%</td><td class='num'>23.4%</td><td class='num'>39.6%</td><td class='num'>24.4%</td><td class='num dn'>-0.51%</td></tr><tr><td>D7</td><td class='num'>9160</td><td class='num'>58.1%</td><td class='num'>9.8%</td><td class='num'>22.8%</td><td class='num'>37.8%</td><td class='num'>21.9%</td><td class='num dn'>-0.55%</td></tr><tr><td>D8</td><td class='num'>9166</td><td class='num'>54.2%</td><td class='num'>8.8%</td><td class='num'>21.7%</td><td class='num'>38.4%</td><td class='num'>20.8%</td><td class='num dn'>-0.34%</td></tr><tr><td>D9</td><td class='num'>9162</td><td class='num'>49.5%</td><td class='num'>7.0%</td><td class='num'>21.0%</td><td class='num'>35.2%</td><td class='num'>17.4%</td><td class='num dn'>-0.44%</td></tr><tr><td>D10</td><td class='num'>9189</td><td class='num'>44.4%</td><td class='num'>5.1%</td><td class='num'>19.1%</td><td class='num'>35.6%</td><td class='num'>15.8%</td><td class='num dn'>-0.13%</td></tr></tbody></table>
+<div class="note">分位在<b>每个交易日内</b>排序后聚合（全局排序会把「日期」混进分位，量到的是行情而非打分能力）。
+D1 = 打分最高档。<b>本表的读法</b>：完成一轮率随 D 升高而下降（打分有效），
+但期望收益未必同向 —— 因为「低吸命中率高」意味着「承接了更多下跌」，
+所以一只票「容易被买到」和「买了能赚」是两件事，这也是本页把期望收益单列的原因。</div></div>
+
+<h2>五、严格样本外对照（同一测试段、同一 top20% 口径）</h2>
+<div class="card"><table data-wb>
+<thead><tr><th>口径</th><th>n_top</th><th>top 完成一轮</th><th>域均 完成一轮</th><th>edge（完成一轮）</th>
+<th>edge（期望收益）</th><th>top 破止损</th></tr></thead>
+<tbody><tr style='background:#f0faf3;font-weight:600'><td>收敛派 A（箱体/带宽/粘合/规律/斜率平）</td><td class='num'>7574</td><td class='num'>15.0%</td><td class='num'>10.3%</td><td class='num up'>+4.7pp</td><td class='num dn'>-0.10%</td><td class='num'>33.7%</td></tr><tr><td>支撑派 B（斜率向上/相对强度/贴下沿/支撑测试）</td><td class='num'>7574</td><td class='num'>13.2%</td><td class='num'>10.3%</td><td class='num up'>+2.9pp</td><td class='num up'>+0.01%</td><td class='num'>34.8%</td></tr><tr><td>现行 7 维等价的 9 因子（v5 口径）</td><td class='num'>7574</td><td class='num'>14.5%</td><td class='num'>10.3%</td><td class='num up'>+4.3pp</td><td class='num dn'>-0.31%</td><td class='num'>35.0%</td></tr><tr><td>自动筛 · 严格样本外（训练段学 → 测试段用）</td><td class='num'>7574</td><td class='num'>15.3%</td><td class='num'>10.3%</td><td class='num up'>+5.0pp</td><td class='num dn'>-0.39%</td><td class='num'>31.8%</td></tr><tr><td>自动筛 · 全量（含测试段，前视）</td><td class='num'>18601</td><td class='num'>18.8%</td><td class='num'>11.9%</td><td class='num up'>+6.9pp</td><td class='num dn'>-0.38%</td><td class='num'>25.5%</td></tr></tbody></table>
+<div class="note">绿底 = 本实验室选定并落地的口径。先验固定集 = 等权不筛；「自动筛」= 在训练段按完成一轮率
+极差挑因子（|差| ≥ 2pp），练习段共选出 19 个、全量
+19 个。<b>「自动筛·全量」比「自动筛·严格样本外」高出的部分
+（1.8pp）就是挑因子这个动作制造的过拟合量</b>，不是本事。</div></div>
+
+<h2>六、训练半 / 测试半对照（优势是否依赖期间）</h2>
+<div class="card"><table>
+<thead><tr><th>半段</th><th>n_top</th><th>top 完成一轮</th><th>域均 完成一轮</th><th>edge</th>
+<th>top 破止损</th><th>edge（期望收益）</th></tr></thead>
+<tbody><tr><td>训练半（2025-11-11 ~ 2026-05-14）</td><td class='num'>5520</td><td class='num'>19.4%</td><td class='num'>13.0%</td><td class='num up'>+6.4pp</td><td class='num'>26.6%</td><td class='num up'>+0.01%</td></tr><tr><td>测试半（2026-05-15 ~ 2026-09-03）</td><td class='num'>3784</td><td class='num'>15.9%</td><td class='num'>10.3%</td><td class='num up'>+5.6pp</td><td class='num'>34.9%</td><td class='num up'>+0.04%</td></tr></tbody></table>
+<div class="note">口径：最终先验集，每日取前 10%。<b>完成一轮率的两半同向 = 稳定的相对能力</b>；
+但期望收益的绝对水平由行情决定（测试半破止损率显著更高），
+所以环境只应该用来<b>控 β 与仓位</b>，不该用来「择时调因子」。</div></div>
+
+<h2>七、逐月 walk-forward（每月单独口径）</h2>
+<div class="card"><table data-wb>
+<thead><tr><th>月份</th><th>域内 n</th><th>top10% 完成一轮</th><th>域均完成一轮</th><th>edge</th><th>top 期望收益</th></tr></thead>
+<tbody><tr><td>2025-12</td><td class='num'>7750</td><td class='num'>22.1%</td><td class='num'>15.6%</td><td class='num up'>+6.5pp</td><td class='num up'>+1.61%</td></tr><tr><td>2026-01</td><td class='num'>10238</td><td class='num'>18.7%</td><td class='num'>11.4%</td><td class='num up'>+7.3pp</td><td class='num dn'>-0.28%</td></tr><tr><td>2026-02</td><td class='num'>9511</td><td class='num'>23.5%</td><td class='num'>16.0%</td><td class='num up'>+7.5pp</td><td class='num up'>+0.62%</td></tr><tr><td>2026-03</td><td class='num'>11819</td><td class='num'>15.7%</td><td class='num'>11.2%</td><td class='num up'>+4.5pp</td><td class='num dn'>-2.01%</td></tr><tr><td>2026-04</td><td class='num'>10895</td><td class='num'>20.0%</td><td class='num'>12.7%</td><td class='num up'>+7.3pp</td><td class='num up'>+1.33%</td></tr><tr><td>2026-05</td><td class='num'>10406</td><td class='num'>18.6%</td><td class='num'>11.1%</td><td class='num up'>+7.5pp</td><td class='num dn'>-1.91%</td></tr><tr><td>2026-06</td><td class='num'>11317</td><td class='num'>20.0%</td><td class='num'>14.0%</td><td class='num up'>+6.0pp</td><td class='num dn'>-0.11%</td></tr><tr><td>2026-07</td><td class='num'>9594</td><td class='num'>11.6%</td><td class='num'>6.8%</td><td class='num up'>+4.8pp</td><td class='num dn'>-1.59%</td></tr><tr><td>2026-08</td><td class='num'>9985</td><td class='num'>13.5%</td><td class='num'>9.2%</td><td class='num up'>+4.3pp</td><td class='num dn'>-0.83%</td></tr><tr><td>2026-09</td><td class='num'>1477</td><td class='num'>13.5%</td><td class='num'>11.5%</td><td class='num up'>+2.0pp</td><td class='num up'>+0.72%</td></tr></tbody></table>
+<div class="note">平均 edge <b>+5.8pp</b>，
+10/10 个月为正，区间 +2.0pp ~ +7.5pp。
+这是「不掺未来信息」的检验：每月只用当月数据，因子方向由先验固定，不存在学习泄漏。
+<b>关键读法</b>：完成一轮率列几乎月月为正（选股有效），
+但期望收益列符号会翻（4/10 个月为正）——
+说明「相对更会做T」稳定，「绝对赚钱」取决于当期是否适合做T。</div></div>
+
+<h2>八、环境分桶（按上证近 20 日涨幅三档）</h2>
+<div class="card"><table data-wb>
+<thead><tr><th>环境</th><th>半段</th><th>域内 n</th><th>top10% 完成一轮</th><th>域均完成一轮</th><th>edge</th><th>top10% 破止损</th></tr></thead>
+<tbody><tr><td>弱（指数 20 日 < −3%）</td><td>训练半</td><td class='num'>9609</td><td class='num'>14.8%</td><td class='num'>8.6%</td><td class='num up'>+6.2pp</td><td class='num'>28.2%</td></tr><tr><td>弱（指数 20 日 < −3%）</td><td>测试半</td><td class='num'>7895</td><td class='num'>16.1%</td><td class='num'>9.7%</td><td class='num up'>+6.4pp</td><td class='num'>22.3%</td></tr><tr><td>中（−3% ~ +3%）</td><td>训练半</td><td class='num'>25721</td><td class='num'>21.4%</td><td class='num'>15.1%</td><td class='num up'>+6.3pp</td><td class='num'>24.3%</td></tr><tr><td>中（−3% ~ +3%）</td><td>测试半</td><td class='num'>26980</td><td class='num'>16.9%</td><td class='num'>10.8%</td><td class='num up'>+6.0pp</td><td class='num'>38.2%</td></tr><tr><td>强（> +3%）</td><td>训练半</td><td class='num'>19824</td><td class='num'>19.1%</td><td class='num'>12.5%</td><td class='num up'>+6.6pp</td><td class='num'>28.7%</td></tr><tr><td>强（> +3%）</td><td>测试半</td><td class='num'>2978</td><td class='num'>6.7%</td><td class='num'>6.8%</td><td class='num dn'>-0.1pp</td><td class='num'>39.1%</td></tr></tbody></table>
+<div class="note">用于判断「环境门控能不能提高做T胜率」：分环境的 edge 差异不大，
+而<b>破止损率在强/弱环境之间差异巨大</b>（28.2% ~
+39.1%），所以线上 <code>_idxkline.market_env</code> 的门控
+定位是<b>控暴露与仓位</b>（弱势只放行 A 档 + 收紧结构条件），而不是「换个因子就能提高胜率」。</div></div>
+
+<h2>九、参数网格（做T真正的抓手：买区 / 卖区 / 止损 / 持有期）</h2>
+<div class="card">
+<div class="note">样本 = 先验集每日前 30% 的标的
+（训练半 16,193 例 / 测试半 11,295 例）。
+默认参数（线上现行）→ 训练半完成一轮 <b>17.9%</b> / 破止损
+<b>23.8%</b> / 期望 <b>-0.07%</b>；
+测试半完成一轮 <b>14.2%</b> / 破止损 <b>33.1%</b> /
+期望 <b>-1.12%</b>。<b>判据是两半均值，不是单半最优。</b></div>
+<h3>买区深度（相对支撑 +%）</h3><table data-wb><thead><tr><th>取值</th><th>训练半<br>完成一轮</th><th>测试半<br>完成一轮</th><th>两半均值</th><th>训练半<br>破止损</th><th>测试半<br>破止损</th><th>两半<br>期望收益</th></tr></thead><tbody><tr><td class='num'>-1.5</td><td class='num'>5.1%</td><td class='num'>4.5%</td><td class='num am'>4.8%</td><td class='num'>10.9%</td><td class='num'>19.4%</td><td class='num dn'>-0.30%</td></tr><tr><td class='num'>-1.0</td><td class='num'>6.4%</td><td class='num'>5.5%</td><td class='num am'>6.0%</td><td class='num'>12.3%</td><td class='num'>21.2%</td><td class='num dn'>-0.33%</td></tr><tr><td class='num'>-0.5</td><td class='num'>7.9%</td><td class='num'>6.8%</td><td class='num am'>7.3%</td><td class='num'>13.7%</td><td class='num'>23.0%</td><td class='num dn'>-0.34%</td></tr><tr><td class='num'>0.0</td><td class='num'>9.7%</td><td class='num'>8.1%</td><td class='num am'>8.9%</td><td class='num'>15.4%</td><td class='num'>24.8%</td><td class='num dn'>-0.37%</td></tr><tr><td class='num'>0.5</td><td class='num'>11.8%</td><td class='num'>9.5%</td><td class='num am'>10.7%</td><td class='num'>17.3%</td><td class='num'>26.7%</td><td class='num dn'>-0.39%</td></tr><tr><td class='num'>1.0</td><td class='num'>13.9%</td><td class='num'>10.9%</td><td class='num am'>12.4%</td><td class='num'>19.3%</td><td class='num'>28.9%</td><td class='num dn'>-0.45%</td></tr><tr><td class='num'>2.0</td><td class='num'>17.9%</td><td class='num'>14.2%</td><td class='num am'>16.0%</td><td class='num'>23.8%</td><td class='num'>33.1%</td><td class='num dn'>-0.60%</td></tr><tr><td class='num'>3.0</td><td class='num'>21.8%</td><td class='num'>16.9%</td><td class='num am'>19.4%</td><td class='num'>28.8%</td><td class='num'>37.7%</td><td class='num dn'>-0.81%</td></tr></tbody></table><h3>卖区目标（ATR 倍数，下限 2.5%）</h3><table data-wb><thead><tr><th>取值</th><th>训练半<br>完成一轮</th><th>测试半<br>完成一轮</th><th>两半均值</th><th>训练半<br>破止损</th><th>测试半<br>破止损</th><th>两半<br>期望收益</th></tr></thead><tbody><tr><td class='num'>0.3</td><td class='num'>32.9%</td><td class='num'>30.8%</td><td class='num am'>31.9%</td><td class='num'>19.8%</td><td class='num'>26.4%</td><td class='num dn'>-0.40%</td></tr><tr><td class='num'>0.4</td><td class='num'>32.8%</td><td class='num'>30.2%</td><td class='num am'>31.5%</td><td class='num'>19.8%</td><td class='num'>26.9%</td><td class='num dn'>-0.42%</td></tr><tr><td class='num'>0.6</td><td class='num'>29.9%</td><td class='num'>25.9%</td><td class='num am'>27.9%</td><td class='num'>21.0%</td><td class='num'>29.2%</td><td class='num dn'>-0.50%</td></tr><tr><td class='num'>0.8</td><td class='num'>25.3%</td><td class='num'>21.2%</td><td class='num am'>23.2%</td><td class='num'>22.5%</td><td class='num'>31.2%</td><td class='num dn'>-0.56%</td></tr><tr><td class='num'>1.0</td><td class='num'>21.0%</td><td class='num'>17.4%</td><td class='num am'>19.2%</td><td class='num'>23.4%</td><td class='num'>32.4%</td><td class='num dn'>-0.58%</td></tr><tr><td class='num'>1.2</td><td class='num'>17.9%</td><td class='num'>14.2%</td><td class='num am'>16.0%</td><td class='num'>23.8%</td><td class='num'>33.1%</td><td class='num dn'>-0.60%</td></tr><tr><td class='num'>1.6</td><td class='num'>13.0%</td><td class='num'>9.5%</td><td class='num am'>11.2%</td><td class='num'>24.3%</td><td class='num'>33.8%</td><td class='num dn'>-0.61%</td></tr></tbody></table><h3>止损宽度（相对买价 %）</h3><table data-wb><thead><tr><th>取值</th><th>训练半<br>完成一轮</th><th>测试半<br>完成一轮</th><th>两半均值</th><th>训练半<br>破止损</th><th>测试半<br>破止损</th><th>两半<br>期望收益</th></tr></thead><tbody><tr><td class='num'>-2.0</td><td class='num'>9.6%</td><td class='num'>7.5%</td><td class='num am'>8.6%</td><td class='num'>51.2%</td><td class='num'>57.6%</td><td class='num dn'>-0.30%</td></tr><tr><td class='num'>-3.0</td><td class='num'>13.0%</td><td class='num'>10.2%</td><td class='num am'>11.6%</td><td class='num'>43.5%</td><td class='num'>51.0%</td><td class='num dn'>-0.40%</td></tr><tr><td class='num'>-4.0</td><td class='num'>15.6%</td><td class='num'>12.0%</td><td class='num am'>13.8%</td><td class='num'>36.0%</td><td class='num'>44.7%</td><td class='num dn'>-0.47%</td></tr><tr><td class='num'>-5.0</td><td class='num'>17.0%</td><td class='num'>13.4%</td><td class='num am'>15.2%</td><td class='num'>29.4%</td><td class='num'>38.3%</td><td class='num dn'>-0.52%</td></tr><tr><td class='num'>-6.0</td><td class='num'>17.9%</td><td class='num'>14.2%</td><td class='num am'>16.0%</td><td class='num'>23.8%</td><td class='num'>33.1%</td><td class='num dn'>-0.60%</td></tr><tr><td class='num'>-8.0</td><td class='num'>18.8%</td><td class='num'>15.2%</td><td class='num am'>17.0%</td><td class='num'>14.5%</td><td class='num'>23.9%</td><td class='num dn'>-0.69%</td></tr><tr><td class='num'>-10.0</td><td class='num'>19.1%</td><td class='num'>15.5%</td><td class='num am'>17.3%</td><td class='num'>8.6%</td><td class='num'>16.1%</td><td class='num dn'>-0.75%</td></tr><tr><td class='num'>-12.0</td><td class='num'>19.2%</td><td class='num'>15.6%</td><td class='num am'>17.4%</td><td class='num'>4.8%</td><td class='num'>10.8%</td><td class='num dn'>-0.82%</td></tr><tr><td class='num'>-15.0</td><td class='num'>19.2%</td><td class='num'>15.7%</td><td class='num am'>17.4%</td><td class='num'>1.7%</td><td class='num'>5.5%</td><td class='num dn'>-0.89%</td></tr></tbody></table><h3>持有期（交易日）</h3><table data-wb><thead><tr><th>取值</th><th>训练半<br>完成一轮</th><th>测试半<br>完成一轮</th><th>两半均值</th><th>训练半<br>破止损</th><th>测试半<br>破止损</th><th>两半<br>期望收益</th></tr></thead><tbody><tr><td class='num'>2</td><td class='num'>7.7%</td><td class='num'>6.6%</td><td class='num am'>7.2%</td><td class='num'>9.9%</td><td class='num'>14.9%</td><td class='num dn'>-0.63%</td></tr><tr><td class='num'>3</td><td class='num'>11.7%</td><td class='num'>9.6%</td><td class='num am'>10.7%</td><td class='num'>15.0%</td><td class='num'>22.3%</td><td class='num dn'>-0.59%</td></tr><tr><td class='num'>4</td><td class='num'>15.0%</td><td class='num'>12.3%</td><td class='num am'>13.7%</td><td class='num'>19.5%</td><td class='num'>27.3%</td><td class='num dn'>-0.58%</td></tr><tr><td class='num'>5</td><td class='num'>17.9%</td><td class='num'>14.2%</td><td class='num am'>16.0%</td><td class='num'>23.8%</td><td class='num'>33.1%</td><td class='num dn'>-0.60%</td></tr><tr><td class='num'>7</td><td class='num'>22.4%</td><td class='num'>17.2%</td><td class='num am'>19.8%</td><td class='num'>28.7%</td><td class='num'>40.3%</td><td class='num dn'>-0.59%</td></tr><tr><td class='num'>10</td><td class='num'>27.2%</td><td class='num'>20.5%</td><td class='num am'>23.8%</td><td class='num'>34.5%</td><td class='num'>47.1%</td><td class='num dn'>-0.59%</td></tr></tbody></table>
+<h3>卖区目标 × 止损宽度（二维网格，按两半平均完成一轮率排序）</h3>
+<table data-wb><thead><tr><th>卖区目标</th><th>止损</th><th>训练完成一轮</th><th>测试完成一轮</th>
+<th>训练破止损</th><th>测试破止损</th><th>两半均值</th><th>两半期望收益</th></tr></thead>
+<tbody><tr><td class='num'>0.4×ATR</td><td class='num'>-12%</td><td class='num'>35.0%</td><td class='num'>33.4%</td><td class='num'>4.1%</td><td class='num'>8.7%</td><td class='num'>34.2%</td><td class='num dn'>-0.55%</td></tr><tr><td class='num'>0.4×ATR</td><td class='num'>-10%</td><td class='num'>34.9%</td><td class='num'>33.2%</td><td class='num'>7.2%</td><td class='num'>12.8%</td><td class='num'>34.0%</td><td class='num dn'>-0.51%</td></tr><tr><td class='num'>0.4×ATR</td><td class='num'>-8%</td><td class='num'>34.4%</td><td class='num'>32.4%</td><td class='num'>12.1%</td><td class='num'>19.0%</td><td class='num'>33.4%</td><td class='num dn'>-0.46%</td></tr><tr><td class='num'>0.4×ATR</td><td class='num'>-6%</td><td class='num'>32.8%</td><td class='num'>30.2%</td><td class='num'>19.8%</td><td class='num'>26.9%</td><td class='num'>31.5%</td><td class='num dn'>-0.42%</td></tr><tr><td class='num'>0.6×ATR</td><td class='num'>-12%</td><td class='num'>32.0%</td><td class='num'>28.8%</td><td class='num'>4.5%</td><td class='num'>9.7%</td><td class='num'>30.4%</td><td class='num dn'>-0.67%</td></tr><tr><td class='num'>0.6×ATR</td><td class='num'>-10%</td><td class='num'>31.9%</td><td class='num'>28.5%</td><td class='num'>7.7%</td><td class='num'>14.2%</td><td class='num'>30.2%</td><td class='num dn'>-0.61%</td></tr><tr><td class='num'>0.4×ATR</td><td class='num'>-5%</td><td class='num'>31.2%</td><td class='num'>28.3%</td><td class='num'>24.6%</td><td class='num'>31.7%</td><td class='num'>29.7%</td><td class='num dn'>-0.39%</td></tr><tr><td class='num'>0.6×ATR</td><td class='num'>-8%</td><td class='num'>31.5%</td><td class='num'>27.9%</td><td class='num'>12.9%</td><td class='num'>21.0%</td><td class='num'>29.7%</td><td class='num dn'>-0.56%</td></tr><tr><td class='num'>0.6×ATR</td><td class='num'>-6%</td><td class='num'>29.9%</td><td class='num'>25.9%</td><td class='num'>21.0%</td><td class='num'>29.2%</td><td class='num'>27.9%</td><td class='num dn'>-0.50%</td></tr><tr><td class='num'>0.4×ATR</td><td class='num'>-4%</td><td class='num'>28.5%</td><td class='num'>25.3%</td><td class='num'>30.5%</td><td class='num'>37.8%</td><td class='num'>26.9%</td><td class='num dn'>-0.37%</td></tr><tr><td class='num'>0.6×ATR</td><td class='num'>-5%</td><td class='num'>28.5%</td><td class='num'>24.3%</td><td class='num'>26.0%</td><td class='num'>34.1%</td><td class='num'>26.4%</td><td class='num dn'>-0.45%</td></tr><tr><td class='num'>0.8×ATR</td><td class='num'>-12%</td><td class='num'>27.2%</td><td class='num'>23.5%</td><td class='num'>4.7%</td><td class='num'>10.3%</td><td class='num'>25.3%</td><td class='num dn'>-0.75%</td></tr><tr><td class='num'>0.8×ATR</td><td class='num'>-10%</td><td class='num'>27.1%</td><td class='num'>23.3%</td><td class='num'>8.2%</td><td class='num'>15.2%</td><td class='num'>25.2%</td><td class='num dn'>-0.69%</td></tr><tr><td class='num'>0.8×ATR</td><td class='num'>-8%</td><td class='num'>26.7%</td><td class='num'>22.7%</td><td class='num'>13.8%</td><td class='num'>22.4%</td><td class='num'>24.7%</td><td class='num dn'>-0.63%</td></tr><tr><td class='num'>0.6×ATR</td><td class='num'>-4%</td><td class='num'>26.1%</td><td class='num'>21.8%</td><td class='num'>32.0%</td><td class='num'>40.1%</td><td class='num'>23.9%</td><td class='num dn'>-0.41%</td></tr><tr><td class='num'>0.8×ATR</td><td class='num'>-6%</td><td class='num'>25.3%</td><td class='num'>21.2%</td><td class='num'>22.5%</td><td class='num'>31.2%</td><td class='num'>23.2%</td><td class='num dn'>-0.56%</td></tr><tr><td class='num'>0.4×ATR</td><td class='num'>-3%</td><td class='num'>23.8%</td><td class='num'>21.2%</td><td class='num'>38.0%</td><td class='num'>44.5%</td><td class='num'>22.5%</td><td class='num dn'>-0.34%</td></tr><tr><td class='num'>0.8×ATR</td><td class='num'>-5%</td><td class='num'>24.0%</td><td class='num'>19.9%</td><td class='num'>27.8%</td><td class='num'>36.3%</td><td class='num'>22.0%</td><td class='num dn'>-0.50%</td></tr></tbody></table>
+<div class="note">两个方向性结论：<b>①止损越紧，破止损率越高、完成一轮率反而下降</b>
+（箱体震荡里「正常波动」的深度就足以扫掉贴身止损）；
+<b>②卖区越近（目标越小），完成一轮率越高</b>。
+把两者放在一起看，就得到做T的核心权衡：<b>目标越近越容易完成，但单次赚得更少；
+止损越紧越保护本金，但被打断的次数更多</b>。是否值得，只能用期望收益判断（下一节）。</div></div>
+
+<h2>十、★ 联合检验：先验集 × 参数组合（能不能把期望收益做正）</h2>
+<div class="card">
+<div class="note">上表只回答「单个旋钮拧到哪」，本表回答「拧组合能不能兑现成正期望」。
+每行一种参数组合（反T = 先低吸后高抛；正T = 先高抛后低吸补回）。
+<b>判据是「两半一致性」</b>：只有训练半与测试半<b>同时为正</b>的组合才值得采信，
+单半为正只是行情赏饭。样本非独立（同一标的每 3 日采一点、前推 10 日重叠），
+故这些差异应按「日期聚类」理解，不要当成精确收益率。</div>
+<table data-wb><thead><tr>
+<th rowspan="2">参数组合</th>
+<th rowspan="2">训练半<br>全体期望</th>
+<th colspan="3">训练半 · 前 10%</th>
+<th rowspan="2">训练半<br>前 2% 期望</th>
+<th colspan="4">测试半 · 各截断比例期望</th>
+<th colspan="3">测试半 · 前 10%</th>
+<th rowspan="2">两半<br>一致性</th></tr>
+<tr><th>完成一轮</th><th>破止损</th><th>期望收益</th>
+<th>前 1%</th><th>前 2%</th><th>前 5%</th><th>前 20%</th>
+<th>完成一轮</th><th>破止损</th><th>期望收益</th></tr></thead>
+<tbody><tr><td>反T · 线上现行（买 +2% / 卖 1.2×ATR / 止损 −6% / T+5）</td><td class='num dn'>-0.02%</td><td class='num'>19.4%</td><td class='num'>26.6%</td><td class='num dn'>-0.01%</td><td class='num up'>+0.28%</td><td class='num dn'>-0.09%</td><td class='num dn'>-0.41%</td><td class='num dn'>-0.78%</td><td class='num dn'>-1.11%</td><td class='num'>15.9%</td><td class='num'>34.9%</td><td class='num dn'>-0.98%</td><td><span class='dim'>两半同号</span></td></tr><tr><td>反T · 买区贴支撑（+0%）</td><td class='num up'>+0.06%</td><td class='num'>11.3%</td><td class='num'>17.1%</td><td class='num up'>+0.25%</td><td class='num up'>+0.39%</td><td class='num dn'>-0.13%</td><td class='num dn'>-0.42%</td><td class='num dn'>-0.49%</td><td class='num dn'>-0.83%</td><td class='num'>9.1%</td><td class='num'>26.8%</td><td class='num dn'>-0.74%</td><td><span class='dim'>反向</span></td></tr><tr><td>反T · 近目标 0.4×ATR</td><td class='num dn'>-0.06%</td><td class='num'>35.7%</td><td class='num'>21.7%</td><td class='num dn'>-0.07%</td><td class='num up'>+0.05%</td><td class='num up'>+0.21%</td><td class='num dn'>-0.29%</td><td class='num dn'>-0.47%</td><td class='num dn'>-0.72%</td><td class='num'>33.4%</td><td class='num'>28.0%</td><td class='num dn'>-0.63%</td><td><span class='dim'>两半同号</span></td></tr><tr><td>反T · 近目标 0.4×ATR + 紧止损 −2%</td><td class='num dn'>-0.11%</td><td class='num'>18.9%</td><td class='num'>48.9%</td><td class='num dn'>-0.16%</td><td class='num dn'>-0.20%</td><td class='num dn'>-0.09%</td><td class='num dn'>-0.16%</td><td class='num dn'>-0.29%</td><td class='num dn'>-0.35%</td><td class='num'>17.8%</td><td class='num'>53.8%</td><td class='num dn'>-0.32%</td><td><span class='dim'>两半同号</span></td></tr><tr><td>★反T · 贴支撑 + 近目标 0.4×ATR + 紧止损 −2%</td><td class='num up'>+0.03%</td><td class='num'>13.5%</td><td class='num'>37.5%</td><td class='num up'>+0.03%</td><td class='num up'>+0.19%</td><td class='num up'>+0.20%</td><td class='num dn'>-0.00%</td><td class='num dn'>-0.03%</td><td class='num dn'>-0.18%</td><td class='num'>12.7%</td><td class='num'>43.8%</td><td class='num dn'>-0.11%</td><td><span class='dim'>反向</span></td></tr><tr><td>反T · 网格法（不设硬止损 · −30% 兜底）</td><td class='num up'>+0.10%</td><td class='num'>21.1%</td><td class='num'>0.0%</td><td class='num up'>+0.15%</td><td class='num up'>+0.49%</td><td class='num dn'>-1.22%</td><td class='num dn'>-1.61%</td><td class='num dn'>-1.68%</td><td class='num dn'>-2.01%</td><td class='num'>17.5%</td><td class='num'>0.2%</td><td class='num dn'>-1.95%</td><td><span class='dim'>反向</span></td></tr><tr><td>反T · 网格法 + 贴支撑 + 近目标 0.4×ATR</td><td class='num up'>+0.19%</td><td class='num'>23.3%</td><td class='num'>0.0%</td><td class='num up'>+0.29%</td><td class='num up'>+0.54%</td><td class='num dn'>-0.08%</td><td class='num dn'>-0.99%</td><td class='num dn'>-0.85%</td><td class='num dn'>-0.98%</td><td class='num'>23.0%</td><td class='num'>0.1%</td><td class='num dn'>-0.98%</td><td><span class='dim'>反向</span></td></tr><tr><td>反T · 短持有 T+3 + 近目标 0.4×ATR</td><td class='num dn'>-0.03%</td><td class='num'>29.5%</td><td class='num'>15.3%</td><td class='num dn'>-0.01%</td><td class='num up'>+0.16%</td><td class='num up'>+0.70%</td><td class='num dn'>-0.06%</td><td class='num dn'>-0.39%</td><td class='num dn'>-0.76%</td><td class='num'>27.6%</td><td class='num'>20.8%</td><td class='num dn'>-0.64%</td><td><span class='dim'>两半同号</span></td></tr><tr><td>正T · 高抛 1.2×ATR → 低吸补回（+2%）</td><td class='num dn'>-0.54%</td><td class='num'>13.2%</td><td class='num'>0.0%</td><td class='num dn'>-0.63%</td><td class='num dn'>-0.84%</td><td class='num up'>+1.33%</td><td class='num up'>+0.81%</td><td class='num up'>+0.74%</td><td class='num up'>+0.64%</td><td class='num'>13.3%</td><td class='num'>0.0%</td><td class='num up'>+0.73%</td><td><span class='dim'>反向</span></td></tr><tr><td>正T · 高抛 0.6×ATR → 低吸补回（+0%）</td><td class='num dn'>-1.07%</td><td class='num'>20.9%</td><td class='num'>0.0%</td><td class='num dn'>-1.18%</td><td class='num dn'>-1.49%</td><td class='num up'>+1.10%</td><td class='num up'>+0.83%</td><td class='num up'>+0.78%</td><td class='num up'>+0.93%</td><td class='num'>23.2%</td><td class='num'>0.0%</td><td class='num up'>+0.93%</td><td><span class='dim'>反向</span></td></tr><tr><td>正T · 高抛 0.4×ATR → 补回（−1%）</td><td class='num dn'>-1.28%</td><td class='num'>19.7%</td><td class='num'>0.0%</td><td class='num dn'>-1.46%</td><td class='num dn'>-2.06%</td><td class='num up'>+1.14%</td><td class='num up'>+0.83%</td><td class='num up'>+0.96%</td><td class='num up'>+1.04%</td><td class='num'>25.3%</td><td class='num'>0.0%</td><td class='num up'>+1.06%</td><td><span class='dim'>反向</span></td></tr><tr><td>正T · 高抛 0.4×ATR → 补回（−1%）/ T+3</td><td class='num dn'>-1.20%</td><td class='num'>11.6%</td><td class='num'>0.0%</td><td class='num dn'>-1.43%</td><td class='num dn'>-2.00%</td><td class='num up'>+1.52%</td><td class='num up'>+1.00%</td><td class='num up'>+0.99%</td><td class='num up'>+1.08%</td><td class='num'>15.9%</td><td class='num'>0.0%</td><td class='num up'>+1.07%</td><td><span class='dim'>反向</span></td></tr></tbody></table>
+<div class="note"><b>怎么用这张表（三步）</b>：<br>
+① <b>先看「两半一致性」列</b>：只认「两半俱正」。测试半为正而训练半为负的组合（本页全部的正T 组合都是这样）
+说明它赚的是「最近一段行情」，不能当作做T能力 —— 这正是反转池与精选池都踩过的坑。<br>
+② <b>再看「前 1% / 前 2%」列</b>：如果越收紧越接近 0，说明<b>最严格的筛选才能勉强不亏</b>，
+那就必须接受「多数日子不做」这件事。<br>
+③ <b>最后看「完成一轮」与「破止损」</b>：做T的胜率是这两者的平衡 ——
+把止损放宽可以提高完成一轮率，但每次亏得更多；把目标缩小也能提高完成一轮率，但单次赚得更少。</div></div>
+
+<h2>十一、环境 × 参数（期望收益能不能靠「只在该做的时候做」转正）</h2>
+<div class="card"><table data-wb>
+<thead><tr><th>参数组合</th><th>指数近 20 日</th><th>域内 n</th><th>top10% 完成一轮</th>
+<th>域均完成一轮</th><th>edge</th><th>top10% 破止损</th><th>top10% 期望收益</th><th>域均期望</th></tr></thead>
+<tbody><tr><td>反T · 线上现行</td><td>&lt; −3%（弱势）</td><td class='num'>1,754</td><td class='num'>15.4%</td><td class='num'>9.1%</td><td class='num up'>+6.3%</td><td class='num'>25.5%</td><td class='num up'>+0.55%</td><td class='num up'>+0.32%</td></tr><tr><td>反T · 线上现行</td><td>−3% ~ 0（偏弱）</td><td class='num'>2,931</td><td class='num'>21.7%</td><td class='num'>15.0%</td><td class='num up'>+6.7%</td><td class='num'>25.3%</td><td class='num up'>+0.02%</td><td class='num dn'>-0.12%</td></tr><tr><td>反T · 线上现行</td><td>0 ~ +3%（偏强）</td><td class='num'>2,340</td><td class='num'>15.8%</td><td class='num'>10.3%</td><td class='num up'>+5.5%</td><td class='num'>39.1%</td><td class='num dn'>-1.62%</td><td class='num dn'>-1.63%</td></tr><tr><td>反T · 线上现行</td><td>&gt; +3%（强势）</td><td class='num'>2,279</td><td class='num'>17.5%</td><td class='num'>11.7%</td><td class='num up'>+5.8%</td><td class='num'>30.1%</td><td class='num dn'>-0.43%</td><td class='num dn'>-0.16%</td></tr><tr><td>反T · 最优（贴支撑+近目标0.4+紧止损−2%）</td><td>&lt; −3%（弱势）</td><td class='num'>1,754</td><td class='num'>11.5%</td><td class='num'>7.2%</td><td class='num up'>+4.3%</td><td class='num'>35.1%</td><td class='num up'>+0.12%</td><td class='num up'>+0.07%</td></tr><tr><td>反T · 最优（贴支撑+近目标0.4+紧止损−2%）</td><td>−3% ~ 0（偏弱）</td><td class='num'>2,931</td><td class='num'>15.8%</td><td class='num'>11.0%</td><td class='num up'>+4.7%</td><td class='num'>35.7%</td><td class='num up'>+0.15%</td><td class='num up'>+0.03%</td></tr><tr><td>反T · 最优（贴支撑+近目标0.4+紧止损−2%）</td><td>0 ~ +3%（偏强）</td><td class='num'>2,340</td><td class='num'>11.7%</td><td class='num'>8.8%</td><td class='num up'>+2.9%</td><td class='num'>48.2%</td><td class='num dn'>-0.35%</td><td class='num dn'>-0.34%</td></tr><tr><td>反T · 最优（贴支撑+近目标0.4+紧止损−2%）</td><td>&gt; +3%（强势）</td><td class='num'>2,279</td><td class='num'>12.7%</td><td class='num'>7.9%</td><td class='num up'>+4.9%</td><td class='num'>41.2%</td><td class='num dn'>-0.05%</td><td class='num up'>+0.01%</td></tr><tr><td>正T · 高抛0.4×ATR → 补回(−1%)</td><td>&lt; −3%（弱势）</td><td class='num'>1,754</td><td class='num'>16.8%</td><td class='num'>13.1%</td><td class='num up'>+3.6%</td><td class='num'>0.0%</td><td class='num dn'>-2.16%</td><td class='num dn'>-2.14%</td></tr><tr><td>正T · 高抛0.4×ATR → 补回(−1%)</td><td>−3% ~ 0（偏弱）</td><td class='num'>2,931</td><td class='num'>23.6%</td><td class='num'>16.0%</td><td class='num up'>+7.6%</td><td class='num'>0.0%</td><td class='num dn'>-0.21%</td><td class='num up'>+0.10%</td></tr><tr><td>正T · 高抛0.4×ATR → 补回(−1%)</td><td>0 ~ +3%（偏强）</td><td class='num'>2,340</td><td class='num'>26.9%</td><td class='num'>20.4%</td><td class='num up'>+6.5%</td><td class='num'>0.0%</td><td class='num up'>+0.80%</td><td class='num up'>+1.15%</td></tr><tr><td>正T · 高抛0.4×ATR → 补回(−1%)</td><td>&gt; +3%（强势）</td><td class='num'>2,279</td><td class='num'>18.9%</td><td class='num'>12.0%</td><td class='num up'>+6.9%</td><td class='num'>0.0%</td><td class='num dn'>-0.66%</td><td class='num dn'>-0.70%</td></tr></tbody></table>
+<div class="note">环境量 = <b>截至当日的上证指数近 20 日涨幅</b>（滞后量，无未来信息）。
+这是第八节的补充 —— 第八节只看「完成一轮率」，本节直接看「期望收益」。
+edge = top10% 完成一轮率 − 域均完成一轮率（正 = 选股有效，与赚不赚钱是两件事）。
+<br><b>本节实测：</b>12 个「参数组合 × 环境档」里，只有 <b>4 个</b>做到「top10% 与域均期望同时为正」——<b>反T·线上现行</b> × <b>&lt; −3%（弱势）</b>（+0.55% / 域均 +0.32%）；<b>反T·最优（贴支撑+近目标0.4+紧止损−2%）</b> × <b>&lt; −3%（弱势）</b>（+0.12% / 域均 +0.07%）；<b>反T·最优（贴支撑+近目标0.4+紧止损−2%）</b> × <b>−3% ~ 0（偏弱）</b>（+0.15% / 域均 +0.03%）；<b>正T·高抛0.4×ATR → 补回(−1%)</b> × <b>0 ~ +3%（偏强）</b>（+0.80% / 域均 +1.15%）。其余配对在任一环境档下都至少有一项为负。这说明<b>择时能把期望转正，但必须「参数方向」与「环境方向」配对</b>：弱环境里做反T（先低吸）、强环境里做正T（先高抛），反向配对（弱环境做正T、强环境做反T）是全表最差的一档。不是随便做T都能靠「只在该做的时候做」救回来。</div></div>
+
+<h2>十二、截断比例曲线（最终先验集，测试段）</h2>
+<div class="card"><table data-wb>
+<thead><tr><th>每日取前</th><th>n_top</th><th>完成一轮</th><th>域均完成一轮</th><th>edge（完成一轮）</th>
+<th>破止损</th><th>edge（期望收益）</th></tr></thead>
+<tbody><tr><td class='num'>5%</td><td class='num'>1895</td><td class='num'>17.6%</td><td class='num'>10.3%</td><td class='num up'>+7.4pp</td><td class='num'>35.3%</td><td class='num up'>+0.24%</td></tr><tr><td class='num'>10%</td><td class='num'>3784</td><td class='num'>15.9%</td><td class='num'>10.3%</td><td class='num up'>+5.6pp</td><td class='num'>34.9%</td><td class='num up'>+0.04%</td></tr><tr><td class='num'>15%</td><td class='num'>5683</td><td class='num'>15.5%</td><td class='num'>10.3%</td><td class='num up'>+5.2pp</td><td class='num'>33.9%</td><td class='num dn'>-0.09%</td></tr><tr><td class='num'>20%</td><td class='num'>7574</td><td class='num'>15.0%</td><td class='num'>10.3%</td><td class='num up'>+4.7pp</td><td class='num'>33.7%</td><td class='num dn'>-0.10%</td></tr><tr><td class='num'>30%</td><td class='num'>11356</td><td class='num'>14.2%</td><td class='num'>10.3%</td><td class='num up'>+3.9pp</td><td class='num'>33.1%</td><td class='num dn'>-0.09%</td></tr><tr><td class='num'>50%</td><td class='num'>18926</td><td class='num'>13.2%</td><td class='num'>10.3%</td><td class='num up'>+2.9pp</td><td class='num'>32.5%</td><td class='num dn'>-0.06%</td></tr></tbody></table>
+<div class="note">用于决定「A/B 档各取每日前多少」：若前 5%~10% 已见顶，则再收紧只会缩小样本、不会提高确定性。</div></div>
+
+<h2>十三、结论与落地</h2>
+<div class="box green">
+<b>① 先验集：</b>落地用<b>收敛派 A</b>（9 因子等权、dir 全 −1）——
+训练段按期望收益择优、测试段验证（见第五节）。<br>
+<b>② 档位：</b>按截断曲线，A = 每日前 10%、B = 每日前 25%（不再是「分数 ≥80/70」的固定阈值 ——
+阈值会随行情漂移，分位不会）。<br>
+<b>③ 买卖点：</b>由参数网格 + 联合检验共同决定，见上两节；落地参数以「两半同向 + 期望收益不为负」为准。<br>
+<b>④ 环境：</b>门控只用于<b>控 β 与仓位</b>，不作为提高胜率的手段（第八节证据）。
+但第十一节给出了一个比「控仓位」更硬的结论：<b>做T方向必须与环境配对</b> ——
+指数近 20 日<b>偏弱（−3%~0）或弱势（&lt; −3%）时做反T</b>（先低吸后高抛）、
+<b>偏强（0~+3%）时做正T</b>（先高抛后低吸补回），这两类配对是唯一能做到「top10% 与域均期望同时为正」的窗口；
+反向配对（弱环境做正T、强环境做反T）是全表最差档。<b>不知道当天处于哪一档时，默认不做。</b><br>
+<b>⑤ 纪律（最重要）：</b>本页最反直觉、也最有用的一条是 ——
+<b>「完成一轮率高」不等于「赚钱」</b>。做T的胜率来自「<b>不追高 + 给噪声留容错 + 早止盈</b>」三者的组合，
+而不是把止损设得更紧、或把目标设得更远。任何单笔亏损预算 = 仓位 × 止损宽度，必须 ≤ 账户 0.5%。<br>
+<b>⑥ 与旧版的关系：</b>旧版的 347 样本、6 个交易日回测只覆盖了「一周的行情」，
+本实验室把它扩到 93,331 样本 / 10 个月，
+并在<b>测试段</b>上验证 —— 结论与「档位 A/B/C/D 对能否完成一轮无预测力」不同：
+档位（分数分位）<b>确实</b>预测完成一轮率，但它预测不了「赚钱」。</div>
+
+<h2>十四、局限（必读）</h2>
+<div class="card"><ul>
+<li><b>样本非独立</b>：同一标的每 3 个交易日采一点、前推 10 日 → 窗口重叠，跨样本相关性高；
+显著性应按<b>日期聚类</b>理解，本页不做逐样本独立性假设。</li>
+<li><b>市值/换手为近似</b>：流通股本用「netprofit ÷ eps 反推总股本」再乘收盘价，未扣限售股，
+故流通市值偏大、换手偏小；门槛已相应放宽，且该近似对同期同域所有标的作用一致。</li>
+<li><b>忽略滑点与手续费</b>：做T单轮目标常仅 2%~4%，实盘双边成本（佣金+印花税+冲击）约 0.15%~0.3%，
+会啃掉相当一部分收益 —— 本页所有参数组同口径，故<b>相对比较有效</b>；
+若某组合期望收益只有 +0.1%~+0.3%，扣成本后可能归零，落地时要按这个量级打折。</li>
+<li><b>未含事件风险</b>：解禁、减持、财报暴雷、停牌不在本页面板控制内，
+线上 <code>build_tplus.load_risk_sets</code> 会额外扣分。</li>
+<li><b>做T本质是低胜率策略</b>：全市场域下 5 日窗口的「先低吸后高抛」本身就是小概率事件
+（基线 11.9%），提升空间在「参数与纪律」，不在「找到完美因子」。</li>
+<li>结论会随数据更新重算（<code>python quant/_tplus_lab.py --rebuild</code>），
+不是一次性拟合出来的静态阈值。</li>
+</ul></div>
+
+<div class="foot">做T池 · 特征功效实验室 · 数据基准 2026-09-03 · 生成 2026-09-21 02:37 ·
+生成脚本 <code>quant/_tplus_lab.py</code> · 非投资建议，仅量化方法论与纪律沉淀</div>
+</div><!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--></body></html>

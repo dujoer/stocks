@@ -122,9 +122,11 @@ FAMILIES = [
          dated=True, start='20260910', date_re=r'(\d{4}-\d{2}-\d{2})',
          need='机构底仓池 + 箱体筛选'),
 
-    dict(key='tplus_entry', label='做T池入口', patterns=['tplus/index.html'],
+    dict(key='tplus_entry', label='做T池入口', patterns=['tplus/index.html', 'tplus/lab.html'],
          entry='tplus/index.html', script='build_tplus.py', freq='daily',
-         dated=False, start=None, date_re=None, need='同 tplus'),
+         dated=False, start=None, date_re=None,
+         need='同 tplus；lab.html = 做T特征功效实验室（全市场域样本外实证，_tplus_lab.py 生成，'
+              '选股能力与买卖点参数以此为准）'),
 
     dict(key='research', label='个股调研', patterns=['research/research-*.html'],
          entry='research/index.html', script=None, freq='on_demand',
