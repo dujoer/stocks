@@ -38,6 +38,7 @@ import os, sys, json, math, statistics, time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import rev_pool as R
 import _idxkline as E
+import _tx_fetch as T
 
 ROOT = R.ROOT
 QUANT = R.QUANT
@@ -822,7 +823,8 @@ def build_panel(step=STEP, hot_only=True):
         H = [b["high"] for b in bars]
         L = [b["low"] for b in bars]
         O = [b["open"] for b in bars]
-        V = [b["volume"] for b in bars]
+        # 腾讯 volume 单位不统一（688=股，其余=手）→ 统一成「股」，否则 amt20_log 差 100 倍
+        V = [b["volume"] * T.vol_unit(c) for b in bars]
         if not all(C) or not all(V):
             continue
         dmap = {}

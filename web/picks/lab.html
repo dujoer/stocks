@@ -230,13 +230,13 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 结论以<b>相对胜率</b>（个股前向收益 &gt; 同期同域等权中位数）为准 —— 绝对胜率在普涨行情里会虚高。</div></header>
 
 <div class='section'><h2>一、先说结论</h2>
-<div class='kgrid'><div class='kb'><div class='kt'>现有 11 维思路（可离线近似）</div><div class='kv dn'>-5.6pp</div><div class='kd'>样本外相对胜率增量｜训练 -7.3pp</div></div><div class='kb'><div class='kt'>自动筛因子（严格样本外）</div><div class='kv dn'>+0.5pp</div><div class='kd'>只由前 60% 数据筛因子 → 后 40% 测试</div></div><div class='kb'><div class='kt'>先验因子集（价量+基本面）</div><div class='kv up'>+4.3pp</div><div class='kd'>绝对胜率 +1.0pp｜6 段滚动全正</div></div><div class='kb'><div class='kt'>环境决定的空间</div><div class='kv up'>10.1pp</div><div class='kd'>弱势期绝对胜率 40.9% vs 强势期 51.1%</div></div></div>
+<div class='kgrid'><div class='kb'><div class='kt'>现有 11 维思路（可离线近似）</div><div class='kv dn'>-5.6pp</div><div class='kd'>样本外相对胜率增量｜训练 -7.3pp</div></div><div class='kb'><div class='kt'>自动筛因子（严格样本外）</div><div class='kv dn'>+0.5pp</div><div class='kd'>只由前 60% 数据筛因子 → 后 40% 测试</div></div><div class='kb'><div class='kt'>先验因子集（价量+基本面）</div><div class='kv up'>+4.9pp</div><div class='kd'>绝对胜率 +1.4pp｜6 段滚动全正</div></div><div class='kb'><div class='kt'>环境决定的空间</div><div class='kv up'>10.1pp</div><div class='kd'>弱势期绝对胜率 40.9% vs 强势期 51.1%</div></div></div>
 <div class='warn'><b>为什么必须做这件事：</b>回测页自己已经露出破绽 —— <b>机构轨 B 档 T+1 胜率仅 36%，而最低的 D 档 T+5 反而 +5.74%、胜率 83%</b>，
 分档与收益几乎反向。根因是 <code>build_picks.py</code> 在 2026-09-18「按近 5 期实测归因重调权重」——
 5 期 × 约 20 只 ≈ 100 个样本、且全落在同一波行情里，属于典型的样本内过拟合。</div>
 <div class='ok'><b>可用的结论：</b>「从一堆因子里自动挑出有效的」这个动作本身就是噪声源（严格样本外只剩 +0.5pp）。
 可行的做法是<b>因子固定、方向由逻辑给定、等权、横截面分位</b> —— 价量 5 项 + 基本面 7 项在留出段 相对胜率
-+4.3pp、绝对胜率 +1.0pp，6 段滚动全部为正。
++4.9pp、绝对胜率 +1.4pp，6 段滚动全部为正。
 落地见 <code>quant/pick_score.py</code>。</div></div>
 
 <div class='section'><h2>二、面板怎么建的</h2>
@@ -267,7 +267,7 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 
 <div class='section'><h2>五、五道检验的对照（本页最该被引用的部分）</h2>
 <table data-wb><thead><tr><th style='width:34%'>检验方式</th><th>相对胜率 lift</th><th>绝对胜率 lift</th><th>结论</th></tr></thead>
-<tbody><tr><td><b>① 两段切分 · 全量筛因子</b><br><span class='dim'>筛因子时看到了后 40% 的数据 → 有前视</span></td><td class='num up'>+8.2pp</td><td class='num'>+3.5pp</td><td><b class='down'>不可信</b></td></tr><tr><td><b>② 严格样本外 · 前 60% 筛→后 40% 测</b><br><span class='dim'>无前视，但因子由数据挑出 → 筛出的是噪声</span></td><td class='num '>+0.5pp</td><td class='num'>+0.3pp</td><td><b class='down'>≈ 无增益</b></td></tr><tr><td><b>③ 留一分段交叉（6 段）</b><br><span class='dim'>每段重筛因子｜0/4 段胜出</span></td><td class='num down'>-5.0pp</td><td class='num'>None</td><td><b class='down'>全败</b></td></tr><tr><td><b>④ 扩窗 walk-forward</b><br><span class='dim'>按月扩窗重学方向｜3/6 期胜出</span></td><td class='num down'>-1.1pp</td><td class='num'>None</td><td><b class='down'>不稳</b></td></tr><tr><td><b>⑤ 先验因子集（不筛、等权）</b><br><span class='dim'>因子与方向由经济逻辑给定，不来自数据</span></td><td class='num up'>+4.3pp</td><td class='num'>+1.0pp</td><td><b class='up'>唯一可用的路</b></td></tr></tbody></table>
+<tbody><tr><td><b>① 两段切分 · 全量筛因子</b><br><span class='dim'>筛因子时看到了后 40% 的数据 → 有前视</span></td><td class='num up'>+8.2pp</td><td class='num'>+3.5pp</td><td><b class='down'>不可信</b></td></tr><tr><td><b>② 严格样本外 · 前 60% 筛→后 40% 测</b><br><span class='dim'>无前视，但因子由数据挑出 → 筛出的是噪声</span></td><td class='num '>+0.5pp</td><td class='num'>+0.3pp</td><td><b class='down'>≈ 无增益</b></td></tr><tr><td><b>③ 留一分段交叉（6 段）</b><br><span class='dim'>每段重筛因子｜0/4 段胜出</span></td><td class='num down'>-5.0pp</td><td class='num'>None</td><td><b class='down'>全败</b></td></tr><tr><td><b>④ 扩窗 walk-forward</b><br><span class='dim'>按月扩窗重学方向｜3/6 期胜出</span></td><td class='num down'>-1.1pp</td><td class='num'>None</td><td><b class='down'>不稳</b></td></tr><tr><td><b>⑤ 先验因子集（不筛、等权）</b><br><span class='dim'>因子与方向由经济逻辑给定，不来自数据</span></td><td class='num up'>+4.9pp</td><td class='num'>+1.4pp</td><td><b class='up'>唯一可用的路</b></td></tr></tbody></table>
 <div class='note'>第 ① 行与第 ② 行的差额 <b>7.6pp</b>，
 就是「筛因子时偷看了测试集」带来的虚高 —— 也就是过拟合的量化值。
 第 ⑤ 行之所以可信，是因为它的因子集<b>不是数据挑的</b>，所以拿它测任何一段都不算偷看。</div></div>
@@ -275,7 +275,7 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <div class='section'><h2>六、先验因子集明细</h2>
 <div class='sub'>方向全部由经济逻辑给定，等权、不拟合权重。测试段 = 后 40% 交易日；滚动列 = 6 段中正 edge 的段数。</div>
 <table data-wb><thead><tr><th>因子集</th><th>测试段全体</th><th>测试段 Top20%</th><th>相对 lift</th><th>绝对 lift</th><th>滚动</th></tr></thead>
-<tbody><tr><td><b>基本面 7 项</b><br><span class='dim'>营收同比·单季净利同比·ROE·小市值·盈利收益率·账面市值比·小成交额</span></td><td class='num'>49.9%</td><td class='num up'>52.1%</td><td class='num'>+2.2pp</td><td class='num'>-0.2pp</td><td class='num'>5/6</td></tr><tr><td><b>价量 5 项</b><br><span class='dim'>量比·缩量回调·贴近20日高·隔夜承接·波动收敛</span></td><td class='num'>49.9%</td><td class='num up'>53.7%</td><td class='num'>+3.8pp</td><td class='num'>+2.6pp</td><td class='num'>6/6</td></tr><tr><td><b>价量 + 基本面 12 项</b><br><span class='dim'>← pick_score.py 采用的口径</span></td><td class='num'>49.9%</td><td class='num up'>54.3%</td><td class='num'>+4.3pp</td><td class='num'>+1.0pp</td><td class='num'>6/6</td></tr></tbody></table>
+<tbody><tr><td><b>基本面 7 项</b><br><span class='dim'>营收同比·单季净利同比·ROE·小市值·盈利收益率·账面市值比·小成交额</span></td><td class='num'>49.9%</td><td class='num up'>52.0%</td><td class='num'>+2.0pp</td><td class='num'>-0.2pp</td><td class='num'>6/6</td></tr><tr><td><b>价量 5 项</b><br><span class='dim'>量比·缩量回调·贴近20日高·隔夜承接·波动收敛</span></td><td class='num'>49.9%</td><td class='num up'>53.7%</td><td class='num'>+3.8pp</td><td class='num'>+2.6pp</td><td class='num'>6/6</td></tr><tr><td><b>价量 + 基本面 12 项</b><br><span class='dim'>← pick_score.py 采用的口径</span></td><td class='num'>49.9%</td><td class='num up'>54.8%</td><td class='num'>+4.9pp</td><td class='num'>+1.4pp</td><td class='num'>6/6</td></tr></tbody></table>
 <div class='ok'><b>落地口径</b>：<code>quant/pick_score.py</code> 采用「价量 + 基本面」12 因子等权，
 在当日候选内做横截面分位（不使用任何绝对阈值，天然自适应市场中枢漂移）。</div></div>
 

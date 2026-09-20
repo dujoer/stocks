@@ -7,9 +7,16 @@
                                 pe_ratio/pb_ratio/circulating_market_cap(亿)/high_52week/low_52week}
 - 全量缓存到 quant/_txk_cache.json，避免重复联网。
 
-单位说明：
-  fqkline 的 volume 单位为「手」(100 股)；本模块原样返回，amount 需调用方按
-  volume*100*均价 估算（前复权价）。
+单位说明（2026-09-21 修正 —— 原文档「一律为手」是错的）：
+  腾讯 fqkline 的 volume **单位不统一**，用 qt 快照的成交额字段交叉标定（240 只抽样、
+  各板块 unit 中位数 1.0 / 99.9 / 100.0，零异常样本）实测：
+    - 科创板 sh688*            → 已是「股」，换算系数 1
+    - 沪主板 sh60* / 深主板 sz00* / 创业板 sz30* / 北交所 bj*  → 单位「手」，系数 100
+  **算成交额必须用 volume * vol_unit(code) * 均价**，否则科创板与其余板块会差 100 倍。
+  ⚠️ 历史上 `pick_score.py` / `_pick_lab.py` / `scan_strong.py` / `fetch_tplus_offline.py`
+  曾直接 `volume * 100` 或 `volume * 均价`，导致：① 主板成交额被低估 100 倍（流动性过滤误杀）；
+  ② 科创板成交额被高估 100 倍（强势扫描虚高）。已统一改为调 `vol_unit()`。
+  本模块仍**原样返回** volume（不改缓存），由调用方按板块换算（前复权价）。
 """
 from __future__ import annotations
 import os, json, time, urllib.request
@@ -49,6 +56,30 @@ def _num(x):
         return float(x)
     except Exception:
         return None
+
+
+def vol_unit(code):
+    """腾讯 fqkline 的 volume 单位换算系数 —— 把各板块统一成「股」。
+
+    实测（2026-09-21，qt 成交额交叉标定，240 只抽样零异常）：
+      科创板 sh688* 原样为「股」(系数 1)；其余（sh60/sz00/sz30/bj）为「手」(系数 100)。
+    成交额 = volume * vol_unit(code) * 均价。
+    """
+    return 1.0 if code.startswith("sh688") else 100.0
+
+
+def amount(bars, code, i=None, win=None):
+    """按统一口径估算成交额（元）。i 为末根下标（默认最后一根）；win 给定时取窗口均值。"""
+    if not bars:
+        return None
+    if i is None:
+        i = len(bars) - 1
+    u = vol_unit(code)
+    rng = range(i - win + 1, i + 1) if win else [i]
+    vals = [bars[k]["volume"] * u * bars[k]["last"] for k in rng if 0 <= k < len(bars)]
+    if not vals:
+        return None
+    return sum(vals) / len(vals) if win else sum(vals)
 
 
 def fetch_kline(code, n=250, retries=3):

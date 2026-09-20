@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang='zh-CN'><head><meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>稳健分选股 · 全市场横截面 · 2026-09-18</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f5f6f8;color:#23262b;font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;line-height:1.75}
+.wrap{max-width:1440px;margin:0 auto;padding:28px 20px 60px}
+.topnav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid #e6e9ee}
+.topnav a{color:#1a73e8;text-decoration:none;font-size:13px;padding:4px 12px;border-radius:20px;border:1px solid rgba(26,115,232,.35)}
+.topnav a.cur{background:#1a73e8;color:#fff;border-color:#1a73e8}
+header h1{font-size:26px;margin:0 0 6px}
+header h1 span{background:linear-gradient(90deg,#1a73e8,#8a6428);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{color:#6b7480;font-size:13.5px}
+.env{margin-top:18px;padding:14px 18px;border-radius:12px;background:#fff5e0;color:#a86a10;font-size:14px;display:flex;flex-wrap:wrap;gap:22px;align-items:center}
+.env b{font-size:19px}
+.section{margin-top:30px}
+.section h2{font-size:19px;margin:0 0 14px;padding-left:12px;border-left:4px solid #1a73e8}
+.kb{background:#fff;border:1px solid #e6e9ee;border-radius:12px;padding:14px 16px}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.kt{font-size:12.5px;color:#6b7480}
+.kv{font-size:22px;font-weight:700;margin:4px 0}
+.kd{font-size:12px;color:#8a929c}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e6e9ee;border-radius:12px;overflow:hidden;font-size:13.5px}
+th{background:#faf7f1;color:#6b5a3a;font-weight:600;text-align:left;padding:10px 12px;white-space:nowrap;font-size:12.5px}
+td{padding:9px 12px;border-top:1px solid #eef1f5;white-space:nowrap}
+tr:hover td{background:#fcfbf8}
+.rk{color:#8a929c;font-weight:600}
+.nm{font-weight:600}
+.bd{margin-left:8px;font-size:11.5px;color:#8a929c;border:1px solid #e6e9ee;border-radius:10px;padding:1px 7px}
+.sc{color:#1a73e8;font-weight:700;font-size:15px}
+.ld{color:#6b7480;font-size:12.5px}
+.note{margin-top:12px;font-size:12.5px;color:#6b7480}
+.warn{margin-top:12px;padding:12px 16px;border-radius:10px;background:#fdf6e9;border:1px solid #f0e2c4;font-size:13px;color:#8a6a2a}
+.lim li{margin:6px 0;font-size:13.5px;color:#3d434b}
+</style><!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  .navgrp{ padding:5px 6px 5px 5px !important; }
+}
+
+</style><!--/WB_THEME--></head><body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class='wrap'>
+<header>
+  <h1>稳健分选股 · <span>全市场横截面</span></h1>
+  <div class='sub'>数据日 2026-09-18 · 生成 2026-09-21 00:55 · 模型 pick_lab_v2 · 先验 12 因子等权横截面分位（不筛、不调权）</div>
+</header>
+
+<div class='env'>
+  <span>环境门控 <b>中性（广度 51.0%）</b></span>
+  <span>建议仓位系数 <b>0.7</b></span>
+  <span>域内标的 <b>2567</b> 只</span>
+  <span class='kd'>广度 = 全市场站上 MA20 占比（51.0%）</span>
+</div>
+
+<div class='section'>
+  <h2>怎么用这一页</h2>
+  <div class='kb'>
+    ① <b>先看环境</b>：门控系数决定总仓位 —— 弱势期降暴露甚至停手，比换标的更有效
+    （实测弱势「随便买」绝对胜率 40.9% vs 强势 51.1%）。<br>
+    ② <b>再看名单</b>：稳健分是**域内横截面分位**（0~100，50 = 中位），不是预测涨跌幅；
+    分数高只代表「在这 12 个先验维度上更占优」。<br>
+    ③ <b>入场仍需技术确认</b>：本页只做候选排序，不替代均线 / 量价结构 / 止损纪律。
+  </div>
+  <div class='warn'>为什么不再「按回测胜率调权重」：样本内过拟合。把全量筛因子（+12.4pp）
+  与严格样本外（+0.5pp）并排看，<b>差额就是过拟合量</b>；而先验固定因子集在留出段
+  仍有 <b>+4.9pp 相对胜率、6 段滚动全部为正</b>。证据见 <b>lab.html</b>。</div>
+</div>
+
+<div class='section'>
+  <h2>可交易域</h2>
+  <div class='kgrid'>
+    <div class='kb'><div class='kt'>缓存标的</div><div class='kv'>2779</div><div class='kd'>全部有日K的标的</div></div>
+    <div class='kb'><div class='kt'>域内标的</div><div class='kv'>2567</div><div class='kd'>剔除后剩余（92.4%）</div></div>
+    <div class='kb'><div class='kt'>分数中位</div><div class='kv'>50.2</div><div class='kd'>最高 79.1 / 最低 7.5</div></div>
+    <div class='kb'><div class='kt'>流动性下限</div><div class='kv'>5000.0万</div><div class='kd'>20 日均额</div></div>
+  </div>
+  <div class='note'>剔除规则：ST/退市 12 · 历史不足 19 · 流动性不足 179 · 低价 2。域内板块分布：沪主板 777 · 创业板 741 · 深主板 733 · 科创板 314 · 其他 2。</div>
+  <div class='note'>⚠️ 成交额口径：腾讯日K的 volume 单位**不统一**（科创板为股、其余为手），
+  本页已按板块统一换算；此前未换算导致主板成交额被低估 100 倍、流动性过滤把主板几乎全部误杀。</div>
+</div>
+
+<div class='section'>
+  <h2>稳健分 Top 30</h2>
+  <table data-wb>
+    <thead><tr><th>#</th><th>名称</th><th>稳健分</th><th>因子亮点（分位最高 3 项）</th>
+    <th>量比</th><th>距20日高</th><th>营收同比</th><th>单季净利同比</th><th>ROE</th><th>20日均额</th></tr></thead>
+    <tbody><tr><td class='rk'>1</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh688633.html" target="_blank" rel="noopener noreferrer">星球石墨</a><span class='bd'>科创板</span></td><td class='sc'>79.1</td><td class='ld'>量比不拥挤 · 小成交额 · 小市值</td><td>0.44</td><td>-12.0%</td><td>+41.0%</td><td>+73.7%</td><td>6.7%</td><td>0.67亿</td></tr>
+<tr><td class='rk'>2</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz300980.html" target="_blank" rel="noopener noreferrer">祥源新材</a><span class='bd'>创业板</span></td><td class='sc'>78.8</td><td class='ld'>小市值 · 量比不拥挤 · 波动收敛</td><td>0.47</td><td>-4.0%</td><td>+20.4%</td><td>+262.1%</td><td>4.5%</td><td>0.83亿</td></tr>
+<tr><td class='rk'>3</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh605189.html" target="_blank" rel="noopener noreferrer">富春染织</a><span class='bd'>沪主板</span></td><td class='sc'>78.7</td><td class='ld'>小市值 · 单季净利同比 · 盈利收益率</td><td>0.44</td><td>-8.9%</td><td>+46.9%</td><td>+1138.1%</td><td>8.5%</td><td>1.16亿</td></tr>
+<tr><td class='rk'>4</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz001256.html" target="_blank" rel="noopener noreferrer">炜冈科技</a><span class='bd'>深主板</span></td><td class='sc'>78.5</td><td class='ld'>量比不拥挤 · 小成交额 · 波动收敛</td><td>0.30</td><td>-8.8%</td><td>+19.1%</td><td>+394.5%</td><td>12.1%</td><td>0.56亿</td></tr>
+<tr><td class='rk'>5</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz301149.html" target="_blank" rel="noopener noreferrer">隆华新材</a><span class='bd'>创业板</span></td><td class='sc'>78.0</td><td class='ld'>隔夜承接 · 单季净利同比 · 小市值</td><td>0.83</td><td>-3.2%</td><td>+40.2%</td><td>+365.0%</td><td>6.3%</td><td>1.06亿</td></tr>
+<tr><td class='rk'>6</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz002054.html" target="_blank" rel="noopener noreferrer">德美化工</a><span class='bd'>深主板</span></td><td class='sc'>76.1</td><td class='ld'>小成交额 · 小市值 · 账面市值比</td><td>0.59</td><td>-7.0%</td><td>+28.0%</td><td>+208.2%</td><td>3.7%</td><td>0.65亿</td></tr>
+<tr><td class='rk'>7</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh603271.html" target="_blank" rel="noopener noreferrer">永杰新材</a><span class='bd'>沪主板</span></td><td class='sc'>76.0</td><td class='ld'>盈利收益率 · ROE · 小成交额</td><td>0.48</td><td>-13.0%</td><td>+18.0%</td><td>+258.5%</td><td>16.3%</td><td>0.66亿</td></tr>
+<tr><td class='rk'>8</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh603223.html" target="_blank" rel="noopener noreferrer">恒通股份</a><span class='bd'>沪主板</span></td><td class='sc'>75.8</td><td class='ld'>缩量回调 · 波动收敛 · 量比不拥挤</td><td>0.48</td><td>-6.4%</td><td>+7.6%</td><td>+60.4%</td><td>4.5%</td><td>0.84亿</td></tr>
+<tr><td class='rk'>9</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh605208.html" target="_blank" rel="noopener noreferrer">永茂泰</a><span class='bd'>沪主板</span></td><td class='sc'>75.7</td><td class='ld'>量比不拥挤 · 单季净利同比 · 波动收敛</td><td>0.36</td><td>-4.3%</td><td>+13.9%</td><td>+1092.5%</td><td>3.6%</td><td>1.05亿</td></tr>
+<tr><td class='rk'>10</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh603969.html" target="_blank" rel="noopener noreferrer">银龙股份</a><span class='bd'>沪主板</span></td><td class='sc'>75.4</td><td class='ld'>缩量回调 · 量比不拥挤 · ROE</td><td>0.43</td><td>-7.1%</td><td>+8.0%</td><td>+71.8%</td><td>8.2%</td><td>0.98亿</td></tr>
+<tr><td class='rk'>11</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz002606.html" target="_blank" rel="noopener noreferrer">大连电瓷</a><span class='bd'>深主板</span></td><td class='sc'>75.1</td><td class='ld'>营收同比 · 缩量回调 · 量比不拥挤</td><td>0.50</td><td>-7.3%</td><td>+48.6%</td><td>+261.3%</td><td>7.8%</td><td>1.82亿</td></tr>
+<tr><td class='rk'>12</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh603165.html" target="_blank" rel="noopener noreferrer">荣晟环保</a><span class='bd'>沪主板</span></td><td class='sc'>74.6</td><td class='ld'>盈利收益率 · 隔夜承接 · 小成交额</td><td>0.76</td><td>-7.2%</td><td>+11.3%</td><td>+157.9%</td><td>7.9%</td><td>0.77亿</td></tr>
+<tr><td class='rk'>13</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz301367.html" target="_blank" rel="noopener noreferrer">瑞迈特</a><span class='bd'>创业板</span></td><td class='sc'>74.4</td><td class='ld'>隔夜承接 · 量比不拥挤 · 营收同比</td><td>0.46</td><td>-13.0%</td><td>+40.3%</td><td>+48.4%</td><td>4.1%</td><td>0.90亿</td></tr>
+<tr><td class='rk'>14</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh603125.html" target="_blank" rel="noopener noreferrer">常青科技</a><span class='bd'>沪主板</span></td><td class='sc'>74.3</td><td class='ld'>贴近20日高 · 波动收敛 · 小成交额</td><td>0.67</td><td>-1.0%</td><td>+45.7%</td><td>+68.1%</td><td>5.6%</td><td>0.80亿</td></tr>
+<tr><td class='rk'>15</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz002546.html" target="_blank" rel="noopener noreferrer">新联电子</a><span class='bd'>深主板</span></td><td class='sc'>74.0</td><td class='ld'>量比不拥挤 · 波动收敛 · 盈利收益率</td><td>0.35</td><td>-5.9%</td><td>+8.3%</td><td>+348.3%</td><td>11.4%</td><td>0.87亿</td></tr>
+<tr><td class='rk'>16</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh603197.html" target="_blank" rel="noopener noreferrer">保隆科技</a><span class='bd'>沪主板</span></td><td class='sc'>74.0</td><td class='ld'>单季净利同比 · 盈利收益率 · 小成交额</td><td>0.73</td><td>-7.3%</td><td>+18.6%</td><td>+386.3%</td><td>8.0%</td><td>0.87亿</td></tr>
+<tr><td class='rk'>17</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz000906.html" target="_blank" rel="noopener noreferrer">浙商中拓</a><span class='bd'>深主板</span></td><td class='sc'>73.6</td><td class='ld'>账面市值比 · 缩量回调 · 盈利收益率</td><td>0.79</td><td>-3.1%</td><td>+17.5%</td><td>+348.4%</td><td>4.2%</td><td>0.77亿</td></tr>
+<tr><td class='rk'>18</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh600727.html" target="_blank" rel="noopener noreferrer">鲁北化工</a><span class='bd'>沪主板</span></td><td class='sc'>73.5</td><td class='ld'>缩量回调 · 账面市值比 · 盈利收益率</td><td>0.50</td><td>-7.2%</td><td>+17.6%</td><td>+172.7%</td><td>5.2%</td><td>1.11亿</td></tr>
+<tr><td class='rk'>19</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh688199.html" target="_blank" rel="noopener noreferrer">久日新材</a><span class='bd'>科创板</span></td><td class='sc'>73.1</td><td class='ld'>单季净利同比 · 贴近20日高 · 小市值</td><td>0.72</td><td>-1.4%</td><td>+21.6%</td><td>+2165.1%</td><td>1.7%</td><td>0.96亿</td></tr>
+<tr><td class='rk'>20</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh603317.html" target="_blank" rel="noopener noreferrer">天味食品</a><span class='bd'>沪主板</span></td><td class='sc'>72.9</td><td class='ld'>缩量回调 · 量比不拥挤 · 波动收敛</td><td>0.41</td><td>-7.0%</td><td>+45.8%</td><td>+13.4%</td><td>8.4%</td><td>1.08亿</td></tr>
+<tr><td class='rk'>21</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz300157.html" target="_blank" rel="noopener noreferrer">新锦动力</a><span class='bd'>创业板</span></td><td class='sc'>72.8</td><td class='ld'>量比不拥挤 · 隔夜承接 · 缩量回调</td><td>0.35</td><td>-14.6%</td><td>+11.5%</td><td>+153.7%</td><td>—</td><td>1.49亿</td></tr>
+<tr><td class='rk'>22</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz301237.html" target="_blank" rel="noopener noreferrer">和顺科技</a><span class='bd'>创业板</span></td><td class='sc'>72.6</td><td class='ld'>小市值 · 隔夜承接 · 小成交额</td><td>0.72</td><td>-1.8%</td><td>+27.5%</td><td>+222.6%</td><td>0.7%</td><td>0.73亿</td></tr>
+<tr><td class='rk'>23</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz002452.html" target="_blank" rel="noopener noreferrer">长高电气</a><span class='bd'>深主板</span></td><td class='sc'>72.5</td><td class='ld'>盈利收益率 · ROE · 单季净利同比</td><td>0.67</td><td>-2.4%</td><td>+4.0%</td><td>+628.7%</td><td>19.3%</td><td>1.75亿</td></tr>
+<tr><td class='rk'>24</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz300428.html" target="_blank" rel="noopener noreferrer">立中集团</a><span class='bd'>创业板</span></td><td class='sc'>72.5</td><td class='ld'>隔夜承接 · 盈利收益率 · 账面市值比</td><td>0.55</td><td>-6.5%</td><td>+30.3%</td><td>+58.1%</td><td>6.3%</td><td>1.33亿</td></tr>
+<tr><td class='rk'>25</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz001311.html" target="_blank" rel="noopener noreferrer">多利科技</a><span class='bd'>深主板</span></td><td class='sc'>72.4</td><td class='ld'>小成交额 · 营收同比 · 账面市值比</td><td>0.59</td><td>-7.9%</td><td>+42.3%</td><td>+61.8%</td><td>3.6%</td><td>0.68亿</td></tr>
+<tr><td class='rk'>26</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz002386.html" target="_blank" rel="noopener noreferrer">天原股份</a><span class='bd'>深主板</span></td><td class='sc'>72.4</td><td class='ld'>单季净利同比 · 账面市值比 · 小成交额</td><td>0.69</td><td>-3.8%</td><td>+31.7%</td><td>+2418.2%</td><td>2.7%</td><td>0.94亿</td></tr>
+<tr><td class='rk'>27</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz002876.html" target="_blank" rel="noopener noreferrer">三利谱</a><span class='bd'>深主板</span></td><td class='sc'>72.4</td><td class='ld'>贴近20日高 · 单季净利同比 · 隔夜承接</td><td>0.68</td><td>-1.7%</td><td>+32.6%</td><td>+344.7%</td><td>2.9%</td><td>1.34亿</td></tr>
+<tr><td class='rk'>28</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh688148.html" target="_blank" rel="noopener noreferrer">芳源股份</a><span class='bd'>科创板</span></td><td class='sc'>72.2</td><td class='ld'>小市值 · 波动收敛 · 营收同比</td><td>0.54</td><td>-8.4%</td><td>+62.9%</td><td>+83.5%</td><td>8.8%</td><td>0.77亿</td></tr>
+<tr><td class='rk'>29</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh603337.html" target="_blank" rel="noopener noreferrer">杰克科技</a><span class='bd'>沪主板</span></td><td class='sc'>72.1</td><td class='ld'>量比不拥挤 · 波动收敛 · ROE</td><td>0.34</td><td>-6.5%</td><td>+16.2%</td><td>+1.5%</td><td>9.2%</td><td>0.96亿</td></tr>
+<tr><td class='rk'>30</td><td class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz002826.html" target="_blank" rel="noopener noreferrer">易明医药</a><span class='bd'>深主板</span></td><td class='sc'>72.1</td><td class='ld'>小成交额 · 量比不拥挤 · 小市值</td><td>0.43</td><td>-10.3%</td><td>+15.5%</td><td>+150.7%</td><td>7.8%</td><td>0.62亿</td></tr></tbody>
+  </table>
+  <div class='note'>「因子亮点」= 该股在域内分位最高的 3 个因子（分位越高越占优）；
+  量比 &lt; 1 表示缩量（先验偏好不过度拥挤），距 20 日高为负表示仍在回调中。</div>
+</div>
+
+<div class='section'>
+  <h2>分数分布（十分位）</h2>
+  <table data-wb><thead><tr><th>档位</th><th>分数区间</th><th>样本数</th><th>占比</th></tr></thead>
+  <tbody><tr><td>第 1 档</td><td>71.9 ~ 79.1</td><td>34 只</td><td>1.3%</td></tr><tr><td>第 2 档</td><td>64.8 ~ 71.9</td><td>166 只</td><td>6.5%</td></tr><tr><td>第 3 档</td><td>57.6 ~ 64.8</td><td>393 只</td><td>15.3%</td></tr><tr><td>第 4 档</td><td>50.5 ~ 57.6</td><td>676 只</td><td>26.3%</td></tr><tr><td>第 5 档</td><td>43.3 ~ 50.5</td><td>572 只</td><td>22.3%</td></tr><tr><td>第 6 档</td><td>36.1 ~ 43.3</td><td>445 只</td><td>17.3%</td></tr><tr><td>第 7 档</td><td>29.0 ~ 36.1</td><td>194 只</td><td>7.6%</td></tr><tr><td>第 8 档</td><td>21.8 ~ 29.0</td><td>71 只</td><td>2.8%</td></tr><tr><td>第 9 档</td><td>14.7 ~ 21.8</td><td>13 只</td><td>0.5%</td></tr><tr><td>第 10 档</td><td>7.5 ~ 14.7</td><td>3 只</td><td>0.1%</td></tr></tbody></table>
+</div>
+
+<div class='section'>
+  <h2>局限（必须一起看）</h2>
+  <ul class='lim'>
+    <li><b>前视偏差</b>：基本面因子取自最新报告期（东财业绩报表），套用到更早价格上；
+    偏差对全部标的同等作用，故相对 lift 仍有效，但<b>绝对胜率被高估</b>。</li>
+    <li><b>窗口重叠</b>：实验室前向 5 日窗口互相重叠，样本非独立，pp 差应按<b>日期聚类</b>理解。</li>
+    <li><b>样本跨度</b>：覆盖 2025-07 ~ 2026-08，不足一个完整牛熊周期，<b>换年份是否成立无法验证</b>。</li>
+    <li><b>分数是相对量</b>：域内横截面分位会随当日域构成漂移，<b>不可跨日直接比较绝对分数</b>。</li>
+    <li><b>非投资建议</b>：本页是筛选与排序工具，不构成任何买卖推荐；入场、仓位、止损须自行判断。</li>
+  </ul>
+</div>
+
+</div><!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--></body></html>

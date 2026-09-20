@@ -12,8 +12,9 @@
    相对胜率只剩 **+0.5pp**；而同一批数据下「用全量筛因子」能报出 +8.2pp —— 7.7pp 的差额
    就是过拟合的量。所以本模块**不做筛选、不按回测调权重**。
 3. **因子集固定 + 等权横截面分位**（方向由经济逻辑给定，不来自数据）在留出段是正的：
-   价量组 相对胜率 +3.8pp / 绝对胜率 +2.6pp；价量+基本面 相对胜率 +4.3pp；
-   6 段滚动全部为正。
+   价量组 相对胜率 +3.8pp / 绝对胜率 +2.6pp；基本面组 +2.0pp；价量+基本面 相对胜率 +4.9pp /
+   绝对胜率 +1.4pp；6 段滚动全部为正。
+   （2026-09-21 修正 volume 单位口径后重跑，数字比修正前更强：原 +4.3pp。）
 4. 因此：因子固定为下面 12 个，方向固定，**等权**，在当日候选内做横截面分位。
 
 因子口径（全部取自腾讯前复权日K + 东财业绩报表，无未来信息）
@@ -35,6 +36,7 @@ import os, sys, json, math
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import rev_pool as R
+import _tx_fetch as _T
 
 QUANT = os.path.dirname(os.path.abspath(__file__))
 CACHE_F = os.path.join(QUANT, "_txk_cache.json")
@@ -114,7 +116,9 @@ def features_for(code, date):
         return {}
     C = [b["last"] for b in bars]; H = [b["high"] for b in bars]
     L = [b["low"] for b in bars]; O = [b["open"] for b in bars]
-    V = [b["volume"] for b in bars]
+    # 腾讯 volume 单位不统一（688=股，其余=手）→ 先统一成「股」再算成交额，否则差 100 倍
+    _u = _T.vol_unit(code)
+    V = [b["volume"] * _u for b in bars]
     if not C[i] or not V[i]:
         return {}
     close = C[i]

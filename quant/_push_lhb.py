@@ -111,7 +111,8 @@ FILES = [
     "quant/fetch_pick_klines.py",    # 精选池日K价格档案（腾讯离线优先）
     # —— 精选池样本外实验室（2026-09-21）：因子功效检验 + 稳健分落地 ——
     "quant/_pick_lab.py",            # 实验室（面板/特征功效/五道检验/环境门控）
-    "quant/pick_score.py",           # 稳健分（先验固定因子集，供 build_picks 消费）
+    "quant/pick_score.py",           # 稳健分（先验固定因子集，供 build_picks/scan_stable 消费）
+    "quant/scan_stable.py",          # 全市场稳健分选股（可交易域内横截面排序）
     "quant/_pick_model.json",        # 冻结模型 + 样本外证据摘要
     "quant/_pick_lab_result.json",   # 实验室完整结果（供审计/复现）
     "quant/fetch_rev_flow.py",       # 反转池主力资金流（MCP 优先 · 新浪离线兜底）
