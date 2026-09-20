@@ -209,6 +209,12 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 .lhb td.sec, .lhb td.reason{ white-space:normal !important; }
 .lhb tr.detail td{ width:auto !important; }
 
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
 /* ---------- 响应式 ---------- */
 @media (max-width:700px){
   .wrap{ padding:16px 12px 40px; }
@@ -274,9 +280,9 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
     <h2>四、研究候选池 A：小盘 + 低位 + 反转（最贴近松发模型）</h2>
     <table data-wb>
       <tr><th>代码</th><th>名称</th><th>价</th><th>流通市值</th><th>YTD</th><th>距52周高</th><th>PE/PB</th><th>重估逻辑</th></tr>
-      <tr><td>000532</td><td>华金资本</td><td>12.14</td><td class="am">41.7 亿</td><td class="dn">−24.2%</td><td>−35.8%</td><td>23.3 / 2.54</td><td>珠海国资创投平台（无券商参股），受益并购重组政策；中报扣非+44% 真实反转；<b>最小盘、6只中唯一主力20日净流入</b>（详见复核页）</td></tr>
-      <tr><td>002346</td><td>柘中股份</td><td>18.02</td><td class="am">79.6 亿</td><td class="dn">−9.2%</td><td>−34.4%</td><td>13.3 / 2.65</td><td>半导体设备（中晶投资）+ 投资平台；<b>注：估值合理但20日主力净流出−2.5亿、价格空头排列，非建仓点</b>（详见复核页）</td></tr>
-      <tr><td>605365</td><td>立达信</td><td>13.82</td><td class="am">69.4 亿</td><td class="dn">−47.4%</td><td>−58.4%</td><td>33.2 / 1.86</td><td>LED+物联网，单季反转；<b>位置最低</b>；但行业景气偏弱需验证</td></tr>
+      <tr><td>000532</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000532.html" target="_blank" rel="noopener noreferrer">华金资本</a></td><td>12.14</td><td class="am">41.7 亿</td><td class="dn">−24.2%</td><td>−35.8%</td><td>23.3 / 2.54</td><td>珠海国资创投平台（无券商参股），受益并购重组政策；中报扣非+44% 真实反转；<b>最小盘、6只中唯一主力20日净流入</b>（详见复核页）</td></tr>
+      <tr><td>002346</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002346.html" target="_blank" rel="noopener noreferrer">柘中股份</a></td><td>18.02</td><td class="am">79.6 亿</td><td class="dn">−9.2%</td><td>−34.4%</td><td>13.3 / 2.65</td><td>半导体设备（中晶投资）+ 投资平台；<b>注：估值合理但20日主力净流出−2.5亿、价格空头排列，非建仓点</b>（详见复核页）</td></tr>
+      <tr><td>605365</td><td><a class="emlk" href="https://quote.eastmoney.com/sh605365.html" target="_blank" rel="noopener noreferrer">立达信</a></td><td>13.82</td><td class="am">69.4 亿</td><td class="dn">−47.4%</td><td>−58.4%</td><td>33.2 / 1.86</td><td>LED+物联网，单季反转；<b>位置最低</b>；但行业景气偏弱需验证</td></tr>
     </table>
     <div class="note" style="font-size:13px;color:var(--sub);margin-top:8px">A 类共性：流通盘 &lt; 80 亿、YTD 为负、处于相对低位、有反转/重估催化。华金资本盘子最小、政策受益最直接；立达信位置最低但需确认行业拐点。</div>
   </div>
@@ -285,9 +291,9 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
     <h2>五、研究候选池 B：低位 + 景气龙头（中大盘，机构向）</h2>
     <table data-wb>
       <tr><th>代码</th><th>名称</th><th>价</th><th>流通市值</th><th>YTD</th><th>距52周高</th><th>PE/PB</th><th>景气逻辑</th></tr>
-      <tr><td>002487</td><td>大金重工</td><td>35.30</td><td>222.7 亿</td><td class="dn">−31.9%</td><td>−62.5%</td><td>22.6 / 1.81</td><td>风电塔筒/海工装备龙头，海上风电高景气；距高点回撤深</td></tr>
-      <tr><td>300456</td><td>赛微电子</td><td>34.65</td><td>207.0 亿</td><td class="dn">−37.7%</td><td>−49.1%</td><td class="am">6.1(假象)</td><td><span class="dn">【已作废】PE6 来自出售 Silex 的 30.8 亿一次性收益，扣非实际亏损 3.79 亿；主力20日净流出−3.4亿，价值陷阱（详见复核页）</span></td></tr>
-      <tr><td>002611</td><td>东方精工</td><td>13.96</td><td>140.2 亿</td><td class="dn">−26.4%</td><td>−36.8%</td><td class="am">4.1(假象)</td><td><span class="dn">【已作废】PE4 来自出售 Fosber 资产的 7.74 亿欧元一次性收益，扣非仅 4808 万；主力20日净流出−1.9亿，价值陷阱（详见复核页）</span></td></tr>
+      <tr><td>002487</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002487.html" target="_blank" rel="noopener noreferrer">大金重工</a></td><td>35.30</td><td>222.7 亿</td><td class="dn">−31.9%</td><td>−62.5%</td><td>22.6 / 1.81</td><td>风电塔筒/海工装备龙头，海上风电高景气；距高点回撤深</td></tr>
+      <tr><td>300456</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300456.html" target="_blank" rel="noopener noreferrer">赛微电子</a></td><td>34.65</td><td>207.0 亿</td><td class="dn">−37.7%</td><td>−49.1%</td><td class="am">6.1(假象)</td><td><span class="dn">【已作废】PE6 来自出售 Silex 的 30.8 亿一次性收益，扣非实际亏损 3.79 亿；主力20日净流出−3.4亿，价值陷阱（详见复核页）</span></td></tr>
+      <tr><td>002611</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002611.html" target="_blank" rel="noopener noreferrer">东方精工</a></td><td>13.96</td><td>140.2 亿</td><td class="dn">−26.4%</td><td>−36.8%</td><td class="am">4.1(假象)</td><td><span class="dn">【已作废】PE4 来自出售 Fosber 资产的 7.74 亿欧元一次性收益，扣非仅 4808 万；主力20日净流出−1.9亿，价值陷阱（详见复核页）</span></td></tr>
     </table>
     <div class="note" style="font-size:13px;color:var(--sub);margin-top:8px">B 类共性：低位 + 行业景气，但流通盘偏大（140–223 亿），弹性不如 A 类，更适合<b>分批配置</b>而非游资式重估博弈。</div>
   </div>

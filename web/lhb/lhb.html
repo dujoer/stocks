@@ -283,6 +283,12 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 .lhb td.sec, .lhb td.reason{ white-space:normal !important; }
 .lhb tr.detail td{ width:auto !important; }
 
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
 /* ---------- 响应式 ---------- */
 @media (max-width:700px){
   .wrap{ padding:16px 12px 40px; }
@@ -330,7 +336,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz002185')" style='cursor:pointer'>
 <td class='num'>1</td>
 <td>
-<b>华天科技</b> <span class='note'>sz002185</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002185.html" target="_blank" rel="noopener noreferrer">华天科技</a></b> <span class='note'>sz002185</span>
 </td>
 <td class='num up'>+10.01%</td>
 <td class='num up'>8.18</td>
@@ -369,7 +375,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz000002')" style='cursor:pointer'>
 <td class='num'>2</td>
 <td>
-<b>万科A</b> <span class='note'>sz000002</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz000002.html" target="_blank" rel="noopener noreferrer">万科A</a></b> <span class='note'>sz000002</span>
 </td>
 <td class='num up'>+9.93%</td>
 <td class='num up'>5.25</td>
@@ -408,7 +414,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz001399')" style='cursor:pointer'>
 <td class='num'>3</td>
 <td>
-<b>惠科股份</b> <span class='note'>sz001399</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz001399.html" target="_blank" rel="noopener noreferrer">惠科股份</a></b> <span class='note'>sz001399</span>
 </td>
 <td class='num up'>+10.02%</td>
 <td class='num up'>4.19</td>
@@ -447,14 +453,14 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh600127')" style='cursor:pointer'>
 <td class='num'>4</td>
 <td>
-<b>金健米业</b> <span class='note'>sh600127</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600127.html" target="_blank" rel="noopener noreferrer">金健米业</a></b> <span class='note'>sh600127</span>
 </td>
 <td class='num up'>+9.98%</td>
 <td class='num up'>3.37</td>
 <td class='reason'>—</td>
 <td class='sec'>农林牧渔 <span class='down'>-2.71%</span>
 </td>
-<td class='sec'>农产品加工 <span class='down'>-3.16%</span>
+<td class='sec'><a class="emlk" href="https://quote.eastmoney.com/sz000061.html" target="_blank" rel="noopener noreferrer">农产品</a>加工 <span class='down'>-3.16%</span>
 </td>
 <td class='hm hm-low'>低<div class='hmtags'>
 <span class='note'>—</span>
@@ -486,7 +492,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz002902')" style='cursor:pointer'>
 <td class='num'>5</td>
 <td>
-<b>铭普光磁</b> <span class='note'>sz002902</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002902.html" target="_blank" rel="noopener noreferrer">铭普光磁</a></b> <span class='note'>sz002902</span>
 </td>
 <td class='num up'>+7.00%</td>
 <td class='num up'>2.69</td>
@@ -525,7 +531,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz002980')" style='cursor:pointer'>
 <td class='num'>6</td>
 <td>
-<b>华盛昌</b> <span class='note'>sz002980</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002980.html" target="_blank" rel="noopener noreferrer">华盛昌</a></b> <span class='note'>sz002980</span>
 </td>
 <td class='num up'>+10.00%</td>
 <td class='num up'>1.85</td>
@@ -564,7 +570,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz301583')" style='cursor:pointer'>
 <td class='num'>7</td>
 <td>
-<b>托伦斯</b> <span class='note'>sz301583</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz301583.html" target="_blank" rel="noopener noreferrer">托伦斯</a></b> <span class='note'>sz301583</span>
 </td>
 <td class='num up'>+20.00%</td>
 <td class='num up'>1.80</td>
@@ -603,7 +609,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh601086')" style='cursor:pointer'>
 <td class='num'>8</td>
 <td>
-<b>国芳集团</b> <span class='note'>sh601086</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh601086.html" target="_blank" rel="noopener noreferrer">国芳集团</a></b> <span class='note'>sh601086</span>
 </td>
 <td class='num up'>+10.00%</td>
 <td class='num up'>1.72</td>
@@ -642,7 +648,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh603626')" style='cursor:pointer'>
 <td class='num'>9</td>
 <td>
-<b>科森科技</b> <span class='note'>sh603626</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603626.html" target="_blank" rel="noopener noreferrer">科森科技</a></b> <span class='note'>sh603626</span>
 </td>
 <td class='num up'>+10.00%</td>
 <td class='num up'>1.61</td>
@@ -681,7 +687,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz300464')" style='cursor:pointer'>
 <td class='num'>10</td>
 <td>
-<b>星徽股份</b> <span class='note'>sz300464</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300464.html" target="_blank" rel="noopener noreferrer">星徽股份</a></b> <span class='note'>sz300464</span>
 </td>
 <td class='num up'>+17.39%</td>
 <td class='num up'>1.40</td>
@@ -720,7 +726,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh600881')" style='cursor:pointer'>
 <td class='num'>11</td>
 <td>
-<b>亚泰集团</b> <span class='note'>sh600881</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600881.html" target="_blank" rel="noopener noreferrer">亚泰集团</a></b> <span class='note'>sh600881</span>
 </td>
 <td class='num up'>+10.29%</td>
 <td class='num up'>1.22</td>
@@ -759,7 +765,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh688261')" style='cursor:pointer'>
 <td class='num'>12</td>
 <td>
-<b>东微半导</b> <span class='note'>sh688261</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh688261.html" target="_blank" rel="noopener noreferrer">东微半导</a></b> <span class='note'>sh688261</span>
 </td>
 <td class='num up'>+15.16%</td>
 <td class='num up'>1.21</td>
@@ -798,7 +804,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh603248')" style='cursor:pointer'>
 <td class='num'>13</td>
 <td>
-<b>锡华科技</b> <span class='note'>sh603248</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603248.html" target="_blank" rel="noopener noreferrer">锡华科技</a></b> <span class='note'>sh603248</span>
 </td>
 <td class='num up'>+9.98%</td>
 <td class='num up'>1.07</td>
@@ -837,7 +843,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz000978')" style='cursor:pointer'>
 <td class='num'>14</td>
 <td>
-<b>桂林旅游</b> <span class='note'>sz000978</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz000978.html" target="_blank" rel="noopener noreferrer">桂林旅游</a></b> <span class='note'>sz000978</span>
 </td>
 <td class='num up'>+4.89%</td>
 <td class='num up'>0.93</td>
@@ -876,7 +882,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh688292')" style='cursor:pointer'>
 <td class='num'>15</td>
 <td>
-<b>浩瀚深度</b> <span class='note'>sh688292</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh688292.html" target="_blank" rel="noopener noreferrer">浩瀚深度</a></b> <span class='note'>sh688292</span>
 </td>
 <td class='num up'>+20.02%</td>
 <td class='num up'>0.89</td>
@@ -915,7 +921,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh688343')" style='cursor:pointer'>
 <td class='num'>16</td>
 <td>
-<b>云天励飞</b> <span class='note'>sh688343</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh688343.html" target="_blank" rel="noopener noreferrer">云天励飞</a></b> <span class='note'>sh688343</span>
 </td>
 <td class='num up'>+15.09%</td>
 <td class='num up'>0.83</td>
@@ -954,7 +960,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh600640')" style='cursor:pointer'>
 <td class='num'>17</td>
 <td>
-<b>国脉文化</b> <span class='note'>sh600640</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600640.html" target="_blank" rel="noopener noreferrer">国脉文化</a></b> <span class='note'>sh600640</span>
 </td>
 <td class='num up'>+10.04%</td>
 <td class='num up'>0.64</td>
@@ -993,7 +999,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz002631')" style='cursor:pointer'>
 <td class='num'>18</td>
 <td>
-<b>德尔未来</b> <span class='note'>sz002631</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002631.html" target="_blank" rel="noopener noreferrer">德尔未来</a></b> <span class='note'>sz002631</span>
 </td>
 <td class='num up'>+9.98%</td>
 <td class='num up'>0.59</td>
@@ -1032,7 +1038,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh600719')" style='cursor:pointer'>
 <td class='num'>19</td>
 <td>
-<b>大连热电</b> <span class='note'>sh600719</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600719.html" target="_blank" rel="noopener noreferrer">大连热电</a></b> <span class='note'>sh600719</span>
 </td>
 <td class='num up'>+10.07%</td>
 <td class='num up'>0.52</td>
@@ -1071,7 +1077,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz300836')" style='cursor:pointer'>
 <td class='num'>20</td>
 <td>
-<b>佰奥智能</b> <span class='note'>sz300836</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300836.html" target="_blank" rel="noopener noreferrer">佰奥智能</a></b> <span class='note'>sz300836</span>
 </td>
 <td class='num up'>+19.42%</td>
 <td class='num up'>0.42</td>
@@ -1110,7 +1116,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh688175')" style='cursor:pointer'>
 <td class='num'>21</td>
 <td>
-<b>高凌信息</b> <span class='note'>sh688175</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh688175.html" target="_blank" rel="noopener noreferrer">高凌信息</a></b> <span class='note'>sh688175</span>
 </td>
 <td class='num up'>+19.98%</td>
 <td class='num up'>0.40</td>
@@ -1149,7 +1155,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz002584')" style='cursor:pointer'>
 <td class='num'>22</td>
 <td>
-<b>西陇科学</b> <span class='note'>sz002584</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002584.html" target="_blank" rel="noopener noreferrer">西陇科学</a></b> <span class='note'>sz002584</span>
 </td>
 <td class='num up'>+2.42%</td>
 <td class='num up'>0.27</td>
@@ -1188,7 +1194,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh600630')" style='cursor:pointer'>
 <td class='num'>23</td>
 <td>
-<b>龙头股份</b> <span class='note'>sh600630</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600630.html" target="_blank" rel="noopener noreferrer">龙头股份</a></b> <span class='note'>sh600630</span>
 </td>
 <td class='num up'>+9.95%</td>
 <td class='num up'>0.27</td>
@@ -1227,7 +1233,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh600847')" style='cursor:pointer'>
 <td class='num'>24</td>
 <td>
-<b>万里股份</b> <span class='note'>sh600847</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600847.html" target="_blank" rel="noopener noreferrer">万里股份</a></b> <span class='note'>sh600847</span>
 </td>
 <td class='num up'>+10.04%</td>
 <td class='num up'>0.18</td>
@@ -1340,7 +1346,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh603880')" style='cursor:pointer'>
 <td class='num'>27</td>
 <td>
-<b>南卫股份</b> <span class='note'>sh603880</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603880.html" target="_blank" rel="noopener noreferrer">南卫股份</a></b> <span class='note'>sh603880</span>
 </td>
 <td class='num down'>-8.55%</td>
 <td class='num down'>-0.03</td>
@@ -1379,7 +1385,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz002836')" style='cursor:pointer'>
 <td class='num'>28</td>
 <td>
-<b>新宏泽</b> <span class='note'>sz002836</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002836.html" target="_blank" rel="noopener noreferrer">新宏泽</a></b> <span class='note'>sz002836</span>
 </td>
 <td class='num up'>+9.96%</td>
 <td class='num down'>-0.05</td>
@@ -1418,7 +1424,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz003001')" style='cursor:pointer'>
 <td class='num'>29</td>
 <td>
-<b>中岩大地</b> <span class='note'>sz003001</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz003001.html" target="_blank" rel="noopener noreferrer">中岩大地</a></b> <span class='note'>sz003001</span>
 </td>
 <td class='num down'>-1.57%</td>
 <td class='num down'>-0.06</td>
@@ -1457,7 +1463,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh600371')" style='cursor:pointer'>
 <td class='num'>30</td>
 <td>
-<b>万向德农</b> <span class='note'>sh600371</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600371.html" target="_blank" rel="noopener noreferrer">万向德农</a></b> <span class='note'>sh600371</span>
 </td>
 <td class='num down'>-1.53%</td>
 <td class='num down'>-0.08</td>
@@ -1496,7 +1502,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz002360')" style='cursor:pointer'>
 <td class='num'>31</td>
 <td>
-<b>ST同德</b> <span class='note'>sz002360</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002360.html" target="_blank" rel="noopener noreferrer">ST同德</a></b> <span class='note'>sz002360</span>
 </td>
 <td class='num down'>-8.58%</td>
 <td class='num down'>-0.08</td>
@@ -1572,7 +1578,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz301390')" style='cursor:pointer'>
 <td class='num'>33</td>
 <td>
-<b>经纬股份</b> <span class='note'>sz301390</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz301390.html" target="_blank" rel="noopener noreferrer">经纬股份</a></b> <span class='note'>sz301390</span>
 </td>
 <td class='num up'>+20.00%</td>
 <td class='num down'>-0.19</td>
@@ -1611,7 +1617,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz001365')" style='cursor:pointer'>
 <td class='num'>34</td>
 <td>
-<b>天海电子</b> <span class='note'>sz001365</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz001365.html" target="_blank" rel="noopener noreferrer">天海电子</a></b> <span class='note'>sz001365</span>
 </td>
 <td class='num up'>+2.16%</td>
 <td class='num down'>-0.24</td>
@@ -1650,7 +1656,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz002453')" style='cursor:pointer'>
 <td class='num'>35</td>
 <td>
-<b>华软科技</b> <span class='note'>sz002453</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002453.html" target="_blank" rel="noopener noreferrer">华软科技</a></b> <span class='note'>sz002453</span>
 </td>
 <td class='num up'>+10.10%</td>
 <td class='num down'>-0.25</td>
@@ -1689,7 +1695,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh603082')" style='cursor:pointer'>
 <td class='num'>36</td>
 <td>
-<b>北自科技</b> <span class='note'>sh603082</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603082.html" target="_blank" rel="noopener noreferrer">北自科技</a></b> <span class='note'>sh603082</span>
 </td>
 <td class='num up'>+0.45%</td>
 <td class='num down'>-0.26</td>
@@ -1765,7 +1771,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz301520')" style='cursor:pointer'>
 <td class='num'>38</td>
 <td>
-<b>万邦医药</b> <span class='note'>sz301520</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz301520.html" target="_blank" rel="noopener noreferrer">万邦医药</a></b> <span class='note'>sz301520</span>
 </td>
 <td class='num down'>-3.93%</td>
 <td class='num down'>-0.38</td>
@@ -1804,7 +1810,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh600448')" style='cursor:pointer'>
 <td class='num'>39</td>
 <td>
-<b>华纺股份</b> <span class='note'>sh600448</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600448.html" target="_blank" rel="noopener noreferrer">华纺股份</a></b> <span class='note'>sh600448</span>
 </td>
 <td class='num up'>+9.94%</td>
 <td class='num down'>-0.56</td>
@@ -1843,7 +1849,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz002528')" style='cursor:pointer'>
 <td class='num'>40</td>
 <td>
-<b>*ST英飞</b> <span class='note'>sz002528</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002528.html" target="_blank" rel="noopener noreferrer">*ST英飞</a></b> <span class='note'>sz002528</span>
 </td>
 <td class='num down'>-10.03%</td>
 <td class='num down'>-0.71</td>
@@ -1882,7 +1888,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh603230')" style='cursor:pointer'>
 <td class='num'>41</td>
 <td>
-<b>内蒙新华</b> <span class='note'>sh603230</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603230.html" target="_blank" rel="noopener noreferrer">内蒙新华</a></b> <span class='note'>sh603230</span>
 </td>
 <td class='num up'>+10.04%</td>
 <td class='num down'>-0.75</td>
@@ -1921,7 +1927,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz003026')" style='cursor:pointer'>
 <td class='num'>42</td>
 <td>
-<b>中晶科技</b> <span class='note'>sz003026</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz003026.html" target="_blank" rel="noopener noreferrer">中晶科技</a></b> <span class='note'>sz003026</span>
 </td>
 <td class='num up'>+0.54%</td>
 <td class='num down'>-0.86</td>
@@ -1960,7 +1966,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsz002531')" style='cursor:pointer'>
 <td class='num'>43</td>
 <td>
-<b>天顺风能</b> <span class='note'>sz002531</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002531.html" target="_blank" rel="noopener noreferrer">天顺风能</a></b> <span class='note'>sz002531</span>
 </td>
 <td class='num down'>-5.63%</td>
 <td class='num down'>-0.94</td>
@@ -1999,7 +2005,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh600721')" style='cursor:pointer'>
 <td class='num'>44</td>
 <td>
-<b>百花医药</b> <span class='note'>sh600721</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600721.html" target="_blank" rel="noopener noreferrer">百花医药</a></b> <span class='note'>sh600721</span>
 </td>
 <td class='num up'>+0.67%</td>
 <td class='num down'>-1.21</td>
@@ -2038,7 +2044,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <tr class='r' onclick="toggle('dsh688802')" style='cursor:pointer'>
 <td class='num'>45</td>
 <td>
-<b>沐曦股份</b> <span class='note'>sh688802</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh688802.html" target="_blank" rel="noopener noreferrer">沐曦股份</a></b> <span class='note'>sh688802</span>
 </td>
 <td class='num up'>+1.52%</td>
 <td class='num down'>-2.19</td>
@@ -2093,7 +2099,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>中晶科技</b> <span class='note'>sz003026</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz003026.html" target="_blank" rel="noopener noreferrer">中晶科技</a></b> <span class='note'>sz003026</span>
 </td>
 <td class='num'>1</td>
 <td class='num'>-0.88</td>
@@ -2105,7 +2111,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>沐曦股份</b> <span class='note'>sh688802</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh688802.html" target="_blank" rel="noopener noreferrer">沐曦股份</a></b> <span class='note'>sh688802</span>
 </td>
 <td class='num'>1</td>
 <td class='num'>-1.95</td>
@@ -2129,7 +2135,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>星徽股份</b> <span class='note'>sz300464</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300464.html" target="_blank" rel="noopener noreferrer">星徽股份</a></b> <span class='note'>sz300464</span>
 </td>
 <td class='num'>3</td>
 <td class='num'>1.40</td>
@@ -2141,7 +2147,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>华天科技</b> <span class='note'>sz002185</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002185.html" target="_blank" rel="noopener noreferrer">华天科技</a></b> <span class='note'>sz002185</span>
 </td>
 <td class='num'>1</td>
 <td class='num'>1.25</td>
@@ -2153,7 +2159,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>托伦斯</b> <span class='note'>sz301583</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz301583.html" target="_blank" rel="noopener noreferrer">托伦斯</a></b> <span class='note'>sz301583</span>
 </td>
 <td class='num'>1</td>
 <td class='num'>-0.54</td>
@@ -2165,7 +2171,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>华盛昌</b> <span class='note'>sz002980</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002980.html" target="_blank" rel="noopener noreferrer">华盛昌</a></b> <span class='note'>sz002980</span>
 </td>
 <td class='num'>1</td>
 <td class='num'>0.11</td>
@@ -2189,7 +2195,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>万邦医药</b> <span class='note'>sz301520</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz301520.html" target="_blank" rel="noopener noreferrer">万邦医药</a></b> <span class='note'>sz301520</span>
 </td>
 <td class='num'>1</td>
 <td class='num'>-0.33</td>
@@ -2201,7 +2207,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>天顺风能</b> <span class='note'>sz002531</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002531.html" target="_blank" rel="noopener noreferrer">天顺风能</a></b> <span class='note'>sz002531</span>
 </td>
 <td class='num'>1</td>
 <td class='num'>-0.70</td>
@@ -2213,7 +2219,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>星徽股份</b> <span class='note'>sz300464</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300464.html" target="_blank" rel="noopener noreferrer">星徽股份</a></b> <span class='note'>sz300464</span>
 </td>
 <td class='num'>1</td>
 <td class='num'>0.90</td>
@@ -2225,7 +2231,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>德尔未来</b> <span class='note'>sz002631</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002631.html" target="_blank" rel="noopener noreferrer">德尔未来</a></b> <span class='note'>sz002631</span>
 </td>
 <td class='num'>1</td>
 <td class='num'>0.12</td>
@@ -2237,7 +2243,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>新宏泽</b> <span class='note'>sz002836</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002836.html" target="_blank" rel="noopener noreferrer">新宏泽</a></b> <span class='note'>sz002836</span>
 </td>
 <td class='num'>3</td>
 <td class='num'>-0.38</td>
@@ -2249,7 +2255,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>佰奥智能</b> <span class='note'>sz300836</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300836.html" target="_blank" rel="noopener noreferrer">佰奥智能</a></b> <span class='note'>sz300836</span>
 </td>
 <td class='num'>1</td>
 <td class='num'>-0.10</td>
@@ -2261,7 +2267,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>中岩大地</b> <span class='note'>sz003001</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz003001.html" target="_blank" rel="noopener noreferrer">中岩大地</a></b> <span class='note'>sz003001</span>
 </td>
 <td class='num'>1</td>
 <td class='num'>0.44</td>
@@ -2273,7 +2279,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>科森科技</b> <span class='note'>sh603626</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603626.html" target="_blank" rel="noopener noreferrer">科森科技</a></b> <span class='note'>sh603626</span>
 </td>
 <td class='num'>3</td>
 <td class='num'>-0.54</td>
@@ -2285,7 +2291,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>铭普光磁</b> <span class='note'>sz002902</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002902.html" target="_blank" rel="noopener noreferrer">铭普光磁</a></b> <span class='note'>sz002902</span>
 </td>
 <td class='num'>1</td>
 <td class='num'>-0.08</td>
@@ -2297,7 +2303,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>西陇科学</b> <span class='note'>sz002584</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002584.html" target="_blank" rel="noopener noreferrer">西陇科学</a></b> <span class='note'>sz002584</span>
 </td>
 <td class='num'>1</td>
 <td class='num'>0.90</td>
@@ -2309,7 +2315,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>华软科技</b> <span class='note'>sz002453</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002453.html" target="_blank" rel="noopener noreferrer">华软科技</a></b> <span class='note'>sz002453</span>
 </td>
 <td class='num'>3</td>
 <td class='num'>-0.10</td>
@@ -2321,7 +2327,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>华纺股份</b> <span class='note'>sh600448</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600448.html" target="_blank" rel="noopener noreferrer">华纺股份</a></b> <span class='note'>sh600448</span>
 </td>
 <td class='num'>3</td>
 <td class='num'>-0.20</td>
@@ -2348,7 +2354,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>金健米业</b> <span class='note'>sh600127</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600127.html" target="_blank" rel="noopener noreferrer">金健米业</a></b> <span class='note'>sh600127</span>
 </td>
 <td class='num'>3</td>
 <td class='num up'>5.24</td>
@@ -2359,7 +2365,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>华天科技</b> <span class='note'>sz002185</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002185.html" target="_blank" rel="noopener noreferrer">华天科技</a></b> <span class='note'>sz002185</span>
 </td>
 <td class='num'>1</td>
 <td class='num up'>4.87</td>
@@ -2370,7 +2376,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>万科A</b> <span class='note'>sz000002</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz000002.html" target="_blank" rel="noopener noreferrer">万科A</a></b> <span class='note'>sz000002</span>
 </td>
 <td class='num'>1</td>
 <td class='num up'>3.31</td>
@@ -2381,7 +2387,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>惠科股份</b> <span class='note'>sz001399</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz001399.html" target="_blank" rel="noopener noreferrer">惠科股份</a></b> <span class='note'>sz001399</span>
 </td>
 <td class='num'>1</td>
 <td class='num up'>2.42</td>
@@ -2392,7 +2398,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>金健米业</b> <span class='note'>sh600127</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600127.html" target="_blank" rel="noopener noreferrer">金健米业</a></b> <span class='note'>sh600127</span>
 </td>
 <td class='num'>1</td>
 <td class='num up'>2.28</td>
@@ -2403,7 +2409,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>铭普光磁</b> <span class='note'>sz002902</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002902.html" target="_blank" rel="noopener noreferrer">铭普光磁</a></b> <span class='note'>sz002902</span>
 </td>
 <td class='num'>1</td>
 <td class='num up'>1.51</td>
@@ -2414,7 +2420,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>华盛昌</b> <span class='note'>sz002980</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002980.html" target="_blank" rel="noopener noreferrer">华盛昌</a></b> <span class='note'>sz002980</span>
 </td>
 <td class='num'>1</td>
 <td class='num up'>1.30</td>
@@ -2425,7 +2431,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>锡华科技</b> <span class='note'>sh603248</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603248.html" target="_blank" rel="noopener noreferrer">锡华科技</a></b> <span class='note'>sh603248</span>
 </td>
 <td class='num'>3</td>
 <td class='num up'>1.30</td>
@@ -2436,7 +2442,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>锡华科技</b> <span class='note'>sh603248</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603248.html" target="_blank" rel="noopener noreferrer">锡华科技</a></b> <span class='note'>sh603248</span>
 </td>
 <td class='num'>1</td>
 <td class='num up'>0.91</td>
@@ -2447,7 +2453,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>托伦斯</b> <span class='note'>sz301583</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz301583.html" target="_blank" rel="noopener noreferrer">托伦斯</a></b> <span class='note'>sz301583</span>
 </td>
 <td class='num'>1</td>
 <td class='num up'>0.77</td>
@@ -2458,7 +2464,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>科森科技</b> <span class='note'>sh603626</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603626.html" target="_blank" rel="noopener noreferrer">科森科技</a></b> <span class='note'>sh603626</span>
 </td>
 <td class='num'>3</td>
 <td class='num up'>0.58</td>
@@ -2469,7 +2475,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>佰奥智能</b> <span class='note'>sz300836</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300836.html" target="_blank" rel="noopener noreferrer">佰奥智能</a></b> <span class='note'>sz300836</span>
 </td>
 <td class='num'>1</td>
 <td class='num up'>0.52</td>
@@ -2480,7 +2486,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>内蒙新华</b> <span class='note'>sh603230</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603230.html" target="_blank" rel="noopener noreferrer">内蒙新华</a></b> <span class='note'>sh603230</span>
 </td>
 <td class='num'>1</td>
 <td class='num up'>0.33</td>
@@ -2491,7 +2497,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>天海电子</b> <span class='note'>sz001365</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz001365.html" target="_blank" rel="noopener noreferrer">天海电子</a></b> <span class='note'>sz001365</span>
 </td>
 <td class='num'>1</td>
 <td class='num up'>0.28</td>
@@ -2502,7 +2508,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>东微半导</b> <span class='note'>sh688261</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh688261.html" target="_blank" rel="noopener noreferrer">东微半导</a></b> <span class='note'>sh688261</span>
 </td>
 <td class='num'>1</td>
 <td class='num up'>0.26</td>
@@ -2513,7 +2519,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>龙头股份</b> <span class='note'>sh600630</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600630.html" target="_blank" rel="noopener noreferrer">龙头股份</a></b> <span class='note'>sh600630</span>
 </td>
 <td class='num'>3</td>
 <td class='num up'>0.20</td>
@@ -2524,7 +2530,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>经纬股份</b> <span class='note'>sz301390</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz301390.html" target="_blank" rel="noopener noreferrer">经纬股份</a></b> <span class='note'>sz301390</span>
 </td>
 <td class='num'>1</td>
 <td class='num up'>0.18</td>
@@ -2535,7 +2541,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>华软科技</b> <span class='note'>sz002453</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002453.html" target="_blank" rel="noopener noreferrer">华软科技</a></b> <span class='note'>sz002453</span>
 </td>
 <td class='num'>3</td>
 <td class='num up'>0.16</td>
@@ -2546,7 +2552,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>经纬股份</b> <span class='note'>sz301390</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz301390.html" target="_blank" rel="noopener noreferrer">经纬股份</a></b> <span class='note'>sz301390</span>
 </td>
 <td class='num'>3</td>
 <td class='num up'>0.12</td>
@@ -2557,7 +2563,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>万邦医药</b> <span class='note'>sz301520</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz301520.html" target="_blank" rel="noopener noreferrer">万邦医药</a></b> <span class='note'>sz301520</span>
 </td>
 <td class='num'>1</td>
 <td class='num up'>0.09</td>
@@ -2568,7 +2574,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 </tr>
 <tr>
 <td>
-<b>华纺股份</b> <span class='note'>sh600448</span>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600448.html" target="_blank" rel="noopener noreferrer">华纺股份</a></b> <span class='note'>sh600448</span>
 </td>
 <td class='num'>3</td>
 <td class='num up'>0.08</td>
@@ -2592,121 +2598,121 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 <td>国泰海通证券股份有限公司北京知春路证券营业部</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>52.5</td>
 <td class='num up'>6.57</td>
-<td style='color:#6b7280;font-size:12px'>金健米业、锡华科技、惠科股份</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sh600127.html" target="_blank" rel="noopener noreferrer">金健米业</a>、<a class="emlk" href="https://quote.eastmoney.com/sh603248.html" target="_blank" rel="noopener noreferrer">锡华科技</a>、<a class="emlk" href="https://quote.eastmoney.com/sz001399.html" target="_blank" rel="noopener noreferrer">惠科股份</a></td>
 </tr>
 <tr>
 <td>国泰海通证券股份有限公司上海分公司</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>56.4</td>
 <td class='num up'>4.05</td>
-<td style='color:#6b7280;font-size:12px'>金健米业</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sh600127.html" target="_blank" rel="noopener noreferrer">金健米业</a></td>
 </tr>
 <tr>
 <td>国泰海通证券股份有限公司武汉紫阳东路证券营业部</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>52.0</td>
 <td class='num up'>3.92</td>
-<td style='color:#6b7280;font-size:12px'>华天科技、华盛昌、托伦斯</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz002185.html" target="_blank" rel="noopener noreferrer">华天科技</a>、<a class="emlk" href="https://quote.eastmoney.com/sz002980.html" target="_blank" rel="noopener noreferrer">华盛昌</a>、<a class="emlk" href="https://quote.eastmoney.com/sz301583.html" target="_blank" rel="noopener noreferrer">托伦斯</a></td>
 </tr>
 <tr>
 <td>国泰海通证券股份有限公司三亚迎宾路证券营业部</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>53.1</td>
 <td class='num up'>3.31</td>
-<td style='color:#6b7280;font-size:12px'>万科A</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz000002.html" target="_blank" rel="noopener noreferrer">万科A</a></td>
 </tr>
 <tr>
 <td>国泰海通证券股份有限公司湛江万豪世家证券营业部</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>52.7</td>
 <td class='num up'>2.80</td>
-<td style='color:#6b7280;font-size:12px'>华天科技</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz002185.html" target="_blank" rel="noopener noreferrer">华天科技</a></td>
 </tr>
 <tr>
 <td>国泰海通证券股份有限公司成都天府大道证券营业部</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>51.4</td>
 <td class='num up'>1.69</td>
-<td style='color:#6b7280;font-size:12px'>天海电子、惠科股份</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz001365.html" target="_blank" rel="noopener noreferrer">天海电子</a>、<a class="emlk" href="https://quote.eastmoney.com/sz001399.html" target="_blank" rel="noopener noreferrer">惠科股份</a></td>
 </tr>
 <tr>
 <td>国泰海通证券股份有限公司上海松江区中山东路证券营业部</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>55.1</td>
 <td class='num up'>1.35</td>
-<td style='color:#6b7280;font-size:12px'>科森科技、铭普光磁</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sh603626.html" target="_blank" rel="noopener noreferrer">科森科技</a>、<a class="emlk" href="https://quote.eastmoney.com/sz002902.html" target="_blank" rel="noopener noreferrer">铭普光磁</a></td>
 </tr>
 <tr>
 <td>国泰海通证券股份有限公司常州健身路证券营业部</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>66.7</td>
 <td class='num up'>0.74</td>
-<td style='color:#6b7280;font-size:12px'>铭普光磁</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz002902.html" target="_blank" rel="noopener noreferrer">铭普光磁</a></td>
 </tr>
 <tr>
 <td>中信证券股份有限公司上海浦东新区东方路证券营业部</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>50.0</td>
 <td class='num up'>0.27</td>
-<td style='color:#6b7280;font-size:12px'>佰奥智能</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz300836.html" target="_blank" rel="noopener noreferrer">佰奥智能</a></td>
 </tr>
 <tr>
 <td>中信建投证券股份有限公司安徽分公司</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>55.3</td>
 <td class='num up'>0.26</td>
-<td style='color:#6b7280;font-size:12px'>东微半导</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sh688261.html" target="_blank" rel="noopener noreferrer">东微半导</a></td>
 </tr>
 <tr>
 <td>方正证券股份有限公司南昌北京西路证券营业部</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>66.7</td>
 <td class='num up'>0.25</td>
-<td style='color:#6b7280;font-size:12px'>佰奥智能</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz300836.html" target="_blank" rel="noopener noreferrer">佰奥智能</a></td>
 </tr>
 <tr>
 <td>长江证券股份有限公司上海分公司</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>53.7</td>
 <td class='num up'>0.23</td>
-<td style='color:#6b7280;font-size:12px'>华盛昌</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz002980.html" target="_blank" rel="noopener noreferrer">华盛昌</a></td>
 </tr>
 <tr>
 <td>麦高证券有限责任公司成都丽都路证券营业部</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>66.7</td>
 <td class='num up'>0.23</td>
-<td style='color:#6b7280;font-size:12px'>内蒙新华</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sh603230.html" target="_blank" rel="noopener noreferrer">内蒙新华</a></td>
 </tr>
 <tr>
 <td>华龙证券股份有限公司湖南分公司</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>50.0</td>
 <td class='num up'>0.21</td>
-<td style='color:#6b7280;font-size:12px'>经纬股份</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz301390.html" target="_blank" rel="noopener noreferrer">经纬股份</a></td>
 </tr>
 <tr>
 <td>东莞证券股份有限公司常熟东南大道证券营业部</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>55.6</td>
 <td class='num up'>0.20</td>
-<td style='color:#6b7280;font-size:12px'>龙头股份</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sh600630.html" target="_blank" rel="noopener noreferrer">龙头股份</a></td>
 </tr>
 <tr>
 <td>东海证券股份有限公司福州长乐北路证券营业部</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>67.7</td>
 <td class='num up'>0.16</td>
-<td style='color:#6b7280;font-size:12px'>华软科技</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz002453.html" target="_blank" rel="noopener noreferrer">华软科技</a></td>
 </tr>
 <tr>
 <td>国泰海通证券股份有限公司成都龙腾东路证券营业部</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>51.5</td>
 <td class='num up'>0.11</td>
-<td style='color:#6b7280;font-size:12px'>锡华科技</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sh603248.html" target="_blank" rel="noopener noreferrer">锡华科技</a></td>
 </tr>
 <tr>
 <td>上海证券有限责任公司奉贤区南奉公路证券营业部</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>100.0</td>
 <td class='num up'>0.10</td>
-<td style='color:#6b7280;font-size:12px'>内蒙新华</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sh603230.html" target="_blank" rel="noopener noreferrer">内蒙新华</a></td>
 </tr>
 <tr>
 <td>国联民生证券股份有限公司无锡梁清路证券营业部</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>50.0</td>
 <td class='num up'>0.09</td>
-<td style='color:#6b7280;font-size:12px'>万邦医药</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz301520.html" target="_blank" rel="noopener noreferrer">万邦医药</a></td>
 </tr>
 <tr>
 <td>东莞证券股份有限公司四川分公司</td>
 <td class='num' style='color:#1a73e8;font-weight:700'>53.5</td>
 <td class='num up'>0.08</td>
-<td style='color:#6b7280;font-size:12px'>华纺股份</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sh600448.html" target="_blank" rel="noopener noreferrer">华纺股份</a></td>
 </tr>
 </table>
 </div>

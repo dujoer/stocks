@@ -238,6 +238,12 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 .lhb td.sec, .lhb td.reason{ white-space:normal !important; }
 .lhb tr.detail td{ width:auto !important; }
 
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
 /* ---------- 响应式 ---------- */
 @media (max-width:700px){
   .wrap{ padding:16px 12px 40px; }
@@ -375,9 +381,10 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
       <tr data-tier='daily'>
         <td class='dim'>底部反转观察池</td><td><span class='tag daily'>每日</span></td>
         <td>盘后（与 MACD 同批）</td>
-        <td><code>rev_pool.py run</code>（本地腾讯前复权日K → 横截面分位组合 / 分位档）→ <code>gen_watchlist.py {DATE}</code>（仅重建入口页，v4 scan 自动跳过明细覆盖）</td>
+        <td><code>rev_pool.py run</code>（本地腾讯前复权日K → 横截面分位组合 / 分位档）→ <code>fetch_rev_flow.py --date D</code>（1/5/10/20 日主力净流入：MCP 优先、限频自动转新浪离线）→ <code>fetch_rev_enrich.py --date D --render</code>（腾讯离线补名称/流通市值/PE，合并资金流并重渲染）→ <code>gen_watchlist.py {DATE}</code>（仅重建入口页，v4 scan 自动跳过明细覆盖）</td>
         <td>2026-09-18</td>
         <td class='hint'>每个交易日重扫种子宇宙（220 只）刷新观察池，方法论页 <code>web/reversal/method.html</code> 与实证页 <code>web/reversal/lab.html</code> 不随日刷新。<code>gen_watchlist.py</code> 会自动把 <code>web/reversal/</code> 下的案例页接回索引；<b>案例页勿放 <code>web/research/</code></b>，否则覆盖度自检报孤儿</td>
+        <br>⚠️ 缺 <code>fetch_rev_flow / fetch_rev_enrich</code> 两步时，页面<b>名称显示成代码、流通市值与 20 日主力整列为空</b>（种子文件只带 code+name，行情文件覆盖仅 30/220 且无资金流）</td>
       </tr>
       <tr data-tier='daily'>
         <td class='dim'>MACD 水上金叉池（已并入精选池 · 技术基底）</td><td><span class='tag daily'>每日</span></td>
@@ -485,7 +492,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
     <li><input type='checkbox' data-k='psy'><div><div class='t'>⑥ 心理雷达：build_psychology.py --date D（已全自动，旧手抄法废弃）</div></div></li>
     <li><input type='checkbox' data-k='picks'><div><div class='t'>⑦ 精选池（原个股信号池）：gen_picks → MCP 25只/批补拉 → <b>fetch_pick_klines --end D（建日K价格档案）</b> → build_picks（按真实交易日历回填每票 T+1/3/5）→ backtest_picks</div><div class='d'>quotes_{D}.json 缺失会 0 行输出；fetch_pick_klines 漏跑则次日无法回填昨日选股。<b>出池门槛（2026-09-19 起）：最高档直接出池，次高档须 20 日主力净流入&gt;0 才出池，无合格标的则明示空仓等待</b></div></div></li>
     <li><input type='checkbox' data-k='tplus'><div><div class='t'>⑧ 做T池：scan_strong（全市场强势扫描）→ gen_tplus（三源并集 ≈1600 只）→ fetch_tplus_offline（腾讯离线补数）→ build_tplus</div><div class='d'>候选含机构底仓 / 龙虎榜 / 强势三源；走离线腾讯通道避开 MCP 限频；破箱体下沿无条件清仓</div></div></li>
-    <li><input type='checkbox' data-k='scan'><div><div class='t'>⑨ 反转 / MACD / 高胜率：反转 rev_pool.py run + gen_watchlist.py / MACD macd_build+build_macd_extra+gen_macd / 高胜率 build_highwin+gen_highwin</div><div class='d'>三者均加 --date D，切勿再用写死日期的 _0914 脚本</div></div></li>
+    <li><input type='checkbox' data-k='scan'><div><div class='t'>⑨ 反转 / MACD / 高胜率：反转 rev_pool.py run + fetch_rev_flow + fetch_rev_enrich --render + gen_watchlist.py / MACD macd_build+build_macd_extra+gen_macd / 高胜率 build_highwin+gen_highwin</div><div class='d'>三者均加 --date D，切勿再用写死日期的 _0914 脚本</div></div></li>
     <li><input type='checkbox' data-k='news'><div><div class='t'>⑩ 当日要闻：data_hot(kind=news) → _news_seed/{D}.json → add_news.py --date D</div></div></li>
     <li><input type='checkbox' data-k='portal'><div><div class='t'>⑪ 数据库与门户：db_update → db_export → build_portal → build_sections → _apply_theme</div><div class='d'>凡显示「非当日」的卡片即为漏跑项</div></div></li>
     <li><input type='checkbox' data-k='push'><div><div class='t'>⑫ 门禁与推送：_link_check 0断链 / _coverage_check 无新增缺口 / _js_check --all → _push_lhb → _sync_all → _curl_gate</div><div class='d'>推送必须 dangerouslyDisableSandbox=true，否则被沙箱 SIGTERM</div></div></li>

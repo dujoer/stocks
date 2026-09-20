@@ -227,6 +227,12 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 .lhb td.sec, .lhb td.reason{ white-space:normal !important; }
 .lhb tr.detail td{ width:auto !important; }
 
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
 /* ---------- 响应式 ---------- */
 @media (max-width:700px){
   .wrap{ padding:16px 12px 40px; }
@@ -267,42 +273,42 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
       <thead><tr><th>股票</th><th>价(9/11)</th><th>流通市值</th><th>YTD</th><th>距52高</th><th>PE(TTM)</th><th>20日主力</th><th>技术/趋势</th><th>复核结论</th></tr></thead>
       <tbody>
         <tr>
-          <td><b>华金资本</b><br>000532</td><td>12.14</td><td>41.7亿</td><td>−24%</td><td>−36%</td>
+          <td><b><a class="emlk" href="https://quote.eastmoney.com/sz000532.html" target="_blank" rel="noopener noreferrer">华金资本</a></b><br>000532</td><td>12.14</td><td>41.7亿</td><td>−24%</td><td>−36%</td>
           <td><span class="ok">23.3（真实）</span></td>
           <td><span class="pos">+3870万 ✅</span></td>
           <td>MACD金叉、站上MA20、RSI6 67</td>
           <td><span class="pill p-green">唯一合格</span></td>
         </tr>
         <tr>
-          <td><b>柘中股份</b><br>002346</td><td>18.02</td><td>79.6亿</td><td>−9%</td><td>−34%</td>
+          <td><b><a class="emlk" href="https://quote.eastmoney.com/sz002346.html" target="_blank" rel="noopener noreferrer">柘中股份</a></b><br>002346</td><td>18.02</td><td>79.6亿</td><td>−9%</td><td>−34%</td>
           <td><span class="ok">13.3（真实）</span></td>
           <td><span class="neg">−2.50亿 ❌</span></td>
           <td>空头排列、MACD死叉、RSI6 19.5</td>
           <td><span class="pill p-amber">估值合理但派发中</span></td>
         </tr>
         <tr>
-          <td><b>立达信</b><br>605365</td><td>13.82</td><td>69.4亿</td><td>−47%</td><td>−58%</td>
+          <td><b><a class="emlk" href="https://quote.eastmoney.com/sh605365.html" target="_blank" rel="noopener noreferrer">立达信</a></b><br>605365</td><td>13.82</td><td>69.4亿</td><td>−47%</td><td>−58%</td>
           <td>33.2（不便宜）</td>
           <td><span class="warn">+4370万(弱)</span></td>
           <td>极端超卖RSI2 3.2、无反转信号</td>
           <td><span class="pill p-amber">低位无催化</span></td>
         </tr>
         <tr>
-          <td><b>大金重工</b><br>002487</td><td>35.30</td><td>222.7亿</td><td>−32%</td><td>−62%</td>
+          <td><b><a class="emlk" href="https://quote.eastmoney.com/sz002487.html" target="_blank" rel="noopener noreferrer">大金重工</a></b><br>002487</td><td>35.30</td><td>222.7亿</td><td>−32%</td><td>−62%</td>
           <td><span class="ok">22.6（真实）</span></td>
           <td><span class="neg">−6.37亿 ❌</span></td>
           <td>9/11单日+5.25%反弹、仍低于MA60</td>
           <td><span class="pill p-amber">中大盘深跌反弹</span></td>
         </tr>
         <tr>
-          <td><b>赛微电子</b><br>300456</td><td>34.65</td><td>207.1亿</td><td>−38%</td><td>−49%</td>
+          <td><b><a class="emlk" href="https://quote.eastmoney.com/sz300456.html" target="_blank" rel="noopener noreferrer">赛微电子</a></b><br>300456</td><td>34.65</td><td>207.1亿</td><td>−38%</td><td>−49%</td>
           <td><span class="neg">6.1（假象）</span></td>
           <td><span class="neg">−3.37亿 ❌</span></td>
           <td>空头排列、KDJ_J −11.7</td>
           <td><span class="pill p-red">价值陷阱·作废</span></td>
         </tr>
         <tr>
-          <td><b>东方精工</b><br>002611</td><td>13.96</td><td>140.2亿</td><td>−26%</td><td>−37%</td>
+          <td><b><a class="emlk" href="https://quote.eastmoney.com/sz002611.html" target="_blank" rel="noopener noreferrer">东方精工</a></b><br>002611</td><td>13.96</td><td>140.2亿</td><td>−26%</td><td>−37%</td>
           <td><span class="neg">4.1（假象）</span></td>
           <td><span class="neg">−1.90亿 ❌</span></td>
           <td>空头排列、RSI2 0.87极端超卖</td>

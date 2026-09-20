@@ -224,6 +224,12 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 .lhb td.sec, .lhb td.reason{ white-space:normal !important; }
 .lhb tr.detail td{ width:auto !important; }
 
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
 /* ---------- 响应式 ---------- */
 @media (max-width:700px){
   .wrap{ padding:16px 12px 40px; }
@@ -339,10 +345,10 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
     <h2>连板天梯（共 63 只连板，最新交易日 2026-08-14）</h2>
     <table data-wb>
       <tr><th>连板数</th><th>代表标的</th></tr>
-      <tr><td class="num">5 板</td><td>蓝盾光电（sz300862）</td></tr>
-      <tr><td class="num">3 板</td><td>金螳螂、华西股份、坤泰股份、天洋新材、澳洋健康</td></tr>
-      <tr><td class="num">2 板</td><td>博济医药、共进股份、神奇制药、理工能科、海洋王</td></tr>
-      <tr><td class="num">1 板（部分）</td><td>亨通光电、网宿科技、中国稀土、中石科技、郑中设计、成都路桥、大豪科技、数据港</td></tr>
+      <tr><td class="num">5 板</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300862.html" target="_blank" rel="noopener noreferrer">蓝盾光电</a>（sz300862）</td></tr>
+      <tr><td class="num">3 板</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002081.html" target="_blank" rel="noopener noreferrer">金螳螂</a>、<a class="emlk" href="https://quote.eastmoney.com/sz000936.html" target="_blank" rel="noopener noreferrer">华西股份</a>、<a class="emlk" href="https://quote.eastmoney.com/sz001260.html" target="_blank" rel="noopener noreferrer">坤泰股份</a>、<a class="emlk" href="https://quote.eastmoney.com/sh603330.html" target="_blank" rel="noopener noreferrer">天洋新材</a>、<a class="emlk" href="https://quote.eastmoney.com/sz002172.html" target="_blank" rel="noopener noreferrer">澳洋健康</a></td></tr>
+      <tr><td class="num">2 板</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300404.html" target="_blank" rel="noopener noreferrer">博济医药</a>、<a class="emlk" href="https://quote.eastmoney.com/sh603118.html" target="_blank" rel="noopener noreferrer">共进股份</a>、<a class="emlk" href="https://quote.eastmoney.com/sh600613.html" target="_blank" rel="noopener noreferrer">神奇制药</a>、<a class="emlk" href="https://quote.eastmoney.com/sz002322.html" target="_blank" rel="noopener noreferrer">理工能科</a>、<a class="emlk" href="https://quote.eastmoney.com/sz002724.html" target="_blank" rel="noopener noreferrer">海洋王</a></td></tr>
+      <tr><td class="num">1 板（部分）</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600487.html" target="_blank" rel="noopener noreferrer">亨通光电</a>、<a class="emlk" href="https://quote.eastmoney.com/sz300017.html" target="_blank" rel="noopener noreferrer">网宿科技</a>、<a class="emlk" href="https://quote.eastmoney.com/sz000831.html" target="_blank" rel="noopener noreferrer">中国稀土</a>、<a class="emlk" href="https://quote.eastmoney.com/sz300684.html" target="_blank" rel="noopener noreferrer">中石科技</a>、<a class="emlk" href="https://quote.eastmoney.com/sz002811.html" target="_blank" rel="noopener noreferrer">郑中设计</a>、<a class="emlk" href="https://quote.eastmoney.com/sz002628.html" target="_blank" rel="noopener noreferrer">成都路桥</a>、<a class="emlk" href="https://quote.eastmoney.com/sh603025.html" target="_blank" rel="noopener noreferrer">大豪科技</a>、<a class="emlk" href="https://quote.eastmoney.com/sh603881.html" target="_blank" rel="noopener noreferrer">数据港</a></td></tr>
     </table>
     <div class="note">封单最大（收盘涨停封单量）：盈新发展 39.7 万手 &gt; 澳洋健康 30.0 万手 &gt; 索菱股份 28.5 万手 &gt; 神奇制药 23.3 万手 &gt; 金螳螂 17.7 万手。注：连板天梯以最近交易日数据呈现（非交易日 API 返回上一交易日榜单）。</div>
   </div>

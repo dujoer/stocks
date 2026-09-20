@@ -327,6 +327,12 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 .lhb td.sec, .lhb td.reason{ white-space:normal !important; }
 .lhb tr.detail td{ width:auto !important; }
 
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
 /* ---------- 响应式 ---------- */
 @media (max-width:700px){
   .wrap{ padding:16px 12px 40px; }
@@ -575,14 +581,14 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
           <tr><td class="cat" colspan="3" data-i18n="ev_sector">三、板块排行与主线</td></tr>
           <tr><td data-i18n="ev_secup">领涨行业</td><td><span class="val up">地面兵装Ⅱ +4.44%</span>（主力净流入 +50.22亿，行为「抢筹」）<br>通信设备 +1.66%（主力 +839.89亿，全行业第一）/ 元件 +1.80%（+638.35亿）/ 玻璃玻纤 +2.63% 跟随<br>全市场 927 个板块仅 33 个收红，733 个呈主力「出货」</td><td data-i18n="ev_secup_i">地面兵装Ⅱ +4.44%（主力净流入 +50.22亿，行为「抢筹」）领涨，玻璃玻纤 +2.63% / 元件 +1.80%（主力 +638.35亿）/ 通信设备 +1.66%（主力 +839.89亿，全行业第一）跟随——军工 + 电子硬科技是恐慌日唯一有主力真实承接的方向，927 个板块仅 33 个收红</td></tr>
-          <tr><td data-i18n="ev_secdn">领跌行业</td><td><span class="val down">工业金属 −5.04%</span>（主力 +261.18亿 但散户流入 +303.79亿更多，暗盘 −42.6亿 → 实为「出货」）<br>农产品加工 −4.36% / 渔业 −4.34%<br>资源与前期题材在恐慌中集中补跌</td><td data-i18n="ev_secdn_i">工业金属 −5.04% 领跌（表面主力净流入 +261亿，但散户流入 +304亿更多，暗盘 −42.6亿 → 实为「出货」）/ 农产品加工 −4.36% / 渔业 −4.34%——资源与前期题材在恐慌中集中补跌，733 个板块呈「出货」行为</td></tr>
-          <tr><td data-i18n="ev_board">极端题材</td><td><span class="val up">连板高度 4 板</span>（瑞尔特，新龙头接棒桂林旅游）<br>共 40 只连板（持平）；3板：鼎信通讯 / 闽东电力；2板：凯盛新能 / 超声电子 / 九鼎新材 / 中新赛克——龙头一日一换</td><td data-i18n="ev_board_i">连板共 40 只（持平），最高板 4板（瑞尔特，新龙头接棒桂林旅游）；3板鼎信通讯 / 闽东电力——高度持平但龙头一日一换，题材快速轮动，赚钱效应极度收窄</td></tr>
+          <tr><td data-i18n="ev_secdn">领跌行业</td><td><span class="val down">工业金属 −5.04%</span>（主力 +261.18亿 但散户流入 +303.79亿更多，暗盘 −42.6亿 → 实为「出货」）<br><a class="emlk" href="https://quote.eastmoney.com/sz000061.html" target="_blank" rel="noopener noreferrer">农产品</a>加工 −4.36% / 渔业 −4.34%<br>资源与前期题材在恐慌中集中补跌</td><td data-i18n="ev_secdn_i">工业金属 −5.04% 领跌（表面主力净流入 +261亿，但散户流入 +304亿更多，暗盘 −42.6亿 → 实为「出货」）/ <a class="emlk" href="https://quote.eastmoney.com/sz000061.html" target="_blank" rel="noopener noreferrer">农产品</a>加工 −4.36% / 渔业 −4.34%——资源与前期题材在恐慌中集中补跌，733 个板块呈「出货」行为</td></tr>
+          <tr><td data-i18n="ev_board">极端题材</td><td><span class="val up">连板高度 4 板</span>（瑞尔特，新龙头接棒桂林旅游）<br>共 40 只连板（持平）；3板：鼎信通讯 / <a class="emlk" href="https://quote.eastmoney.com/sz000993.html" target="_blank" rel="noopener noreferrer">闽东电力</a>；2板：凯盛新能 / <a class="emlk" href="https://quote.eastmoney.com/sz000823.html" target="_blank" rel="noopener noreferrer">超声电子</a> / <a class="emlk" href="https://quote.eastmoney.com/sz002201.html" target="_blank" rel="noopener noreferrer">九鼎新材</a> / <a class="emlk" href="https://quote.eastmoney.com/sz002912.html" target="_blank" rel="noopener noreferrer">中新赛克</a>——龙头一日一换</td><td data-i18n="ev_board_i">连板共 40 只（持平），最高板 4板（瑞尔特，新龙头接棒桂林旅游）；3板鼎信通讯 / <a class="emlk" href="https://quote.eastmoney.com/sz000993.html" target="_blank" rel="noopener noreferrer">闽东电力</a>——高度持平但龙头一日一换，题材快速轮动，赚钱效应极度收窄</td></tr>
 
           <tr><td class="cat" colspan="3" data-i18n="ev_flow">四、资金：连板 / 主力 / 两融</td></tr>
-          <tr><td data-i18n="ev_height">连板高度</td><td><span class="val up">瑞尔特 4板</span>（2026-09-11）</td><td data-i18n="ev_height_i">高度 4板（瑞尔特，2026-09-11 收盘，新龙头）；题材以卫浴出海 + 电子（鼎信通讯/超声电子）+ 电力（闽东电力）为主，恐慌日筹码紧凑标的成避险池</td></tr>
+          <tr><td data-i18n="ev_height">连板高度</td><td><span class="val up"><a class="emlk" href="https://quote.eastmoney.com/sz002790.html" target="_blank" rel="noopener noreferrer">瑞尔特</a> 4板</span>（2026-09-11）</td><td data-i18n="ev_height_i">高度 4板（瑞尔特，2026-09-11 收盘，新龙头）；题材以卫浴出海 + 电子（鼎信通讯/<a class="emlk" href="https://quote.eastmoney.com/sz000823.html" target="_blank" rel="noopener noreferrer">超声电子</a>）+ 电力（闽东电力）为主，恐慌日筹码紧凑标的成避险池</td></tr>
           <tr><td data-i18n="ev_main">主力5日净流入TOP</td><td><span class="val">主力5日净流入 TOP（tool_ranking 降级期，09-09 口径沿用）</span></td><td data-i18n="ev_main_i">主力5日净流入数据降级期无法更新（westock tool_ranking service error，09-09 口径沿用、未编造）；当日可见信号：主力单日极端分化——通信设备 +839.89亿 / 元件 +638.35亿 / 地面兵装Ⅱ +50.22亿 集中流入，733 板块「出货」；两融数据暂缺，未编造。</td></tr>
           <tr><td data-i18n="ev_margin">融资单日变动TOP</td><td><span class="val">融资单日变动 TOP（两融接口降级，数据暂缺，未编造）</span></td><td data-i18n="ev_margin_i">两融数据接口降级（service error），融资单日变动与两融余额均暂缺，<b>未编造</b>；放量恐慌 + 技术破位下，杠杆踩踏风险无法确认，谨慎对待——若两融余额在恐慌日显著下降，反而利于后续出清。</td></tr>
-          <tr><td data-i18n="ev_hot">热搜 / 领涨TOP</td><td><span class="val up">瑞尔特 4板</span>（卫浴出海）<br>地面兵装Ⅱ +4.44%（主力 +50.22亿 抢筹）<br>通信设备 +1.66% / 元件 +1.80% / 玻璃玻纤 +2.63%<br>工业金属 −5.04% / 农产品加工 −4.36% / 渔业 −4.34%</td><td data-i18n="ev_hot_i">恐慌日热点极度收敛：瑞尔特 4板（卫浴出海）/ 地面兵装Ⅱ +4.44%（主力 +50.22亿 抢筹）/ 通信设备 +1.66%（主力 +839.89亿）/ 元件 +1.80%（+638.35亿）；防御与硬科技双主线，与「全指价值 20日 +3.19% vs 全指成长 −4.27%」的风格分化一致</td></tr>
+          <tr><td data-i18n="ev_hot">热搜 / 领涨TOP</td><td><span class="val up"><a class="emlk" href="https://quote.eastmoney.com/sz002790.html" target="_blank" rel="noopener noreferrer">瑞尔特</a> 4板</span>（卫浴出海）<br>地面兵装Ⅱ +4.44%（主力 +50.22亿 抢筹）<br>通信设备 +1.66% / 元件 +1.80% / 玻璃玻纤 +2.63%<br>工业金属 −5.04% / <a class="emlk" href="https://quote.eastmoney.com/sz000061.html" target="_blank" rel="noopener noreferrer">农产品</a>加工 −4.36% / 渔业 −4.34%</td><td data-i18n="ev_hot_i">恐慌日热点极度收敛：瑞尔特 4板（卫浴出海）/ 地面兵装Ⅱ +4.44%（主力 +50.22亿 抢筹）/ 通信设备 +1.66%（主力 +839.89亿）/ 元件 +1.80%（+638.35亿）；防御与硬科技双主线，与「全指价值 20日 +3.19% vs 全指成长 −4.27%」的风格分化一致</td></tr>
           <tr><td data-i18n="ev_margintotal">市场两融余额</td><td><span class="val">数据源未返回聚合值</span></td><td data-i18n="ev_margintotal_i">缺口：聚合两融余额与融资单日变动接口降级（service error），已如实标注、未编造；涨跌分布 / 指数 / 成交额 / 板块 / 连板梯队均为 2026-09-11 真实收盘，主力5日净流入为 09-09 口径（降级期无法更新）</td></tr>
 
           <tr><td class="cat" colspan="3" data-i18n="ev_macro">五、核心宏观指标</td></tr>

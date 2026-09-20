@@ -327,6 +327,12 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 .lhb td.sec, .lhb td.reason{ white-space:normal !important; }
 .lhb tr.detail td{ width:auto !important; }
 
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
 /* ---------- 响应式 ---------- */
 @media (max-width:700px){
   .wrap{ padding:16px 12px 40px; }
@@ -575,14 +581,14 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
 
           <tr><td class="cat" colspan="3" data-i18n="ev_sector">三、板块排行与主线</td></tr>
           <tr><td data-i18n="ev_secup">领涨行业</td><td><span class="val up">航海装备Ⅱ +2.76%</span>（换手 5.72%、主力净流入 +4.64亿）<br>城商行Ⅱ +2.39% / 玻璃玻纤 +2.23% 跟随<br>全市场 124 个行业绝大多数下跌，仅约 2 成行业收红</td><td data-i18n="ev_secup_i">航海装备Ⅱ +2.76%（换手 5.72%、主力净流入 +4.64亿）领涨，城商行Ⅱ +2.39% / 玻璃玻纤 +2.23% 跟随——主线切换至防御/权重与局部题材，TMT 与前期资源全面退潮，全市场约 2 成行业收红</td></tr>
-          <tr><td data-i18n="ev_secdn">领跌行业</td><td><span class="val down">种植业 −5.09%</span>（换手 11.15%）<br>渔业 −4.69% / 农产品加工 −4.65%<br>农业链集体重挫，与 09-09 领涨的橡胶/航运/资源剧烈反转</td><td data-i18n="ev_secdn_i">种植业 −5.09%（换手 11.15%）领跌 / 渔业 −4.69% / 农产品加工 −4.65%——农业链集体重挫，与 09-09 领涨的橡胶/航运/资源形成剧烈反转</td></tr>
+          <tr><td data-i18n="ev_secdn">领跌行业</td><td><span class="val down">种植业 −5.09%</span>（换手 11.15%）<br>渔业 −4.69% / <a class="emlk" href="https://quote.eastmoney.com/sz000061.html" target="_blank" rel="noopener noreferrer">农产品</a>加工 −4.65%<br>农业链集体重挫，与 09-09 领涨的橡胶/航运/资源剧烈反转</td><td data-i18n="ev_secdn_i">种植业 −5.09%（换手 11.15%）领跌 / 渔业 −4.69% / <a class="emlk" href="https://quote.eastmoney.com/sz000061.html" target="_blank" rel="noopener noreferrer">农产品</a>加工 −4.65%——农业链集体重挫，与 09-09 领涨的橡胶/航运/资源形成剧烈反转</td></tr>
           <tr><td data-i18n="ev_board">极端题材</td><td><span class="val up">连板高度 4 板</span>（桂林旅游）<br>共 40 只连板；题材由消费/资源切换至旅游（桂林旅游 4板），轮动加快、高度下降</td><td data-i18n="ev_board_i">连板共 40 只，最高板 4板（桂林旅游，由 5 板降级）；题材由消费/资源切换至旅游（桂林旅游 4板）等局部热点，轮动加快、高度下降</td></tr>
 
           <tr><td class="cat" colspan="3" data-i18n="ev_flow">四、资金：连板 / 主力 / 两融</td></tr>
-          <tr><td data-i18n="ev_height">连板高度</td><td><span class="val up">桂林旅游 4板</span>（2026-09-10）</td><td data-i18n="ev_height_i">高度 4板（桂林旅游，2026-09-10 收盘），由 5 板降级；题材以旅游接力，基本面以区域旅游为主，无显著题材泡沫</td></tr>
-          <tr><td data-i18n="ev_main">主力5日净流入TOP</td><td><span class="val">主力5日净流入 TOP（09-09 口径，当日暂缺）</span></td><td data-i18n="ev_main_i">主力5日净流入仍集中于光模块 / PCB（中际旭创 +76.9亿 居首、新易盛 +41.0亿、东山精密 +31.3亿），但 09-10 当日板块资金已切向航海装备Ⅱ（主力净流入 +4.64亿）与城商行Ⅱ等防御/权重——资金从高弹性成长转向低估值避险，光模块个股已退潮；两融数据暂缺，未编造。</td></tr>
+          <tr><td data-i18n="ev_height">连板高度</td><td><span class="val up"><a class="emlk" href="https://quote.eastmoney.com/sz000978.html" target="_blank" rel="noopener noreferrer">桂林旅游</a> 4板</span>（2026-09-10）</td><td data-i18n="ev_height_i">高度 4板（桂林旅游，2026-09-10 收盘），由 5 板降级；题材以旅游接力，基本面以区域旅游为主，无显著题材泡沫</td></tr>
+          <tr><td data-i18n="ev_main">主力5日净流入TOP</td><td><span class="val">主力5日净流入 TOP（09-09 口径，当日暂缺）</span></td><td data-i18n="ev_main_i">主力5日净流入仍集中于光模块 / PCB（中际旭创 +76.9亿 居首、<a class="emlk" href="https://quote.eastmoney.com/sz300502.html" target="_blank" rel="noopener noreferrer">新易盛</a> +41.0亿、<a class="emlk" href="https://quote.eastmoney.com/sz002384.html" target="_blank" rel="noopener noreferrer">东山精密</a> +31.3亿），但 09-10 当日板块资金已切向航海装备Ⅱ（主力净流入 +4.64亿）与城商行Ⅱ等防御/权重——资金从高弹性成长转向低估值避险，光模块个股已退潮；两融数据暂缺，未编造。</td></tr>
           <tr><td data-i18n="ev_margin">融资单日变动TOP</td><td><span class="val">融资单日变动 TOP（两融接口返回空，数据暂缺）</span></td><td data-i18n="ev_margin_i">两融数据接口当日返回空（数据缺失），融资单日变动与两融余额均暂缺，<b>未编造</b>；从可见信号看资金切向防御/权重（航海装备Ⅱ +4.64亿、城商行Ⅱ），杠杆风险因缺失无法确认，谨慎对待。</td></tr>
-          <tr><td data-i18n="ev_hot">热搜 / 领涨TOP</td><td><span class="val up">桂林旅游 4板</span>（旅游）<br>航海装备Ⅱ +2.76%（主力净流入 +4.64亿）<br>城商行Ⅱ +2.39% / 玻璃玻纤 +2.23%<br>种植业 −5.09%（换手 11.15%）/ 渔业 −4.69%</td><td data-i18n="ev_hot_i">热点由防御/局部题材主导：桂林旅游 4板（旅游）/ 航海装备Ⅱ +2.76%（主力净流入 +4.64亿）/ 城商行Ⅱ +2.39% / 玻璃玻纤 +2.23%；data_hot 板块榜以航海装备、银行、电力居前，与护盘资金方向一致</td></tr>
+          <tr><td data-i18n="ev_hot">热搜 / 领涨TOP</td><td><span class="val up"><a class="emlk" href="https://quote.eastmoney.com/sz000978.html" target="_blank" rel="noopener noreferrer">桂林旅游</a> 4板</span>（旅游）<br>航海装备Ⅱ +2.76%（主力净流入 +4.64亿）<br>城商行Ⅱ +2.39% / 玻璃玻纤 +2.23%<br>种植业 −5.09%（换手 11.15%）/ 渔业 −4.69%</td><td data-i18n="ev_hot_i">热点由防御/局部题材主导：桂林旅游 4板（旅游）/ 航海装备Ⅱ +2.76%（主力净流入 +4.64亿）/ 城商行Ⅱ +2.39% / 玻璃玻纤 +2.23%；data_hot 板块榜以航海装备、银行、电力居前，与护盘资金方向一致</td></tr>
           <tr><td data-i18n="ev_margintotal">市场两融余额</td><td><span class="val">数据源未返回聚合值</span></td><td data-i18n="ev_margintotal_i">缺口：聚合两融余额（data_market_overview type=margin）与融资单日变动接口当日均返回空，已如实标注、未编造；涨跌分布 / 指数 / 成交额 / 板块 / 连板梯队均为 2026-09-10 真实收盘，主力5日净流入为 09-09 口径（当日暂缺）</td></tr>
 
           <tr><td class="cat" colspan="3" data-i18n="ev_macro">五、核心宏观指标</td></tr>
