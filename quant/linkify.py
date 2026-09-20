@@ -59,6 +59,15 @@ BAD_WIN = 16
 MAXLEN = 7          # 名称最长 7 字
 MINLEN = 3          # 名称最短 3 字
 
+# 歧义词：既是股票简称、又常作行业/类别名词。误链概率远高于正链价值，一律不链。
+#   农产品(000061) → 常出现在「种植业、农产品」这类行业枚举里
+#   机器人(300024) → 常出现在「机器人板块」这类概念表述里
+AMBIG = {"农产品", "机器人"}
+
+# 方括号包裹 = 新闻/资讯来源标记（如「[同花顺] [新华网]」），指的是媒体而非个股
+BRACKET_L = "[【"
+BRACKET_R = "]】"
+
 _CJK = re.compile(r"[\u3400-\u9fff\uff00-\uffef]")
 
 
@@ -66,8 +75,13 @@ def _is_cjk(ch):
     return bool(_CJK.match(ch)) if ch else False
 
 
-def _find_names(text, n2c, minlen=MINLEN, maxlen=MAXLEN):
-    """贪婪最长匹配，返回 [(start, end, code)]。"""
+def _find_names(text, n2c, minlen=MINLEN, maxlen=MAXLEN, tight=False):
+    """贪婪最长匹配，返回 [(start, end, code)]。
+
+    tight=True 用于「正文/卡片」等非结构化文本：额外要求名称**后一个字符也不是汉字**，
+    否则「中际旭创板块」「农产品价格」「中国平安保险」这类长词里的一截会被误链。
+    结构化单元格（<td>）仍用宽松模式，因为名称通常独占一格。
+    """
     n = len(text)
     out = []
     i = 0
@@ -77,8 +91,19 @@ def _find_names(text, n2c, minlen=MINLEN, maxlen=MAXLEN):
             code = n2c.get(text[i:i + Ln])
             if not code:
                 continue
+            if text[i:i + Ln] in AMBIG:
+                break
             # 前一个字符是汉字 → 说明是某个长词的一截，同起点更短的名字同样不可信
             if i > 0 and _is_cjk(text[i - 1]):
+                break
+            nxt = text[i + Ln] if i + Ln < n else ""
+            if tight:
+                # 严格模式（正文/卡片）额外要求后一个字符也不是汉字，
+                # 否则「中际旭创板块」「中国平安保险」这类长词里的一截会被误链。
+                if nxt and _is_cjk(nxt):
+                    break
+            # 方括号包裹 = 新闻来源标记（「[同花顺]」「[新华网]」），指媒体不是个股
+            if i > 0 and text[i - 1] in BRACKET_L and nxt in BRACKET_R:
                 break
             if BAD_RE.search(text[i + Ln:i + Ln + BAD_WIN]):
                 break
@@ -89,9 +114,9 @@ def _find_names(text, n2c, minlen=MINLEN, maxlen=MAXLEN):
     return out
 
 
-def _link_text(text, n2c):
+def _link_text(text, n2c, tight=False):
     """对一段纯文本加链接，返回 (新文本, 命中数)。"""
-    hits = _find_names(text, n2c)
+    hits = _find_names(text, n2c, tight=tight)
     if not hits:
         return text, 0
     buf = []
@@ -134,6 +159,46 @@ def _process_container(inner, n2c):
             hits += nh
         out.append(seg)
     return "".join(out), hits
+
+
+# ---------- 第三阶段：全文本节点（卡片标题 / 加粗 / 行内 span / 正文短句） ----------
+# 只看结构化的 <td>/<span class> 会漏掉大量名称：`<div class='h'>… 深南电路 002916</div>`、
+# `<b>机构净买 TOP3</b>：中晶科技(2.45亿)`、`<span class='namechip'>华瓷股份</span>`、
+# 以及群体心理正文里的「（中际旭创 +76.9亿居首）」等。
+# 做法：先遮罩 script/style 与既有 <a>（含已生成的外链 → 天然幂等），
+# 再对剩下的**文本节点**做严格匹配（前后都得是非汉字边界）。
+SKIP_RE = re.compile(
+    r"(<script\b[^>]*>.*?</script>|<style\b[^>]*>.*?</style>|<a\b[^>]*>.*?</a>)",
+    re.S | re.I)
+TXT_RE = re.compile(r"(?<=>)([^<]+)")
+NODE_MAX = 800      # 单个文本节点超过此长度视为正文段落，跳过（防误链、控体积）
+
+
+def _walk_text(s, n2c, node_max=NODE_MAX):
+    """对全部文本节点做严格匹配加链，返回 (新 HTML, 命中数)。"""
+    store = []
+
+    def _mask(m):
+        store.append(m.group(0))
+        return "\x00%d\x00" % (len(store) - 1)
+
+    s2 = SKIP_RE.sub(_mask, s)
+    hits = [0]
+
+    def _rep(m):
+        t = m.group(1)
+        if len(t) > node_max:
+            return m.group(0)
+        nt, nh = _link_text(t, n2c, tight=True)
+        if nh:
+            hits[0] += nh
+            return nt
+        return m.group(0)
+
+    s2 = TXT_RE.sub(_rep, s2)
+    if store:
+        s2 = re.sub(r"\x00(\d+)\x00", lambda m: store[int(m.group(1))], s2)
+    return s2, hits[0]
 
 
 def scan_html(s, n2c, c2n=None):
@@ -179,6 +244,9 @@ def scan_html(s, n2c, c2n=None):
 
     s = CELL_RE.sub(lambda m: run(CELL_RE, m), s)
     s = SPAN_RE.sub(lambda m: run(SPAN_RE, m), s)
+    # 第三阶段：全文本节点（严格边界）→ 覆盖卡片标题 / 加粗 / 行内 span / 正文短句
+    s, nh = _walk_text(s, n2c)
+    total += nh
     return s, total
 
 

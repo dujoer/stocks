@@ -256,7 +256,7 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <b>本批增强：</b>新增「52 周分位 / 量比 / 换手 / 5日主力 / 归一化强度 / 60日涨幅 / 获利盘 / 集中度」诊断列并自动标红警示（<b>记录项，未参与筛选</b>）。</div>
 
 <h2>方法论（三层漏斗）</h2>
-<div class="card"><div class='box'><b>初筛 · 主力流入池</b><br>westock tool_filter：preset=main_inflow，min_inflow=0.3 亿，market=hs。全市场约 1488 只满足，取前 200 进入技术验证。</div><div class='box'><b>技术 · 水上金叉</b><br>data_technical 取 MACD：要求 DIF &gt; 0 且 DEA &gt; 0 且 MACD 红柱 &gt; 0。三者同时在零轴上方 = 多头趋势已确立的真金叉，区别于零轴下方的「水下金叉」（仅是下跌中继反弹）。</div><div class='box'><b>资金 · 20 日净流入为正</b><br>data_fund_flow 取 MainNetFlow20D：要求 20 日主力净流入 &gt; 0。剔除「当日拉升热、近 20 日却在撤」的伪强势（如亨通光电 20 日净流出 −41 亿、风语筑 −1.6 亿，均被剔除）。</div>
+<div class="card"><div class='box'><b>初筛 · 主力流入池</b><br>westock tool_filter：preset=main_inflow，min_inflow=0.3 亿，market=hs。全市场约 1488 只满足，取前 200 进入技术验证。</div><div class='box'><b>技术 · 水上金叉</b><br>data_technical 取 MACD：要求 DIF &gt; 0 且 DEA &gt; 0 且 MACD 红柱 &gt; 0。三者同时在零轴上方 = 多头趋势已确立的真金叉，区别于零轴下方的「水下金叉」（仅是下跌中继反弹）。</div><div class='box'><b>资金 · 20 日净流入为正</b><br>data_fund_flow 取 MainNetFlow20D：要求 20 日主力净流入 &gt; 0。剔除「当日拉升热、近 20 日却在撤」的伪强势（如亨通光电 20 日净流出 −41 亿、<a class="emlk" href="https://quote.eastmoney.com/sh603466.html" target="_blank" rel="noopener noreferrer">风语筑</a> −1.6 亿，均被剔除）。</div>
 <div class="note"><a href="method.html" style="color:var(--accent);text-decoration:none;font-weight:600">→ 完整方法论（概念详解 / 增强列读法 / 常见误区 / 介入纪律）</a></div>
 </div>
 
