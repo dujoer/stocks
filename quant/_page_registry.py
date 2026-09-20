@@ -100,10 +100,14 @@ FAMILIES = [
          date_re=r'(\d{4}-\d{2}-\d{2})',
          need='四路候选 + 行情补齐 + chip/fundflow（须等 lhb/block/exec 跑完）'),
 
-    dict(key='picks_entry', label='信号池入口/回测',
-         patterns=['picks/index.html', 'picks/backtest.html'],
-         entry='picks/index.html', script='build_picks.py', freq='daily',
-         dated=False, start=None, date_re=None, need='同 picks'),
+    dict(key='picks_entry', label='信号池入口/回测/实验室',
+         patterns=['picks/index.html', 'picks/backtest.html', 'picks/lab.html',
+                   'picks/stable_*.html'],
+         entry='picks/index.html', script='build_picks.py;_pick_lab.py;scan_stable.py',
+         freq='daily',
+         dated=False, start=None, date_re=None,
+         need='同 picks；lab.html = 因子样本外功效实验室（先验固定集 vs 自动筛，_pick_lab.py）；'
+              'stable_YYYY-MM-DD.html = 全市场稳健分选股快照（scan_stable.py，由 picks 入口页静态入链）'),
 
     dict(key='highwin', label='高胜率候选池（每日多因子扫描）',
          patterns=['picks/highwin_*.html'],
@@ -131,18 +135,22 @@ FAMILIES = [
          script=None, freq='on_demand', dated=False, start=None,
          date_re=None, need=None),
 
-    dict(key='reversal', label='底部反转观察池（每日扫描）',
+    dict(key='reversal', label='底部反转观察池（每日扫描 · v5 全市场域）',
          patterns=['reversal/watchlist_*.html'],
-         entry='reversal/index.html', script='gen_watchlist.py', freq='daily',
+         entry='reversal/index.html', script='rev_pool.py', freq='daily',
          dated=True, start='20260911', date_re=r'(\d{8})',
-         need='六步法：tool_filter 三预设交叉 → 流通<100亿 → 低位 → 扣非PE → 20日主力净流入 → 技术金叉；agent 实拉落盘 watchlist_scan_{DATE}.json 后跑 gen_watchlist.py'),
+         need='v5：全市场深跌域（A 股正股剔 ST/退，20 日均额≥3000万，距52周高回撤≥18% 且未破 MA60×0.75）'
+              '× 先验固定因子集（9 因子等权横截面分位）→ 域内前 10% 为 A 档；'
+              '流程：rev_pool.py run {DATE} → fetch_rev_flow.py --date {DATE} --src sina → '
+              'fetch_rev_enrich.py --date {DATE} --render'),
 
     dict(key='reversal_entry', label='底部反转板块入口',
          patterns=['reversal/index.html', 'reversal/backtest.html', 'reversal/lab.html'],
          entry='reversal/index.html',
          script='gen_watchlist.py', freq='daily', dated=False, start=None,
-         date_re=None, need='同 reversal（滚动更新最新观察池 + 归档）；backtest.html 为退出规则口径回测（参考）；'
-                            'lab.html 为特征功效实验室（样本外实证，选股能力以此为准，由 _rev_lab.py 生成）'),
+         date_re=None, need='入口页由 gen_watchlist.py 生成（只出入口页，检测到 rev_pool scan 时不覆盖明细页，'
+                            '避免两套渲染互相打架）；backtest.html 为旧种子宇宙的退出规则对照（仅参考）；'
+                            'lab.html 为特征功效实验室（14 节样本外实证，选股能力以此为准，由 _rev_lab.py 生成）'),
 
     dict(key='reversal_method', label='底部反转方法论 Playbook',
          patterns=['reversal/method.html'], entry='reversal/index.html',

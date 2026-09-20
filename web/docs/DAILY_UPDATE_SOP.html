@@ -396,53 +396,65 @@ python quant/scan_stable.py --date {DATE}     # 全市场稳健分选股 → web
 <p class="note">⚠️ 三源并集后候选约 1600 只（原 848 只），<b>务必走离线腾讯通道</b>（<code>fetch_tplus_offline.py</code>），MCP <code>data_kline</code> 拉 1600×250 根会严重限频。日K缓存 <code>quant/_txk_cache.json</code> 是关键，缺失时会显著变慢。漏跑会导致做T池停更在上一交易日。</p>
 </div>
 
-<h3>⑦ 底部反转选股（每日重扫，必做）</h3>
+<h3>⑦ 底部反转选股（每日重扫，必做 · v5 全市场域）</h3>
 <div class="card">
-<p><b>目标</b>：每个交易日收盘后重扫种子宇宙，按<b>横截面分位组合</b>定档刷新观察池，让 <code>web/reversal/</code> 常驻版块始终保持最新。方法论常驻页 <code>web/reversal/method.html</code>、实证页 <code>web/reversal/lab.html</code> 不随日刷新。</p>
+<p><b>目标</b>：每个交易日收盘后重扫<b>全市场深跌域</b>，按<b>先验固定因子集的横截面分位组合</b>定档刷新观察池，让 <code>web/reversal/</code> 常驻版块始终保持最新。方法论常驻页 <code>web/reversal/method.html</code>、实证页 <code>web/reversal/lab.html</code> 不随日刷新。</p>
+<p class="note">🔁 <b>2026-09-21 起 v5 改动（两处结构性）</b>：① <b>域扩张</b> —— 不再用 westock 条件选股
+<code>tool_filter intersect([NPParentCompanyYOY_Q&gt;50, PE_TTM&gt;0, PE_TTM&lt;50, TotalMV&lt;100亿])</code> 的 220 只种子，
+改为<b>全市场深跌域</b>（A 股正股剔 ST/退 + 20 日均额 ≥3000 万 + 距 52 周高回撤 ≥18% + 未跌破 MA60×0.75），
+本期入域 <b>4691</b> 只 / 过门槛 <b>4190</b> 只，横截面分位噪声显著下降；市值/估值由硬门槛改为<b>因子</b>（<code>mv_log</code>）。
+② <b>排序</b> —— 改用<b>先验固定因子集</b>（9 因子等权、方向由经济逻辑给定、不筛因子、不调权重），
+严格样本外 top20% 相对 lift <b>+14.0pp</b>，而「自动筛因子」同口径仅 <b>+0.0pp</b>。
+档位改为<b>域内分位</b>：A = 前 10%、B = 10~25%（<b>不再用绝对名次</b>，域扩张后会失真）。</p>
 <p><b>1. 选股（本地日K，不经 westock）</b>：</p>
-<pre>python quant/rev_pool.py run        # 腾讯前复权日K（220 只种子，离线缓存 _txk_cache.json）
-                                    # 产出 quant/watchlist_scan_{DATE}.json + web/reversal/watchlist_{DATE}.html
-                                    # 档位 = 硬门槛内 9 特征横截面分位排序（A=前20% / B=20~50% / C=其余）</pre>
+<pre>python quant/rev_pool.py run {DATE}   # 全市场域；腾讯前复权日K，离线缓存 _txk_cache.json
+                                       # 产出 quant/watchlist_scan_{DS}.json + web/reversal/watchlist_{DS}.html
+                                       # 全市场腾讯快照落 quant/_rev_quote_full_{DS}.json（当日复用）
+                                       # 档位 = 硬门槛内 9 先验因子横截面分位（A=前10% / B=10~25% / C=其余）</pre>
+<p class="note">⚠️ 全市场域依赖 <code>quant/_txk_cache.json</code> 覆盖全（约 5000 只）。若缓存偏稀，先跑
+<code>python quant/fetch_full_kline.py</code> 补齐（以 <code>quant/fin/snapshot.json</code> 为宇宙，实测 4997/5026、约 1 分钟）。</p>
 <p><b>2. 补全「名称 / 流通市值 / PE / 20 日主力净流入」（必做，否则页面上这几列是空的）</b>：</p>
-<pre>python quant/fetch_rev_flow.py --date {DATE}
+<pre>python quant/fetch_rev_flow.py --date {DATE} --src sina
 # 拉 1/5/10/20 日主力净流入 → quant/_rev_flow_raw_{DS}.json
-# ⚠️ 优先走 MCP data_fund_flow（与精选池同口径）；被限频时自动转「新浪离线」
-#    （vip.stock.finance.sina.com.cn MoneyFlow.ssl_qsfx_zjlrqs，220 只约 3 秒，不受 MCP 限频影响）
+# ✅ v5 推荐 --src sina 全离线（新浪 MoneyFlow.ssl_qsfx_zjlrqs，1 只 1 请求，不受 MCP 限频影响）
+#    不写 --src 时 auto：先 MCP data_fund_flow，被限频再转新浪。全市场域候选量级上升，默认走离线更省额度。
 
 python quant/fetch_rev_enrich.py --date {DATE} --render
-# 腾讯离线快照补 name / 流通市值 / PE / PB（80 只/请求，220 只 1 秒）
+# 腾讯离线快照补 name / 流通市值 / PE / PB（80 只/请求）
 # 合并资金流 → quant/rev_enrich_{DS}.json，并顺带重渲染页面（= rev_pool.py render）</pre>
-<p class="note">⚠️ <b>为什么必须有这一步</b>：种子文件 <code>_rev_seed_raw_*.json</code> 只带 code+name，
-行情文件 <code>_rev_quote_*.json</code> 覆盖极稀（实测 30/220）且<b>没有资金流</b>，
-所以不做补全时，名称会回退成 <code>sz000049</code> 这种代码、流通市值与 20 日主力整列为空。
-名称/流通走腾讯离线（不占 MCP 额度），资金流走 MCP + 新浪兜底。
-页面「资金口径」一行会标出当日实际来源（<code>westock / 新浪财经离线 / mixed</code>）——
-两家的「主力」阈值定义不同，跨日对比前请先看这一行。</p>
+<p class="note">⚠️ <b>为什么必须有这一步</b>：扫描产出只带 code / 名称 / 组合分 / 买卖点，
+不带流通市值与资金流，所以不做补全时，名称可能回退成代码、流通市值与 20 日主力整列为空。
+名称/流通走腾讯离线（不占 MCP 额度），资金流走新浪离线。页面「资金口径」一行会标出当日实际来源
+（<code>sina / mcp / mixed</code>）——各家「主力」阈值定义不同，跨日对比前请先看这一行。
+<b>红线：主力净额只作弱辅助</b>，不要用它去否决或加码组合分排序。</p>
 
 <p class="note">📄 <b>补数后还要重跑「入口页」</b>：<code>web/reversal/index.html</code>（板块入口）由
 <code>quant/gen_watchlist.py</code> 生成，读的是<b>同一份</b> <code>quant/watchlist_scan_{DATE}.json</code>。
 只跑 <code>rev_pool render</code> 而不重跑 <code>gen_watchlist.py</code>，入口页会停在旧数据上 ——
-典型症状正是<b>名称列显示成代码、流通市值与 20 日主力整列是「—」</b>（旧扫描文件里没有这些字段）。
+典型症状正是<b>名称列显示成代码、流通市值与 20 日主力整列是「—」</b>。
 该页现含：名称（可点跳东财）· 流通亿 · 距52高 · YTD · <b>20日主力(亿)</b> · <b>5日主力(亿)</b> · 组合分 · 档 ·
 <b>现价 / 买区 / 止损 / 目标T1</b>，另加「本期新进 / 连续在榜」统计、「这张表怎么用（操作路径）」四步与仓位退出纪律。
 ⚠️ 字段名坑：扫描产出的是 <code>mf20</code>（单位<b>元</b>），入口页若读旧的 <code>main20</code> 会整列空 —— 改动前先对字段名。</p>
 
-<p class="note">✅ <b>种子已可完全脱离 MCP（2026-09-20 打通，推荐切换）</b>：原种子走
-<code>tool_filter intersect([NPParentCompanyYOY_Q&gt;50, PE_TTM&gt;0, PE_TTM&lt;50, TotalMV&lt;100亿])</code>，
-现已可用离线复现：</p>
-<pre>python quant/fetch_fin_snapshot.py --periods 6    # 东财全市场业绩报表 → quant/fin/snapshot.json（季度更新一次）
-python quant/fetch_fin_snapshot.py --screen-rev   # → quant/_rev_seed_offline_{报告期}.json（与 MCP 种子同格式）</pre>
-<p class="note">实证等效性：与 MCP 当期 220 只种子比对 → <b>遗漏 0 只</b>、仅多 1 只边界股（去 ST 后）。
-改为离线种子只需把 <code>rev_pool.load_universe()</code> 的种子文件名指过去；<b>切换前建议先跑一期对照</b>，
-确认池子构成无异常再固化为日更路径。</p>
+<p class="note">🗑️ <b>已废弃：条件选股种子（含离线复现路径）</b>。v5 不再使用
+<code>tool_filter</code> 的「净利同比&gt;50 &amp; 0&lt;PE&lt;50 &amp; 市值&lt;100亿」种子，
+因此 <code>fetch_fin_snapshot.py --screen-rev</code> / <code>_rev_seed_raw_*.json</code> /
+<code>_rev_quote_*.json</code> 这一整条链路<b>对反转池不再需要</b>（脚本仍在，供历史页与其它池复用）。
+v5 的宇宙是 <code>_txk_cache.json</code> 全量正股，不再有「种子」概念。</p>
 
 <p><b>3. 入口页</b>：</p>
 <pre>python quant/gen_watchlist.py {DATE}   # 只重建 web/reversal/index.html（入口滚动更新）
-                                       # 检测到 rev_pool v4 的 scan 时会自动跳过明细，避免覆盖</pre>
-<p class="note">⚠️ 两个脚本都写 <code>web/reversal/watchlist_{DATE}.html</code>，<code>gen_watchlist.py</code> 已加 <code>_doc</code> 含「v4」即跳过明细的守卫；<b>顺序必须 rev_pool 在前</b>，否则入口页取不到当期 scan。落盘 JSON 必须是<b>纯 JSON</b>（第一行起即为 <code>{</code>，任何 <code>#</code> 注释都会让 <code>json.load</code> 失败），说明文字放进 <code>"_doc"</code>。</p>
+                                       # 检测到 rev_pool 产出（version 以 rev_v 开头）时自动跳过明细，避免覆盖</pre>
+<p class="note">⚠️ 两个脚本都写 <code>web/reversal/watchlist_{DATE}.html</code>，<code>gen_watchlist.py</code> 的守卫是
+<b><code>version</code> 以 <code>rev_v</code> 开头 或 <code>_doc</code> 含 v4/v5</b> 即跳过明细
+（旧守卫只认「v4」，v5 上线时必须同步放宽，否则会把全市场明细页覆盖回旧模板）；
+<b>顺序必须 rev_pool 在前</b>，否则入口页取不到当期 scan。落盘 JSON 必须是<b>纯 JSON</b>
+（第一行起即为 <code>{</code>，任何 <code>#</code> 注释都会让 <code>json.load</code> 失败），说明文字放进 <code>"_doc"</code>。</p>
 <p><b>4. 模型维护（按需，不是每日）</b>：</p>
-<pre>python quant/_rev_lab.py            # 重建样本外面板并重估特征功效 → 刷新 web/reversal/lab.html + quant/_rev_model.json
-                                    # 首次或数据大幅更新时加 --panel /tmp/_p.json 强制重建面板（约 1~2 分钟）</pre>
+<pre>python quant/_rev_lab.py            # 复用已有面板重估 → 刷新 web/reversal/lab.html + quant/_rev_model.json（约 4.5 分钟）
+python quant/_rev_lab.py --rebuild  # 面板重建（全市场 × 步长 3，面板约 16 万行 / 170MB，更久）</pre>
+<p class="note">⚠️ <b>面板复用不会填 <code>LAST_UNIVERSE_N</code></b>，页面上的「全市场 N 只」会显示 0 ——
+<code>_universe_n(rows)</code> 已做兜底（现算日K缓存长度），若再遇到显示 0 请先查这个函数。</p>
 <p><b>5. 注入导航 + 主题 + 校验</b>（与其他版块统一门禁）：</p>
 <pre>python _apply_theme.py          # 统一导航/主题/排序注入（reversal 已登记，自动覆盖）
 python _link_check.py           # 0 断链门禁
@@ -545,7 +557,9 @@ python quant/_apply_theme.py     # 统一导航/主题/排序/搜索注入（改
 <tr><td>高管增减持 / 大宗 / 涨停池 / 龙虎榜</td><td>东财 <code>datacenter-web</code> + <code>push2ex</code></td><td>✅ 可用</td></tr>
 <tr><td><code>push2.eastmoney.com</code>（行情 clist）</td><td>——</td><td>❌ 本机被墙，勿再试（<b>只此一个主机</b>，勿扩大结论）</td></tr>
 </tbody></table>
-<b>反转池种子已可完全离线复现</b>：<code>python quant/fetch_fin_snapshot.py --periods 6</code> → <code>--screen-rev</code>，产出 <code>_rev_seed_offline_{报告期}.json</code>（同 MCP 种子格式）。实证：与 MCP <code>tool_filter</code> 220 只种子比对 <b>遗漏 0 只</b>、仅多 1 只边界股。</div>
+<b>反转池已完全离线（2026-09-21 起 v5）</b>：宇宙 = <code>quant/_txk_cache.json</code> 全量正股（配 <code>fetch_full_kline.py</code> 补齐），
+资金流 = 新浪 <code>MoneyFlow.ssl_qsfx_zjlrqs</code>（<code>--src sina</code>），<b>整条链路不再需要 MCP</b>，
+也不再需要条件选股种子（<code>fetch_fin_snapshot.py --screen-rev</code> 仅为历史页/其它池保留）。</div>
 
 <div class="danger"><b>⚠️ 跨平台执行（2026-09-15 起）</b>：本机已从 Windows 迁到 macOS（项目根 <code>/Users/&lt;user&gt;/Downloads/workbuddy/股票</code>）。历史脚本里有 73 个写死 <code>G:/ai/股票</code> 或 <code>C:/Users/nonoy/…</code>，现已统一治理：<b>项目根由 <code>__file__</code> 推导</b>（每日链路上的脚本全部可跨机运行）；需要外部落盘目录的旧 relay 脚本改用环境变量 <code>WB_TOOL_RESULTS</code> / <code>WB_SESSION_JSONL</code> / <code>WB_NODE</code>。<b>新增脚本一律不许再写绝对路径</b>。</div>
 

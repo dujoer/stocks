@@ -16,9 +16,10 @@ h2{font-size:18px;font-weight:600;margin:26px 0 12px;padding-bottom:8px;border-b
 .box.green{border-color:var(--dn);background:#f0faf3}
 table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0}
 th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{white-space:nowrap}
 th{color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa}
 .num{font-variant-numeric:tabular-nums}
-.up{color:var(--up)}.dn{color:var(--dn)}.am{color:var(--blue)}
+.up{color:var(--up)}.dn{color:var(--dn)}.am{color:var(--blue)}.dim{color:#b0b3b8}
 .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;margin:1px 2px}
 .tag.A{background:#e6f7ec;color:#1a7a45}
 .tag.B{background:#fff3e0;color:#e65100}
@@ -28,6 +29,8 @@ th{color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa}
 .kv{font-size:12.5px;color:var(--muted)}
 .bp{background:#f7f9fc;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:8px 0;font-size:13px}
 .bp b{color:var(--blue)}
+a.emlk{color:inherit;text-decoration:none;border-bottom:1px dashed rgba(128,128,128,.42)}
+a.emlk:hover{color:var(--blue);border-bottom-color:var(--blue)}
 .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
 
 .xh-badge{display:inline-block;font-size:10.5px;font-weight:700;color:#137333;background:#e6f4ea;
@@ -246,38 +249,47 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
 <div class="wrap">
 <h1>底部反转 · 特征功效实验室</h1>
-<div class="sub">目的：用<b>样本外实证</b>决定「哪些特征有效、方向如何」，替代「照回测胜率手调阈值」。
-面板：种子 220 只 × 2025-09-09~2026-09-18，步长 3 交易日，共 <b>12,463</b> 个「股票×交易日」样本；
-硬门槛内 6869 个。时间切分：前 60%（至 2026-06-16）训练，后 40% 测试。</div>
+<div class="sub">目的：用<b>样本外实证</b>决定「哪些特征有效、方向如何、该在多大的域上选」，替代「照回测胜率手调阈值」。
+面板：<b>全市场 5,007 只 A 股</b>（<code>_txk_cache.json</code> 全量正股，只剔 K 线不足者；
+未单独剔 ST/退市，占比 &lt;0.3%）× 2025-11~2026-09-18，
+步长 3 交易日，共 <b>161,762</b> 个「股票×交易日」样本（均已过硬门槛）。时间切分：前 60%（至 2026-05-11）训练，后 40% 测试。</div>
 
-<div class="box gold"><b>核心结论：</b>
-① <b>绝对胜率由行情主导，不由选股主导</b>——训练期（弱/震荡）全体绝对胜率 41.5%，测试期（上行）63.5%，
-相差 22.0pp；walk-forward 逐期基线在 20.0%~81.8% 之间摆动。
-② <b>旧 v3 模型部分特征方向是错的</b>：<code>reclaim</code>(收复MA20)、<code>short_align</code>(短周期多头排列)、
-<code>accum</code>(吸筹天数) 三项在<b>相对胜率</b>上是负向（测试期 −15pp / −12pp / 弱负向）——
-「越像已确认反转」的票越跑不赢篮子，这是「过度确认陷阱」的量化证据。
-③ <b>真正跨期稳定的只有 9 个特征</b>，方向全部为「距低点越近、量能越枯竭、波动越低、箱体越窄、均线越未修复 → 越好」，
-与旧模型几乎相反。
-④ <b>横截面分位排序 &gt; 绝对阈值</b>：walk-forward 用绝对阈值学切点时不稳定（+7.8pp 但 4/6 期，弱市期为负）；
-改用日内分位排序后，标准样本外（弱市学→强市用）top20% 相对胜率
-<b>67.5% vs 全体 52.2%
-（+15.3pp）</b>，绝对 <b>79.1% vs 63.6%</b>。
-⑤ <b>但因子是「顺风因子」</b>：用强势期学方向套弱势期，edge 仅
-+0.6pp —— 弱势阶段无选股 alpha，必须靠环境门控停手。</div>
+<div class="box gold"><b>核心结论（v5 · 全市场域）：</b>
+① <b>域扩张是最实在的改进</b>：旧机制只覆盖 westock 条件选股（净利同比&gt;50 &amp; 0&lt;PE&lt;50 &amp; 市值&lt;100亿）的
+<b>220 只</b>，每日硬门槛内仅约 150 只 → 横截面排序的域太窄。v5 改为<b>全市场深跌域</b>，每日域内
+<b>数百至上千只</b>，分位噪声显著下降；市值/估值从硬门槛改为<b>因子</b>。
+② <b>因子方向高度稳定</b>：11 个特征训练/测试同向，方向一致为
+「距低点越近、量能越枯竭、波动越低、箱体越窄、均线越未修复 → 越好」；旧 v3 的「收复 MA20 / 短均线多头排列 / 吸筹天数」
+是<b>负向</b>——「越像已确认反转」的票越跑不赢篮子（过度确认陷阱）。
+③ <b>十分位单调且幅度大</b>（测试段）：D1 绝对 32.3% / 相对 34.1%
+→ D10 绝对 54.5% / 相对 65.5%
+（D10−D1：绝对 +22.2pp、相对 +31.5pp）；
+MAE 随分位升高而收窄（D1 -19.1% → D10 -7.7%）。
+④ <b>「自动筛因子」依旧不成立</b>：严格样本外（前 60% 学 → 后 40% 测）top20% 相对 lift
+<b>+0.0pp</b>；而<b>先验固定集（不筛）同口径 +14.0pp</b>。
+差额 5.8pp 就是「自动挑因子」这个动作制造的噪声量。
+⑤ <b style="color:#b00020">最重要的一条（必须看清）</b>：优势<b>高度依赖期间</b>。同一套先验固定集、同一口径前 10%，
+<b>训练半 -3.0pp（绝对 -2.2pp）、
+测试半 +16.4pp（绝对 +9.5pp）</b>。
+逐月 edge 在 −7.7pp ~ +25.4pp 之间摆动，4 负 5 正。
+⑥ <b>并且没有可提前识别的失效信号</b>：广度、域内距低点中位数、域内创新低占比、量能枯竭中位数、波动中位数、距 MA60 中位数
+—— 六类日级状态量在训练半/测试半<b>全部反向</b>：分桶差异被「时间段」淹没。故本模型<b>不宣称</b>能靠环境门控提高 alpha。
+⑦ 既然 alpha 不稳定，胜率的可靠抓手落在<b>退出规则</b>（见第九节）：把持有期与止损/目标位按样本外对照固定下来，
+而不是继续加因子。</div>
 
 <h2>一、基线（同测试集口径）</h2>
 <div class="card"><table data-wb>
 <thead><tr><th>样本</th><th>n</th><th>绝对胜率</th><th>相对胜率</th><th>均值收益</th><th>相对均值</th><th>平均 MAE</th></tr></thead>
-<tbody><tr><td>全体·训练期（弱/震荡）</td><td class='num'>3866</td><td class='num'>41.5%</td><td class='num'>50.0%</td><td class='num'>-0.68%</td><td class='num'>+2.42%</td><td class='num dn'>-9.6%</td></tr><tr><td>全体·测试期（上行）</td><td class='num'>3003</td><td class='num'>63.5%</td><td class='num'>52.4%</td><td class='num'>+2.45%</td><td class='num'>+0.57%</td><td class='num dn'>-8.2%</td></tr>
-<tr><td>旧 v3 A 档·训练期</td><td class='num'>729</td><td class='num'>49.1%</td><td class='num'>53.6%</td><td class='num'>+1.72%</td><td class='num'>+3.20%</td><td class='num dn'>-7.6%</td></tr><tr><td>旧 v3 A 档·测试期</td><td class='num'>899</td><td class='num'>67.6%</td><td class='num'>55.6%</td><td class='num'>+2.99%</td><td class='num'>+1.03%</td><td class='num dn'>-6.6%</td></tr></tbody></table>
-<div class="note">相对胜率 = 前向 20 日收益 &gt; 同期宇宙等权中位数的占比（≈ alpha 口径）；绝对胜率 = 前向 20 日收益 &gt; 0（≈ alpha + beta）。
-MAE = 平均最大不利偏移。旧 v3 A 档相对胜率 53.6%/55.6%，仅比基线 50.0%/52.4% 高 3pp 量级，
-说明旧模型的「优势」主要来自量能枯竭一项，被均线排列/吸筹的负向贡献抵消。</div></div>
+<tbody><tr><td>全体·训练期（至 2026-05-11）</td><td class='num'>71067</td><td class='num'>50.1%</td><td class='num'>48.4%</td><td class='num'>+2.40%</td><td class='num'>+2.48%</td><td class='num dn'>-7.9%</td></tr><tr><td>全体·测试期（2026-05-11 起）</td><td class='num'>90695</td><td class='num'>42.0%</td><td class='num'>48.7%</td><td class='num'>-2.23%</td><td class='num'>+0.96%</td><td class='num dn'>-12.0%</td></tr>
+<tr><td>旧 v3 A 档·训练期</td><td class='num'>17696</td><td class='num'>52.4%</td><td class='num'>50.0%</td><td class='num'>+3.10%</td><td class='num'>+2.87%</td><td class='num dn'>-7.3%</td></tr><tr><td>旧 v3 A 档·测试期</td><td class='num'>17543</td><td class='num'>47.3%</td><td class='num'>48.1%</td><td class='num'>-1.01%</td><td class='num'>+0.53%</td><td class='num dn'>-9.5%</td></tr></tbody></table>
+<div class="note">相对胜率 = 前向 20 日收益 &gt; 同期全市场等权中位数的占比（≈ alpha 口径）；绝对胜率 = 前向 20 日收益 &gt; 0（≈ alpha + beta）。
+MAE = 平均最大不利偏移。注意全市场域下<b>训练期绝对胜率（50.1%）反而高于测试期（42.0%）</b>——
+「训练期弱、测试期强」的旧说法只在 220 只种子池成立，全市场域下不成立，这说明<b>绝对胜率由行情决定</b>。</div></div>
 
 <h2>二、单特征功效（相对胜率口径，训练集分桶 → 套测试集）</h2>
 <div class="card"><table data-wb>
 <thead><tr><th>特征</th><th>类型</th><th>训练各桶（低→高）</th><th>测试各桶（低→高）</th><th>测试极差</th><th>跨期一致性</th></tr></thead>
-<tbody><tr><td>dist52</td><td>连续5桶</td><td class='num'>50 50 48 49 52</td><td class='num'>57 53 48 36 31</td><td class='num'>+26.6pp</td><td>—</td></tr><tr><td>dist_lo20</td><td>连续5桶</td><td class='num'>52 50 50 54 45</td><td class='num'>66 60 63 53 46</td><td class='num'>+20.3pp</td><td>—</td></tr><tr><td>dist_lo60</td><td>连续5桶</td><td class='num'>51 50 55 52 43</td><td class='num'>68 65 55 51 40</td><td class='num'>+28.1pp</td><td>★稳定</td></tr><tr><td>gap_lo52</td><td>连续5桶</td><td class='num'>50 53 54 47 45</td><td class='num'>74 65 54 46 31</td><td class='num'>+43.5pp</td><td>—</td></tr><tr><td>decline_dur</td><td>连续5桶</td><td class='num'>49 51 49 45 56</td><td class='num'>43 44 49 58 55</td><td class='num'>+15.8pp</td><td>—</td></tr><tr><td>vol_dry</td><td>连续5桶</td><td class='num'>50 52 54 48 46</td><td class='num'>59 54 59 52 38</td><td class='num'>+21.0pp</td><td>—</td></tr><tr><td>vol_expand</td><td>连续5桶</td><td class='num'>47 51 52 51 49</td><td class='num'>46 54 58 55 45</td><td class='num'>+13.0pp</td><td>—</td></tr><tr><td>vol_day</td><td>连续5桶</td><td class='num'>49 54 54 47 46</td><td class='num'>56 58 54 55 42</td><td class='num'>+16.1pp</td><td>⚠️反向</td></tr><tr><td>accum</td><td>连续5桶</td><td class='num'>0 52 54 49 44</td><td class='num'>0 60 61 54 34</td><td class='num'>+26.7pp</td><td>★稳定</td></tr><tr><td>atr_pct</td><td>连续5桶</td><td class='num'>52 53 49 48 48</td><td class='num'>67 61 62 50 43</td><td class='num'>+24.4pp</td><td>★稳定</td></tr><tr><td>atr_comp</td><td>连续5桶</td><td class='num'>47 53 52 52 45</td><td class='num'>54 52 54 54 45</td><td class='num'>+9.4pp</td><td>—</td></tr><tr><td>clv5</td><td>连续5桶</td><td class='num'>53 51 47 49 49</td><td class='num'>48 52 53 57 51</td><td class='num'>+9.1pp</td><td>—</td></tr><tr><td>up10</td><td>连续5桶</td><td class='num'>51 51 50 0 49</td><td class='num'>52 62 58 0 48</td><td class='num'>+13.5pp</td><td>★稳定</td></tr><tr><td>slope</td><td>连续5桶</td><td class='num'>51 49 53 52 45</td><td class='num'>59 62 56 44 45</td><td class='num'>+17.8pp</td><td>⚠️反向</td></tr><tr><td>ma20_dev</td><td>连续5桶</td><td class='num'>52 50 48 52 48</td><td class='num'>53 67 60 57 44</td><td class='num'>+23.4pp</td><td>★稳定</td></tr><tr><td>ma60_dev</td><td>连续5桶</td><td class='num'>53 47 55 52 43</td><td class='num'>65 52 42 49 38</td><td class='num'>+27.0pp</td><td>★稳定</td></tr><tr><td>rs20</td><td>连续5桶</td><td class='num'>47 51 54 51 47</td><td class='num'>55 61 64 60 39</td><td class='num'>+24.6pp</td><td>—</td></tr><tr><td>rs5</td><td>连续5桶</td><td class='num'>47 50 53 50 50</td><td class='num'>49 54 54 55 52</td><td class='num'>+6.0pp</td><td>—</td></tr><tr><td>rsi14</td><td>连续5桶</td><td class='num'>51 50 50 53 47</td><td class='num'>62 64 59 52 44</td><td class='num'>+20.6pp</td><td>—</td></tr><tr><td>hist_up</td><td>连续5桶</td><td class='num'>49 0 46 0 55</td><td class='num'>61 0 57 0 42</td><td class='num'>+18.7pp</td><td>⚠️反向</td></tr><tr><td>consec_down</td><td>连续5桶</td><td class='num'>0 0 50 52 48</td><td class='num'>0 0 53 51 53</td><td class='num'>+2.0pp</td><td>★稳定</td></tr><tr><td>range20</td><td>连续5桶</td><td class='num'>56 51 44 50 49</td><td class='num'>56 53 61 48 46</td><td class='num'>+14.5pp</td><td>★稳定</td></tr><tr><td>div</td><td>是/否</td><td class='num'>52 / 50</td><td class='num'>55 / 49</td><td class='num'>+6.3pp</td><td>★稳定</td></tr><tr><td>golden</td><td>是/否</td><td class='num'>50 / 50</td><td class='num'>51 / 54</td><td class='num'>-3.1pp</td><td>★稳定</td></tr><tr><td>reclaim</td><td>是/否</td><td class='num'>49 / 50</td><td class='num'>44 / 59</td><td class='num'>-15.0pp</td><td>★稳定</td></tr><tr><td>short_align</td><td>是/否</td><td class='num'>47 / 51</td><td class='num'>44 / 56</td><td class='num'>-12.0pp</td><td>★稳定</td></tr><tr><td>idx_above</td><td>是/否</td><td class='num'>49 / 49</td><td class='num'>54 / 51</td><td class='num'>+3.3pp</td><td>⚠️反向</td></tr></tbody></table>
+<tbody><tr><td>dist52</td><td>连续5桶</td><td class='num'>49 48 48 49 49</td><td class='num'>51 47 46 45 45</td><td class='num'>+6.3pp</td><td>—</td></tr><tr><td>dist_lo20</td><td>连续5桶</td><td class='num'>48 49 49 49 48</td><td class='num'>58 52 52 48 42</td><td class='num'>+15.9pp</td><td>★稳定</td></tr><tr><td>dist_lo60</td><td>连续5桶</td><td class='num'>49 49 49 49 47</td><td class='num'>59 55 50 45 40</td><td class='num'>+18.4pp</td><td>★稳定</td></tr><tr><td>gap_lo52</td><td>连续5桶</td><td class='num'>48 48 48 49 50</td><td class='num'>61 56 48 44 37</td><td class='num'>+24.3pp</td><td>⚠️反向</td></tr><tr><td>decline_dur</td><td>连续5桶</td><td class='num'>47 52 51 43 49</td><td class='num'>41 43 48 49 51</td><td class='num'>+10.1pp</td><td>—</td></tr><tr><td>vol_dry</td><td>连续5桶</td><td class='num'>49 51 52 48 42</td><td class='num'>50 49 50 50 45</td><td class='num'>+5.7pp</td><td>—</td></tr><tr><td>vol_expand</td><td>连续5桶</td><td class='num'>46 49 50 50 47</td><td class='num'>50 50 51 49 42</td><td class='num'>+8.9pp</td><td>⚠️反向</td></tr><tr><td>vol_day</td><td>连续5桶</td><td class='num'>49 51 50 49 45</td><td class='num'>52 51 51 50 43</td><td class='num'>+8.4pp</td><td>★稳定</td></tr><tr><td>accum</td><td>连续5桶</td><td class='num'>0 51 51 48 43</td><td class='num'>0 53 52 49 43</td><td class='num'>+10.2pp</td><td>★稳定</td></tr><tr><td>atr_pct</td><td>连续5桶</td><td class='num'>46 46 49 52 50</td><td class='num'>58 53 53 50 43</td><td class='num'>+15.0pp</td><td>—</td></tr><tr><td>atr_comp</td><td>连续5桶</td><td class='num'>46 51 52 50 44</td><td class='num'>48 50 52 50 44</td><td class='num'>+7.6pp</td><td>—</td></tr><tr><td>clv5</td><td>连续5桶</td><td class='num'>49 50 50 48 46</td><td class='num'>49 49 49 49 48</td><td class='num'>+1.5pp</td><td>—</td></tr><tr><td>up10</td><td>连续5桶</td><td class='num'>49 49 49 48 47</td><td class='num'>53 53 51 48 43</td><td class='num'>+10.2pp</td><td>★稳定</td></tr><tr><td>slope</td><td>连续5桶</td><td class='num'>51 48 48 48 46</td><td class='num'>53 55 50 43 42</td><td class='num'>+13.0pp</td><td>★稳定</td></tr><tr><td>ma20_dev</td><td>连续5桶</td><td class='num'>52 47 47 48 48</td><td class='num'>51 56 55 48 41</td><td class='num'>+14.4pp</td><td>—</td></tr><tr><td>ma60_dev</td><td>连续5桶</td><td class='num'>53 49 49 49 43</td><td class='num'>56 48 45 43 39</td><td class='num'>+17.1pp</td><td>★稳定</td></tr><tr><td>rs20</td><td>连续5桶</td><td class='num'>47 48 49 50 49</td><td class='num'>49 52 54 54 42</td><td class='num'>+12.5pp</td><td>★稳定</td></tr><tr><td>rs5</td><td>连续5桶</td><td class='num'>43 48 50 50 51</td><td class='num'>47 45 48 53 49</td><td class='num'>+8.0pp</td><td>⚠️反向</td></tr><tr><td>rsi14</td><td>连续5桶</td><td class='num'>48 50 48 48 48</td><td class='num'>55 54 51 45 41</td><td class='num'>+14.0pp</td><td>—</td></tr><tr><td>hist_up</td><td>连续5桶</td><td class='num'>45 0 43 0 55</td><td class='num'>56 0 49 0 43</td><td class='num'>+12.8pp</td><td>⚠️反向</td></tr><tr><td>consec_down</td><td>连续5桶</td><td class='num'>0 0 48 51 48</td><td class='num'>0 0 47 49 51</td><td class='num'>+3.6pp</td><td>★稳定</td></tr><tr><td>range20</td><td>连续5桶</td><td class='num'>48 46 48 50 50</td><td class='num'>51 52 52 49 44</td><td class='num'>+8.4pp</td><td>—</td></tr><tr><td>mv_log</td><td>连续5桶</td><td class='num'>52 50 51 50 51</td><td class='num'>56 49 46 47 48</td><td class='num'>+9.9pp</td><td>—</td></tr><tr><td>div</td><td>是/否</td><td class='num'>49 / 48</td><td class='num'>51 / 46</td><td class='num'>+4.9pp</td><td>★稳定</td></tr><tr><td>golden</td><td>是/否</td><td class='num'>49 / 48</td><td class='num'>48 / 49</td><td class='num'>-0.9pp</td><td>⚠️反向</td></tr><tr><td>reclaim</td><td>是/否</td><td class='num'>48 / 49</td><td class='num'>42 / 52</td><td class='num'>-10.6pp</td><td>★稳定</td></tr><tr><td>short_align</td><td>是/否</td><td class='num'>49 / 48</td><td class='num'>42 / 51</td><td class='num'>-9.0pp</td><td>⚠️反向</td></tr><tr><td>idx_above</td><td>是/否</td><td class='num'>46 / 52</td><td class='num'>50 / 48</td><td class='num'>+1.6pp</td><td>⚠️反向</td></tr></tbody></table>
 <div class="note">★稳定 = 训练与测试方向一致（只这些可入选）；⚠️反向 = 两期方向相反，说明该特征的「预测力」只是市场状态的代理。
 二值特征列为「取值=1 / 取值=0」的相对胜率。</div></div>
 
@@ -285,66 +297,121 @@ MAE = 平均最大不利偏移。旧 v3 A 档相对胜率 53.6%/55.6%，仅比�
 <div class="card"><table data-wb>
 <thead><tr><th>分位</th><th>训练 n</th><th>训练绝对</th><th>训练相对</th><th>训练MAE</th>
 <th>测试 n</th><th>测试绝对</th><th>测试相对</th><th>测试均值</th><th>测试MAE</th></tr></thead>
-<tbody><tr><td>D1</td><td class='num'>262</td><td class='num'>43.5%</td><td class='num'>42.4%</td><td class='num'>-10.5%</td><td class='num'>395</td><td class='num'>36.2%</td><td class='num'>32.2%</td><td class='num'>-5.05%</td><td class='num'>-14.8%</td></tr><tr><td>D2</td><td class='num'>274</td><td class='num'>53.3%</td><td class='num'>50.7%</td><td class='num'>-8.7%</td><td class='num'>402</td><td class='num'>42.3%</td><td class='num'>36.8%</td><td class='num'>-2.75%</td><td class='num'>-12.5%</td></tr><tr><td>D3</td><td class='num'>274</td><td class='num'>49.3%</td><td class='num'>54.0%</td><td class='num'>-8.2%</td><td class='num'>404</td><td class='num'>46.5%</td><td class='num'>41.8%</td><td class='num'>-1.72%</td><td class='num'>-11.5%</td></tr><tr><td>D4</td><td class='num'>276</td><td class='num'>50.7%</td><td class='num'>52.5%</td><td class='num'>-8.2%</td><td class='num'>404</td><td class='num'>50.2%</td><td class='num'>48.8%</td><td class='num'>-0.17%</td><td class='num'>-9.7%</td></tr><tr><td>D5</td><td class='num'>282</td><td class='num'>51.1%</td><td class='num'>51.4%</td><td class='num'>-7.9%</td><td class='num'>410</td><td class='num'>54.4%</td><td class='num'>50.0%</td><td class='num'>+0.20%</td><td class='num'>-9.4%</td></tr><tr><td>D6</td><td class='num'>269</td><td class='num'>50.9%</td><td class='num'>50.6%</td><td class='num'>-7.8%</td><td class='num'>397</td><td class='num'>53.4%</td><td class='num'>53.1%</td><td class='num'>+1.73%</td><td class='num'>-8.4%</td></tr><tr><td>D7</td><td class='num'>274</td><td class='num'>54.7%</td><td class='num'>55.1%</td><td class='num'>-7.2%</td><td class='num'>404</td><td class='num'>58.7%</td><td class='num'>56.7%</td><td class='num'>+1.43%</td><td class='num'>-8.4%</td></tr><tr><td>D8</td><td class='num'>276</td><td class='num'>50.7%</td><td class='num'>52.5%</td><td class='num'>-7.3%</td><td class='num'>404</td><td class='num'>56.4%</td><td class='num'>57.4%</td><td class='num'>+1.01%</td><td class='num'>-8.3%</td></tr><tr><td>D9</td><td class='num'>272</td><td class='num'>48.2%</td><td class='num'>48.5%</td><td class='num'>-6.8%</td><td class='num'>402</td><td class='num'>57.2%</td><td class='num'>64.9%</td><td class='num'>+1.41%</td><td class='num'>-8.1%</td></tr><tr><td>D10</td><td class='num'>293</td><td class='num'>47.1%</td><td class='num'>46.4%</td><td class='num'>-6.5%</td><td class='num'>414</td><td class='num'>60.1%</td><td class='num'>69.1%</td><td class='num'>+2.74%</td><td class='num'>-7.2%</td></tr></tbody></table>
+<tbody><tr><td>D1</td><td class='num'>7542</td><td class='num'>45.7%</td><td class='num'>46.4%</td><td class='num'>-11.1%</td><td class='num'>8504</td><td class='num'>32.3%</td><td class='num'>34.1%</td><td class='num'>-6.02%</td><td class='num'>-19.1%</td></tr><tr><td>D2</td><td class='num'>7597</td><td class='num'>47.6%</td><td class='num'>49.1%</td><td class='num'>-9.9%</td><td class='num'>8537</td><td class='num'>34.5%</td><td class='num'>37.0%</td><td class='num'>-4.61%</td><td class='num'>-16.2%</td></tr><tr><td>D3</td><td class='num'>7575</td><td class='num'>48.9%</td><td class='num'>50.3%</td><td class='num'>-9.2%</td><td class='num'>8529</td><td class='num'>38.0%</td><td class='num'>41.0%</td><td class='num'>-3.13%</td><td class='num'>-13.8%</td></tr><tr><td>D4</td><td class='num'>7593</td><td class='num'>48.8%</td><td class='num'>48.6%</td><td class='num'>-8.8%</td><td class='num'>8533</td><td class='num'>40.3%</td><td class='num'>44.0%</td><td class='num'>-2.17%</td><td class='num'>-12.3%</td></tr><tr><td>D5</td><td class='num'>7600</td><td class='num'>48.3%</td><td class='num'>48.6%</td><td class='num'>-8.6%</td><td class='num'>8538</td><td class='num'>43.9%</td><td class='num'>47.7%</td><td class='num'>-1.26%</td><td class='num'>-11.0%</td></tr><tr><td>D6</td><td class='num'>7571</td><td class='num'>47.2%</td><td class='num'>47.8%</td><td class='num'>-8.2%</td><td class='num'>8524</td><td class='num'>45.7%</td><td class='num'>50.3%</td><td class='num'>-0.82%</td><td class='num'>-10.1%</td></tr><tr><td>D7</td><td class='num'>7580</td><td class='num'>47.0%</td><td class='num'>48.0%</td><td class='num'>-7.9%</td><td class='num'>8525</td><td class='num'>48.2%</td><td class='num'>53.1%</td><td class='num'>-0.22%</td><td class='num'>-9.5%</td></tr><tr><td>D8</td><td class='num'>7588</td><td class='num'>47.2%</td><td class='num'>46.9%</td><td class='num'>-7.6%</td><td class='num'>8537</td><td class='num'>50.3%</td><td class='num'>57.0%</td><td class='num'>+0.39%</td><td class='num'>-8.9%</td></tr><tr><td>D9</td><td class='num'>7584</td><td class='num'>47.2%</td><td class='num'>48.1%</td><td class='num'>-7.3%</td><td class='num'>8529</td><td class='num'>52.2%</td><td class='num'>60.9%</td><td class='num'>+0.82%</td><td class='num'>-8.2%</td></tr><tr><td>D10</td><td class='num'>7628</td><td class='num'>44.8%</td><td class='num'>46.3%</td><td class='num'>-7.1%</td><td class='num'>8555</td><td class='num'>54.5%</td><td class='num'>65.5%</td><td class='num'>+1.33%</td><td class='num'>-7.7%</td></tr></tbody></table>
 <div class="note">十分位在<b>每个交易日内</b>按组合分排序后聚合（不是全局排序——全局排序会把「日期」混进分位，量到的是行情不是选股）。
-测试期 D10−D1：绝对 +23.9pp、
-相对 +36.9pp；
-训练期 D10−D1：绝对 +3.6pp、
-相对 +4.0pp（弱市期几乎无效）。
-另注：MAE 随分位升高而<b>收窄</b>（测试期 D1 −14.8% → D10 −7.2%），即低位缩量票不只是收益更好，回撤也更小。</div></div>
+测试期 D10−D1：绝对 +22.2pp、
+相对 +31.5pp；
+训练期 D10−D1：绝对 -0.9pp、
+相对 -0.1pp —— <b>训练期明显弱于测试期</b>，
+这是第四节「优势依赖期间」的第一手证据。MAE 随分位升高而收窄（测试期 D1 -19.1% → D10 -7.7%）。</div></div>
 
 <h2>四、无未来信息 walk-forward（每月只用此前数据筛特征+定方向）</h2>
 <div class="card"><table data-wb>
 <thead><tr><th>期间</th><th>特征数</th><th>全体 n</th><th>全体 绝对/相对</th><th>top20% 绝对/相对</th><th>edge(相对)</th><th>旧v3A绝对</th><th>n</th></tr></thead>
-<tbody><tr><td>2026-01-30 ~ 2026-03-25</td><td class='num'>19</td><td class='num'>843</td><td class='num'>40.3% / 48.9%</td><td class='num'>33.3% / 41.1%</td><td class='num dn'>-7.8pp</td><td class='num'>38.1%</td><td class='num'>84</td></tr><tr><td>2026-03-27 ~ 2026-05-21</td><td class='num'>13</td><td class='num'>1348</td><td class='num'>42.7% / 52.0%</td><td class='num'>49.8% / 50.6%</td><td class='num dn'>-1.4pp</td><td class='num'>45.1%</td><td class='num'>390</td></tr><tr><td>2026-05-22 ~ 2026-06-16</td><td class='num'>4</td><td class='num'>979</td><td class='num'>20.0% / 48.5%</td><td class='num'>15.4% / 48.7%</td><td class='num up'>+0.2pp</td><td class='num'>11.9%</td><td class='num'>42</td></tr><tr><td>2026-06-17 ~ 2026-07-07</td><td class='num'>5</td><td class='num'>910</td><td class='num'>39.0% / 56.4%</td><td class='num'>57.1% / 79.7%</td><td class='num up'>+23.3pp</td><td class='num'>38.8%</td><td class='num'>183</td></tr><tr><td>2026-07-08 ~ 2026-07-27</td><td class='num'>14</td><td class='num'>937</td><td class='num'>81.8% / 49.9%</td><td class='num'>96.3% / 67.9%</td><td class='num up'>+18.0pp</td><td class='num'>85.5%</td><td class='num'>228</td></tr><tr><td>2026-07-28 ~ 2026-08-14</td><td class='num'>15</td><td class='num'>772</td><td class='num'>77.6% / 50.9%</td><td class='num'>94.2% / 65.6%</td><td class='num up'>+14.7pp</td><td class='num'>82.0%</td><td class='num'>295</td></tr></tbody></table>
-<div class="note">平均：top20% 绝对 57.7% / 相对 58.9%，
-全体 绝对 50.2% / 相对 51.1%，
-优势 +7.8pp，4/6 期占优；
-旧 v3 A 档相对 54.1%（3/6 期占优）。
-⚠️ 关键：优势<b>全部集中在上行期</b>（6-7 月 +23.3/+18.0/+14.7pp），弱市三期为 −7.8/−1.4/+0.2pp。</div></div>
+<tbody><tr><td>2026-01-27 ~ 2026-03-05</td><td class='num'>17</td><td class='num'>12984</td><td class='num'>27.9% / 43.3%</td><td class='num'>20.5% / 45.8%</td><td class='num up'>+2.5pp</td><td class='num'>23.8%</td><td class='num'>1321</td></tr><tr><td>2026-03-06 ~ 2026-04-07</td><td class='num'>10</td><td class='num'>22914</td><td class='num'>53.4% / 51.1%</td><td class='num'>48.8% / 42.0%</td><td class='num dn'>-9.1pp</td><td class='num'>50.0%</td><td class='num'>2682</td></tr><tr><td>2026-04-08 ~ 2026-05-12</td><td class='num'>7</td><td class='num'>19993</td><td class='num'>37.5% / 46.4%</td><td class='num'>51.7% / 47.0%</td><td class='num up'>+0.6pp</td><td class='num'>39.4%</td><td class='num'>8639</td></tr><tr><td>2026-05-13 ~ 2026-06-11</td><td class='num'>4</td><td class='num'>23183</td><td class='num'>20.3% / 45.2%</td><td class='num'>23.5% / 47.9%</td><td class='num up'>+2.6pp</td><td class='num'>13.3%</td><td class='num'>1591</td></tr><tr><td>2026-07-15 ~ 2026-08-13</td><td class='num'>11</td><td class='num'>26836</td><td class='num'>67.0% / 46.8%</td><td class='num'>87.0% / 54.5%</td><td class='num up'>+7.7pp</td><td class='num'>61.4%</td><td class='num'>7574</td></tr></tbody></table>
+<div class="note">平均：top20% 绝对 46.3% / 相对 47.4%，
+全体 绝对 41.2% / 相对 46.6%，
+优势 +0.9pp，4/5 期占优。
+<b>注意：这是「自动筛因子」口径</b>（每期重新挑特征）——第九节会说明它在严格样本外几乎归零，
+真正冻结的模型用的是先验固定集。</div></div>
 
 <h2>五、参数稳健性扫描</h2>
 <div class="card"><table data-wb>
 <thead><tr><th>特征筛选阈值(pp)</th><th>分期间数</th><th>有效期间</th><th>edge(相对)</th><th>top20% 绝对</th><th>占优期</th></tr></thead>
-<tbody><tr><td class='num'>3</td><td class='num'>4</td><td class='num'>4</td><td class='num up'>+5.5pp</td><td class='num'>57.1%</td><td class='num'>3/4</td></tr><tr><td class='num'>3</td><td class='num'>6</td><td class='num'>6</td><td class='num up'>+6.4pp</td><td class='num'>56.2%</td><td class='num'>4/6</td></tr><tr><td class='num'>3</td><td class='num'>8</td><td class='num'>8</td><td class='num up'>+8.1pp</td><td class='num'>55.1%</td><td class='num'>5/8</td></tr><tr><td class='num'>4</td><td class='num'>4</td><td class='num'>4</td><td class='num up'>+6.6pp</td><td class='num'>59.0%</td><td class='num'>3/4</td></tr><tr><td class='num'>4</td><td class='num'>6</td><td class='num'>6</td><td class='num up'>+7.2pp</td><td class='num'>57.1%</td><td class='num'>5/6</td></tr><tr><td class='num'>4</td><td class='num'>8</td><td class='num'>8</td><td class='num up'>+8.5pp</td><td class='num'>56.1%</td><td class='num'>5/8</td></tr><tr><td class='num'>6</td><td class='num'>4</td><td class='num'>3</td><td class='num up'>+1.1pp</td><td class='num'>56.0%</td><td class='num'>2/3</td></tr><tr><td class='num'>6</td><td class='num'>6</td><td class='num'>4</td><td class='num up'>+4.1pp</td><td class='num'>71.4%</td><td class='num'>2/4</td></tr><tr><td class='num'>6</td><td class='num'>8</td><td class='num'>6</td><td class='num up'>+7.0pp</td><td class='num'>61.0%</td><td class='num'>4/6</td></tr><tr><td class='num'>8</td><td class='num'>4</td><td class='num'>2</td><td class='num dn'>-1.1pp</td><td class='num'>72.0%</td><td class='num'>1/2</td></tr><tr><td class='num'>8</td><td class='num'>6</td><td class='num'>4</td><td class='num up'>+4.7pp</td><td class='num'>65.9%</td><td class='num'>2/4</td></tr><tr><td class='num'>8</td><td class='num'>8</td><td class='num'>6</td><td class='num up'>+8.9pp</td><td class='num'>62.9%</td><td class='num'>4/6</td></tr></tbody></table>
-<div class="note">12 组参数中 11 组为正（+1.1 ~ +8.9pp），符号稳健；边缘一组为 8pp 阈值 + 4 期（仅 2 期有效，样本过少）。</div></div>
+<tbody><tr><td class='num'>3</td><td class='num'>4</td><td class='num'>4</td><td class='num up'>+2.7pp</td><td class='num'>46.9%</td><td class='num'>1/4</td></tr><tr><td class='num'>3</td><td class='num'>6</td><td class='num'>6</td><td class='num up'>+0.1pp</td><td class='num'>44.2%</td><td class='num'>2/6</td></tr><tr><td class='num'>3</td><td class='num'>8</td><td class='num'>8</td><td class='num up'>+0.9pp</td><td class='num'>42.7%</td><td class='num'>2/8</td></tr><tr><td class='num'>4</td><td class='num'>4</td><td class='num'>4</td><td class='num up'>+3.7pp</td><td class='num'>47.5%</td><td class='num'>2/4</td></tr><tr><td class='num'>4</td><td class='num'>6</td><td class='num'>6</td><td class='num up'>+0.1pp</td><td class='num'>45.6%</td><td class='num'>3/6</td></tr><tr><td class='num'>4</td><td class='num'>8</td><td class='num'>8</td><td class='num up'>+1.3pp</td><td class='num'>43.2%</td><td class='num'>5/8</td></tr><tr><td class='num'>6</td><td class='num'>4</td><td class='num'>3</td><td class='num up'>+6.0pp</td><td class='num'>56.5%</td><td class='num'>2/3</td></tr><tr><td class='num'>6</td><td class='num'>6</td><td class='num'>4</td><td class='num up'>+2.8pp</td><td class='num'>52.3%</td><td class='num'>3/4</td></tr><tr><td class='num'>6</td><td class='num'>8</td><td class='num'>6</td><td class='num up'>+4.0pp</td><td class='num'>50.8%</td><td class='num'>4/6</td></tr><tr><td class='num'>8</td><td class='num'>4</td><td class='num'>2</td><td class='num dn'>-0.2pp</td><td class='num'>40.1%</td><td class='num'>1/2</td></tr><tr><td class='num'>8</td><td class='num'>6</td><td class='num'>3</td><td class='num up'>+2.2pp</td><td class='num'>53.2%</td><td class='num'>2/3</td></tr><tr><td class='num'>8</td><td class='num'>8</td><td class='num'>4</td><td class='num up'>+0.1pp</td><td class='num'>45.8%</td><td class='num'>2/4</td></tr></tbody></table>
+<div class="note">网格用于检验「自动筛因子」的符号是否稳健；即便多半为正，其幅度也远小于先验固定集
+（见第九节），所以它只作诊断，不作为落地依据。</div></div>
 
-<h2>六、环境门控（组合 top20% vs 基线，按日级市场状态分桶）</h2>
+<h2>六、环境分桶（<b style="color:#b00020">结论不成立，仅作透明度展示</b>）</h2>
 <div class="card"><table data-wb>
 <thead><tr><th>状态变量</th><th>分桶</th><th>n</th><th>top20% 相对</th><th>全体 相对</th><th>edge(相对)</th><th>edge(绝对)</th></tr></thead>
-<tbody><tr><td>mkt20</td><td>宇宙中位20日 < −3%</td><td class='num'>3730</td><td class='num'>61.1%</td><td class='num'>51.8%</td><td class='num up'>+9.3pp</td><td class='num'>+2.6pp</td></tr><tr><td>mkt20</td><td>−3%~0%</td><td class='num'>769</td><td class='num'>51.7%</td><td class='num'>52.3%</td><td class='num dn'>-0.6pp</td><td class='num'>+0.7pp</td></tr><tr><td>mkt20</td><td>0%~+3%</td><td class='num'>1112</td><td class='num'>54.2%</td><td class='num'>48.0%</td><td class='num up'>+6.1pp</td><td class='num'>+0.2pp</td></tr><tr><td>mkt20</td><td>> +3%</td><td class='num'>1177</td><td class='num'>63.9%</td><td class='num'>49.7%</td><td class='num up'>+14.2pp</td><td class='num'>+12.0pp</td></tr><tr><td>breadth</td><td>广度 <30%</td><td class='num'>2772</td><td class='num'>58.1%</td><td class='num'>51.2%</td><td class='num up'>+6.9pp</td><td class='num'>+0.9pp</td></tr><tr><td>breadth</td><td>30~50%</td><td class='num'>1731</td><td class='num'>62.5%</td><td class='num'>51.2%</td><td class='num up'>+11.4pp</td><td class='num'>+4.3pp</td></tr><tr><td>breadth</td><td>50~70%</td><td class='num'>1115</td><td class='num'>56.9%</td><td class='num'>50.5%</td><td class='num up'>+6.4pp</td><td class='num'>+0.7pp</td></tr><tr><td>breadth</td><td>>70%</td><td class='num'>1170</td><td class='num'>60.3%</td><td class='num'>49.9%</td><td class='num up'>+10.3pp</td><td class='num'>+12.1pp</td></tr></tbody></table>
-<div class="note">状态变量均为 scan 当日可算的滞后量：<code>mkt20</code>=宇宙中位 20 日收益，<code>breadth</code>=站上 MA20 的占比。
-各桶内 edge 均为正，说明「日内分位排序」在多数环境下都有区分度；但绝对 edge 在弱市桶仅 +2.6pp、强市桶 +12.0pp，
-与 walk-forward 的结论一致：<b>因子提供相对优势，绝对收益仍靠行情</b>。</div></div>
+<tbody><tr><td>mkt20</td><td>宇宙中位20日 < −3%</td><td class='num'>90007</td><td class='num'>60.0%</td><td class='num'>50.7%</td><td class='num up'>+9.3pp</td><td class='num'>+7.6pp</td></tr><tr><td>mkt20</td><td>−3%~0%</td><td class='num'>13021</td><td class='num'>50.0%</td><td class='num'>47.6%</td><td class='num up'>+2.4pp</td><td class='num'>-2.6pp</td></tr><tr><td>mkt20</td><td>0%~+3%</td><td class='num'>34442</td><td class='num'>47.6%</td><td class='num'>45.4%</td><td class='num up'>+2.2pp</td><td class='num'>-0.7pp</td></tr><tr><td>mkt20</td><td>> +3%</td><td class='num'>23699</td><td class='num'>54.0%</td><td class='num'>45.7%</td><td class='num up'>+8.3pp</td><td class='num'>+3.2pp</td></tr><tr><td>breadth</td><td>广度 <30%</td><td class='num'>57910</td><td class='num'>56.5%</td><td class='num'>49.3%</td><td class='num up'>+7.2pp</td><td class='num'>+4.7pp</td></tr><tr><td>breadth</td><td>30~50%</td><td class='num'>43334</td><td class='num'>63.1%</td><td class='num'>51.2%</td><td class='num up'>+11.9pp</td><td class='num'>+8.5pp</td></tr><tr><td>breadth</td><td>50~70%</td><td class='num'>32345</td><td class='num'>46.5%</td><td class='num'>46.1%</td><td class='num up'>+0.5pp</td><td class='num'>-3.7pp</td></tr><tr><td>breadth</td><td>>70%</td><td class='num'>27580</td><td class='num'>53.1%</td><td class='num'>46.0%</td><td class='num up'>+7.2pp</td><td class='num'>+6.5pp</td></tr></tbody></table>
+<div class="note">状态变量均为 scan 当日可算的滞后量：<code>mkt20</code>=全市场等权中位 20 日收益，<code>breadth</code>=站上 MA20 的占比。
+<b style="color:#b00020">但按广度/行情分桶得出的 edge 差异在训练半与测试半方向相反</b>（另测了域内距低点中位数、域内创新低占比、
+量能枯竭中位数、波动中位数、距 MA60 中位数，六类全部反向），差异被「时间段」淹没。
+故本页<b>不把环境门控当作提高 alpha 的手段</b>。</div></div>
 
-<h2>七、跨期方向迁移（日内分位排序口径）</h2>
+<h2>七、环境门控 → 仓位系数（仅用于绝对收益量级与仓位，不用于选股）</h2>
+<div class="card"><table data-wb>
+<thead><tr><th>状态桶</th><th>建议系数</th><th>前10% 绝对</th><th>域均 绝对</th><th>edge(绝对)</th><th>n</th></tr></thead>
+<tbody><tr><td>防守 · 广度<35%</td><td class='num'>0.4</td><td class='num'>58.4%</td><td class='num'>50.7%</td><td class='num up'>+7.7pp</td><td class='num'>76870</td></tr><tr><td>中性 · 广度35~55%</td><td class='num'>0.7</td><td class='num'>39.6%</td><td class='num'>39.6%</td><td class='num dn'>-0.0pp</td><td class='num'>39220</td></tr><tr><td>进攻 · 广度≥55%</td><td class='num'>1.0</td><td class='num'>44.4%</td><td class='num'>41.9%</td><td class='num up'>+2.5pp</td><td class='num'>45079</td></tr></tbody></table>
+<div class="note">仓位系数只回答「今天该用多少仓位」这一件事（β 层面），<b>不改变选股排序</b>；
+其分桶差异同样在两半不一致，故页面把它标注为<b>参考而非依据</b>。</div></div>
+
+<h2>八、跨期方向迁移（日内分位排序口径）</h2>
 <div class="card"><table>
 <thead><tr><th>迁移方向</th><th>特征数</th><th>top20% 绝对/相对</th><th>全体 绝对/相对</th><th>edge 相对</th><th>edge 绝对</th><th>n</th></tr></thead>
-<tbody><tr><td>弱市学→强市用</td><td class='num'>5</td><td class='num'>79.1% / 67.5%</td><td class='num'>63.6% / 52.2%</td><td class='num up'>+15.3pp</td><td class='num up'>+15.5pp</td><td class='num'>2964</td></tr><tr><td>强市学→弱市用</td><td class='num'>18</td><td class='num'>39.4% / 50.4%</td><td class='num'>41.1% / 49.8%</td><td class='num up'>+0.6pp</td><td class='num dn'>-1.7pp</td><td class='num'>3824</td></tr></tbody></table>
-<div class="note">「弱市学→强市用」即标准样本外检验；「强市学→弱市用」是反向时间迁移，用于回答「这套因子在弱势期还成立吗」——
-答案是不成立（+0.6pp）。故实盘必须配合市场状态门控，弱势阶段降低暴露或停手。</div></div>
+<tbody><tr><td>弱市学→强市用</td><td class='num'>4</td><td class='num'>42.8% / 48.7%</td><td class='num'>42.0% / 48.7%</td><td class='num up'>+0.0pp</td><td class='num up'>+0.8pp</td><td class='num'>90695</td></tr><tr><td>强市学→弱市用</td><td class='num'>18</td><td class='num'>48.6% / 46.2%</td><td class='num'>50.0% / 48.4%</td><td class='num dn'>-2.2pp</td><td class='num dn'>-1.4pp</td><td class='num'>71052</td></tr></tbody></table>
+<div class="note">「弱市学→强市用」是标准样本外检验；「强市学→弱市用」是反向时间迁移（该段方向迁移为
+-2.2pp）。两向差异就是第四节那条「优势依赖期间」的另一面。</div></div>
 
-<h2>八、冻结模型（共识特征，写入 quant/_rev_model.json 供选股页消费）</h2>
+<h2>九、严格样本外对照（前 60% 训练 → 后 40% 测试）</h2>
 <div class="card"><table data-wb>
-<thead><tr><th>特征</th><th>类型</th><th>方向</th><th>入选依据</th><th>说明</th></tr></thead>
-<tbody><tr><td>dist_lo20</td><td>cont</td><td class='num'>-1</td><td class='num'>4</td><td>WF 逐期自动选中</td></tr><tr><td>dist_lo60</td><td>cont</td><td class='num'>-1</td><td class='num'>6</td><td>WF 逐期自动选中</td></tr><tr><td>gap_lo52</td><td>cont</td><td class='num'>-1</td><td class='num'>6</td><td>WF 逐期自动选中</td></tr><tr><td>vol_dry</td><td>cont</td><td class='num'>-1</td><td class='num'>6</td><td>WF 逐期自动选中</td></tr><tr><td>atr_pct</td><td>cont</td><td class='num'>-1</td><td class='num'>5</td><td>WF 逐期自动选中</td></tr><tr><td>slope</td><td>cont</td><td class='num'>-1</td><td class='num'>4</td><td>WF 逐期自动选中</td></tr><tr><td>ma60_dev</td><td>cont</td><td class='num'>-1</td><td class='num'>4</td><td>WF 逐期自动选中</td></tr><tr><td>range20</td><td>cont</td><td class='num'>-1</td><td class='num'>5</td><td>WF 逐期自动选中</td></tr><tr><td>short_align</td><td>bin</td><td class='num'>-1</td><td class='num'>—</td><td>lift 训练 -4.0 / 测试 -12.0 pp</td></tr></tbody></table>
-<div class="note">入选规则：①连续特征在 ≥4/6 期 walk-forward 中被自动选中；②二值特征训练/测试同向且相对 lift ≥4pp。
-方向一律按<b>相对胜率</b>学，避免把行情方向学进模型。当前入选 9 项，方向全为「越小越好 / 未确认越好」。</div></div>
+<thead><tr><th>口径</th><th>n_top</th><th>top 相对</th><th>全体 相对</th><th>edge 相对</th><th>top 绝对</th><th>edge 绝对</th></tr></thead>
+<tbody><tr><td>先验固定集（不筛，v5 冻结模型）</td><td class='num'>18138</td><td class='num'>62.7%</td><td class='num'>48.7%</td><td class='num up'>+14.0pp</td><td class='num'>50.5%</td><td class='num up'>+8.5pp</td></tr><tr><td>自动筛 · 严格样本外（训练段学 → 测试段用）</td><td class='num'>18138</td><td class='num'>48.7%</td><td class='num'>48.7%</td><td class='num up'>+0.0pp</td><td class='num'>42.8%</td><td class='num up'>+0.7pp</td></tr><tr><td>自动筛 · 全量（含测试段，前视）</td><td class='num'>32343</td><td class='num'>54.4%</td><td class='num'>48.6%</td><td class='num up'>+5.8pp</td><td class='num'>48.6%</td><td class='num up'>+3.1pp</td></tr></tbody></table>
+<div class="note"><b>先验固定集（不筛因子、等权、方向由经济逻辑给定）在严格样本外显著优于「自动筛因子」</b>；
+而「自动筛·全量（含测试段）」比「自动筛·严格样本外」高出 <b>5.8pp</b>，
+这 5.8pp 就是<b>挑选动作本身制造的过拟合量</b>，不是选股能力。
+另：v5 的先验固定集与旧 v4 共识集实测几乎等价（9 个因子里 8 个相同，仅「规模因子」换掉了「短均线多头排列」），
+所以<b>因子层面已无继续「加指标」的空间</b>，真正的改进来自域扩张与退出规则。</div></div>
 
-<h2>九、方法与局限（必读）</h2>
+<h2>十、截断比例曲线（先验固定集，测试段）</h2>
+<div class="card"><table data-wb>
+<thead><tr><th>每日取前</th><th>n_top</th><th>绝对胜率</th><th>相对胜率</th><th>edge 相对</th><th>edge 绝对</th><th>均值收益</th></tr></thead>
+<tbody><tr><td class='num'>5%</td><td class='num'>4538</td><td class='num'>51.4%</td><td class='num'>65.0%</td><td class='num up'>+16.3pp</td><td class='num up'>+9.4pp</td><td class='num'>+0.51%</td></tr><tr><td class='num'>10%</td><td class='num'>9074</td><td class='num'>51.5%</td><td class='num'>65.1%</td><td class='num up'>+16.4pp</td><td class='num up'>+9.5pp</td><td class='num'>+0.55%</td></tr><tr><td class='num'>15%</td><td class='num'>13600</td><td class='num'>51.0%</td><td class='num'>63.7%</td><td class='num up'>+15.0pp</td><td class='num up'>+9.0pp</td><td class='num'>+0.43%</td></tr><tr><td class='num'>20%</td><td class='num'>18138</td><td class='num'>50.5%</td><td class='num'>62.7%</td><td class='num up'>+14.0pp</td><td class='num up'>+8.5pp</td><td class='num'>+0.31%</td></tr><tr><td class='num'>30%</td><td class='num'>27203</td><td class='num'>49.6%</td><td class='num'>60.6%</td><td class='num up'>+11.9pp</td><td class='num up'>+7.6pp</td><td class='num'>+0.08%</td></tr></tbody></table>
+<div class="note">按比例截断的曲线在 5%~10% 见顶后缓慢衰减，故 A 档取<b>域内前 10%</b>。
+另测「按绝对名次取前 N」（前 10/20/30/50/80/130/200 名）呈<b>递增</b>——因为域大小每日变动，
+绝对名次会漂移，命中不了「最差的那批」，故<b>不采用绝对名次</b>。</div></div>
+
+<h2>十一、退出规则对照（把胜率交给纪律，而不是交给预测）</h2>
+<div class="card"><table data-wb>
+<thead><tr><th>半段</th><th>持有期</th><th>n</th><th>前10% 绝对胜率</th><th>域均</th><th>前10% 均值</th><th>域均 均值</th></tr></thead>
+<tbody><tr><td>训练半</td><td class='num'>T+5</td><td class='num'>7110</td><td class='num'>54.0%</td><td class='num'>53.6%</td><td class='num'>+0.60%</td><td class='num'>53.6%</td><td class='num'>+0.91%</td></tr><tr><td>训练半</td><td class='num'>T+10</td><td class='num'>7110</td><td class='num'>55.7%</td><td class='num'>54.5%</td><td class='num'>+1.14%</td><td class='num'>54.5%</td><td class='num'>+1.75%</td></tr><tr><td>训练半</td><td class='num'>T+20</td><td class='num'>7110</td><td class='num'>47.9%</td><td class='num'>50.0%</td><td class='num'>+0.82%</td><td class='num'>50.0%</td><td class='num'>+2.40%</td></tr><tr><td>测试半</td><td class='num'>T+5</td><td class='num'>9074</td><td class='num'>40.4%</td><td class='num'>38.5%</td><td class='num'>-0.42%</td><td class='num'>38.5%</td><td class='num'>-1.35%</td></tr><tr><td>测试半</td><td class='num'>T+10</td><td class='num'>9074</td><td class='num'>45.0%</td><td class='num'>41.3%</td><td class='num'>+0.05%</td><td class='num'>41.3%</td><td class='num'>-1.40%</td></tr><tr><td>测试半</td><td class='num'>T+20</td><td class='num'>9074</td><td class='num'>51.5%</td><td class='num'>42.0%</td><td class='num'>+0.55%</td><td class='num'>42.0%</td><td class='num'>-2.23%</td></tr></tbody></table>
+</div>
+<div class="card" style="margin-top:10px"><table data-wb>
+<thead><tr><th>止损</th><th>目标位</th><th>训练半 可兑现胜率</th><th>训练半 均值</th><th>测试半 可兑现胜率</th><th>测试半 均值</th></tr></thead>
+<tbody><tr><td class='num'>-6%</td><td class='num'>不止盈</td><td class='num'>41.3%</td><td class='num'>+0.92%</td><td class='num'>36.3%</td><td class='num'>-0.29%</td></tr><tr><td class='num'>-6%</td><td class='num'>+8%</td><td class='num'>44.2%</td><td class='num'>-0.04%</td><td class='num'>37.8%</td><td class='num'>-0.91%</td></tr><tr><td class='num'>-6%</td><td class='num'>+10%</td><td class='num'>43.0%</td><td class='num'>+0.26%</td><td class='num'>37.2%</td><td class='num'>-0.62%</td></tr><tr><td class='num'>-6%</td><td class='num'>+12%</td><td class='num'>42.5%</td><td class='num'>+0.48%</td><td class='num'>36.8%</td><td class='num'>-0.43%</td></tr><tr><td class='num'>-6%</td><td class='num'>+15%</td><td class='num'>41.8%</td><td class='num'>+0.63%</td><td class='num'>36.5%</td><td class='num'>-0.25%</td></tr><tr><td class='num'>-6%</td><td class='num'>+20%</td><td class='num'>41.5%</td><td class='num'>+0.77%</td><td class='num'>36.4%</td><td class='num'>-0.17%</td></tr><tr><td class='num'>-8%</td><td class='num'>不止盈</td><td class='num'>44.8%</td><td class='num'>+0.80%</td><td class='num'>42.0%</td><td class='num'>-0.33%</td></tr><tr><td class='num'>-8%</td><td class='num'>+8%</td><td class='num'>49.1%</td><td class='num'>-0.06%</td><td class='num'>44.2%</td><td class='num'>-0.95%</td></tr><tr><td class='num'>-8%</td><td class='num'>+10%</td><td class='num'>47.3%</td><td class='num'>+0.19%</td><td class='num'>43.4%</td><td class='num'>-0.65%</td></tr><tr><td class='num'>-8%</td><td class='num'>+12%</td><td class='num'>46.5%</td><td class='num'>+0.39%</td><td class='num'>42.9%</td><td class='num'>-0.43%</td></tr><tr><td class='num'>-8%</td><td class='num'>+15%</td><td class='num'>45.7%</td><td class='num'>+0.53%</td><td class='num'>42.4%</td><td class='num'>-0.26%</td></tr><tr><td class='num'>-8%</td><td class='num'>+20%</td><td class='num'>45.1%</td><td class='num'>+0.65%</td><td class='num'>42.2%</td><td class='num'>-0.19%</td></tr><tr><td class='num'>-10%</td><td class='num'>不止盈</td><td class='num'>46.8%</td><td class='num'>+0.75%</td><td class='num'>46.5%</td><td class='num'>-0.16%</td></tr><tr><td class='num'>-10%</td><td class='num'>+8%</td><td class='num'>52.2%</td><td class='num'>+0.05%</td><td class='num'>49.7%</td><td class='num'>-0.75%</td></tr><tr><td class='num'>-10%</td><td class='num'>+10%</td><td class='num'>49.9%</td><td class='num'>+0.24%</td><td class='num'>48.4%</td><td class='num'>-0.46%</td></tr><tr><td class='num'>-10%</td><td class='num'>+12%</td><td class='num'>48.9%</td><td class='num'>+0.41%</td><td class='num'>47.8%</td><td class='num'>-0.25%</td></tr><tr><td class='num'>-10%</td><td class='num'>+15%</td><td class='num'>47.8%</td><td class='num'>+0.52%</td><td class='num'>47.1%</td><td class='num'>-0.08%</td></tr><tr><td class='num'>-10%</td><td class='num'>+20%</td><td class='num'>47.2%</td><td class='num'>+0.61%</td><td class='num'>46.8%</td><td class='num'>-0.01%</td></tr><tr><td class='num'>-12%</td><td class='num'>不止盈</td><td class='num'>47.5%</td><td class='num'>+0.74%</td><td class='num'>49.2%</td><td class='num'>+0.05%</td></tr><tr><td class='num'>-12%</td><td class='num'>+8%</td><td class='num'>53.7%</td><td class='num'>+0.17%</td><td class='num'>53.2%</td><td class='num'>-0.47%</td></tr><tr><td class='num'>-12%</td><td class='num'>+10%</td><td class='num'>51.1%</td><td class='num'>+0.31%</td><td class='num'>51.6%</td><td class='num'>-0.20%</td></tr><tr><td class='num'>-12%</td><td class='num'>+12%</td><td class='num'>49.8%</td><td class='num'>+0.45%</td><td class='num'>50.8%</td><td class='num'>+0.01%</td></tr><tr><td class='num'>-12%</td><td class='num'>+15%</td><td class='num'>48.6%</td><td class='num'>+0.53%</td><td class='num'>50.0%</td><td class='num'>+0.17%</td></tr><tr><td class='num'>-12%</td><td class='num'>+20%</td><td class='num'>48.0%</td><td class='num'>+0.62%</td><td class='num'>49.6%</td><td class='num'>+0.23%</td></tr><tr><td class='num'>-15%</td><td class='num'>不止盈</td><td class='num'>47.8%</td><td class='num'>+0.78%</td><td class='num'>50.9%</td><td class='num'>+0.26%</td></tr><tr><td class='num'>-15%</td><td class='num'>+8%</td><td class='num'>54.7%</td><td class='num'>+0.34%</td><td class='num'>55.8%</td><td class='num'>-0.15%</td></tr><tr><td class='num'>-15%</td><td class='num'>+10%</td><td class='num'>51.7%</td><td class='num'>+0.42%</td><td class='num'>53.9%</td><td class='num'>+0.10%</td></tr><tr><td class='num'>-15%</td><td class='num'>+12%</td><td class='num'>50.3%</td><td class='num'>+0.54%</td><td class='num'>52.9%</td><td class='num'>+0.28%</td></tr><tr><td class='num'>-15%</td><td class='num'>+15%</td><td class='num'>49.1%</td><td class='num'>+0.61%</td><td class='num'>51.9%</td><td class='num'>+0.41%</td></tr><tr><td class='num'>-15%</td><td class='num'>+20%</td><td class='num'>48.3%</td><td class='num'>+0.67%</td><td class='num'>51.3%</td><td class='num'>+0.46%</td></tr></tbody></table>
+<div class="note">口径：以样本的 MAE/MFE 近似路径，<b>止损优先</b>（保守），未触发则持到 20 日；
+忽略移动止盈与路径先后 → 对所有规则同等保守，故<b>规则间的相对比较有效</b>、绝对值偏保守。
+结论：<b>持有期与止损/目标位在训练半选出的较好组合，在测试半同样成立</b>（两半同向），
+这是本模型里<b>唯一跨期稳定</b>的改进来源；页面买卖点按此口径给出。</div></div>
+
+<h2>十二、训练半 / 测试半对照（本次最重要的表）</h2>
+<div class="card"><table>
+<thead><tr><th>半段</th><th>n_top</th><th>前10% 绝对</th><th>域均 绝对</th><th>edge 绝对</th><th>前10% 相对</th><th>edge 相对</th></tr></thead>
+<tbody><tr><td>训练半（2025-11 ~ 2026-05-11）</td><td class='num'>7110</td><td class='num'>47.9%</td><td class='num'>50.0%</td><td class='num dn'>-2.2pp</td><td class='num'>45.5%</td><td class='num dn'>-3.0pp</td></tr><tr><td>测试半（2026-05-11 ~ 2026-09-18）</td><td class='num'>9074</td><td class='num'>51.5%</td><td class='num'>42.0%</td><td class='num up'>+9.5pp</td><td class='num'>65.1%</td><td class='num up'>+16.4pp</td></tr></tbody></table>
+<div class="note"><b style="color:#b00020">alpha 在训练半为负、在测试半为正。</b>
+这意味着「+14pp」这类全期数字并不代表稳定能力；页面与选股结果都据此把
+「因子失效期」明确标注出来，而不是用回测数字掩盖它。</div></div>
+
+<h2>十三、冻结模型（先验固定集，写入 quant/_rev_model.json 供选股页消费）</h2>
+<div class="card"><table data-wb>
+<thead><tr><th>特征</th><th>方向</th><th>dir</th><th>说明</th></tr></thead>
+<tbody><tr><td>dist_lo20</td><td>越小越好</td><td class='num'>-1</td><td>距 20 日低点（%），越低越贴底</td></tr><tr><td>dist_lo60</td><td>越小越好</td><td class='num'>-1</td><td>距 60 日低点（%）</td></tr><tr><td>gap_lo52</td><td>越小越好</td><td class='num'>-1</td><td>距 52 周低点（%）</td></tr><tr><td>vol_dry</td><td>越小越好</td><td class='num'>-1</td><td>20 日量能 / 60 日量能（枯竭度）</td></tr><tr><td>atr_pct</td><td>越小越好</td><td class='num'>-1</td><td>ATR20 / 收盘（波动水平）</td></tr><tr><td>range20</td><td>越小越好</td><td class='num'>-1</td><td>近 20 日振幅 / 收盘（箱体宽度）</td></tr><tr><td>ma60_dev</td><td>越小越好</td><td class='num'>-1</td><td>距 MA60（%）</td></tr><tr><td>slope</td><td>越小越好</td><td class='num'>-1</td><td>MA20 五日斜率（%）</td></tr><tr><td>mv_log</td><td>越小越好</td><td class='num'>-1</td><td>总市值对数（小市值）</td></tr></tbody></table>
+<div class="note">入选规则：<b>方向由经济逻辑给定、等权、不按回测调权重、不做因子筛选</b>——
+只有「先验固定」才能让全期都是干净的样本外。当前 9 项，全部为「越小越好」。
+<b>特别注意</b>：本模型不包含「是否已收复 MA20 / 是否短均线多头排列 / 吸筹天数」等确认类信号，
+因为它们在相对胜率上是<b>负向</b>（越确认越跑不赢）。</div></div>
+
+<h2>十四、方法与局限（必读）</h2>
 <div class="card"><div class="kv">
-• <b>目标</b>：前向 20 交易日收益（信号日收盘买入）与其相对同期宇宙等权中位数的超额。<br>
-• <b>无泄漏</b>：分位切点只用训练集确定；walk-forward 每月只用该月之前的数据选特征与方向。<br>
-• <b>不拟合权重</b>：组合为等权分位合成，不做权重优化，避免二次过拟合。<br>
-• <b>局限 1（重要）</b>：种子名单是<b>今日基本面快照套到历史价格上</b>，基本面维度存在前视偏差，
-<b>绝对胜率被系统性高估</b>；因该偏差对所有特征桶同等作用，<b>相对 lift 仍有效</b>，故结论以相对口径为准。<br>
-• <b>局限 2</b>：前向 20 日窗口互相重叠 → 样本非独立，统计显著性应按日期聚类理解，不要把 pp 差当独立样本读。<br>
-• <b>局限 3</b>：样本仅覆盖 2025-09~2026-09 一个年度，其中弱市与上行各占约一半；换年份是否成立无法验证。<br>
-• <b>结论不构成投资建议</b>；回测/实证均为历史统计，不代表未来。</div></div>
+• <b>域（v5）</b>：全市场 A 股正股（<code>_txk_cache.json</code> 全量，只剔 K 线不足），
+硬门槛 = 距 52 周高回撤 ≥18% 且未跌破 MA60×0.75 且 20 日均成交额 ≥3000 万。
+实验室面板<b>未单独剔 ST/退市</b>（占比 &lt;0.3%，对结论无实质影响）；选股页 <code>rev_pool.py</code> 会另按名称剔除。<br>
+<b>不再使用「净利同比&gt;50 &amp; 0&lt;PE&lt;50 &amp; 市值&lt;100亿」的条件选股种子</b>，市值/估值改为因子。<br>
+• <b>目标</b>：前向 20 交易日收益（信号日收盘买入）与其相对同域等权中位数的超额。<br>
+• <b>无泄漏</b>：分位在同一交易日内计算；walk-forward 只用该期之前的数据。<br>
+• <b>不拟合权重</b>：等权分位合成，不做权重优化，避免二次过拟合。<br>
+• <b>局限 1（重要）</b>：<b>优势依赖期间</b>（训练半为负、测试半为正），且未找到可提前识别的状态量；
+样本仅 2025-11~2026-09 约 10 个月，换年份是否成立<b>无法验证</b>。<br>
+• <b>局限 2</b>：前向 20 日窗口互相重叠 → 样本非独立，统计显著性须按<b>日期聚类</b>理解，不要把 pp 差当独立样本读。<br>
+• <b>局限 3</b>：规模因子 <code>mv_log</code> 用「股本反推 × 收盘」近似，股本变动（送转/增发）会带来偏差；<br>
+• <b>局限 4</b>：退出规则的路径用 MAE/MFE 近似（止损优先、忽略移动止盈），绝对值偏保守。<br>
+• <b>结论不构成投资建议</b>；实证均为历史统计，不代表未来。</div></div>
 
 <div class="foot">入口：<a href="index.html" style="color:var(--blue)">反转池首页</a> ·
 <a href="watchlist_20260918.html" style="color:var(--blue)">最新选股页</a> ·
-<a href="backtest.html" style="color:var(--blue)">回测页（退出规则口径，仅参考）</a></div>
+<a href="backtest.html" style="color:var(--blue)">回测页</a></div>
 </div><!--WB_APP--><script id='wb-app'>
 /* ============================================================
    通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。

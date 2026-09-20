@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
 """底部反转观察池 · 数据补全（名称 / 流通市值 / PE / 20 日主力净流入）。
 
-背景：观察池的种子来自「净利同比 > 50% & 0<PE<50 & 总市值<100 亿」的条件选股，
-种子文件只带 code+name，不带流通市值；行情文件 `_rev_quote_{dc}.json` 覆盖也很稀，
-且**没有资金流**。结果页面出现「名称显示成 sz000049 / 流通与 20 日主力一片空白」。
+背景（v5）：观察池的候选来自**全市场深跌域**（rev_pool.py 先验固定因子集横截面分位），
+候选清单只带 code / 名称 / 组合分，不含流通市值与资金流；页面会出现
+「名称显示成代码 / 流通与 20 日主力一片空白」。本脚本负责把这些补全并回写。
+（旧版候选来自「净利同比>50 & 0<PE<50 & 总市值<100亿」的条件选股种子，该路径已废。）
 
 数据源分工（都不占 MCP 额度 → 可以每天跑）：
   · 名称 / 流通市值 / PE / PB / 换手  → 腾讯离线快照（qt.gtimg.cn，80 只/请求）
-  · 20 日主力净流入                    → westock MCP `data_fund_flow`（由 agent 拉，落盘为
+  · 20 日主力净流入                    → 新浪离线 MoneyFlow（由 fetch_rev_flow.py 落盘为
                                         quant/_rev_flow_raw_{dc}.json，本脚本负责合并）
 
 用法：
   python quant/fetch_rev_enrich.py --date 2026-09-18
   python quant/fetch_rev_enrich.py --date 2026-09-18 --no-quote      # 只合并已落盘的 flow
+  python quant/fetch_rev_enrich.py --date 2026-09-18 --render        # 合并后顺带重渲染页面
   python quant/fetch_rev_enrich.py --date 2026-09-18 --flow /tmp/f.json
 
 产出：quant/rev_enrich_{dc}.json

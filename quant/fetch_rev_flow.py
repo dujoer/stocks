@@ -12,8 +12,11 @@
 
 用法：
   python quant/fetch_rev_flow.py --date 2026-09-18                # auto：先 MCP 再新浪补缺
-  python quant/fetch_rev_flow.py --date 2026-09-18 --src sina     # 纯离线
+  python quant/fetch_rev_flow.py --date 2026-09-18 --src sina     # 纯离线（推荐：不占 MCP 额度）
   python quant/fetch_rev_flow.py --date 2026-09-18 --limit 30
+
+说明（v5）：全市场域下候选从 220 只量级跃升，**默认用 --src sina 全离线**，
+既省 MCP 额度也不受限频影响；页面会标注当日实际来源（sina / mcp / mixed）。
 """
 import os
 import sys

@@ -246,17 +246,18 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
 <div class="wrap">
 <h1>底部反转 · 回测报告（退出规则口径）</h1>
-<div class="sub">walk-forward：种子宇宙 220 只，过往 ~180 交易日每 5 日重算信号；信号样本 1573，基线样本 7434。</div>
+<div class="sub">walk-forward（<b>旧版种子宇宙</b>，仅作退出规则对照）：种子宇宙 220 只，过往 ~180 交易日每 5 日重算信号；信号样本 1573，基线样本 7434。</div>
 
-<div class="box red"><b>⚠️ 本页口径说明（必读）：</b>本页评估的是<b>旧 v3 规则的退出规则口径</b>——
-只回答「同一条入场规则下，不同止损/止盈方式能把胜率调到多少」，<b>不能证明选股能力</b>。
-若要评估「哪些特征真的有预测力、方向如何」，请以 <a href="lab.html" style="color:var(--blue)">特征功效实验室 lab.html</a> 为准
-（样本外：标准 OOS top20% 相对胜率 +15.3pp；稳健性扫描 11/12 组为正；弱势期因子无优势）。
+<div class="box red"><b>⚠️ 本页口径说明（必读）：</b>本页评估的是<b>旧 v3 规则的退出规则口径</b>（基于当年的「净利同比&gt;50 &amp; 0&lt;PE&lt;50 &amp; 市值&lt;100亿」条件选股种子宇宙），
+只回答「同一条入场规则下，不同止损/止盈方式能把胜率调到多少」，<b>不能证明选股能力</b>，
+也不代表 v5 全市场域的回测结果。若要评估「哪些特征真的有预测力、方向如何、档位该取多大」，
+请以 <a href="lab.html" style="color:var(--blue)">特征功效实验室 lab.html</a> 为准
+（v5 全市场域 · 先验固定集严格样本外 top20% 相对胜率 <b>+14.0pp</b>；退出规则对照见其第十一节）。
 另：报告里「可兑现胜率」随退出参数变宽而升高，属规则设计的结果、非入场质量提升，勿当作策略优势。</div>
 
 <div class="box gold"><b>结论：</b>A 档<b>可兑现胜率</b>（移动止盈 −12% / +6%激活 / 回撤3%）<b>69.3%</b> vs 基线 63.8%（<b>+5.5pp</b>），均值收益 +1.08% vs +0.01%（<b>+1.07pp</b>），触止盈率 63.0% / 触硬止损率 15.9%，平均持有 10.6 日，最坏 MAE -19.0% vs 基线 -23.3%（<b>+4.3pp</b>）。胜率较旧版「朴素买入持有 +20 日」的 58.4% <b>显著提升</b>。<br>
-回测只验证<b>技术反转信号</b>，选股日的「基本面地板」(盈利高增+估值合理+小盘) 作为静态叠加未计入历史（离线无可比基本面序列），
-实际选股进一步降低踩雷概率。</div>
+本页只验证<b>退出规则</b>本身（止损 / 移动止盈 / 持有期），入场侧一律使用当年的旧规则，
+不含 v5 的域扩张与先验固定因子集排序（那部分见 lab.html）。</div>
 
 <h2>一、可兑现胜率（移动止盈 −12% 硬止损 / +6% 激活 / 回撤 3% / 满 20 日强平）</h2>
 <div class="card"><table data-wb>
