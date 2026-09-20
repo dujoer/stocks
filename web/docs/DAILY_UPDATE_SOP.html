@@ -386,6 +386,14 @@ python quant/fetch_rev_enrich.py --date {DATE} --render
 页面「资金口径」一行会标出当日实际来源（<code>westock / 新浪财经离线 / mixed</code>）——
 两家的「主力」阈值定义不同，跨日对比前请先看这一行。</p>
 
+<p class="note">📄 <b>补数后还要重跑「入口页」</b>：<code>web/reversal/index.html</code>（板块入口）由
+<code>quant/gen_watchlist.py</code> 生成，读的是<b>同一份</b> <code>quant/watchlist_scan_{DATE}.json</code>。
+只跑 <code>rev_pool render</code> 而不重跑 <code>gen_watchlist.py</code>，入口页会停在旧数据上 ——
+典型症状正是<b>名称列显示成代码、流通市值与 20 日主力整列是「—」</b>（旧扫描文件里没有这些字段）。
+该页现含：名称（可点跳东财）· 流通亿 · 距52高 · YTD · <b>20日主力(亿)</b> · <b>5日主力(亿)</b> · 组合分 · 档 ·
+<b>现价 / 买区 / 止损 / 目标T1</b>，另加「本期新进 / 连续在榜」统计、「这张表怎么用（操作路径）」四步与仓位退出纪律。
+⚠️ 字段名坑：扫描产出的是 <code>mf20</code>（单位<b>元</b>），入口页若读旧的 <code>main20</code> 会整列空 —— 改动前先对字段名。</p>
+
 <p class="note">✅ <b>种子已可完全脱离 MCP（2026-09-20 打通，推荐切换）</b>：原种子走
 <code>tool_filter intersect([NPParentCompanyYOY_Q&gt;50, PE_TTM&gt;0, PE_TTM&lt;50, TotalMV&lt;100亿])</code>，
 现已可用离线复现：</p>
@@ -451,6 +459,18 @@ python quant/db_export.py          # 导出列式分片到 web/data/，供查询
 python quant/build_sections.py   # 生成跳转页（内容已并入门户）
 python quant/_apply_theme.py     # 统一导航/主题/排序/搜索注入（改任何页面样式后必跑）
                                    # 收尾会自动跑 quant/linkify.py（个股名称 → 东财外链）</pre>
+<div class="note"><b>个股外链机制（2026-09-20 扩容）</b>：<code>quant/linkify.py</code> 分三个阶段处理，
+由 <code>_apply_theme.py</code> <b>收尾自动调用</b>（所以<b>不要逐改生成器</b>，新页老页一起覆盖）：
+<ol style="margin:6px 0 0 0;padding-left:20px">
+<li><b>结构化单元格</b> <code>&lt;td&gt;</code>：宽松匹配（名称通常独占一格）；</li>
+<li><b>卡片标题</b> <code>&lt;span class="cname|nm|sname|stk"&gt;</code>；</li>
+<li><b>全文本节点</b>：严格匹配 —— 名称<b>前后都必须是「非汉字」边界</b>，覆盖卡片标题、加粗、行内 <code>&lt;span&gt;</code> 与正文短句
+（如「<code>&lt;b&gt;机构净买 TOP3&lt;/b&gt;：中晶科技(2.45亿)</code>」「正文里的（中际旭创 +76.9亿居首）」）。</li>
+</ol>
+<b>安全阀</b>（缺一不可）：跳过 <code>&lt;script&gt;/&lt;style&gt;/&lt;a&gt;</code>；单文本节点 &gt;800 字视为正文段落跳过；
+名称后 16 字内含「有限责任/营业部/分公司/席位/专户/资管计划」不链；方括号包裹（<code>[同花顺]</code> <code>[新华网]</code> 这类新闻来源标记）不链；
+易歧义词（<b>农产品</b> / <b>机器人</b> 等既是简称又是行业名词的）不链。
+扩容后全站 <b>21,625 处 / 180 文件</b>；验证幂等：<code>_apply_theme.py</code> 连跑两次应 <b>0 变化</b>。</div>
 <p>随后做 <a href="#check">第四节校验清单</a>。任何显示「非当日」的子系统即为<b>漏跑项</b>，必须当天补齐（或按降级说明诚实标注），不得放任累积。</p>
 <div class="danger"><b>⚠️ 顺序敏感 + 主题必须注入</b>：<code>build_portal.py</code> 会<b>整份重写</b>仓库根 <code>index.html</code>。门户自带 <code>&lt;style&gt;</code> 用的是统一设计系统的 CSS 变量（<code>--ink / --muted / --surface / --accent / --line</code> 等），这些变量只在 <code>_apply_theme.py</code> 注入的 <code>&lt;!--WB_THEME--&gt;</code> 块里定义。若顺序颠倒（先 <code>_apply_theme</code> 再 <code>build_portal</code>），门户就会丢掉 <code>:root</code>，变量全部未定义 → 卡片<b>无背景、无边框</b>、导航无分组底色（页面看起来「没样式」）。现已让 <code>build_portal.py</code> 在写盘前<b>自行注入</b>主题与通用脚本，与执行顺序解耦；<code>_apply_theme.py</code> 照常在其后跑仍是幂等的。<br><b>同一脚本还会给全站个股名称加外链</b>：收尾调用 <code>quant/linkify.py</code>，把表格单元格 / 卡片标题里的个股名称统一包成东方财富个股页外链（<code>quote.eastmoney.com/&lt;sh|sz|bj&gt;&lt;code&gt;.html</code>，新窗口打开）。为什么放在这里而不是逐个改生成器：站点有 30+ 个生成器 + 200 多张历史归档页，逐处改只能覆盖「以后新生成的页」，归档页永远漏。名称表 <code>quant/_stock_names.json</code>（全市场 5543 只，腾讯快照生成）缺失时该步自动跳过；新增名称可跑 <code>python quant/_emlink.py --refresh</code> 重建。安全阀：只匹配「独占单元格开头 + 名称后 16 字内无『有限责任/营业部/分公司』」的位置，不会误链券商营业部名；幂等，重复执行不会套娃。</div>
 <div class="note"><b>日期口径</b>：本手册与门户「每日更新清单」里的 <code>{DATE}</code> 取<b>最新数据日</b>（各子系统最新快照日的最大值），<b>不是日历今天</b> —— 周末或节假日重建门户时若用今天，会写出一个根本没有数据的日期，误导执行者。</div>
