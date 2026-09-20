@@ -347,9 +347,9 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
       <tr data-tier='daily'>
         <td class='dim'>群体心理风险雷达</td><td><span class='tag daily'>每日</span></td>
         <td>盘后 ~21:00（原「按需」已改为每日必做）</td>
-        <td><code>build_psychology.py --date D</code>（节假日加 <code>--next N</code>）——自动出页 + 写入索引 + 累积 <code>quant/psy/history.json</code></td>
+        <td><code>build_psychology.py --date D</code>（节假日加 <code>--next N</code>）——自动出页 + 写入索引 + 累积 <code>quant/psy/history.json</code>；收尾自动跑 <code>psy_hub_refresh.py</code> 刷新 hub 顶部<b>静态块</b>（涨股比走势 SVG / 走势注记 / 轨迹注记 / 统计条 / 跨度标签）</td>
         <td>2026-09-14</td>
-        <td class='hint'><b>已全自动化，不再手抄文案</b>；旧的「复制上一期 HTML + 精确字符串替换」法（<code>_build_{MMDD}.py</code>）已废弃——锚点一旦失配会静默残留旧数据。数据缺失时脚本如实标注「接口降级，未编造」</td>
+        <td class='hint'><b>已全自动化，不再手抄文案</b>；旧的「复制上一期 HTML + 精确字符串替换」法（<code>_build_{MMDD}.py</code>）已废弃——锚点一旦失配会静默残留旧数据。数据缺失时脚本如实标注「接口降级，未编造」。⚠️ <b>REPORTS 追加 ≠ hub 顶部刷新</b>：走势 SVG / 注记 / 统计条是静态文本，历史上靠 <code>_update_index_{MMDD}.py</code> 手改，漏跑会永久停在旧日期（曾停在 09-11，而 REPORTS 已 25 期）；体检 <code>psy_hub_refresh.py --check</code>（落后退出码 1）</td>
       </tr>
       <tr data-tier='daily'>
         <td class='dim'>精选池（原个股信号池 · 次日建仓候选，含技术确认出池）</td><td><span class='tag daily'>每日</span></td>
@@ -412,7 +412,7 @@ footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; 
         <td>各数据跑完后</td>
         <td><code>build_dashboards</code> → <code>build_portal</code> → <code>build_sections</code> → <code>_apply_theme</code>（含导航注入）→ <code>_link_check</code> → <code>_coverage_check</code></td>
         <td>2026-09-15</td>
-        <td class='hint'>补跑历史日须最后再跑最新交易日，否则 index.html 停在旧日期；build_portal 须在 dashboards 之后跑还原门户版</td>
+        <td class='hint'>补跑历史日须最后再跑最新交易日，否则 index.html 停在旧日期；build_portal 须在 dashboards 之后跑还原门户版。⚠️ <code>build_portal</code> 整份重写仓库根 <code>index.html</code> —— 若先跑 <code>_apply_theme</code> 再跑它，门户会丢 <code>WB_THEME</code> 主题块，卡片无背景无边框（现已在写盘前自行注入，与顺序解耦）。SOP 里的 <code>{DATE}</code> 取<b>最新数据日</b>，不是日历今天</td>
       </tr>
       <tr data-tier='periodic'>
         <td class='dim'>行业最强榜（全市场）</td><td><span class='tag periodic'>季频</span></td>

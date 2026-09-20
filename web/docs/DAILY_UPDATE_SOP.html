@@ -294,6 +294,7 @@ python quant/build_psychology.py --date {DATE} --next {NEXT_DATE}
 #   自动写入 quant/psy/history.json（供下期环比与雷达融资维平移）</code></pre>
 <p><b>数据流</b>：广度 / 指数 / 技术 / 估值 / 风格 ← <code>data_market_overview</code>；板块领涨领跌与主力行为 ← 板块强度 <code>sector_strength_data_{YYYYMMDD}.json</code>；连板梯队 ← <code>tool_ranking(limitup_days)</code>。阶段定性（恐慌扩散 / 退潮加速 / 广度修复 / 情绪回暖 / 指数分化 / 缩量震荡）、风险等级、雷达六维均由脚本内的<b>显式规则</b>计算；中英文叙述由模板按真实数据拼装。任一数据缺失即如实标注「接口降级，未编造」。</p>
 <p><b>校验</b>：脚本收尾会打印「残留旧数据」，必须为「<b>无</b>」。若不为无，说明固定骨架 <code>quant/psy/_skeleton.html</code> 的某处正则锚点失配，修对应位置的正则即可（骨架只读，不可改数值）。</p>
+<div class="danger"><b>⚠️ hub 顶部静态块必须单独刷新（曾停在 09-11）</b>：<code>build_psychology.py</code> 只把新一期「追加」进 <code>web/psychology/index.html</code> 的 <code>REPORTS</code> 数组；而 hub 顶部的<b>涨股比走势 SVG</b>（折线点位 / 数值标签 / 日期轴）、<b>走势注记</b>、<b>情绪周期轨迹注记</b>、<b>统计条</b>、<b>跨度标签</b>都是<b>静态文本</b>，不会随 REPORTS 自动走 —— 历史上靠 <code>market-trend/_update_index_{MMDD}.py</code> 手改，一旦漏跑就永久停在旧日期（实测 2026-09-20 时 REPORTS 已有 25 期，走势图与注记仍停在 09-11）。现已改为脚本收尾<b>自动调用</b> <code>quant/psy_hub_refresh.py</code>（幂等，以 hub 自身 REPORTS 为唯一真相源重建上述静态块）。体检 / 补刷：<br><code>python quant/psy_hub_refresh.py --check</code>　# 落后会返回退出码 1<br><code>python quant/psy_hub_refresh.py</code>　　　　　# 补刷</div>
 
 <h3>④ 自下而上选股（可选，每日一期）</h3>
 <div class="card">
@@ -419,6 +420,8 @@ python quant/db_export.py          # 导出列式分片到 web/data/，供查询
 python quant/build_sections.py   # 生成跳转页（内容已并入门户）
 python quant/_apply_theme.py     # 统一导航/主题/排序/搜索注入（改任何页面样式后必跑）</pre>
 <p>随后做 <a href="#check">第四节校验清单</a>。任何显示「非当日」的子系统即为<b>漏跑项</b>，必须当天补齐（或按降级说明诚实标注），不得放任累积。</p>
+<div class="danger"><b>⚠️ 顺序敏感 + 主题必须注入</b>：<code>build_portal.py</code> 会<b>整份重写</b>仓库根 <code>index.html</code>。门户自带 <code>&lt;style&gt;</code> 用的是统一设计系统的 CSS 变量（<code>--ink / --muted / --surface / --accent / --line</code> 等），这些变量只在 <code>_apply_theme.py</code> 注入的 <code>&lt;!--WB_THEME--&gt;</code> 块里定义。若顺序颠倒（先 <code>_apply_theme</code> 再 <code>build_portal</code>），门户就会丢掉 <code>:root</code>，变量全部未定义 → 卡片<b>无背景、无边框</b>、导航无分组底色（页面看起来「没样式」）。现已让 <code>build_portal.py</code> 在写盘前<b>自行注入</b>主题与通用脚本，与执行顺序解耦；<code>_apply_theme.py</code> 照常在其后跑仍是幂等的。</div>
+<div class="note"><b>日期口径</b>：本手册与门户「每日更新清单」里的 <code>{DATE}</code> 取<b>最新数据日</b>（各子系统最新快照日的最大值），<b>不是日历今天</b> —— 周末或节假日重建门户时若用今天，会写出一个根本没有数据的日期，误导执行者。</div>
 </div>
 
 <h2>三、已知坑（务必先看，避免重蹈覆辙）</h2>

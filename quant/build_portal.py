@@ -10,7 +10,7 @@
   3) 群体心理风险雷达 web/psychology/index.html  最新 = max(web/psychology/crowd-psychology-risk-radar-YYYYMMDD.html)
   4) 个股调研        web/research/index.html     列出全部调研报告
 """
-import os, re, datetime, json
+import os, re, sys, datetime, json
 from _nav import selfcontained_nav
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -209,7 +209,14 @@ def stat_sector():
 
 
 def stat_psy():
-    """群体心理雷达：从最近一期 HTML 抓「标题 + 关键定性词」"""
+    """群体心理雷达：从最近一期归档页抓「阶段定性 + 广度 + 风险等级」。
+
+    归档页是 build_psychology.py 生成的 i18n 结构，稳定可解析的字段是
+    t_cycle_note（形如「注：上方「缩量止跌 · 广度修复（指数未确认）」为实时群体心理
+    定位——2026-09-14 广度（涨股比 56%、涨停 57、跌停 18、成交 ¥1.63万亿）显示：…」）
+    与 t_risk_hi（高/中/低）。旧写法去找 class="grade" 抓不到 → 退化成标题
+    「近期：群体心理风险雷达 · A股」，等于没信息。
+    """
     if not psy_f:
         return ""
     p = os.path.join(WEB, "psychology", psy_f)
@@ -217,16 +224,38 @@ def stat_psy():
         h = open(p, encoding="utf-8").read()
     except Exception:
         return ""
-    import re as _re
-    # 情绪定性（找一个风险/情绪相关词）
-    m = _re.search(r"id=\"grade[^\"]*\"[^>]*>([^<]{2,12})<", h) \
-        or _re.search(r"<span[^>]*class=\"grade[^\"]*\"[^>]*>([^<]{2,12})<", h)
-    title_m = _re.search(r"<title>([^<]+)</title>", h)
-    if m:
-        return f"情绪定性 <b>{m.group(1).strip()}</b>"
-    if title_m:
-        return f"近期：<b>{title_m.group(1).strip()[:24]}</b>"
-    return ""
+
+    def field(key):
+        m = re.search(re.escape(key) + r':\s*([\"`])', h)
+        if not m:
+            return None
+        q = m.group(1)
+        i = a = m.end()
+        while i < len(h):
+            if h[i] == "\\":
+                i += 2
+                continue
+            if h[i] == q:
+                break
+            i += 1
+        return h[a:i].replace('\\"', '"')
+
+    note = field("t_cycle_note") or ""
+    stage = re.search(r"「(.+?)」", note)
+    br = re.search(r"广度（涨股比\s*([\d.]+)%、涨停\s*(\d+)、跌停\s*(\d+)", note)
+    risk = (field("t_risk_hi") or "").strip()
+
+    if stage:
+        bits = ["<b>%s</b>" % stage.group(1)]
+        if br:
+            bits.append("涨股比 %s%%" % br.group(1))
+            bits.append("涨停 %s / 跌停 %s" % (br.group(2), br.group(3)))
+        if risk:
+            bits.append("风险 <b>%s</b>" % risk)
+        return " ｜ ".join(bits)
+    # 兜底：六阶段主标签
+    m = re.search(r'id="grade[^"]*"[^>]*>([^<]{2,12})<', h)
+    return ("情绪定性 <b>%s</b>" % m.group(1).strip()) if m else ""
 
 
 def stat_research():
@@ -589,16 +618,31 @@ update_steps = [
     ("③ 高管增减持", "<code>tool_event(manager_sharechg, limit=700)</code>；<b>降级期</b>经东财 <code>RPT_EXECUTIVE_HOLD_DETAILS</code> 回补（变动日口径、覆盖约 76%）→ 落 <code>quant/exec_chg/{DATE}.json</code> → <code>python quant/gen_exec.py --date {DATE}</code> → <code>python quant/build_exec.py --date {DATE}</code>。"),
     ("④ 大宗交易", "<code>block_past_30(limit=3000)</code>；<b>降级期</b>经东财 <code>RPT_DATA_BLOCKTRADE</code>（pageSize=5000；折扣 <code>discount=-PREMIUM_RATIO*100</code>，正=折价）→ 落 <code>quant/block_chg/{DATE}.json</code> → <code>python quant/gen_block.py --date {DATE}</code> → <code>python quant/build_block.py --date {DATE}</code>。"),
     ("⑤ 板块强度（必做 · 不可回溯）", "拉 industry(ranking, limit=300) + concept(limit=1000) 快照 → <code>python quant/gen_sector_raw.py</code> → <code>python quant/run_daily_sector.py --date {DATE} --industry &lt;绝对路径&gt; --concept &lt;绝对路径&gt;</code>。<b>漏跑一天该交易日永久断档</b>，次日开盘后无法回补。"),
-    ("⑥ 群体心理风险雷达（每日必做 · 已全自动化）", "<code>python quant/build_psychology.py --date {DATE}</code>（节假日用 <code>--next {NEXT}</code>）。读①②③④⑤ 的产物自动出页 + 写入索引 + 累积 <code>quant/psy/history.json</code>；<b>旧的手抄文案法 <code>_build_*_{MMDD}.py</code> 已废弃</b>。"),
+    ("⑥ 群体心理风险雷达（每日必做 · 已全自动化）", "<code>python quant/build_psychology.py --date {DATE}</code>（节假日用 <code>--next {NEXT}</code>）。读①②③④⑤ 的产物自动出页 + 写入索引 + 累积 <code>quant/psy/history.json</code>；<b>旧的手抄文案法 <code>_build_*_{MMDD}.py</code> 已废弃</b>。脚本收尾会自动调用 <code>quant/psy_hub_refresh.py</code> 刷新 hub 顶部<b>静态块</b>（涨股比走势 SVG / 走势注记 / 情绪周期轨迹注记 / 统计条 / 跨度标签）——这些块不会随 REPORTS 自动走，<b>曾因此永久停在 09-11</b>。手工体检：<code>python quant/psy_hub_refresh.py --check</code>；补刷：<code>python quant/psy_hub_refresh.py</code>。"),
     ("⑦ 精选池（原信号池 · 每日 · 双轨 + 技术确认出池）", "<code>python quant/gen_picks.py --date {DATE} --window 20 --top 40</code>（纯本地三路信号）→ agent 经 MCP 按 <code>_codes_{DATE}.txt</code> 以 25 只/批补拉 quote/technical/chip/fund_flow/margin/hot → <b><code>python quant/fetch_pick_klines.py --end {DATE}</code>（沙箱外；为全部选股码建 <code>quant/picks/price_archive.json</code> 日K价格档案，漏跑则次日无法回填昨日选股）</b> → <code>python quant/build_picks.py --date {DATE}</code>（backfill 读该档案按真实交易日历回填每只票 T+1/T+3/T+5，昨日选股今日结算；并用真实同日收盘+MA5 校正入场/止损/目标基准）→ <code>python quant/backtest_picks.py</code>（累积胜率）。<b><code>quotes_{DATE}.json</code> 缺失会导致 0 行输出</b>。<b>2026-09-19 起出池门槛：</b>最高档直接出池；次高档须通过「20 日主力净流入为正」（MACD 三层漏斗第 C 层，读 <code>fundflow_{DATE}.json</code> 的 <code>mainNetFlow20D</code>）才出池；其余一律折叠为仅跟踪。当日无出池标的时页面明示<b>空仓等待</b>——实测最高档 T+3 胜率 83%，次高档仅 47%，故不硬凑。"),
     ("⑧ 做T池（每日 · 底仓网格）", "<code>python quant/scan_strong.py --date {DATE}</code>（全市场强势扫描，产出 <code>_strong_scan_{DATE}.json</code>）→ <code>python quant/gen_tplus.py --date {DATE}</code>（<b>三源并集</b>：机构底仓 ≥3% ／ 龙虎榜近 10 日 ／ 强势 20 日超额 ≥5pp，约 1600 只）→ 补拉 <code>data_quote</code> + <code>data_kline</code>（约 848×60 根，<b>数据量最大，建议单独跑一轮</b>）→ <code>python quant/build_tplus.py --date {DATE}</code>。<b>2026-09-19 起加大盘环境门控（<code>quant/_idxkline.py</code>）</b>：市场画像评分 × 55% + 上证指数均线状态 × 45%，强势 ≥3.8 / 震荡 3.0~3.8 / 弱势 2.2~3.0 / 破位 &lt;2.2；强势放行 A/B/C、震荡放行 A/B、<b>弱势只放行 A 档</b>并附加「一年分位 ≤70% · MA20 斜率 ≥−1% · 箱体高度 ≤40%」，仓位按环境打 0.55~1.0 折，<b>破位不放行新开仓</b>；卖区改为 1.2×ATR 驱动（不再死等箱体上沿）。"),
     ("⑨ 反转 / MACD / 高胜率（每日扫描）", "三者均以当日数据实拉落盘后再渲染：反转 = <code>python quant/rev_pool.py run</code>（本地日K，220 只种子 → 横截面分位组合/分位档）→ <code>python quant/gen_watchlist.py {DATE}</code>（仅重建入口页）；模型失效时 <code>python quant/_rev_lab.py</code> 重跑样本外实证并刷新 <code>web/reversal/lab.html</code>。MACD = <code>python quant/macd_build.py {DS} --raw</code> + <code>python quant/build_macd_extra.py --date {DATE}</code> + <code>python quant/gen_macd.py {DS}</code>；高胜率 = <code>python quant/build_highwin.py --date {DATE}</code> + <code>python quant/gen_highwin.py --date {DATE}</code>。<b>增强诊断列（52周分位 / 量比 / 换手 / 5日主力 / 归一化强度 / 获利盘 / 集中度）由 <code>build_macd_extra.py</code> 经 MCP 实拉 data_quote + data_chip + data_fund_flow 生成</b>，必须在 <code>macd_build.py</code> 之前跑，否则该表整列显示「无增强数据」；<b>高胜率须早于 <code>build_picks.py</code></b>，否则 picks/index 入链停在上期。"),
     ("⑩ 当日要闻", "<code>data_hot(kind=news)</code> 榜单落 <code>quant/_news_seed/{DATE}.json</code> → <code>python quant/add_news.py --date {DATE}</code>（可加 <code>--expect 50</code> 校验条数）。<b>不再每天新建一个脚本</b>。"),
-    ("⑪ 数据库与门户重建", "<code>python quant/db_update.py {DATE}</code> → <code>python quant/db_export.py</code> → <code>python quant/build_portal.py</code> → <code>python quant/build_sections.py</code> → <code>python quant/_apply_theme.py</code>。门户卡片自动带出最新日期与新鲜度；<b>凡显示「非当日」的卡片即为漏跑项，须当天补齐或诚实标注降级</b>。"),
+    ("⑪ 数据库与门户重建", "<code>python quant/db_update.py {DATE}</code> → <code>python quant/db_export.py</code> → <code>python quant/build_portal.py</code> → <code>python quant/build_sections.py</code> → <code>python quant/_apply_theme.py</code>。门户卡片自动带出最新日期与新鲜度；<b>凡显示「非当日」的卡片即为漏跑项，须当天补齐或诚实标注降级</b>。🔴 <b>顺序敏感</b>：<code>build_portal.py</code> 会整份重写仓库根 <code>index.html</code>。过去若先跑 <code>_apply_theme.py</code> 再跑它，门户会丢掉 <code>&lt;!--WB_THEME--&gt;</code> 主题块 → <code>--ink/--muted/--surface</code> 等变量全部未定义 → 卡片无背景无边框（页面看起来「没样式」）。现已在写盘前自行注入主题与通用脚本，与执行顺序解耦。另：本 SOP 里的 <code>{{DATE}}</code> 取<b>最新数据日</b>（各子系统最新快照的最大值），不是日历今天，避免周末重建门户时写出一个没有数据的日期。"),
     ("⑫ 校验与推送", "合规扫描（产物内不得出现个人持有信息、账户盈亏等敏感内容）；<code>python quant/_link_check.py</code> 须 0 断链、<code>python quant/_coverage_check.py --until {DATE}</code> 无新增缺口、<code>python quant/_js_check.py --all</code> 通过；推送须<b>关闭沙箱</b>执行 <code>python quant/_push_lhb.py</code> → <code>python quant/_sync_all.py</code> 收敛 → <code>python quant/_curl_gate.py</code> 抽检核心页 200。"),
 ]
 
 _LATEST = TODAY.strftime("%Y-%m-%d")
+# 精简 SOP 里的 {DATE} 语义是「这一期数据所属的交易日」，不是「门户重建日」。
+# 周末/节假日重建门户时用今天会写出一个根本没有数据的日期，误导执行者；
+# 故取各子系统最新快照日的最大值（至少 mkt_d 通常就是最近交易日）。
+_cands = [d for d in (mkt_d, psy_d, sec_d, lhb_d, exec_d, blk_d, reversal_d, macd_d) if d]
+if _cands:
+    _DATA_D = max(_cands)
+    _LATEST = _DATA_D.strftime("%Y-%m-%d")
+    _DS = _DATA_D.strftime("%Y%m%d")
+else:
+    _DATA_D = TODAY
+    _DS = TODAY.strftime("%Y%m%d")
+# 下一交易日（按工作日近似，跳过周末；假日由人工判断）
+_nxt = _DATA_D + datetime.timedelta(days=1)
+while _nxt.weekday() >= 5:
+    _nxt += datetime.timedelta(days=1)
 steps_html = "\n".join(
     f"<div class='step'><div class='no'>{i+1}</div><div><b>{t}</b><br><span class='sd'>{d}</span></div></div>"
     for i, (t, d) in enumerate(update_steps)
@@ -606,8 +650,8 @@ steps_html = "\n".join(
 # 之前 {DATE} / {DS} / {NEXT} 占位符从未被替换，会原样输出到门户页面 —— 这里统一落地
 steps_html = (steps_html
               .replace("{DATE}", _LATEST)
-              .replace("{DS}", TODAY.strftime("%Y%m%d"))
-              .replace("{NEXT}", (TODAY + __import__("datetime").timedelta(days=1)).strftime("%Y-%m-%d")))
+              .replace("{DS}", _DS)
+              .replace("{NEXT}", _nxt.strftime("%Y-%m-%d")))
 
 # ---- 合并自原 build_sections.py 的参考信息 ----
 RELATIONSHIPS = [
@@ -785,8 +829,21 @@ footer {{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center
 </html>
 """
 
+# 门户自带 <style> 用的是统一设计系统的 CSS 变量（--ink / --muted / --surface / --accent…），
+# 这些变量只在 _apply_theme.py 注入的 <!--WB_THEME--> 块里定义。过去靠 SOP 顺序
+# 「build_portal → build_sections → _apply_theme」保证，一旦顺序颠倒（或只跑门户）
+# 门户就会丢掉 :root —— 卡片背景/边框全失效，页面看起来"没样式"。
+# 这里在写盘前自己注入一次，与执行顺序解耦；_apply_theme 之后照跑仍是幂等的。
+try:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import _apply_theme as _AT
+    html = _AT.inject_app(_AT.inject_theme(html))
+except Exception as _e:
+    print("[warn] 门户主题注入失败（请务必补跑 python quant/_apply_theme.py）：%s" % _e)
+
 with open(OUT, "w", encoding="utf-8") as f:
     f.write(html)
 print(f"OK: 总门户已生成 -> {OUT}")
 print(f"    龙虎榜={fmt(lhb_d)} | 高管增减持={fmt(exec_d)} | 大宗交易={fmt(blk_d)} | 板块强度={fmt(sec_d)} | 心理雷达={fmt(psy_d)}")
+print(f"    SOP 日期口径 = 最新数据日 {_LATEST}（非日历今天 {TODAY.isoformat()}）")
 print("    下一步：python quant/build_sections.py（重定向页）→ python quant/_apply_theme.py")
