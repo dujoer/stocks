@@ -386,6 +386,15 @@ python quant/fetch_rev_enrich.py --date {DATE} --render
 页面「资金口径」一行会标出当日实际来源（<code>westock / 新浪财经离线 / mixed</code>）——
 两家的「主力」阈值定义不同，跨日对比前请先看这一行。</p>
 
+<p class="note">✅ <b>种子已可完全脱离 MCP（2026-09-20 打通，推荐切换）</b>：原种子走
+<code>tool_filter intersect([NPParentCompanyYOY_Q&gt;50, PE_TTM&gt;0, PE_TTM&lt;50, TotalMV&lt;100亿])</code>，
+现已可用离线复现：</p>
+<pre>python quant/fetch_fin_snapshot.py --periods 6    # 东财全市场业绩报表 → quant/fin/snapshot.json（季度更新一次）
+python quant/fetch_fin_snapshot.py --screen-rev   # → quant/_rev_seed_offline_{报告期}.json（与 MCP 种子同格式）</pre>
+<p class="note">实证等效性：与 MCP 当期 220 只种子比对 → <b>遗漏 0 只</b>、仅多 1 只边界股（去 ST 后）。
+改为离线种子只需把 <code>rev_pool.load_universe()</code> 的种子文件名指过去；<b>切换前建议先跑一期对照</b>，
+确认池子构成无异常再固化为日更路径。</p>
+
 <p><b>3. 入口页</b>：</p>
 <pre>python quant/gen_watchlist.py {DATE}   # 只重建 web/reversal/index.html（入口滚动更新）
                                        # 检测到 rev_pool v4 的 scan 时会自动跳过明细，避免覆盖</pre>
@@ -462,9 +471,28 @@ python quant/_apply_theme.py     # 统一导航/主题/排序/搜索注入（改
 <li><b>③ 群体心理雷达</b>：连板梯队 / 两融环比 / 指数聚合缺失 → 无法整期重建（模板 130+ 键写死），只能停更；</li>
 <li><b>⑤ 个股信号池</b>：<code>quotes</code> 拉不到 → 0 行输出；<code>data_risk</code> 缺失 → 风险闸门失效；</li>
 <li><b>⑥ 做T池</b>：<code>data_kline</code> 大批量拉取受限 → 池子停更；</li>
-<li><b>⑧ MACD / ⑦ 反转</b>：<code>tool_filter</code> 正常时不受影响，降级时同步停更。</li>
+<li><b>⑧ MACD</b>：<code>tool_filter</code> 正常时不受影响，降级时同步停更；<b>⑦ 反转</b>已可脱离 MCP 走离线财务快照（见下方「配额对策」）。</li>
 </ul>
-<b>纪律</b>：每日收尾跑 <code>python quant/_coverage_check.py --until {DATE}</code>，凡「最新日期 ≠ {DATE}」的子系统即为漏跑/降级项 —— 能补的当天补；确因接口降级补不了的，必须在总门户诚实标注「接口降级·停更于 YYYY-MM-DD」，<b>绝不可以用旧数据冒充当日、也不可静默跳过</b>。</div>
+<b>纪律</b>：每日收尾跑 <code>python quant/_coverage_check.py --until {DATE}</code>，凡「最新日期 ≠ {DATE}」的子系统即为漏跑/降级项 —— 能补的当天补；确因接口降级补不了的，必须在总门户诚实标注「接口降级·停更于 YYYY-MM-DD」，<b>绝不能用旧数据冒充当日、也不可静默跳过</b>。</div>
+
+<div class="ok"><b>✅ MCP 配额对策（2026-09-20 立）——「端口被限制」≠「服务限频」</b>
+<ul>
+<li><b>先分清两件事</b>：<code>502 / init failed</code> 是<b>寻址问题</b>（Electron 换端口，<code>_wsboot</code> 已修为 live 优先）；<code>服务限频 / error_type=2 / 429</code> 才是<b>服务端配额</b>，与端口无关。</li>
+<li><b>① 磁盘缓存（<code>_wsmcp</code> 内建）</b>：参数完全相同的调用直接命中本地缓存，<b>不发请求</b>。历史日期（参数 <code>date/end</code> &lt; 今天）<b>永久有效</b>，当日/无日期走 <code>MCP_CACHE_TTL</code>（默认 600s）。只缓存成功结果（限频不入缓存）。开关 <code>MCP_CACHE=0</code>，体检 <code>python quant/_wsmcp.py --stats</code>。</li>
+<li><b>② 批量粒度可调（不是根因）</b>：<code>build_macd_extra.py --batch-quote/--batch-chip/--batch-flow</code>（默认沿用 30/30/20）。实测提醒：<b>限频一旦触发，缩批也无效</b>（30 只批次同样空返），所以真正有效的永远是 ①缓存 与 ③离线化，不要指望靠调批大小救国。</li>
+<li><b>③ 能离线的绝不用 MCP</b>：日K/快照走腾讯 <code>_tx_fetch</code>，资金流走新浪，财务走东财 <code>datacenter-web</code>（详见下表）。全市场量级（上千只）一律离线。</li>
+<li><b>④ 只把不可替代项留给 MCP</b>：<code>data_chip</code>（筹码获利盘/集中度，暂无公开等价源）、部分 <code>data_news</code> / <code>data_report</code>、以及少数单码接口。<code>tool_filter</code>（条件选股）已可被离线财务快照替代。</li>
+</ul>
+<b>数据源分工（实测连通性，2026-09-20）</b>
+<table data-wb><thead><tr><th>数据需求</th><th>首选离线源</th><th>实测</th></tr></thead><tbody>
+<tr><td>全市场快照（名称/价/PE/PB/换手/量比/市值/52周）</td><td>腾讯 <code>qt.gtimg.cn</code>（80 只/请求）</td><td>✅ 5207 只约 20 秒</td></tr>
+<tr><td>日K（前复权）</td><td>腾讯 <code>ifzq/proxy.finance.qq.com fqkline</code></td><td>✅ 与 MCP <code>data_kline</code> 口径一致（抽样 101/101 吻合）</td></tr>
+<tr><td>主力资金流（1/5/10/20 日）</td><td>新浪 <code>MoneyFlow.ssl_qsfx_zjlrqs</code>（日级 25 日）</td><td>✅ 220 只约 3 秒</td></tr>
+<tr><td>财务（净利/营收同比、ROE、EPS）</td><td>东财数据中心 <code>RPT_LICO_FN_CPD</code>（500/页，全市场 23 页）</td><td>✅ 6 期约 70 秒，<b>季度更新一次</b></td></tr>
+<tr><td>高管增减持 / 大宗 / 涨停池 / 龙虎榜</td><td>东财 <code>datacenter-web</code> + <code>push2ex</code></td><td>✅ 可用</td></tr>
+<tr><td><code>push2.eastmoney.com</code>（行情 clist）</td><td>——</td><td>❌ 本机被墙，勿再试（<b>只此一个主机</b>，勿扩大结论）</td></tr>
+</tbody></table>
+<b>反转池种子已可完全离线复现</b>：<code>python quant/fetch_fin_snapshot.py --periods 6</code> → <code>--screen-rev</code>，产出 <code>_rev_seed_offline_{报告期}.json</code>（同 MCP 种子格式）。实证：与 MCP <code>tool_filter</code> 220 只种子比对 <b>遗漏 0 只</b>、仅多 1 只边界股。</div>
 
 <div class="danger"><b>⚠️ 跨平台执行（2026-09-15 起）</b>：本机已从 Windows 迁到 macOS（项目根 <code>/Users/&lt;user&gt;/Downloads/workbuddy/股票</code>）。历史脚本里有 73 个写死 <code>G:/ai/股票</code> 或 <code>C:/Users/nonoy/…</code>，现已统一治理：<b>项目根由 <code>__file__</code> 推导</b>（每日链路上的脚本全部可跨机运行）；需要外部落盘目录的旧 relay 脚本改用环境变量 <code>WB_TOOL_RESULTS</code> / <code>WB_SESSION_JSONL</code> / <code>WB_NODE</code>。<b>新增脚本一律不许再写绝对路径</b>。</div>
 
