@@ -246,13 +246,13 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 
 </style><!--/WB_THEME--></head>
 <body>
-<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
-<div class="wrap">
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div><div class="wrap">
 <h1>底部反转 · 特征功效实验室</h1>
 <div class="sub">目的：用<b>样本外实证</b>决定「哪些特征有效、方向如何、该在多大的域上选」，替代「照回测胜率手调阈值」。
 面板：<b>全市场 5,007 只 A 股</b>（<code>_txk_cache.json</code> 全量正股，只剔 K 线不足者；
-未单独剔 ST/退市，占比 &lt;0.3%）× 2025-11~2026-09-18，
-步长 3 交易日，共 <b>161,762</b> 个「股票×交易日」样本（均已过硬门槛）。时间切分：前 60%（至 2026-05-11）训练，后 40% 测试。</div>
+未单独剔 ST/退市，占比 &lt;0.3%）× 2025-11-20~2026-08-20，
+步长 3 交易日，共 <b>161,762</b> 个「股票×交易日」样本（均已过硬门槛）。时间切分：前 60%（至 2026-05-11）训练，后 40% 测试。
+（面板最新样本为 2026-08-20：标签需要未来 20 交易日收益，故比最新交易日晚约 1 个月，<b>属方法固有滞后、非数据陈旧</b>；每日重跑面板会自然前移。）</div>
 
 <div class="box gold"><b>核心结论（v5 · 全市场域）：</b>
 ① <b>域扩张是最实在的改进</b>：旧机制只覆盖 westock 条件选股（净利同比&gt;50 &amp; 0&lt;PE&lt;50 &amp; 市值&lt;100亿）的
@@ -385,7 +385,7 @@ MAE = 平均最大不利偏移。注意全市场域下<b>训练期绝对胜率�
 <h2>十二、训练半 / 测试半对照（本次最重要的表）</h2>
 <div class="card"><table>
 <thead><tr><th>半段</th><th>n_top</th><th>前10% 绝对</th><th>域均 绝对</th><th>edge 绝对</th><th>前10% 相对</th><th>edge 相对</th></tr></thead>
-<tbody><tr><td>训练半（2025-11 ~ 2026-05-11）</td><td class='num'>7110</td><td class='num'>47.9%</td><td class='num'>50.0%</td><td class='num dn'>-2.2pp</td><td class='num'>45.5%</td><td class='num dn'>-3.0pp</td></tr><tr><td>测试半（2026-05-11 ~ 2026-09-18）</td><td class='num'>9074</td><td class='num'>51.5%</td><td class='num'>42.0%</td><td class='num up'>+9.5pp</td><td class='num'>65.1%</td><td class='num up'>+16.4pp</td></tr></tbody></table>
+<tbody><tr><td>训练半（2025-11 ~ 2026-05-11）</td><td class='num'>7110</td><td class='num'>47.9%</td><td class='num'>50.0%</td><td class='num dn'>-2.2pp</td><td class='num'>45.5%</td><td class='num dn'>-3.0pp</td></tr><tr><td>测试半（2026-05-11 ~ 2026-08-20）</td><td class='num'>9074</td><td class='num'>51.5%</td><td class='num'>42.0%</td><td class='num up'>+9.5pp</td><td class='num'>65.1%</td><td class='num up'>+16.4pp</td></tr></tbody></table>
 <div class="note"><b style="color:#b00020">alpha 在训练半为负、在测试半为正。</b>
 这意味着「+14pp」这类全期数字并不代表稳定能力；页面与选股结果都据此把
 「因子失效期」明确标注出来，而不是用回测数字掩盖它。</div></div>
@@ -409,7 +409,7 @@ MAE = 平均最大不利偏移。注意全市场域下<b>训练期绝对胜率�
 • <b>无泄漏</b>：分位在同一交易日内计算；walk-forward 只用该期之前的数据。<br>
 • <b>不拟合权重</b>：等权分位合成，不做权重优化，避免二次过拟合。<br>
 • <b>局限 1（重要）</b>：<b>优势依赖期间</b>（训练半为负、测试半为正），且未找到可提前识别的状态量；
-样本仅 2025-11~2026-09 约 10 个月，换年份是否成立<b>无法验证</b>。<br>
+样本仅 2025-11-20~2026-08-20（约 9 个月），换年份是否成立<b>无法验证</b>。<br>
 • <b>局限 2</b>：前向 20 日窗口互相重叠 → 样本非独立，统计显著性须按<b>日期聚类</b>理解，不要把 pp 差当独立样本读。<br>
 • <b>局限 3</b>：规模因子 <code>mv_log</code> 用「股本反推 × 收盘」近似，股本变动（送转/增发）会带来偏差；<br>
 • <b>局限 4</b>：退出规则的路径用 MAE/MFE 近似（止损优先、忽略移动止盈），绝对值偏保守。<br>

@@ -12,6 +12,7 @@ h2{font-size:18px;font-weight:600;margin:28px 0 12px;padding-bottom:8px;border-b
 .card{background:var(--card);border-radius:16px;padding:16px 20px;margin:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .box{border-left:4px solid var(--blue);background:#f0f7ff;padding:14px 18px;border-radius:0 12px 12px 0;margin:14px 0}
 .box.gold{border-color:var(--gold);background:#fffaf0}
+.box.warn{border-color:var(--up);background:#fdf1f0}
 .box.red{border-color:var(--dn);background:#f0faf3}
 table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0}
 th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
@@ -22,6 +23,7 @@ th{color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa}
 .tag.A{background:#e6f7ec;color:#1a7a45}
 .tag.B{background:#fff3e0;color:#e65100}
 .tag.C{background:#fdecea;color:#c0392b}
+.tag.new{background:#e8f0fe;color:#1967d2;margin-left:3px}
 .case{font-size:13px;margin:8px 0;padding:10px 14px;background:#fafafa;border-radius:10px;border-left:3px solid var(--purple)}
 .case .h{font-weight:600;margin-bottom:3px}
 .note{font-size:12px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
@@ -245,8 +247,7 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 
 </style><!--/WB_THEME--></head>
 <body>
-<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
-<div class="wrap">
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div><div class="wrap">
 <h1>底部反转观察池 · 实测筛选结果</h1>
 <div class="sub">数据基准：2026-09-16 收盘｜ 方法：六步 Playbook ｜ 种子表达式 225 只 → 低位保留 185 只 → 逐只验证分级</div>
 
@@ -269,7 +270,7 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <h2>二、观察池总表（185 只实测）</h2>
 <div class='xh-cmp'><div class='cnew'><b>1</b><span>本期与上期不重叠</span></div><div class='ccont'><b>184</b><span>连续在榜</span></div><div class='cout'><b>8</b><span>上期已退出</span></div></div><div class='note' style='border:none;padding:0;margin:0 0 6px'>口径提示：上一期（20260916 前最近一期）为人工精选、样本远小于本期的机械筛选，「新进 / 退出」多为口径差异而非基本面变化，<b>对比仅供参考</b>；真正可比的是名称后的历史入选徽标。</div>
 <div class="card">
-<div class="note" style="border:none;padding:0;margin:0 0 8px">名称后 <span class="xh-badge">09-11</span> = 该股此前曾在任一选股池入选（<b>悬停</b>看全部日期与池别：MACD观察池 / 信号池 / 做T池 / 反转池）。<b>所有列均可点击表头排序。</b></div>
+<div class="note" style="border:none;padding:0;margin:0 0 8px">名称后带 <span class="xh-badge">日期</span> 标记 = 该股此前曾在任一选股池入选（<b>悬停</b>看全部日期与池别：MACD观察池 / 信号池 / 做T池 / 反转池）。<b>所有列均可点击表头排序。</b></div>
 <div style="overflow-x:auto"><table class="sortable" data-wb>
 <thead><tr>
 <th data-k="code" data-t="s">代码</th><th data-k="name" data-t="s">名称</th>
