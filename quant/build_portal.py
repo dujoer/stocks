@@ -317,26 +317,24 @@ def stat_selected():
 
 
 def stat_accumulation():
-    """增仓精选：7 维增持/增仓信号 + 1/3/5 日多空增仓 · 共识选股（A=≥3 信号共振）"""
+    """增仓精选：机构/私募增持 I × 融资融券 1/3/5 日净增仓 M（S=强增仓×机构私募 80.9%）"""
     p = os.path.join(WEB, "accumulation", "accum_result.json")
     r = _load_json(p) or {}
-    c3 = (r.get("cons_wr") or {}).get("3") or [0, None]
-    n3, wr3 = c3[0], c3[1]
-    # 当日 A/B 档数从 combined 页提取
-    a_cnt = b_cnt = "—"
+    mods = r.get("mod_wr") or {}
+    v6 = mods.get("v6_M强(≥5日占比4%)+I") or [0, None]
+    n_s, wr_s6 = v6[0], v6[1]
+    # 当日 S/A 档数从 combined 页 sub 行提取
+    s_cnt = a_cnt = "—"
     if accum_d:
         h = _load_text(os.path.join(WEB, "accumulation", "combined_%s.html"
                                     % accum_d.strftime("%Y%m%d"))) or ""
         import re as _re
-        m = _re.search(r"A 档[^0-9]*(\d+)", h)
+        m = _re.search(r"S 档 (\d+) · A 档 (\d+)", h)
         if m:
-            a_cnt = m.group(1)
-        m = _re.search(r"B 档[^0-9]*(\d+)", h)
-        if m:
-            b_cnt = m.group(1)
-    wr_s = ("<b>%.1f%%</b>" % wr3) if isinstance(wr3, (int, float)) else "—"
-    return ("≥3 信号共振 <b>%d</b> 笔 ｜ 可兑现胜率 %s ｜ 当日 A 档 <b>%s</b> / B 档 %s"
-            % (n3, wr_s, a_cnt, b_cnt))
+            s_cnt, a_cnt = m.group(1), m.group(2)
+    wr_s = ("<b>%.1f%%</b>" % wr_s6) if isinstance(wr_s6, (int, float)) else "—"
+    return ("S 档（融资强增仓×机构私募）胜率 <b>%s</b>（20日 n=%d）｜ 当日 S 档 <b>%s</b> / A 档 %s"
+            % (wr_s, n_s, s_cnt, a_cnt))
 
 
 def stat_industry_elite():
@@ -566,9 +564,9 @@ ZONES = [
                 "stat": STAT["selected"], "date": fmt(selected_d) if selected_d else "—", "fresh": badge("fresh", "每日" if selected_d else "—"),
             },
             {
-                "ic": "🤝", "t": "增仓精选 · 多维共识选股", "href": "web/accumulation/index.html",
-                "func": "七维增持/增仓信号合一：私募增持 / 阳光私募 / 个人(牛散) / 公募增持（Q2 股东维度）＋ 大宗交易 / 高管增持 / 席位异动（日频事件）＋ <b>1/3/5 日多空增仓</b>（融资−融券净额）。先验等权合成「增仓分」，<b>共识度曲线 20 日实证：单一信号≈基线（55.7% vs 55.2%），≥3 信号共振胜率 61.6%、≥4 达 77.4%</b>——共识才有 alpha。出池门槛：A 档=≥3 信号共振（须含 ≥1 日频事件）、B 档=2 信号观察仓、仅 1 信号不入选。证据见 <a href='web/accumulation/lab.html'>增仓精选实验室</a>。",
-                "rel": "← 大宗交易/高管增持/席位（日频）+ Q2 股东分类（季度）+ 多空增仓（近似）；多空增仓待补连续序列后可重权。",
+                "ic": "🤝", "t": "增仓精选 · 机构私募×融资增仓", "href": "web/accumulation/index.html",
+                "func": "条件模块组合选股：<b>Ⅰ 机构/私募增持</b>（私募/阳光私募/牛散/公募 Q2 股东维度）× <b>Ⅱ 融资融券 1/3/5 日净增仓</b>（东财全量日频序列、T+1 口径）× Ⅲ 大宗/高管/席位日频事件。<b>20 日回测：S 档（5日融资净买入占比≥4% × 机构私募）胜率 80.9%（n=110，占比≥6% 达 91.2%）；A 档（≥3 信号共振且 M/I）69.1%</b>。S 档=最高确定性，A 档=共识共振，B 档=观察仓。证据见 <a href='web/accumulation/lab.html'>增仓精选实验室</a>。",
+                "rel": "← 大宗交易/高管增持/席位（日频）+ Q2 股东分类（季度）+ 东财融资融券序列（已补连续 20 日）；阈值敏感性单调（68→81→91%），先验阈值非拟合。",
                 "stat": STAT["accum"], "date": fmt(accum_d) if accum_d else "—", "fresh": badge("fresh", "每日" if accum_d else "—"),
             },
             {

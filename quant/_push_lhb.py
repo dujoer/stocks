@@ -121,6 +121,11 @@ FILES = [
     "quant/_wsboot.py",              # MCP 引导（live 端口优先，本地文件仅兜底）
     "quant/_emlink.py",              # 东财个股页 URL + 全市场名称表
     "quant/linkify.py",              # 全站个股名称外链后处理器
+    # —— 增仓精选（2026-09-21）：机构/私募 × 融资融券 1/3/5 日净增仓 条件模块 ——
+    "quant/_accum_lab.py",           # 实验室（信号帧 + 移动止盈回测 + 模块组合/阈值敏感性）
+    "quant/build_accum.py",          # 每日选股页（S=融资强增仓×机构私募 80.9%）
+    "quant/_fetch_margin_em.py",     # 东财 datacenter 融资融券日频批量抓取（margin_em/ 本地缓存不推送，可复抓）
+    "web/accumulation/accum_result.json",  # 回测汇总（模块组合/敏感性，供主页卡与审计）
 ]
 
 # 自动纳入「带日期/版块」的页面与数据源，保证每一页都带统一导航、且数据可复现。
