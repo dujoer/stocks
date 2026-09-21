@@ -1,0 +1,491 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>增仓精选 · 2026-09-18</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f6f8;color:#23262b}
+.wrap{max-width:1440px;margin:0 auto;padding:36px 20px 60px}
+h1{font-size:26px;margin:0 0 4px;color:#1c2430}
+.sub{color:#8a929c;font-size:13px;margin:0 0 20px}
+.card{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:16px;padding:18px 20px;margin:0 0 18px;box-shadow:0 1px 3px rgba(20,30,50,.05)}
+.card h2{font-size:16px;margin:0 0 12px;color:#1c2430;display:flex;align-items:center;gap:8px}
+.card h2:before{content:"";width:4px;height:16px;background:#1a73e8;border-radius:3px}
+.kpi{display:flex;flex-wrap:wrap;gap:12px}
+.k{flex:1;min-width:150px;background:linear-gradient(135deg,#fafbff,#f0f4ff);border:1px solid #dde6ff;border-radius:14px;padding:13px;text-align:center}
+.k .v{font-size:24px;font-weight:800}
+.k .l{font-size:12px;color:#6b7280;margin-top:4px}
+.stkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.stk{background:#fbfcfe;border:1px solid #e8ecf3;border-radius:12px;padding:12px 14px}
+.stk .h{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.nm{font-weight:700;font-size:15px;color:#1c2430;text-decoration:none}
+.nm:hover{color:#1a73e8}
+.cd{font-size:11px;color:#8a929c}
+.tier{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:700}
+.tA{background:#fdecea;color:#ea4335}
+.tB{background:#e8f0fe;color:#1a73e8}
+.sc{margin-left:auto;font-size:12px;color:#6b7280}
+.sg{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+.bdg{font-size:11px;background:#eef3fb;color:#3c5a83;border:1px solid #d8e2f2;border-radius:9px;padding:2px 8px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:7px 9px;border-bottom:1px solid #eef0f3;text-align:center}
+th{background:#f7f9fc;color:#5b6573;font-weight:600}
+td a{color:#1c2430;text-decoration:none} td a:hover{color:#1a73e8}
+.sgtd{text-align:left;white-space:normal}
+.rule{background:#fff7ed;border:1px solid #fed7aa;color:#9a5b1e;border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.8}
+.evi{background:#f0f7ff;border:1px solid #cfe3ff;border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.8}
+.note{color:#6b7280;font-size:12px;line-height:1.7}
+</style><!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  .navgrp{ padding:5px 6px 5px 5px !important; }
+}
+
+</style><!--/WB_THEME--></head><body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class="wrap">
+<h1>增仓精选</h1>
+<p class="sub">数据日 2026-09-18 ｜ 候选域 3586 只（带日频增仓事件）｜ A 档 17 只 · B 档 55 只</p>
+
+<div class="card"><h2>选股逻辑：聪明钱共识</h2>
+<div class="kpi">
+<div class="k"><div class="v" style="color:#ea4335">61.6%</div><div class="l">≥3 信号共振 可兑现胜率</div></div>
+<div class="k"><div class="v" style="color:#ea4335">77.4%</div><div class="l">≥4 信号共振（小样本）</div></div>
+<div class="k"><div class="v" style="color:#888">55.2%</div><div class="l">随机基线（20日回测）</div></div>
+<div class="k"><div class="v">17</div><div class="l">今日 A 档（≥3 信号共振）</div></div>
+</div>
+<div class="evi" style="margin-top:12px"><b>七维+多空增仓信号集</b>：私募增持 · 阳光私募 · 个人(牛散)增持 · 公募增持 · 大宗交易 · 高管增持 · 席位异动 · 多空增仓（融资−融券 1/3/5 日变化）。单一信号≈基线无超额，<b>多维度同时触发才有 alpha</b>（共识度曲线见 <a href='lab.html'>回测证据页</a>）。退出纪律与主升/反转池一致：止损 −12% ／ 浮盈 +6% 激活、回撤 3% 跟踪止盈 ／ 满 20 日强平。</div></div>
+
+<div class="card"><h2>A 档 · 共振精选（≥3 信号）</h2>
+<div class='stkgrid'><div class='stk'>
+<div class='h'><a class='nm' href='https://quote.eastmoney.com/sh688617.html' target='_blank'>sh688617</a>
+<span class='cd'>SH688617</span><span class='tier tA'>A 档</span>
+<span class='sc'>增仓分 3.86</span></div>
+<div class='sg'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（+4.8%）'>多空增仓1日</span><span class='bdg' title='（+2.0%）'>多空增仓3日</span><span class='bdg' title='（+11.2%）'>多空增仓5日</span></div></div><div class='stk'>
+<div class='h'><a class='nm' href='https://quote.eastmoney.com/sh688433.html' target='_blank'>sh688433</a>
+<span class='cd'>SH688433</span><span class='tier tA'>A 档</span>
+<span class='sc'>增仓分 2.68</span></div>
+<div class='sg'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 5万元）'>高管增持</span><span class='bdg' title='（+18.1%）'>多空增仓1日</span><span class='bdg' title='（+1.6%）'>多空增仓5日</span></div></div><div class='stk'>
+<div class='h'><a class='nm' href='https://quote.eastmoney.com/sz301186.html' target='_blank'>sz301186</a>
+<span class='cd'>SZ301186</span><span class='tier tA'>A 档</span>
+<span class='sc'>增仓分 2.59</span></div>
+<div class='sg'><span class='bdg' title=''>私募增持</span><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（额 1015万 折价 2.0%）'>大宗交易</span></div></div><div class='stk'>
+<div class='h'><a class='nm' href='https://quote.eastmoney.com/sh603499.html' target='_blank'>sh603499</a>
+<span class='cd'>SH603499</span><span class='tier tA'>A 档</span>
+<span class='sc'>增仓分 2.17</span></div>
+<div class='sg'><span class='bdg' title=''>私募增持</span><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 35945万元）'>高管增持</span></div></div><div class='stk'>
+<div class='h'><a class='nm' href='https://quote.eastmoney.com/sh603179.html' target='_blank'>sh603179</a>
+<span class='cd'>SH603179</span><span class='tier tA'>A 档</span>
+<span class='sc'>增仓分 2.06</span></div>
+<div class='sg'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 3956万元）'>高管增持</span></div></div><div class='stk'>
+<div class='h'><a class='nm' href='https://quote.eastmoney.com/sz301039.html' target='_blank'>sz301039</a>
+<span class='cd'>SZ301039</span><span class='tier tA'>A 档</span>
+<span class='sc'>增仓分 2.03</span></div>
+<div class='sg'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 2478万元）'>高管增持</span></div></div><div class='stk'>
+<div class='h'><a class='nm' href='https://quote.eastmoney.com/sz002296.html' target='_blank'>sz002296</a>
+<span class='cd'>SZ002296</span><span class='tier tA'>A 档</span>
+<span class='sc'>增仓分 1.97</span></div>
+<div class='sg'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 690万元）'>高管增持</span></div></div><div class='stk'>
+<div class='h'><a class='nm' href='https://quote.eastmoney.com/sh688200.html' target='_blank'>sh688200</a>
+<span class='cd'>SH688200</span><span class='tier tA'>A 档</span>
+<span class='sc'>增仓分 1.96</span></div>
+<div class='sg'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 564万元）'>高管增持</span></div></div><div class='stk'>
+<div class='h'><a class='nm' href='https://quote.eastmoney.com/sz301316.html' target='_blank'>sz301316</a>
+<span class='cd'>SZ301316</span><span class='tier tA'>A 档</span>
+<span class='sc'>增仓分 1.96</span></div>
+<div class='sg'><span class='bdg' title=''>私募增持</span><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 524万元）'>高管增持</span></div></div><div class='stk'>
+<div class='h'><a class='nm' href='https://quote.eastmoney.com/sh688657.html' target='_blank'>sh688657</a>
+<span class='cd'>SH688657</span><span class='tier tA'>A 档</span>
+<span class='sc'>增仓分 1.90</span></div>
+<div class='sg'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 155万元）'>高管增持</span></div></div><div class='stk'>
+<div class='h'><a class='nm' href='https://quote.eastmoney.com/sh688307.html' target='_blank'>sh688307</a>
+<span class='cd'>SH688307</span><span class='tier tA'>A 档</span>
+<span class='sc'>增仓分 1.90</span></div>
+<div class='sg'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 151万元）'>高管增持</span></div></div><div class='stk'>
+<div class='h'><a class='nm' href='https://quote.eastmoney.com/sz301110.html' target='_blank'>sz301110</a>
+<span class='cd'>SZ301110</span><span class='tier tA'>A 档</span>
+<span class='sc'>增仓分 1.89</span></div>
+<div class='sg'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 141万元）'>高管增持</span></div></div><div class='stk'>
+<div class='h'><a class='nm' href='https://quote.eastmoney.com/sz002096.html' target='_blank'>sz002096</a>
+<span class='cd'>SZ002096</span><span class='tier tA'>A 档</span>
+<span class='sc'>增仓分 1.76</span></div>
+<div class='sg'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 9万元）'>高管增持</span></div></div><div class='stk'>
+<div class='h'><a class='nm' href='https://quote.eastmoney.com/sz301089.html' target='_blank'>sz301089</a>
+<span class='cd'>SZ301089</span><span class='tier tA'>A 档</span>
+<span class='sc'>增仓分 1.73</span></div>
+<div class='sg'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（额 846万 折价 8.8%）'>大宗交易</span><span class='bdg' title='（增持 51万元）'>高管增持</span></div></div><div class='stk'>
+<div class='h'><a class='nm' href='https://quote.eastmoney.com/sz002058.html' target='_blank'>sz002058</a>
+<span class='cd'>SZ002058</span><span class='tier tA'>A 档</span>
+<span class='sc'>增仓分 1.68</span></div>
+<div class='sg'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 2万元）'>高管增持</span></div></div><div class='stk'>
+<div class='h'><a class='nm' href='https://quote.eastmoney.com/sh688799.html' target='_blank'>sh688799</a>
+<span class='cd'>SH688799</span><span class='tier tA'>A 档</span>
+<span class='sc'>增仓分 1.49</span></div>
+<div class='sg'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（额 5260万 折价 25.1%）'>大宗交易</span></div></div><div class='stk'>
+<div class='h'><a class='nm' href='https://quote.eastmoney.com/sz001309.html' target='_blank'>sz001309</a>
+<span class='cd'>SZ001309</span><span class='tier tA'>A 档</span>
+<span class='sc'>增仓分 0.83</span></div>
+<div class='sg'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（+0.2%）'>多空增仓1日</span><span class='bdg' title='（+0.5%）'>多空增仓3日</span></div></div></div>
+</div>
+
+<div class="card"><h2>完整名单（A + B 档）</h2>
+<table data-wb><tr><th>#</th><th>名称</th><th>代码</th><th>档</th><th>共振数</th><th>增仓分</th><th>触发信号</th></tr><tr><td>1</td><td><a href='https://quote.eastmoney.com/sh688617.html' target='_blank'>sh688617</a></td><td>SH688617</td><td>A</td><td>5</td><td>3.86</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（+4.8%）'>多空增仓1日</span><span class='bdg' title='（+2.0%）'>多空增仓3日</span><span class='bdg' title='（+11.2%）'>多空增仓5日</span></td></tr><tr><td>2</td><td><a href='https://quote.eastmoney.com/sh688433.html' target='_blank'>sh688433</a></td><td>SH688433</td><td>A</td><td>4</td><td>2.68</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 5万元）'>高管增持</span><span class='bdg' title='（+18.1%）'>多空增仓1日</span><span class='bdg' title='（+1.6%）'>多空增仓5日</span></td></tr><tr><td>3</td><td><a href='https://quote.eastmoney.com/sz301186.html' target='_blank'>sz301186</a></td><td>SZ301186</td><td>A</td><td>4</td><td>2.59</td><td class='sgtd'><span class='bdg' title=''>私募增持</span><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（额 1015万 折价 2.0%）'>大宗交易</span></td></tr><tr><td>4</td><td><a href='https://quote.eastmoney.com/sh603499.html' target='_blank'>sh603499</a></td><td>SH603499</td><td>A</td><td>3</td><td>2.17</td><td class='sgtd'><span class='bdg' title=''>私募增持</span><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 35945万元）'>高管增持</span></td></tr><tr><td>5</td><td><a href='https://quote.eastmoney.com/sh603179.html' target='_blank'>sh603179</a></td><td>SH603179</td><td>A</td><td>3</td><td>2.06</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 3956万元）'>高管增持</span></td></tr><tr><td>6</td><td><a href='https://quote.eastmoney.com/sz301039.html' target='_blank'>sz301039</a></td><td>SZ301039</td><td>A</td><td>3</td><td>2.03</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 2478万元）'>高管增持</span></td></tr><tr><td>7</td><td><a href='https://quote.eastmoney.com/sz002296.html' target='_blank'>sz002296</a></td><td>SZ002296</td><td>A</td><td>3</td><td>1.97</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 690万元）'>高管增持</span></td></tr><tr><td>8</td><td><a href='https://quote.eastmoney.com/sh688200.html' target='_blank'>sh688200</a></td><td>SH688200</td><td>A</td><td>3</td><td>1.96</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 564万元）'>高管增持</span></td></tr><tr><td>9</td><td><a href='https://quote.eastmoney.com/sz301316.html' target='_blank'>sz301316</a></td><td>SZ301316</td><td>A</td><td>3</td><td>1.96</td><td class='sgtd'><span class='bdg' title=''>私募增持</span><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 524万元）'>高管增持</span></td></tr><tr><td>10</td><td><a href='https://quote.eastmoney.com/sh688657.html' target='_blank'>sh688657</a></td><td>SH688657</td><td>A</td><td>3</td><td>1.90</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 155万元）'>高管增持</span></td></tr><tr><td>11</td><td><a href='https://quote.eastmoney.com/sh688307.html' target='_blank'>sh688307</a></td><td>SH688307</td><td>A</td><td>3</td><td>1.90</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 151万元）'>高管增持</span></td></tr><tr><td>12</td><td><a href='https://quote.eastmoney.com/sz301110.html' target='_blank'>sz301110</a></td><td>SZ301110</td><td>A</td><td>3</td><td>1.89</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 141万元）'>高管增持</span></td></tr><tr><td>13</td><td><a href='https://quote.eastmoney.com/sz002096.html' target='_blank'>sz002096</a></td><td>SZ002096</td><td>A</td><td>3</td><td>1.76</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 9万元）'>高管增持</span></td></tr><tr><td>14</td><td><a href='https://quote.eastmoney.com/sz301089.html' target='_blank'>sz301089</a></td><td>SZ301089</td><td>A</td><td>3</td><td>1.73</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（额 846万 折价 8.8%）'>大宗交易</span><span class='bdg' title='（增持 51万元）'>高管增持</span></td></tr><tr><td>15</td><td><a href='https://quote.eastmoney.com/sz002058.html' target='_blank'>sz002058</a></td><td>SZ002058</td><td>A</td><td>3</td><td>1.68</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 2万元）'>高管增持</span></td></tr><tr><td>16</td><td><a href='https://quote.eastmoney.com/sh688799.html' target='_blank'>sh688799</a></td><td>SH688799</td><td>A</td><td>3</td><td>1.49</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title=''>公募增持</span><span class='bdg' title='（额 5260万 折价 25.1%）'>大宗交易</span></td></tr><tr><td>17</td><td><a href='https://quote.eastmoney.com/sz001309.html' target='_blank'>sz001309</a></td><td>SZ001309</td><td>A</td><td>3</td><td>0.83</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（+0.2%）'>多空增仓1日</span><span class='bdg' title='（+0.5%）'>多空增仓3日</span></td></tr><tr><td>18</td><td><a href='https://quote.eastmoney.com/sz000333.html' target='_blank'>sz000333</a></td><td>SZ000333</td><td>B</td><td>2</td><td>1.55</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（额 3778万 折价 0.0%）'>大宗交易</span></td></tr><tr><td>19</td><td><a href='https://quote.eastmoney.com/sh600177.html' target='_blank'>sh600177</a></td><td>SH600177</td><td>B</td><td>2</td><td>1.48</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（额 1618万 折价 0.6%）'>大宗交易</span></td></tr><tr><td>20</td><td><a href='https://quote.eastmoney.com/sz301533.html' target='_blank'>sz301533</a></td><td>SZ301533</td><td>B</td><td>2</td><td>1.47</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 4891万元）'>高管增持</span></td></tr><tr><td>21</td><td><a href='https://quote.eastmoney.com/sh688082.html' target='_blank'>sh688082</a></td><td>SH688082</td><td>B</td><td>2</td><td>1.47</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 4680万元）'>高管增持</span></td></tr><tr><td>22</td><td><a href='https://quote.eastmoney.com/sh603370.html' target='_blank'>sh603370</a></td><td>SH603370</td><td>B</td><td>2</td><td>1.43</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（额 1368万 折价 1.5%）'>大宗交易</span></td></tr><tr><td>23</td><td><a href='https://quote.eastmoney.com/sh603098.html' target='_blank'>sh603098</a></td><td>SH603098</td><td>B</td><td>2</td><td>1.42</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 1969万元）'>高管增持</span></td></tr><tr><td>24</td><td><a href='https://quote.eastmoney.com/sh688525.html' target='_blank'>sh688525</a></td><td>SH688525</td><td>B</td><td>2</td><td>1.42</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 1906万元）'>高管增持</span></td></tr><tr><td>25</td><td><a href='https://quote.eastmoney.com/sh688073.html' target='_blank'>sh688073</a></td><td>SH688073</td><td>B</td><td>2</td><td>1.41</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 1614万元）'>高管增持</span></td></tr><tr><td>26</td><td><a href='https://quote.eastmoney.com/sz300806.html' target='_blank'>sz300806</a></td><td>SZ300806</td><td>B</td><td>2</td><td>1.41</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 1455万元）'>高管增持</span></td></tr><tr><td>27</td><td><a href='https://quote.eastmoney.com/sz301332.html' target='_blank'>sz301332</a></td><td>SZ301332</td><td>B</td><td>2</td><td>1.40</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（额 378万 折价 0.7%）'>大宗交易</span></td></tr><tr><td>28</td><td><a href='https://quote.eastmoney.com/sz002049.html' target='_blank'>sz002049</a></td><td>SZ002049</td><td>B</td><td>2</td><td>1.40</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 1160万元）'>高管增持</span></td></tr><tr><td>29</td><td><a href='https://quote.eastmoney.com/sz301498.html' target='_blank'>sz301498</a></td><td>SZ301498</td><td>B</td><td>2</td><td>1.40</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 1131万元）'>高管增持</span></td></tr><tr><td>30</td><td><a href='https://quote.eastmoney.com/sz002456.html' target='_blank'>sz002456</a></td><td>SZ002456</td><td>B</td><td>2</td><td>1.36</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 602万元）'>高管增持</span></td></tr><tr><td>31</td><td><a href='https://quote.eastmoney.com/sh688613.html' target='_blank'>sh688613</a></td><td>SH688613</td><td>B</td><td>2</td><td>1.36</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（额 355万 折价 1.5%）'>大宗交易</span></td></tr><tr><td>32</td><td><a href='https://quote.eastmoney.com/sz301601.html' target='_blank'>sz301601</a></td><td>SZ301601</td><td>B</td><td>2</td><td>1.36</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（额 207万 折价 1.0%）'>大宗交易</span></td></tr><tr><td>33</td><td><a href='https://quote.eastmoney.com/sz002568.html' target='_blank'>sz002568</a></td><td>SZ002568</td><td>B</td><td>2</td><td>1.36</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 499万元）'>高管增持</span></td></tr><tr><td>34</td><td><a href='https://quote.eastmoney.com/sz002557.html' target='_blank'>sz002557</a></td><td>SZ002557</td><td>B</td><td>2</td><td>1.35</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 421万元）'>高管增持</span></td></tr><tr><td>35</td><td><a href='https://quote.eastmoney.com/sz301078.html' target='_blank'>sz301078</a></td><td>SZ301078</td><td>B</td><td>2</td><td>1.34</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 380万元）'>高管增持</span></td></tr><tr><td>36</td><td><a href='https://quote.eastmoney.com/sh603262.html' target='_blank'>sh603262</a></td><td>SH603262</td><td>B</td><td>2</td><td>1.34</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（额 444万 折价 2.4%）'>大宗交易</span></td></tr><tr><td>37</td><td><a href='https://quote.eastmoney.com/sh600165.html' target='_blank'>sh600165</a></td><td>SH600165</td><td>B</td><td>2</td><td>1.33</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 328万元）'>高管增持</span></td></tr><tr><td>38</td><td><a href='https://quote.eastmoney.com/sh600566.html' target='_blank'>sh600566</a></td><td>SH600566</td><td>B</td><td>2</td><td>1.33</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 318万元）'>高管增持</span></td></tr><tr><td>39</td><td><a href='https://quote.eastmoney.com/sh688575.html' target='_blank'>sh688575</a></td><td>SH688575</td><td>B</td><td>2</td><td>1.33</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 292万元）'>高管增持</span></td></tr><tr><td>40</td><td><a href='https://quote.eastmoney.com/sh688478.html' target='_blank'>sh688478</a></td><td>SH688478</td><td>B</td><td>2</td><td>1.32</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 265万元）'>高管增持</span></td></tr><tr><td>41</td><td><a href='https://quote.eastmoney.com/sh600801.html' target='_blank'>sh600801</a></td><td>SH600801</td><td>B</td><td>2</td><td>1.32</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 252万元）'>高管增持</span></td></tr><tr><td>42</td><td><a href='https://quote.eastmoney.com/sz301539.html' target='_blank'>sz301539</a></td><td>SZ301539</td><td>B</td><td>2</td><td>1.32</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 240万元）'>高管增持</span></td></tr><tr><td>43</td><td><a href='https://quote.eastmoney.com/sh688118.html' target='_blank'>sh688118</a></td><td>SH688118</td><td>B</td><td>2</td><td>1.32</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 234万元）'>高管增持</span></td></tr><tr><td>44</td><td><a href='https://quote.eastmoney.com/sz002475.html' target='_blank'>sz002475</a></td><td>SZ002475</td><td>B</td><td>2</td><td>1.29</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 124万元）'>高管增持</span></td></tr><tr><td>45</td><td><a href='https://quote.eastmoney.com/sz301656.html' target='_blank'>sz301656</a></td><td>SZ301656</td><td>B</td><td>2</td><td>1.28</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 108万元）'>高管增持</span></td></tr><tr><td>46</td><td><a href='https://quote.eastmoney.com/sz002416.html' target='_blank'>sz002416</a></td><td>SZ002416</td><td>B</td><td>2</td><td>1.28</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 101万元）'>高管增持</span></td></tr><tr><td>47</td><td><a href='https://quote.eastmoney.com/sh601528.html' target='_blank'>sh601528</a></td><td>SH601528</td><td>B</td><td>2</td><td>1.27</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 82万元）'>高管增持</span></td></tr><tr><td>48</td><td><a href='https://quote.eastmoney.com/bj920168.html' target='_blank'>bj920168</a></td><td>BJ920168</td><td>B</td><td>2</td><td>1.27</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 80万元）'>高管增持</span></td></tr><tr><td>49</td><td><a href='https://quote.eastmoney.com/sh688157.html' target='_blank'>sh688157</a></td><td>SH688157</td><td>B</td><td>2</td><td>1.26</td><td class='sgtd'><span class='bdg' title=''>私募增持</span><span class='bdg' title='（增持 76万元）'>高管增持</span></td></tr><tr><td>50</td><td><a href='https://quote.eastmoney.com/sh688129.html' target='_blank'>sh688129</a></td><td>SH688129</td><td>B</td><td>2</td><td>1.25</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 59万元）'>高管增持</span></td></tr><tr><td>51</td><td><a href='https://quote.eastmoney.com/sh603960.html' target='_blank'>sh603960</a></td><td>SH603960</td><td>B</td><td>2</td><td>1.25</td><td class='sgtd'><span class='bdg' title='（额 1102万 折价 10.6%）'>大宗交易</span><span class='bdg' title='（增持 2406万元）'>高管增持</span></td></tr><tr><td>52</td><td><a href='https://quote.eastmoney.com/sh688102.html' target='_blank'>sh688102</a></td><td>SH688102</td><td>B</td><td>2</td><td>1.22</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 33万元）'>高管增持</span></td></tr><tr><td>53</td><td><a href='https://quote.eastmoney.com/sz002444.html' target='_blank'>sz002444</a></td><td>SZ002444</td><td>B</td><td>2</td><td>1.22</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 32万元）'>高管增持</span></td></tr><tr><td>54</td><td><a href='https://quote.eastmoney.com/sh601005.html' target='_blank'>sh601005</a></td><td>SH601005</td><td>B</td><td>2</td><td>1.22</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 30万元）'>高管增持</span></td></tr><tr><td>55</td><td><a href='https://quote.eastmoney.com/sz002615.html' target='_blank'>sz002615</a></td><td>SZ002615</td><td>B</td><td>2</td><td>1.21</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 25万元）'>高管增持</span></td></tr><tr><td>56</td><td><a href='https://quote.eastmoney.com/sh603725.html' target='_blank'>sh603725</a></td><td>SH603725</td><td>B</td><td>2</td><td>1.20</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 22万元）'>高管增持</span></td></tr><tr><td>57</td><td><a href='https://quote.eastmoney.com/sh603915.html' target='_blank'>sh603915</a></td><td>SH603915</td><td>B</td><td>2</td><td>1.20</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 21万元）'>高管增持</span></td></tr><tr><td>58</td><td><a href='https://quote.eastmoney.com/sh600803.html' target='_blank'>sh600803</a></td><td>SH600803</td><td>B</td><td>2</td><td>1.20</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 19万元）'>高管增持</span></td></tr><tr><td>59</td><td><a href='https://quote.eastmoney.com/sh688391.html' target='_blank'>sh688391</a></td><td>SH688391</td><td>B</td><td>2</td><td>1.19</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 17万元）'>高管增持</span></td></tr><tr><td>60</td><td><a href='https://quote.eastmoney.com/sh688387.html' target='_blank'>sh688387</a></td><td>SH688387</td><td>B</td><td>2</td><td>1.14</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 7万元）'>高管增持</span></td></tr><tr><td>61</td><td><a href='https://quote.eastmoney.com/sh601020.html' target='_blank'>sh601020</a></td><td>SH601020</td><td>B</td><td>2</td><td>1.12</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 4万元）'>高管增持</span></td></tr><tr><td>62</td><td><a href='https://quote.eastmoney.com/sz000801.html' target='_blank'>sz000801</a></td><td>SZ000801</td><td>B</td><td>2</td><td>1.10</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 3万元）'>高管增持</span></td></tr><tr><td>63</td><td><a href='https://quote.eastmoney.com/sh688010.html' target='_blank'>sh688010</a></td><td>SH688010</td><td>B</td><td>2</td><td>1.07</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 2万元）'>高管增持</span></td></tr><tr><td>64</td><td><a href='https://quote.eastmoney.com/sz001369.html' target='_blank'>sz001369</a></td><td>SZ001369</td><td>B</td><td>2</td><td>1.06</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（增持 1万元）'>高管增持</span></td></tr><tr><td>65</td><td><a href='https://quote.eastmoney.com/sz001226.html' target='_blank'>sz001226</a></td><td>SZ001226</td><td>B</td><td>2</td><td>0.96</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（额 5632万 折价 12.5%）'>大宗交易</span></td></tr><tr><td>66</td><td><a href='https://quote.eastmoney.com/sz002867.html' target='_blank'>sz002867</a></td><td>SZ002867</td><td>B</td><td>2</td><td>0.94</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（增持 0万元）'>高管增持</span></td></tr><tr><td>67</td><td><a href='https://quote.eastmoney.com/sh605188.html' target='_blank'>sh605188</a></td><td>SH605188</td><td>B</td><td>2</td><td>0.93</td><td class='sgtd'><span class='bdg' title='（额 1603万 折价 9.1%）'>大宗交易</span><span class='bdg' title='（增持 1万元）'>高管增持</span></td></tr><tr><td>68</td><td><a href='https://quote.eastmoney.com/sz300001.html' target='_blank'>sz300001</a></td><td>SZ300001</td><td>B</td><td>2</td><td>0.86</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（额 993万 折价 21.6%）'>大宗交易</span></td></tr><tr><td>69</td><td><a href='https://quote.eastmoney.com/sh688590.html' target='_blank'>sh688590</a></td><td>SH688590</td><td>B</td><td>2</td><td>0.86</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（额 576万 折价 21.2%）'>大宗交易</span></td></tr><tr><td>70</td><td><a href='https://quote.eastmoney.com/sz301011.html' target='_blank'>sz301011</a></td><td>SZ301011</td><td>B</td><td>2</td><td>0.85</td><td class='sgtd'><span class='bdg' title=''>公募增持</span><span class='bdg' title='（额 328万 折价 25.0%）'>大宗交易</span></td></tr><tr><td>71</td><td><a href='https://quote.eastmoney.com/sh603232.html' target='_blank'>sh603232</a></td><td>SH603232</td><td>B</td><td>2</td><td>0.84</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（额 240万 折价 18.1%）'>大宗交易</span></td></tr><tr><td>72</td><td><a href='https://quote.eastmoney.com/bj920344.html' target='_blank'>bj920344</a></td><td>BJ920344</td><td>B</td><td>2</td><td>0.84</td><td class='sgtd'><span class='bdg' title=''>个人(牛散)增持</span><span class='bdg' title='（额 222万 折价 32.0%）'>大宗交易</span></td></tr></table>
+<div class="note">B 档（2 信号）回测胜率 56.1%，仅作观察仓；C 档（1 信号）≈基线，不入选。</div></div>
+
+<div class="card"><h2>回测共识度曲线（最近 20 个交易日）</h2>
+<table data-wb><tr><th>共振门槛</th><th>可测样本</th><th>胜率</th><th>均值收益</th></tr><tr><td>≥1 个信号</td><td>458</td><td style='color:#34a853;font-weight:700'>55.9%</td><td>0.24%</td></tr><tr><td>≥2 个信号</td><td>431</td><td style='color:#34a853;font-weight:700'>56.4%</td><td>0.37%</td></tr><tr><td>≥3 个信号</td><td>198</td><td style='color:#ea4335;font-weight:700'>61.6%</td><td>1.21%</td></tr><tr><td>≥4 个信号</td><td>31</td><td style='color:#ea4335;font-weight:700'>77.4%</td><td>4.01%</td></tr><tr><td>≥5 个信号</td><td>8</td><td style='color:#ea4335;font-weight:700'>87.5%</td><td>4.41%</td></tr><tr><td>≥6 个信号</td><td>1</td><td style='color:#ea4335;font-weight:700'>100.0%</td><td>6.56%</td></tr></table></div>
+
+<div class="rule"><b>⚠️ 数据覆盖与局限（务必阅读）</b><br>
+· 多空增仓维度：融资融券快照仅 5 天（2026-09-10, 2026-09-14, 2026-09-15, 2026-09-16, 2026-09-18），1/3/5 日变化为<b>近似</b>，需补连续序列后才可重权。<br>
+· 私募/阳光私募/个人(牛散)/公募增持为 <b>2026Q2 季度维度</b>；阳光私募与一般私募/保险在股东名中难严格区分，事件可为 0。<br>
+· 高管增持覆盖 9-02 起 13/20 日；席位异动（龙虎榜）8/20 日；大宗交易 20/20 日。<br>
+· 共振高档样本量小（≥4 档 20 日仅 31 笔），统计脆弱，样本外持续验证，<b>退出纪律 &gt; 入场筛选</b>。</div>
+</div><!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--></body></html>
