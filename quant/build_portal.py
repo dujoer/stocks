@@ -68,6 +68,7 @@ research_d, research_f = latest(r"^research-.*?-(\d{8})\.html$", os.path.join(WE
 reversal_d, reversal_f = latest(r"^watchlist_(\d{8})\.html$", os.path.join(WEB, "reversal"))
 macd_d, macd_f = latest(r"^watchlist_(\d{8})\.html$", os.path.join(WEB, "macd"))
 selected_d, selected_f = latest(r"^combined_(\d{8})\.html$", os.path.join(WEB, "selected"))
+accum_d, accum_f = latest(r"^combined_(\d{8})\.html$", os.path.join(WEB, "accumulation"))
 exec_d, exec_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "exec_chg"))
 blk_d, blk_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "block_chg"))
 # 每日总览（大盘看板）：取 market_overview 最新快照日期
@@ -111,6 +112,13 @@ except Exception:
 def _load_json(path):
     try:
         return json.load(open(path, encoding="utf-8"))
+    except Exception:
+        return None
+
+
+def _load_text(path):
+    try:
+        return open(path, encoding="utf-8").read()
     except Exception:
         return None
 
@@ -308,6 +316,29 @@ def stat_selected():
             f"剔除低确定性 {excl} ｜ 环境 <b>{env}</b> ｜ 带买卖点")
 
 
+def stat_accumulation():
+    """增仓精选：7 维增持/增仓信号 + 1/3/5 日多空增仓 · 共识选股（A=≥3 信号共振）"""
+    p = os.path.join(WEB, "accumulation", "accum_result.json")
+    r = _load_json(p) or {}
+    c3 = (r.get("cons_wr") or {}).get("3") or [0, None]
+    n3, wr3 = c3[0], c3[1]
+    # 当日 A/B 档数从 combined 页提取
+    a_cnt = b_cnt = "—"
+    if accum_d:
+        h = _load_text(os.path.join(WEB, "accumulation", "combined_%s.html"
+                                    % accum_d.strftime("%Y%m%d"))) or ""
+        import re as _re
+        m = _re.search(r"A 档[^0-9]*(\d+)", h)
+        if m:
+            a_cnt = m.group(1)
+        m = _re.search(r"B 档[^0-9]*(\d+)", h)
+        if m:
+            b_cnt = m.group(1)
+    wr_s = ("<b>%.1f%%</b>" % wr3) if isinstance(wr3, (int, float)) else "—"
+    return ("≥3 信号共振 <b>%d</b> 笔 ｜ 可兑现胜率 %s ｜ 当日 A 档 <b>%s</b> / B 档 %s"
+            % (n3, wr_s, a_cnt, b_cnt))
+
+
 def stat_industry_elite():
     """行业最强榜：行业数 / 标的数"""
     p = os.path.join(WEB, "shareholder", "2026-q2-industry-elite.html")
@@ -386,6 +417,7 @@ STAT = {
     "reversal": stat_reversal(),
     "macd": stat_macd(),
     "selected": stat_selected(),
+    "accum": stat_accumulation(),
 }
 
 lhb_txt, lhb_cls = freshness(lhb_d)
@@ -395,6 +427,7 @@ psy_txt, psy_cls = freshness(psy_d)
 research_txt, research_cls = freshness(research_d)
 reversal_txt, reversal_cls = freshness(reversal_d)
 selected_txt, selected_cls = freshness(selected_d) if selected_d else ("—", "stale")
+accum_txt, accum_cls = freshness(accum_d) if accum_d else ("—", "stale")
 exec_txt, exec_cls = freshness(exec_d)
 blk_txt, blk_cls = freshness(blk_d)
 pick_txt, pick_cls = freshness(pick_d) if pick_d else ("—", "stale")
@@ -528,9 +561,15 @@ ZONES = [
             },
             {
                 "ic": "🎯", "t": "主升精选 · 趋势+资金双确认", "href": "web/selected/index.html",
-                "func": "把「趋势已转多」与「主力真金白银介入」两路信号合一：MACD 水上金叉（趋势强势延续）+ 精选池（机构/游资/大宗/Q2/高管多信号）。只保留双池共振与已过出池门槛的高确定性标的，剔除未出池低确定性票，并接大盘环境门控（弱势/破位只留双池共振与最高档）。逐只给出买区/止损/目标/盈亏比。",
-                "rel": "← MACD 水上金叉 + 精选池（三路上游）→ 个股调研（选中后深挖）；逐票完整打分见精选池明细页。",
+                "func": "<b>v2 全市场域</b>：A 股正股全量（剔 ST/退 · 20 日均额&lt;3000万 · 现价≥2 元）中，用 9 个先验固定因子（趋势 rel20/rel60/above_ma60/slope20/ma_strength/dist_h20 + 资金 up_vol/rvol/vol_dry）做日内横截面分位、等权排序，<b>A 档 = 域内前 5%</b>（更严格）。严格样本外可兑现胜率 <b>65.5%</b>（基线 62.7%，训练半 68.7% / 测试半 65.5% 同向均 &gt;60%），逐只给出买区/止损/目标/盈亏比，接大盘环境门控。证据见 <a href='web/selected/lab.html'>主升精选实验室</a>。",
+                "rel": "← 全市场日K 横截面分位（不依赖任何模型库）→ 个股调研（选中后深挖）；胜率证据以 lab.html 为准。",
                 "stat": STAT["selected"], "date": fmt(selected_d) if selected_d else "—", "fresh": badge("fresh", "每日" if selected_d else "—"),
+            },
+            {
+                "ic": "🤝", "t": "增仓精选 · 多维共识选股", "href": "web/accumulation/index.html",
+                "func": "七维增持/增仓信号合一：私募增持 / 阳光私募 / 个人(牛散) / 公募增持（Q2 股东维度）＋ 大宗交易 / 高管增持 / 席位异动（日频事件）＋ <b>1/3/5 日多空增仓</b>（融资−融券净额）。先验等权合成「增仓分」，<b>共识度曲线 20 日实证：单一信号≈基线（55.7% vs 55.2%），≥3 信号共振胜率 61.6%、≥4 达 77.4%</b>——共识才有 alpha。出池门槛：A 档=≥3 信号共振（须含 ≥1 日频事件）、B 档=2 信号观察仓、仅 1 信号不入选。证据见 <a href='web/accumulation/lab.html'>增仓精选实验室</a>。",
+                "rel": "← 大宗交易/高管增持/席位（日频）+ Q2 股东分类（季度）+ 多空增仓（近似）；多空增仓待补连续序列后可重权。",
+                "stat": STAT["accum"], "date": fmt(accum_d) if accum_d else "—", "fresh": badge("fresh", "每日" if accum_d else "—"),
             },
             {
                 "ic": "📉", "t": "信号池回测", "href": "web/picks/backtest.html",

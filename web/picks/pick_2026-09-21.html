@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang='zh-CN'><head><meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>个股信号池 · 2026-09-21</title><style>
+* { box-sizing:border-box; }
+body { margin:0; background:#f5f6f8; color:#23262b;
+  font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif; line-height:1.7; }
+.wrap { max-width:1180px; margin:0 auto; padding:28px 20px 60px; }
+.topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
+  border-bottom:1px solid #e6e9ee; }
+.topnav a { color:#1a73e8; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(26,115,232,.35); }
+.topnav a.cur { background:#1a73e8; color:#fff; border-color:#1a73e8; }
+.topnav a:hover { background:rgba(26,115,232,.10); }
+header h1 { font-size:26px; margin:0 0 6px; }
+header h1 span { background:linear-gradient(90deg,#1a73e8,#8a6428); -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent; }
+.sub { color:#6b7480; font-size:13.5px; }
+.section { margin-top:30px; }
+.section h2 { font-size:19px; margin:0 0 14px; padding-left:12px; border-left:4px solid #1a73e8; }
+.trk { display:inline-block; font-size:12px; padding:2px 10px; border-radius:20px; margin-left:8px; }
+.trk.i { background:#e6f1fb; color:#185fa5; } .trk.y { background:#fcebeb; color:#a32d2d; }
+table { width:100%; border-collapse:collapse; background:#fff; font-size:13px;
+  border:1px solid #e6e9ee; border-radius:10px; overflow:hidden; }
+th,td { padding:8px 9px; text-align:left; border-bottom:1px solid #eef1f4; }
+th { background:#fafbfc; color:#5a6573; font-weight:600; font-size:12.5px; }
+tr:last-child td { border-bottom:none; }
+.up { color:#b8332a; } .down { color:#1a9e5a; }
+.card { background:#fff; border:1px solid #e6e9ee; border-radius:12px; padding:16px 18px; margin-bottom:12px; }
+.card.hi { border-left:4px solid #1a73e8; }
+.chead { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+.cname { font-size:17px; font-weight:700; }
+.ccode { color:#8a929c; font-size:13px; }
+.badge { font-size:11.5px; padding:2px 9px; border-radius:20px; font-weight:700; }
+.bA { background:#fdecea; color:#b8332a; } .bB { background:#fdf3e0; color:#b7791f; }
+.bC { background:#eef4fa; color:#2b6cb0; } .bD { background:#eef0f2; color:#6b7480; }
+.score { font-size:22px; font-weight:800; color:#1a73e8; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:9px; margin-top:11px; }
+.kv { background:#fafbfc; border:1px solid #eef1f4; border-radius:8px; padding:7px 10px; }
+.kv .k { font-size:11.5px; color:#8a929c; }
+.kv .v { font-size:14px; font-weight:700; margin-top:2px; }
+.kv .v.sm { font-size:12.5px; font-weight:600; }
+.sig { margin-top:10px; font-size:12.5px; color:#5a6573; }
+.sig b { color:#23262b; }
+.chip { display:inline-block; background:#f4f6f8; border:1px solid #e6e9ee; border-radius:14px;
+  padding:1px 9px; font-size:11.5px; margin:2px 4px 2px 0; color:#5a6573; }
+.note { background:#fffaf0; border-left:4px solid #1a73e8; padding:12px 16px; border-radius:0 8px 8px 0;
+  font-size:13px; color:#6b4f2a; margin:14px 0; }
+.warn { background:#fdecea; border-left-color:#b8332a; color:#8c2b22; }
+.veto { background:#f4f6f8; border:1px dashed #c8ced6; border-radius:10px; padding:12px 16px;
+  font-size:12.5px; color:#6b7480; margin:12px 0; }
+footer { margin-top:36px; padding-top:16px; border-top:1px solid #e6e9ee; font-size:12px; color:#8a929c; }
+.muted { color:#8a929c; font-size:12px; }
+@media(max-width:700px){ .wrap{padding:20px 12px 44px;} header h1{font-size:20px;} table{font-size:12px;} }
+/* 字段悬浮说明：带虚线下划线的字段均可悬浮查看口径 */
+.tip { cursor:help; border-bottom:1px dotted #c3cad3; }
+.kv.tipbox:hover { background:#fdf8ef; border-color:#e6d3ae; }
+.kv .k.tipk::after { content:"?"; display:inline-block; margin-left:3px; font-size:10px;
+  color:#1a73e8; border:1px solid rgba(26,115,232,.45); border-radius:50%;
+  width:12px; height:12px; line-height:11px; text-align:center; }
+.chip[title], .badge[title], .score[title] { cursor:help; }
+/* 观察池进出标记 */
+.obs { display:inline-block; font-size:11px; padding:1px 7px; border-radius:10px; margin-left:6px;
+  font-weight:600; vertical-align:middle; }
+.obs.new { background:#e8f3ec; color:#1a7f43; border:1px solid #bfe0cb; }
+.obs.keep { background:#f1f3f5; color:#6b7480; border:1px solid #e0e4e9; }
+.dropsec table { font-size:12.5px; }
+.dropsum { background:#fdecea; border-left:4px solid #b8332a; padding:12px 16px; border-radius:0 8px 8px 0;
+  font-size:13px; color:#8c2b2b; margin:14px 0; }
+.why { color:#8a929c; font-size:12px; }
+</style><!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  .navgrp{ padding:5px 6px 5px 5px !important; }
+}
+
+</style><!--/WB_THEME--></head><body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class='wrap'>
+
+<header><h1><span>个股信号池</span> · 2026-09-21</h1>
+<div class='sub'>机构轨（波段 5~15 日）与 游资轨（短线 1~3 日）双池分轨打分，含板块闸门与筹码/资金流确认，每日盘后更新并回填次日表现。
+<div class='muted' style='margin-top:6px'>字段旁带 <span class='tip' style='border:none'>?</span> 或虚线下划线的均可悬浮查看计算口径。</div></div></header>
+
+<div class='note'><b>今日结论：</b>机构轨 34 只（A 0 / B 0）· 游资轨 35 只（A 0 / B 0）。<br>
+<span class='muted'>档位口径 = 当日<b>该轨道内相对分位</b>（前 15% 为 A、前 40% 为 B），并设绝对底线 45 分——整体偏弱或数据降级时该轨可能无 A/B，此时建议空仓等待。</span><br>
+<span class='muted'><b>实测（7 期 278 样本）：A 档 T+3 均值 +2.96% / 胜率 83% / 3 日触 T1 58%；B 档 −0.22% / 47%，反而不如「不建仓」的 D 档（+3.96% / 70%）——故 B 档须再过技术确认才出池。</b></span><br>
+<span class='tip' title='一票否决闸门：所属板块主力出货 · 获利盘 &gt;90% · 现价高于平均成本 30% · 均线空头排列且跌破 MA60 · RSI&gt;80 · 解禁市值占比 ≥1% · 处于计划减持窗口 · 质押比例 &gt;30%，命中任意一条即剔除，不参与打分。'>闸门</span>：所属板块主力出货、获利盘 &gt;90%、<b>获利盘 &lt;20% 且位置偏弱</b>、现价高于成本 30%、空头排列破 MA60、RSI&gt;80、解禁 ≥1%、减持窗口、质押 &gt;30% 一律剔除。</div>
+<div class='note warn' style='border-left:4px solid #d93025'><b>今日结论：无合格标的 · 建议空仓等待</b><br>全部候选均未达出池门槛（A 档空缺，且 B 档未通过 20 日主力净流入为正的技术确认）。按「宁可没有，也不要低胜率标的」的纪律，<b>本期不出任何建仓建议</b>。</div>
+<div class='note' style='border-left:4px solid #1a7a45'><b>环境门控：强势（广度 56.4%） · 建议仓位系数 1.0（可正常配置）</b><br>实测在同一批异动票里「随便买」的绝对胜率：<b>弱势环境 40.9%</b> vs <b>强势环境 51.1%</b> —— 差 10.1pp，<b>比选股本身能带来的 1~3pp 大得多</b>。所以弱势期该做的是降低暴露，而不是继续在弱势里精挑细选。<br><b>稳健分最高的 3 只：</b><a class="emlk" href="https://quote.eastmoney.com/sz001389.html" target="_blank" rel="noopener noreferrer">广合科技</a> 65、<a class="emlk" href="https://quote.eastmoney.com/sz002636.html" target="_blank" rel="noopener noreferrer">金安国纪</a> 65、<a class="emlk" href="https://quote.eastmoney.com/sz300243.html" target="_blank" rel="noopener noreferrer">瑞丰高材</a> 64（满分 100，仅表排序强弱，不构成推荐）。<br><b>稳健分</b>（表内新列）＝独立于「总分」的第二个口径：固定价量 5 项 + 基本面 7 项、等权、在当日候选内做横截面分位，<b>不按回测调权重</b>。原因：实测「自动筛因子」在严格样本外只剩 +0.5pp，筛选动作本身就是噪声源；而先验固定因子集在留出段 相对胜率 +4.9pp / 绝对胜率 +1.4pp，6 段滚动全部为正。<a href='lab.html' style='color:#1a73e8;text-decoration:none;font-weight:600'>查看完整证据与局限 →</a></div>
+<details class='veto'><summary style='cursor:pointer'><b>已剔除 4 只（触发一票否决 · 点击展开名单）</b></summary><ul style='margin:8px 0 0 20px;padding:0'><li><b><a class="emlk" href="https://quote.eastmoney.com/sh688256.html" target="_blank" rel="noopener noreferrer">寒武纪</a></b> <span class='muted'>sh688256 · —</span> —— 所属板块主力出货（电子）</li><li><b><a class="emlk" href="https://quote.eastmoney.com/sh688478.html" target="_blank" rel="noopener noreferrer">晶升股份</a></b> <span class='muted'>sh688478 · 机构轨 / 游资轨</span> —— 所属板块主力出货（电子）</li><li><b><a class="emlk" href="https://quote.eastmoney.com/sz002867.html" target="_blank" rel="noopener noreferrer">周大生</a></b> <span class='muted'>sz002867 · 机构轨 / 游资轨</span> —— 所属板块主力出货（纺织服饰）</li><li><b><a class="emlk" href="https://quote.eastmoney.com/sh688368.html" target="_blank" rel="noopener noreferrer">晶丰明源</a></b> <span class='muted'>sh688368 · 机构轨 / 游资轨</span> —— 所属板块主力出货（电子）</li></ul></details>
+<div class='dropsum'><b>当日取消观察 4 只</b>（相对 2026-09-18）：键凯科技（信号消失）、中瓷电子（信号消失）、沃森生物（信号消失）、晶丰明源（一票否决） · <a href='#dropped' style='color:#8c2b2b'>查看明细</a></div>
+
+
+
+<div class='section'><h2>机构轨 · 波段<span class='trk i'>5~15 日</span></h2>
+<div class='muted' style='margin-bottom:8px'>机构方向 16（龙虎榜机构净买入 10 + 目标价空间 6）+ 机构评级 4 + 两融 6 + 主力资金 8（5日 6 + 1/3/5 共振 2）+ 中报背景 1.5 + 高管 6.4 + 大宗 6 + 量价 24 + 筹码 10 + 动量 ≤2 − 风险 ≤12 − 热度反向 ≤4<br>
+<span class='muted'>2026-09-18 按近 5 期实测归因重调权重：筹码 / 量价 / 动量 / 主力资金（5日）为正向因子已提权；中报背景、机构评级、龙虎榜机构净买入与 T+1 负相关已降权；主力 20 日净流入确认为反向已剔除。</span></div>
+<div class='muted' style='padding:10px 0'>本期该轨<b>无合格出池标的</b> —— 当日整体偏弱或分数未达门槛，按纪律空仓等待，不硬凑低胜率标的。</div>
+
+<details class='veto' style='margin-top:12px'><summary style='cursor:pointer'><b>仅跟踪 · 机构轨 C/D 档 34 只</b><span class='muted'>（不建议建仓 · 点击展开）</span></summary><table style='margin-top:8px' data-wb><thead><tr><th>名称</th><th>代码</th><th>总分</th><th>档位</th><th>当日</th><th>收盘</th><th>止损</th><th>目标一</th><th>次日表现</th></tr></thead><tbody><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh603256.html" target="_blank" rel="noopener noreferrer">宏和科技</a></td><td class='muted'>sh603256</td><td>25.8</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>148.92</td><td>139.19</td><td>164.63</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002396.html" target="_blank" rel="noopener noreferrer">星网锐捷</a></td><td class='muted'>sz002396</td><td>23.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>37.74</td><td>35.27</td><td>41.72</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002161.html" target="_blank" rel="noopener noreferrer">远望谷</a></td><td class='muted'>sz002161</td><td>23.3</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>7.16</td><td>6.69</td><td>7.92</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz000560.html" target="_blank" rel="noopener noreferrer">我爱我家</a></td><td class='muted'>sz000560</td><td>21.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>3.19</td><td>2.98</td><td>3.53</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002579.html" target="_blank" rel="noopener noreferrer">中京电子</a></td><td class='muted'>sz002579</td><td>20.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>19.46</td><td>18.19</td><td>21.51</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz003040.html" target="_blank" rel="noopener noreferrer">楚天龙</a></td><td class='muted'>sz003040</td><td>20.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>17.31</td><td>16.18</td><td>19.14</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz301520.html" target="_blank" rel="noopener noreferrer">万邦医药</a></td><td class='muted'>sz301520</td><td>20.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>82.38</td><td>77.00</td><td>91.07</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz301489.html" target="_blank" rel="noopener noreferrer">思泉新材</a></td><td class='muted'>sz301489</td><td>20.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>131.40</td><td>122.81</td><td>145.26</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002531.html" target="_blank" rel="noopener noreferrer">天顺风能</a></td><td class='muted'>sz002531</td><td>20.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>7.72</td><td>7.22</td><td>8.53</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002916.html" target="_blank" rel="noopener noreferrer">深南电路</a></td><td class='muted'>sz002916</td><td>20.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>395.02</td><td>369.21</td><td>436.69</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002281.html" target="_blank" rel="noopener noreferrer">光迅科技</a></td><td class='muted'>sz002281</td><td>20.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>193.76</td><td>181.10</td><td>214.20</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz300464.html" target="_blank" rel="noopener noreferrer">星徽股份</a></td><td class='muted'>sz300464</td><td>20.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>11.88</td><td>11.10</td><td>13.13</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh603565.html" target="_blank" rel="noopener noreferrer">中谷物流</a></td><td class='muted'>sh603565</td><td>20.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>12.11</td><td>11.32</td><td>13.39</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002792.html" target="_blank" rel="noopener noreferrer">通宇通讯</a></td><td class='muted'>sz002792</td><td>20.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>34.54</td><td>32.28</td><td>38.18</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002491.html" target="_blank" rel="noopener noreferrer">通鼎互联</a></td><td class='muted'>sz002491</td><td>19.8</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>24.59</td><td>22.98</td><td>27.18</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh688802.html" target="_blank" rel="noopener noreferrer">沐曦股份</a></td><td class='muted'>sh688802</td><td>19.8</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>564.00</td><td>527.14</td><td>623.50</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz300243.html" target="_blank" rel="noopener noreferrer">瑞丰高材</a></td><td class='muted'>sz300243</td><td>18.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>22.46</td><td>20.99</td><td>24.83</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz001389.html" target="_blank" rel="noopener noreferrer">广合科技</a></td><td class='muted'>sz001389</td><td>18.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>185.93</td><td>173.78</td><td>205.55</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002487.html" target="_blank" rel="noopener noreferrer">大金重工</a></td><td class='muted'>sz002487</td><td>17.8</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>39.70</td><td>37.11</td><td>43.89</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh600479.html" target="_blank" rel="noopener noreferrer">千金药业</a></td><td class='muted'>sh600479</td><td>16.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>12.34</td><td>11.53</td><td>13.64</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz001232.html" target="_blank" rel="noopener noreferrer">嘉立创</a></td><td class='muted'>sz001232</td><td>16.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>193.51</td><td>180.86</td><td>213.93</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002837.html" target="_blank" rel="noopener noreferrer">英维克</a></td><td class='muted'>sz002837</td><td>16.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>62.23</td><td>58.16</td><td>68.80</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh688678.html" target="_blank" rel="noopener noreferrer">福立旺</a></td><td class='muted'>sh688678</td><td>16.4</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>27.93</td><td>26.10</td><td>30.88</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002155.html" target="_blank" rel="noopener noreferrer">湖南黄金</a></td><td class='muted'>sz002155</td><td>15.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>25.29</td><td>23.64</td><td>27.96</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh603936.html" target="_blank" rel="noopener noreferrer">博敏电子</a></td><td class='muted'>sh603936</td><td>15.0</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>21.61</td><td>20.20</td><td>23.89</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh600792.html" target="_blank" rel="noopener noreferrer">云煤能源</a></td><td class='muted'>sh600792</td><td>14.6</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>5.46</td><td>5.10</td><td>6.04</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz000977.html" target="_blank" rel="noopener noreferrer">浪潮信息</a></td><td class='muted'>sz000977</td><td>14.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>71.85</td><td>67.15</td><td>79.43</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz301171.html" target="_blank" rel="noopener noreferrer">易点天下</a></td><td class='muted'>sz301171</td><td>14.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>34.77</td><td>32.50</td><td>38.44</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002104.html" target="_blank" rel="noopener noreferrer">恒宝股份</a></td><td class='muted'>sz002104</td><td>14.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>11.80</td><td>11.03</td><td>13.04</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz000978.html" target="_blank" rel="noopener noreferrer">桂林旅游</a></td><td class='muted'>sz000978</td><td>14.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>8.39</td><td>7.84</td><td>9.28</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002636.html" target="_blank" rel="noopener noreferrer">金安国纪</a></td><td class='muted'>sz002636</td><td>13.8</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>81.38</td><td>76.06</td><td>89.97</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh603042.html" target="_blank" rel="noopener noreferrer">华脉科技</a></td><td class='muted'>sh603042</td><td>13.6</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>19.03</td><td>17.79</td><td>21.04</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz300290.html" target="_blank" rel="noopener noreferrer">ST荣科</a></td><td class='muted'>sz300290</td><td>10.9</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>7.14</td><td>6.67</td><td>7.89</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh605177.html" target="_blank" rel="noopener noreferrer">东亚药业</a></td><td class='muted'>sh605177</td><td>10.6</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>24.73</td><td>23.11</td><td>27.34</td><td class='muted'>待结算</td></tr></tbody></table></details></div>
+
+<div class='section'><h2>游资轨 · 短线<span class='trk y'>1~3 日</span></h2>
+<div class='muted' style='margin-bottom:8px'>游资方向 30（知名席位 18 + 买入额 8 + 席位家数 4）+ 量价 30 + 筹码 12 + 两融 8 + 主力资金 6（当日）+ 动量 ≤2.5 + 中报 1 + 高管 5 + 大宗 5 − 风险 ≤12 − 热度反向 ≤4</div>
+<div class='muted' style='padding:10px 0'>本期该轨<b>无合格出池标的</b> —— 当日整体偏弱或分数未达门槛，按纪律空仓等待，不硬凑低胜率标的。</div>
+
+<details class='veto' style='margin-top:12px'><summary style='cursor:pointer'><b>仅跟踪 · 游资轨 C/D 档 35 只</b><span class='muted'>（不建议建仓 · 点击展开）</span></summary><table style='margin-top:8px' data-wb><thead><tr><th>名称</th><th>代码</th><th>总分</th><th>档位</th><th>当日</th><th>收盘</th><th>止损</th><th>目标一</th><th>次日表现</th></tr></thead><tbody><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh600479.html" target="_blank" rel="noopener noreferrer">千金药业</a></td><td class='muted'>sh600479</td><td>42.8</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>12.34</td><td>11.78</td><td>13.02</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002579.html" target="_blank" rel="noopener noreferrer">中京电子</a></td><td class='muted'>sz002579</td><td>42.8</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>19.46</td><td>18.58</td><td>20.54</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz003040.html" target="_blank" rel="noopener noreferrer">楚天龙</a></td><td class='muted'>sz003040</td><td>42.8</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>17.31</td><td>16.53</td><td>18.27</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002491.html" target="_blank" rel="noopener noreferrer">通鼎互联</a></td><td class='muted'>sz002491</td><td>42.3</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>24.59</td><td>23.48</td><td>25.95</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh688802.html" target="_blank" rel="noopener noreferrer">沐曦股份</a></td><td class='muted'>sh688802</td><td>42.3</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>564.00</td><td>538.48</td><td>595.16</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh688678.html" target="_blank" rel="noopener noreferrer">福立旺</a></td><td class='muted'>sh688678</td><td>42.0</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>27.93</td><td>26.67</td><td>29.47</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002161.html" target="_blank" rel="noopener noreferrer">远望谷</a></td><td class='muted'>sz002161</td><td>41.3</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>7.16</td><td>6.84</td><td>7.56</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh600792.html" target="_blank" rel="noopener noreferrer">云煤能源</a></td><td class='muted'>sh600792</td><td>41.2</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>5.46</td><td>5.21</td><td>5.76</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh688498.html" target="_blank" rel="noopener noreferrer">源杰科技</a></td><td class='muted'>sh688498</td><td>41.0</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>1,838.56</td><td>1,755.37</td><td>1,940.14</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz001232.html" target="_blank" rel="noopener noreferrer">嘉立创</a></td><td class='muted'>sz001232</td><td>40.2</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>193.51</td><td>184.75</td><td>204.20</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh605177.html" target="_blank" rel="noopener noreferrer">东亚药业</a></td><td class='muted'>sh605177</td><td>40.1</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>24.73</td><td>23.61</td><td>26.10</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh603042.html" target="_blank" rel="noopener noreferrer">华脉科技</a></td><td class='muted'>sh603042</td><td>37.8</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>19.03</td><td>18.17</td><td>20.08</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002487.html" target="_blank" rel="noopener noreferrer">大金重工</a></td><td class='muted'>sz002487</td><td>37.7</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>39.70</td><td>37.90</td><td>41.89</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002104.html" target="_blank" rel="noopener noreferrer">恒宝股份</a></td><td class='muted'>sz002104</td><td>37.0</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>11.80</td><td>11.27</td><td>12.45</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002636.html" target="_blank" rel="noopener noreferrer">金安国纪</a></td><td class='muted'>sz002636</td><td>36.3</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>81.38</td><td>77.70</td><td>85.88</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002281.html" target="_blank" rel="noopener noreferrer">光迅科技</a></td><td class='muted'>sz002281</td><td>36.0</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>193.76</td><td>184.99</td><td>204.47</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh603565.html" target="_blank" rel="noopener noreferrer">中谷物流</a></td><td class='muted'>sh603565</td><td>34.4</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>12.11</td><td>11.56</td><td>12.78</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002155.html" target="_blank" rel="noopener noreferrer">湖南黄金</a></td><td class='muted'>sz002155</td><td>32.4</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>25.29</td><td>24.15</td><td>26.69</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz000560.html" target="_blank" rel="noopener noreferrer">我爱我家</a></td><td class='muted'>sz000560</td><td>31.7</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>3.19</td><td>3.05</td><td>3.37</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz301520.html" target="_blank" rel="noopener noreferrer">万邦医药</a></td><td class='muted'>sz301520</td><td>30.6</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>82.38</td><td>78.65</td><td>86.93</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002916.html" target="_blank" rel="noopener noreferrer">深南电路</a></td><td class='muted'>sz002916</td><td>30.4</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>395.02</td><td>377.15</td><td>416.84</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz300243.html" target="_blank" rel="noopener noreferrer">瑞丰高材</a></td><td class='muted'>sz300243</td><td>30.0</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>22.46</td><td>21.44</td><td>23.70</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002792.html" target="_blank" rel="noopener noreferrer">通宇通讯</a></td><td class='muted'>sz002792</td><td>29.6</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>34.54</td><td>32.98</td><td>36.45</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh603936.html" target="_blank" rel="noopener noreferrer">博敏电子</a></td><td class='muted'>sh603936</td><td>29.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>21.61</td><td>20.63</td><td>22.80</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002396.html" target="_blank" rel="noopener noreferrer">星网锐捷</a></td><td class='muted'>sz002396</td><td>29.3</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>37.74</td><td>36.03</td><td>39.83</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz301489.html" target="_blank" rel="noopener noreferrer">思泉新材</a></td><td class='muted'>sz301489</td><td>28.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>131.40</td><td>125.45</td><td>138.66</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz300464.html" target="_blank" rel="noopener noreferrer">星徽股份</a></td><td class='muted'>sz300464</td><td>28.5</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>11.88</td><td>11.34</td><td>12.54</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz001389.html" target="_blank" rel="noopener noreferrer">广合科技</a></td><td class='muted'>sz001389</td><td>26.9</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>185.93</td><td>177.52</td><td>196.20</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz000978.html" target="_blank" rel="noopener noreferrer">桂林旅游</a></td><td class='muted'>sz000978</td><td>26.8</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>8.39</td><td>8.01</td><td>8.85</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz301171.html" target="_blank" rel="noopener noreferrer">易点天下</a></td><td class='muted'>sz301171</td><td>26.1</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>34.77</td><td>33.20</td><td>36.69</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh603256.html" target="_blank" rel="noopener noreferrer">宏和科技</a></td><td class='muted'>sh603256</td><td>25.8</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>148.92</td><td>142.18</td><td>157.15</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002837.html" target="_blank" rel="noopener noreferrer">英维克</a></td><td class='muted'>sz002837</td><td>25.2</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>62.23</td><td>59.41</td><td>65.67</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz000977.html" target="_blank" rel="noopener noreferrer">浪潮信息</a></td><td class='muted'>sz000977</td><td>23.6</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>71.85</td><td>68.60</td><td>75.82</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz300290.html" target="_blank" rel="noopener noreferrer">ST荣科</a></td><td class='muted'>sz300290</td><td>22.9</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>7.14</td><td>6.82</td><td>7.53</td><td class='muted'>待结算</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz002531.html" target="_blank" rel="noopener noreferrer">天顺风能</a></td><td class='muted'>sz002531</td><td>22.0</td><td><span class='badge bD'>D</span> 弱势·仅跟踪</td><td class='up'>—</td><td>7.72</td><td>7.37</td><td>8.15</td><td class='muted'>待结算</td></tr></tbody></table></details></div>
+
+<div class='section dropsec'><h2 id='dropped'>当日取消观察 · 4 只</h2><div class='muted' style='margin-bottom:8px'>相对上一期（2026-09-18）在池、本期出局的个股。取消只代表<b>规则口径下不再跟踪</b>，不等于看空；原因分四类：一票否决 / 信号消失 / 未达阈值 / 数据缺失或停牌（见下方「暂停跟踪」）。</div><table data-wb><thead><tr><th>名称</th><th>代码</th><th>原轨道</th><th>上期档位 · 评分</th><th>当日涨跌</th><th>连续观察</th><th>取消原因</th></tr></thead><tbody><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh688356.html" target="_blank" rel="noopener noreferrer">键凯科技</a></td><td class='muted'>sh688356</td><td>机构轨 / 游资轨</td><td><span class='badge bC'>C</span> 41.40</td><td class='up'>+6.54%</td><td>3 期</td><td class='why'>今日未进入候选池（三路信号均不再触发）</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz003031.html" target="_blank" rel="noopener noreferrer">中瓷电子</a></td><td class='muted'>sz003031</td><td>机构轨 / 游资轨</td><td><span class='badge bD'>D</span> 36.10</td><td class='up'>+1.07%</td><td>1 期</td><td class='why'>今日未进入候选池（三路信号均不再触发）</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sz300142.html" target="_blank" rel="noopener noreferrer">沃森生物</a></td><td class='muted'>sz300142</td><td>机构轨 / 游资轨</td><td><span class='badge bD'>D</span> 35.10</td><td class='up'>+2.85%</td><td>1 期</td><td class='why'>今日未进入候选池（三路信号均不再触发）</td></tr><tr><td><a class="emlk" href="https://quote.eastmoney.com/sh688368.html" target="_blank" rel="noopener noreferrer">晶丰明源</a></td><td class='muted'>sh688368</td><td>机构轨 / 游资轨</td><td><span class='badge bD'>D</span> 31.00</td><td class='down'>-1.44%</td><td>3 期</td><td class='why'>一票否决：所属板块主力出货（电子）</td></tr></tbody></table></div>
+
+<div class='note warn'><b>风险提示：</b>本页为量化规则输出，<b>不构成投资建议</b>。中报数据截至 2026-06-30 已滞后，仅作背景参考；
+游资轨波动剧烈、须严格执行紧止损。所有买卖点来自公开数据与固定公式，不含基本面判断，务必自行核验并控制单票亏损不超过总资金 2%。</div>
+
+<footer>数据源：westock-mcp（行情 / 技术指标 / 资金流 / 筹码 / 一致预期 / 龙虎榜 / 高管变动 / 大宗）· 中报十大流通股东（2026-06-30）<br>
+生成脚本 <code>quant/gen_picks.py</code> + <code>quant/build_picks.py</code> · 仅供参考，不构成投资建议。</footer>
+</div><!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--></body></html>
