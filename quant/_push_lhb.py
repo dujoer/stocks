@@ -160,6 +160,8 @@ _AUTO_PATTERNS = [
     "market-trend/*.py",
     # 数据中心静态切片（查询页数据源，由 quant/db_export.py 生成）
     "web/data/*.json",
+    # 增仓精选每日统计快照（供门户卡片取数；历史累积 quant/accum/history.json 属本地，不推送）
+    "web/accumulation/stat_*.json",
 ]
 # 覆盖度自检机制（2026-09-11 新增）：主题源 + 页面登记表 + 自检/归位/校验脚本
 for _p in ("quant/_theme.css", "quant/_app.js", "quant/_page_registry.py",

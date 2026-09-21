@@ -42,6 +42,7 @@ SECTIONS = [
     ("个股调研", "research/index.html"),
     ("底部反转", "reversal/index.html"),
     ("主升精选", "selected/index.html"),
+    ("增仓精选", "accumulation/index.html"),
     ("做T池", "tplus/index.html"),
     ("数据中心", "db/index.html"),
 ]
@@ -69,6 +70,7 @@ MODULES = [
         ("个股调研", "research/index.html"),
         ("底部反转", "reversal/index.html"),
         ("主升精选", "selected/index.html"),
+        ("增仓精选", "accumulation/index.html"),
         ("做T池", "tplus/index.html"),
     ]),
     ("数据与工具", [

@@ -317,24 +317,42 @@ def stat_selected():
 
 
 def stat_accumulation():
-    """增仓精选：机构/私募增持 I × 融资融券 1/3/5 日净增仓 M（S=强增仓×机构私募 80.9%）"""
-    p = os.path.join(WEB, "accumulation", "accum_result.json")
-    r = _load_json(p) or {}
-    mods = r.get("mod_wr") or {}
-    v6 = mods.get("v6_M强(≥5日占比4%)+I") or [0, None]
-    n_s, wr_s6 = v6[0], v6[1]
-    # 当日 S/A 档数从 combined 页 sub 行提取
-    s_cnt = a_cnt = "—"
+    """增仓精选：I（机构/私募）× M（融资 1/3/5 日净增仓）条件模块组合。
+
+    优先读当日统计快照 web/accumulation/stat_{DS}.json（由 build_accum.py 每日写出），
+    缺失时回退到解析当期页面；再回退 lab 回测汇总。
+    """
+    st = {}
     if accum_d:
-        h = _load_text(os.path.join(WEB, "accumulation", "combined_%s.html"
-                                    % accum_d.strftime("%Y%m%d"))) or ""
-        import re as _re
-        m = _re.search(r"S 档 (\d+) · A 档 (\d+)", h)
-        if m:
-            s_cnt, a_cnt = m.group(1), m.group(2)
+        st = _load_json(os.path.join(WEB, "accumulation",
+                                     "stat_%s.json" % accum_d.strftime("%Y%m%d"))) or {}
+    if st:
+        s_cnt, a_cnt = st.get("nS", "—"), st.get("nA", "—")
+        wr_s6, n_s = st.get("lab_S_wr"), st.get("lab_S_n", 0)
+        hp, hn, hw = st.get("hist_periods", 0), st.get("hist_n", 0), st.get("hist_wr")
+    else:
+        p = os.path.join(WEB, "accumulation", "accum_result.json")
+        r = _load_json(p) or {}
+        mods = r.get("mod_wr") or {}
+        v6 = mods.get("v6_M强(≥5日占比4%)+I") or [0, None]
+        n_s, wr_s6 = v6[0], v6[1]
+        s_cnt = a_cnt = "—"
+        hp = hn = 0
+        hw = None
+        if accum_d:
+            h = _load_text(os.path.join(WEB, "accumulation", "combined_%s.html"
+                                        % accum_d.strftime("%Y%m%d"))) or ""
+            import re as _re
+            m = _re.search(r"S 档 (\d+) · A 档 (\d+)", h)
+            if m:
+                s_cnt, a_cnt = m.group(1), m.group(2)
     wr_s = ("<b>%.1f%%</b>" % wr_s6) if isinstance(wr_s6, (int, float)) else "—"
-    return ("S 档（融资强增仓×机构私募）胜率 <b>%s</b>（20日 n=%d）｜ 当日 S 档 <b>%s</b> / A 档 %s"
-            % (wr_s, n_s, s_cnt, a_cnt))
+    tail = ""
+    if hp and hn:
+        tail = f" ｜ 归档 {hp} 期累计兑现 {hn} 个、胜率 <b>{hw}%</b>" if hw is not None \
+               else f" ｜ 归档 {hp} 期待结算"
+    return ("S 档（融资强增仓×机构私募）胜率 <b>%s</b>（20日 n=%d）｜ 当日 S 档 <b>%s</b> / A 档 %s%s"
+            % (wr_s, n_s, s_cnt, a_cnt, tail))
 
 
 def stat_industry_elite():
@@ -438,6 +456,21 @@ def fmt(d):
 
 def badge(cls, txt):
     return f"<span class='badge {cls}'>{txt}</span>"
+
+# ---- 增仓精选当日快照（门户卡片文案取真实数字，避免手写值与系统脱节）----
+_accst = {}
+if accum_d:
+    _accst = _load_json(os.path.join(WEB, "accumulation",
+                                     "stat_%s.json" % accum_d.strftime("%Y%m%d"))) or {}
+_ACC_WR_S = _accst.get("lab_S_wr")
+_ACC_N_S = _accst.get("lab_S_n", 0)
+_ACC_WR_A = _accst.get("lab_A_wr")
+_ACC_HP = _accst.get("hist_periods", 0)
+_ACC_HN = _accst.get("hist_n", 0)
+_ACC_HW = _accst.get("hist_wr")
+_ACC_HIST = (f" ｜ 已归档 {_ACC_HP} 期、累计真实结算 {_ACC_HN} 个样本"
+             + (f"（可兑现胜率 {_ACC_HW}%）" if _ACC_HW is not None else "（待结算）")
+             if _ACC_HP else "")
 
 # ---- 功能区定义（与导航的 5 大模块一一对应）----
 # 模块顺序与 _nav.py 的 MODULES 完全一致：
@@ -565,7 +598,13 @@ ZONES = [
             },
             {
                 "ic": "🤝", "t": "增仓精选 · 机构私募×融资增仓", "href": "web/accumulation/index.html",
-                "func": "条件模块组合选股：<b>Ⅰ 机构/私募增持</b>（私募/阳光私募/牛散/公募 Q2 股东维度）× <b>Ⅱ 融资融券 1/3/5 日净增仓</b>（东财全量日频序列、T+1 口径）× Ⅲ 大宗/高管/席位日频事件。<b>20 日回测：S 档（5日融资净买入占比≥4% × 机构私募）胜率 80.9%（n=110，占比≥6% 达 91.2%）；A 档（≥3 信号共振且 M/I）69.1%</b>。S 档=最高确定性，A 档=共识共振，B 档=观察仓。证据见 <a href='web/accumulation/lab.html'>增仓精选实验室</a>。",
+                "func": ("条件模块组合选股：<b>Ⅰ 机构/私募增持</b>（私募/阳光私募/牛散/公募 Q2 股东维度）× "
+                         "<b>Ⅱ 融资融券 1/3/5 日净增仓</b>（东财全量日频序列、T+1 口径）× Ⅲ 大宗/高管/席位日频事件。"
+                         f"<b>20 日回测：S 档（5日融资净买入占比≥4% × 机构私募）胜率 {_ACC_WR_S}%（n={_ACC_N_S}，占比≥6% 档更高）；"
+                         f"A 档（≥3 信号共振且 M/I）{_ACC_WR_A}%</b>。S 档=最高确定性，A 档=共识共振，B 档=观察仓。"
+                         f"<b>每日留档</b>：逐交易日生成当期页 + 统计快照，并对历史各期回填事后兑现{_ACC_HIST}。"
+                         "证据见 <a href='web/accumulation/lab.html'>增仓精选实验室</a>，逐期明细见 "
+                         "<a href='web/accumulation/history.html'>每日归档 · 兑现跟踪</a>。"),
                 "rel": "← 大宗交易/高管增持/席位（日频）+ Q2 股东分类（季度）+ 东财融资融券序列（已补连续 20 日）；阈值敏感性单调（68→81→91%），先验阈值非拟合。",
                 "stat": STAT["accum"], "date": fmt(accum_d) if accum_d else "—", "fresh": badge("fresh", "每日" if accum_d else "—"),
             },
@@ -659,9 +698,10 @@ update_steps = [
     ("⑦ 精选池（原信号池 · 每日 · 双轨 + 技术确认出池）", "<code>python quant/gen_picks.py --date {DATE} --window 20 --top 40</code>（纯本地三路信号）→ agent 经 MCP 按 <code>_codes_{DATE}.txt</code> 以 25 只/批补拉 quote/technical/chip/fund_flow/margin/hot → <b><code>python quant/fetch_pick_klines.py --end {DATE}</code>（沙箱外；为全部选股码建 <code>quant/picks/price_archive.json</code> 日K价格档案，漏跑则次日无法回填昨日选股）</b> → <code>python quant/build_picks.py --date {DATE}</code>（backfill 读该档案按真实交易日历回填每只票 T+1/T+3/T+5，昨日选股今日结算；并用真实同日收盘+MA5 校正入场/止损/目标基准）→ <code>python quant/backtest_picks.py</code>（累积胜率）→ <code>python quant/scan_stable.py --date {DATE}</code>（<b>全市场稳健分选股</b>：在可交易域（剔除 ST/退市、停牌、20 日均额 &lt;5000 万、低价）内做先验 12 因子的横截面分位排序，产出 <code>web/picks/stable_{DATE}.html</code> + <code>quant/picks/stable_{DATE}.json</code>；<b>须排在 <code>build_picks.py</code> 之后</b>——归档首页只在 stable 页已存在时才加入链，顺序反了会漏掉入口）。<b><code>quotes_{DATE}.json</code> 缺失会导致 0 行输出</b>。<b>2026-09-19 起出池门槛：</b>最高档直接出池；次高档须通过「20 日主力净流入为正」（MACD 三层漏斗第 C 层，读 <code>fundflow_{DATE}.json</code> 的 <code>mainNetFlow20D</code>）才出池；其余一律折叠为仅跟踪。当日无出池标的时页面明示<b>空仓等待</b>——实测最高档 T+3 胜率 83%，次高档仅 47%，故不硬凑。"),
     ("⑧ 做T池（每日 · 底仓网格）", "<code>python quant/scan_strong.py --date {DATE}</code>（全市场强势扫描，产出 <code>_strong_scan_{DATE}.json</code>）→ <code>python quant/gen_tplus.py --date {DATE}</code>（<b>三源并集</b>：机构底仓 ≥3% ／ 龙虎榜近 10 日 ／ 强势 20 日超额 ≥5pp，约 1600 只）→ 补拉 <code>data_quote</code> + <code>data_kline</code>（约 848×60 根，<b>数据量最大，建议单独跑一轮</b>）→ <code>python quant/build_tplus.py --date {DATE}</code>。<b>打分口径（v6 · 2026-09-21 起）</b>：做T分 = <b>9 个先验固定因子</b>（箱体窄 / 带宽低 / 均线粘合 / 波动规律 / 振幅适中 / ATR 适中 / 横盘 / 支撑被验 / 流动性）在<b>当日域内横截面分位</b>、等权 × 100；<b>档位 = 域内分位</b>（A 前 10% / B 前 25% / C 其余），不再是「≥80/70」的固定阈值（阈值随行情漂移，分位不漂）；命中解禁 / 计划减持 → <b>D（风险否决·仅跟踪）</b>；风险项（破 MA60 / RSI 超买 / 成交额不足 / MA20 陡峭 / 龙虎榜净卖出）<b>只作卡片提示、不参与排序</b>。旧 7 维手调绝对分保留在 <code>v5score</code> 字段备查。<b>大盘环境门控（<code>quant/_idxkline.py</code>）</b>：市场画像评分 × 55% + 上证指数均线状态 × 45%，强势 ≥3.8 / 震荡 3.0~3.8 / 弱势 2.2~3.0 / 破位 &lt;2.2；强势放行 A/B/C、震荡放行 A/B、<b>弱势只放行 A 档</b>并附加「一年分位 ≤70% · MA20 斜率 ≥−1% · 箱体高度 ≤40%」，仓位按环境打 0.55~1.0 折，<b>破位不放行新开仓</b>；卖区 1.2×ATR 驱动（不再死等箱体上沿）。<b>模型失效或口径大改时</b> <code>python quant/_tplus_lab.py</code> 重跑样本外实证（复用 <code>_tplus_lab_panel.json</code> 约 30 秒；<code>--rebuild</code> 全量重建约 5 分钟）并刷新 <code>web/tplus/lab.html</code>（14 节：两组先验对照 / 严格样本外 / 参数网格 / <b>环境 × 参数</b> 等）。"),
     ("⑨ 反转 / MACD / 高胜率（每日扫描）", "三者均以当日数据实拉落盘后再渲染：反转（<b>v5 全市场域</b>）= <code>python quant/rev_pool.py run {DATE}</code>（本地全市场日K ≈4700 只 → 先验固定因子集横截面分位，档位 = 域内前 10% / 10~25%）→ <code>python quant/fetch_rev_flow.py --date {DATE} --src sina</code>（1/5/10/20 日主力净流入，<b>走新浪离线不占 MCP 额度</b>）→ <code>python quant/fetch_rev_enrich.py --date {DATE} --render</code>（腾讯离线补<b>名称 / 流通市值 / PE</b>，合并资金流后重渲染页面）→ <code>python quant/gen_watchlist.py {DATE}</code>（仅重建入口页；检测到 rev_pool scan 会跳过明细，避免覆盖）；模型失效或数据大幅更新时 <code>python quant/_rev_lab.py</code> 重跑样本外实证并刷新 <code>web/reversal/lab.html</code>。MACD = <code>python quant/macd_build.py {DS} --raw</code> + <code>python quant/build_macd_extra.py --date {DATE}</code> + <code>python quant/gen_macd.py {DS}</code>；高胜率 = <code>python quant/build_highwin.py --date {DATE}</code> + <code>python quant/gen_highwin.py --date {DATE}</code>。<b>增强诊断列（52周分位 / 量比 / 换手 / 5日主力 / 归一化强度 / 获利盘 / 集中度）由 <code>build_macd_extra.py</code> 经 MCP 实拉 data_quote + data_chip + data_fund_flow 生成</b>，必须在 <code>macd_build.py</code> 之前跑，否则该表整列显示「无增强数据」；<b>高胜率须早于 <code>build_picks.py</code></b>，否则 picks/index 入链停在上期。"),
-    ("⑩ 当日要闻", "<code>data_hot(kind=news)</code> 榜单落 <code>quant/_news_seed/{DATE}.json</code> → <code>python quant/add_news.py --date {DATE}</code>（可加 <code>--expect 50</code> 校验条数）。<b>不再每天新建一个脚本</b>。"),
-    ("⑪ 数据库与门户重建", "<code>python quant/db_update.py {DATE}</code> → <code>python quant/db_export.py</code> → <code>python quant/build_portal.py</code> → <code>python quant/build_sections.py</code> → <code>python quant/_apply_theme.py</code>。门户卡片自动带出最新日期与新鲜度；<b>凡显示「非当日」的卡片即为漏跑项，须当天补齐或诚实标注降级</b>。🔴 <b>顺序敏感</b>：<code>build_portal.py</code> 会整份重写仓库根 <code>index.html</code>。过去若先跑 <code>_apply_theme.py</code> 再跑它，门户会丢掉 <code>&lt;!--WB_THEME--&gt;</code> 主题块 → <code>--ink/--muted/--surface</code> 等变量全部未定义 → 卡片无背景无边框（页面看起来「没样式」）。现已在写盘前自行注入主题与通用脚本，与执行顺序解耦。另：<code>_apply_theme.py</code> 收尾还会跑 <code>quant/linkify.py</code>——把<b>全站个股名称</b>统一包成东方财富个股页外链（<code>quote.eastmoney.com/&lt;sh|sz|bj&gt;&lt;code&gt;.html</code>），新页老页一起覆盖、幂等。名称表 <code>quant/_stock_names.json</code> 缺失时该步自动跳过（页面退化为纯文本）。另：本 SOP 里的 <code>{{DATE}}</code> 取<b>最新数据日</b>（各子系统最新快照的最大值），不是日历今天，避免周末重建门户时写出一个没有数据的日期。"),
-    ("⑫ 校验与推送", "合规扫描（产物内不得出现个人持有信息、账户盈亏等敏感内容）；<code>python quant/_link_check.py</code> 须 0 断链、<code>python quant/_coverage_check.py --until {DATE}</code> 无新增缺口、<code>python quant/_js_check.py --all</code> 通过；推送须<b>关闭沙箱</b>执行 <code>python quant/_push_lhb.py</code> → <code>python quant/_sync_all.py</code> 收敛 → <code>python quant/_curl_gate.py</code> 抽检核心页 200。"),
+    ("⑩ 增仓精选（每日 · 条件模块组合选股）", "<code>python quant/build_accum.py {DATE}</code>。<b>每日必跑</b>，产出三件套：<code>web/accumulation/combined_{DS}.html</code>（当期留档）+ <code>stat_{DS}.json</code>（统计快照，供门户卡片取数）+ <code>index.html</code>（入口，只跟随最新期，补跑旧期不会倒退）；同时累积 <code>quant/accum/history.json</code>（逐期逐票 + 当日收盘价作入场价）并<b>对历史各期回填事后兑现</b>（移动止盈口径：止损 −12% ／ +6% 激活、回撤 3% 跟踪 ／ 满 20 日强平），重渲染 <code>web/accumulation/history.html</code>（每日归档 + 兑现跟踪）。<b>依赖</b>：须在③④（大宗/高管）与②（席位）之后跑，否则 Ⅲ 类日频事件缺失；融资融券序列走离线缓存 <code>quant/margin_em/</code>（首次或被清空时用 <code>python quant/_fetch_margin_em.py</code> 补抓，<b>不占 MCP 额度</b>）。模型失效或口径大改时才需重跑 <code>python quant/_accum_lab.py</code> 刷新回测与 <code>lab.html</code>（日更不必跑）。"),
+    ("⑪ 当日要闻", "<code>data_hot(kind=news)</code> 榜单落 <code>quant/_news_seed/{DATE}.json</code> → <code>python quant/add_news.py --date {DATE}</code>（可加 <code>--expect 50</code> 校验条数）。<b>不再每天新建一个脚本</b>。"),
+    ("⑫ 数据库与门户重建", "<code>python quant/db_update.py {DATE}</code> → <code>python quant/db_export.py</code> → <code>python quant/build_portal.py</code> → <code>python quant/build_sections.py</code> → <code>python quant/_apply_theme.py</code>。门户卡片自动带出最新日期与新鲜度；<b>凡显示「非当日」的卡片即为漏跑项，须当天补齐或诚实标注降级</b>。🔴 <b>顺序敏感</b>：<code>build_portal.py</code> 会整份重写仓库根 <code>index.html</code>。过去若先跑 <code>_apply_theme.py</code> 再跑它，门户会丢掉 <code>&lt;!--WB_THEME--&gt;</code> 主题块 → <code>--ink/--muted/--surface</code> 等变量全部未定义 → 卡片无背景无边框（页面看起来「没样式」）。现已在写盘前自行注入主题与通用脚本，与执行顺序解耦。另：<code>_apply_theme.py</code> 收尾还会跑 <code>quant/linkify.py</code>——把<b>全站个股名称</b>统一包成东方财富个股页外链（<code>quote.eastmoney.com/&lt;sh|sz|bj&gt;&lt;code&gt;.html</code>），新页老页一起覆盖、幂等。名称表 <code>quant/_stock_names.json</code> 缺失时该步自动跳过（页面退化为纯文本）。另：本 SOP 里的 <code>{{DATE}}</code> 取<b>最新数据日</b>（各子系统最新快照的最大值），不是日历今天，避免周末重建门户时写出一个没有数据的日期。"),
+    ("⑬ 校验与推送", "合规扫描（产物内不得出现个人持有信息、账户盈亏等敏感内容）；<code>python quant/_link_check.py</code> 须 0 断链、<code>python quant/_coverage_check.py --until {DATE}</code> 无新增缺口、<code>python quant/_js_check.py --all</code> 通过；推送须<b>关闭沙箱</b>执行 <code>python quant/_push_lhb.py</code> → <code>python quant/_sync_all.py</code> 收敛 → <code>python quant/_curl_gate.py</code> 抽检核心页 200。"),
 ]
 
 _LATEST = TODAY.strftime("%Y-%m-%d")

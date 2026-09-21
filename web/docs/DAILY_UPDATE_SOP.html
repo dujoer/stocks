@@ -227,7 +227,7 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 
 </style><!--/WB_THEME--></head>
 <body>
-<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
 <div class="wrap">
 <header class="top">
   <div class="kicker">A股量化助理 · 每日盘后</div>
@@ -253,7 +253,8 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <tr><td>⑦ 底部反转选股（每日重扫）</td><td><code>web/reversal/index.html</code><br><code>web/reversal/watchlist_{DATE}.html</code></td><td id="d5">—</td><td><code>quant/rev_pool.py run</code> + <code>quant/fetch_rev_flow.py</code> + <code>quant/fetch_rev_enrich.py --render</code> + <code>quant/gen_watchlist.py</code></td><td>本地腾讯前复权日K（220 只种子，离线缓存）→ 硬门槛内 9 特征横截面分位组合；<b>名称/流通市值</b>走腾讯离线、<b>1·5·10·20 日主力净流入</b>走 MCP（限频转新浪离线兜底）补全，缺这步则相关列为空；模型由 <code>_rev_lab.py</code> 样本外实证冻结，证据页 <code>web/reversal/lab.html</code></td></tr>
 <tr><td>⑧ MACD 水上金叉观察池（每日重扫 · <b>已并入精选池</b>）</td><td><code>web/macd/index.html</code><br><code>web/macd/watchlist_{DATE}.html</code></td><td id="d6">—</td><td><code>quant/macd_build.py</code> + <code>quant/gen_macd.py</code></td><td>westock tool_filter / data_technical / data_fund_flow（agent 经 MCP 实拉 → <code>macd_raw_*_{DATE}.json</code>）+ 增强列 data_quote / data_chip / data_fund_flow。<b>2026-09-19 起：</b>不再单独荐股，两层条件并入精选池作技术确认门槛；本扫描继续日更（同时是⑨高胜率池的基底）</td></tr>
 <tr><td>⑨ 高胜率候选池（每日重扫）</td><td><code>web/picks/highwin_{YYYYMMDD}.html</code></td><td id="d9">—</td><td><code>quant/build_highwin.py --date {DATE}</code> + <code>quant/gen_highwin.py --date {DATE}</code></td><td>基底 = 当日 MACD 水上金叉 + 20 日主力净流入&gt;0（<code>quant/macd_scan_{YYYYMMDD}.json</code>）；增强：data_quote / data_technical(MA·RSI) / data_chip / 板块强度 / 龙虎榜 / 高管·大宗</td></tr>
-<tr><td>⑩ 当日要闻</td><td>（无独立页，进龙虎榜看板）</td><td id="d10">—</td><td><code>quant/add_news.py --date {DATE}</code></td><td>westock <code>data_hot(kind=news)</code> 榜单 → 落 <code>quant/_news_seed/{DATE}.json</code> → 写入 <code>quant/news.json</code>。<b>不再每天新建一个脚本</b></td></tr>
+<tr><td>⑩ 增仓精选（每日选股 · 留档结算）</td><td><code>web/accumulation/index.html</code><br><code>web/accumulation/combined_{YYYYMMDD}.html</code><br><code>web/accumulation/stat_{YYYYMMDD}.json</code><br><code>web/accumulation/history.html</code></td><td id="d11">—</td><td><code>quant/build_accum.py {DATE}</code></td><td>条件模块组合：<b>Ⅰ 机构/私募季度增持</b>（私募·阳光私募·牛散·公募）× <b>Ⅱ 融资融券 1/3/5 日净增仓</b>（东财 <code>datacenter-web</code> 离线日频序列、T+1 口径）× <b>Ⅲ 大宗/高管/席位日频事件</b>。每日三件套：<b>当期页 + 统计快照 + 入口页</b>（入口只跟随最新期，补跑旧期不会倒退）；同时累积 <code>quant/accum/history.json</code> 并<b>对历史各期回填事后兑现</b>（移动止盈口径），重渲染归档页。须排在③④（大宗/高管）与②（席位）之后；融资序列缓存 <code>quant/margin_em/</code> 被清空时用 <code>quant/_fetch_margin_em.py</code> 补抓（不占 MCP 额度）。回测证据 <code>web/accumulation/lab.html</code>（日更不必重跑 <code>_accum_lab.py</code>）</td></tr>
+<tr><td>⑪ 当日要闻</td><td>（无独立页，进龙虎榜看板）</td><td id="d10">—</td><td><code>quant/add_news.py --date {DATE}</code></td><td>westock <code>data_hot(kind=news)</code> 榜单 → 落 <code>quant/_news_seed/{DATE}.json</code> → 写入 <code>quant/news.json</code>。<b>不再每天新建一个脚本</b></td></tr>
 </table>
 <p style="margin-top:10px;color:#5a6573;font-size:13px">总门户本身由 <code>quant/build_portal.py</code> 扫描上述各子系统最新文件自动生成，无需手写。</p>
 </div>
@@ -505,7 +506,7 @@ python quant/gen_highwin.py  --date {DATE}   # 渲染 → web/picks/highwin_{YYY
 <p class="note">⚠️ 旧的 <code>build_highwin_0914.py</code> 把日期和路径<b>写死在脚本里</b>，每天要改文件名，现已归档。基底文件 <code>quant/macd_scan_{YYYYMMDD}.json</code> 缺失会输出 0 行；增强数据缺失时对应维度自动记 0，页面上显示「—」。</p>
 </div>
 
-<h3>⑩ 当日要闻 + 数据库累积</h3>
+<h3>⑪ 当日要闻 + 数据库累积</h3>
 <div class="card">
 <pre># data_hot(kind=news) 榜单落盘（结构：[["来源","标题"], …]）
 python quant/add_news.py --date {DATE} --expect 50
