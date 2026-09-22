@@ -3,7 +3,7 @@
 <head>
 <meta charset='UTF-8'>
 <meta name='viewport' content='width=device-width,initial-scale=1.0'>
-<title>A股量化助理 · 龙虎榜看板</title>
+<title>状态报告</title>
 <style>* { box-sizing: border-box; }
 body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
   background:#f5f6f8; color:#23262b; min-height:100vh; }
@@ -302,67 +302,34 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 
 </style><!--/WB_THEME--></head>
 <body>
-<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
-<div class='wrap landing'>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class='wrap'>
 
 <header>
-<h1>📊 龙虎榜 · 入口与归档</h1>
-<p>本页为龙虎榜板块的辅助入口，主看板请点击下方按钮。</p>
+<h1>📋 状态报告</h1>
+<p>2026-09-22 · 龙虎榜手动更新 + 全量数据刷新</p>
 </header>
-<div class='date'>数据口径：2026-09-22（大盘概览快照 2026-09-22 · 估值快照 2026-09-21）</div>
-<div class='grid'>
-<a class='card' href='lhb.html'>
-<div class='ic'>🐉</div>
-<div class='t'>龙虎榜主看板</div>
-<div class='d'>机构专用榜 / 机构+游资共振 / 席位胜率 / 申万一·二级板块与涨跌幅</div>
-</a>
-<a class='card' href='../market/index.html'>
-<div class='ic'>📈</div>
-<div class='t'>每日总览</div>
-<div class='d'>大盘 / 板块热度 / 连板梯队 / 龙虎榜速览</div>
-</a>
-<a class='card' href='../market/hotmoney.html'>
-<div class='ic'>🏦</div>
-<div class='t'>游资看板</div>
-<div class='d'>游资席位净买榜 TOP25 / 营业部胜率聚合</div>
-</a>
-<a class='card' href='../market/status_2026-09-22.html'>
-<div class='ic'>📋</div>
-<div class='t'>状态报告</div>
-<div class='d'>本轮产出、文件清单与口径说明</div>
-</a>
+<div class='section'>
+<h2>✅ 本轮完成情况</h2>
+<div class='amberbox' style='color:#1c2430'>1. <b>龙虎榜数据</b>：通过 westock-mcp data_lhb 拉取 2026-09-22 真实龙虎榜（机构榜 34 只、游资席位 94 个、机构+游资共振 25 只、席位胜率 27 条；龙虎榜全榜上榜 67 只）。已渲染 lhb.html（机构榜/共振/胜率）与 hotmoney.html（席位净买榜/胜率）。<br>2. <b>大盘/板块/连板刷新</b>：data_market_overview(2026-09-22)、data_hot(board)、tool_ranking(limitup_days) 全部更新为 2026-09-22（估值口径 2026-09-21）。<br>4. <b>推送</b>：本地已生成 6 个页面（含导航 index.html、龙虎榜归档页 lhb_2026-09-22.html），待经 GitHub 连接器推送至 dujoer/stocks 的 web/ 目录（main 分支，需仓库写权限）。注：早期 08-14 窗口收益/共振/Alpha 回测为远程分析页，本地未保留，本系统以龙虎榜机构榜、共振、席位胜率为核心。</div>
 </div>
-<div class='hist'>
-<b>每日龙虎榜归档：</b>
-<a href='lhb_2026-09-22.html'>2026-09-22</a>
-<a href='lhb_2026-09-21.html'>2026-09-21</a>
-<a href='lhb_2026-09-18.html'>2026-09-18</a>
-<a href='lhb_2026-09-17.html'>2026-09-17</a>
-<a href='lhb_2026-09-16.html'>2026-09-16</a>
-<a href='lhb_2026-09-15.html'>2026-09-15</a>
-<a href='lhb_2026-09-14.html'>2026-09-14</a>
-<a href='lhb_2026-09-11.html'>2026-09-11</a>
-<a href='lhb_2026-09-10.html'>2026-09-10</a>
-<a href='lhb_2026-09-09.html'>2026-09-09</a>
-<a href='lhb_2026-09-08.html'>2026-09-08</a>
-<a href='lhb_2026-09-07.html'>2026-09-07</a>
-<a href='lhb_2026-09-04.html'>2026-09-04</a>
-<a href='lhb_2026-09-03.html'>2026-09-03</a>
-<a href='lhb_2026-09-02.html'>2026-09-02</a>
-<a href='lhb_2026-09-01.html'>2026-09-01</a>
-<a href='lhb_2026-08-31.html'>2026-08-31</a>
-<a href='lhb_2026-08-27.html'>2026-08-27</a>
-<a href='lhb_2026-08-26.html'>2026-08-26</a>
-<a href='lhb_2026-08-25.html'>2026-08-25</a>
-<a href='lhb_2026-08-24.html'>2026-08-24</a>
-<a href='lhb_2026-08-21.html'>2026-08-21</a>
-<a href='lhb_2026-08-20.html'>2026-08-20</a>
-<a href='lhb_2026-08-19.html'>2026-08-19</a>
-<a href='lhb_2026-08-17.html'>2026-08-17</a>
-<br>
-<a href='../../index.html'>← 返回 A股分析中心总门户</a>
+<div class='section'>
+<h2>📁 产出文件</h2>
+<div class='chiprow'>
+<span class='pill'>index.html</span>
+<span class='pill'>daily_overview.html</span>
+<span class='pill'>lhb.html</span>
+<span class='pill'>hotmoney.html</span>
+<span class='pill'>lhb_2026-09-22.html</span>
+<span class='pill'>status_2026-09-22.html</span>
 </div>
-<div class='foot'>数据来源：腾讯自选股 westock-mcp（盘后公开数据，滞后且非未来收益承诺）。<br>由 A 股量化助理生成 · 仅供参考，不构成投资建议。</div>
+<div class='note'>数据落盘：quant/market_overview、board_hot、quotes、news.json、limitup、lhb（均为 2026-09-22）。生成脚本：quant/build_dashboards.py。</div>
+</div>
+<div class='section'>
+<h2>⚠️ 口径说明</h2>
+<div class='empty' style='text-align:left'>· 估值（PE 分位）接口最新快照为 2026-09-21，其余均为 2026-09-22。<br>· 窗口收益(alpha)回测未内置，链接至远程历史分析页。<br>· 所有资金数据为盘后公开龙虎榜，滞后且非未来收益承诺。</div>
+</div>
+<footer>由 A 股量化助理生成 · 仅供参考，不构成投资建议。</footer>
 </div>
 <!--WB_APP--><script id='wb-app'>
 /* ============================================================

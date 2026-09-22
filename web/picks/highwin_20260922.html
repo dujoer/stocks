@@ -1,0 +1,489 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>今日高胜率候选池 · 2026-09-22</title><style>
+.wrap{max-width:1320px}
+h1{font-size:23px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+h2{font-size:18px;font-weight:600;margin:28px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--accent)}
+h3{font-size:15px;font-weight:600;margin:18px 0 8px}
+.sub{color:var(--muted);font-size:13px;margin-bottom:8px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:12px 0;box-shadow:0 1px 2px rgba(60,64,67,.10)}
+.box{border-left:4px solid var(--accent);background:var(--accent-soft);padding:14px 18px;border-radius:0 10px 10px 0;margin:14px 0}
+.box.red{border-color:var(--green);background:#e6f4ea}
+.box.amber{border-color:#e37400;background:#fef7e0}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line-2);text-align:left;vertical-align:middle;white-space:nowrap}
+th{color:var(--muted);font-weight:600;font-size:11.5px;background:var(--hover);position:sticky;top:0}
+th[data-k]{cursor:pointer;user-select:none}
+th[data-k]:hover{color:var(--accent)}
+th.sorted-asc:after{content:" ▴";color:var(--accent)}
+th.sorted-desc:after{content:" ▾";color:var(--accent)}
+tbody tr:hover{background:var(--hover)}
+.num{font-variant-numeric:tabular-nums;text-align:right}
+.up{color:var(--red)}.dn{color:var(--green)}.am{color:var(--accent)}
+.note-inline{color:var(--muted)}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;margin:1px 2px;white-space:nowrap}
+.tag.r{background:#fce8e6;color:#a8071a}.tag.y{background:#fef7e0;color:#8a6d00}.tag.g{background:#e6f4ea;color:#137333}
+.hist{display:inline-block;font-size:10.5px;font-weight:700;color:#137333;background:#e6f4ea;border:1px solid #b7e1c3;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
+.histcol{white-space:normal;min-width:150px;max-width:200px}
+.note{font-size:12px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px dashed var(--line-2)}
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
+ul{margin:8px 0;padding-left:20px}li{margin:4px 0}
+.kpi{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.kpi div{flex:1;min-width:110px;background:var(--hover);border-radius:10px;padding:10px 14px}
+.kpi b{display:block;font-size:20px;color:var(--accent)}
+.kpi span{font-size:12px;color:var(--muted)}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:78vh;overflow-y:auto}
+.scroll table{min-width:1380px}
+</style><!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  .navgrp{ padding:5px 6px 5px 5px !important; }
+}
+
+</style><!--/WB_THEME--></head><body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class="wrap">
+<h1>今日高胜率候选池 · 2026-09-22</h1>
+<div class="sub">基底：MACD 水上金叉（DIF&gt;0 且 DEA&gt;0 且 柱&gt;0）+ 20 日主力净流入&gt;0 的 <b>55 只</b>（全市场扫描 1,803 只）。增强：行情 / 技术(MA·RSI) / 筹码 / 板块行为 / 龙虎榜 / 高管·大宗，全部为 <b>2026-09-22 收盘</b>数据。表格所有列均可点击排序。</div>
+
+<div class="kpi">
+<div><b>55</b><span>候选池（MACD 水上金叉）</span></div>
+<div><b>0</b><span>核心候选</span></div>
+<div><b>15</b><span>观察候选</span></div>
+<div><b>4</b><span>备选</span></div>
+<div><b>36</b><span>回避（含风险标记）</span></div>
+</div>
+
+<div class="box"><b>打分模型（100 分 · 8 维）</b>
+<ul>
+<li><b>趋势/技术 25</b>：MACD 柱动能(柱/价·10) + 均线多头排列(8) + RSI12 健康区(7)</li>
+<li><b>位置 15</b>：52 周分位——偏好相对中低位（25–65% 满分），过高(≥88%)降分</li>
+<li><b>资金 20</b>：20 日主力净流入(12) + 当日主力净流入(4) + 流入占流通比(4)</li>
+<li><b>筹码 15</b>：获利盘健康区(45–80%·8) + 90 集中度适中(12–32·7)</li>
+<li><b>板块 12</b>：所属申万二级板块主力行为——抢筹12 / 建仓9 / 洗盘5 / 出货0</li>
+<li><b>龙虎榜 8</b>：机构席位净买入 + 游资热度（高/中/低）</li>
+<li><b>高管/大宗 5</b>：高管净增持 + 大宗机构买入</li>
+</ul>
+<b>硬性降级（回避）</b>：所属板块「出货」/ RSI12≥90 超买 / 52 周位≥92% 高位。
+<div class="note">名称后的<span class="hist">09-11</span>绿色徽标 = 该标的<b>此前（不含今日）</b>曾被选入观察/信号池；<b>鼠标悬停</b>可看全部入选记录；对应「历史入选」列（可排序）列出全部日期与池别。</div></div>
+
+<h2>一、核心候选（0 只 · 总分≥68 且无风险否决）</h2>
+<div class="box">无</div>
+
+<h2>二、观察候选（15 只 · 55≤总分&lt;68）</h2>
+<div class="scroll"><table class="sortable" data-wb><thead><tr><th data-k="code" data-t="s">代码</th><th data-k="name" data-t="s">名称</th><th data-k="hist" data-t="s">历史入选</th><th data-k="total" data-t="n" class="sorted-desc">总分 ▾</th><th data-k="price" data-t="n">收盘</th><th data-k="changePct" data-t="n">涨跌%</th><th data-k="macd_ratio" data-t="n">MACD柱/价%</th><th data-k="flow20d_yi" data-t="n">20D主力(亿)</th><th data-k="dailyFlow_yi" data-t="n">当日主力(亿)</th><th data-k="pos52" data-t="n">52周位%</th><th data-k="turn" data-t="n">换手%</th><th data-k="volr" data-t="n">量比</th><th data-k="rsi12" data-t="n">RSI12</th><th data-k="profit" data-t="n">获利盘%</th><th data-k="conc90" data-t="n">集中90</th><th data-k="behavior" data-t="s">板块行为</th><th data-k="sw2" data-t="s">板块</th><th data-k="inst_net" data-t="n">龙虎榜(亿)</th><th data-k="eb" data-t="s">高管/大宗</th><th data-k="flags" data-t="s">风险标记</th></tr></thead><tbody><tr><td class="num">sz002916</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz002916.html" target="_blank" rel="noopener noreferrer">深南电路</a></b> <span class="hist" title="入选记录：2026-09-10 信号池·机构轨；2026-09-10 信号池·游资轨；2026-09-11 MACD观察池；2026-09-11 信号池·机构轨；2026-09-11 信号池·游资轨；2026-09-14 信号池·机构轨；2026-09-14 信号池·游资轨；2026-09-15 信号池·机构轨；2026-09-15 信号池·游资轨；2026-09-16 信号池·机构轨；2026-09-16 信号池·游资轨；2026-09-17 信号池·机构轨；2026-09-17 信号池·游资轨；2026-09-18 MACD观察池；2026-09-18 信号池·机构轨；2026-09-18 信号池·游资轨；2026-09-21 MACD观察池；2026-09-21 信号池·机构轨；2026-09-21 信号池·游资轨">09-21</span></td><td class="histcol"><span class="tag y">09-10 机构轨</span> <span class="tag y">09-10 游资轨</span> <span class="tag g">09-11 MACD</span> <span class="tag y">09-11 机构轨</span> <span class="tag y">09-11 游资轨</span> <span class="tag y">09-14 机构轨</span> <span class="tag y">09-14 游资轨</span> <span class="tag y">09-15 机构轨</span> <span class="tag y">09-15 游资轨</span> <span class="tag y">09-16 机构轨</span> <span class="tag y">09-16 游资轨</span> <span class="tag y">09-17 机构轨</span> <span class="tag y">09-17 游资轨</span> <span class="tag g">09-18 MACD</span> <span class="tag y">09-18 机构轨</span> <span class="tag y">09-18 游资轨</span> <span class="tag g">09-21 MACD</span> <span class="tag y">09-21 机构轨</span> <span class="tag y">09-21 游资轨</span></td><td class="num" data-v="67"><b>67.0</b></td><td class="num" data-v="400.0">400.00</td><td class="num up" data-v="1.26">1.26%</td><td class="num" data-v="1.274">1.274</td><td class="num" data-v="28.73">28.73</td><td class="num" data-v="0.758">0.758</td><td class="num" data-v="56.3">56.3%</td><td class="num" data-v="1.41">1.41%</td><td class="num" data-v="1.18">1.18</td><td class="num" data-v="61.98">62.0</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>元件</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="note-inline">—</span></td></tr><tr><td class="num">sz002138</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz002138.html" target="_blank" rel="noopener noreferrer">顺络电子</a></b> <span class="hist" title="入选记录：2026-09-21 MACD观察池">09-21</span></td><td class="histcol"><span class="tag g">09-21 MACD</span></td><td class="num" data-v="65"><b>65.0</b></td><td class="num" data-v="54.35">54.35</td><td class="num up" data-v="1.84">1.84%</td><td class="num" data-v="2.812">2.812</td><td class="num" data-v="14.22">14.22</td><td class="num" data-v="0.227">0.227</td><td class="num" data-v="59.2">59.2%</td><td class="num" data-v="4.79">4.79%</td><td class="num" data-v="1.23">1.23</td><td class="num" data-v="64.93">64.9</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>元件</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="note-inline">—</span></td></tr><tr><td class="num">sz301511</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz301511.html" target="_blank" rel="noopener noreferrer">德福科技</a></b> <span class="hist" title="入选记录：2026-09-14 MACD观察池；2026-09-21 MACD观察池">09-21</span></td><td class="histcol"><span class="tag g">09-14 MACD</span> <span class="tag g">09-21 MACD</span></td><td class="num" data-v="65"><b>65.0</b></td><td class="num" data-v="111.1">111.10</td><td class="num up" data-v="0.44">0.44%</td><td class="num" data-v="1.939">1.939</td><td class="num" data-v="11.5">11.50</td><td class="num" data-v="0.027">0.027</td><td class="num" data-v="51.1">51.1%</td><td class="num" data-v="6.49">6.49%</td><td class="num" data-v="0.81">0.81</td><td class="num" data-v="62.5">62.5</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>电池</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="note-inline">—</span></td></tr><tr><td class="num">sz300811</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz300811.html" target="_blank" rel="noopener noreferrer">铂科新材</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="65"><b>65.0</b></td><td class="num" data-v="86.45">86.45</td><td class="num up" data-v="1.21">1.21%</td><td class="num" data-v="0.928">0.928</td><td class="num" data-v="7.72">7.72</td><td class="num" data-v="-0.045">-0.045</td><td class="num" data-v="53.0">53.0%</td><td class="num" data-v="4.48">4.48%</td><td class="num" data-v="1.31">1.31</td><td class="num" data-v="62.71">62.7</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag g">建仓</span></td><td>金属新材料</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="note-inline">—</span></td></tr><tr><td class="num">sz002436</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz002436.html" target="_blank" rel="noopener noreferrer">兴森科技</a></b> <span class="hist" title="入选记录：2026-09-14 MACD观察池；2026-09-15 MACD观察池；2026-09-16 MACD观察池；2026-09-21 MACD观察池">09-21</span></td><td class="histcol"><span class="tag g">09-14 MACD</span> <span class="tag g">09-15 MACD</span> <span class="tag g">09-16 MACD</span> <span class="tag g">09-21 MACD</span></td><td class="num" data-v="63"><b>63.0</b></td><td class="num" data-v="44.23">44.23</td><td class="num dn" data-v="-0.23">-0.23%</td><td class="num" data-v="3.022">3.022</td><td class="num" data-v="65.92">65.92</td><td class="num" data-v="-3.718">-3.718</td><td class="num" data-v="48.9">48.9%</td><td class="num" data-v="11.58">11.58%</td><td class="num" data-v="1.33">1.33</td><td class="num" data-v="68.52">68.5</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>元件</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="note-inline">—</span></td></tr><tr><td class="num">sz000823</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz000823.html" target="_blank" rel="noopener noreferrer">超声电子</a></b> <span class="hist" title="入选记录：2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-18 MACD观察池">09-18</span></td><td class="histcol"><span class="tag g">09-11 MACD</span> <span class="tag g">09-14 MACD</span> <span class="tag g">09-18 MACD</span></td><td class="num" data-v="63"><b>63.0</b></td><td class="num" data-v="25.22">25.22</td><td class="num up" data-v="0.08">0.08%</td><td class="num" data-v="6.157">6.157</td><td class="num" data-v="44.8">44.80</td><td class="num" data-v="-1.539">-1.539</td><td class="num" data-v="50.4">50.4%</td><td class="num" data-v="34.23">34.23%</td><td class="num" data-v="1.1">1.10</td><td class="num" data-v="77.08">77.1</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>元件</td><td class="num" data-v="3.052">3.05</td><td>—</td><td><span class="tag y">换手过热</span></td></tr><tr><td class="num">sz300857</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz300857.html" target="_blank" rel="noopener noreferrer">协创数据</a></b> <span class="hist" title="入选记录：2026-09-21 MACD观察池">09-21</span></td><td class="histcol"><span class="tag g">09-21 MACD</span></td><td class="num" data-v="62.6"><b>62.6</b></td><td class="num" data-v="273.35">273.35</td><td class="num up" data-v="0.09">0.09%</td><td class="num" data-v="0.863">0.863</td><td class="num" data-v="10.59">10.59</td><td class="num" data-v="-0.013">-0.013</td><td class="num" data-v="50.2">50.2%</td><td class="num" data-v="3.18">3.18%</td><td class="num" data-v="1.13">1.13</td><td class="num" data-v="59.01">59.0</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>消费电子</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="note-inline">—</span></td></tr><tr><td class="num">sh603936</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sh603936.html" target="_blank" rel="noopener noreferrer">博敏电子</a></b> <span class="hist" title="入选记录：2026-09-11 MACD观察池；2026-09-16 信号池·机构轨；2026-09-16 信号池·游资轨；2026-09-18 MACD观察池；2026-09-21 信号池·机构轨；2026-09-21 信号池·游资轨">09-21</span></td><td class="histcol"><span class="tag g">09-11 MACD</span> <span class="tag y">09-16 机构轨</span> <span class="tag y">09-16 游资轨</span> <span class="tag g">09-18 MACD</span> <span class="tag y">09-21 机构轨</span> <span class="tag y">09-21 游资轨</span></td><td class="num" data-v="62.5"><b>62.5</b></td><td class="num" data-v="22.62">22.62</td><td class="num up" data-v="4.67">4.67%</td><td class="num" data-v="2.798">2.798</td><td class="num" data-v="8.55">8.55</td><td class="num" data-v="1.013">1.013</td><td class="num" data-v="73.4">73.4%</td><td class="num" data-v="15.52">15.52%</td><td class="num" data-v="1.36">1.36</td><td class="num" data-v="70.59">70.6</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>元件</td><td class="num" data-v="0.0">—</td><td>大宗机构买</td><td><span class="note-inline">—</span></td></tr><tr><td class="num">sz002636</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz002636.html" target="_blank" rel="noopener noreferrer">金安国纪</a></b> <span class="hist" title="入选记录：2026-09-14 MACD观察池；2026-09-15 MACD观察池；2026-09-16 信号池·机构轨；2026-09-16 信号池·游资轨；2026-09-17 信号池·机构轨；2026-09-17 信号池·游资轨；2026-09-18 信号池·机构轨；2026-09-18 信号池·游资轨；2026-09-21 信号池·机构轨；2026-09-21 信号池·游资轨">09-21</span></td><td class="histcol"><span class="tag g">09-14 MACD</span> <span class="tag g">09-15 MACD</span> <span class="tag y">09-16 机构轨</span> <span class="tag y">09-16 游资轨</span> <span class="tag y">09-17 机构轨</span> <span class="tag y">09-17 游资轨</span> <span class="tag y">09-18 机构轨</span> <span class="tag y">09-18 游资轨</span> <span class="tag y">09-21 机构轨</span> <span class="tag y">09-21 游资轨</span></td><td class="num" data-v="62"><b>62.0</b></td><td class="num" data-v="85.58">85.58</td><td class="num up" data-v="5.16">5.16%</td><td class="num" data-v="2.625">2.625</td><td class="num" data-v="34.36">34.36</td><td class="num" data-v="1.575">1.575</td><td class="num" data-v="75.8">75.8%</td><td class="num" data-v="10.47">10.47%</td><td class="num" data-v="1.19">1.19</td><td class="num" data-v="66.72">66.7</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>元件</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="note-inline">—</span></td></tr><tr><td class="num">sz301486</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz301486.html" target="_blank" rel="noopener noreferrer">致尚科技</a></b> <span class="hist" title="入选记录：2026-09-16 MACD观察池；2026-09-21 MACD观察池">09-21</span></td><td class="histcol"><span class="tag g">09-16 MACD</span> <span class="tag g">09-21 MACD</span></td><td class="num" data-v="61"><b>61.0</b></td><td class="num" data-v="218.87">218.87</td><td class="num dn" data-v="-0.19">-0.19%</td><td class="num" data-v="3.197">3.197</td><td class="num" data-v="16.05">16.05</td><td class="num" data-v="-1.371">-1.371</td><td class="num" data-v="49.5">49.5%</td><td class="num" data-v="8.4">8.40%</td><td class="num" data-v="0.71">0.71</td><td class="num" data-v="66.68">66.7</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>消费电子</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="note-inline">—</span></td></tr><tr><td class="num">sh603920</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sh603920.html" target="_blank" rel="noopener noreferrer">世运电路</a></b> <span class="hist" title="入选记录：2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-15 MACD观察池；2026-09-17 MACD观察池；2026-09-18 MACD观察池；2026-09-21 MACD观察池">09-21</span></td><td class="histcol"><span class="tag g">09-11 MACD</span> <span class="tag g">09-14 MACD</span> <span class="tag g">09-15 MACD</span> <span class="tag g">09-17 MACD</span> <span class="tag g">09-18 MACD</span> <span class="tag g">09-21 MACD</span></td><td class="num" data-v="61"><b>61.0</b></td><td class="num" data-v="46.15">46.15</td><td class="num dn" data-v="-0.62">-0.62%</td><td class="num" data-v="3.075">3.075</td><td class="num" data-v="7.82">7.82</td><td class="num" data-v="-0.695">-0.695</td><td class="num" data-v="46.9">46.9%</td><td class="num" data-v="4.85">4.85%</td><td class="num" data-v="0.84">0.84</td><td class="num" data-v="72.77">72.8</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>元件</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="note-inline">—</span></td></tr><tr><td class="num">sz300077</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz300077.html" target="_blank" rel="noopener noreferrer">国民技术</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="59.5"><b>59.5</b></td><td class="num" data-v="22.7">22.70</td><td class="num up" data-v="0.84">0.84%</td><td class="num" data-v="2.783">2.783</td><td class="num" data-v="4.23">4.23</td><td class="num" data-v="0.157">0.157</td><td class="num" data-v="52.1">52.1%</td><td class="num" data-v="9.47">9.47%</td><td class="num" data-v="1.16">1.16</td><td class="num" data-v="70.35">70.3</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>半导体</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="note-inline">—</span></td></tr><tr><td class="num">sz300751</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz300751.html" target="_blank" rel="noopener noreferrer">迈为股份</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="58.7"><b>58.7</b></td><td class="num" data-v="203.51">203.51</td><td class="num up" data-v="0.62">0.62%</td><td class="num" data-v="0.498">0.498</td><td class="num" data-v="5.57">5.57</td><td class="num" data-v="1.194">1.194</td><td class="num" data-v="51.6">51.6%</td><td class="num" data-v="3.12">3.12%</td><td class="num" data-v="1.0">1.00</td><td class="num" data-v="55.22">55.2</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>光伏设备</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="note-inline">—</span></td></tr><tr><td class="num">sz301366</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz301366.html" target="_blank" rel="noopener noreferrer">一博科技</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="57.0"><b>57.0</b></td><td class="num" data-v="72.16">72.16</td><td class="num up" data-v="0.22">0.22%</td><td class="num" data-v="3.37">3.370</td><td class="num" data-v="2.99">2.99</td><td class="num" data-v="-0.905">-0.905</td><td class="num" data-v="50.6">50.6%</td><td class="num" data-v="17.94">17.94%</td><td class="num" data-v="1.03">1.03</td><td class="num" data-v="69.99">70.0</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>元件</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="note-inline">—</span></td></tr><tr><td class="num">sz301047</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz301047.html" target="_blank" rel="noopener noreferrer">义翘神州</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="56.4"><b>56.4</b></td><td class="num" data-v="136.22">136.22</td><td class="num up" data-v="16.09">16.09%</td><td class="num" data-v="4.362">4.362</td><td class="num" data-v="5.82">5.82</td><td class="num" data-v="7.366">7.366</td><td class="num" data-v="90.2">90.2%</td><td class="num" data-v="15.42">15.42%</td><td class="num" data-v="2.12">2.12</td><td class="num" data-v="74.02">74.0</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>生物制品</td><td class="num" data-v="0.752">0.75</td><td>—</td><td><span class="note-inline">—</span></td></tr></tbody></table></div>
+
+<h2>三、备选（4 只）</h2>
+<div class="scroll"><table class="sortable" data-wb><thead><tr><th data-k="code" data-t="s">代码</th><th data-k="name" data-t="s">名称</th><th data-k="hist" data-t="s">历史入选</th><th data-k="total" data-t="n" class="sorted-desc">总分 ▾</th><th data-k="price" data-t="n">收盘</th><th data-k="changePct" data-t="n">涨跌%</th><th data-k="macd_ratio" data-t="n">MACD柱/价%</th><th data-k="flow20d_yi" data-t="n">20D主力(亿)</th><th data-k="dailyFlow_yi" data-t="n">当日主力(亿)</th><th data-k="pos52" data-t="n">52周位%</th><th data-k="turn" data-t="n">换手%</th><th data-k="volr" data-t="n">量比</th><th data-k="rsi12" data-t="n">RSI12</th><th data-k="profit" data-t="n">获利盘%</th><th data-k="conc90" data-t="n">集中90</th><th data-k="behavior" data-t="s">板块行为</th><th data-k="sw2" data-t="s">板块</th><th data-k="inst_net" data-t="n">龙虎榜(亿)</th><th data-k="eb" data-t="s">高管/大宗</th><th data-k="flags" data-t="s">风险标记</th></tr></thead><tbody><tr><td class="num">sh603160</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sh603160.html" target="_blank" rel="noopener noreferrer">汇顶科技</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="52.2"><b>52.2</b></td><td class="num" data-v="56.0">56.00</td><td class="num up" data-v="5.34">5.34%</td><td class="num" data-v="1.577">1.577</td><td class="num" data-v="3.11">3.11</td><td class="num" data-v="0.995">0.995</td><td class="num" data-v="76.7">76.7%</td><td class="num" data-v="2.06">2.06%</td><td class="num" data-v="2.34">2.34</td><td class="num" data-v="66.58">66.6</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>半导体</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="note-inline">—</span></td></tr><tr><td class="num">sz002815</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz002815.html" target="_blank" rel="noopener noreferrer">崇达技术</a></b> <span class="hist" title="入选记录：2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-18 MACD观察池">09-18</span></td><td class="histcol"><span class="tag g">09-11 MACD</span> <span class="tag g">09-14 MACD</span> <span class="tag g">09-18 MACD</span></td><td class="num" data-v="50"><b>50.0</b></td><td class="num" data-v="25.39">25.39</td><td class="num up" data-v="6.32">6.32%</td><td class="num" data-v="5.866">5.866</td><td class="num" data-v="28.21">28.21</td><td class="num" data-v="2.512">2.512</td><td class="num" data-v="81.6">81.6%</td><td class="num" data-v="11.88">11.88%</td><td class="num" data-v="0.83">0.83</td><td class="num" data-v="89.32">89.3</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>元件</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="note-inline">—</span></td></tr><tr><td class="num">sz301176</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz301176.html" target="_blank" rel="noopener noreferrer">逸豪新材</a></b> <span class="hist" title="入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池">09-18</span></td><td class="histcol"><span class="tag g">09-11 MACD</span> <span class="tag g">09-18 MACD</span></td><td class="num" data-v="48.4"><b>48.4</b></td><td class="num" data-v="63.11">63.11</td><td class="num up" data-v="8.55">8.55%</td><td class="num" data-v="3.411">3.411</td><td class="num" data-v="1.2">1.20</td><td class="num" data-v="-0.526">-0.526</td><td class="num" data-v="71.4">71.4%</td><td class="num" data-v="15.58">15.58%</td><td class="num" data-v="1.78">1.78</td><td class="num" data-v="71.44">71.4</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>元件</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="note-inline">—</span></td></tr><tr><td class="num">sh688002</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sh688002.html" target="_blank" rel="noopener noreferrer">睿创微</a>纳</b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="45.4"><b>45.4</b></td><td class="num" data-v="186.8">186.80</td><td class="num up" data-v="0.04">0.04%</td><td class="num" data-v="0.017">0.017</td><td class="num" data-v="0.1">0.10</td><td class="num" data-v="0.57">0.570</td><td class="num" data-v="50.1">50.1%</td><td class="num" data-v="1.82">1.82%</td><td class="num" data-v="1.04">1.04</td><td class="num" data-v="65.76">65.8</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>半导体</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="note-inline">—</span></td></tr></tbody></table></div>
+
+<h2>四、回避 / 风险名单（36 只 · 触发板块出货 / 超买 / 高位 等硬降级）</h2>
+<div class="box amber">以下标的不建议追入，触发硬性降级条件；若已持有，按退出纪律执行（见下）。</div>
+<div class="scroll"><table class="sortable" data-wb><thead><tr><th data-k="code" data-t="s">代码</th><th data-k="name" data-t="s">名称</th><th data-k="hist" data-t="s">历史入选</th><th data-k="total" data-t="n" class="sorted-desc">总分 ▾</th><th data-k="price" data-t="n">收盘</th><th data-k="changePct" data-t="n">涨跌%</th><th data-k="macd_ratio" data-t="n">MACD柱/价%</th><th data-k="flow20d_yi" data-t="n">20D主力(亿)</th><th data-k="dailyFlow_yi" data-t="n">当日主力(亿)</th><th data-k="pos52" data-t="n">52周位%</th><th data-k="turn" data-t="n">换手%</th><th data-k="volr" data-t="n">量比</th><th data-k="rsi12" data-t="n">RSI12</th><th data-k="profit" data-t="n">获利盘%</th><th data-k="conc90" data-t="n">集中90</th><th data-k="behavior" data-t="s">板块行为</th><th data-k="sw2" data-t="s">板块</th><th data-k="inst_net" data-t="n">龙虎榜(亿)</th><th data-k="eb" data-t="s">高管/大宗</th><th data-k="flags" data-t="s">风险标记</th></tr></thead><tbody><tr><td class="num">sz300570</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz300570.html" target="_blank" rel="noopener noreferrer">太辰光</a></b> <span class="hist" title="入选记录：2026-09-17 MACD观察池">09-17</span></td><td class="histcol"><span class="tag g">09-17 MACD</span></td><td class="num" data-v="62"><b>62.0</b></td><td class="num" data-v="227.46">227.46</td><td class="num up" data-v="1.68">1.68%</td><td class="num" data-v="1.783">1.783</td><td class="num" data-v="10.11">10.11</td><td class="num" data-v="2.289">2.289</td><td class="num" data-v="54.2">54.2%</td><td class="num" data-v="11.18">11.18%</td><td class="num" data-v="0.99">0.99</td><td class="num" data-v="65.8">65.8</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>通信设备</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span></td></tr><tr><td class="num">sh603002</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sh603002.html" target="_blank" rel="noopener noreferrer">宏昌电子</a></b> <span class="hist" title="入选记录：2026-09-14 MACD观察池；2026-09-17 MACD观察池">09-17</span></td><td class="histcol"><span class="tag g">09-14 MACD</span> <span class="tag g">09-17 MACD</span></td><td class="num" data-v="62"><b>62.0</b></td><td class="num" data-v="19.8">19.80</td><td class="num up" data-v="2.38">2.38%</td><td class="num" data-v="2.806">2.806</td><td class="num" data-v="6.43">6.43</td><td class="num" data-v="0.271">0.271</td><td class="num" data-v="61.9">61.9%</td><td class="num" data-v="7.17">7.17%</td><td class="num" data-v="0.78">0.78</td><td class="num" data-v="70.57">70.6</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>电子化学品Ⅱ</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span></td></tr><tr><td class="num">sz300489</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz300489.html" target="_blank" rel="noopener noreferrer">光智科技</a></b> <span class="hist" title="入选记录：2026-09-21 MACD观察池">09-21</span></td><td class="histcol"><span class="tag g">09-21 MACD</span></td><td class="num" data-v="60.7"><b>60.7</b></td><td class="num" data-v="249.01">249.01</td><td class="num up" data-v="4.27">4.27%</td><td class="num" data-v="1.905">1.905</td><td class="num" data-v="5.84">5.84</td><td class="num" data-v="0.026">0.026</td><td class="num" data-v="60.7">60.7%</td><td class="num" data-v="11.17">11.17%</td><td class="num" data-v="1.12">1.12</td><td class="num" data-v="62.63">62.6</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>光学光电子</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span></td></tr><tr><td class="num">sz002222</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz002222.html" target="_blank" rel="noopener noreferrer">福晶科技</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="60"><b>60.0</b></td><td class="num" data-v="71.15">71.15</td><td class="num up" data-v="1.99">1.99%</td><td class="num" data-v="1.398">1.398</td><td class="num" data-v="8.54">8.54</td><td class="num" data-v="0.81">0.810</td><td class="num" data-v="60.0">60.0%</td><td class="num" data-v="7.28">7.28%</td><td class="num" data-v="1.35">1.35</td><td class="num" data-v="62.23">62.2</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>光学光电子</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span></td></tr><tr><td class="num">sz000510</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz000510.html" target="_blank" rel="noopener noreferrer">新金路</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="59.6"><b>59.6</b></td><td class="num" data-v="19.08">19.08</td><td class="num up" data-v="2.97">2.97%</td><td class="num" data-v="2.178">2.178</td><td class="num" data-v="5.78">5.78</td><td class="num" data-v="1.037">1.037</td><td class="num" data-v="64.9">64.9%</td><td class="num" data-v="7.65">7.65%</td><td class="num" data-v="0.97">0.97</td><td class="num" data-v="64.33">64.3</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>化学原料</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span></td></tr><tr><td class="num">sz301205</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz301205.html" target="_blank" rel="noopener noreferrer">联特科技</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="59"><b>59.0</b></td><td class="num" data-v="327.5">327.50</td><td class="num up" data-v="2.02">2.02%</td><td class="num" data-v="1.355">1.355</td><td class="num" data-v="14.64">14.64</td><td class="num" data-v="2.025">2.025</td><td class="num" data-v="55.1">55.1%</td><td class="num" data-v="7.57">7.57%</td><td class="num" data-v="0.96">0.96</td><td class="num" data-v="61.17">61.2</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>通信设备</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span></td></tr><tr><td class="num">sz002912</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz002912.html" target="_blank" rel="noopener noreferrer">中新赛克</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="58"><b>58.0</b></td><td class="num" data-v="26.38">26.38</td><td class="num up" data-v="10.01">10.01%</td><td class="num" data-v="2.861">2.861</td><td class="num" data-v="7.75">7.75</td><td class="num" data-v="1.574">1.574</td><td class="num" data-v="100.0">100.0%</td><td class="num" data-v="19.11">19.11%</td><td class="num" data-v="1.12">1.12</td><td class="num" data-v="64.95">65.0</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag g">抢筹</span></td><td>计算机设备</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">高位≥92%</span></td></tr><tr><td class="num">sz000676</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz000676.html" target="_blank" rel="noopener noreferrer">智度股份</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="57.6"><b>57.6</b></td><td class="num" data-v="7.45">7.45</td><td class="num up" data-v="10.04">10.04%</td><td class="num" data-v="0.528">0.528</td><td class="num" data-v="6.33">6.33</td><td class="num" data-v="7.474">7.474</td><td class="num" data-v="100.0">100.0%</td><td class="num" data-v="13.77">13.77%</td><td class="num" data-v="5.7">5.70</td><td class="num" data-v="65.66">65.7</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag g">抢筹</span></td><td>广告营销</td><td class="num" data-v="0.54">0.54</td><td>—</td><td><span class="tag r">高位≥92%</span></td></tr><tr><td class="num">sz000560</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz000560.html" target="_blank" rel="noopener noreferrer">我爱我家</a></b> <span class="hist" title="入选记录：2026-09-21 信号池·机构轨；2026-09-21 信号池·游资轨">09-21</span></td><td class="histcol"><span class="tag y">09-21 机构轨</span> <span class="tag y">09-21 游资轨</span></td><td class="num" data-v="57"><b>57.0</b></td><td class="num" data-v="3.51">3.51</td><td class="num up" data-v="10.03">10.03%</td><td class="num" data-v="1.134">1.134</td><td class="num" data-v="61.0">61.00</td><td class="num" data-v="10.617">10.617</td><td class="num" data-v="100.0">100.0%</td><td class="num" data-v="17.42">17.42%</td><td class="num" data-v="1.21">1.21</td><td class="num" data-v="68.68">68.7</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag g">抢筹</span></td><td>房地产服务</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">高位≥92%</span></td></tr><tr><td class="num">sh603082</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sh603082.html" target="_blank" rel="noopener noreferrer">北自科技</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="57"><b>57.0</b></td><td class="num" data-v="51.6">51.60</td><td class="num up" data-v="4.6">4.60%</td><td class="num" data-v="1.204">1.204</td><td class="num" data-v="8.56">8.56</td><td class="num" data-v="0.178">0.178</td><td class="num" data-v="73.0">73.0%</td><td class="num" data-v="35.63">35.63%</td><td class="num" data-v="1.0">1.00</td><td class="num" data-v="62.72">62.7</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>自动化设备</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span> <span class="tag y">换手过热</span></td></tr><tr><td class="num">sh688205</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sh688205.html" target="_blank" rel="noopener noreferrer">德科立</a></b> <span class="hist" title="入选记录：2026-09-16 MACD观察池；2026-09-21 MACD观察池">09-21</span></td><td class="histcol"><span class="tag g">09-16 MACD</span> <span class="tag g">09-21 MACD</span></td><td class="num" data-v="56"><b>56.0</b></td><td class="num" data-v="224.21">224.21</td><td class="num dn" data-v="-7.78">-7.78%</td><td class="num" data-v="1.17">1.170</td><td class="num" data-v="15.39">15.39</td><td class="num" data-v="-6.483">-6.483</td><td class="num" data-v="30.6">30.6%</td><td class="num" data-v="11.38">11.38%</td><td class="num" data-v="1.66">1.66</td><td class="num" data-v="60.72">60.7</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>通信设备</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span></td></tr><tr><td class="num">sz002141</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz002141.html" target="_blank" rel="noopener noreferrer">贤丰控股</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="54.5"><b>54.5</b></td><td class="num" data-v="7.43">7.43</td><td class="num up" data-v="10.07">10.07%</td><td class="num" data-v="0.622">0.622</td><td class="num" data-v="32.16">32.16</td><td class="num" data-v="11.608">11.608</td><td class="num" data-v="100.0">100.0%</td><td class="num" data-v="27.0">27.00%</td><td class="num" data-v="1.65">1.65</td><td class="num" data-v="64.25">64.2</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>元件</td><td class="num" data-v="0.912">0.91</td><td>—</td><td><span class="tag r">高位≥92%</span></td></tr><tr><td class="num">sh688813</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sh688813.html" target="_blank" rel="noopener noreferrer">泰金新能</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="53.6"><b>53.6</b></td><td class="num" data-v="144.0">144.00</td><td class="num up" data-v="3.6">3.60%</td><td class="num" data-v="3.821">3.821</td><td class="num" data-v="2.79">2.79</td><td class="num" data-v="0.06">0.060</td><td class="num" data-v="59.0">59.0%</td><td class="num" data-v="18.85">18.85%</td><td class="num" data-v="0.87">0.87</td><td class="num" data-v="63.06">63.1</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>专用设备</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span></td></tr><tr><td class="num">sh603588</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sh603588.html" target="_blank" rel="noopener noreferrer">高能环境</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="52.4"><b>52.4</b></td><td class="num" data-v="16.86">16.86</td><td class="num up" data-v="2.43">2.43%</td><td class="num" data-v="1.396">1.396</td><td class="num" data-v="2.19">2.19</td><td class="num" data-v="0.803">0.803</td><td class="num" data-v="62.1">62.1%</td><td class="num" data-v="3.37">3.37%</td><td class="num" data-v="1.13">1.13</td><td class="num" data-v="65.89">65.9</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>环境治理</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span></td></tr><tr><td class="num">sz000620</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz000620.html" target="_blank" rel="noopener noreferrer">盈新发展</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="51.5"><b>51.5</b></td><td class="num" data-v="3.37">3.37</td><td class="num up" data-v="3.06">3.06%</td><td class="num" data-v="0.493">0.493</td><td class="num" data-v="11.51">11.51</td><td class="num" data-v="2.688">2.688</td><td class="num" data-v="65.2">65.2%</td><td class="num" data-v="10.72">10.72%</td><td class="num" data-v="1.64">1.64</td><td class="num" data-v="61.14">61.1</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>房地产开发</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span></td></tr><tr><td class="num">sz002290</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz002290.html" target="_blank" rel="noopener noreferrer">禾盛新材</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="51"><b>51.0</b></td><td class="num" data-v="77.85">77.85</td><td class="num up" data-v="10.0">10.00%</td><td class="num" data-v="2.823">2.823</td><td class="num" data-v="7.37">7.37</td><td class="num" data-v="1.388">1.388</td><td class="num" data-v="100.0">100.0%</td><td class="num" data-v="1.4">1.40%</td><td class="num" data-v="0.47">0.47</td><td class="num" data-v="71.68">71.7</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>家电零部件Ⅱ</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">高位≥92%</span></td></tr><tr><td class="num">sh600770</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sh600770.html" target="_blank" rel="noopener noreferrer">综艺股份</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="50.5"><b>50.5</b></td><td class="num" data-v="6.63">6.63</td><td class="num up" data-v="9.95">9.95%</td><td class="num" data-v="3.05">3.050</td><td class="num" data-v="5.75">5.75</td><td class="num" data-v="0.739">0.739</td><td class="num" data-v="100.0">100.0%</td><td class="num" data-v="1.57">1.57%</td><td class="num" data-v="0.32">0.32</td><td class="num" data-v="74.95">75.0</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>综合Ⅱ</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">高位≥92%</span></td></tr><tr><td class="num">sz002303</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz002303.html" target="_blank" rel="noopener noreferrer">美盈森</a></b> <span class="hist" title="入选记录：2026-09-16 MACD观察池；2026-09-21 MACD观察池">09-21</span></td><td class="histcol"><span class="tag g">09-16 MACD</span> <span class="tag g">09-21 MACD</span></td><td class="num" data-v="50"><b>50.0</b></td><td class="num" data-v="6.9">6.90</td><td class="num up" data-v="10.05">10.05%</td><td class="num" data-v="3.397">3.397</td><td class="num" data-v="10.34">10.34</td><td class="num" data-v="3.71">3.710</td><td class="num" data-v="100.0">100.0%</td><td class="num" data-v="6.12">6.12%</td><td class="num" data-v="0.81">0.81</td><td class="num" data-v="76.04">76.0</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>包装印刷</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">高位≥92%</span></td></tr><tr><td class="num">sz002957</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz002957.html" target="_blank" rel="noopener noreferrer">科瑞技术</a></b> <span class="hist" title="入选记录：2026-09-21 MACD观察池">09-21</span></td><td class="histcol"><span class="tag g">09-21 MACD</span></td><td class="num" data-v="50"><b>50.0</b></td><td class="num" data-v="45.43">45.43</td><td class="num up" data-v="5.95">5.95%</td><td class="num" data-v="2.346">2.346</td><td class="num" data-v="6.19">6.19</td><td class="num" data-v="1.227">1.227</td><td class="num" data-v="79.7">79.7%</td><td class="num" data-v="11.42">11.42%</td><td class="num" data-v="2.47">2.47</td><td class="num" data-v="64.37">64.4</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>自动化设备</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span></td></tr><tr><td class="num">sz002768</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz002768.html" target="_blank" rel="noopener noreferrer">国恩股份</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="50"><b>50.0</b></td><td class="num" data-v="74.86">74.86</td><td class="num up" data-v="10.01">10.01%</td><td class="num" data-v="2.227">2.227</td><td class="num" data-v="6.09">6.09</td><td class="num" data-v="4.157">4.157</td><td class="num" data-v="100.0">100.0%</td><td class="num" data-v="5.38">5.38%</td><td class="num" data-v="1.87">1.87</td><td class="num" data-v="76.81">76.8</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>塑料</td><td class="num" data-v="1.409">1.41</td><td>—</td><td><span class="tag r">板块出货</span> <span class="tag r">高位≥92%</span></td></tr><tr><td class="num">sh688028</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sh688028.html" target="_blank" rel="noopener noreferrer">沃尔德</a></b> <span class="hist" title="入选记录：2026-09-21 MACD观察池">09-21</span></td><td class="histcol"><span class="tag g">09-21 MACD</span></td><td class="num" data-v="49.7"><b>49.7</b></td><td class="num" data-v="124.22">124.22</td><td class="num dn" data-v="-0.06">-0.06%</td><td class="num" data-v="2.208">2.208</td><td class="num" data-v="3.87">3.87</td><td class="num" data-v="-0.571">-0.571</td><td class="num" data-v="49.8">49.8%</td><td class="num" data-v="6.07">6.07%</td><td class="num" data-v="0.96">0.96</td><td class="num" data-v="63.94">63.9</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>通用设备</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span></td></tr><tr><td class="num">sh688628</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sh688628.html" target="_blank" rel="noopener noreferrer">优利德</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="49.7"><b>49.7</b></td><td class="num" data-v="95.37">95.37</td><td class="num up" data-v="8.78">8.78%</td><td class="num" data-v="2.365">2.365</td><td class="num" data-v="2.09">2.09</td><td class="num" data-v="1.281">1.281</td><td class="num" data-v="72.0">72.0%</td><td class="num" data-v="10.61">10.61%</td><td class="num" data-v="2.28">2.28</td><td class="num" data-v="71.72">71.7</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>通用设备</td><td class="num" data-v="0.0">—</td><td>高管增持</td><td><span class="tag r">板块出货</span></td></tr><tr><td class="num">sz300395</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz300395.html" target="_blank" rel="noopener noreferrer">菲利华</a></b> <span class="hist" title="入选记录：2026-09-15 MACD观察池">09-15</span></td><td class="histcol"><span class="tag g">09-15 MACD</span></td><td class="num" data-v="49.6"><b>49.6</b></td><td class="num" data-v="97.08">97.08</td><td class="num up" data-v="3.02">3.02%</td><td class="num" data-v="0.054">0.054</td><td class="num" data-v="13.38">13.38</td><td class="num" data-v="2.807">2.807</td><td class="num" data-v="57.6">57.6%</td><td class="num" data-v="5.35">5.35%</td><td class="num" data-v="1.22">1.22</td><td class="num" data-v="55.94">55.9</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>航空装备Ⅱ</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span></td></tr><tr><td class="num">sz301312</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz301312.html" target="_blank" rel="noopener noreferrer">智立方</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="48.2"><b>48.2</b></td><td class="num" data-v="86.91">86.91</td><td class="num up" data-v="0.84">0.84%</td><td class="num" data-v="1.077">1.077</td><td class="num" data-v="2.08">2.08</td><td class="num" data-v="-0.535">-0.535</td><td class="num" data-v="52.1">52.1%</td><td class="num" data-v="8.85">8.85%</td><td class="num" data-v="1.44">1.44</td><td class="num" data-v="61.16">61.2</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>自动化设备</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span></td></tr><tr><td class="num">sh600641</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sh600641.html" target="_blank" rel="noopener noreferrer">先导基电</a></b> <span class="hist" title="入选记录：2026-09-21 MACD观察池">09-21</span></td><td class="histcol"><span class="tag g">09-21 MACD</span></td><td class="num" data-v="48"><b>48.0</b></td><td class="num" data-v="43.74">43.74</td><td class="num up" data-v="10.01">10.01%</td><td class="num" data-v="5.819">5.819</td><td class="num" data-v="47.01">47.01</td><td class="num" data-v="21.458">21.458</td><td class="num" data-v="100.0">100.0%</td><td class="num" data-v="6.29">6.29%</td><td class="num" data-v="0.75">0.75</td><td class="num" data-v="76.66">76.7</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag y">洗盘</span></td><td>半导体</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">高位≥92%</span></td></tr><tr><td class="num">sh601949</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sh601949.html" target="_blank" rel="noopener noreferrer">中国出版</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="47.6"><b>47.6</b></td><td class="num" data-v="6.62">6.62</td><td class="num up" data-v="9.97">9.97%</td><td class="num" data-v="0.051">0.051</td><td class="num" data-v="6.43">6.43</td><td class="num" data-v="1.133">1.133</td><td class="num" data-v="100.0">100.0%</td><td class="num" data-v="4.65">4.65%</td><td class="num" data-v="0.91">0.91</td><td class="num" data-v="62.48">62.5</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag g">抢筹</span></td><td>出版</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">高位≥92%</span></td></tr><tr><td class="num">sz002301</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz002301.html" target="_blank" rel="noopener noreferrer">齐心集团</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="47.0"><b>47.0</b></td><td class="num" data-v="9.27">9.27</td><td class="num up" data-v="9.96">9.96%</td><td class="num" data-v="1.789">1.789</td><td class="num" data-v="2.49">2.49</td><td class="num" data-v="1.222">1.222</td><td class="num" data-v="100.0">100.0%</td><td class="num" data-v="3.83">3.83%</td><td class="num" data-v="2.47">2.47</td><td class="num" data-v="76.93">76.9</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag g">建仓</span></td><td>文娱用品</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">高位≥92%</span></td></tr><tr><td class="num">sh600721</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sh600721.html" target="_blank" rel="noopener noreferrer">百花医药</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="45.9"><b>45.9</b></td><td class="num" data-v="14.47">14.47</td><td class="num up" data-v="10.04">10.04%</td><td class="num" data-v="0.8">0.800</td><td class="num" data-v="16.23">16.23</td><td class="num" data-v="5.624">5.624</td><td class="num" data-v="100.0">100.0%</td><td class="num" data-v="50.63">50.63%</td><td class="num" data-v="1.97">1.97</td><td class="num" data-v="65.93">65.9</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>医疗服务</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span> <span class="tag r">高位≥92%</span> <span class="tag y">换手过热</span></td></tr><tr><td class="num">sh603598</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sh603598.html" target="_blank" rel="noopener noreferrer">引力传媒</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="45.5"><b>45.5</b></td><td class="num" data-v="18.96">18.96</td><td class="num up" data-v="9.98">9.98%</td><td class="num" data-v="0.133">0.133</td><td class="num" data-v="4.99">4.99</td><td class="num" data-v="3.99">3.990</td><td class="num" data-v="100.0">100.0%</td><td class="num" data-v="12.45">12.45%</td><td class="num" data-v="3.62">3.62</td><td class="num" data-v="62.75">62.8</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag g">抢筹</span></td><td>广告营销</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">高位≥92%</span></td></tr><tr><td class="num">sz300110</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz300110.html" target="_blank" rel="noopener noreferrer">华仁药业</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="42.7"><b>42.7</b></td><td class="num" data-v="3.95">3.95</td><td class="num up" data-v="20.06">20.06%</td><td class="num" data-v="4.182">4.182</td><td class="num" data-v="8.66">8.66</td><td class="num" data-v="3.835">3.835</td><td class="num" data-v="100.0">100.0%</td><td class="num" data-v="29.47">29.47%</td><td class="num" data-v="6.57">6.57</td><td class="num" data-v="83.43">83.4</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>化学制药</td><td class="num" data-v="0.343">0.34</td><td>—</td><td><span class="tag r">板块出货</span> <span class="tag r">高位≥92%</span></td></tr><tr><td class="num">sz002757</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz002757.html" target="_blank" rel="noopener noreferrer">南兴股份</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="41.5"><b>41.5</b></td><td class="num" data-v="19.86">19.86</td><td class="num up" data-v="10.03">10.03%</td><td class="num" data-v="1.865">1.865</td><td class="num" data-v="3.75">3.75</td><td class="num" data-v="2.587">2.587</td><td class="num" data-v="100.0">100.0%</td><td class="num" data-v="13.92">13.92%</td><td class="num" data-v="2.91">2.91</td><td class="num" data-v="73.71">73.7</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>专用设备</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span> <span class="tag r">高位≥92%</span></td></tr><tr><td class="num">sz002106</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz002106.html" target="_blank" rel="noopener noreferrer">莱宝高科</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="39.9"><b>39.9</b></td><td class="num" data-v="13.23">13.23</td><td class="num up" data-v="6.27">6.27%</td><td class="num" data-v="3.548">3.548</td><td class="num" data-v="2.43">2.43</td><td class="num" data-v="0.672">0.672</td><td class="num" data-v="81.1">81.1%</td><td class="num" data-v="8.1">8.10%</td><td class="num" data-v="1.37">1.37</td><td class="num" data-v="78.25">78.2</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>光学光电子</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span></td></tr><tr><td class="num">sh600664</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sh600664.html" target="_blank" rel="noopener noreferrer">哈药股份</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="37.9"><b>37.9</b></td><td class="num" data-v="9.08">9.08</td><td class="num up" data-v="10.06">10.06%</td><td class="num" data-v="0.081">0.081</td><td class="num" data-v="39.47">39.47</td><td class="num" data-v="11.098">11.098</td><td class="num" data-v="100.0">100.0%</td><td class="num" data-v="12.24">12.24%</td><td class="num" data-v="0.82">0.82</td><td class="num" data-v="66.33">66.3</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>化学制药</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span> <span class="tag r">高位≥92%</span></td></tr><tr><td class="num">sh600503</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sh600503.html" target="_blank" rel="noopener noreferrer">华丽家族</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="36.0"><b>36.0</b></td><td class="num" data-v="2.67">2.67</td><td class="num up" data-v="9.88">9.88%</td><td class="num" data-v="2.663">2.663</td><td class="num" data-v="2.48">2.48</td><td class="num" data-v="1.214">1.214</td><td class="num" data-v="100.0">100.0%</td><td class="num" data-v="12.24">12.24%</td><td class="num" data-v="5.08">5.08</td><td class="num" data-v="78.95">79.0</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>房地产开发</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span> <span class="tag r">高位≥92%</span></td></tr><tr><td class="num">sz002313</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz002313.html" target="_blank" rel="noopener noreferrer">日海智能</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="28.9"><b>28.9</b></td><td class="num" data-v="9.3">9.30</td><td class="num up" data-v="10.06">10.06%</td><td class="num" data-v="0.356">0.356</td><td class="num" data-v="0.95">0.95</td><td class="num" data-v="1.204">1.204</td><td class="num" data-v="100.0">100.0%</td><td class="num" data-v="4.85">4.85%</td><td class="num" data-v="3.67">3.67</td><td class="num" data-v="67.98">68.0</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>通信设备</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span> <span class="tag r">高位≥92%</span></td></tr><tr><td class="num">sz002564</td><td><b><a class="emlk" href="https://quote.eastmoney.com/sz002564.html" target="_blank" rel="noopener noreferrer">天沃科技</a></b></td><td class="histcol"><span class="note-inline">—</span></td><td class="num" data-v="27.6"><b>27.6</b></td><td class="num" data-v="5.45">5.45</td><td class="num up" data-v="10.1">10.10%</td><td class="num" data-v="0.101">0.101</td><td class="num" data-v="1.76">1.76</td><td class="num" data-v="0.887">0.887</td><td class="num" data-v="100.0">100.0%</td><td class="num" data-v="3.0">3.00%</td><td class="num" data-v="1.22">1.22</td><td class="num" data-v="69.09">69.1</td><td class="num" data-v="0.0">0.0%</td><td class="num" data-v="0.0">0.0</td><td><span class="tag r">出货</span></td><td>专用设备</td><td class="num" data-v="0.0">—</td><td>—</td><td><span class="tag r">板块出货</span> <span class="tag r">高位≥92%</span></td></tr></tbody></table></div>
+
+<h2>五、使用说明与退出纪律</h2>
+<div class="card">
+<b>胜率的正确理解：</b>本池是「多因子共振」筛选，<b>不是</b>收益承诺。单期样本不能证明胜率——按项目纪律，需<b>累积 20–30 个交易日</b>的前向表现，再分组回测各维度胜率，方可把阈值逐步硬化。当前所有阈值仅为「观察档」，不构成趋势的充分/必要条件。
+<div class="note">
+<b>建议执行规则：</b>
+<ul>
+<li><b>入场</b>：优先核心候选，且需满足「次日不破 5 日线」或「放量突破前高」之一；不追涨停、不打板。</li>
+<li><b>仓位</b>：单票 ≤ 组合 15%；核心候选合计 ≤ 60%。</li>
+<li><b>退出（优先于入场）</b>：跌破 MA20 或 MACD 死叉 → 离场；单票 −8% 无条件止损；达 +15~20% 分批止盈。</li>
+<li><b>板块</b>：若所属板块主力行为由「抢筹/建仓」转为「洗盘/出货」，同步降仓。</li>
+</ul>
+</div>
+<div class="note">数据口径：行情/技术/筹码 = westock data_quote/data_technical/data_chip（2026-09-22）；板块行为 = westock data_sector（2026-09-22）；龙虎榜 = westock data_lhb 机构席位（2026-09-22）；高管增减持 = 东财 RPT_EXECUTIVE_HOLD_DETAILS（变动日 2026-09-22）；大宗 = 东财 RPT_DATA_BLOCKTRADE（2026-09-22）。</div>
+</div>
+
+<div class="foot">
+<b>免责声明</b>：以上内容基于公开数据和量化分析，仅供参考，不构成投资建议。市场有风险，投资需谨慎。<br>
+任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往表现不预示未来收益。
+</div>
+</div>
+<script>
+(function(){
+  function cellVal(tr, idx, type){
+    var td = tr.cells[idx];
+    if(!td) return type==='n' ? -Infinity : '';
+    var raw = td.getAttribute('data-v');
+    var txt = (raw!==null? raw : td.textContent).trim();
+    if(type==='n'){
+      var v = parseFloat(txt.replace(/[,%·万亿+]/g,''));
+      return isNaN(v) ? -Infinity : v;
+    }
+    return txt;
+  }
+  document.querySelectorAll('table.sortable').forEach(function(tb){
+    var ths = tb.querySelectorAll('thead th[data-k]');
+    ths.forEach(function(th, ci){
+      th.addEventListener('click', function(){
+        var tbody = tb.tBodies[0];
+        var arr = Array.prototype.slice.call(tbody.rows);
+        var type = th.getAttribute('data-t') || 'n';
+        var cur = th.getAttribute('data-dir');
+        var dir = (cur === 'asc') ? 'desc' : 'asc';
+        ths.forEach(function(o){ o.removeAttribute('data-dir'); o.classList.remove('sorted-asc','sorted-desc'); });
+        th.setAttribute('data-dir', dir);
+        th.classList.add(dir==='asc' ? 'sorted-asc' : 'sorted-desc');
+        arr.sort(function(a,b){
+          var va = cellVal(a, ci, type), vb = cellVal(b, ci, type);
+          if(va < vb) return dir==='asc' ? -1 : 1;
+          if(va > vb) return dir==='asc' ? 1 : -1;
+          return 0;
+        });
+        arr.forEach(function(tr){ tbody.appendChild(tr); });
+      });
+    });
+  });
+})();
+</script>
+<!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--></body></html>

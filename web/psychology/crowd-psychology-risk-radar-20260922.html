@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>群体心理风险雷达 · A股</title>
+<style>
+  :root{
+    --bg:#f5f5f7; --card:#ffffff; --ink:#1c1b19; --muted:#6b675f; --line:#e7e2d8;
+    --accent:#b8332a; --accent2:#1f4e5f; --gold:#0071e3;
+    --up:#d8392b; --down:#1a9e5a;
+    --h1:#a5d6a7; --h2:#fff59d; --h3:#ffcc80; --h4:#ef9a9a; --h5:#e53935;
+    --shadow:0 1px 3px rgba(28,27,25,.08),0 8px 24px rgba(28,27,25,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
+    line-height:1.62;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 18px 60px;}
+  /* Masthead */
+  .masthead{background:linear-gradient(135deg,#221f1c 0%,#3a3026 100%);color:#f7f3ea;
+    border-radius:0 0 18px 18px;padding:30px 26px 24px;position:relative;overflow:hidden;}
+  .masthead:before{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;
+    background:radial-gradient(circle,rgba(0,113,227,.35),transparent 70%);}
+  .kicker{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:700;}
+  .masthead h1{font-size:2.05rem;font-weight:800;letter-spacing:-.01em;margin:6px 0 4px;line-height:1.1;}
+  .masthead .sub{font-size:.92rem;color:#cfc6b6;max-width:640px;}
+  .mast-meta{margin-top:14px;font-size:.78rem;color:#bdb4a4;display:flex;gap:16px;flex-wrap:wrap;align-items:center;}
+  .toggle{position:absolute;top:22px;right:24px;display:inline-flex;border:1px solid rgba(247,243,234,.35);
+    border-radius:999px;overflow:hidden;background:rgba(0,0,0,.18);}
+  .toggle button{background:transparent;border:0;color:#e9e2d2;font-size:.82rem;font-weight:600;
+    padding:7px 16px;cursor:pointer;font-family:inherit;}
+  .toggle button.active{background:var(--gold);color:#221f1c;}
+  /* TLDR */
+  .tldr{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--accent);
+    border-radius:14px;padding:22px 24px;margin:22px 0;box-shadow:var(--shadow);}
+  .tldr .lbl{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.14em;color:var(--accent);
+    text-transform:uppercase;margin-bottom:8px;}
+  .tldr p{font-size:1.04rem;line-height:1.7;font-weight:500;}
+  .grade{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-weight:700;
+    background:#fdecea;color:var(--accent);border:1px solid #f3c2bd;border-radius:999px;padding:6px 16px;font-size:.92rem;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+.chip{background:#f3f0e8;border:1px solid var(--line);border-radius:8px;padding:5px 11px;font-size:.8rem;color:var(--muted);}
+.chip b{color:var(--ink);}
+/* Headline (one-line summary banner — list-style) */
+.headline{background:linear-gradient(135deg,#2a2520 0%,#3d332a 100%);color:#f7f3ea;border-radius:14px;
+  padding:18px 22px;margin:18px 0 0;box-shadow:var(--shadow);border-left:5px solid var(--accent);}
+.hl-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(247,243,234,.18);}
+.hl-lbl{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:800;
+  background:rgba(0,113,227,.18);border:1px solid rgba(0,113,227,.35);border-radius:6px;
+  padding:5px 12px;white-space:nowrap;}
+.hl-sub{font-size:.72rem;color:#c8bfb0;letter-spacing:.04em;}
+.hl-table{display:grid;grid-template-columns:96px 1fr;gap:6px 14px;margin:0;padding:0;list-style:none;}
+.hl-table li{display:contents;}
+.hl-table .k{font-size:.78rem;color:#c8bfb0;text-align:right;padding:5px 0;border-bottom:1px dashed rgba(247,243,234,.12);font-weight:500;}
+.hl-table .v{font-size:.92rem;color:#f7f3ea;padding:5px 0;border-bottom:1px dashed rgba(247,243,234,.12);font-weight:600;}
+.hl-table .v b{color:#fff;font-weight:800;}
+.hl-table .v .hl-down{color:#7dd8a3;}
+.hl-table .v .hl-up{color:#ff9a8a;}
+.hl-table .v .hl-risk{color:#ff8a7a;font-size:1rem;letter-spacing:.04em;}
+.hl-table li:last-child .k,.hl-table li:last-child .v{border-bottom:0;}
+@media(max-width:580px){.hl-table{grid-template-columns:80px 1fr;}}
+/* TL;DR — list of one-line keypoints */
+.tldr-lines{display:grid;gap:8px;margin:14px 0 8px;}
+.tldr-line{display:grid;grid-template-columns:6px 96px 1fr;gap:10px;align-items:start;
+  padding:8px 0;border-bottom:1px dashed var(--line);}
+.tldr-line:last-child{border-bottom:0;}
+.tldr-line::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);
+  margin-top:9px;box-shadow:0 0 0 3px rgba(216,57,43,.15);}
+.tldr-line.warn::before{background:var(--gold);box-shadow:0 0 0 3px rgba(0,113,227,.18);}
+.tldr-line.danger::before{background:#1a9e5a;box-shadow:0 0 0 3px rgba(26,158,90,.18);}
+.tldr-line .k{font-size:.78rem;color:var(--accent2);font-weight:800;letter-spacing:.02em;white-space:nowrap;}
+.tldr-line .v{font-size:.92rem;color:var(--ink);line-height:1.6;}
+.tldr-line .v b{color:var(--accent);font-weight:700;}
+  /* sections */
+  .sec{margin-top:34px;}
+  .sec h2{font-size:1.28rem;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .sec h2 .bar{width:6px;height:22px;background:var(--accent);border-radius:2px;display:inline-block;}
+  .sec h2 .en{font-size:.78rem;font-weight:500;color:var(--muted);letter-spacing:.02em;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;box-shadow:var(--shadow);}
+  .note{font-size:.78rem;color:var(--muted);margin-top:10px;}
+  /* sentiment rail */
+  .rail{display:flex;gap:6px;margin:6px 0 4px;flex-wrap:wrap;}
+  .rail .s{flex:1;min-width:78px;text-align:center;padding:10px 4px;border-radius:10px;background:#eef0ea;
+    color:#5b5a55;font-weight:700;font-size:.86rem;border:1px solid #e2e4dc;}
+  .rail .s small{display:block;font-weight:500;font-size:.62rem;color:#8a877f;margin-top:2px;}
+  .rail .s.on{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 4px 14px rgba(184,51,42,.3);}
+  .rail .s.on small{color:#ffe2df;}
+  /* heatmap */
+  .heat{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+  .heat .cell{border-radius:12px;padding:13px 12px;min-height:118px;display:flex;flex-direction:column;
+    justify-content:space-between;border:1px solid rgba(0,0,0,.06);}
+  .heat .cell .bn{font-weight:800;font-size:.92rem;line-height:1.2;color:#241f18;}
+  .heat .cell .bd{font-size:.72rem;line-height:1.4;color:#3c362e;margin-top:6px;}
+  .heat .cell .sev{display:inline-flex;align-items:center;justify-content:center;align-self:flex-start;
+    margin-top:8px;font-size:.7rem;font-weight:800;border-radius:999px;padding:2px 9px;background:rgba(0,0,0,.16);color:#1c1b19;}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:.76rem;color:var(--muted);align-items:center;}
+  .legend i{width:14px;height:14px;border-radius:4px;display:inline-block;margin-right:5px;vertical-align:-2px;}
+  /* radar + breadth layout */
+  .duo{display:grid;grid-template-columns:340px 1fr;gap:18px;align-items:stretch;}
+  @media(max-width:760px){.duo{grid-template-columns:1fr}.heat{grid-template-columns:repeat(2,1fr)}}
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:.86rem;}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{font-size:.74rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#faf8f3;}
+  td .val{font-weight:700;font-variant-numeric:tabular-nums;}
+  .cat{font-size:.74rem;font-weight:800;letter-spacing:.06em;color:var(--accent2);text-transform:uppercase;
+    padding:14px 12px 6px;}
+  .up{color:var(--up);} .down{color:var(--down);}
+  /* risk cards */
+  .risk3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media(max-width:760px){.risk3{grid-template-columns:1fr}}
+  .rc{border-radius:14px;padding:18px 18px;box-shadow:var(--shadow);border:1px solid var(--line);}
+  .rc.red{background:linear-gradient(180deg,#fdecea,#fff);border-top:4px solid var(--accent);}
+  .rc.amber{background:linear-gradient(180deg,#fff8e8,#fff);border-top:4px solid var(--gold);}
+  .rc.green{background:linear-gradient(180deg,#eef7f0,#fff);border-top:4px solid var(--down);}
+  .rc h3{font-size:1.02rem;font-weight:800;margin-bottom:4px;}
+  .rc .tag{font-size:.7rem;font-weight:700;letter-spacing:.04em;padding:2px 9px;border-radius:999px;display:inline-block;margin-bottom:10px;}
+  .rc.red .tag{background:#f3c2bd;color:var(--accent);}
+  .rc.amber .tag{background:#f3e0b3;color:#8a6418;}
+  .rc.green .tag{background:#bfe6cb;color:#14703a;}
+  .rc p{font-size:.82rem;line-height:1.55;color:#3a352e;margin:6px 0;}
+  .rc .rep{font-size:.8rem;color:var(--muted);}
+  .rc .cond{font-size:.8rem;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-weight:600;color:var(--ink);}
+  /* source / disclaimer */
+  .src li{list-style:none;padding:8px 0;border-bottom:1px solid var(--line);font-size:.84rem;display:flex;gap:10px;flex-wrap:wrap;}
+  .src li b{color:var(--accent2);min-width:150px;display:inline-block;}
+  /* Outlook cards */
+  .outlook-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:10px;}
+  @media(max-width:760px){.outlook-grid{grid-template-columns:1fr}}
+  .oc{border-radius:12px;padding:16px 18px;border:1px solid var(--line);}
+  .oc.up{background:linear-gradient(180deg,#eef7f0,#fff);border-top:4px solid var(--down);}
+  .oc.amber{background:linear-gradient(180deg,#fff8e8,#fff);border-top:4px solid var(--gold);}
+  .oc.red{background:linear-gradient(180deg,#fdecea,#fff);border-top:4px solid var(--accent);}
+  .oc .oc-tag{font-size:.68rem;font-weight:800;letter-spacing:.04em;padding:3px 10px;border-radius:999px;display:inline-block;margin-bottom:8px;}
+  .oc.up .oc-tag{background:#bfe6cb;color:#14703a;}
+  .oc.amber .oc-tag{background:#f3e0b3;color:#8a6418;}
+  .oc.red .oc-tag{background:#f3c2bd;color:var(--accent);}
+  .oc h3{font-size:.98rem;font-weight:800;margin-bottom:6px;}
+  .oc p{font-size:.82rem;line-height:1.55;color:#3a352e;margin:4px 0;}
+  .oc-cond{font-size:.78rem;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-weight:600;color:var(--ink);line-height:1.55;}
+  /* Trading rules */
+  .rules{list-style:none;margin-top:8px;padding:0;}
+  .rules li{padding:9px 0;border-bottom:1px solid var(--line);font-size:.86rem;line-height:1.6;}
+  .rules li:last-child{border-bottom:0;}
+  .rules li b{color:var(--accent2);font-weight:800;margin-right:6px;}
+  .disclaimer{background:#f3f0e8;border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-top:24px;font-size:.82rem;color:#4a453c;line-height:1.7;}
+  .disclaimer b{color:var(--accent);}
+  .foot{text-align:center;color:var(--muted);font-size:.74rem;margin-top:28px;}
+</style>
+
+
+
+
+
+<!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  .navgrp{ padding:5px 6px 5px 5px !important; }
+}
+
+</style><!--/WB_THEME--></head>
+<body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="toggle" role="group" aria-label="language">
+      <button id="btnZh" class="active" onclick="setLang('zh')">中文</button>
+      <button id="btnEn" onclick="setLang('en')">EN</button>
+    </div>
+    <div class="kicker" data-i18n="t_kicker">A股 · 群体行为金融研判</div>
+    <h1 data-i18n="t_title">群体心理风险雷达</h1>
+    <div class="sub" data-i18n="t_sub">行为金融偏差 · 拥挤度 · 融资 · 热度 — 综合风险雷达。基于 westock 官方行情数据的真实查询结果。</div>
+    <div class="mast-meta">
+      <span><span data-i18n="t_date">数据截至</span>：<b>2026-09-22 收盘（北京时间，盘后）</b></span>
+      <span data-i18n="t_path">分析路径：群体心理分析（路径 C）</span>
+    </div>
+  </header>
+
+  <!-- 一句话结论（表格式，每行一指标） -->
+  <div class="headline">
+    <div class="hl-head">
+      <span class="hl-lbl" data-i18n="t_headline">一句话</span>
+      <span class="hl-sub" data-i18n="t_headline_sub">2026-09-22 · 收盘</span>
+    </div>
+    <ul class="hl-table">
+      <li><span class="k" data-i18n="hk_stage">阶段定性</span><span class="v" data-i18n="hv_stage"><b>放量普涨 · 情绪回暖</b>（2026-09-22）</span></li>
+      <li><span class="k" data-i18n="hk_upratio">涨股比</span><span class="v" data-i18n="hv_upratio"><b>82%</b>（前次 76% · 较上一报告日 +5.4pct）</span></li>
+      <li><span class="k" data-i18n="hk_lim">涨停 / 跌停</span><span class="v" data-i18n="hv_lim"><b>90</b> / <b>2</b>（跌停 较上一报告日 +2 只）</span></li>
+      <li><span class="k" data-i18n="hk_amt">成交额</span><span class="v" data-i18n="hv_amt"><b>¥2.03万亿</b>（放量，为 5 日均 108.2%）</span></li>
+      <li><span class="k" data-i18n="hk_cycle">情绪周期</span><span class="v" data-i18n="hv_cycle"><b>放量普涨 · 情绪回暖</b></span></li>
+      <li><span class="k" data-i18n="hk_risk">风险等级</span><span class="v" data-i18n="hv_risk"><b class="hl-risk">低</b>（较上一报告日维持）</span></li>
+      <li><span class="k" data-i18n="hk_flag">关键提示</span><span class="v" data-i18n="hv_flag">涨股比 82%（涨4536 / 跌936 / 平93，较上一报告日 +5.4pct）、涨停 90 / 跌停 2（较上一报告日 +2 只）、成交 ¥2.03万亿（5 日均 108.2%）；上证 +0.97%（3949.91）站上 MA5/MA10/MA20/MA60 全部均线，盘中/收盘位于布林下轨（3856.90）上方——两融接口降级暂缺，未编造</span></li>
+    </ul>
+  </div>
+
+  <!-- TL;DR — 一行一行的关键点 -->
+  <section class="tldr">
+    <span class="lbl" data-i18n="t_tldr">一句话结论</span>
+    <ul class="tldr-lines" style="list-style:none;padding:0;">
+      <li class="tldr-line"><span class="k" data-i18n="tk1">阶段定性</span><span class="v" data-i18n="tv1">A股 2026-09-22 定性为「<b>放量普涨 · 情绪回暖</b>」：涨股比 <b>82%</b>（涨4536 / 跌936 / 平93，较上一报告日 +5.4pct），涨停 <b>90</b>、跌停 <b>2</b>（较上一报告日 +2 只）；上证 <b>+0.97%</b>（3949.91，站上 MA5/MA10/MA20/MA60 全部均线），深成 +0.65%（13730.02）、创业板 +0.80%（3399.59）；成交 ¥2.03万亿（5 日均 108.2%、10 日均 110.1%、20 日均 106.9%，环比 -456亿）。风险等级：<b>低</b>。</span></li>
+      <li class="tldr-line warn"><span class="k" data-i18n="tk2">广度与量能</span><span class="v" data-i18n="tv2">涨股比 <b>82%</b>（较上一报告日 +5.4pct）· 涨停 <b>90</b> · 跌停 <b>2</b>（较上一报告日 +2 只）· 成交 <b>¥2.03万亿</b>（5 日均 108.2%、环比 -456亿，放量）——跌停回落至 10 只下方，恐慌边际缓和；全市场 927 个板块中 <b>479</b> 个收红、541 个呈主力「出货」。</span></li>
+      <li class="tldr-line"><span class="k" data-i18n="tk3">技术位置</span><span class="v" data-i18n="tv3">上证 <b>+0.97%</b>（3949.91），站上 MA5/MA10/MA20/MA60 全部均线；盘中/收盘位于布林下轨（3856.90）上方。MACD <b>-2.25</b>（DIF -4.98 / DEA -3.85），RSI6 <b>65.12</b>、KDJ_J 87.4——技术指标处于中性区间。深成 +0.65%（13730.02）、创业板 +0.80%（3399.59）。</span></li>
+      <li class="tldr-line"><span class="k" data-i18n="tk4">板块结构</span><span class="v" data-i18n="tv4">领涨：广告营销 +3.58%（主力 +88.35亿，行为「抢筹」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sz000676.html" target="_blank" rel="noopener noreferrer">智度股份</a> +10.04%）；房地产服务 +3.40%（主力 +16.46亿，行为「抢筹」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sz000560.html" target="_blank" rel="noopener noreferrer">我爱我家</a> +10.03%）；出版 +3.39%（主力 +29.62亿，行为「抢筹」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sh601811.html" target="_blank" rel="noopener noreferrer">新华文轩</a> +10.01%）。领跌：航运港口 -2.64%（主力 +48.85亿，行为「出货」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sz001205.html" target="_blank" rel="noopener noreferrer">盛航股份</a> +0.27%）；地面兵装Ⅱ -2.00%（主力 +11.32亿，行为「出货」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sz300527.html" target="_blank" rel="noopener noreferrer">ST应急</a> +0.00%）；航海装备Ⅱ -1.93%（主力 +31.94亿，行为「出货」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sz300810.html" target="_blank" rel="noopener noreferrer">中科海讯</a> +0.58%）。全市场 927 个板块中 479 个收红、541 个呈主力「出货」——板块普涨，赚钱效应扩散。</span></li>
+      <li class="tldr-line"><span class="k" data-i18n="tk5">连板结构</span><span class="v" data-i18n="tv5">最高 5 板（），共 104 只涨停；2板： /  /  /  /  / 。高度与接力情况是短线情绪的直接温度计：高度抬升＝赚钱效应扩张，高度下降或龙头更替＝接力意愿转弱。</span></li>
+      <li class="tldr-line warn"><span class="k" data-i18n="tk6">资金：两融</span><span class="v" data-i18n="tv6">两融接口降级（service error），<b>未编造</b>；仅就可见信号判断：541 个板块呈主力「出货」，资金集中在 广告营销、房地产服务、出版。</span></li>
+      <li class="tldr-line danger"><span class="k" data-i18n="tk7">估值 / 风格</span><span class="v" data-i18n="tv7">PE_TTM 20.04（10年分位 75.4%、5年 77.8%、3年 63.0%；PB 1.72、股息率 1.88%）。风格上：全指价值 20 日 <b>-0.01%</b> vs 全指成长 20 日 <b>+1.32%</b>（差 1.3pct），沪深300 5日 +1.33% / 中证1000 5日 +3.99%——风格差异不显著。</span></li>
+      <li class="tldr-line danger"><span class="k" data-i18n="tk8">情绪周期</span><span class="v" data-i18n="tv8">当期定位「<b>放量普涨 · 情绪回暖</b>」：涨股比 82%、涨停 90 / 跌停 2、成交 5 日均 108.2%（放量）。右侧确认条件：放量收复 MA5/MA10（3898.65 / 3909.32）且跌停回落至 10 只下方；恶化条件：跌停扩大至 25 只以上或上证收于布林下轨（3856.90）下方。风险等级 <b>低</b>。</span></li>
+    </ul>
+    <div class="grade"><span data-i18n="t_risk">风险等级</span>：<span data-i18n="t_risk_hi">低</span></div>
+    <div class="chips">
+      <span class="chip"><span data-i18n="c_upratio">涨股比</span> <b>82%</b></span>
+      <span class="chip"><span data-i18n="c_limitup">涨停</span> <b>90</b></span>
+      <span class="chip"><span data-i18n="c_board">连板高度</span> <b>4板</b></span>
+      <span class="chip"><span data-i18n="c_pe">估值 PE分位</span> <b>75%（10年）</b></span>
+      <span class="chip"><span data-i18n="c_pmi">制造业PMI</span> <b>49.2</b></span>
+      <span class="chip"><span data-i18n="c_turn">两市成交</span> <b>¥2.03万亿</b></span>
+    </div>
+  </section>
+
+  <!-- Sentiment cycle + Bias heatmap -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_bias">行为偏差热力图</span><span class="en">Behavioral Bias Heatmap</span></h2>
+    <div class="card">
+      <div class="cat" style="padding-left:0" data-i18n="t_cycle">情绪周期定位（六阶段）</div>
+      <div class="rail">
+        <div class="s"><span data-i18n="r1">绝望</span><small>Despair</small></div>
+        <div class="s"><span data-i18n="r2">怀疑</span><small>Doubt</small></div>
+        <div class="s on"><span data-i18n="r3">乐观</span><small>Optimism</small></div>
+        <div class="s"><span data-i18n="r4">狂热</span><small>Euphoria</small></div>
+        <div class="s"><span data-i18n="r5">焦虑</span><small>Anxiety</small></div>
+        <div class="s"><span data-i18n="r6">自满</span><small>Complacency</small></div>
+      </div>
+      <div class="note" data-i18n="t_cycle_note">注：上方「放量普涨 · 情绪回暖」为实时群体心理定位——2026-09-22 广度（涨股比 82%、涨停 90、跌停 2、成交 ¥2.03万亿）显示：跌停已回落至 10 只下方，恐慌边际缓和。若下一交易日跌停回落至 10 只以内且涨股比维持在 50% 上方，恐慌视为完全缓和；若跌停重新扩大至 25 只以上或上证收于 3856.90 下方，恐慌升级。</div>
+      <div class="heat" id="heat"></div>
+      <div class="legend">
+        <span data-i18n="t_leg">严重度（由数据综合映射）</span>：
+        <span><i style="background:var(--h1)"></i>1</span>
+        <span><i style="background:var(--h2)"></i>2</span>
+        <span><i style="background:var(--h3)"></i>3</span>
+        <span><i style="background:var(--h4)"></i>4</span>
+        <span><i style="background:var(--h5)"></i>5（高危）</span>
+      </div>
+      <div class="note" data-i18n="t_bias_note">注：偏差严重度为基于下方真实数据的模型映射（1=低，5=高），用于呈现群体心理的脆弱点分布，并非对个股的买卖建议。</div>
+    </div>
+  </section>
+
+  <!-- Radar + Breadth -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_radar">风险雷达</span><span class="en">Risk Radar</span></h2>
+    <div class="duo">
+      <div class="card">
+        <svg viewBox="0 0 320 320" width="100%" role="img" aria-label="risk radar">
+          <!-- grid -->
+          <g fill="none" stroke="#e2ddd1">
+            <polygon points="160,40 277,110 237,230 83,230 43,110" stroke-width="1"/>
+            <polygon points="160,75 240,121 211,199 109,199 79,121" stroke-width="1"/>
+            <polygon points="160,110 203,133 183,169 137,169 117,133" stroke-width="1"/>
+            <line x1="160" y1="150" x2="160" y2="40" stroke-width="1"/>
+            <line x1="160" y1="150" x2="277" y2="110" stroke-width="1"/>
+            <line x1="160" y1="150" x2="237" y2="230" stroke-width="1"/>
+            <line x1="160" y1="150" x2="83" y2="230" stroke-width="1"/>
+            <line x1="160" y1="150" x2="43" y2="110" stroke-width="1"/>
+          </g>
+          <!-- data polygon -->
+          <polygon points="160,72 218,107 206,167 160,189 104,172 88,98"
+            fill="rgba(184,51,42,.28)" stroke="#b8332a" stroke-width="2.2"/>
+          <g fill="#b8332a">
+            <circle cx="160" cy="72" r="3.2"/><circle cx="218" cy="107" r="3.2"/>
+            <circle cx="206" cy="167" r="3.2"/><circle cx="160" cy="189" r="3.2"/>
+            <circle cx="104" cy="172" r="3.2"/><circle cx="88" cy="98" r="3.2"/>
+          </g>
+          <g font-size="11" font-weight="700" fill="#3a352e" text-anchor="middle">
+            <text x="160" y="30" data-i18n="ax_crowd">拥挤度</text>
+            <text x="292" y="106" data-i18n="ax_margin">融资</text>
+            <text x="250" y="212" data-i18n="ax_turn">换手</text>
+            <text x="160" y="248" data-i18n="ax_breadth">广度</text>
+            <text x="70" y="212" data-i18n="ax_media">媒体情绪</text>
+            <text x="30" y="106" data-i18n="ax_val">估值</text>
+          </g>
+          <g font-size="10" fill="#b8332a" text-anchor="middle" font-weight="800">
+            <text x="160" y="71">30</text><text x="237" y="120">62</text><text x="209" y="194">57</text>
+            <text x="160" y="167">25</text><text x="109" y="201">74</text><text x="55" y="118">68</text>
+          </g>
+        </svg>
+        <div class="note" data-i18n="t_radar_note">六维风险读数（0–100，由下方真实数据按显式公式映射，越高代表该维度群体脆弱性越强）：拥挤度 30 / 融资 62 / 换手 57 / 广度 25 / 媒体 74 / 估值 68。融资维度因两融接口降级，按恐慌边际平移上一期读数（非实测值）；其余五维均由当日真实数据计算。</div>
+      </div>
+      <div class="card">
+        <div class="cat" style="padding-left:0" data-i18n="t_breadth">市场涨跌分布（2026-09-22 收盘）</div>
+        <svg viewBox="0 0 560 200" width="100%" role="img" aria-label="breadth distribution">
+          <!-- Stacked proportion bar (single row, clean) -->
+          <rect x="14" y="14" width="500" height="26" fill="#f3f0e8" stroke="#e7e2d8"/>
+          <rect x="14" y="14" width="408" height="26" fill="#d8392b"/>
+          <rect x="422" y="14" width="92" height="26" fill="#1a9e5a"/>
+          <text x="218" y="33" fill="#fff" font-size="14" font-weight="800" text-anchor="middle">82%</text>
+          <text x="468" y="33" fill="#fff" font-size="14" font-weight="800" text-anchor="middle">18%</text>
+          <text x="514" y="33" fill="#6b675f" font-size="11" font-weight="700" text-anchor="end">2% 平盘</text>
+
+          <!-- Stat rows: label / number / change -->
+          <g font-size="13" font-weight="700" fill="#3a352e">
+            <text x="14" y="72" data-i18n="b_up">上涨</text>
+            <text x="14" y="92" data-i18n="b_down">下跌</text>
+            <text x="14" y="112" data-i18n="b_flat">平盘</text>
+            <text x="14" y="138" data-i18n="b_limitup">涨停</text>
+            <text x="14" y="158" data-i18n="b_limitdn">跌停</text>
+            <text x="14" y="184" data-i18n="b_amt">成交额</text>
+          </g>
+          <g font-size="14" font-weight="800" text-anchor="end">
+            <text x="340" y="72" fill="#d8392b">4536</text>
+            <text x="340" y="92" fill="#1a9e5a">936</text>
+            <text x="340" y="112" fill="#6b675f">93</text>
+            <text x="340" y="138" fill="#d8392b">90</text>
+            <text x="340" y="158" fill="#1a9e5a">2</text>
+            <text x="340" y="184" fill="#1c1b19">¥2.03万亿</text>
+          </g>
+          <g font-size="11" fill="#6b675f" text-anchor="start">
+            <text x="355" y="72">（占 82%，较上一报告日 +5.4pct）</text>
+            <text x="355" y="92">（占 17%，较上一报告日 -5.4pct）</text>
+            <text x="355" y="112">（占 2%）</text>
+            <text x="355" y="138">（较前日 +18 只，连板高度 5板）</text>
+            <text x="355" y="158">（较前日 +2 只）</text>
+            <text x="355" y="184">（环比 -456亿，放量）</text>
+          </g>
+        </svg>
+        <div class="note" data-i18n="t_breadth_note">涨股比 82%（涨4536 / 跌936 / 平93）、涨停 90 / 跌停 2，成交 ¥2.03万亿（5 日均 108.2%，环比 -456亿）。三大指数：上证 +0.97%（3949.91）/ 深成 +0.65%（13730.02）/ 创业板 +0.80%（3399.59）；927 个板块中 479 个收红、541 个呈主力「出货」。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key evidence -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_evidence">关键证据表</span><span class="en">Key Evidence</span></h2>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table data-wb>
+        <thead><tr><th data-i18n="th_metric">指标</th><th data-i18n="th_read">真实读数</th><th data-i18n="th_interp">行为金融解读</th></tr></thead>
+        <tbody>
+          <tr><td class="cat" colspan="3" data-i18n="ev_market">一、市场广度与总览</td></tr>
+          <tr><td data-i18n="ev_upratio">涨股比</td><td><span class="val up">82%</span>（涨4536 / 跌936 / 平93）</td><td data-i18n="ev_upratio_i">涨股比 82%（较上一报告日 +5.4pct），涨 4536 / 跌 936 / 平 93——参与度变化不大</td></tr>
+          <tr><td data-i18n="ev_limit">涨停 / 跌停</td><td><span class="val up">90</span> / <span class="val down">2</span></td><td data-i18n="ev_limit_i">涨停 90（较上一报告日 +18 只）、跌停 2（较上一报告日 +2 只）——跌停回落至警戒线下方，恐慌缓和</td></tr>
+          <tr><td data-i18n="ev_amount">两市成交额</td><td><span class="val">¥2.03万亿</span>（环比 -456亿，5日均 108.2%）</td><td data-i18n="ev_amount_i">两市成交 ¥2.03万亿（5 日均 108.2%、10 日均 110.1%、20 日均 106.9%，环比 -456亿）——放量＝分歧加大，需看方向</td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_index">二、核心指数表现（2026-09-22 收盘）</td></tr>
+          <tr><td data-i18n="ev_sh">上证指数</td><td><span class="val up">3949.91　+0.97%</span></td><td data-i18n="ev_sh_i">上证 +0.97%（3949.91），站上 MA5/MA10/MA20/MA60 全部均线；盘中/收盘位于布林下轨（3856.90）上方。MACD -2.25（DIF -4.98 / DEA -3.85）、RSI6 65.12、KDJ_J 87.4。PE_TTM 20.04（10年分位 75.4%、5年 77.8%、3年 63.0%；PB 1.72、股息率 1.88%）</td></tr>
+          <tr><td data-i18n="ev_sz">深证成指</td><td><span class="val up">13730.02　+0.65%</span></td><td data-i18n="ev_sz_i">深成 +0.65%（13730.02）——与上证同步，趋势一致性较高</td></tr>
+          <tr><td data-i18n="ev_cyb">创业板指</td><td><span class="val up">3399.59　+0.80%</span></td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_sector">三、板块排行与主线</td></tr>
+          <tr><td data-i18n="ev_secup">领涨行业</td><td>广告营销 +3.58%（主力 +88.35亿，行为「抢筹」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sz000676.html" target="_blank" rel="noopener noreferrer">智度股份</a> +10.04%）<br>房地产服务 +3.40%（主力 +16.46亿，行为「抢筹」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sz000560.html" target="_blank" rel="noopener noreferrer">我爱我家</a> +10.03%）<br>出版 +3.39%（主力 +29.62亿，行为「抢筹」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sh601811.html" target="_blank" rel="noopener noreferrer">新华文轩</a> +10.01%）</td><td data-i18n="ev_secup_i">领涨：广告营销 +3.58%（主力 +88.35亿，行为「抢筹」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sz000676.html" target="_blank" rel="noopener noreferrer">智度股份</a> +10.04%）；房地产服务 +3.40%（主力 +16.46亿，行为「抢筹」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sz000560.html" target="_blank" rel="noopener noreferrer">我爱我家</a> +10.03%）；出版 +3.39%（主力 +29.62亿，行为「抢筹」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sh601811.html" target="_blank" rel="noopener noreferrer">新华文轩</a> +10.01%）</td></tr>
+          <tr><td data-i18n="ev_secdn">领跌行业</td><td>航运港口 -2.64%（主力 +48.85亿，行为「出货」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sz001205.html" target="_blank" rel="noopener noreferrer">盛航股份</a> +0.27%）<br>地面兵装Ⅱ -2.00%（主力 +11.32亿，行为「出货」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sz300527.html" target="_blank" rel="noopener noreferrer">ST应急</a> +0.00%）<br>航海装备Ⅱ -1.93%（主力 +31.94亿，行为「出货」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sz300810.html" target="_blank" rel="noopener noreferrer">中科海讯</a> +0.58%）</td><td data-i18n="ev_secdn_i">领跌：航运港口 -2.64%（主力 +48.85亿，行为「出货」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sz001205.html" target="_blank" rel="noopener noreferrer">盛航股份</a> +0.27%）；地面兵装Ⅱ -2.00%（主力 +11.32亿，行为「出货」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sz300527.html" target="_blank" rel="noopener noreferrer">ST应急</a> +0.00%）；航海装备Ⅱ -1.93%（主力 +31.94亿，行为「出货」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sz300810.html" target="_blank" rel="noopener noreferrer">中科海讯</a> +0.58%）</td></tr>
+          <tr><td data-i18n="ev_board">极端题材</td><td><span class="val up">连板高度 5 板</span>（）<br>共 104 只涨停；5板：；4板： / ；3板： /  /  / ；2板： /  /  / </td><td data-i18n="ev_board_i">最高 5 板（），共 104 只涨停；2板： /  /  /  /  / ——梯队高度为短线情绪温度计</td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_flow">四、资金：连板 / 主力 / 两融</td></tr>
+          <tr><td data-i18n="ev_height">连板高度</td><td><span class="val up"> 5板</span>（2026-09-22）</td><td data-i18n="ev_height_i">最高 5 板（），最高 5 板（），共 104 只涨停；2板： /  /  /  /  / </td></tr>
+          <tr><td data-i18n="ev_main">主力5日净流入TOP</td><td><span class="val">主力5日净流入 TOP（降级期暂缺，未编造）</span></td><td data-i18n="ev_main_i">主力 5 日净流入：接口降级暂缺，未编造；当日主力行为以板块口径（主力/散户/暗盘）替代呈现</td></tr>
+          <tr><td data-i18n="ev_margin">融资单日变动TOP</td><td><span class="val">融资单日变动 TOP（两融接口降级，数据暂缺，未编造）</span></td><td data-i18n="ev_margin_i">融资单日变动：两融接口降级（service error），数据暂缺，<b>未编造</b></td></tr>
+          <tr><td data-i18n="ev_hot">热搜 / 领涨TOP</td><td>广告营销 +3.58%（抢筹）<br>房地产服务 +3.40%（抢筹）<br>出版 +3.39%（抢筹）<br>航运港口 -2.64%（出货）</td><td data-i18n="ev_hot_i">热点：广告营销、房地产服务、出版；最高 5 板（），共 104 只涨停；2板： /  /  /  /  / </td></tr>
+          <tr><td data-i18n="ev_margintotal">市场两融余额</td><td><span class="val">数据源未返回聚合值</span></td><td data-i18n="ev_margintotal_i">市场两融余额：接口降级暂缺，已如实标注、未编造</td></tr>
+
+          <tr><td class="cat" colspan="3" data-i18n="ev_macro">五、核心宏观指标</td></tr>
+          <tr><td data-i18n="ev_pmi">制造业PMI（7月）</td><td><span class="val down">49.2</span>（<50，景气收缩）</td><td data-i18n="ev_pmi_i">基本面收缩，与「高估值 + 恐慌破位」共振放大下行压力；非制造业新订单偏弱</td></tr>
+          <tr><td data-i18n="ev_capu">产能利用率（Q2）</td><td><span class="val down">73.6%</span>（环比 −0.5pct）</td><td data-i18n="ev_capu_i">实物经济动能走弱，价格缺乏业绩支撑</td></tr>
+          <tr><td data-i18n="ev_cpi">CPI（7月）</td><td><span class="val">0.5%</span></td><td data-i18n="ev_cpi_i">低通胀、需求偏弱，难证景气全面复苏</td></tr>
+          <tr><td data-i18n="ev_social">社融（7月）</td><td><span class="val down">累计同比 −7.25%</span>（存量同比 +7.4%）</td><td data-i18n="ev_social_i">信用需求弱，资金绕道股市 = 流动性驱动特征，恐慌日流动性预期同样承压</td></tr>
+          <tr><td data-i18n="ev_m1m2">M1-M2 剪刀差</td><td><span class="val down">−3.7%</span></td><td data-i18n="ev_m1m2_i">活钱偏弱，资金空转，典型后周期现象</td></tr>
+          <tr><td data-i18n="ev_yield">10Y 国债收益率</td><td><span class="val down">1.70%</span></td><td data-i18n="ev_yield_i">极低无风险利率，既支撑估值也反映增长担忧</td></tr>
+          <tr><td data-i18n="ev_lpr">LPR</td><td>1Y <span class="val">3.0%</span> / 5Y <span class="val">3.5%</span></td><td data-i18n="ev_lpr_i">宽松基调未变</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note" data-i18n="t_ev_note">数据口径：宏观指标为月频/季频（截至最新发布），与日频行情不可直接对齐，已分别标注；涨跌分布 / 指数 / 板块 / 连板梯队均为 2026-09-22 当日真实收盘。缺失项均已标注，未编造。详见末尾「数据来源与日期口径」。</div>
+  </section>
+
+  <!-- Risk stratification -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_risk">风险分层</span><span class="en">Risk Stratification</span></h2>
+    <div class="risk3">
+      <div class="rc red">
+        <span class="tag" data-i18n="rc1_tag">红线区 · 杠杆与恐慌双高（两融暂缺）</span>
+        <h3 data-i18n="rc1_t">恐慌未完全出清 + 指数未收复均线</h3>
+        <p data-i18n="rc1_d">2026-09-22 跌停 2 只（较上一报告日 +2 只，仍在 10 只警戒线下方）、上证 +0.97%（3949.91）站上 MA5/MA10/MA20/MA60 全部均线——恐慌虽有缓和但未确认出清；两融数据缺失，杠杆踩踏风险无法证伪。</p>
+        <p class="rep" data-i18n="rc1_rep">代表：航运港口、地面兵装Ⅱ、航海装备Ⅱ；以及 541 个呈主力「出货」的板块</p>
+        <div class="cond" data-i18n="rc1_cond">条件框架：以「跌停回落至 10 只下方 + 涨股比维持 50% 上方 + 上证放量收复 MA5（3898.65）」为恐慌出清的最低确认；未确认前仓位纪律优先，不加杠杆、不抄正在下跌的刀。</div>
+      </div>
+      <div class="rc amber">
+        <span class="tag" data-i18n="rc2_tag">黄线区 · 修复与反复的博弈</span>
+        <h3 data-i18n="rc2_t">广度修复 vs 指数未确认</h3>
+        <p data-i18n="rc2_d">涨股比已回升至 82%（涨4536 / 跌936，较上一报告日 +5.4pct），但上证仍 +0.97%、成交放量（5 日均 108.2%）——广度修复领先于指数，属典型的「跌不动但涨不动」阶段；RSI6 65.12、KDJ_J 87.4 显示未超卖。</p>
+        <p class="rep" data-i18n="rc2_rep">代表：广告营销、房地产服务、出版</p>
+        <div class="cond" data-i18n="rc2_cond">条件框架：不预判底部；若反弹缩量（量能回落至 5 日均下方）视为弱反弹，警惕二次探底；右侧确认 ＝ 放量收复 MA5/MA10（3898.65 / 3909.32）且跌停清零。</div>
+      </div>
+      <div class="rc green">
+        <span class="tag" data-i18n="rc3_tag">绿线区 · 有主力真实承接的方向（观察）</span>
+        <h3 data-i18n="rc3_t">主力净流入方向</h3>
+        <p data-i18n="rc3_d">广告营销 +3.58%（主力 +88.35亿，行为「抢筹」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sz000676.html" target="_blank" rel="noopener noreferrer">智度股份</a> +10.04%）；房地产服务 +3.40%（主力 +16.46亿，行为「抢筹」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sz000560.html" target="_blank" rel="noopener noreferrer">我爱我家</a> +10.03%）；出版 +3.39%（主力 +29.62亿，行为「抢筹」；龙头 <a class="emlk" href="https://quote.eastmoney.com/sh601811.html" target="_blank" rel="noopener noreferrer">新华文轩</a> +10.01%）——在 541 个板块呈「出货」的背景下，以上方向是少数有主力真实承接者。</p>
+        <p class="rep" data-i18n="rc3_rep">代表：广告营销、房地产服务、出版</p>
+        <div class="cond" data-i18n="rc3_cond">条件框架：仅作结构跟踪，不追当日涨幅；确认信号 ＝ 指数企稳后仍保持主力净流入且换手不萎缩；若恐慌加剧其补跌，则确认全线出清。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Outlook (next-session) -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_outlook">下个交易日（09-23 周三）展望</span><span class="en">Next-Session Outlook (09-23 Wed)</span></h2>
+    <div class="card">
+      <div class="cat" style="padding-left:0" data-i18n="o_logic">研判逻辑（基于 2026-09-22 收盘 + 群体心理定位）</div>
+      <p class="note" data-i18n="o_logic_text">由 2026-09-22 的「放量普涨 · 情绪回暖」延伸：涨股比 82%、涨停 90 / 跌停 2、成交 ¥2.03万亿（5 日均 108.2%），上证 站上 MA5/MA10/MA20/MA60 全部均线 且 盘中/收盘位于布林下轨（3856.90）上方；技术指标处于中性区间。据此给出下一交易日的板块方向与交易规则（<b>不涉及具体个股推荐</b>）。</p>
+
+      <div class="outlook-grid">
+        <div class="oc up">
+          <span class="oc-tag" data-i18n="o1_tag">有主力承接的方向（观察）</span>
+          <h3 data-i18n="o1_t">广告营销 / 房地产服务 / 出版</h3>
+          <p data-i18n="o1_d">广告营销、房地产服务、出版 是当日少数有主力真实承接的方向（广告营销 主力 +88.35亿、房地产服务 主力 +16.46亿）；若恐慌继续缓和，该方向大概率率先企稳。</p>
+          <div class="oc-cond" data-i18n="o1_cond">注意：当日收红 ≠ 避险港；观察「指数企稳后主力净流入是否延续」，不追当日涨幅。</div>
+        </div>
+
+        <div class="oc amber">
+          <span class="oc-tag" data-i18n="o2_tag">主力「出货」方向（回避）</span>
+          <h3 data-i18n="o2_t">航运港口 / 地面兵装Ⅱ / 航海装备Ⅱ</h3>
+          <p data-i18n="o2_d">航运港口、地面兵装Ⅱ、航海装备Ⅱ 当日领跌且呈主力「出货」；全市场 541 个板块处于出货状态——流动性最差的方向抛压最重。</p>
+          <div class="oc-cond" data-i18n="o2_cond">注意：主力出货型下跌通常有第二段惯性下探；不抢反弹，等待主力净流入转正或缩量止跌信号。</div>
+        </div>
+
+        <div class="oc red">
+          <span class="oc-tag" data-i18n="o3_tag">出清确认信号（观望）</span>
+          <h3 data-i18n="o3_t">跌停回落 / 涨股比修复 / 量能回补</h3>
+          <p data-i18n="o3_d">当日跌停 2 只、涨股比 82%；观察下一交易日是否出现「跌停回落至 10 只以内 + 涨股比维持 50% 上方 + 量能回升至 5 日均上方」。</p>
+          <div class="oc-cond" data-i18n="o3_cond">注意：未出清段不预判底部；反弹缩量视为弱反弹（警惕二次探底）；右侧确认 ＝ 放量收复 MA5/MA10（3898.65 / 3909.32）且跌停清零。</div>
+        </div>
+      </div>
+
+      <div class="cat" style="padding-left:0;margin-top:18px;" data-i18n="o_rules_t">交易规则（09-23）</div>
+      <ul class="rules">
+        <li data-i18n="o_r1"><b>仓位</b>：恐慌未出清前维持防守——<b>仓位 ≤3 成</b>，不加杠杆；出清确认（跌停 <10 + 涨股比 >50%% + 放量收复 MA5）后再考虑加回。</li>
+        <li data-i18n="o_r2"><b>出清确认</b>：跌停回落至 10 只以内且涨股比维持在 50% 上方，视为恐慌出清；若跌停重新扩大至 25 只以上或上证收于 3856.90 下方，视为恶化，进一步压缩风险敞口。</li>
+        <li data-i18n="o_r3"><b>主线参与</b>：有主力承接的方向仅作结构观察（净流入是否延续），不追当日涨幅；主力「出货」方向回避，等待净流入转正。</li>
+        <li data-i18n="o_r4"><b>回避清单</b>：主力出货板块、两融集中且已破位的高位主线、连板高标接力（龙头更替快时接力风险最高）。</li>
+        <li data-i18n="o_r5"><b>风控</b>：反弹缩量视为弱反弹、警惕二次探底；两融数据恢复前不加重杠杆；单笔止损 −8%%，MA20 破位或死叉离场。</li>
+      </ul>
+
+      <p class="note" style="margin-top:14px;font-size:.76rem;color:var(--muted)" data-i18n="o_compliance"><b>合规说明：</b>本展望仅给出板块方向与交易规则，不涉及具体个股推荐；群体心理定位与板块推断基于 2026-09-22 真实行情数据，市场有风险，决策须独立。</p>
+    </div>
+  </section>
+
+  <!-- Sources -->
+  <section class="sec">
+    <h2><span class="bar"></span><span data-i18n="t_sec_source">数据来源与日期口径</span><span class="en">Data Sources & Time Caliber</span></h2>
+    <div class="card">
+      <ul class="src">
+        <li><b data-i18n="s_breadth">涨跌分布 / 总览</b><span data-i18n="s_breadth_v">westock · data_market_overview（market_statis_updown / daily_trade）；2026-09-22 收盘</span></li>
+        <li><b data-i18n="s_portrait">市场画像 summary</b><span data-i18n="s_portrait_v">westock · data_market_overview 官方快照；2026-09-22</span></li>
+        <li><b data-i18n="s_index">指数表现</b><span data-i18n="s_index_v">westock · data_market_overview（market_statis_technical / interval_trade）；2026-09-22 收盘</span></li>
+        <li><b data-i18n="s_sector">板块排行 / 资金流</b><span data-i18n="s_sector_v">westock · data_sector（927 个板块，含主力/散户/暗盘行为分类）；2026-09-22</span></li>
+        <li><b data-i18n="s_hot">热搜股票</b><span data-i18n="s_hot_v">westock · data_hot(kind=board) / tool_ranking(limitup_days)；2026-09-22</span></li>
+        <li><b data-i18n="s_macro">核心宏观</b><span data-i18n="s_macro_v">westock · data_macro(cn_pmi, cn_capacity_utilization, cn_financing 等)；PMI/产能/社融为前期复核（月频，无新发布），CPI/M1-M2/10Y/LPR 沿用前期值</span></li>
+        <li><b data-i18n="s_margin">两融（个股）</b><span data-i18n="s_margin_v">westock · 两融接口降级（market_statis_margin_chg 为空），数据暂缺，未编造</span></li>
+        <li><b data-i18n="s_main">主力5日净流入</b><span data-i18n="s_main_v">westock · tool_ranking 降级期，主力5日净流入暂缺；当日主力行为由 data_sector 板块口径替代</span></li>
+        <li><b data-i18n="s_board">连板高度</b><span data-i18n="s_board_v">westock · tool_ranking(metric=limitup_days, date=2026-09-22)；共 104 只涨停</span></li>
+        <li><b data-i18n="s_gap">数据缺口</b><span data-i18n="s_gap_v">两融余额与融资单日变动接口降级（service error），已如实标注、未编造；主力5日净流入降级期暂缺</span></li>
+      </ul>
+      <div class="note" data-i18n="t_src_note">时间口径：所有时点按北京时间。宏观为月频 / 季频，与日频行情不可直接对齐，已分别标注。2026-09-22 的涨跌分布 / 指数 / 技术 / 板块 / 连板梯队均为当日真实数据；缺失项（两融 / 主力5日）已如实标注、未编造。</div>
+    </div>
+  </section>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    <p data-i18n="disc1">免责声明：以上内容基于公开数据和量化分析，仅供参考，不构成投资建议。市场有风险，投资需谨慎。任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往表现不预示未来收益。</p>
+    <p style="margin-top:8px" data-i18n="disc2">本研判为「群体心理 / 条件框架」分析，非买卖指令；风险读数与偏差严重度为模型综合映射，须与价格结构、估值、资金流向交叉验证，不可单独作为交易依据。</p>
+  </div>
+
+  <div class="foot" data-i18n="t_foot">群体心理风险雷达 · 由 westock / iFinD 官方行情数据生成 · 仅供研究参考</div>
+</div>
+
+<script>
+  var I18N = {
+    zh:{
+      t_kicker:"A股 · 群体行为金融研判",
+      t_title:"群体心理风险雷达",
+      t_sub:"行为金融偏差 · 拥挤度 · 融资 · 热度 — 综合风险雷达。基于 westock 官方行情数据的真实查询结果。",
+      t_date:"数据截至",
+      t_path:"分析路径：群体心理分析（路径 C）",
+      t_tldr:"一句话结论",
+      t_headline:"一句话",
+      t_headline_sub:"2026-09-22 · 收盘",
+      hk_stage:"阶段定性",
+      hv_stage:"<b>放量普涨 · 情绪回暖</b>（2026-09-22）",
+      hk_upratio:"涨股比",
+      hv_upratio:"<b>82%</b>（前次 76% · 较上一报告日 +5.4pct）",
+      hk_lim:"涨停 / 跌停",
+      hv_lim:"<b>90</b> / <b>2</b>（跌停 较上一报告日 +2 只）",
+      hk_amt:"成交额",
+      hv_amt:"<b>¥2.03万亿</b>（放量，为 5 日均 108.2%）",
+      hk_cycle:"情绪周期",
+      hv_cycle:"<b>放量普涨 · 情绪回暖</b>",
+      hk_risk:"风险等级",
+      hv_risk:"<b class=\"hl-risk\">低</b>（较上一报告日维持）",
+      hk_flag:"关键提示",
+      hv_flag:"涨股比 82%（涨4536 / 跌936 / 平93，较上一报告日 +5.4pct）、涨停 90 / 跌停 2（较上一报告日 +2 只）、成交 ¥2.03万亿（5 日均 108.2%）；上证 +0.97%（3949.91）站上 MA5/MA10/MA20/MA60 全部均线，盘中/收盘位于布林下轨（3856.90）上方——两融接口降级暂缺，未编造",
+      tk1:"阶段定性",
+      tv1:"A股 2026-09-22 定性为「<b>放量普涨 · 情绪回暖</b>」：涨股比 <b>82%</b>（涨4536 / 跌936 / 平93，较上一报告日 +5.4pct），涨停 <b>90</b>、跌停 <b>2</b>（较上一报告日 +2 只）；上证 <b>+0.97%</b>（3949.91，站上 MA5/MA10/MA20/MA60 全部均线），深成 +0.65%（13730.02）、创业板 +0.80%（3399.59）；成交 ¥2.03万亿（5 日均 108.2%、10 日均 110.1%、20 日均 106.9%，环比 -456亿）。风险等级：<b>低</b>。",
+      tk2:"广度与量能",
+      tv2:"涨股比 <b>82%</b>（较上一报告日 +5.4pct）· 涨停 <b>90</b> · 跌停 <b>2</b>（较上一报告日 +2 只）· 成交 <b>¥2.03万亿</b>（5 日均 108.2%、环比 -456亿，放量）——跌停回落至 10 只下方，恐慌边际缓和；全市场 927 个板块中 <b>479</b> 个收红、541 个呈主力「出货」。",
+      tk3:"技术位置",
+      tv3:"上证 <b>+0.97%</b>（3949.91），站上 MA5/MA10/MA20/MA60 全部均线；盘中/收盘位于布林下轨（3856.90）上方。MACD <b>-2.25</b>（DIF -4.98 / DEA -3.85），RSI6 <b>65.12</b>、KDJ_J 87.4——技术指标处于中性区间。深成 +0.65%（13730.02）、创业板 +0.80%（3399.59）。",
+      tk4:"板块结构",
+      tv4:"领涨：广告营销 +3.58%（主力 +88.35亿，行为「抢筹」；龙头 智度股份 +10.04%）；房地产服务 +3.40%（主力 +16.46亿，行为「抢筹」；龙头 我爱我家 +10.03%）；出版 +3.39%（主力 +29.62亿，行为「抢筹」；龙头 新华文轩 +10.01%）。领跌：航运港口 -2.64%（主力 +48.85亿，行为「出货」；龙头 盛航股份 +0.27%）；地面兵装Ⅱ -2.00%（主力 +11.32亿，行为「出货」；龙头 ST应急 +0.00%）；航海装备Ⅱ -1.93%（主力 +31.94亿，行为「出货」；龙头 中科海讯 +0.58%）。全市场 927 个板块中 479 个收红、541 个呈主力「出货」——板块普涨，赚钱效应扩散。",
+      tk5:"连板结构",
+      tv5:"最高 5 板（），共 104 只涨停；2板： /  /  /  /  / 。高度与接力情况是短线情绪的直接温度计：高度抬升＝赚钱效应扩张，高度下降或龙头更替＝接力意愿转弱。",
+      tk6:"资金：两融",
+      tv6:"两融接口降级（service error），<b>未编造</b>；仅就可见信号判断：541 个板块呈主力「出货」，资金集中在 广告营销、房地产服务、出版。",
+      tk7:"估值 / 风格",
+      tv7:"PE_TTM 20.04（10年分位 75.4%、5年 77.8%、3年 63.0%；PB 1.72、股息率 1.88%）。风格上：全指价值 20 日 <b>-0.01%</b> vs 全指成长 20 日 <b>+1.32%</b>（差 1.3pct），沪深300 5日 +1.33% / 中证1000 5日 +3.99%——风格差异不显著。",
+      tk8:"情绪周期",
+      tv8:"当期定位「<b>放量普涨 · 情绪回暖</b>」：涨股比 82%、涨停 90 / 跌停 2、成交 5 日均 108.2%（放量）。右侧确认条件：放量收复 MA5/MA10（3898.65 / 3909.32）且跌停回落至 10 只下方；恶化条件：跌停扩大至 25 只以上或上证收于布林下轨（3856.90）下方。风险等级 <b>低</b>。",
+      t_tldr_text:"2026-09-22 A股：涨股比 82%（涨4536 / 跌936 / 平93），涨停 90 / 跌停 2，成交 ¥2.03万亿（5 日均 108.2%）；上证 +0.97%（3949.91，站上 MA5/MA10/MA20/MA60 全部均线），深成 +0.65%（13730.02）、创业板 +0.80%（3399.59）。领涨：广告营销 +3.58%；房地产服务 +3.40%；出版 +3.39%。领跌：航运港口 -2.64%；地面兵装Ⅱ -2.00%；航海装备Ⅱ -1.93%。最高 5 板（），共 104 只涨停；2板： /  /  /  /  / 。PE_TTM 20.04（10年分位 75.4%、5年 77.8%、3年 63.0%；PB 1.72、股息率 1.88%）。风险等级 低。",
+      t_risk:"风险等级",
+      t_risk_hi:"低",
+      c_upratio:"涨股比",
+      c_limitup:"涨停",
+      c_board:"连板高度",
+      c_pe:"估值 PE分位",
+      c_pmi:"制造业PMI",
+      c_turn:"两市成交",
+      t_sec_bias:"行为偏差热力图",
+      t_cycle:"情绪周期定位（六阶段）",
+      r1:"绝望",
+      r2:"怀疑",
+      r3:"乐观",
+      r4:"狂热",
+      r5:"焦虑",
+      r6:"自满",
+      t_cycle_note:"注：上方「放量普涨 · 情绪回暖」为实时群体心理定位——2026-09-22 广度（涨股比 82%、涨停 90、跌停 2、成交 ¥2.03万亿）显示：跌停已回落至 10 只下方，恐慌边际缓和。若下一交易日跌停回落至 10 只以内且涨股比维持在 50% 上方，恐慌视为完全缓和；若跌停重新扩大至 25 只以上或上证收于 3856.90 下方，恐慌升级。",
+      t_leg:"严重度（由数据综合映射）",
+      t_bias_note:"注：偏差严重度为基于下方真实数据的模型映射（1=低，5=高），用于呈现群体心理的脆弱点分布，并非对个股的买卖建议。",
+      t_sec_radar:"风险雷达",
+      t_radar_note:"六维风险读数（0–100，由下方真实数据按显式公式映射，越高代表该维度群体脆弱性越强）：拥挤度 30 / 融资 62 / 换手 57 / 广度 25 / 媒体 74 / 估值 68。融资维度因两融接口降级，按恐慌边际平移上一期读数（非实测值）；其余五维均由当日真实数据计算。",
+      ax_crowd:"拥挤度",
+      ax_margin:"融资",
+      ax_turn:"换手",
+      ax_breadth:"广度",
+      ax_media:"媒体情绪",
+      ax_val:"估值",
+      t_breadth:"市场涨跌分布（2026-09-22 收盘）",
+      b_up:"上涨",
+      b_down:"下跌",
+      b_flat:"平盘",
+      b_limitup:"涨停",
+      b_limitdn:"跌停",
+      b_amt:"成交额",
+      t_breadth_note:"涨股比 82%（涨4536 / 跌936 / 平93）、涨停 90 / 跌停 2，成交 ¥2.03万亿（5 日均 108.2%，环比 -456亿）。三大指数：上证 +0.97%（3949.91）/ 深成 +0.65%（13730.02）/ 创业板 +0.80%（3399.59）；927 个板块中 479 个收红、541 个呈主力「出货」。",
+      t_sec_evidence:"关键证据表",
+      th_metric:"指标",
+      th_read:"真实读数",
+      th_interp:"行为金融解读",
+      ev_market:"一、市场广度与总览",
+      ev_upratio:"涨股比",
+      ev_upratio_i:"涨股比 82%（较上一报告日 +5.4pct），涨 4536 / 跌 936 / 平 93——参与度变化不大",
+      ev_limit:"涨停 / 跌停",
+      ev_limit_i:"涨停 90（较上一报告日 +18 只）、跌停 2（较上一报告日 +2 只）——跌停回落至警戒线下方，恐慌缓和",
+      ev_amount:"两市成交额",
+      ev_amount_i:"两市成交 ¥2.03万亿（5 日均 108.2%、10 日均 110.1%、20 日均 106.9%，环比 -456亿）——放量＝分歧加大，需看方向",
+      ev_index:"二、核心指数表现（2026-09-22 收盘）",
+      ev_sh:"上证指数",
+      ev_sh_i:"上证 +0.97%（3949.91），站上 MA5/MA10/MA20/MA60 全部均线；盘中/收盘位于布林下轨（3856.90）上方。MACD -2.25（DIF -4.98 / DEA -3.85）、RSI6 65.12、KDJ_J 87.4。PE_TTM 20.04（10年分位 75.4%、5年 77.8%、3年 63.0%；PB 1.72、股息率 1.88%）",
+      ev_sz:"深证成指",
+      ev_sz_i:"深成 +0.65%（13730.02）——与上证同步，趋势一致性较高",
+      ev_cyb:"创业板指",
+      ev_cyb_i:"创业板 +0.80%（3399.59）——弱于主板，成长风格承压",
+      ev_sector:"三、板块排行与主线",
+      ev_secup:"领涨行业",
+      ev_secup_i:"领涨：广告营销 +3.58%（主力 +88.35亿，行为「抢筹」；龙头 智度股份 +10.04%）；房地产服务 +3.40%（主力 +16.46亿，行为「抢筹」；龙头 我爱我家 +10.03%）；出版 +3.39%（主力 +29.62亿，行为「抢筹」；龙头 新华文轩 +10.01%）",
+      ev_secdn:"领跌行业",
+      ev_secdn_i:"领跌：航运港口 -2.64%（主力 +48.85亿，行为「出货」；龙头 盛航股份 +0.27%）；地面兵装Ⅱ -2.00%（主力 +11.32亿，行为「出货」；龙头 ST应急 +0.00%）；航海装备Ⅱ -1.93%（主力 +31.94亿，行为「出货」；龙头 中科海讯 +0.58%）",
+      ev_board:"极端题材",
+      ev_board_i:"最高 5 板（），共 104 只涨停；2板： /  /  /  /  / ——梯队高度为短线情绪温度计",
+      ev_flow:"四、资金：连板 / 主力 / 两融",
+      ev_height:"连板高度",
+      ev_height_i:"最高 5 板（），最高 5 板（），共 104 只涨停；2板： /  /  /  /  / ",
+      ev_main:"主力5日净流入TOP",
+      ev_main_i:"主力 5 日净流入：接口降级暂缺，未编造；当日主力行为以板块口径（主力/散户/暗盘）替代呈现",
+      ev_margin:"融资单日变动TOP",
+      ev_margin_i:"融资单日变动：两融接口降级（service error），数据暂缺，<b>未编造</b>",
+      ev_hot:"热搜 / 领涨TOP",
+      ev_hot_i:"热点：广告营销、房地产服务、出版；最高 5 板（），共 104 只涨停；2板： /  /  /  /  / ",
+      ev_margintotal:"市场两融余额",
+      ev_margintotal_i:"市场两融余额：接口降级暂缺，已如实标注、未编造",
+      ev_macro:"五、核心宏观指标",
+      ev_pmi:"制造业PMI（7月）",
+      ev_pmi_i:"基本面收缩，与「高估值 + 恐慌破位」共振放大下行压力；非制造业新订单偏弱",
+      ev_capu:"产能利用率（Q2）",
+      ev_capu_i:"实物经济动能走弱，价格缺乏业绩支撑",
+      ev_cpi:"CPI（7月）",
+      ev_cpi_i:"低通胀、需求偏弱，难证景气全面复苏",
+      ev_social:"社融（7月）",
+      ev_social_i:"信用需求弱，资金绕道股市 = 流动性驱动特征，恐慌日流动性预期同样承压",
+      ev_m1m2:"M1-M2 剪刀差",
+      ev_m1m2_i:"活钱偏弱，资金空转，典型后周期现象",
+      ev_yield:"10Y 国债收益率",
+      ev_yield_i:"极低无风险利率，既支撑估值也反映增长担忧",
+      ev_lpr:"LPR",
+      ev_lpr_i:"宽松基调未变",
+      t_ev_note:"数据口径：宏观指标为月频/季频（截至最新发布），与日频行情不可直接对齐，已分别标注；涨跌分布 / 指数 / 板块 / 连板梯队均为 2026-09-22 当日真实收盘。缺失项均已标注，未编造。详见末尾「数据来源与日期口径」。",
+      t_sec_risk:"风险分层",
+      rc1_tag:"红线区 · 杠杆与恐慌双高（两融暂缺）",
+      rc1_t:"恐慌未完全出清 + 指数未收复均线",
+      rc1_d:"2026-09-22 跌停 2 只（较上一报告日 +2 只，仍在 10 只警戒线下方）、上证 +0.97%（3949.91）站上 MA5/MA10/MA20/MA60 全部均线——恐慌虽有缓和但未确认出清；两融数据缺失，杠杆踩踏风险无法证伪。",
+      rc1_rep:"代表：航运港口、地面兵装Ⅱ、航海装备Ⅱ；以及 541 个呈主力「出货」的板块",
+      rc1_cond:"条件框架：以「跌停回落至 10 只下方 + 涨股比维持 50% 上方 + 上证放量收复 MA5（3898.65）」为恐慌出清的最低确认；未确认前仓位纪律优先，不加杠杆、不抄正在下跌的刀。",
+      rc2_tag:"黄线区 · 修复与反复的博弈",
+      rc2_t:"广度修复 vs 指数未确认",
+      rc2_d:"涨股比已回升至 82%（涨4536 / 跌936，较上一报告日 +5.4pct），但上证仍 +0.97%、成交放量（5 日均 108.2%）——广度修复领先于指数，属典型的「跌不动但涨不动」阶段；RSI6 65.12、KDJ_J 87.4 显示未超卖。",
+      rc2_rep:"代表：广告营销、房地产服务、出版",
+      rc2_cond:"条件框架：不预判底部；若反弹缩量（量能回落至 5 日均下方）视为弱反弹，警惕二次探底；右侧确认 ＝ 放量收复 MA5/MA10（3898.65 / 3909.32）且跌停清零。",
+      rc3_tag:"绿线区 · 有主力真实承接的方向（观察）",
+      rc3_t:"主力净流入方向",
+      rc3_d:"广告营销 +3.58%（主力 +88.35亿，行为「抢筹」；龙头 智度股份 +10.04%）；房地产服务 +3.40%（主力 +16.46亿，行为「抢筹」；龙头 我爱我家 +10.03%）；出版 +3.39%（主力 +29.62亿，行为「抢筹」；龙头 新华文轩 +10.01%）——在 541 个板块呈「出货」的背景下，以上方向是少数有主力真实承接者。",
+      rc3_rep:"代表：广告营销、房地产服务、出版",
+      rc3_cond:"条件框架：仅作结构跟踪，不追当日涨幅；确认信号 ＝ 指数企稳后仍保持主力净流入且换手不萎缩；若恐慌加剧其补跌，则确认全线出清。",
+      t_sec_outlook:"下个交易日（09-23 周三）展望",
+      o_logic:"研判逻辑（基于 2026-09-22 收盘 + 群体心理定位）",
+      o_logic_text:"由 2026-09-22 的「放量普涨 · 情绪回暖」延伸：涨股比 82%、涨停 90 / 跌停 2、成交 ¥2.03万亿（5 日均 108.2%），上证 站上 MA5/MA10/MA20/MA60 全部均线 且 盘中/收盘位于布林下轨（3856.90）上方；技术指标处于中性区间。据此给出下一交易日的板块方向与交易规则（<b>不涉及具体个股推荐</b>）。",
+      o1_tag:"有主力承接的方向（观察）",
+      o1_t:"广告营销 / 房地产服务 / 出版",
+      o1_d:"广告营销、房地产服务、出版 是当日少数有主力真实承接的方向（广告营销 主力 +88.35亿、房地产服务 主力 +16.46亿）；若恐慌继续缓和，该方向大概率率先企稳。",
+      o1_cond:"注意：当日收红 ≠ 避险港；观察「指数企稳后主力净流入是否延续」，不追当日涨幅。",
+      o2_tag:"主力「出货」方向（回避）",
+      o2_t:"航运港口 / 地面兵装Ⅱ / 航海装备Ⅱ",
+      o2_d:"航运港口、地面兵装Ⅱ、航海装备Ⅱ 当日领跌且呈主力「出货」；全市场 541 个板块处于出货状态——流动性最差的方向抛压最重。",
+      o2_cond:"注意：主力出货型下跌通常有第二段惯性下探；不抢反弹，等待主力净流入转正或缩量止跌信号。",
+      o3_tag:"出清确认信号（观望）",
+      o3_t:"跌停回落 / 涨股比修复 / 量能回补",
+      o3_d:"当日跌停 2 只、涨股比 82%；观察下一交易日是否出现「跌停回落至 10 只以内 + 涨股比维持 50% 上方 + 量能回升至 5 日均上方」。",
+      o3_cond:"注意：未出清段不预判底部；反弹缩量视为弱反弹（警惕二次探底）；右侧确认 ＝ 放量收复 MA5/MA10（3898.65 / 3909.32）且跌停清零。",
+      o_rules_t:"交易规则（09-23）",
+      o_r1:"<b>仓位</b>：恐慌未出清前维持防守——<b>仓位 ≤3 成</b>，不加杠杆；出清确认（跌停 <10 + 涨股比 >50%% + 放量收复 MA5）后再考虑加回。",
+      o_r2:"<b>出清确认</b>：跌停回落至 10 只以内且涨股比维持在 50% 上方，视为恐慌出清；若跌停重新扩大至 25 只以上或上证收于 3856.90 下方，视为恶化，进一步压缩风险敞口。",
+      o_r3:"<b>主线参与</b>：有主力承接的方向仅作结构观察（净流入是否延续），不追当日涨幅；主力「出货」方向回避，等待净流入转正。",
+      o_r4:"<b>回避清单</b>：主力出货板块、两融集中且已破位的高位主线、连板高标接力（龙头更替快时接力风险最高）。",
+      o_r5:"<b>风控</b>：反弹缩量视为弱反弹、警惕二次探底；两融数据恢复前不加重杠杆；单笔止损 −8%%，MA20 破位或死叉离场。",
+      o_compliance:"<b>合规说明：</b>本展望仅给出板块方向与交易规则，不涉及具体个股推荐；群体心理定位与板块推断基于 2026-09-22 真实行情数据，市场有风险，决策须独立。",
+      t_sec_source:"数据来源与日期口径",
+      s_breadth:"涨跌分布 / 总览",
+      s_breadth_v:"westock · data_market_overview（market_statis_updown / daily_trade）；2026-09-22 收盘",
+      s_portrait:"市场画像 summary",
+      s_portrait_v:"westock · data_market_overview 官方快照；2026-09-22",
+      s_index:"指数表现",
+      s_index_v:"westock · data_market_overview（market_statis_technical / interval_trade）；2026-09-22 收盘",
+      s_sector:"板块排行 / 资金流",
+      s_sector_v:"westock · data_sector（927 个板块，含主力/散户/暗盘行为分类）；2026-09-22",
+      s_hot:"热搜股票",
+      s_hot_v:"westock · data_hot(kind=board) / tool_ranking(limitup_days)；2026-09-22",
+      s_macro:"核心宏观",
+      s_macro_v:"westock · data_macro(cn_pmi, cn_capacity_utilization, cn_financing 等)；PMI/产能/社融为前期复核（月频，无新发布），CPI/M1-M2/10Y/LPR 沿用前期值",
+      s_margin:"两融（个股）",
+      s_margin_v:"westock · 两融接口降级（market_statis_margin_chg 为空），数据暂缺，未编造",
+      s_main:"主力5日净流入",
+      s_main_v:"westock · tool_ranking 降级期，主力5日净流入暂缺；当日主力行为由 data_sector 板块口径替代",
+      s_board:"连板高度",
+      s_board_v:"westock · tool_ranking(metric=limitup_days, date=2026-09-22)；共 104 只涨停",
+      s_gap:"数据缺口",
+      s_gap_v:"两融余额与融资单日变动接口降级（service error），已如实标注、未编造；主力5日净流入降级期暂缺",
+      t_src_note:"时间口径：所有时点按北京时间。宏观为月频 / 季频，与日频行情不可直接对齐，已分别标注。2026-09-22 的涨跌分布 / 指数 / 技术 / 板块 / 连板梯队均为当日真实数据；缺失项（两融 / 主力5日）已如实标注、未编造。",
+      disc1:"免责声明：以上内容基于公开数据和量化分析，仅供参考，不构成投资建议。市场有风险，投资需谨慎。任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往表现不预示未来收益。",
+      disc2:"本研判为「群体心理 / 条件框架」分析，非买卖指令；风险读数与偏差严重度为模型综合映射，须与价格结构、估值、资金流向交叉验证，不可单独作为交易依据。",
+      t_foot:"群体心理风险雷达 · 由 westock / iFinD 官方行情数据生成 · 仅供研究参考",
+    },
+    en:{
+      t_kicker:"A-share · Crowd Behavioral Finance",
+      t_title:"Crowd Psychology Risk Radar",
+      t_sub:"Behavioral bias · crowding · margin · heat — an integrated risk radar. Built on real queries via westock official market data.",
+      t_date:"Data as of",
+      t_path:"Path: Crowd Psychology Analysis (Path C)",
+      t_tldr:"Bottom Line",
+      t_headline:"Headline",
+      t_headline_sub:"2026-09-22 · Close",
+      hk_stage:"Stage",
+      hv_stage:"<b>Volume-expanding rally / Sentiment warms</b> (2026-09-22)",
+      hk_upratio:"Up-ratio",
+      hv_upratio:"<b>82%</b> (prev 76% · +5.4pct vs the previous report)",
+      hk_lim:"Limit-up / -down",
+      hv_lim:"<b>90</b> / <b>2</b> (limit-down +2 vs the previous report)",
+      hk_amt:"Turnover",
+      hv_amt:"<b>¥2.03 tn</b> (expanding, 108.2% of the 5d avg)",
+      hk_cycle:"Sentiment cycle",
+      hv_cycle:"<b>Volume-expanding rally / Sentiment warms</b>",
+      hk_risk:"Risk level",
+      hv_risk:"<b class=\"hl-risk\">Low</b> (held from the previous report)",
+      hk_flag:"Key flag",
+      hv_flag:"Up-ratio 82% (4536 up / 936 down / 93 flat, +5.4pct vs the previous report), limit-up 90 / limit-down 2 (+2 vs the previous report), turnover ¥2.03 tn (108.2% of 5d avg); SSE +0.97% (3949.91), above MA5/MA10/MA20/MA60 all at once, closes above the BOLL lower band (3856.90) — margin interface degraded, not fabricated.",
+      tk1:"Stage",
+      tv1:"A-shares 2026-09-22: '<b>Volume-expanding rally / Sentiment warms</b>'. Up-ratio <b>82%</b> (4536 up / 936 down / 93 flat, +5.4pct vs the previous report), limit-up <b>90</b>, limit-down <b>2</b> (+2 vs the previous report); SSE <b>+0.97%</b> (3949.91, above MA5/MA10/MA20/MA60 all at once), SZ +0.65% (13730.02), ChiNext +0.80% (3399.59); turnover ¥2.03 tn (108.2% of 5d, 110.1% of 10d, 106.9% of 20d, -456 bn d/d). Risk: <b>Low</b>.",
+      tk2:"Breadth collapse deepens",
+      tv2:"Up-ratio <b>82%</b> (+5.4pct vs the previous report) · limit-up <b>90</b> · limit-down <b>2</b> (+2 vs the previous report) · turnover <b>¥2.03 tn</b> (108.2% of 5d, -456 bn d/d, expanding) — limit-downs fall under 10, panic eases at the margin; 479 of 927 sectors green, 541 in main-capital 'distribution'. ",
+      tk3:"Technical breakdown",
+      tv3:"SSE <b>+0.97%</b> (3949.91), above MA5/MA10/MA20/MA60 all at once; closes above the BOLL lower band (3856.90). MACD <b>-2.25</b> (DIF -4.98 / DEA -3.85), RSI6 <b>65.12</b>, KDJ_J 87.4 — technicals in the neutral zone. SZ +0.65% (13730.02), ChiNext +0.80% (3399.59).",
+      tk4:"Sector structure",
+      tv4:"Leaders: 广告营销 +3.58% (main +88.35, '抢筹')；房地产服务 +3.40% (main +16.46, '抢筹')；出版 +3.39% (main +29.62, '抢筹'). Laggards: 航运港口 -2.64%（主力 +48.85亿，行为「出货」；龙头 盛航股份 +0.27%）；地面兵装Ⅱ -2.00%（主力 +11.32亿，行为「出货」；龙头 ST应急 +0.00%）；航海装备Ⅱ -1.93%（主力 +31.94亿，行为「出货」；龙头 中科海讯 +0.58%）. 479 of 927 sectors green, 541 in 'distribution' — broad sector gains, profit effect spreads.",
+      tk5:"Limit-up ladder",
+      tv5:"Top board 5 (), 104 limit-ups; 2-board:  /  /  /  /  / . Ladder height is the direct thermometer of short-term sentiment: rising height = profit effect expanding; falling height or leader rotation = weaker relay appetite.",
+      tk6:"Capital: margin missing",
+      tv6:"Margin interface degraded (service error), <b>not fabricated</b>; from visible signals: 541 sectors in 'distribution', capital concentrates in 广告营销, 房地产服务, 出版.",
+      tk7:"Valuation / style",
+      tv7:"PE_TTM 20.04 (10Y pctile 75.4%, 5Y 77.8%, 3Y 63.0%; PB 1.72, dividend yield 1.88%). Style: All-Share Value 20d <b>-0.01%</b> vs Growth 20d <b>+1.32%</b> (1.3pct gap), HS300 5d +1.33% / CSI1000 5d +3.99% — no notable style gap.",
+      tk8:"Sentiment cycle",
+      tv8:"Positioned as '<b>Volume-expanding rally / Sentiment warms</b>': up-ratio 82%, limit-up 90 / limit-down 2, turnover 108.2% of 5d (expanding). Right-side confirmation: expanding volume reclaiming MA5/MA10 (3898.65 / 3909.32) with limit-downs under 10; deterioration: limit-downs widening past 25 or the SSE closing below the BOLL lower band (3856.90). Risk <b>Low</b>.",
+      t_tldr_text:"2026-09-22 A-shares: up-ratio 82% (4536 up / 936 down / 93 flat), limit-up 90 / limit-down 2, turnover ¥2.03 tn (108.2% of 5d); SSE +0.97% (3949.91, above MA5/MA10/MA20/MA60 all at once), SZ +0.65% (13730.02), ChiNext +0.80% (3399.59). Leaders: 广告营销 +3.58%; 房地产服务 +3.40%; 出版 +3.39%. Laggards: 航运港口 -2.64%; 地面兵装Ⅱ -2.00%; 航海装备Ⅱ -1.93%. Top board 5 (), 104 limit-ups; 2-board:  /  /  /  /  / . PE_TTM 20.04 (10Y pctile 75.4%, 5Y 77.8%, 3Y 63.0%; PB 1.72, dividend yield 1.88%). Risk Low.",
+      t_risk:"Risk level",
+      t_risk_hi:"Low",
+      c_upratio:"Up-ratio",
+      c_limitup:"Limit-up",
+      c_board:"Ladder height",
+      c_pe:"PE pctile",
+      c_pmi:"Mfg PMI",
+      c_turn:"Turnover",
+      t_sec_bias:"Behavioral Bias Heatmap",
+      t_cycle:"Sentiment Cycle (6-stage)",
+      r1:"Despair",
+      r2:"Doubt",
+      r3:"Optimism",
+      r4:"Euphoria",
+      r5:"Anxiety",
+      r6:"Complacency",
+      t_cycle_note:"Note: the 'Volume-expanding rally / Sentiment warms' tag above is the live crowd-psychology position — 2026-09-22 breadth (up-ratio 82%, limit-up 90, limit-down 2, turnover ¥2.03 tn) shows: limit-downs back under 10, panic easing at the margin. Panic is treated as fully cleared only if the next session sees limit-downs under 10 with the up-ratio holding above 50%; it escalates if limit-downs widen past 25 or the SSE closes below 3856.90.",
+      t_leg:"Severity (model-mapped)",
+      t_bias_note:"Note: bias severity is a model mapping from the real data below (1=low, 5=high), used to show where crowd psychology is fragile — not a buy/sell recommendation for any stock.",
+      t_sec_radar:"Risk Radar",
+      t_radar_note:"Six-dimension risk readings (0–100, mapped from the real data below by explicit formulas; higher = greater crowd fragility): crowding 30 / margin 62 / turnover 57 / breadth 25 / media 74 / valuation 68. The margin axis is carried forward by panic delta while the margin interface is degraded (not a measured value); the other five are computed from same-day data.",
+      ax_crowd:"Crowding",
+      ax_margin:"Margin",
+      ax_turn:"Turnover",
+      ax_breadth:"Breadth",
+      ax_media:"Media mood",
+      ax_val:"Valuation",
+      t_breadth:"Market breadth (2026-09-22 close)",
+      b_up:"Up",
+      b_down:"Down",
+      b_flat:"Flat",
+      b_limitup:"Limit-up",
+      b_limitdn:"Limit-down",
+      b_amt:"Turnover",
+      t_breadth_note:"Up-ratio 82% (4536 up / 936 down / 93 flat), limit-up 90 / limit-down 2, turnover ¥2.03 tn (108.2% of 5d, -456 bn d/d). SSE +0.97% (3949.91) / SZ +0.65% (13730.02) / ChiNext +0.80% (3399.59); 479 of 927 sectors green, 541 in 'distribution'.",
+      t_sec_evidence:"Key Evidence",
+      th_metric:"Metric",
+      th_read:"Real reading",
+      th_interp:"Behavioral read",
+      ev_market:"I. Market breadth & overview",
+      ev_upratio:"Up-ratio",
+      ev_upratio_i:"Up-ratio 82% (+5.4pct vs the previous report), 4536 up / 936 down / 93 flat — participation little changed",
+      ev_limit:"Limit-up / -down",
+      ev_limit_i:"Limit-up 90 (+18 vs the previous report), limit-down 2 (+2 vs the previous report) — limit-downs below the warning line, panic eases",
+      ev_amount:"Turnover",
+      ev_amount_i:"Turnover ¥2.03 tn (108.2% of 5d, 110.1% of 10d, 106.9% of 20d, -456 bn d/d) — expanding = divergence widens, direction matters",
+      ev_index:"II. Core indices (2026-09-22 close)",
+      ev_sh:"SSE Composite",
+      ev_sh_i:"SSE +0.97% (3949.91), above MA5/MA10/MA20/MA60 all at once; closes above the BOLL lower band (3856.90). MACD -2.25 (DIF -4.98 / DEA -3.85), RSI6 65.12, KDJ_J 87.4. PE_TTM 20.04 (10Y pctile 75.4%, 5Y 77.8%, 3Y 63.0%; PB 1.72, dividend yield 1.88%)",
+      ev_sz:"SZ Component",
+      ev_sz_i:"SZ +0.65% (13730.02) — in sync with the SSE, trend consistency high",
+      ev_cyb:"ChiNext",
+      ev_cyb_i:"ChiNext +0.80% (3399.59) — weaker than the main board, growth style pressured",
+      ev_sector:"III. Sector ranking & main line",
+      ev_secup:"Leading sectors",
+      ev_secup_i:"Leaders: 广告营销 +3.58% (main +88.35, '抢筹')；房地产服务 +3.40% (main +16.46, '抢筹')；出版 +3.39% (main +29.62, '抢筹')",
+      ev_secdn:"Lagging sectors",
+      ev_secdn_i:"Laggards: 航运港口 -2.64%（主力 +48.85亿，行为「出货」；龙头 盛航股份 +0.27%）；地面兵装Ⅱ -2.00%（主力 +11.32亿，行为「出货」；龙头 ST应急 +0.00%）；航海装备Ⅱ -1.93%（主力 +31.94亿，行为「出货」；龙头 中科海讯 +0.58%）",
+      ev_board:"Extreme themes",
+      ev_board_i:"Top board 5 (), 104 limit-ups; 2-board:  /  /  /  /  /  — ladder height is the short-term sentiment thermometer",
+      ev_flow:"IV. Capital: ladder / main / margin",
+      ev_height:"Ladder height",
+      ev_height_i:"Top board 5 (), Top board 5 (), 104 limit-ups; 2-board:  /  /  /  /  / ",
+      ev_main:"Main capital 5d net inflow TOP",
+      ev_main_i:"Main capital 5d net inflow: interface degraded, missing, not fabricated; same-day main behaviour shown via the sector view (main/retail/dark)",
+      ev_margin:"Daily margin change TOP",
+      ev_margin_i:"Daily margin change: margin interface degraded (service error), missing — <b>not fabricated</b>",
+      ev_hot:"Hot / top gainers",
+      ev_hot_i:"Hotspots: 广告营销, 房地产服务, 出版; Top board 5 (), 104 limit-ups; 2-board:  /  /  /  /  / ",
+      ev_margintotal:"Aggregate margin balance",
+      ev_margintotal_i:"Aggregate margin balance: interface degraded, missing — flagged honestly, not fabricated",
+      ev_macro:"V. Core macro indicators",
+      ev_pmi:"Mfg PMI (Jul)",
+      ev_pmi_i:"Fundamentals contract, resonating with 'high valuation + panic breakdown' to amplify the downside; non-mfg new orders soft",
+      ev_capu:"Capacity utilisation (Q2)",
+      ev_capu_i:"Real-economy momentum weakens, prices lack earnings support",
+      ev_cpi:"CPI (Jul)",
+      ev_cpi_i:"Low inflation, weak demand, hard to confirm a broad recovery",
+      ev_social:"Social financing (Jul)",
+      ev_social_i:"Weak credit demand, capital detours into stocks = liquidity-driven feature; liquidity expectations also pressured on the panic day",
+      ev_m1m2:"M1-M2 spread",
+      ev_m1m2_i:"Active money weak, capital idles, typical late-cycle phenomenon",
+      ev_yield:"10Y gov bond yield",
+      ev_yield_i:"Extremely low risk-free rate, supports valuation yet reflects growth worry",
+      ev_lpr:"LPR",
+      ev_lpr_i:"Accommodative stance unchanged",
+      t_ev_note:"Data basis: macro indicators are monthly/quarterly (to the latest release) and cannot be aligned directly with daily quotes; each is flagged. Breadth / indices / sectors / ladder are real 2026-09-22 closes. Missing items are flagged, not fabricated. See 'Sources & date basis' at the end.",
+      t_sec_risk:"Risk Stratification",
+      rc1_tag:"Red zone · leverage and panic both elevated (margin missing)",
+      rc1_t:"Panic not fully cleared + index below its MAs",
+      rc1_d:"2026-09-22: limit-downs 2 (+2 vs the previous report, still below the 10-name warning line), SSE +0.97% (3949.91) above MA5/MA10/MA20/MA60 all at once — panic eases but clearing is unconfirmed; margin missing, leverage-crash risk cannot be ruled out.",
+      rc1_rep:"Represented by: 航运港口, 地面兵装Ⅱ, 航海装备Ⅱ; plus 541 sectors in main-capital 'distribution'",
+      rc1_cond:"Condition frame: minimum clearing confirmation = 'limit-downs under 10 + up-ratio above 50% + SSE reclaiming MA5 (3898.65) on expanding volume'; until then position discipline first, no leverage, no catching a falling knife.",
+      rc2_tag:"Amber zone · repair vs relapse",
+      rc2_t:"Breadth repair vs index unconfirmed",
+      rc2_d:"Up-ratio back to 82% (4536 up / 936 down, +5.4pct vs the previous report), yet the SSE is still +0.97% and turnover is expanding (108.2% of 5d) — breadth repairs ahead of the index, the classic 'can't fall but can't rally' phase; RSI6 65.12, KDJ_J 87.4 show no oversold reading.",
+      rc2_rep:"Represented by: 广告营销, 房地产服务, 出版",
+      rc2_cond:"Condition frame: do not pre-empt the bottom; a shrinking-volume bounce = weak rebound, beware a second leg; right-side confirmation = expanding volume reclaiming MA5/MA10 (3898.65 / 3909.32) with limit-downs cleared.",
+      rc3_tag:"Green zone · directions with real main-capital absorption (watch)",
+      rc3_t:"Main net-inflow directions",
+      rc3_d:"广告营销 +3.58% (main +88.35, '抢筹')；房地产服务 +3.40% (main +16.46, '抢筹')；出版 +3.39% (main +29.62, '抢筹') — with 541 sectors in 'distribution', these are among the few with real main-capital absorption.",
+      rc3_rep:"Represented by: 广告营销, 房地产服务, 出版",
+      rc3_cond:"Condition frame: structural tracking only, do not chase same-day gains; confirmation = main net inflows persist and turnover holds after the index stabilises; if it dumps as panic worsens, that confirms a full wash-out.",
+      t_sec_outlook:"Next session (09-23 Wed) outlook",
+      o_logic:"Reasoning (based on the 2026-09-22 close + crowd-psychology position)",
+      o_logic_text:"Extending 2026-09-22's 'Volume-expanding rally / Sentiment warms': up-ratio 82%, limit-up 90 / limit-down 2, turnover ¥2.03 tn (108.2% of 5d), SSE above MA5/MA10/MA20/MA60 all at once and closes above the BOLL lower band (3856.90); technicals in the neutral zone. Sector directions and trading rules for the next session follow (<b>no individual stock recommendations</b>).",
+      o1_tag:"Directions with main-capital absorption (watch)",
+      o1_t:"广告营销 / 房地产服务 / 出版",
+      o1_d:"广告营销, 房地产服务, 出版 are among the few with real main-capital absorption (广告营销 main +88.35, 房地产服务 main +16.46); if panic keeps easing, they likely stabilise first.",
+      o1_cond:"Caution: green on the day ≠ safe haven; watch 'do main inflows persist after the index stabilises', do not chase same-day gains.",
+      o2_tag:"Main-capital 'distribution' directions (avoid)",
+      o2_t:"航运港口 / 地面兵装Ⅱ / 航海装备Ⅱ",
+      o2_d:"航运港口, 地面兵装Ⅱ, 航海装备Ⅱ led the losses in main-capital 'distribution'; 541 sectors market-wide are distributing — the least liquid directions carry the heaviest selling.",
+      o2_cond:"Caution: distribution-led declines usually have a second leg down; do not grab the bounce, wait for main inflows to turn positive or a shrinking-volume stabilisation.",
+      o3_tag:"Clearing confirmation signals (stand by)",
+      o3_t:"Limit-downs recede / up-ratio repairs / volume returns",
+      o3_d:"Limit-downs 2 and up-ratio 82% today; watch for 'limit-downs under 10 + up-ratio above 50% + volume back above the 5d average' next session.",
+      o3_cond:"Caution: do not pre-empt the bottom before clearing; a shrinking-volume bounce = weak rebound (beware a second leg); right-side confirmation = expanding volume reclaiming MA5/MA10 (3898.65 / 3909.32) with limit-downs cleared.",
+      o_rules_t:"Trading rules (09-23 Wed)",
+      o_r1:"<b>Position</b>: stay defensive until the panic clears — <b>≤30%</b>, no leverage; rebuild only after clearing (limit-downs <10 + up-ratio >50%% + volume reclaiming MA5).",
+      o_r2:"<b>Clearing confirmation</b>: limit-downs under 10 with the up-ratio holding above 50% = cleared; if limit-downs widen past 25 or the SSE closes below 3856.90, treat as deterioration and shrink exposure further.",
+      o_r3:"<b>Main-line participation</b>: absorption directions are structural observation only (do inflows persist?), no chasing same-day gains; avoid distribution directions until inflows turn positive.",
+      o_r4:"<b>Avoid list</b>: distribution sectors, margin-concentrated broken high-position lines, ladder-top relay (relay risk peaks when the leader rotates fast).",
+      o_r5:"<b>Risk control</b>: a shrinking-volume bounce = weak rebound, beware a second leg; do not add leverage until margin data resumes; −8%% stop per position, exit on a MA20 break or dead cross.",
+      o_compliance:"<b>Compliance:</b> sector directions and trading rules only, no individual stock recommendations; the crowd-psychology position and sector inferences are based on real 2026-09-22 market data. Markets carry risk; decisions must be independent.",
+      t_sec_source:"Sources & date basis",
+      s_breadth:"Breadth / overview",
+      s_breadth_v:"westock · data_market_overview (market_statis_updown / daily_trade); 2026-09-22 close",
+      s_portrait:"Market portrait summary",
+      s_portrait_v:"westock · data_market_overview official snapshot; 2026-09-22",
+      s_index:"Index performance",
+      s_index_v:"westock · data_market_overview (market_statis_technical / interval_trade); 2026-09-22 close",
+      s_sector:"Sector ranking / flows",
+      s_sector_v:"westock · data_sector (927 sectors, incl. main/retail/dark behaviour); 2026-09-22",
+      s_hot:"Hot stocks",
+      s_hot_v:"westock · data_hot(kind=board) / tool_ranking(limitup_days); 2026-09-22",
+      s_macro:"Core macro",
+      s_macro_v:"westock · data_macro(cn_pmi, cn_capacity_utilization, cn_financing etc.); PMI/capacity/social-financing reviewed earlier (monthly, no new release), CPI/M1-M2/10Y/LPR carried forward",
+      s_margin:"Margin (stocks)",
+      s_margin_v:"westock · margin interface degraded (market_statis_margin_chg empty), missing, not fabricated",
+      s_main:"Main capital 5d net inflow",
+      s_main_v:"westock · tool_ranking degraded, main-5d missing; same-day behaviour shown via data_sector",
+      s_board:"Ladder height",
+      s_board_v:"westock · tool_ranking(metric=limitup_days, date=2026-09-22); 104 limit-ups in total",
+      s_gap:"Data gaps",
+      s_gap_v:"aggregate margin balance and daily change interfaces degraded (service error) — flagged, not fabricated; main-capital 5d net inflow missing in the degraded window",
+      t_src_note:"Timing: all timestamps are Beijing time. Macro data are monthly/quarterly and cannot be aligned with daily quotes; each is flagged. 2026-09-22 breadth / indices / technicals / sectors / ladder are real same-day data; missing items (margin / main-5d) are flagged honestly, not fabricated.",
+      disc1:"Disclaimer: the above is based on public data and quantitative analysis, for reference only, not investment advice. Markets carry risk; investment decisions should be made independently per your own risk tolerance, financial status and goals, and consult a licensed professional when necessary. Past performance does not predict future returns.",
+      disc2:"This assessment is 'crowd psychology / conditional framework' analysis, not a trading order; risk readings and bias severities are model mappings and must be cross-validated with price structure, valuation and flows, not used alone as a trade basis.",
+      t_foot:"Crowd Psychology Risk Radar · generated from westock / iFinD official market data · research reference only",
+    }
+  };
+
+  var BIAS = [
+    {zh:"羊群效应",en:"Herding",sev:3,zhd:"涨股比 82%（涨4536 / 跌936）较上一报告日+5.4pct，跌停 2 只——群体定价仍由「跟随」主导：分歧收敛但方向未定，跟随行为依旧主导。",end:"Up-ratio 82% (4536 up / 936 down), +5.4pct vs the previous report with 2 limit-downs — pricing is still herd-driven: divergence narrows but direction is unset, herding still leads."},
+    {zh:"损失厌恶",en:"Loss Aversion",sev:3,zhd:"跌停 2 只是损失实现的直接刻度；跌停已回落至 10 只下方 的情况下，「扛单的痛苦」与「割肉的痛苦」仍在博弈，止损盘与被动持有者交替释放。",end:"2 limit-downs are the direct gauge of realised loss; with limit-downs back under 10, the pain of holding and the pain of cutting are still in play as stop-losses and passive holders release in turns."},
+    {zh:"心理账户/赌徒谬误",en:"Mental Accounting / Gambler",sev:3,zhd:"把 华为汽车股权合作、商用车、高血压 的当日收红记入「避风港」账户并外推为「资金避难所」，忽视全市场 541/927 个板块呈主力「出货」——局部强势≠账户安全。",end:"Booking today's greens in 华为汽车股权合作、商用车、高血压 into a 'safe-haven' account and extrapolating them into 'where capital shelters' ignores that 541 of 927 sectors are in main-capital distribution — local strength ≠ account safety."},
+    {zh:"过度自信",en:"Overconfidence",sev:3,zhd:"技术指标处于中性区：涨股比单日+5.4pct 的剧烈变化容易催生「已见底/已转势」的判断，而指数与技术均未确认——自信领先于证据是高波动期的典型特征。",end:"technicals sit in the neutral zone: a +5.4pct one-day swing in the up-ratio easily breeds an 'it has bottomed / turned' call while neither the index nor the technicals confirm — confidence running ahead of evidence is typical of high-volatility phases."},
+    {zh:"处置效应",en:"Disposition",sev:3,zhd:"卖出亏损仓、紧握浮盈仓的倾向在该阶段依然明显；若恐慌二次扩散，「强势仓」同样面临回吐——浮盈不等于安全边际。",end:"The tendency to cut losers and clutch winners stays visible here; if panic spreads again, the 'strong' books give back too — unrealised gains are not a safety margin."},
+    {zh:"锚定偏差",en:"Anchoring",sev:3,zhd:"缺乏新定价锚时，指数点位与布林下轨（3856.90）等可见参照成为群体博弈焦点；锚在前高者视回调为机会、锚在下轨者等反弹，易在半山腰互接。",end:"Without a new pricing anchor, visible references such as the index level and the BOLL lower band (3856.90) become the crowd's battleground: those anchored to prior highs see dips as chances, those anchored to the band wait for a bounce — easy to catch falling knives at mid-slope."},
+    {zh:"确认偏误",en:"Confirmation Bias",sev:3,zhd:"广度与指数方向一致，确认偏误的破坏力相对可控——多头只看广度修复，空头只盯指数与技术破位，同一组数据被两侧各取所需。",end:"Breadth and the index point the same way, so confirmation bias does less damage — bulls read only the breadth repair, bears only the index and broken technicals; the same dataset is mined by both sides."},
+    {zh:"近因偏差",en:"Recency",sev:3,zhd:"把单日涨股比+5.4pct 的剧变外推为趋势转折，忽视样本仅为一个交易日；恐慌期的单日修复与单日暴跌一样，都不构成趋势证据。",end:"Extrapolating a single-day +5.4pct swing in the up-ratio into a trend turn ignores that the sample is one session: single-day repairs in a panic phase are as little trend evidence as single-day crashes."},
+    {zh:"叙事偏差",en:"Narrative",sev:4,zhd:"华为汽车股权合作、商用车、高血压 等方向的叙事被当日主力净流入强化；但 541/927 个板块处于「出货」状态，叙事一旦被后续资金证伪，承接盘回撤同样剧烈。",end:"The narrative around 华为汽车股权合作、商用车、高血压 is reinforced by same-day main inflows; yet 541 of 927 sectors are distributing — if the story is falsified by follow-through flows, the absorption books retrace just as hard."},
+    {zh:"代表性启发",en:"Representativeness",sev:4,zhd:"以个别领涨/领跌板块推断全市场，是 2 只跌停 / 90 只涨停并存的分布下最容易犯的错——极端分布中任何单一样本都不具代表性。",end:"Inferring the whole market from a few leading or lagging sectors is the easiest mistake when 2 limit-downs and 90 limit-ups coexist — in an extreme distribution no single sample is representative."}
+  ];
+
+  var HEATCOL = {1:"var(--h1)",2:"var(--h2)",3:"var(--h3)",4:"var(--h4)",5:"var(--h5)"};
+
+  function buildHeat(lang){
+    var box = document.getElementById('heat');
+    box.innerHTML = '';
+    BIAS.forEach(function(b){
+      var d = document.createElement('div');
+      d.className = 'cell';
+      d.style.background = HEATCOL[b.sev];
+      var name = lang==='en' ? b.en : b.zh;
+      var desc = lang==='en' ? b.end : b.zhd;
+      d.innerHTML = '<div class="bn">'+name+'</div><div class="bd">'+desc+'</div><span class="sev">'+b.sev+' / 5</span>';
+      box.appendChild(d);
+    });
+  }
+
+  function applyLang(lang){
+    var dic = I18N[lang] || I18N.zh;
+    document.documentElement.lang = (lang==='en' ? 'en' : 'zh-CN');
+    var nodes = document.querySelectorAll('[data-i18n]');
+    for(var i=0;i<nodes.length;i++){
+      var k = nodes[i].getAttribute('data-i18n');
+      if(dic[k]!==undefined){ nodes[i].innerHTML = dic[k]; }
+    }
+    buildHeat(lang);
+    document.getElementById('btnZh').className = (lang==='zh'?'active':'');
+    document.getElementById('btnEn').className = (lang==='en'?'active':'');
+    document.title = (lang==='en' ? I18N.en.t_title : I18N.zh.t_title);
+  }
+
+  function setLang(lang){
+    applyLang(lang);
+    var url = new URL(window.location.href);
+    url.searchParams.set('lang', lang);
+    window.history.replaceState({}, '', url.toString());
+  }
+
+  (function(){
+    var p = new URL(window.location.href).searchParams.get('lang');
+    var lang = (p==='en') ? 'en' : 'zh';
+    applyLang(lang);
+  })();
+</script>
+
+
+
+
+
+<!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--></body>
+</html>
