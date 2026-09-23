@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A股板块强度 2026-09-23</title>
+<style>
+:root{
+  --bg:#f5f6f8; --panel:#ffffff; --panel2:#f0f2f5; --line:#e3e6ea; --txt:#23262b;
+  --mut:#6b7280; --up:#b8332a; --down:#1a9e5a; --gold:#1a73e8; --qc:#b8332a; --ch:#1a9e5a;
+  --jc:#1a73e8; --xp:#3b6fd1;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#f5f6f8,#eef0f3);color:var(--txt);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:13px;padding:22px 26px 60px}
+h1{font-size:21px;margin:0 0 2px;letter-spacing:.5px}
+.sub{color:var(--mut);font-size:12px;margin-bottom:16px}
+.sub b{color:var(--gold)}
+.up{color:var(--up)} .down{color:var(--down)} .c-qc{color:var(--qc)} .c-ch{color:var(--ch)} .c-jc{color:var(--jc)} .c-xp{color:var(--xp)}
+.unit{font-size:10px;color:var(--mut);margin-left:2px}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:20px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 14px 12px;position:relative;overflow:hidden}
+.kpi:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold);opacity:.55}
+.kpi-v{font-size:23px;font-weight:700;line-height:1.1}
+.kpi-l{color:var(--mut);font-size:11.5px;margin-top:6px}
+.kpi-s{color:#5f6b7a;font-size:10.5px;margin-top:2px}
+.strips{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.strip{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.strip h3{margin:0 0 10px;font-size:13px;color:var(--gold);font-weight:600;letter-spacing:.5px}
+.trow{display:flex;justify-content:space-between;align-items:baseline;margin-top:9px;font-size:12px}
+.tname{color:var(--txt)} .tkind{font-style:normal;font-size:9.5px;color:var(--mut);border:1px solid var(--line);border-radius:4px;padding:0 4px;margin-left:5px}
+.tval{font-weight:600;font-variant-numeric:tabular-nums}
+.ttrack{height:5px;background:#f0f2f5;border-radius:3px;overflow:hidden;margin:3px 0 2px}
+.tbar{border-radius:3px}
+.tbar.up{background:linear-gradient(90deg,#7a1d16,var(--up))}
+.tbar.down{background:linear-gradient(90deg,#0d4d2c,var(--down))}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--panel2);
+  border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px}
+.controls input[type=text]{background:#f0f2f5;border:1px solid var(--line);color:var(--txt);
+  border-radius:8px;padding:7px 10px;width:200px;outline:none}
+.controls input[type=text]:focus{border-color:var(--gold)}
+.controls select{background:#f0f2f5;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 8px;outline:none}
+.controls button{background:#f3f4f6;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 12px;cursor:pointer}
+.controls button:hover{border-color:var(--gold)}
+.count{margin-left:auto;color:var(--mut);font-size:12px}
+.count b{color:var(--gold)}
+.tablewrap{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid #161d2b;white-space:nowrap;font-variant-numeric:tabular-nums}
+th{background:#f3f4f6;color:var(--mut);font-weight:600;cursor:pointer;user-select:none;position:sticky;top:0;font-size:12px}
+th:hover{color:var(--gold)}
+th.sorted:after{content:" " attr(data-arrow);color:var(--gold)}
+td:first-child,th:first-child,td:nth-child(2),th:nth-child(2){text-align:left}
+tbody tr:hover{background:#f3f4f6}
+.rank{color:#5f6b7a;width:42px}
+.sname{font-weight:600}
+.skind{font-size:9.5px;color:var(--mut);border:1px solid var(--line);border-radius:4px;padding:0 4px;margin-left:5px}
+.beh{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.beh.q{background:rgba(224,72,59,.15);color:var(--qc)}
+.beh.j{background:rgba(232,179,57,.15);color:var(--jc)}
+.beh.x{background:rgba(91,141,239,.15);color:var(--xp)}
+.beh.c{background:rgba(26,158,90,.15);color:var(--ch)}
+.sbar{display:inline-block;height:6px;border-radius:3px;vertical-align:middle;margin-left:8px}
+.note{color:var(--mut);font-size:11px;margin-top:14px;line-height:1.7}
+.note code{background:#f0f2f5;padding:1px 5px;border-radius:4px;color:var(--gold)}
+.quads{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.qcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 14px;position:relative;overflow:hidden}
+.qcard:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;opacity:.6}
+.qcard.qc-qa:before{background:var(--down)}
+.qcard.qc-qb:before{background:var(--jc)}
+.qcard.qc-qc:before{background:var(--xp)}
+.qcard.qc-qd:before{background:var(--qc)}
+.qc-h{font-size:12.5px;font-weight:700;display:flex;align-items:center;gap:6px}
+.qc-tag{font-size:9.5px;font-weight:600;padding:1px 6px;border-radius:10px;background:#f0f2f5;color:var(--mut)}
+.qc-n{font-size:11px;color:var(--mut);margin:5px 0 7px}
+.qc-list{font-size:11px;color:#3a4250;line-height:1.65}
+.qc-list b{color:var(--gold);font-weight:600}
+.qb-adge{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;display:inline-block;white-space:nowrap}
+.qb-adge.qa{background:rgba(26,158,90,.16);color:var(--down)}
+.qb-adge.qb{background:rgba(232,179,57,.16);color:var(--jc)}
+.qb-adge.qc{background:rgba(59,111,209,.15);color:var(--xp)}
+.qb-adge.qd{background:rgba(224,72,59,.15);color:var(--qc)}
+.valbar{display:inline-block;height:6px;border-radius:3px;vertical-align:middle;margin-left:6px;background:var(--line)}
+@media(max-width:1100px){.quads{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}.strips{grid-template-columns:1fr}
+  .hide-narrow{display:none}}
+</style>
+<!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  .navgrp{ padding:5px 6px 5px 5px !important; }
+}
+
+</style><!--/WB_THEME--></head>
+<body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<h1>A股板块强度 <span style="color:var(--gold)">2026-09-23</span></h1>
+<div class="sub">暗盘资金 = 主力资金 − 散户资金 ｜ 板块强度 = 暗盘资金 ÷ 总成交额 × 100 ｜ 主力行为:
+  <b>抢筹</b>(≥3) <b>建仓</b>(1~3) <b>洗盘</b>(−1~1) <b>出货</b>(≤−1) ｜ 数据: westock 实时板块(最新快照)</div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="kpi-v">124</div><div class="kpi-l">板块总数</div><div class="kpi-s">行业 124 · 概念 0</div></div>
+      <div class="kpi"><div class="kpi-v down">-63.60<span class="unit">亿</span></div><div class="kpi-l">全市场暗盘资金净额</div><div class="kpi-s">主力−散户 合计</div></div>
+      <div class="kpi"><div class="kpi-v">-3.171</div><div class="kpi-l">平均板块强度</div><div class="kpi-s">暗盘/成交额×100</div></div>
+      <div class="kpi"><div class="kpi-v c-qc">28</div><div class="kpi-l">抢筹板块</div><div class="kpi-s">强度≥3</div></div>
+      <div class="kpi"><div class="kpi-v c-ch">80</div><div class="kpi-l">出货板块</div><div class="kpi-s">强度≤−1</div></div>
+      <div class="kpi"><div class="kpi-v">33.1%<span class="unit">涨</span></div><div class="kpi-l">上涨占比</div><div class="kpi-s">涨 41 · 跌 82</div></div>
+    </div>
+<div class="strips">
+  <div class="strip"><h3>★ 强势板块 Top 10（按强度）</h3><div class="trow"><span class="tname">房地产服务<i class="tkind">行业</i></span><span class="tval up">30.58<span class="unit"></span></span></div><div class="ttrack"><div class="tbar up" style="width:100.0%"></div></div>
+<div class="trow"><span class="tname">非白酒<i class="tkind">行业</i></span><span class="tval up">17.97<span class="unit"></span></span></div><div class="ttrack"><div class="tbar up" style="width:58.8%"></div></div>
+<div class="trow"><span class="tname">商用车<i class="tkind">行业</i></span><span class="tval up">16.70<span class="unit"></span></span></div><div class="ttrack"><div class="tbar up" style="width:54.6%"></div></div>
+<div class="trow"><span class="tname">水泥<i class="tkind">行业</i></span><span class="tval up">15.72<span class="unit"></span></span></div><div class="ttrack"><div class="tbar up" style="width:51.4%"></div></div>
+<div class="trow"><span class="tname">非金属材料Ⅱ<i class="tkind">行业</i></span><span class="tval up">10.86<span class="unit"></span></span></div><div class="ttrack"><div class="tbar up" style="width:35.5%"></div></div>
+<div class="trow"><span class="tname">汽车服务<i class="tkind">行业</i></span><span class="tval up">9.73<span class="unit"></span></span></div><div class="ttrack"><div class="tbar up" style="width:31.8%"></div></div>
+<div class="trow"><span class="tname">专业服务<i class="tkind">行业</i></span><span class="tval up">8.88<span class="unit"></span></span></div><div class="ttrack"><div class="tbar up" style="width:29.0%"></div></div>
+<div class="trow"><span class="tname">光学光电子<i class="tkind">行业</i></span><span class="tval up">7.88<span class="unit"></span></span></div><div class="ttrack"><div class="tbar up" style="width:25.8%"></div></div>
+<div class="trow"><span class="tname">厨卫电器<i class="tkind">行业</i></span><span class="tval up">7.44<span class="unit"></span></span></div><div class="ttrack"><div class="tbar up" style="width:24.3%"></div></div>
+<div class="trow"><span class="tname">电子化学品Ⅱ<i class="tkind">行业</i></span><span class="tval up">7.30<span class="unit"></span></span></div><div class="ttrack"><div class="tbar up" style="width:23.9%"></div></div>
+<div class="trow"><span class="tname">照明设备Ⅱ<i class="tkind">行业</i></span><span class="tval up">7.27<span class="unit"></span></span></div><div class="ttrack"><div class="tbar up" style="width:23.8%"></div></div>
+<div class="trow"><span class="tname">生物制品<i class="tkind">行业</i></span><span class="tval up">7.12<span class="unit"></span></span></div><div class="ttrack"><div class="tbar up" style="width:23.3%"></div></div></div>
+  <div class="strip"><h3>★ 暗盘资金流入 Top 10（亿元）</h3><div class="trow"><span class="tname">半导体<i class="tkind">行业</i></span><span class="tval up">+54.29<span class="unit">亿</span></span></div><div class="ttrack"><div class="tbar up" style="width:100.0%"></div></div>
+<div class="trow"><span class="tname">元件<i class="tkind">行业</i></span><span class="tval up">+46.74<span class="unit">亿</span></span></div><div class="ttrack"><div class="tbar up" style="width:86.1%"></div></div>
+<div class="trow"><span class="tname">光学光电子<i class="tkind">行业</i></span><span class="tval up">+30.99<span class="unit">亿</span></span></div><div class="ttrack"><div class="tbar up" style="width:57.1%"></div></div>
+<div class="trow"><span class="tname">通用设备<i class="tkind">行业</i></span><span class="tval up">+23.87<span class="unit">亿</span></span></div><div class="ttrack"><div class="tbar up" style="width:44.0%"></div></div>
+<div class="trow"><span class="tname">电子化学品Ⅱ<i class="tkind">行业</i></span><span class="tval up">+22.23<span class="unit">亿</span></span></div><div class="ttrack"><div class="tbar up" style="width:40.9%"></div></div>
+<div class="trow"><span class="tname">专用设备<i class="tkind">行业</i></span><span class="tval up">+21.68<span class="unit">亿</span></span></div><div class="ttrack"><div class="tbar up" style="width:39.9%"></div></div>
+<div class="trow"><span class="tname">电池<i class="tkind">行业</i></span><span class="tval up">+17.26<span class="unit">亿</span></span></div><div class="ttrack"><div class="tbar up" style="width:31.8%"></div></div>
+<div class="trow"><span class="tname">医疗服务<i class="tkind">行业</i></span><span class="tval up">+15.01<span class="unit">亿</span></span></div><div class="ttrack"><div class="tbar up" style="width:27.6%"></div></div>
+<div class="trow"><span class="tname">房地产开发<i class="tkind">行业</i></span><span class="tval up">+13.74<span class="unit">亿</span></span></div><div class="ttrack"><div class="tbar up" style="width:25.3%"></div></div>
+<div class="trow"><span class="tname">生物制品<i class="tkind">行业</i></span><span class="tval up">+13.33<span class="unit">亿</span></span></div><div class="ttrack"><div class="tbar up" style="width:24.6%"></div></div>
+<div class="trow"><span class="tname">房地产服务<i class="tkind">行业</i></span><span class="tval up">+12.49<span class="unit">亿</span></span></div><div class="ttrack"><div class="tbar up" style="width:23.0%"></div></div>
+<div class="trow"><span class="tname">商用车<i class="tkind">行业</i></span><span class="tval up">+12.32<span class="unit">亿</span></span></div><div class="ttrack"><div class="tbar up" style="width:22.7%"></div></div></div>
+</div>
+<div class="sub" style="margin:-4px 0 10px">行业四象限：<b>资金进/退</b> = 暗盘资金(主力−散户)正负 ｜ <b>估值高/低</b> = 估值分位(PE/PB历史百分位均值)以 50 为界，越小越便宜。仅行业板块有估值数据。</div>
+<div class="quads"><div class="qcard qc-qa"><div class="qc-h">资金进 · 估值低<span class="qc-tag">优</span></div><div class="qc-n">0 个行业</div><div class="qc-list">—</div></div>
+<div class="qcard qc-qb"><div class="qc-h">资金进 · 估值高<span class="qc-tag">热</span></div><div class="qc-n">0 个行业</div><div class="qc-list">—</div></div>
+<div class="qcard qc-qc"><div class="qc-h">资金退 · 估值低<span class="qc-tag">冷</span></div><div class="qc-n">0 个行业</div><div class="qc-list">—</div></div>
+<div class="qcard qc-qd"><div class="qc-h">资金退 · 估值高<span class="qc-tag">慎</span></div><div class="qc-n">0 个行业</div><div class="qc-list">—</div></div></div>
+<div class="controls">
+  <input type="text" id="search" placeholder="搜索板块 / 领涨股…">
+  <select id="f-kind"><option value="">类型:全部</option><option value="行业">行业</option><option value="概念">概念</option></select>
+  <select id="f-behavior"><option value="">行为:全部</option><option value="抢筹">抢筹</option><option value="建仓">建仓</option><option value="洗盘">洗盘</option><option value="出货">出货</option></select>
+  <select id="f-quad"><option value="">象限:全部</option><option value="qa">资金进·估值低</option><option value="qb">资金进·估值高</option><option value="qc">资金退·估值低</option><option value="qd">资金退·估值高</option></select>
+  <select id="f-dir"><option value="">涨跌:全部</option><option value="up">上涨</option><option value="down">下跌</option></select>
+  <select id="f-strength"><option value="">强度:全部</option><option value="g10">≥10</option><option value="g5">≥5</option><option value="g3">≥3(抢筹级)</option><option value="l-1">≤−1(出货级)</option></select>
+  <button id="reset">重置</button>
+  <button id="csv">导出CSV</button>
+  <span class="count">当前显示 <b id="cnt">0</b> / 124</span>
+</div>
+<div class="tablewrap">
+<table id="t">
+<thead><tr>
+<th class="rank" data-k="idx">#</th>
+<th data-k="name">板块 ⇅</th>
+<th data-k="pctVal" title="涨幅%">涨幅 ⇅</th>
+<th class="hide-narrow" data-k="totalVal" title="总成交额(元)">总成交额 ⇅</th>
+<th data-k="mainVal" title="主力资金(元)">主力资金 ⇅</th>
+<th data-k="retailVal" title="散户资金(元)">散户资金 ⇅</th>
+<th data-k="darkVal" title="暗盘资金=主力−散户(元)">暗盘资金 ⇅</th>
+<th data-k="strengthVal" title="板块强度=暗盘/总成交额×100">板块强度 ⇅</th>
+<th data-k="behaviorRank">主力行为 ⇅</th>
+<th data-k="valPct" title="估值分位 = PE/PB历史百分位均值(越小越便宜)">估值分位 ⇅</th>
+<th data-k="quad">资金×估值 ⇅</th>
+<th class="hide-narrow" data-k="leader">领涨股</th>
+</tr></thead>
+<tbody id="tb"></tbody>
+</table>
+</div>
+<div class="note">计算口径: 主力资金=<code>mainInflow</code> ｜ 散户资金=<code>mainOutflow</code> ｜ 暗盘资金=<code>mainNetInflow</code> ｜
+强度=<code>暗盘资金 ÷ 总成交额 × 100</code>。金额由元换算为亿元展示。本页为当日真实板块快照，仅供研究参考，不构成投资建议。</div>
+<script>
+const DATA = [{"name": "房地产服务", "kind": "行业", "pctText": "+4.21%", "pctVal": 4.21, "totalText": "+40.84", "totalVal": 4083798977.6899996, "mainText": "+12.49", "mainVal": 1248778953.0, "retailText": "0.00", "retailVal": 0, "darkText": "+12.49", "darkVal": 1248778953.0, "darkUp": true, "strengthText": "30.58", "strengthVal": 30.58, "behavior": "抢筹", "behaviorRank": 4, "leader": "我爱我家 +9.97%", "_members": 10}, {"name": "非白酒", "kind": "行业", "pctText": "+0.90%", "pctVal": 0.9, "totalText": "+59.71", "totalVal": 5970842176.46, "mainText": "+10.73", "mainVal": 1072668711.0, "retailText": "0.00", "retailVal": 0, "darkText": "+10.73", "darkVal": 1072668711.0, "darkUp": true, "strengthText": "17.97", "strengthVal": 17.97, "behavior": "抢筹", "behaviorRank": 4, "leader": "古越龙山 +5.00%", "_members": 11}, {"name": "商用车", "kind": "行业", "pctText": "+6.67%", "pctVal": 6.67, "totalText": "+73.79", "totalVal": 7378812319.32, "mainText": "+12.32", "mainVal": 1232034174.0, "retailText": "0.00", "retailVal": 0, "darkText": "+12.32", "darkVal": 1232034174.0, "darkUp": true, "strengthText": "16.70", "strengthVal": 16.7, "behavior": "抢筹", "behaviorRank": 4, "leader": "江淮汽车 +9.99%", "_members": 13}, {"name": "水泥", "kind": "行业", "pctText": "+2.80%", "pctVal": 2.8, "totalText": "+28.95", "totalVal": 2895004987.99, "mainText": "+4.55", "mainVal": 455202653.0, "retailText": "0.00", "retailVal": 0, "darkText": "+4.55", "darkVal": 455202653.0, "darkUp": true, "strengthText": "15.72", "strengthVal": 15.72, "behavior": "抢筹", "behaviorRank": 4, "leader": "天山股份 +6.78%", "_members": 20}, {"name": "非金属材料Ⅱ", "kind": "行业", "pctText": "+3.26%", "pctVal": 3.26, "totalText": "+55.95", "totalVal": 5594905399.44, "mainText": "+6.07", "mainVal": 607458959.0, "retailText": "0.00", "retailVal": 0, "darkText": "+6.07", "darkVal": 607458959.0, "darkUp": true, "strengthText": "10.86", "strengthVal": 10.86, "behavior": "抢筹", "behaviorRank": 4, "leader": "力量钻石 +3.71%", "_members": 8}, {"name": "汽车服务", "kind": "行业", "pctText": "-0.71%", "pctVal": -0.71, "totalText": "+8.81", "totalVal": 881452019.73, "mainText": "+0.86", "mainVal": 85792339.0, "retailText": "0.00", "retailVal": 0, "darkText": "+0.86", "darkVal": 85792339.0, "darkUp": true, "strengthText": "9.73", "strengthVal": 9.73, "behavior": "抢筹", "behaviorRank": 4, "leader": "申华控股 +10.00%", "_members": 9}, {"name": "专业服务", "kind": "行业", "pctText": "+2.74%", "pctVal": 2.74, "totalText": "+38.62", "totalVal": 3862061530.4800005, "mainText": "+3.43", "mainVal": 342945087.0, "retailText": "0.00", "retailVal": 0, "darkText": "+3.43", "darkVal": 342945087.0, "darkUp": true, "strengthText": "8.88", "strengthVal": 8.88, "behavior": "抢筹", "behaviorRank": 4, "leader": "联检科技 +8.68%", "_members": 29}, {"name": "光学光电子", "kind": "行业", "pctText": "+2.64%", "pctVal": 2.64, "totalText": "+393.38", "totalVal": 39338000067.17999, "mainText": "+30.99", "mainVal": 3098812997.0, "retailText": "0.00", "retailVal": 0, "darkText": "+30.99", "darkVal": 3098812997.0, "darkUp": true, "strengthText": "7.88", "strengthVal": 7.88, "behavior": "抢筹", "behaviorRank": 4, "leader": "沃格光电 +10.00%", "_members": 82}, {"name": "厨卫电器", "kind": "行业", "pctText": "+6.36%", "pctVal": 6.36, "totalText": "+13.23", "totalVal": 1323098923.0400002, "mainText": "+0.98", "mainVal": 98438338.0, "retailText": "0.00", "retailVal": 0, "darkText": "+0.98", "darkVal": 98438338.0, "darkUp": true, "strengthText": "7.44", "strengthVal": 7.44, "behavior": "抢筹", "behaviorRank": 4, "leader": "亿田智能 +12.13%", "_members": 8}, {"name": "电子化学品Ⅱ", "kind": "行业", "pctText": "+2.49%", "pctVal": 2.49, "totalText": "+304.45", "totalVal": 30445186090.530003, "mainText": "+22.23", "mainVal": 2222854850.0, "retailText": "0.00", "retailVal": 0, "darkText": "+22.23", "darkVal": 2222854850.0, "darkUp": true, "strengthText": "7.30", "strengthVal": 7.3, "behavior": "抢筹", "behaviorRank": 4, "leader": "国瓷材料 +4.23%", "_members": 34}, {"name": "照明设备Ⅱ", "kind": "行业", "pctText": "+3.52%", "pctVal": 3.52, "totalText": "+17.96", "totalVal": 1795853438.83, "mainText": "+1.31", "mainVal": 130646715.0, "retailText": "0.00", "retailVal": 0, "darkText": "+1.31", "darkVal": 130646715.0, "darkUp": true, "strengthText": "7.27", "strengthVal": 7.27, "behavior": "抢筹", "behaviorRank": 4, "leader": "勤上股份 +9.98%", "_members": 12}, {"name": "生物制品", "kind": "行业", "pctText": "+4.73%", "pctVal": 4.73, "totalText": "+187.24", "totalVal": 18724119840.54, "mainText": "+13.33", "mainVal": 1333470785.0, "retailText": "0.00", "retailVal": 0, "darkText": "+13.33", "darkVal": 1333470785.0, "darkUp": true, "strengthText": "7.12", "strengthVal": 7.12, "behavior": "抢筹", "behaviorRank": 4, "leader": "甘李药业 +5.47%", "_members": 46}, {"name": "房屋建设Ⅱ", "kind": "行业", "pctText": "-0.05%", "pctVal": -0.05, "totalText": "+21.83", "totalVal": 2182855833.57, "mainText": "+1.51", "mainVal": 150978453.0, "retailText": "0.00", "retailVal": 0, "darkText": "+1.51", "darkVal": 150978453.0, "darkUp": true, "strengthText": "6.92", "strengthVal": 6.92, "behavior": "抢筹", "behaviorRank": 4, "leader": "中国建筑 +-0.47%", "_members": 7}, {"name": "调味发酵品Ⅱ", "kind": "行业", "pctText": "+3.89%", "pctVal": 3.89, "totalText": "+63.89", "totalVal": 6388501988.73, "mainText": "+4.39", "mainVal": 439489422.0, "retailText": "0.00", "retailVal": 0, "darkText": "+4.39", "darkVal": 439489422.0, "darkUp": true, "strengthText": "6.88", "strengthVal": 6.88, "behavior": "抢筹", "behaviorRank": 4, "leader": "莲花控股 +5.10%", "_members": 13}, {"name": "房地产开发", "kind": "行业", "pctText": "+0.04%", "pctVal": 0.04, "totalText": "+207.93", "totalVal": 20793082947.21, "mainText": "+13.74", "mainVal": 1373515687.0, "retailText": "0.00", "retailVal": 0, "darkText": "+13.74", "darkVal": 1373515687.0, "darkUp": true, "strengthText": "6.61", "strengthVal": 6.61, "behavior": "抢筹", "behaviorRank": 4, "leader": "华丽家族 +10.11%", "_members": 69}, {"name": "航空机场", "kind": "行业", "pctText": "+0.29%", "pctVal": 0.29, "totalText": "+22.10", "totalVal": 2210463779.36, "mainText": "+1.38", "mainVal": 138151405.0, "retailText": "0.00", "retailVal": 0, "darkText": "+1.38", "darkVal": 138151405.0, "darkUp": true, "strengthText": "6.25", "strengthVal": 6.25, "behavior": "抢筹", "behaviorRank": 4, "leader": "春秋航空 +0.14%", "_members": 12}, {"name": "专用设备", "kind": "行业", "pctText": "+2.02%", "pctVal": 2.02, "totalText": "+357.54", "totalVal": 35753665928.34999, "mainText": "+21.68", "mainVal": 2168035482.0, "retailText": "0.00", "retailVal": 0, "darkText": "+21.68", "darkVal": 2168035482.0, "darkUp": true, "strengthText": "6.06", "strengthVal": 6.06, "behavior": "抢筹", "behaviorRank": 4, "leader": "通用电梯 +19.99%", "_members": 169}, {"name": "摩托车及其他", "kind": "行业", "pctText": "+1.02%", "pctVal": 1.02, "totalText": "+17.61", "totalVal": 1760976069.8300002, "mainText": "+0.97", "mainVal": 97443124.0, "retailText": "0.00", "retailVal": 0, "darkText": "+0.97", "darkVal": 97443124.0, "darkUp": true, "strengthText": "5.53", "strengthVal": 5.53, "behavior": "抢筹", "behaviorRank": 4, "leader": "征和工业 +6.81%", "_members": 15}, {"name": "其他电子Ⅱ", "kind": "行业", "pctText": "+3.48%", "pctVal": 3.48, "totalText": "+159.89", "totalVal": 15988533389.060001, "mainText": "+8.63", "mainVal": 863277506.0, "retailText": "0.00", "retailVal": 0, "darkText": "+8.63", "darkVal": 863277506.0, "darkUp": true, "strengthText": "5.40", "strengthVal": 5.4, "behavior": "抢筹", "behaviorRank": 4, "leader": "富信科技 +16.21%", "_members": 32}, {"name": "塑料", "kind": "行业", "pctText": "+2.79%", "pctVal": 2.79, "totalText": "+240.71", "totalVal": 24071024526.180004, "mainText": "+10.94", "mainVal": 1094394226.0, "retailText": "0.00", "retailVal": 0, "darkText": "+10.94", "darkVal": 1094394226.0, "darkUp": true, "strengthText": "4.55", "strengthVal": 4.55, "behavior": "抢筹", "behaviorRank": 4, "leader": "东材科技 +5.38%", "_members": 72}, {"name": "医疗器械", "kind": "行业", "pctText": "+1.51%", "pctVal": 1.51, "totalText": "+198.72", "totalVal": 19871818438.090008, "mainText": "+9.02", "mainVal": 901699763.0, "retailText": "0.00", "retailVal": 0, "darkText": "+9.02", "darkVal": 901699763.0, "darkUp": true, "strengthText": "4.54", "strengthVal": 4.54, "behavior": "抢筹", "behaviorRank": 4, "leader": "浩欧博 +20.00%", "_members": 119}, {"name": "通用设备", "kind": "行业", "pctText": "+2.81%", "pctVal": 2.81, "totalText": "+548.04", "totalVal": 54803577569.77995, "mainText": "+23.87", "mainVal": 2386663232.0, "retailText": "0.00", "retailVal": 0, "darkText": "+23.87", "darkVal": 2386663232.0, "darkUp": true, "strengthText": "4.35", "strengthVal": 4.35, "behavior": "抢筹", "behaviorRank": 4, "leader": "优利德 +20.00%", "_members": 207}, {"name": "医疗服务", "kind": "行业", "pctText": "+1.27%", "pctVal": 1.27, "totalText": "+347.54", "totalVal": 34753748609.41001, "mainText": "+15.01", "mainVal": 1501406573.0, "retailText": "0.00", "retailVal": 0, "darkText": "+15.01", "darkVal": 1501406573.0, "darkUp": true, "strengthText": "4.32", "strengthVal": 4.32, "behavior": "抢筹", "behaviorRank": 4, "leader": "南华生物 +5.37%", "_members": 50}, {"name": "电池", "kind": "行业", "pctText": "+2.00%", "pctVal": 2.0, "totalText": "+448.23", "totalVal": 44823010774.399994, "mainText": "+17.26", "mainVal": 1725904904.0, "retailText": "0.00", "retailVal": 0, "darkText": "+17.26", "darkVal": 1725904904.0, "darkUp": true, "strengthText": "3.85", "strengthVal": 3.85, "behavior": "抢筹", "behaviorRank": 4, "leader": "中一科技 +20.00%", "_members": 90}, {"name": "元件", "kind": "行业", "pctText": "+1.45%", "pctVal": 1.45, "totalText": "+1242.46", "totalVal": 124245667348.54004, "mainText": "+46.74", "mainVal": 4673771863.0, "retailText": "0.00", "retailVal": 0, "darkText": "+46.74", "darkVal": 4673771863.0, "darkUp": true, "strengthText": "3.76", "strengthVal": 3.76, "behavior": "抢筹", "behaviorRank": 4, "leader": "超声电子 +7.85%", "_members": 60}, {"name": "装修装饰Ⅱ", "kind": "行业", "pctText": "+2.03%", "pctVal": 2.03, "totalText": "+28.44", "totalVal": 2844405124.94, "mainText": "+0.96", "mainVal": 96389317.0, "retailText": "0.00", "retailVal": 0, "darkText": "+0.96", "darkVal": 96389317.0, "darkUp": true, "strengthText": "3.39", "strengthVal": 3.39, "behavior": "抢筹", "behaviorRank": 4, "leader": "中天精装 +9.99%", "_members": 16}, {"name": "其他电源设备Ⅱ", "kind": "行业", "pctText": "+1.99%", "pctVal": 1.99, "totalText": "+124.60", "totalVal": 12459937641.049997, "mainText": "+4.15", "mainVal": 415061703.0, "retailText": "0.00", "retailVal": 0, "darkText": "+4.15", "darkVal": 415061703.0, "darkUp": true, "strengthText": "3.33", "strengthVal": 3.33, "behavior": "抢筹", "behaviorRank": 4, "leader": "科华数据 +7.83%", "_members": 30}, {"name": "金属新材料", "kind": "行业", "pctText": "+1.38%", "pctVal": 1.38, "totalText": "+67.72", "totalVal": 6771722509.289997, "mainText": "+2.10", "mainVal": 210029350.0, "retailText": "0.00", "retailVal": 0, "darkText": "+2.10", "darkVal": 210029350.0, "darkUp": true, "strengthText": "3.10", "strengthVal": 3.1, "behavior": "抢筹", "behaviorRank": 4, "leader": "江南新材 +10.00%", "_members": 32}, {"name": "普钢", "kind": "行业", "pctText": "-0.18%", "pctVal": -0.18, "totalText": "+36.95", "totalVal": 3694642370.75, "mainText": "+1.06", "mainVal": 106038416.0, "retailText": "0.00", "retailVal": 0, "darkText": "+1.06", "darkVal": 106038416.0, "darkUp": true, "strengthText": "2.87", "strengthVal": 2.87, "behavior": "建仓", "behaviorRank": 3, "leader": "宝钢股份 +0.35%", "_members": 21}, {"name": "半导体", "kind": "行业", "pctText": "+1.28%", "pctVal": 1.28, "totalText": "+2079.34", "totalVal": 207934050611.22012, "mainText": "+54.29", "mainVal": 5429179513.0, "retailText": "0.00", "retailVal": 0, "darkText": "+54.29", "darkVal": 5429179513.0, "darkUp": true, "strengthText": "2.61", "strengthVal": 2.61, "behavior": "建仓", "behaviorRank": 3, "leader": "先导基电 +9.28%", "_members": 164}, {"name": "工程咨询服务Ⅱ", "kind": "行业", "pctText": "+1.89%", "pctVal": 1.89, "totalText": "+83.33", "totalVal": 8333465195.979999, "mainText": "+2.12", "mainVal": 211625656.0, "retailText": "0.00", "retailVal": 0, "darkText": "+2.12", "darkVal": 211625656.0, "darkUp": true, "strengthText": "2.54", "strengthVal": 2.54, "behavior": "建仓", "behaviorRank": 3, "leader": "太极实业 +3.62%", "_members": 39}, {"name": "化学制品", "kind": "行业", "pctText": "+1.00%", "pctVal": 1.0, "totalText": "+360.98", "totalVal": 36097982553.37001, "mainText": "+5.36", "mainVal": 535929617.0, "retailText": "0.00", "retailVal": 0, "darkText": "+5.36", "darkVal": 535929617.0, "darkUp": true, "strengthText": "1.48", "strengthVal": 1.48, "behavior": "建仓", "behaviorRank": 3, "leader": "凌玮科技 +13.02%", "_members": 163}, {"name": "家居用品", "kind": "行业", "pctText": "+1.24%", "pctVal": 1.24, "totalText": "+99.95", "totalVal": 9994829656.069998, "mainText": "+1.40", "mainVal": 139829325.0, "retailText": "0.00", "retailVal": 0, "darkText": "+1.40", "darkVal": 139829325.0, "darkUp": true, "strengthText": "1.40", "strengthVal": 1.4, "behavior": "建仓", "behaviorRank": 3, "leader": "大亚圣象 +10.01%", "_members": 68}, {"name": "农产品加工", "kind": "行业", "pctText": "+1.05%", "pctVal": 1.05, "totalText": "+70.87", "totalVal": 7087201343.690001, "mainText": "+0.99", "mainVal": 99241072.0, "retailText": "0.00", "retailVal": 0, "darkText": "+0.99", "darkVal": 99241072.0, "darkUp": true, "strengthText": "1.40", "strengthVal": 1.4, "behavior": "建仓", "behaviorRank": 3, "leader": "保龄宝 +10.06%", "_members": 22}, {"name": "自动化设备", "kind": "行业", "pctText": "+0.48%", "pctVal": 0.48, "totalText": "+309.09", "totalVal": 30909201966.650005, "mainText": "+4.17", "mainVal": 417300923.0, "retailText": "0.00", "retailVal": 0, "darkText": "+4.17", "darkVal": 417300923.0, "darkUp": true, "strengthText": "1.35", "strengthVal": 1.35, "behavior": "建仓", "behaviorRank": 3, "leader": "智立方 +6.55%", "_members": 79}, {"name": "白色家电", "kind": "行业", "pctText": "+0.00%", "pctVal": 0.0, "totalText": "+29.47", "totalVal": 2947229215.2, "mainText": "+0.30", "mainVal": 29668894.0, "retailText": "0.00", "retailVal": 0, "darkText": "+0.30", "darkVal": 29668894.0, "darkUp": true, "strengthText": "1.01", "strengthVal": 1.01, "behavior": "建仓", "behaviorRank": 3, "leader": "格力电器 +0.47%", "_members": 10}, {"name": "汽车零部件", "kind": "行业", "pctText": "-0.07%", "pctVal": -0.07, "totalText": "+377.31", "totalVal": 37731274688.13998, "mainText": "+3.57", "mainVal": 357466136.0, "retailText": "0.00", "retailVal": 0, "darkText": "+3.57", "darkVal": 357466136.0, "darkUp": true, "strengthText": "0.95", "strengthVal": 0.95, "behavior": "洗盘", "behaviorRank": 2, "leader": "众泰汽车 +0.92%", "_members": 232}, {"name": "炼化及贸易", "kind": "行业", "pctText": "+0.10%", "pctVal": 0.1, "totalText": "+78.92", "totalVal": 7891924542.960001, "mainText": "+0.49", "mainVal": 48825858.0, "retailText": "0.00", "retailVal": 0, "darkText": "+0.49", "darkVal": 48825858.0, "darkUp": true, "strengthText": "0.62", "strengthVal": 0.62, "behavior": "洗盘", "behaviorRank": 2, "leader": "荣盛石化 +3.20%", "_members": 29}, {"name": "化学原料", "kind": "行业", "pctText": "-0.06%", "pctVal": -0.06, "totalText": "+160.05", "totalVal": 16005025337.309998, "mainText": "+0.16", "mainVal": 16151506.0, "retailText": "0.00", "retailVal": 0, "darkText": "+0.16", "darkVal": 16151506.0, "darkUp": true, "strengthText": "0.10", "strengthVal": 0.1, "behavior": "洗盘", "behaviorRank": 2, "leader": "振华股份 +9.99%", "_members": 52}, {"name": "白酒Ⅱ", "kind": "行业", "pctText": "-0.08%", "pctVal": -0.08, "totalText": "+86.52", "totalVal": 8652146088.390001, "mainText": "-0.12", "mainVal": -12132769.0, "retailText": "0.00", "retailVal": 0, "darkText": "-0.12", "darkVal": -12132769.0, "darkUp": false, "strengthText": "-0.14", "strengthVal": -0.14, "behavior": "洗盘", "behaviorRank": 2, "leader": "天佑德酒 +3.97%", "_members": 18}, {"name": "光伏设备", "kind": "行业", "pctText": "-0.40%", "pctVal": -0.4, "totalText": "+216.12", "totalVal": 21611739245.099995, "mainText": "-0.88", "mainVal": -87854236.0, "retailText": "0.00", "retailVal": 0, "darkText": "-0.88", "darkVal": -87854236.0, "darkUp": false, "strengthText": "-0.41", "strengthVal": -0.41, "behavior": "洗盘", "behaviorRank": 2, "leader": "帝尔激光 +4.33%", "_members": 61}, {"name": "专业工程", "kind": "行业", "pctText": "+1.78%", "pctVal": 1.78, "totalText": "+54.29", "totalVal": 5428728264.12, "mainText": "-0.34", "mainVal": -34469960.0, "retailText": "0.00", "retailVal": 0, "darkText": "-0.34", "darkVal": -34469960.0, "darkUp": false, "strengthText": "-0.63", "strengthVal": -0.63, "behavior": "洗盘", "behaviorRank": 2, "leader": "鸿路钢构 +10.00%", "_members": 30}, {"name": "化学制药", "kind": "行业", "pctText": "-0.57%", "pctVal": -0.57, "totalText": "+389.20", "totalVal": 38919501182.96998, "mainText": "-2.62", "mainVal": -262476148.0, "retailText": "0.00", "retailVal": 0, "darkText": "-2.62", "darkVal": -262476148.0, "darkUp": false, "strengthText": "-0.67", "strengthVal": -0.67, "behavior": "洗盘", "behaviorRank": 2, "leader": "哈药股份 +-0.44%", "_members": 130}, {"name": "家电零部件Ⅱ", "kind": "行业", "pctText": "+1.17%", "pctVal": 1.17, "totalText": "+67.40", "totalVal": 6740343840.52, "mainText": "-0.65", "mainVal": -64605879.0, "retailText": "0.00", "retailVal": 0, "darkText": "-0.65", "darkVal": -64605879.0, "darkUp": false, "strengthText": "-0.96", "strengthVal": -0.96, "behavior": "洗盘", "behaviorRank": 2, "leader": "宏昌科技 +12.22%", "_members": 28}, {"name": "国有大型银行Ⅱ", "kind": "行业", "pctText": "-0.66%", "pctVal": -0.66, "totalText": "+75.14", "totalVal": 7514340059.51, "mainText": "-0.87", "mainVal": -86802237.0, "retailText": "0.00", "retailVal": 0, "darkText": "-0.87", "darkVal": -86802237.0, "darkUp": false, "strengthText": "-1.16", "strengthVal": -1.16, "behavior": "出货", "behaviorRank": 1, "leader": "农业银行 +-0.73%", "_members": 6}, {"name": "城商行Ⅱ", "kind": "行业", "pctText": "-0.26%", "pctVal": -0.26, "totalText": "+43.70", "totalVal": 4369745937.11, "mainText": "-0.67", "mainVal": -66770008.0, "retailText": "0.00", "retailVal": 0, "darkText": "-0.67", "darkVal": -66770008.0, "darkUp": false, "strengthText": "-1.53", "strengthVal": -1.53, "behavior": "出货", "behaviorRank": 1, "leader": "杭州银行 +0.35%", "_members": 16}, {"name": "玻璃玻纤", "kind": "行业", "pctText": "-1.30%", "pctVal": -1.3, "totalText": "+219.68", "totalVal": 21968312788.24, "mainText": "-3.90", "mainVal": -390431695.0, "retailText": "0.00", "retailVal": 0, "darkText": "-3.90", "darkVal": -390431695.0, "darkUp": false, "strengthText": "-1.78", "strengthVal": -1.78, "behavior": "出货", "behaviorRank": 1, "leader": "中国巨石 +0.33%", "_members": 15}, {"name": "通信设备", "kind": "行业", "pctText": "-1.08%", "pctVal": -1.08, "totalText": "+1128.46", "totalVal": 112846416494.50996, "mainText": "-20.31", "mainVal": -2030955953.0, "retailText": "0.00", "retailVal": 0, "darkText": "-20.31", "darkVal": -2030955953.0, "darkUp": false, "strengthText": "-1.80", "strengthVal": -1.8, "behavior": "出货", "behaviorRank": 1, "leader": "新易盛 +-0.84%", "_members": 81}, {"name": "化学纤维", "kind": "行业", "pctText": "+0.49%", "pctVal": 0.49, "totalText": "+23.89", "totalVal": 2389122076.81, "mainText": "-0.44", "mainVal": -43942976.0, "retailText": "0.00", "retailVal": 0, "darkText": "-0.44", "darkVal": -43942976.0, "darkUp": false, "strengthText": "-1.84", "strengthVal": -1.84, "behavior": "出货", "behaviorRank": 1, "leader": "皖维高新 +1.60%", "_members": 23}, {"name": "军工电子Ⅱ", "kind": "行业", "pctText": "+0.95%", "pctVal": 0.95, "totalText": "+148.79", "totalVal": 14879274033.54, "mainText": "-3.09", "mainVal": -309330902.0, "retailText": "0.00", "retailVal": 0, "darkText": "-3.09", "darkVal": -309330902.0, "darkUp": false, "strengthText": "-2.08", "strengthVal": -2.08, "behavior": "出货", "behaviorRank": 1, "leader": "天奥电子 +9.98%", "_members": 57}, {"name": "文娱用品", "kind": "行业", "pctText": "-0.90%", "pctVal": -0.9, "totalText": "+19.20", "totalVal": 1919663198.29, "mainText": "-0.42", "mainVal": -42013666.0, "retailText": "0.00", "retailVal": 0, "darkText": "-0.42", "darkVal": -42013666.0, "darkUp": false, "strengthText": "-2.19", "strengthVal": -2.19, "behavior": "出货", "behaviorRank": 1, "leader": "通达创智 +7.72%", "_members": 20}, {"name": "环境治理", "kind": "行业", "pctText": "-0.60%", "pctVal": -0.6, "totalText": "+97.13", "totalVal": 9712631110.550001, "mainText": "-2.17", "mainVal": -217166807.0, "retailText": "0.00", "retailVal": 0, "darkText": "-2.17", "darkVal": -217166807.0, "darkUp": false, "strengthText": "-2.24", "strengthVal": -2.24, "behavior": "出货", "behaviorRank": 1, "leader": "高能环境 +3.56%", "_members": 100}, {"name": "旅游及景区", "kind": "行业", "pctText": "+2.27%", "pctVal": 2.27, "totalText": "+46.01", "totalVal": 4601437918.63, "mainText": "-1.13", "mainVal": -112814140.0, "retailText": "0.00", "retailVal": 0, "darkText": "-1.13", "darkVal": -112814140.0, "darkUp": false, "strengthText": "-2.45", "strengthVal": -2.45, "behavior": "出货", "behaviorRank": 1, "leader": "桂林旅游 +4.64%", "_members": 23}, {"name": "航空装备Ⅱ", "kind": "行业", "pctText": "-0.43%", "pctVal": -0.43, "totalText": "+115.70", "totalVal": 11570483088.849997, "mainText": "-3.10", "mainVal": -310194591.0, "retailText": "0.00", "retailVal": 0, "darkText": "-3.10", "darkVal": -310194591.0, "darkUp": false, "strengthText": "-2.68", "strengthVal": -2.68, "behavior": "出货", "behaviorRank": 1, "leader": "菲利华 +1.42%", "_members": 46}, {"name": "包装印刷", "kind": "行业", "pctText": "-2.00%", "pctVal": -2.0, "totalText": "+59.21", "totalVal": 5921180338.98, "mainText": "-1.62", "mainVal": -161798432.0, "retailText": "0.00", "retailVal": 0, "darkText": "-1.62", "darkVal": -161798432.0, "darkUp": false, "strengthText": "-2.73", "strengthVal": -2.73, "behavior": "出货", "behaviorRank": 1, "leader": "美盈森 +-2.90%", "_members": 39}, {"name": "消费电子", "kind": "行业", "pctText": "-0.13%", "pctVal": -0.13, "totalText": "+427.35", "totalVal": 42734784997.979996, "mainText": "-13.11", "mainVal": -1311459636.0, "retailText": "0.00", "retailVal": 0, "darkText": "-13.11", "darkVal": -1311459636.0, "darkUp": false, "strengthText": "-3.07", "strengthVal": -3.07, "behavior": "出货", "behaviorRank": 1, "leader": "胜利精密 +10.04%", "_members": 89}, {"name": "特钢Ⅱ", "kind": "行业", "pctText": "-1.36%", "pctVal": -1.36, "totalText": "+16.68", "totalVal": 1668303006.3499997, "mainText": "-0.52", "mainVal": -51878186.0, "retailText": "0.00", "retailVal": 0, "darkText": "-0.52", "darkVal": -51878186.0, "darkUp": false, "strengthText": "-3.11", "strengthVal": -3.11, "behavior": "出货", "behaviorRank": 1, "leader": "南钢股份 +0.23%", "_members": 12}, {"name": "种植业", "kind": "行业", "pctText": "+0.22%", "pctVal": 0.22, "totalText": "+77.01", "totalVal": 7701194261.680001, "mainText": "-2.54", "mainVal": -254184335.0, "retailText": "0.00", "retailVal": 0, "darkText": "-2.54", "darkVal": -254184335.0, "darkUp": false, "strengthText": "-3.30", "strengthVal": -3.3, "behavior": "出货", "behaviorRank": 1, "leader": "万向德农 +9.99%", "_members": 18}, {"name": "工程机械", "kind": "行业", "pctText": "-0.35%", "pctVal": -0.35, "totalText": "+57.80", "totalVal": 5779786583.639999, "mainText": "-1.98", "mainVal": -197745866.0, "retailText": "0.00", "retailVal": 0, "darkText": "-1.98", "darkVal": -197745866.0, "darkUp": false, "strengthText": "-3.42", "strengthVal": -3.42, "behavior": "出货", "behaviorRank": 1, "leader": "山推股份 +0.43%", "_members": 27}, {"name": "纺织制造", "kind": "行业", "pctText": "-2.39%", "pctVal": -2.39, "totalText": "+29.18", "totalVal": 2918114434.2800007, "mainText": "-1.11", "mainVal": -110993099.0, "retailText": "0.00", "retailVal": 0, "darkText": "-1.11", "darkVal": -110993099.0, "darkUp": false, "strengthText": "-3.80", "strengthVal": -3.8, "behavior": "出货", "behaviorRank": 1, "leader": "华茂股份 +9.93%", "_members": 31}, {"name": "食品加工", "kind": "行业", "pctText": "-0.72%", "pctVal": -0.72, "totalText": "+18.70", "totalVal": 1870169158.3299994, "mainText": "-0.74", "mainVal": -74169917.0, "retailText": "0.00", "retailVal": 0, "darkText": "-0.74", "darkVal": -74169917.0, "darkUp": false, "strengthText": "-3.97", "strengthVal": -3.97, "behavior": "出货", "behaviorRank": 1, "leader": "技源集团 +2.59%", "_members": 21}, {"name": "贵金属", "kind": "行业", "pctText": "-0.84%", "pctVal": -0.84, "totalText": "+76.80", "totalVal": 7680140399.499999, "mainText": "-3.29", "mainVal": -328994376.0, "retailText": "0.00", "retailVal": 0, "darkText": "-3.29", "darkVal": -328994376.0, "darkUp": false, "strengthText": "-4.28", "strengthVal": -4.28, "behavior": "出货", "behaviorRank": 1, "leader": "山金国际 +0.33%", "_members": 11}, {"name": "计算机设备", "kind": "行业", "pctText": "-0.81%", "pctVal": -0.81, "totalText": "+216.70", "totalVal": 21670468331.989998, "mainText": "-9.50", "mainVal": -950033308.0, "retailText": "0.00", "retailVal": 0, "darkText": "-9.50", "darkVal": -950033308.0, "darkUp": false, "strengthText": "-4.38", "strengthVal": -4.38, "behavior": "出货", "behaviorRank": 1, "leader": "安居宝 +11.95%", "_members": 77}, {"name": "小家电", "kind": "行业", "pctText": "-0.76%", "pctVal": -0.76, "totalText": "+17.48", "totalVal": 1747818321.95, "mainText": "-0.79", "mainVal": -78508516.0, "retailText": "0.00", "retailVal": 0, "darkText": "-0.79", "darkVal": -78508516.0, "darkUp": false, "strengthText": "-4.49", "strengthVal": -4.49, "behavior": "出货", "behaviorRank": 1, "leader": "欧圣电气 +-0.45%", "_members": 19}, {"name": "饮料乳品", "kind": "行业", "pctText": "-2.84%", "pctVal": -2.84, "totalText": "+44.69", "totalVal": 4468628181.349999, "mainText": "-2.01", "mainVal": -201314628.0, "retailText": "0.00", "retailVal": 0, "darkText": "-2.01", "darkVal": -201314628.0, "darkUp": false, "strengthText": "-4.51", "strengthVal": -4.51, "behavior": "出货", "behaviorRank": 1, "leader": "伊利股份 +0.56%", "_members": 26}, {"name": "小金属", "kind": "行业", "pctText": "-1.25%", "pctVal": -1.25, "totalText": "+168.44", "totalVal": 16843576129.239998, "mainText": "-8.24", "mainVal": -823861956.0, "retailText": "0.00", "retailVal": 0, "darkText": "-8.24", "darkVal": -823861956.0, "darkUp": false, "strengthText": "-4.89", "strengthVal": -4.89, "behavior": "出货", "behaviorRank": 1, "leader": "长裕集团 +3.24%", "_members": 27}, {"name": "休闲食品", "kind": "行业", "pctText": "-0.75%", "pctVal": -0.75, "totalText": "+12.17", "totalVal": 1216957503.94, "mainText": "-0.60", "mainVal": -60292186.0, "retailText": "0.00", "retailVal": 0, "darkText": "-0.60", "darkVal": -60292186.0, "darkUp": false, "strengthText": "-4.95", "strengthVal": -4.95, "behavior": "出货", "behaviorRank": 1, "leader": "来伊份 +2.18%", "_members": 20}, {"name": "橡胶", "kind": "行业", "pctText": "-0.33%", "pctVal": -0.33, "totalText": "+31.28", "totalVal": 3128373381.8799996, "mainText": "-1.56", "mainVal": -155593928.0, "retailText": "0.00", "retailVal": 0, "darkText": "-1.56", "darkVal": -155593928.0, "darkUp": false, "strengthText": "-4.97", "strengthVal": -4.97, "behavior": "出货", "behaviorRank": 1, "leader": "科创新源 +4.11%", "_members": 16}, {"name": "证券Ⅱ", "kind": "行业", "pctText": "-0.28%", "pctVal": -0.28, "totalText": "+145.29", "totalVal": 14528738537.670002, "mainText": "-7.52", "mainVal": -752322095.0, "retailText": "0.00", "retailVal": 0, "darkText": "-7.52", "darkVal": -752322095.0, "darkUp": false, "strengthText": "-5.18", "strengthVal": -5.18, "behavior": "出货", "behaviorRank": 1, "leader": "中金公司 +2.67%", "_members": 48}, {"name": "航运港口", "kind": "行业", "pctText": "-2.82%", "pctVal": -2.82, "totalText": "+88.01", "totalVal": 8800767220.25, "mainText": "-4.59", "mainVal": -459260126.0, "retailText": "0.00", "retailVal": 0, "darkText": "-4.59", "darkVal": -459260126.0, "darkUp": false, "strengthText": "-5.22", "strengthVal": -5.22, "behavior": "出货", "behaviorRank": 1, "leader": "中远海特 +-0.97%", "_members": 32}, {"name": "股份制银行Ⅱ", "kind": "行业", "pctText": "-0.55%", "pctVal": -0.55, "totalText": "+56.84", "totalVal": 5684309683.470001, "mainText": "-3.16", "mainVal": -316069402.0, "retailText": "0.00", "retailVal": 0, "darkText": "-3.16", "darkVal": -316069402.0, "darkUp": false, "strengthText": "-5.56", "strengthVal": -5.56, "behavior": "出货", "behaviorRank": 1, "leader": "兴业银行 +-0.11%", "_members": 9}, {"name": "轨交设备Ⅱ", "kind": "行业", "pctText": "+1.92%", "pctVal": 1.92, "totalText": "+29.38", "totalVal": 2938049617.8000016, "mainText": "-1.65", "mainVal": -164867203.0, "retailText": "0.00", "retailVal": 0, "darkText": "-1.65", "darkVal": -164867203.0, "darkUp": false, "strengthText": "-5.61", "strengthVal": -5.61, "behavior": "出货", "behaviorRank": 1, "leader": "九州一轨 +6.24%", "_members": 27}, {"name": "教育", "kind": "行业", "pctText": "+2.58%", "pctVal": 2.58, "totalText": "+38.72", "totalVal": 3871675283.4900007, "mainText": "-2.19", "mainVal": -219341293.0, "retailText": "0.00", "retailVal": 0, "darkText": "-2.19", "darkVal": -219341293.0, "darkUp": false, "strengthText": "-5.67", "strengthVal": -5.67, "behavior": "出货", "behaviorRank": 1, "leader": "科德教育 +16.97%", "_members": 13}, {"name": "物流", "kind": "行业", "pctText": "-0.40%", "pctVal": -0.4, "totalText": "+36.69", "totalVal": 3669172670.3899994, "mainText": "-2.13", "mainVal": -212536656.0, "retailText": "0.00", "retailVal": 0, "darkText": "-2.13", "darkVal": -212536656.0, "darkUp": false, "strengthText": "-5.79", "strengthVal": -5.79, "behavior": "出货", "behaviorRank": 1, "leader": "建发股份 +1.05%", "_members": 43}, {"name": "风电设备", "kind": "行业", "pctText": "-1.38%", "pctVal": -1.38, "totalText": "+80.42", "totalVal": 8041925245.88, "mainText": "-4.86", "mainVal": -486093289.0, "retailText": "0.00", "retailVal": 0, "darkText": "-4.86", "darkVal": -486093289.0, "darkUp": false, "strengthText": "-6.04", "strengthVal": -6.04, "behavior": "出货", "behaviorRank": 1, "leader": "振江股份 +3.55%", "_members": 30}, {"name": "冶钢原料", "kind": "行业", "pctText": "-1.93%", "pctVal": -1.93, "totalText": "+13.97", "totalVal": 1396856290.99, "mainText": "-0.86", "mainVal": -86319897.0, "retailText": "0.00", "retailVal": 0, "darkText": "-0.86", "darkVal": -86319897.0, "darkUp": false, "strengthText": "-6.18", "strengthVal": -6.18, "behavior": "出货", "behaviorRank": 1, "leader": "金岭矿业 +-0.97%", "_members": 9}, {"name": "航海装备Ⅱ", "kind": "行业", "pctText": "-3.27%", "pctVal": -3.27, "totalText": "+62.46", "totalVal": 6246452260.040001, "mainText": "-3.91", "mainVal": -390940025.0, "retailText": "0.00", "retailVal": 0, "darkText": "-3.91", "darkVal": -390940025.0, "darkUp": false, "strengthText": "-6.26", "strengthVal": -6.26, "behavior": "出货", "behaviorRank": 1, "leader": "中国船舶 +-3.81%", "_members": 10}, {"name": "环保设备Ⅱ", "kind": "行业", "pctText": "-2.03%", "pctVal": -2.03, "totalText": "+27.79", "totalVal": 2778634005.24, "mainText": "-1.81", "mainVal": -180519259.0, "retailText": "0.00", "retailVal": 0, "darkText": "-1.81", "darkVal": -180519259.0, "darkUp": false, "strengthText": "-6.50", "strengthVal": -6.5, "behavior": "出货", "behaviorRank": 1, "leader": "聚光科技 +3.31%", "_members": 26}, {"name": "IT服务Ⅱ", "kind": "行业", "pctText": "-1.58%", "pctVal": -1.58, "totalText": "+316.87", "totalVal": 31687022953.88, "mainText": "-20.87", "mainVal": -2086917028.0, "retailText": "0.00", "retailVal": 0, "darkText": "-20.87", "darkVal": -2086917028.0, "darkUp": false, "strengthText": "-6.59", "strengthVal": -6.59, "behavior": "出货", "behaviorRank": 1, "leader": "南威软件 +9.99%", "_members": 107}, {"name": "工业金属", "kind": "行业", "pctText": "-0.60%", "pctVal": -0.6, "totalText": "+267.67", "totalVal": 26767075898.68001, "mainText": "-17.93", "mainVal": -1793074531.0, "retailText": "0.00", "retailVal": 0, "darkText": "-17.93", "darkVal": -1793074531.0, "darkUp": false, "strengthText": "-6.70", "strengthVal": -6.7, "behavior": "出货", "behaviorRank": 1, "leader": "华钰矿业 +5.03%", "_members": 58}, {"name": "服装家纺", "kind": "行业", "pctText": "-1.72%", "pctVal": -1.72, "totalText": "+44.33", "totalVal": 4433425212.42, "mainText": "-3.12", "mainVal": -312179026.0, "retailText": "0.00", "retailVal": 0, "darkText": "-3.12", "darkVal": -312179026.0, "darkUp": false, "strengthText": "-7.04", "strengthVal": -7.04, "behavior": "出货", "behaviorRank": 1, "leader": "森马服饰 +0.36%", "_members": 50}, {"name": "中药Ⅱ", "kind": "行业", "pctText": "-2.02%", "pctVal": -2.02, "totalText": "+88.57", "totalVal": 8856714070.13, "mainText": "-6.33", "mainVal": -632805826.0, "retailText": "0.00", "retailVal": 0, "darkText": "-6.33", "darkVal": -632805826.0, "darkUp": false, "strengthText": "-7.14", "strengthVal": -7.14, "behavior": "出货", "behaviorRank": 1, "leader": "千金药业 +-2.80%", "_members": 60}, {"name": "装修建材", "kind": "行业", "pctText": "-0.93%", "pctVal": -0.93, "totalText": "+36.28", "totalVal": 3628061986.13, "mainText": "-2.61", "mainVal": -261429407.0, "retailText": "0.00", "retailVal": 0, "darkText": "-2.61", "darkVal": -261429407.0, "darkUp": false, "strengthText": "-7.21", "strengthVal": -7.21, "behavior": "出货", "behaviorRank": 1, "leader": "东方雨虹 +-0.19%", "_members": 31}, {"name": "电网设备", "kind": "行业", "pctText": "-1.60%", "pctVal": -1.6, "totalText": "+295.86", "totalVal": 29585629662.390003, "mainText": "-21.87", "mainVal": -2186704739.0, "retailText": "0.00", "retailVal": 0, "darkText": "-21.87", "darkVal": -2186704739.0, "darkUp": false, "strengthText": "-7.39", "strengthVal": -7.39, "behavior": "出货", "behaviorRank": 1, "leader": "华盛昌 +2.61%", "_members": 125}, {"name": "贸易Ⅱ", "kind": "行业", "pctText": "-0.53%", "pctVal": -0.53, "totalText": "+6.66", "totalVal": 665990120.87, "mainText": "-0.49", "mainVal": -49267487.0, "retailText": "0.00", "retailVal": 0, "darkText": "-0.49", "darkVal": -49267487.0, "darkUp": false, "strengthText": "-7.40", "strengthVal": -7.4, "behavior": "出货", "behaviorRank": 1, "leader": "苏美达 +0.53%", "_members": 11}, {"name": "电机Ⅱ", "kind": "行业", "pctText": "-1.40%", "pctVal": -1.4, "totalText": "+24.67", "totalVal": 2467487290.8399997, "mainText": "-1.87", "mainVal": -187433501.0, "retailText": "0.00", "retailVal": 0, "darkText": "-1.87", "darkVal": -187433501.0, "darkUp": false, "strengthText": "-7.60", "strengthVal": -7.6, "behavior": "出货", "behaviorRank": 1, "leader": "江苏雷利 +0.97%", "_members": 26}, {"name": "酒店餐饮", "kind": "行业", "pctText": "-1.30%", "pctVal": -1.3, "totalText": "+9.19", "totalVal": 919320084.8600001, "mainText": "-0.70", "mainVal": -69956350.0, "retailText": "0.00", "retailVal": 0, "darkText": "-0.70", "darkVal": -69956350.0, "darkUp": false, "strengthText": "-7.61", "strengthVal": -7.61, "behavior": "出货", "behaviorRank": 1, "leader": "金陵饭店 +-0.44%", "_members": 7}, {"name": "渔业", "kind": "行业", "pctText": "-2.38%", "pctVal": -2.38, "totalText": "+4.99", "totalVal": 498620906.91, "mainText": "-0.39", "mainVal": -38854754.0, "retailText": "0.00", "retailVal": 0, "darkText": "-0.39", "darkVal": -38854754.0, "darkUp": false, "strengthText": "-7.79", "strengthVal": -7.79, "behavior": "出货", "behaviorRank": 1, "leader": "开创国际 +-1.28%", "_members": 6}, {"name": "影视院线", "kind": "行业", "pctText": "-1.91%", "pctVal": -1.91, "totalText": "+60.99", "totalVal": 6099231115.47, "mainText": "-4.76", "mainVal": -476407915.0, "retailText": "0.00", "retailVal": 0, "darkText": "-4.76", "darkVal": -476407915.0, "darkUp": false, "strengthText": "-7.81", "strengthVal": -7.81, "behavior": "出货", "behaviorRank": 1, "leader": "百纳千成 +0.67%", "_members": 18}, {"name": "乘用车", "kind": "行业", "pctText": "-1.38%", "pctVal": -1.38, "totalText": "+44.88", "totalVal": 4488175151.07, "mainText": "-3.73", "mainVal": -372698195.0, "retailText": "0.00", "retailVal": 0, "darkText": "-3.73", "darkVal": -372698195.0, "darkUp": false, "strengthText": "-8.30", "strengthVal": -8.3, "behavior": "出货", "behaviorRank": 1, "leader": "长城汽车 +-0.14%", "_members": 7}, {"name": "医药商业", "kind": "行业", "pctText": "-3.63%", "pctVal": -3.63, "totalText": "+41.20", "totalVal": 4119739413.96, "mainText": "-3.45", "mainVal": -344810756.0, "retailText": "0.00", "retailVal": 0, "darkText": "-3.45", "darkVal": -344810756.0, "darkUp": false, "strengthText": "-8.37", "strengthVal": -8.37, "behavior": "出货", "behaviorRank": 1, "leader": "九州通 +0.41%", "_members": 30}, {"name": "地面兵装Ⅱ", "kind": "行业", "pctText": "-2.65%", "pctVal": -2.65, "totalText": "+36.57", "totalVal": 3657236184.71, "mainText": "-3.25", "mainVal": -325413369.0, "retailText": "0.00", "retailVal": 0, "darkText": "-3.25", "darkVal": -325413369.0, "darkUp": false, "strengthText": "-8.90", "strengthVal": -8.9, "behavior": "出货", "behaviorRank": 1, "leader": "光电股份 +-0.78%", "_members": 11}, {"name": "农化制品", "kind": "行业", "pctText": "-1.54%", "pctVal": -1.54, "totalText": "+104.18", "totalVal": 10417958303.36, "mainText": "-9.38", "mainVal": -938185323.0, "retailText": "0.00", "retailVal": 0, "darkText": "-9.38", "darkVal": -938185323.0, "darkUp": false, "strengthText": "-9.01", "strengthVal": -9.01, "behavior": "出货", "behaviorRank": 1, "leader": "利民股份 +5.01%", "_members": 58}, {"name": "燃气Ⅱ", "kind": "行业", "pctText": "-1.29%", "pctVal": -1.29, "totalText": "+36.63", "totalVal": 3663330380.7200003, "mainText": "-3.32", "mainVal": -331791650.0, "retailText": "0.00", "retailVal": 0, "darkText": "-3.32", "darkVal": -331791650.0, "darkUp": false, "strengthText": "-9.06", "strengthVal": -9.06, "behavior": "出货", "behaviorRank": 1, "leader": "德龙汇能 +5.68%", "_members": 27}, {"name": "综合Ⅱ", "kind": "行业", "pctText": "-1.98%", "pctVal": -1.98, "totalText": "+36.59", "totalVal": 3658826048.4900007, "mainText": "-3.45", "mainVal": -344506185.0, "retailText": "0.00", "retailVal": 0, "darkText": "-3.45", "darkVal": -344506185.0, "darkUp": false, "strengthText": "-9.42", "strengthVal": -9.42, "behavior": "出货", "behaviorRank": 1, "leader": "上海三毛 +0.92%", "_members": 18}, {"name": "煤炭开采", "kind": "行业", "pctText": "-3.02%", "pctVal": -3.02, "totalText": "+72.43", "totalVal": 7243455980.68, "mainText": "-6.87", "mainVal": -686561250.0, "retailText": "0.00", "retailVal": 0, "darkText": "-6.87", "darkVal": -686561250.0, "darkUp": false, "strengthText": "-9.48", "strengthVal": -9.48, "behavior": "出货", "behaviorRank": 1, "leader": "上海能源 +-1.55%", "_members": 26}, {"name": "养殖业", "kind": "行业", "pctText": "-2.55%", "pctVal": -2.55, "totalText": "+39.12", "totalVal": 3912025325.8500004, "mainText": "-3.87", "mainVal": -386730255.0, "retailText": "0.00", "retailVal": 0, "darkText": "-3.87", "darkVal": -386730255.0, "darkUp": false, "strengthText": "-9.89", "strengthVal": -9.89, "behavior": "出货", "behaviorRank": 1, "leader": "温氏股份 +-0.74%", "_members": 20}, {"name": "多元金融", "kind": "行业", "pctText": "-3.09%", "pctVal": -3.09, "totalText": "+40.31", "totalVal": 4031480906.060001, "mainText": "-4.07", "mainVal": -406729958.0, "retailText": "0.00", "retailVal": 0, "darkText": "-4.07", "darkVal": -406729958.0, "darkUp": false, "strengthText": "-10.09", "strengthVal": -10.09, "behavior": "出货", "behaviorRank": 1, "leader": "华金资本 +-0.81%", "_members": 22}, {"name": "一般零售", "kind": "行业", "pctText": "-3.39%", "pctVal": -3.39, "totalText": "+105.14", "totalVal": 10514270859.790005, "mainText": "-10.64", "mainVal": -1063767337.0, "retailText": "0.00", "retailVal": 0, "darkText": "-10.64", "darkVal": -1063767337.0, "darkUp": false, "strengthText": "-10.12", "strengthVal": -10.12, "behavior": "出货", "behaviorRank": 1, "leader": "汇通能源 +9.99%", "_members": 57}, {"name": "软件开发", "kind": "行业", "pctText": "-1.52%", "pctVal": -1.52, "totalText": "+283.18", "totalVal": 28317810213.809986, "mainText": "-29.37", "mainVal": -2937244005.0, "retailText": "0.00", "retailVal": 0, "darkText": "-29.37", "darkVal": -2937244005.0, "darkUp": false, "strengthText": "-10.37", "strengthVal": -10.37, "behavior": "出货", "behaviorRank": 1, "leader": "科大国创 +11.91%", "_members": 121}, {"name": "专业连锁Ⅱ", "kind": "行业", "pctText": "-1.76%", "pctVal": -1.76, "totalText": "+8.48", "totalVal": 848438969.41, "mainText": "-0.88", "mainVal": -88189502.0, "retailText": "0.00", "retailVal": 0, "darkText": "-0.88", "darkVal": -88189502.0, "darkUp": false, "strengthText": "-10.39", "strengthVal": -10.39, "behavior": "出货", "behaviorRank": 1, "leader": "华致酒行 +0.78%", "_members": 7}, {"name": "动物保健Ⅱ", "kind": "行业", "pctText": "-0.86%", "pctVal": -0.86, "totalText": "+4.15", "totalVal": 414907569.35, "mainText": "-0.43", "mainVal": -43412875.0, "retailText": "0.00", "retailVal": 0, "darkText": "-0.43", "darkVal": -43412875.0, "darkUp": false, "strengthText": "-10.46", "strengthVal": -10.46, "behavior": "出货", "behaviorRank": 1, "leader": "申联生物 +-1.59%", "_members": 9}, {"name": "保险Ⅱ", "kind": "行业", "pctText": "-1.14%", "pctVal": -1.14, "totalText": "+45.26", "totalVal": 4526287486.03, "mainText": "-4.77", "mainVal": -477191100.0, "retailText": "0.00", "retailVal": 0, "darkText": "-4.77", "darkVal": -477191100.0, "darkUp": false, "strengthText": "-10.54", "strengthVal": -10.54, "behavior": "出货", "behaviorRank": 1, "leader": "中国人保 +-1.22%", "_members": 5}, {"name": "化妆品", "kind": "行业", "pctText": "-5.58%", "pctVal": -5.58, "totalText": "+23.98", "totalVal": 2398467780.55, "mainText": "-2.54", "mainVal": -253692465.0, "retailText": "0.00", "retailVal": 0, "darkText": "-2.54", "darkVal": -253692465.0, "darkUp": false, "strengthText": "-10.58", "strengthVal": -10.58, "behavior": "出货", "behaviorRank": 1, "leader": "上海家化 +0.32%", "_members": 13}, {"name": "航天装备Ⅱ", "kind": "行业", "pctText": "-1.85%", "pctVal": -1.85, "totalText": "+24.93", "totalVal": 2493159361.66, "mainText": "-2.67", "mainVal": -267091200.0, "retailText": "0.00", "retailVal": 0, "darkText": "-2.67", "darkVal": -267091200.0, "darkUp": false, "strengthText": "-10.71", "strengthVal": -10.71, "behavior": "出货", "behaviorRank": 1, "leader": "中国卫星 +-1.87%", "_members": 9}, {"name": "通信服务", "kind": "行业", "pctText": "-1.64%", "pctVal": -1.64, "totalText": "+93.52", "totalVal": 9351664547.550003, "mainText": "-10.07", "mainVal": -1007307482.0, "retailText": "0.00", "retailVal": 0, "darkText": "-10.07", "darkVal": -1007307482.0, "darkUp": false, "strengthText": "-10.77", "strengthVal": -10.77, "behavior": "出货", "behaviorRank": 1, "leader": "润泽科技 +0.01%", "_members": 33}, {"name": "黑色家电", "kind": "行业", "pctText": "-0.62%", "pctVal": -0.62, "totalText": "+12.69", "totalVal": 1269382966.91, "mainText": "-1.43", "mainVal": -143034331.0, "retailText": "0.00", "retailVal": 0, "darkText": "-1.43", "darkVal": -143034331.0, "darkUp": false, "strengthText": "-11.27", "strengthVal": -11.27, "behavior": "出货", "behaviorRank": 1, "leader": "高斯贝尔 +1.36%", "_members": 9}, {"name": "互联网电商", "kind": "行业", "pctText": "-1.94%", "pctVal": -1.94, "totalText": "+38.05", "totalVal": 3804782306.33, "mainText": "-4.41", "mainVal": -441311735.0, "retailText": "0.00", "retailVal": 0, "darkText": "-4.41", "darkVal": -441311735.0, "darkUp": false, "strengthText": "-11.60", "strengthVal": -11.6, "behavior": "出货", "behaviorRank": 1, "leader": "狮头股份 +5.94%", "_members": 16}, {"name": "造纸", "kind": "行业", "pctText": "-1.61%", "pctVal": -1.61, "totalText": "+20.62", "totalVal": 2062191178.72, "mainText": "-2.49", "mainVal": -249127936.0, "retailText": "0.00", "retailVal": 0, "darkText": "-2.49", "darkVal": -249127936.0, "darkUp": false, "strengthText": "-12.08", "strengthVal": -12.08, "behavior": "出货", "behaviorRank": 1, "leader": "太阳纸业 +0.44%", "_members": 22}, {"name": "出版", "kind": "行业", "pctText": "-3.39%", "pctVal": -3.39, "totalText": "+76.21", "totalVal": 7620914242.200001, "mainText": "-9.28", "mainVal": -927584580.0, "retailText": "0.00", "retailVal": 0, "darkText": "-9.28", "darkVal": -927584580.0, "darkUp": false, "strengthText": "-12.17", "strengthVal": -12.17, "behavior": "出货", "behaviorRank": 1, "leader": "新华传媒 +9.97%", "_members": 27}, {"name": "数字媒体", "kind": "行业", "pctText": "-2.76%", "pctVal": -2.76, "totalText": "+58.10", "totalVal": 5809773794.779999, "mainText": "-7.13", "mainVal": -712721643.0, "retailText": "0.00", "retailVal": 0, "darkText": "-7.13", "darkVal": -712721643.0, "darkUp": false, "strengthText": "-12.27", "strengthVal": -12.27, "behavior": "出货", "behaviorRank": 1, "leader": "返利科技 +-1.93%", "_members": 12}, {"name": "饲料", "kind": "行业", "pctText": "-2.39%", "pctVal": -2.39, "totalText": "+18.52", "totalVal": 1852277295.0899997, "mainText": "-2.29", "mainVal": -229277856.0, "retailText": "0.00", "retailVal": 0, "darkText": "-2.29", "darkVal": -229277856.0, "darkUp": false, "strengthText": "-12.38", "strengthVal": -12.38, "behavior": "出货", "behaviorRank": 1, "leader": "邦基科技 +1.16%", "_members": 17}, {"name": "游戏Ⅱ", "kind": "行业", "pctText": "-2.82%", "pctVal": -2.82, "totalText": "+96.86", "totalVal": 9685815353.34, "mainText": "-12.09", "mainVal": -1208587570.0, "retailText": "0.00", "retailVal": 0, "darkText": "-12.09", "darkVal": -1208587570.0, "darkUp": false, "strengthText": "-12.48", "strengthVal": -12.48, "behavior": "出货", "behaviorRank": 1, "leader": "游族网络 +-0.49%", "_members": 26}, {"name": "能源金属", "kind": "行业", "pctText": "-1.86%", "pctVal": -1.86, "totalText": "+70.88", "totalVal": 7087585856.21, "mainText": "-8.93", "mainVal": -893108437.0, "retailText": "0.00", "retailVal": 0, "darkText": "-8.93", "darkVal": -893108437.0, "darkUp": false, "strengthText": "-12.60", "strengthVal": -12.6, "behavior": "出货", "behaviorRank": 1, "leader": "赣锋锂业 +-1.85%", "_members": 11}, {"name": "电视广播Ⅱ", "kind": "行业", "pctText": "-2.43%", "pctVal": -2.43, "totalText": "+21.41", "totalVal": 2140684197.6399999, "mainText": "-2.84", "mainVal": -284467855.0, "retailText": "0.00", "retailVal": 0, "darkText": "-2.84", "darkVal": -284467855.0, "darkUp": false, "strengthText": "-13.29", "strengthVal": -13.29, "behavior": "出货", "behaviorRank": 1, "leader": "天威视讯 +10.06%", "_members": 14}, {"name": "铁路公路", "kind": "行业", "pctText": "-2.88%", "pctVal": -2.88, "totalText": "+31.14", "totalVal": 3114466795.96, "mainText": "-4.24", "mainVal": -423896242.0, "retailText": "0.00", "retailVal": 0, "darkText": "-4.24", "darkVal": -423896242.0, "darkUp": false, "strengthText": "-13.61", "strengthVal": -13.61, "behavior": "出货", "behaviorRank": 1, "leader": "五洲交通 +1.48%", "_members": 32}, {"name": "基础建设", "kind": "行业", "pctText": "-0.73%", "pctVal": -0.73, "totalText": "+29.81", "totalVal": 2981065692.3599997, "mainText": "-4.07", "mainVal": -407223177.0, "retailText": "0.00", "retailVal": 0, "darkText": "-4.07", "darkVal": -407223177.0, "darkUp": false, "strengthText": "-13.66", "strengthVal": -13.66, "behavior": "出货", "behaviorRank": 1, "leader": "山东路桥 +0.78%", "_members": 33}, {"name": "广告营销", "kind": "行业", "pctText": "-4.07%", "pctVal": -4.07, "totalText": "+145.17", "totalVal": 14516798700.85, "mainText": "-20.08", "mainVal": -2008190246.0, "retailText": "0.00", "retailVal": 0, "darkText": "-20.08", "darkVal": -2008190246.0, "darkUp": false, "strengthText": "-13.83", "strengthVal": -13.83, "behavior": "出货", "behaviorRank": 1, "leader": "引力传媒 +0.84%", "_members": 25}, {"name": "油服工程", "kind": "行业", "pctText": "-3.33%", "pctVal": -3.33, "totalText": "+23.84", "totalVal": 2384345494.4399996, "mainText": "-3.37", "mainVal": -336537920.0, "retailText": "0.00", "retailVal": 0, "darkText": "-3.37", "darkVal": -336537920.0, "darkUp": false, "strengthText": "-14.11", "strengthVal": -14.11, "behavior": "出货", "behaviorRank": 1, "leader": "博迈科 +-2.09%", "_members": 12}, {"name": "电力", "kind": "行业", "pctText": "-2.91%", "pctVal": -2.91, "totalText": "+283.48", "totalVal": 28348039042.040005, "mainText": "-40.82", "mainVal": -4081980623.0, "retailText": "0.00", "retailVal": 0, "darkText": "-40.82", "darkVal": -4081980623.0, "darkUp": false, "strengthText": "-14.40", "strengthVal": -14.4, "behavior": "出货", "behaviorRank": 1, "leader": "亨通股份 +1.00%", "_members": 107}, {"name": "农商行Ⅱ", "kind": "行业", "pctText": "-0.54%", "pctVal": -0.54, "totalText": "+13.84", "totalVal": 1383754617.3899999, "mainText": "-2.08", "mainVal": -207765950.0, "retailText": "0.00", "retailVal": 0, "darkText": "-2.08", "darkVal": -207765950.0, "darkUp": false, "strengthText": "-15.01", "strengthVal": -15.01, "behavior": "出货", "behaviorRank": 1, "leader": "渝农商行 +-0.61%", "_members": 10}, {"name": "个护用品", "kind": "行业", "pctText": "-0.86%", "pctVal": -0.86, "totalText": "+14.46", "totalVal": 1446196662.3800004, "mainText": "-2.24", "mainVal": -223659070.0, "retailText": "0.00", "retailVal": 0, "darkText": "-2.24", "darkVal": -223659070.0, "darkUp": false, "strengthText": "-15.47", "strengthVal": -15.47, "behavior": "出货", "behaviorRank": 1, "leader": "洁雅股份 +5.75%", "_members": 12}, {"name": "饰品", "kind": "行业", "pctText": "-3.17%", "pctVal": -3.17, "totalText": "+13.11", "totalVal": 1310514892.14, "mainText": "-2.16", "mainVal": -215853772.0, "retailText": "0.00", "retailVal": 0, "darkText": "-2.16", "darkVal": -215853772.0, "darkUp": false, "strengthText": "-16.47", "strengthVal": -16.47, "behavior": "出货", "behaviorRank": 1, "leader": "老凤祥 +0.66%", "_members": 12}, {"name": "焦炭Ⅱ", "kind": "行业", "pctText": "-6.95%", "pctVal": -6.95, "totalText": "+17.16", "totalVal": 1716456178.6399999, "mainText": "-4.46", "mainVal": -445846467.0, "retailText": "0.00", "retailVal": 0, "darkText": "-4.46", "darkVal": -445846467.0, "darkUp": false, "strengthText": "-25.97", "strengthVal": -25.97, "behavior": "出货", "behaviorRank": 1, "leader": "云维股份 +-3.32%", "_members": 7}];
+const fmtYi = v => (v>=0?'+':'') + (v/1e8).toFixed(2);
+const fmtPct = v => (v>0?'+':'') + v.toFixed(2) + '%';
+const behClass = {'抢筹':'q','建仓':'j','洗盘':'x','出货':'c'};
+const maxAbsStrength = Math.max.apply(null, DATA.map(r=>Math.abs(r.strengthVal||0))) || 1;
+let sortKey='strengthVal', sortDir=-1;
+function behRank(b){return {'抢筹':4,'建仓':3,'洗盘':2,'出货':1}[b]||0;}
+function applyFilters(){
+  const q=(document.getElementById('search').value||'').trim().toLowerCase();
+  const k=document.getElementById('f-kind').value;
+  const b=document.getElementById('f-behavior').value;
+  const d=document.getElementById('f-dir').value;
+  const st=document.getElementById('f-strength').value;
+  const qd=document.getElementById('f-quad').value;
+  let rows=DATA.filter(r=>{
+    if(q && !(r.name.toLowerCase().includes(q) || (r.leader||'').toLowerCase().includes(q))) return false;
+    if(k && r.kind!==k) return false;
+    if(b && r.behavior!==b) return false;
+    if(qd && (r.qcls||'')!==qd) return false;
+    if(d==='up' && (r.pctVal||0)<=0) return false;
+    if(d==='down' && (r.pctVal||0)>=0) return false;
+    const sv=r.strengthVal||0;
+    if(st==='g10' && sv<10) return false;
+    if(st==='g5' && sv<5) return false;
+    if(st==='g3' && sv<3) return false;
+    if(st==='l-1' && sv>-1) return false;
+    return true;
+  });
+  rows.sort((a,b)=>{
+    let av=a[sortKey], bv=b[sortKey];
+    if(sortKey==='name'){av=(av||'');bv=(bv||'');return av<bv?-sortDir:av>bv?sortDir:0;}
+    if(sortKey==='behaviorRank'){av=behRank(a.behavior);bv=behRank(b.behavior);}
+    if(sortKey==='idx'){av=DATA.indexOf(a);bv=DATA.indexOf(b);}
+    av=av||0;bv=bv||0;return (av-bv)*sortDir;
+  });
+  render(rows);
+}
+function render(rows){
+  const tb=document.getElementById('tb');tb.innerHTML='';
+  rows.forEach((r,i)=>{
+    const sv=r.strengthVal||0;
+    const w=Math.abs(sv)/maxAbsStrength*60;
+    const bc=sv>=0?'var(--up)':'var(--down)';
+    const tr=document.createElement('tr');
+    tr.innerHTML=
+      '<td class="rank">'+(i+1)+'</td>'+
+      '<td class="sname">'+r.name+'<i class="skind">'+r.kind+'</i></td>'+
+      '<td class="'+(r.pctVal>0?'up':r.pctVal<0?'down':'')+'">'+fmtPct(r.pctVal||0)+'</td>'+
+      '<td class="hide-narrow">'+(r.totalText||'')+'</td>'+
+      '<td class="'+(r.mainVal>=0?'up':'down')+'">'+(r.mainText||'')+'</td>'+
+      '<td class="'+(r.retailVal>=0?'up':'down')+'">'+(r.retailText||'')+'</td>'+
+      '<td class="'+(r.darkVal>=0?'up':'down')+'">'+(r.darkText||'')+'</td>'+
+      '<td><span class="'+(sv>=0?'up':'down')+'">'+(r.strengthText||'')+'</span>'+
+        '<span class="sbar" style="width:'+w.toFixed(1)+'px;background:'+bc+'"></span></td>'+
+      '<td><span class="beh '+behClass[r.behavior]+'">'+r.behavior+'</span></td>'+
+      '<td class="'+(r.valPct!=null?(r.valPct<30?'down':r.valPct>70?'up':'') : '')+'">'+(r.valPct!=null? r.valPct+'%':'—')+'</td>'+
+      '<td><span class="qb-adge '+(r.qcls||'')+'">'+(r.quad||'')+'</span></td>'+
+      '<td class="hide-narrow">'+(r.leader||'')+'</td>';
+    tb.appendChild(tr);
+  });
+  document.getElementById('cnt').textContent=rows.length;
+}
+document.querySelectorAll('th[data-k]').forEach(th=>{
+  th.addEventListener('click',()=>{
+    const k=th.getAttribute('data-k');
+    if(sortKey===k){sortDir*=-1;}else{sortKey=k;sortDir=(k==='name'||k==='idx')?1:-1;}
+    document.querySelectorAll('th').forEach(x=>x.classList.remove('sorted'));
+    th.classList.add('sorted');
+    th.setAttribute('data-arrow', sortDir>0?'▲':'▼');
+    applyFilters();
+  });
+});
+['search','f-kind','f-behavior','f-quad','f-dir','f-strength'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',applyFilters);
+  document.getElementById(id).addEventListener('change',applyFilters);
+});
+document.getElementById('reset').addEventListener('click',()=>{
+  document.getElementById('search').value='';
+  ['f-kind','f-behavior','f-quad','f-dir','f-strength'].forEach(id=>document.getElementById(id).value='');
+  sortKey='strengthVal';sortDir=-1;
+  document.querySelectorAll('th').forEach(x=>x.classList.remove('sorted'));
+  applyFilters();
+});
+document.getElementById('csv').addEventListener('click',()=>{
+  const q=(document.getElementById('search').value||'').trim().toLowerCase();
+  const k=document.getElementById('f-kind').value,b=document.getElementById('f-behavior').value,
+        d=document.getElementById('f-dir').value,st=document.getElementById('f-strength').value,
+        qd=document.getElementById('f-quad').value;
+  const rows=DATA.filter(r=>{
+    if(q && !(r.name.toLowerCase().includes(q)||(r.leader||'').toLowerCase().includes(q)))return false;
+    if(k&&r.kind!==k)return false; if(b&&r.behavior!==b)return false; if(qd&&(r.qcls||'')!==qd)return false;
+    if(d==='up'&&(r.pctVal||0)<=0)return false; if(d==='down'&&(r.pctVal||0)>=0)return false;
+    const sv=r.strengthVal||0; if(st==='g10'&&sv<10)return false; if(st==='g5'&&sv<5)return false;
+    if(st==='g3'&&sv<3)return false; if(st==='l-1'&&sv>-1)return false; return true;
+  });
+  const head=['板块','类型','涨幅%','总成交额(亿)','主力资金(亿)','散户资金(亿)','暗盘资金(亿)','板块强度','主力行为','估值分位%','资金×估值象限','领涨股'];
+  const lines=[head.join(',')];
+  rows.forEach(r=>lines.push([r.name,r.kind,(r.pctVal||0).toFixed(2),
+    (r.totalVal/1e8).toFixed(2),(r.mainVal/1e8).toFixed(2),(r.retailVal/1e8).toFixed(2),
+    (r.darkVal/1e8).toFixed(2),(r.strengthVal||0).toFixed(2),r.behavior,
+    (r.valPct!=null?r.valPct:''),(r.quad||''),r.leader||''].join(',')));
+  const blob=new Blob(['﻿'+lines.join('\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='sector-strength-20260923.csv';a.click();
+});
+applyFilters();
+</script>
+<!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--></body>
+</html>
