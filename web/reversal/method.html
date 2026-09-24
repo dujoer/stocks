@@ -256,11 +256,16 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <div class="box red" style="border-color:#b00020">
 <b>⚠️ 本页与「量化日更版」的关系（2026-09-21 说明，必读）：</b>本页是<b>手工执行版 Playbook</b> ——
 回答「单只票怎么判确定性、怎么逐项核对技术/资金/基本面、怎么分三档介入」，这一层仍然有效。
+<b style="color:#b00020">2026-09-25 追加（v6）：本页「−8% 硬止损」「位置过滤：距 52 周高回撤 &gt;30%」等条款已与日更口径不一致</b>
+——日更 v6 改为：先看<b>本轮下跌段的谷底是否站住</b>（已止跌 ≥4 日、现价距谷底 ≤15%、本轮跌幅 ≥30%），
+再要<b>回升启动证据 ≥2 条</b>；<b>止损 = 跌破谷底结构位先减半、−15% 全出</b>，
+<b>目标 = 本轮下跌段的 0.382 / 0.618 回撤</b>（不再用 52 周高回撤）。
+冲突处以 <a href="index.html" style="color:var(--blue)">日更首页</a> 与当日 <code>watchlist_*.html</code> 为准。
 但它的<b>第六节「可复制六步」中的条件选股种子已废弃</b>：原种子为
 <code>tool_filter intersect([NPParentCompanyYOY_Q&gt;50, PE_TTM&gt;0, PE_TTM&lt;50, TotalMV&lt;100亿])</code>，
 只有 220 只、每日过门槛约 150 只，横截面分位噪声过大。
-量化日更版（<b>v5</b>）已改为<b>全市场深跌域（≈4700 只入域）＋ 先验固定因子集横截面分位</b>，
-档位按域内分位取（A=前 10% / B=10~25%）。选股能力与局限请以
+量化日更版（<b>v6</b>）在 v5 基础上又新增了<b>阶段底部锚定 ＋ 回升启动确认</b>（详见上面 09-25 追加说明），
+域仍为<b>全市场深跌域（≈4700 只入域）</b>，排序仍为<b>先验固定因子集横截面分位</b>，档位按域内分位取（A=前 10%）。选股能力与局限请以
 <a href="lab.html" style="color:var(--blue)">lab.html（样本外实证）</a> 为准，日更名单见
 <a href="index.html" style="color:var(--blue)">index.html</a>。<br>
 另：本页把「资金面（主力持续流入）」列为<b>比技术面更硬</b>的一档，属<b>手工核对视角</b>；
