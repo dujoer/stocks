@@ -3,57 +3,111 @@
 <head>
 <meta charset='UTF-8'>
 <meta name='viewport' content='width=device-width,initial-scale=1.0'>
-<title>A股板块强度 · 看板中心</title>
+<title>状态报告</title>
 <style>* { box-sizing: border-box; }
 body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
   background:#f5f6f8; color:#23262b; min-height:100vh; }
-.wrap { max-width:1180px; margin:0 auto; padding:40px 20px 60px; }
+.wrap { max-width:1040px; margin:0 auto; padding:40px 20px 60px; }
 .topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
   border-bottom:1px solid rgba(0,0,0,.08); }
 .topnav a { color:#1a73e8; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
   border:1px solid rgba(26,115,232,.35); transition:.2s; }
 .topnav a:hover { background:rgba(26,115,232,.10); }
-.topnav a.cur { background:#1a73e8; color:#fff; border-color:#1a73e8; }
-header { display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:12px; }
 header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#1a73e8,#b8332a,#6b5b95);
   -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
 header p { margin:4px 0; color:#8a929c; font-size:13px; line-height:1.6; }
-.datebadge { display:inline-block; font-size:22px; font-weight:800; color:#fff;
-  background:linear-gradient(135deg,#1a73e8,#b8332a); padding:10px 20px; border-radius:14px;
-  letter-spacing:.5px; box-shadow:0 6px 18px rgba(26,115,232,.25); white-space:nowrap; }
-.datebadge small { display:block; font-size:11px; font-weight:600; opacity:.85; letter-spacing:1px; }
 .meta { margin:14px 0 24px; font-size:12px; color:#6b7280; line-height:1.7; }
 .meta b { color:#1a73e8; }
-.section { background:#ffffff; border:1px solid rgba(0,0,0,.08); border-radius:20px;
-  padding:18px 20px; margin:0 0 22px; }
-.section h2 { font-size:19px; margin:0 0 14px; padding-left:12px; border-left:5px solid #1a73e8; }
-.idxrow { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; }
-.idx { background:#fafbfc; border:1px solid #eef1f4; border-radius:14px; padding:14px 16px; }
-.idx .k { font-size:12px; color:#7b8794; }
-.idx .v { font-size:24px; font-weight:800; margin-top:4px; color:#23262b; }
-.idx .v.up { color:#b8332a; } .idx .v.down { color:#1a9e5a; } .idx .v.gold { color:#1a73e8; }
-.idx a { color:#23262b; text-decoration:none; display:block; }
-.idx a:hover .v { color:#1a73e8; }
-table { width:100%; border-collapse:collapse; font-size:13px; }
-th { text-align:left; padding:9px 10px; background:#f7f8fa; color:#5a6573; font-weight:700;
-  border-bottom:2px solid #e3e7ec; white-space:nowrap; }
-td { padding:9px 10px; border-bottom:1px solid #f0f2f5; }
-tr:hover td { background:#fcfbf8; }
-.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
-.up { color:#b8332a; font-weight:700; } .down { color:#1a9e5a; font-weight:700; } .flat { color:#8a929c; }
-.beh-qiang { color:#b8332a; font-weight:700; }
-.beh-jian  { color:#1a73e8; font-weight:700; }
-.beh-xi    { color:#3b6fd1; font-weight:700; }
-.beh-chu   { color:#1a9e5a; font-weight:700; }
-.empty { padding:8px; color:#9aa2ad; font-size:12px; }
-footer { margin-top:40px; padding-top:18px; border-top:1px solid #e3e7ec;
-  font-size:12px; color:#7b8794; line-height:1.8; }
-th.sort { cursor:pointer; user-select:none; position:relative; }
-th.sort:hover { background:#eef0f3; color:#3b4453; }
-th.sort.sorted { color:#1a73e8; }
-th.sort.sorted[data-asc="1"]::after { content:" \25B2"; font-size:10px; }
-th.sort.sorted[data-asc="0"]::after { content:" \25BC"; font-size:10px; }
-th.sort:not(.sorted)::after { content:" \2195"; font-size:10px; color:#c2c9d1; }
+.section { background:#ffffff;
+  border:1px solid rgba(0,0,0,.08); border-radius:20px; padding:18px 20px; margin:0 0 22px;
+  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); }
+.section h2 { font-size:17px; margin:0 0 14px; color:#1c2430; display:flex; align-items:center; gap:8px; }
+.section h2:before { content:""; width:4px; height:16px; background:#1a73e8; border-radius:3px; }
+.idxrow { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px; }
+.idx { flex:1; min-width:200px; background:linear-gradient(135deg,rgba(184,51,42,.08),rgba(184,51,42,.03));
+  border:1px solid rgba(184,51,42,.20); border-radius:14px; padding:13px 10px; text-align:center;
+  box-shadow:0 1px 3px rgba(184,51,42,.06); }
+.idx .k { font-size:11px; color:#6b7280; letter-spacing:.3px; }
+.idx .v { font-size:22px; font-weight:800; color:#1c2430; margin:5px 0 2px; }
+.idx .c { font-size:13px; font-weight:700; }
+.idx .hl { font-size:10px; color:#8a929c; margin-top:4px; }
+.bar { display:flex; height:34px; border-radius:8px; overflow:hidden; margin:10px 0; font-size:12px;
+  color:#ffffff; text-align:center; line-height:34px; box-shadow:0 2px 6px rgba(0,0,0,.12); }
+.chiprow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+.chip { background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06); border-radius:12px;
+  padding:10px 6px; text-align:center; min-width:74px; backdrop-filter:blur(6px); box-shadow:0 1px 3px rgba(20,30,50,.04); }
+.chip .ck { font-size:10px; color:#8a929c; }
+.chip .cv { font-size:16px; font-weight:800; margin-top:3px; }
+.tag { display:inline-block; border-radius:20px; padding:3px 11px; font-size:12px; margin:3px 4px 3px 0;
+  background:#eef2f8; color:#33414f; }
+.tag.hot { background:#fdeceb; color:#d8392b; }
+.tag.cold { background:#e9f6ef; color:#1a9e5a; }
+.pill { display:inline-block; background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06);
+  border-radius:20px; padding:4px 11px; font-size:12px; color:#3a4048; margin:3px 4px 3px 0; cursor:help; }
+.pill b { color:#1a73e8; font-weight:700; }
+table { width:100%; border-collapse:collapse; font-size:13px; background:rgba(0,0,0,.03);
+  border:1px solid rgba(0,0,0,.05); border-radius:12px; overflow:hidden; margin:10px 0; }
+th,td { padding:8px 10px; text-align:left; border-bottom:1px solid rgba(0,0,0,.04); }
+th { background:rgba(20,30,50,.06); color:#3a4048; font-weight:600; font-size:12px; }
+td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+.up { color:#b8332a; } .down { color:#1a9e5a; }
+.note { color:#8a929c; font-size:12px; margin-top:8px; line-height:1.6; }
+.amberbox { font-size:13px; color:#1a73e8; background:linear-gradient(135deg,rgba(26,115,232,.10),rgba(26,115,232,.04));
+  border:1px solid rgba(26,115,232,.18); border-radius:12px; padding:12px 16px; margin:12px 0; line-height:1.6; }
+.ladder { margin:6px 0; padding:8px 10px; background:rgba(0,0,0,.03); border:1px solid rgba(0,0,0,.08);
+  border-radius:8px; font-size:13px; }
+.ladder .badge { display:inline-block; border-radius:6px; padding:1px 8px; margin-right:8px; font-weight:700; font-size:12px; }
+.ladder .b5 { background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.35); color:#b8332a; }
+.ladder .b6 { background:rgba(184,51,42,.16); border:1px solid rgba(184,51,42,.55); color:#b8332a; }
+.ladder .b5 { background:rgba(184,51,42,.12); border:1px solid rgba(184,51,42,.42); color:#b8332a; }
+.ladder .b4 { background:rgba(184,51,42,.08); border:1px solid rgba(184,51,42,.30); color:#b8332a; }
+.ladder .b3 { background:rgba(26,115,232,.14); border:1px solid rgba(26,115,232,.40); color:#d8bd8a; }
+.ladder .b2 { background:rgba(26,115,232,.14); border:1px solid rgba(26,115,232,.40); color:#d8bd8a; }
+.ladder .b1 { background:rgba(90,107,128,.12); border:1px solid rgba(90,107,128,.35); color:#a7b4c9; }
+.namechip { display:inline-block; color:#3a4048; margin:2px 6px 2px 0; font-size:13px; }
+.empty { color:#8a929c; text-align:center; padding:38px 0; font-size:14px; line-height:1.8; }
+.empty b { color:#1a73e8; }
+footer { margin-top:40px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08);
+  font-size:12px; color:#8a929c; line-height:1.8; }
+a.inlink { color:#1a73e8; text-decoration:none; border:1px solid rgba(201,166,107,.5);
+  border-radius:10px; padding:6px 14px; font-size:13px; font-weight:700; display:inline-block; margin:4px 6px 4px 0; }
+a.inlink:hover { background:rgba(201,166,107,.16); }
+.wrap.landing { max-width:880px; text-align:center; }
+.landing header h1 { font-size:34px; }
+.landing header p { margin:6px 0; color:#8a929c; font-size:14px; }
+.date { margin:18px 0 30px; font-size:13px; color:#1a73e8; letter-spacing:.5px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; text-align:left; }
+.card { display:block; text-decoration:none; color:#23262b; background:#ffffff;
+  border:1px solid rgba(0,0,0,.08); border-radius:18px; padding:20px 18px;
+  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); transition:.2s; }
+.card:hover { border-color:rgba(26,115,232,.50); transform:translateY(-2px); background:linear-gradient(135deg,rgba(26,115,232,.08),rgba(255,255,255,.03)); }
+.card .ic { font-size:26px; }
+.card .t { font-size:17px; font-weight:700; margin:10px 0 6px; color:#1c2430; }
+.card .d { font-size:12.5px; color:#8a929c; line-height:1.6; }
+.hist { margin-top:30px; font-size:12.5px; color:#6b7280; }
+.hist a { color:#1a73e8; text-decoration:none; border:1px solid rgba(201,166,107,.4); border-radius:10px; padding:5px 12px; display:inline-block; margin:4px; }
+.foot { margin-top:42px; font-size:12px; color:#8a929c; line-height:1.8; }
+.lhb { table-layout:fixed; }
+.lhb th, .lhb td { font-size:12.5px; vertical-align:top; }
+.lhb td.reason { color:#6b7280; width:150px; font-size:11.5px; line-height:1.4; }
+.lhb td.sec { font-size:12px; white-space:nowrap; }
+.hm { text-align:center; }
+.hm-high { color:#f2a65a; font-weight:800; }
+.hm-mid { color:#1a73e8; font-weight:700; }
+.hm-low { color:#8a93a3; }
+.hmtags { margin-top:3px; }
+.hmtag { display:inline-block; background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.30); color:#b8332a; border-radius:10px; padding:1px 7px; font-size:10.5px; margin:2px 2px 0 0; }
+.toggle { color:#1a73e8; cursor:pointer; font-size:12px; user-select:none; }
+.toggle:hover { text-decoration:underline; }
+.seats { display:flex; gap:24px; flex-wrap:wrap; padding:6px 4px; }
+.seats .buys, .seats .sells { flex:1; min-width:260px; }
+.seat-h { font-weight:700; margin-bottom:6px; font-size:13px; }
+.seat-h.up { color:#b8332a; } .seat-h.down { color:#1a9e5a; }
+.seats ul { list-style:none; margin:0; padding:0; }
+.seats li { display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px dashed rgba(0,0,0,.04); font-size:12px; }
+.seats li .nm { flex:1; color:#3a4048; }
+.seats li .amt { font-variant-numeric:tabular-nums; font-weight:700; }
+tr.detail td { background:rgba(0,0,0,.03); }
 </style>
 <!--WB_THEME--><style id='wb-theme'>
 /* ============================================================
@@ -248,80 +302,35 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 
 </style><!--/WB_THEME--></head>
 <body>
-<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
 <div class='wrap'>
 
 <header>
-  <div>
-    <h1>📊 板块强度 · 看板中心</h1>
-    <p>暗盘资金 = 主力净流入 − 散户净流入 ｜ 板块强度 = 暗盘 ÷ 板块总成交额 × 100 ｜ 每日盘后真实快照累积（因 westock 接口 date 无效，按拉取日固化、不回溯不编造）。</p>
-  </div>
-  <div class='datebadge'><small>最新交易日</small>2026-09-24</div>
+<h1>📋 状态报告</h1>
+<p>2026-09-24 · 龙虎榜手动更新 + 全量数据刷新</p>
 </header>
-<div class='meta'>
-最新一日 <b>2026-09-24</b> ｜ 全市场暗盘净额 <b>-933.1亿</b> ｜ 均强 <b>-5.167</b> ｜ 上涨占比 <b>25.0%</b><br>
-区间累计：暗盘净额 <b>-72158.7亿</b> ｜ 主力抢筹板块 <b>2234</b> / 出货板块 <b>8896</b> ｜ 共 <b>20</b> 个数据点。
+<div class='section'>
+<h2>✅ 本轮完成情况</h2>
+<div class='amberbox' style='color:#1c2430'>1. <b>龙虎榜数据</b>：通过 westock-mcp data_lhb 拉取 2026-09-24 真实龙虎榜（机构榜 0 只、游资席位 0 个、机构+游资共振 0 只、席位胜率 0 条；龙虎榜全榜上榜 81 只）。分项（机构榜/游资席位/共振/胜率）数据源当日未披露（均为空），已以龙虎榜全榜 81 只兜底渲染 lhb.html / hotmoney.html。<br>2. <b>大盘/板块/连板刷新</b>：data_market_overview(2026-09-24)、data_hot(board)、tool_ranking(limitup_days) 全部更新为 2026-09-24（估值口径 2026-09-23）。<br>4. <b>推送</b>：本地已生成 6 个页面（含导航 index.html、龙虎榜归档页 lhb_2026-09-24.html），待经 GitHub 连接器推送至 dujoer/stocks 的 web/ 目录（main 分支，需仓库写权限）。注：早期 08-14 窗口收益/共振/Alpha 回测为远程分析页，本地未保留，本系统以龙虎榜机构榜、共振、席位胜率为核心。</div>
 </div>
 <div class='section'>
-  <h2>概览</h2>
-  <div class='idxrow'>
-    <div class='idx'><div class='k'>区间累计暗盘净额</div><div class='v down'>-72158.7<span style='font-size:13px;color:#7b8794'>亿</span></div></div>
-    <div class='idx'><div class='k'>数据点（交易日）</div><div class='v gold'>20</div></div>
-    <div class='idx'><div class='k'>日均板块数</div><div class='v'>846</div></div>
-    <div class='idx'><div class='k'>主力抢筹板块（累计）</div><div class='v up'>2234</div></div>
-    <div class='idx'><div class='k'>主力出货板块（累计）</div><div class='v down'>8896</div></div>
-    <div class='idx'><div class='k'>最新一日均强</div><div class='v'>-5.167</div></div>
-    <div class='idx'><div class='k'>最新一日上涨占比</div><div class='v'>25.0%</div></div>
-    <div class='idx'><a href='trend.html'><div class='k'>趋势看板（日/周/月）</div><div class='v gold'>查看 →</div></a></div>
-  </div>
+<h2>📁 产出文件</h2>
+<div class='chiprow'>
+<span class='pill'>index.html</span>
+<span class='pill'>daily_overview.html</span>
+<span class='pill'>lhb.html</span>
+<span class='pill'>hotmoney.html</span>
+<span class='pill'>lhb_2026-09-24.html</span>
+<span class='pill'>status_2026-09-24.html</span>
+</div>
+<div class='note'>数据落盘：quant/market_overview、board_hot、quotes、news.json、limitup、lhb（均为 2026-09-24）。生成脚本：quant/build_dashboards.py。</div>
 </div>
 <div class='section'>
-  <h2>每日板块强度归档（按日期倒序）</h2>
-  <table id='arch'>
-    <thead><tr>
-      <th class='sort' data-c='0'>交易日</th>
-      <th class='num sort' data-c='1'>板块数</th>
-      <th class='num sort' data-c='2'>暗盘净额</th>
-      <th class='num sort' data-c='3'>均强</th>
-      <th class='num sort' data-c='4'>上涨占比</th>
-      <th class='num sort' data-c='5'>主力抢筹</th>
-      <th class='num sort' data-c='6'>主力建仓</th>
-      <th class='num sort' data-c='7'>主力洗盘</th>
-      <th class='num sort' data-c='8'>主力出货</th>
-    </tr></thead>
-    <tbody><tr><td data-val='2026-09-24'><a href='sector-strength-20260924.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-24</a></td><td class='num' data-val='124'>124</td><td class='num' data-val='-933.10'>-933.1亿</td><td class='num' data-val='-5.167'>-5.167</td><td class='num' data-val='25.00'>25.0%</td><td class='num beh-qiang' data-val='13'>13</td><td class='num beh-jian'  data-val='6'>6</td><td class='num beh-xi'    data-val='11'>11</td><td class='num beh-chu'   data-val='94'>94</td></tr><tr><td data-val='2026-09-23'><a href='sector-strength-20260923.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-23</a></td><td class='num' data-val='124'>124</td><td class='num' data-val='-63.60'>-63.6亿</td><td class='num' data-val='-3.171'>-3.171</td><td class='num' data-val='33.10'>33.1%</td><td class='num beh-qiang' data-val='28'>28</td><td class='num beh-jian'  data-val='8'>8</td><td class='num beh-xi'    data-val='8'>8</td><td class='num beh-chu'   data-val='80'>80</td></tr><tr><td data-val='2026-09-22'><a href='sector-strength-20260922.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-22</a></td><td class='num' data-val='927'>927</td><td class='num' data-val='-6490.10'>-6490.1亿</td><td class='num' data-val='-1.312'>-1.312</td><td class='num' data-val='51.70'>51.7%</td><td class='num beh-qiang' data-val='88'>88</td><td class='num beh-jian'  data-val='95'>95</td><td class='num beh-xi'    data-val='206'>206</td><td class='num beh-chu'   data-val='538'>538</td></tr><tr><td data-val='2026-09-21'><a href='sector-strength-20260921.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-21</a></td><td class='num' data-val='927'>927</td><td class='num' data-val='2886.50'>+2886.5亿</td><td class='num' data-val='0.878'>0.878</td><td class='num' data-val='97.50'>97.5%</td><td class='num beh-qiang' data-val='181'>181</td><td class='num beh-jian'  data-val='238'>238</td><td class='num beh-xi'    data-val='288'>288</td><td class='num beh-chu'   data-val='220'>220</td></tr><tr><td data-val='2026-09-18'><a href='sector-strength-20260918.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-18</a></td><td class='num' data-val='927'>927</td><td class='num' data-val='11678.40'>+11678.4亿</td><td class='num' data-val='1.615'>1.615</td><td class='num' data-val='95.00'>95.0%</td><td class='num beh-qiang' data-val='272'>272</td><td class='num beh-jian'  data-val='282'>282</td><td class='num beh-xi'    data-val='213'>213</td><td class='num beh-chu'   data-val='160'>160</td></tr><tr><td data-val='2026-09-17'><a href='sector-strength-20260917.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-17</a></td><td class='num' data-val='927'>927</td><td class='num' data-val='-8498.90'>-8498.9亿</td><td class='num' data-val='-1.456'>-1.456</td><td class='num' data-val='48.80'>48.8%</td><td class='num beh-qiang' data-val='77'>77</td><td class='num beh-jian'  data-val='106'>106</td><td class='num beh-xi'    data-val='204'>204</td><td class='num beh-chu'   data-val='540'>540</td></tr><tr><td data-val='2026-09-16'><a href='sector-strength-20260916.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-16</a></td><td class='num' data-val='927'>927</td><td class='num' data-val='9543.10'>+9543.1亿</td><td class='num' data-val='0.772'>0.772</td><td class='num' data-val='90.80'>90.8%</td><td class='num beh-qiang' data-val='210'>210</td><td class='num beh-jian'  data-val='218'>218</td><td class='num beh-xi'    data-val='226'>226</td><td class='num beh-chu'   data-val='273'>273</td></tr><tr><td data-val='2026-09-15'><a href='sector-strength-20260915.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-15</a></td><td class='num' data-val='927'>927</td><td class='num' data-val='-7703.60'>-7703.6亿</td><td class='num' data-val='-2.667'>-2.667</td><td class='num' data-val='7.60'>7.6%</td><td class='num beh-qiang' data-val='42'>42</td><td class='num beh-jian'  data-val='66'>66</td><td class='num beh-xi'    data-val='162'>162</td><td class='num beh-chu'   data-val='657'>657</td></tr><tr><td data-val='2026-09-14'><a href='sector-strength-20260914.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-14</a></td><td class='num' data-val='927'>927</td><td class='num' data-val='-5791.90'>-5791.9亿</td><td class='num' data-val='-0.998'>-0.998</td><td class='num' data-val='67.40'>67.4%</td><td class='num beh-qiang' data-val='98'>98</td><td class='num beh-jian'  data-val='124'>124</td><td class='num beh-xi'    data-val='221'>221</td><td class='num beh-chu'   data-val='484'>484</td></tr><tr><td data-val='2026-09-11'><a href='sector-strength-20260911.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-11</a></td><td class='num' data-val='927'>927</td><td class='num' data-val='-13075.00'>-13075.0亿</td><td class='num' data-val='-3.120'>-3.120</td><td class='num' data-val='3.60'>3.6%</td><td class='num beh-qiang' data-val='31'>31</td><td class='num beh-jian'  data-val='46'>46</td><td class='num beh-xi'    data-val='117'>117</td><td class='num beh-chu'   data-val='733'>733</td></tr><tr><td data-val='2026-09-10'><a href='sector-strength-20260910.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-10</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='-10749.60'>-10749.6亿</td><td class='num' data-val='-2.979'>-2.979</td><td class='num' data-val='5.80'>5.8%</td><td class='num beh-qiang' data-val='45'>45</td><td class='num beh-jian'  data-val='45'>45</td><td class='num beh-xi'    data-val='128'>128</td><td class='num beh-chu'   data-val='708'>708</td></tr><tr><td data-val='2026-09-09'><a href='sector-strength-20260909.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-09</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='-441.50'>-441.5亿</td><td class='num' data-val='-1.348'>-1.348</td><td class='num' data-val='29.60'>29.6%</td><td class='num beh-qiang' data-val='129'>129</td><td class='num beh-jian'  data-val='127'>127</td><td class='num beh-xi'    data-val='184'>184</td><td class='num beh-chu'   data-val='486'>486</td></tr><tr><td data-val='2026-09-08'><a href='sector-strength-20260908.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-08</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='-5547.70'>-5547.7亿</td><td class='num' data-val='-0.749'>-0.749</td><td class='num' data-val='72.60'>72.6%</td><td class='num beh-qiang' data-val='124'>124</td><td class='num beh-jian'  data-val='130'>130</td><td class='num beh-xi'    data-val='223'>223</td><td class='num beh-chu'   data-val='449'>449</td></tr><tr><td data-val='2026-09-07'><a href='sector-strength-20260907.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-07</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='11675.80'>+11675.8亿</td><td class='num' data-val='0.423'>0.423</td><td class='num' data-val='80.10'>80.1%</td><td class='num beh-qiang' data-val='235'>235</td><td class='num beh-jian'  data-val='143'>143</td><td class='num beh-xi'    data-val='193'>193</td><td class='num beh-chu'   data-val='355'>355</td></tr><tr><td data-val='2026-09-04'><a href='sector-strength-20260904.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-04</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='-13765.00'>-13765.0亿</td><td class='num' data-val='-1.354'>-1.354</td><td class='num' data-val='46.50'>46.5%</td><td class='num beh-qiang' data-val='144'>144</td><td class='num beh-jian'  data-val='106'>106</td><td class='num beh-xi'    data-val='157'>157</td><td class='num beh-chu'   data-val='519'>519</td></tr><tr><td data-val='2026-09-03'><a href='sector-strength-20260903.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-03</a></td><td class='num' data-val='926'>926</td><td class='num' data-val='-5635.20'>-5635.2亿</td><td class='num' data-val='-1.084'>-1.084</td><td class='num' data-val='26.90'>26.9%</td><td class='num beh-qiang' data-val='98'>98</td><td class='num beh-jian'  data-val='111'>111</td><td class='num beh-xi'    data-val='214'>214</td><td class='num beh-chu'   data-val='503'>503</td></tr><tr><td data-val='2026-09-02'><a href='sector-strength-20260902.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-09-02</a></td><td class='num' data-val='925'>925</td><td class='num' data-val='-16297.70'>-16297.7亿</td><td class='num' data-val='-3.484'>-3.484</td><td class='num' data-val='6.90'>6.9%</td><td class='num beh-qiang' data-val='40'>40</td><td class='num beh-jian'  data-val='41'>41</td><td class='num beh-xi'    data-val='103'>103</td><td class='num beh-chu'   data-val='741'>741</td></tr><tr><td data-val='2026-08-31'><a href='sector-strength-20260831.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-08-31</a></td><td class='num' data-val='925'>925</td><td class='num' data-val='1756.40'>+1756.4亿</td><td class='num' data-val='0.085'>0.085</td><td class='num' data-val='70.30'>70.3%</td><td class='num beh-qiang' data-val='178'>178</td><td class='num beh-jian'  data-val='160'>160</td><td class='num beh-xi'    data-val='224'>224</td><td class='num beh-chu'   data-val='363'>363</td></tr><tr><td data-val='2026-08-28'><a href='sector-strength-20260828.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-08-28</a></td><td class='num' data-val='925'>925</td><td class='num' data-val='-10787.00'>-10787.0亿</td><td class='num' data-val='-0.942'>-0.942</td><td class='num' data-val='59.50'>59.5%</td><td class='num beh-qiang' data-val='89'>89</td><td class='num beh-jian'  data-val='140'>140</td><td class='num beh-xi'    data-val='197'>197</td><td class='num beh-chu'   data-val='499'>499</td></tr><tr><td data-val='2026-08-27'><a href='sector-strength-20260827.html' style='color:#1f4e79;text-decoration:none;font-weight:700'>2026-08-27</a></td><td class='num' data-val='925'>925</td><td class='num' data-val='-3919.00'>-3919.0亿</td><td class='num' data-val='-0.948'>-0.948</td><td class='num' data-val='68.00'>68.0%</td><td class='num beh-qiang' data-val='112'>112</td><td class='num beh-jian'  data-val='103'>103</td><td class='num beh-xi'    data-val='216'>216</td><td class='num beh-chu'   data-val='494'>494</td></tr></tbody>
-  </table>
-  <div class='empty'>提示：点击表头可排序；点击交易日可进入当日完整明细。</div>
+<h2>⚠️ 口径说明</h2>
+<div class='empty' style='text-align:left'>· 估值（PE 分位）接口最新快照为 2026-09-23，其余均为 2026-09-24。<br>· 窗口收益(alpha)回测未内置，链接至远程历史分析页。<br>· 所有资金数据为盘后公开龙虎榜，滞后且非未来收益承诺。</div>
 </div>
-<footer>
-数据来源：腾讯自选股 <b>westock-mcp</b>（盘后公开数据）。<br>
-本页面由 A股量化助理自动生成 · 仅供参考，<b>不构成投资建议</b> · 市场有风险，投资需谨慎。
-</footer>
+<footer>由 A 股量化助理生成 · 仅供参考，不构成投资建议。</footer>
 </div>
-<script>function sortTable(id, th){
-  var table=document.getElementById(id);
-  var tbody=table.tBodies[0];
-  var rows=Array.prototype.slice.call(tbody.rows);
-  var idx=parseInt(th.getAttribute('data-c'),10);
-  var asc=th.getAttribute('data-asc')!=='1';
-  rows.sort(function(a,b){
-    var x=a.cells[idx].getAttribute('data-val');
-    var y=b.cells[idx].getAttribute('data-val');
-    var nx=parseFloat(x), ny=parseFloat(y);
-    if(!isNaN(nx)&&!isNaN(ny)){ return asc?nx-ny:ny-nx; }
-    x=(x==null?'':x); y=(y==null?'':y);
-    return asc?(x<y?-1:(x>y?1:0)):(x<y?1:(x>y?-1:0));
-  });
-  for(var i=0;i<rows.length;i++) tbody.appendChild(rows[i]);
-  var ths=table.querySelectorAll('th.sort');
-  for(var k=0;k<ths.length;k++){ ths[k].removeAttribute('data-asc'); ths[k].classList.remove('sorted'); }
-  th.setAttribute('data-asc', asc?'1':'0');
-  th.classList.add('sorted');
-}
-document.querySelectorAll('th.sort').forEach(function(t){
-  t.addEventListener('click',function(){ sortTable(t.parentNode.parentNode.parentNode.id, t); });
-});
-</script>
 <!--WB_APP--><script id='wb-app'>
 /* ============================================================
    通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
