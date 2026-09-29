@@ -162,43 +162,60 @@ def features_for(code, date):
     return f
 
 
-def score_codes(codes, date, feats=None):
-    """在给定候选集合内做**横截面分位等权**打分。
+def all_codes():
+    """全市场代码（_txk_cache 全量正股）。用作横截面分位的「基准域」。"""
+    cache, _ = _load()
+    return list(cache.keys())
+
+
+def score_codes(codes, date, feats=None, universe=None):
+    """在**基准域**上做横截面分位等权打分，只对候选（codes）输出分数。
 
     返回 {code: {"score": 0~100, "rank": {因子: 0~1 分位}, "raw": {...}, "n_feat": n}}
     不使用任何绝对阈值 —— 分位天然自适应市场中枢漂移（lab 已验证的口径）。
+
+    ⚠️ 域（原则9）：默认基准域 = 候选自身（旧行为，兼容）。但**信号池候选来自异动票
+    （龙虎榜/增减持/大宗），用「候选内分位」会把分数压扁**——实测同因子在异动票域最高分
+    仅 66.6，而全市场可达 79+，等于把最强的一批标的排除在域外。故调用方应传入
+    `universe=全市场可交易域`，让分位在全市场口径下算、候选只作「展示过滤」。
+    这样既修复域错，又不改因子、不调权重（仍是先验固定集等权，干净样本外）。
     """
     use = feats or ALL_FEATS
-    rows = {}
-    for c in codes:
+    # 基准域：给定 universe 用它；否则用候选自身
+    base_codes = universe if universe else codes
+    base = {}
+    for c in base_codes:
         f = features_for(c, date)
         if f:
-            rows[c] = f
-    if not rows:
+            base[c] = f
+    if not base:
         return {}
-    # 逐因子算分位（在候选内部）
-    rank = {c: {} for c in rows}
+    # 只给候选（codes ∩ base）输出分数
+    cand = [c for c in codes if c in base]
+    if not cand:
+        return {}
+    rank = {c: {} for c in cand}
     valid = {}
     for name, d, _cn in use:
-        vals = sorted([(rows[c].get(name), c) for c in rows if rows[c].get(name) is not None])
+        vals = sorted([(base[c].get(name), c) for c in base if base[c].get(name) is not None])
         n = len(vals)
         if n < 5:
             continue
-        spread = vals[-1][0] - vals[0][0]
-        if spread == 0:
+        if vals[-1][0] == vals[0][0]:
             continue
         valid[name] = True
         for pos, (v, c) in enumerate(vals):
-            r = pos / (n - 1) if n > 1 else 0.5
-            rank[c][name] = r if d > 0 else 1 - r
+            if c in rank:
+                r = pos / (n - 1) if n > 1 else 0.5
+                rank[c][name] = r if d > 0 else 1 - r
     out = {}
-    for c in rows:
+    for c in cand:
         rk = rank[c]
         if len(rk) < max(3, len(valid) // 2):
             continue
         out[c] = {"score": round(sum(rk.values()) / len(rk) * 100, 1),
                   "rank": {k: round(v, 3) for k, v in rk.items()},
-                  "raw": {k: rows[c].get(k) for k in rk},
+                  "raw": {k: base[c].get(k) for k in rk},
                   "n_feat": len(rk)}
     return out
 
