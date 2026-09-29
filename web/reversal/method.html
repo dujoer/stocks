@@ -243,7 +243,7 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 
 </style><!--/WB_THEME--></head>
 <body>
-<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
 </div>
 </div>
 </div>
@@ -426,6 +426,17 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 
 <div class="foot">本 Playbook 为基于公开量化规则与已验证案例的方法论框架，非个股推荐、非买卖建议。所有数字以 westock 实拉为准，决策责任在账户本人。</div>
 </div>
+
+<h2>九、诚实披露 · 弱势期纪律（用之前必读）</h2>
+<div class="box" style="border-left:4px solid #b8332a;background:#fdf3f2">
+<b>① 胜率有「期间依赖」，别当稳定承诺：</b>反转池「组合分前 10%」相对胜率约 62–65%（健康区间），
+但样本外 half_oos 切分下训练半 <b>−2.97pp</b>、测试半 <b>+16.35pp</b> —— 信号强度随市场环境大幅摆动，某一期很强不代表下一期也强。<br>
+<b>② 环境只控仓位（β），不改排序：</b>全市场广度 &lt;35%（弱势）时仓位系数降到 0.4×，并建议直接<b>空仓等待</b>，
+不靠选股对抗系统性下行；广度 35~55% 中性 0.7×；≥55% 进攻 1.0×。<br>
+<b>③ 退出纪律 &gt; 入场筛选：</b>严格止损（谷底×0.97）+ 移动止盈，是本项目唯一在两段样本外都稳定的改进。<br>
+<b>④ 本池不宣称能靠环境提高 α</b> —— 它只解决「什么时候该收手」，不解决「选哪只一定涨」。
+</div>
+
 <!--WB_APP--><script id='wb-app'>
 /* ============================================================
    通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
@@ -590,16 +601,5 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
   });
 })();
 
-</script><!--/WB_APP-->
-<h2>九、诚实披露 · 弱势期纪律（用之前必读）</h2>
-<div class="box" style="border-left:4px solid #b8332a;background:#fdf3f2">
-<b>① 胜率有「期间依赖」，别当稳定承诺：</b>反转池「组合分前 10%」相对胜率约 62–65%（健康区间），
-但样本外 half_oos 切分下训练半 <b>−2.97pp</b>、测试半 <b>+16.35pp</b> —— 信号强度随市场环境大幅摆动，某一期很强不代表下一期也强。<br>
-<b>② 环境只控仓位（β），不改排序：</b>全市场广度 &lt;35%（弱势）时仓位系数降到 0.4×，并建议直接<b>空仓等待</b>，
-不靠选股对抗系统性下行；广度 35~55% 中性 0.7×；≥55% 进攻 1.0×。<br>
-<b>③ 退出纪律 &gt; 入场筛选：</b>严格止损（谷底×0.97）+ 移动止盈，是本项目唯一在两段样本外都稳定的改进。<br>
-<b>④ 本池不宣称能靠环境提高 α</b> —— 它只解决「什么时候该收手」，不解决「选哪只一定涨」。
-</div>
-
-</body>
+</script><!--/WB_APP--></body>
 </html>

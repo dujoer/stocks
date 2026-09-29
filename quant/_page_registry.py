@@ -181,11 +181,19 @@ FAMILIES = [
          dated=True, start='20260918', date_re=r'(\d{8})',
          need='_txk_cache.json（全市场日K）+ _selected_lab.py（实验室冻结 _selected_model.json：9 因子等权横截面分位、A档前5%）+ _idxkline（环境门控）；不再依赖 macd_scan/picks 模型库'),
     dict(key='accumulation', label='增仓精选（7 维增持/增仓信号 + 1/3/5 日多空增仓 · 共识选股池）',
-         patterns=['accumulation/combined_*.html', 'accumulation/index.html',
-                   'accumulation/lab.html', 'accumulation/history.html'],
-         entry='accumulation/index.html', script='_accum_lab.py;build_accum.py', freq='daily',
-         dated=True, start='20260918', date_re=r'(\d{8})',
-         need='block_chg/{DATE}.json（大宗交易）+ exec_chg/{DATE}.json（高管增持）+ lhb_detail/{DATE}_batch*.json（席位异动）+ margin_em/{code}.json（东财融资融券日频全量序列 · T+1 口径）+ q2_full/_merged_shareholder.json（私募/阳光私募/个人/公募增持·季度维度）+ _txk_cache.json（前向回测与事后兑现回填）；每日另出 stat_{DS}.json 快照并累积 quant/accum/history.json（history.html 为归档/兑现页）'),
+        patterns=['accumulation/combined_*.html', 'accumulation/index.html',
+                  'accumulation/lab.html', 'accumulation/history.html'],
+        entry='accumulation/index.html', script='_accum_lab.py;build_accum.py', freq='daily',
+        dated=True, start='20260918', date_re=r'(\d{8})',
+        need='block_chg/{DATE}.json（大宗交易）+ exec_chg/{DATE}.json（高管增持）+ lhb_detail/{DATE}_batch*.json（席位异动）+ margin_em/{code}.json（东财融资融券日频全量序列 · T+1 口径）+ q2_full/_merged_shareholder.json（私募/阳光私募/个人/公募增持·季度维度）+ _txk_cache.json（前向回测与事后兑现回填）；每日另出 stat_{DS}.json 快照并累积 quant/accum/history.json（history.html 为归档/兑现页）'),
+    dict(key='quant_strategy', label='量化策略板（综合选股 + 买卖点 · 短/中/长三周期）',
+        patterns=['quant_strategy/strategy_*.html', 'quant_strategy/index.html',
+                  'quant_strategy/method.html'],
+        entry='quant_strategy/index.html',
+        script='build_quant_strategy.py', freq='daily', dated=True, start='20260928',
+        date_re=r'(\d{8})',
+        need='_txk_cache.json（全市场日K）+ rev/bottom_state.json（底部锚定）；先验固定因子集（短/中/长三族，等权横截面分位）→ 按持有周期分类并给量化买卖点（箱体/趋势/底部锚定）；环境只控β不控排序；综合视图非叠加alpha'),
+
     dict(key='shareholder', label='行业最强/牛人', patterns=['shareholder/*.html'],
          entry='shareholder/2026-q2-industry-elite.html', script=None,
          freq='quarterly', dated=False, start=None, date_re=None,
@@ -215,6 +223,7 @@ ORPHAN_WHITELIST_SUBSTR = (
     'docs/',
     'sections/',
     'selected/',
+    'quant_strategy/',
 )
 
 

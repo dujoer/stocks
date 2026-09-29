@@ -44,6 +44,7 @@ SECTIONS = [
     ("主升精选", "selected/index.html"),
     ("增仓精选", "accumulation/index.html"),
     ("做T池", "tplus/index.html"),
+    ("量化策略", "quant_strategy/index.html"),
     ("数据中心", "db/index.html"),
 ]
 
@@ -72,6 +73,7 @@ MODULES = [
         ("主升精选", "selected/index.html"),
         ("增仓精选", "accumulation/index.html"),
         ("做T池", "tplus/index.html"),
+        ("量化策略", "quant_strategy/index.html"),
     ]),
     ("数据与工具", [
         ("数据中心", "db/index.html"),

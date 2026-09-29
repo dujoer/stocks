@@ -69,6 +69,7 @@ reversal_d, reversal_f = latest(r"^watchlist_(\d{8})\.html$", os.path.join(WEB, 
 macd_d, macd_f = latest(r"^watchlist_(\d{8})\.html$", os.path.join(WEB, "macd"))
 selected_d, selected_f = latest(r"^combined_(\d{8})\.html$", os.path.join(WEB, "selected"))
 accum_d, accum_f = latest(r"^combined_(\d{8})\.html$", os.path.join(WEB, "accumulation"))
+qstrat_d, qstrat_f = latest(r"^strategy_(\d{8})\.html$", os.path.join(WEB, "quant_strategy"))
 exec_d, exec_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "exec_chg"))
 blk_d, blk_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "block_chg"))
 # 每日总览（大盘看板）：取 market_overview 最新快照日期
@@ -289,6 +290,19 @@ def stat_reversal():
     return f"已累积 <b>{len(fs)}</b> 期观察池 ｜ 最新 {latest_dt}"
 
 
+def stat_quant_strategy():
+    """量化策略板：短/中/长三周期综合选股 + 买卖点（全市场域先验固定因子集）。"""
+    if not qstrat_d:
+        return ""
+    st = _load_json(os.path.join(WEB, "quant_strategy", "stat_%s.json" % qstrat_d.strftime("%Y%m%d")))
+    if not st:
+        return "综合选股 + 买卖点（短/中/长）"
+    c = st.get("counts", {}) or {}
+    env = st.get("env") or "未知"
+    return (f"全市场域 <b>{st.get('n_universe', '—')}</b> 只 ｜ 短线 <b>{c.get('short', '—')}</b> "
+            f"｜ 中线 <b>{c.get('mid', '—')}</b> ｜ 长线 <b>{c.get('long', '—')}</b> ｜ 环境 <b>{env}</b> ｜ 带买卖点")
+
+
 def stat_macd():
     """MACD 水上金叉观察池：入选数 / 水上金叉数 / 初筛数"""
     if not macd_d or not macd_f:
@@ -434,6 +448,7 @@ STAT = {
     "macd": stat_macd(),
     "selected": stat_selected(),
     "accum": stat_accumulation(),
+    "qstrat": stat_quant_strategy(),
 }
 
 lhb_txt, lhb_cls = freshness(lhb_d)
@@ -450,6 +465,8 @@ pick_txt, pick_cls = freshness(pick_d) if pick_d else ("—", "stale")
 STAT["pick"] = pick_stat
 tplus_txt, tplus_cls = freshness(tplus_d) if tplus_d else ("—", "stale")
 STAT["tplus"] = tplus_stat
+qstrat_txt, qstrat_cls = freshness(qstrat_d) if qstrat_d else ("—", "stale")
+STAT["qstrat"] = stat_quant_strategy()
 
 def fmt(d):
     return d.strftime("%Y-%m-%d") if d else "—"
@@ -625,6 +642,18 @@ ZONES = [
                 "func": "单只 A 股「短线 / 中线 / 长线」三周期调研：单季拆分、内部人行为对照、板块资金确认、七条标准打分。",
                 "rel": "← 板块强度 / 牛人追踪 / 健康度（筛选上游） → 数据中心（查历年）。",
                 "stat": STAT["research"], "date": fmt(research_d), "fresh": badge(research_cls, research_txt),
+            },
+            {
+                "ic": "🧬", "t": "量化策略板（短/中/长 + 买卖点）", "href": "web/quant_strategy/index.html",
+                "func": ("把已在样本外证实的各池因子族（<b>趋势 / 资金 / 反转 / 做T / 增仓</b>）重组成 "
+                         "<b>短线 / 中线 / 长线</b> 三种持有周期视角，各自给 <b>买区 / 止损 / 目标 / 盈亏比</b>。"
+                         "先验固定因子集（短中长三族，等权横截面分位）→ 按最高一族判定持有周期。"
+                         "环境只给<b>仓位系数</b>（控 β，不改排序）。详见 "
+                         "<a href='web/quant_strategy/index.html'>量化策略板</a>（选股能力以各池 lab 为准）。"),
+                "rel": "← 全市场日K 横截面分位 + rev/bottom_state 底部锚定 → 综合视图（非叠加 alpha）；"
+                       "策略族来源：主升/反转/做T/增仓 四池实验室。",
+                "stat": STAT["qstrat"], "date": fmt(qstrat_d) if qstrat_d else "—",
+                "fresh": badge(qstrat_cls, qstrat_txt),
             },
         ],
     },

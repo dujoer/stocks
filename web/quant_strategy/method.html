@@ -1,39 +1,27 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>今日高胜率候选池 · 2026-09-24</title><style>
-.wrap{max-width:1320px}
-h1{font-size:23px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
-h2{font-size:18px;font-weight:600;margin:28px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--accent)}
-h3{font-size:15px;font-weight:600;margin:18px 0 8px}
+<title>量化策略板 · 方法论 Playbook（短/中/长 + 买卖点）</title>
+<style>
+:root{--bg:#fbfbfd;--card:#fff;--text:#1d1d1f;--muted:#6e6e73;--line:#e5e5e7;
+ --up:#ff3b30;--dn:#34c759;--blue:#0071e3;--gold:#1a73e8;--orange:#ff9500;--purple:#af52de;}
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+ background:var(--bg);color:var(--text);line-height:1.75;margin:0;padding:0}
+.wrap{max-width:1040px;margin:0 auto;padding:28px 18px 56px}
+h1{font-size:23px;font-weight:700;margin:0 0 6px}
+h2{font-size:18px;font-weight:600;margin:26px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--blue)}
+h3{font-size:15px;font-weight:600;margin:18px 0 6px;color:var(--blue)}
 .sub{color:var(--muted);font-size:13px;margin-bottom:8px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:12px 0;box-shadow:0 1px 2px rgba(60,64,67,.10)}
-.box{border-left:4px solid var(--accent);background:var(--accent-soft);padding:14px 18px;border-radius:0 10px 10px 0;margin:14px 0}
-.box.red{border-color:var(--green);background:#e6f4ea}
-.box.amber{border-color:#e37400;background:#fef7e0}
-table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0}
-th,td{padding:8px 6px;border-bottom:1px solid var(--line-2);text-align:left;vertical-align:middle;white-space:nowrap}
-th{color:var(--muted);font-weight:600;font-size:11.5px;background:var(--hover);position:sticky;top:0}
-th[data-k]{cursor:pointer;user-select:none}
-th[data-k]:hover{color:var(--accent)}
-th.sorted-asc:after{content:" ▴";color:var(--accent)}
-th.sorted-desc:after{content:" ▾";color:var(--accent)}
-tbody tr:hover{background:var(--hover)}
-.num{font-variant-numeric:tabular-nums;text-align:right}
-.up{color:var(--red)}.dn{color:var(--green)}.am{color:var(--accent)}
-.note-inline{color:var(--muted)}
-.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;margin:1px 2px;white-space:nowrap}
-.tag.r{background:#fce8e6;color:#a8071a}.tag.y{background:#fef7e0;color:#8a6d00}.tag.g{background:#e6f4ea;color:#137333}
-.hist{display:inline-block;font-size:10.5px;font-weight:700;color:#137333;background:#e6f4ea;border:1px solid #b7e1c3;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
-.histcol{white-space:normal;min-width:150px;max-width:200px}
-.note{font-size:12px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px dashed var(--line-2)}
+.card{background:var(--card);border-radius:16px;padding:16px 20px;margin:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.box{border-left:4px solid var(--blue);background:#f0f7ff;padding:14px 18px;border-radius:0 12px 12px 0;margin:14px 0}
+.box.gold{border-color:var(--gold);background:#fffaf0}
+.box.green{border-color:var(--dn);background:#f0faf3}
+.box.red{border-color:var(--up);background:#fff5f4}
+.kv{font-size:13px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:600;background:#fafafa}
 .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
-ul{margin:8px 0;padding-left:20px}li{margin:4px 0}
-.kpi{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
-.kpi div{flex:1;min-width:110px;background:var(--hover);border-radius:10px;padding:10px 14px}
-.kpi b{display:block;font-size:20px;color:var(--accent)}
-.kpi span{font-size:12px;color:var(--muted)}
-.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:78vh;overflow-y:auto}
-.scroll table{min-width:1380px}
 </style><!--WB_THEME--><style id='wb-theme'>
 /* ============================================================
    统一设计系统 (A股看板) — Google Material 风·朴素简洁
@@ -225,104 +213,91 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
   .navgrp{ padding:5px 6px 5px 5px !important; }
 }
 
-</style><!--/WB_THEME--></head><body>
-<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
-<div class="wrap">
-<h1>今日高胜率候选池 · 2026-09-24</h1>
-<div class="sub">基底：MACD 水上金叉（DIF&gt;0 且 DEA&gt;0 且 柱&gt;0）+ 20 日主力净流入&gt;0 的 <b>0 只</b>（全市场扫描 — 只）。增强：行情 / 技术(MA·RSI) / 筹码 / 板块行为 / 龙虎榜 / 高管·大宗，全部为 <b>2026-09-24 收盘</b>数据。表格所有列均可点击排序。</div>
+</style><!--/WB_THEME--></head>
+<body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='index.html'>量化策略</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div><div class="wrap">
+<h1>量化策略板 · 方法论 Playbook</h1>
+<div class="sub">综合选股 + 买卖点操作建议，按短 / 中 / 长 持有周期组织。本页是常驻方法论；选股能力与局限以各池实验室页为准。</div>
 
-<div class="kpi">
-<div><b>0</b><span>候选池（MACD 水上金叉）</span></div>
-<div><b>0</b><span>核心候选</span></div>
-<div><b>0</b><span>观察候选</span></div>
-<div><b>0</b><span>备选</span></div>
-<div><b>0</b><span>回避（含风险标记）</span></div>
-</div>
+<div class="box gold"><b>定位：综合视图，不是新 alpha 源。</b>本板把已在样本外证实的各池因子族（趋势 / 资金 / 反转 / 做T / 增仓）
+重新组织成「短线 / 中线 / 长线」三种持有周期视角，并各自给出<b>买区 / 止损 / 目标 / 盈亏比</b>。
+它解决的是「这只票该用哪种打法、拿多久」，<b>不宣称叠加胜率</b>——三族分是同一批真实日K的不同切角。</div>
 
-<div class="box"><b>打分模型（100 分 · 8 维）</b>
+<h2>一、六套量化策略来源</h2>
+<div class="card"><div class="kv">
+<table data-wb>
+<thead><tr><th>策略族</th><th>来源池 / 实验室</th><th>在综合板里的角色</th></tr></thead>
+<tbody>
+<tr><td><b>趋势</b></td><td>主升精选 lab（全市场域 9 因子）</td><td>中线族主体：近20/60日动量、站上MA60、MA20斜率、均线多头、接近近20日高</td></tr>
+<tr><td><b>资金</b></td><td>主升精选 lab（上涨放量占比 / 量能放大 / 回调缩量）</td><td>短线+中线族的动量确认；离线源用价量代理（历史主力净流入不可得）</td></tr>
+<tr><td><b>反转</b></td><td>底部反转 lab（v5 全市场深跌域）</td><td>长线族主体：距52周高深跌回撤、底部锚定（谷底×0.97 结构位）</td></tr>
+<tr><td><b>做T</b></td><td>做T池 lab（箱体 / 网格 / 方向×环境配对）</td><td>短线族主体：箱体窄、贴近均线、近10日高低区间低吸高抛</td></tr>
+<tr><td><b>增仓</b></td><td>增仓精选 lab（机构/私募 × 融资增仓）</td><td>长线族加分项：底部区 / 机构私募增持 → accumev 信号</td></tr>
+<tr><td><b>多周期</b></td><td>个股调研（三周期框架）</td><td>短/中/长分类的语义框架来源</td></tr>
+</tbody></table>
+</div></div>
+
+<h2>二、短 / 中 / 长 三族因子（先验固定，等权横截面分位）</h2>
+<div class="card"><div class="kv">
+<table data-wb>
+<thead><tr><th>周期</th><th>因子（方向由经济逻辑给定）</th><th>排序含义</th></tr></thead>
+<tbody>
+<tr><td><b>短线</b></td><td>5日动量 + 量比 + 贴近MA10 + 箱体窄(近10日振幅std) + 上涨放量占比</td><td>活跃、贴线、箱体紧凑 → 适合做T/波段</td></tr>
+<tr><td><b>中线</b></td><td>近20/60日动量 + 站上MA60 + MA20斜率 + 均线多头 + 接近近20日高</td><td>趋势已转多、资金进场 → 回踩低吸吃主升</td></tr>
+<tr><td><b>长线</b></td><td>低波动(ATR%) + 距52周高深跌回撤 + 底部锚定/增仓</td><td>低位 + 低波动 + 底部确认 → 逢低布局价值修复</td></tr>
+</tbody></table>
+每个因子在<b>当日全市场可交易域</b>（剔 ST/退、20日均额≥3000万、现价≥2元、K线≥250日）内做横截面分位，
+方向乘权重（均 +1，越高越好）后等权合成该族分。三族分各自 0~100。<b>不筛因子、不按回测调权重</b>——这是干净样本外的前提。
+</div></div>
+
+<h2>三、持有周期怎么定</h2>
+<div class="kv">对每只入池票，取三族分的最高一族作为它的<b>持有周期标签</b>；再加两条经济门控：
 <ul>
-<li><b>趋势/技术 25</b>：MACD 柱动能(柱/价·10) + 均线多头排列(8) + RSI12 健康区(7)</li>
-<li><b>位置 15</b>：52 周分位——偏好相对中低位（25–65% 满分），过高(≥88%)降分</li>
-<li><b>资金 20</b>：20 日主力净流入(12) + 当日主力净流入(4) + 流入占流通比(4)</li>
-<li><b>筹码 15</b>：获利盘健康区(45–80%·8) + 90 集中度适中(12–32·7)</li>
-<li><b>板块 12</b>：所属申万二级板块主力行为——抢筹12 / 建仓9 / 洗盘5 / 出货0</li>
-<li><b>龙虎榜 8</b>：机构席位净买入 + 游资热度（高/中/低）</li>
-<li><b>高管/大宗 5</b>：高管净增持 + 大宗机构买入</li>
+<li><b>中线</b>须趋势 intact：若未站上 MA60，则取消中线资格，改判短/长。</li>
+<li><b>短线</b>须可交易：若 20 日 ATR% 过低（&lt;0.8%，近乎无波动），则取消短线资格，改判中/长。</li>
 </ul>
-<b>硬性降级（回避）</b>：所属板块「出货」/ RSI12≥90 超买 / 52 周位≥92% 高位。
-<div class="note">名称后的<span class="hist">09-11</span>绿色徽标 = 该标的<b>此前（不含今日）</b>曾被选入观察/信号池；<b>鼠标悬停</b>可看全部入选记录；对应「历史入选」列（可排序）列出全部日期与池别。</div></div>
+标签只说明「这只票最贴合哪种打法」，<b>不是推荐</b>。</div>
 
-<h2>一、核心候选（0 只 · 总分≥68 且无风险否决）</h2>
-<div class="box">无</div>
+<h2>四、买卖点怎么算（量化，非预测）</h2>
+<div class="card"><div class="kv">
+<table data-wb>
+<thead><tr><th>周期</th><th>买区</th><th>结构位止损</th><th>目标</th></tr></thead>
+<tbody>
+<tr><td><b>短线</b></td><td>近10日箱体下沿×1.00~1.02（贴近下沿低吸，不追高）</td><td>近10日低×0.97（破位先减半）</td><td>近10日高×1.00 / ×1.04</td></tr>
+<tr><td><b>中线</b></td><td>回踩 MA10/MA20（min×0.99 ~ max×1.01）</td><td>近20日低×0.97</td><td>近20日高×1.05 / ×1.10</td></tr>
+<tr><td><b>长线</b></td><td>底部锚定：谷底×1.00~1.03（或阶段低位）</td><td>谷底×0.97（结构失效位）</td><td>本轮下跌段回撤：谷底+跌幅×0.382 / ×0.618</td></tr>
+</tbody></table>
+盈亏比 RR = (T1 − 买区上沿) / (买区上沿 − 止损)。箱体位置 = 现价在「止损位(0%)→买区→T1→T2(100%)」中的百分比，
+用于判断「买区内·可买 / 持有·待涨 / 已到T1/T2 / 已破止损」。
+</div></div>
 
-<h2>二、观察候选（0 只 · 55≤总分&lt;68）</h2>
-<div class="box">无</div>
+<h2>五、环境只控 β（仓位系数），不改排序</h2>
+<div class="box green">大盘环境（由上证近20日偏离 + 广度等判定）只输出<b>仓位系数</b>（破位 0.0 / 弱势 0.55 / 震荡 0.8 / 偏强 1.0）：
+用它给「该拿多少」，<b>不</b>用它改「选哪只」。
+短线做T方向须与环境配对（弱环境做反T、强环境做正T），反向配对是全表最差档——这是做T池 lab 的实证结论。
+<b>宁可降低仓位也不降低确定性；环境差就空仓等待。</b></div>
 
-<h2>三、备选（0 只）</h2>
-<div class="box">无</div>
+<h2>六、退出纪律（唯一跨期稳定的改进）</h2>
+<div class="box red" style="border-color:#b00020">
+① <b>两层止损</b>：结构位（近20日基底 / 箱体下沿 / 谷底×0.97）破位先<b>减半</b>，跌到更宽固定位（约 −15%）再<b>全出</b>；
+② <b>移动止盈</b>：浮盈达标后止损上移跟踪，到 T1/T2 先兑现一半；③ <b>胜率与单笔均值是一对权衡</b>，不要只看胜率。
+入场侧（选股）两半常反向，退出侧两半同向——所以「退出纪律 &gt; 入场筛选」是铁律。</div>
 
-<h2>四、回避 / 风险名单（0 只 · 触发板块出货 / 超买 / 高位 等硬降级）</h2>
-<div class="box amber">以下标的不建议追入，触发硬性降级条件；若已持有，按退出纪律执行（见下）。</div>
-<div class="box">无</div>
+<h2>七、期间依赖诚实披露</h2>
+<div class="kv">各池样本外实证均显示 edge 随市场环境摆动：例如反转池 half_oos 切分下训练半 <b>−3.0pp</b>、测试半 <b>+16.4pp</b>，
+逐月 edge 在 −7.7pp ~ +25.4pp 之间摆动（4 负 5 正）。本板不掩饰该波动；某期很强不代表下一期也强，
+环境状态从「提高 alpha 的手段」降级为「只控 β 暴露的仓位系数」。</div>
 
-<h2>五、使用说明与退出纪律</h2>
-<div class="card">
-<b>胜率的正确理解：</b>本池是「多因子共振」筛选，<b>不是</b>收益承诺。单期样本不能证明胜率——按项目纪律，需<b>累积 20–30 个交易日</b>的前向表现，再分组回测各维度胜率，方可把阈值逐步硬化。当前所有阈值仅为「观察档」，不构成趋势的充分/必要条件。
-<div class="note">
-<b>建议执行规则：</b>
-<ul>
-<li><b>入场</b>：优先核心候选，且需满足「次日不破 5 日线」或「放量突破前高」之一；不追涨停、不打板。</li>
-<li><b>仓位</b>：单票 ≤ 组合 15%；核心候选合计 ≤ 60%。</li>
-<li><b>退出（优先于入场）</b>：跌破 MA20 或 MACD 死叉 → 离场；单票 −8% 无条件止损；达 +15~20% 分批止盈。</li>
-<li><b>板块</b>：若所属板块主力行为由「抢筹/建仓」转为「洗盘/出货」，同步降仓。</li>
-</ul>
-</div>
-<div class="note">数据口径：行情/技术/筹码 = westock data_quote/data_technical/data_chip（2026-09-24）；板块行为 = westock data_sector（2026-09-24）；龙虎榜 = westock data_lhb 机构席位（2026-09-24）；高管增减持 = 东财 RPT_EXECUTIVE_HOLD_DETAILS（变动日 2026-09-24）；大宗 = 东财 RPT_DATA_BLOCKTRADE（2026-09-24）。</div>
-</div>
+<h2>八、局限</h2>
+<div class="card"><div class="kv">
+① 前向窗口重叠 → 样本非独立；② 样本约 10 个月，换年份是否成立无法验证；
+③ 主力资金用「上涨放量占比」价量代理（离线源历史主力净流入不可得），选股日可叠加真实主力净流入作加分；
+④ 长线底部锚定依赖 rev/bottom_state.json（本地累积、随日K刷新）；
+⑤ 绝对胜率含 beta，结论以<b>相对口径</b>（个股前向收益 &gt; 同期同池等权中位数）为主。
+</div></div>
 
-<div class="foot">
-<b>免责声明</b>：以上内容基于公开数据和量化分析，仅供参考，不构成投资建议。市场有风险，投资需谨慎。<br>
-任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往表现不预示未来收益。
-</div>
-</div>
-<script>
-(function(){
-  function cellVal(tr, idx, type){
-    var td = tr.cells[idx];
-    if(!td) return type==='n' ? -Infinity : '';
-    var raw = td.getAttribute('data-v');
-    var txt = (raw!==null? raw : td.textContent).trim();
-    if(type==='n'){
-      var v = parseFloat(txt.replace(/[,%·万亿+]/g,''));
-      return isNaN(v) ? -Infinity : v;
-    }
-    return txt;
-  }
-  document.querySelectorAll('table.sortable').forEach(function(tb){
-    var ths = tb.querySelectorAll('thead th[data-k]');
-    ths.forEach(function(th, ci){
-      th.addEventListener('click', function(){
-        var tbody = tb.tBodies[0];
-        var arr = Array.prototype.slice.call(tbody.rows);
-        var type = th.getAttribute('data-t') || 'n';
-        var cur = th.getAttribute('data-dir');
-        var dir = (cur === 'asc') ? 'desc' : 'asc';
-        ths.forEach(function(o){ o.removeAttribute('data-dir'); o.classList.remove('sorted-asc','sorted-desc'); });
-        th.setAttribute('data-dir', dir);
-        th.classList.add(dir==='asc' ? 'sorted-asc' : 'sorted-desc');
-        arr.sort(function(a,b){
-          var va = cellVal(a, ci, type), vb = cellVal(b, ci, type);
-          if(va < vb) return dir==='asc' ? -1 : 1;
-          if(va > vb) return dir==='asc' ? 1 : -1;
-          return 0;
-        });
-        arr.forEach(function(tr){ tbody.appendChild(tr); });
-      });
-    });
-  });
-})();
-</script>
-<!--WB_APP--><script id='wb-app'>
+<div class="foot">本页为量化方法论常驻文档，非个股推荐、非买卖建议。决策责任在账户本人。</div>
+</div><!--WB_APP--><script id='wb-app'>
 /* ============================================================
    通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
    功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
