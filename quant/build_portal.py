@@ -70,6 +70,7 @@ macd_d, macd_f = latest(r"^watchlist_(\d{8})\.html$", os.path.join(WEB, "macd"))
 selected_d, selected_f = latest(r"^combined_(\d{8})\.html$", os.path.join(WEB, "selected"))
 accum_d, accum_f = latest(r"^combined_(\d{8})\.html$", os.path.join(WEB, "accumulation"))
 qstrat_d, qstrat_f = latest(r"^strategy_(\d{8})\.html$", os.path.join(WEB, "quant_strategy"))
+sanyin_d, sanyin_f = latest(r"^sanyin_(\d{8})\.html$", os.path.join(WEB, "three_yin"))
 exec_d, exec_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "exec_chg"))
 blk_d, blk_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "block_chg"))
 # 每日总览（大盘看板）：取 market_overview 最新快照日期
@@ -303,6 +304,20 @@ def stat_quant_strategy():
             f"｜ 中线 <b>{c.get('mid', '—')}</b> ｜ 长线 <b>{c.get('long', '—')}</b> ｜ 环境 <b>{env}</b> ｜ 带买卖点")
 
 
+def stat_three_yin():
+    """三连阴（量化错杀型）观察池：按累计跌幅分档（回测校准的核心维度）。"""
+    if not sanyin_d:
+        return ""
+    st = _load_json(os.path.join(WEB, "three_yin", "stat_%s.json" % sanyin_d.strftime("%Y%m%d")))
+    if not st:
+        return "三连阴按跌幅分档 + 量化买卖点"
+    c = st.get("counts", {}) or {}
+    env = st.get("env") or "未知"
+    return (f"三连阴 <b>{st.get('n', '—')}</b> 只 ｜ 观察档(跌8~12%) <b>{c.get('obs', '—')}</b> "
+            f"｜ 一般档 <b>{c.get('mid', '—')}</b> ｜ 排雷档 <b>{c.get('deep', '—')}</b> "
+            f"｜ 深跌禁区 <b>{c.get('fatal', '—')}</b> ｜ 环境 <b>{env}</b> ｜ 带买卖点")
+
+
 def stat_macd():
     """MACD 水上金叉观察池：入选数 / 水上金叉数 / 初筛数"""
     if not macd_d or not macd_f:
@@ -467,6 +482,8 @@ tplus_txt, tplus_cls = freshness(tplus_d) if tplus_d else ("—", "stale")
 STAT["tplus"] = tplus_stat
 qstrat_txt, qstrat_cls = freshness(qstrat_d) if qstrat_d else ("—", "stale")
 STAT["qstrat"] = stat_quant_strategy()
+sanyin_txt, sanyin_cls = freshness(sanyin_d) if sanyin_d else ("—", "stale")
+STAT["sanyin"] = stat_three_yin()
 
 def fmt(d):
     return d.strftime("%Y-%m-%d") if d else "—"
@@ -654,6 +671,17 @@ ZONES = [
                        "策略族来源：主升/反转/做T/增仓 四池实验室。",
                 "stat": STAT["qstrat"], "date": fmt(qstrat_d) if qstrat_d else "—",
                 "fresh": badge(qstrat_cls, qstrat_txt),
+            },
+            {
+                "ic": "🕯️", "t": "三连阴（量化错杀）观察池", "href": "web/three_yin/index.html",
+                "func": ("连续 3 日收盘下跌的「量化踩踏」候选，按<b>三连阴累计跌幅</b>分档（回测校准的唯一稳健维度）："
+                         "★ 观察档(跌8~12%) / 一般档(5~8%) / 浅跌档(0~5%) / ⚠ 排雷档(12~20%) / ⛔ 深跌禁区(&gt;20%)，"
+                         "每只给 <b>低吸区 / 止损 / 目标 T1·T2 / 盈亏比</b>。"
+                         "附 <a href='web/three_yin/lab.html'>实验室页</a>：四套问财条件已逐条回测（284 交易日 / 22.4 万信号）。"),
+                "rel": "⚠️ 回测如实结论：原条件集（缩量+站上MA60+市值）<b>不产生超额</b>，其中两条为负贡献；"
+                       "真正稳健的只有跌幅分档。环境与利空需人工核对。",
+                "stat": STAT["sanyin"], "date": fmt(sanyin_d) if sanyin_d else "—",
+                "fresh": badge(sanyin_cls, sanyin_txt),
             },
         ],
     },

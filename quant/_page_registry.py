@@ -194,6 +194,15 @@ FAMILIES = [
         date_re=r'(\d{8})',
         need='_txk_cache.json（全市场日K）+ rev/bottom_state.json（底部锚定）；先验固定因子集（短/中/长三族，等权横截面分位）→ 按持有周期分类并给量化买卖点（箱体/趋势/底部锚定）；环境只控β不控排序；综合视图非叠加alpha'),
 
+    dict(key='three_yin', label='三连阴（量化错杀）观察池 + 实验室',
+        patterns=['three_yin/sanyin_*.html', 'three_yin/index.html', 'three_yin/lab.html'],
+        entry='three_yin/index.html',
+        script='build_3yl.py', freq='daily', dated=True, start='20260929',
+        date_re=r'(\d{8})',
+        need='_txk_cache.json（全市场日K）+ _mktcap.json（流通市值）+ _name2sw2.json（行业）；'
+             '回测引擎 _3yl_lab.py（284交易日/22.4万信号，结论：原条件集不产生超额，仅跌幅分档两半同向稳健）；'
+             '按跌幅分档出票 + 量化买卖点（止损取结构位与-6%更宽者，目标=谷底+跌幅×0.382/0.618）'),
+
     dict(key='shareholder', label='行业最强/牛人', patterns=['shareholder/*.html'],
          entry='shareholder/2026-q2-industry-elite.html', script=None,
          freq='quarterly', dated=False, start=None, date_re=None,
@@ -224,6 +233,7 @@ ORPHAN_WHITELIST_SUBSTR = (
     'sections/',
     'selected/',
     'quant_strategy/',
+    'three_yin/',
 )
 
 

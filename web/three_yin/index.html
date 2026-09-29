@@ -1,0 +1,551 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>三连阴（量化错杀）观察池 · 2026-09-29</title><style>
+:root{--bg:#fbfbfd;--card:#fff;--text:#1d1d1f;--muted:#6e6e73;--line:#e5e5e7;
+ --up:#ff3b30;--dn:#34c759;--blue:#0071e3;--gold:#1a73e8;--orange:#ff9500;--purple:#af52de;}
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+ background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:0}
+.wrap{max-width:1060px;margin:0 auto;padding:28px 18px 56px}
+h1{font-size:23px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+h2{font-size:18px;font-weight:600;margin:26px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--blue)}
+.sub{color:var(--muted);font-size:13px;margin-bottom:8px}
+.card{background:var(--card);border-radius:16px;padding:16px 20px;margin:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.box{border-left:4px solid var(--blue);background:#f0f7ff;padding:14px 18px;border-radius:0 12px 12px 0;margin:14px 0}
+.box.gold{border-color:var(--gold);background:#fffaf0}
+.box.green{border-color:var(--dn);background:#f0faf3}
+.box.red{border-color:var(--up);background:#fff5f4}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa;white-space:nowrap}
+.num{font-variant-numeric:tabular-nums}
+.up{color:var(--up)}.dn{color:var(--dn)}.am{color:var(--blue)}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;margin:1px 2px}
+.tag.ok{background:#e6f7ec;color:#1a7a45}.tag.no{background:#fff5f4;color:#b00020}
+.tag.mid{background:#e6f0ff;color:#1a73e8}.tag.gray{background:#f0f0f2;color:#6e6e73}
+.bk{font-size:13px;font-weight:700;padding:3px 10px;border-radius:10px;display:inline-block;margin:2px 0}
+.case{font-size:13px;margin:10px 0;padding:12px 16px;background:#fafafa;border-radius:10px;border-left:3px solid var(--purple)}
+.case .h{font-weight:600;margin-bottom:4px}
+.kv{font-size:12.5px;color:var(--muted)}
+.bp{background:#f7f9fc;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:8px 0;font-size:13px}
+.bp b{color:var(--blue)}
+.chk{font-size:13.5px;line-height:2.0}
+.chk label{display:block;padding:4px 0;cursor:pointer}
+.chk input{margin-right:8px;transform:translateY(1px)}
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
+.tbl-wrap{overflow-x:auto}
+
+.xh-badge{display:inline-block;font-size:10.5px;font-weight:700;color:#137333;background:#e6f4ea;
+  border:1px solid #b7e1c3;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
+.xh-new{display:inline-block;font-size:10.5px;font-weight:700;color:#1a73e8;background:#e8f0fe;
+  border:1px solid #c6dafc;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
+.xh-tag{display:inline-block;font-size:10.5px;padding:1px 6px;border-radius:8px;margin:1px 2px;white-space:nowrap}
+.xh-tag.g{background:#e6f4ea;color:#137333}
+.xh-tag.y{background:#fef7e0;color:#8a6d00}
+.xh-tag.t{background:#e3f2f1;color:#0b6b63}
+.xh-tag.r{background:#f0e9fb;color:#5b3fa8}
+.xh-col{white-space:normal;min-width:150px;max-width:215px}
+.xh-dim{color:#9aa0a6}
+.xh-cmp{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.xh-cmp div{flex:1;min-width:130px;border-radius:10px;padding:10px 14px;background:#f1f3f4}
+.xh-cmp b{display:block;font-size:19px}
+.xh-cmp span{font-size:12px;color:#5f6368}
+.xh-cmp .cnew b{color:#1a73e8}.xh-cmp .ccont b{color:#137333}.xh-cmp .cout b{color:#a8071a}
+.xh-sort{cursor:pointer;user-select:none}
+.xh-sort:hover{color:#1a73e8}
+.xh-sort.xh-asc:after{content:" \25b4";color:#1a73e8}
+.xh-sort.xh-desc:after{content:" \25be";color:#1a73e8}
+</style><!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  .navgrp{ padding:5px 6px 5px 5px !important; }
+}
+
+</style><!--/WB_THEME--></head>
+<body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a><a href='index.html'>三连阴</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div><div class="wrap">
+<h1>三连阴（量化错杀型）观察池 · 每日选股 + 量化买卖点</h1>
+<div class="sub">数据基准 2026-09-29 收盘｜ 全市场域（剔 ST/退/北交所、20 日均成交额 &lt;2000 万、现价 &lt;2 元）｜
+按<b>三连阴累计跌幅</b>分档（回测校准的核心维度）｜ 全部离线真实日K，不联网、不补造</div>
+
+<div class="box gold"><b>本页怎么用：</b>四套问财条件已<b>逐条回测</b>（见下方裁决区）。
+回测结论是：<b>原条件集（缩量 + 站上MA60 + 市值）不产生超额</b>，其中两条甚至是负贡献；
+真正稳健的维度只有 <b>跌幅分档</b>。因此本页<b>保留四套条件的原始判定</b>供你对照，
+但<b>排序与推荐以跌幅档为准</b>——尤其 <b>★ 观察档（跌 8~12%）</b>。</div>
+
+<div class='box red'><b>大盘环境门控：弱势</b>｜ 建议仓位系数 <b>0.55</b><br>环境偏弱：箱体下沿易被击穿、均值回归失效。只做 A 档且须「非高位 + MA20 未明显下行 + 箱体不过宽」，仓位打 5.5 折，破位立即停，宁可少做。本页据此给<b>仓位系数</b>（控 β 暴露）；排序不受环境影响。</div>
+
+
+<div class="box red" style="border-color:#b00020">
+<b>🔬 回测裁决（先看这里，再决定是否使用本页信号）</b><br>
+样本：<b>2025-10-31 ~ 2026-09-18</b>（218 个交易日）｜ 可回测域 5,007 只 ｜
+样本量：三连阴信号 <b>223,879</b> 条 ｜ 口径：T+1 开盘买入，止损 5% /
+止盈 8% / 持有 5 日，同日双触保守记止损。<br><br>
+<b>结论 1（原条件集被证伪）：</b>A「优质三连阴」胜率 <b>42.5%</b>、期望
+<b>+0.03%</b>，<b>低于</b>「全市场随便买」基准
+45.9% / +0.20%。
+即：<b>这套过滤条件不产生超额收益</b>。<br>
+<b>结论 2（三条假设与数据相反）：</b>「缩量」与「站上 MA60」两个条件<b>都是负贡献</b>（见消融表）；
+而用户归为「高危」的<b>放量</b>反而 T+1 上涨 51.1%、5 日上涨 54.2%，<b>优于缩量</b>。<br>
+<b>结论 3（唯一有效维度 = 跌幅分档）：</b>累计跌幅 <b>8~12%</b> 档在前后半<b>两半同向跑赢</b>（T+1 涨 54.0%、
+期望 +0.43%）；<b>跌幅 &gt;20% 是灾难</b>（胜率 20.9%、期望 −2.39%，两半同向为大负）。<br>
+<b>结论 4（环境主导）：</b>所有变体在后半段期望<b>集体转负</b>（基准亦由 +0.58% → −0.13%），
+说明收益主要来自市场 β 而非选股 α；环境差时应降低仓位，而非依赖选股。
+</div>
+
+<div class="card">
+<h2 style="border:0;margin:0 0 8px;font-size:16px">① 四套规则 vs 基准（真实样本外）</h2>
+<div class="tbl-wrap"><table data-wb><thead><tr><th>规则</th><th>信号数</th><th>T+1 上涨</th><th>5日上涨</th>
+<th>胜率</th><th>期望收益</th><th>走前·前半</th><th>走前·后半</th></tr></thead>
+<tbody><tr><td><b>全市场随便买（绝对基准）</b></td><td class='num'>36,653</td><td class='num'>48.7%</td><td class='num'>47.7%</td><td class='num'>45.9%</td><td class='num up'>+0.20%</td><td class='kv'>前半 胜率50.5% / 期望+0.58%</td><td class='kv'>后半 胜率41.8% / 期望-0.13%</td></tr><tr><td><b>B 普通三连阴</b></td><td class='num'>223,879</td><td class='num'>49.3%</td><td class='num'>47.9%</td><td class='num'>44.3%</td><td class='num up'>+0.01%</td><td class='kv'>前半 胜率51.6% / 期望+0.63%</td><td class='kv'>后半 胜率39.2% / 期望-0.42%</td></tr><tr><td><b>A 优质三连阴（用户原条件）</b></td><td class='num'>30,450</td><td class='num'>46.6%</td><td class='num'>44.8%</td><td class='num'>42.5%</td><td class='num up'>+0.03%</td><td class='kv'>前半 胜率46.9% / 期望+0.44%</td><td class='kv'>后半 胜率36.7% / 期望-0.52%</td></tr><tr><td><b>C 高危三连阴</b></td><td class='num'>155,562</td><td class='num'>50.1%</td><td class='num'>49.1%</td><td class='num'>44.9%</td><td class='num dn'>-0.01%</td><td class='kv'>前半 胜率55.6% / 期望+0.89%</td><td class='kv'>后半 胜率38.1% / 期望-0.57%</td></tr><tr><td><b>D 龙头主线三连阴</b></td><td class='num'>1,751</td><td class='num'>45.7%</td><td class='num'>42.1%</td><td class='num'>38.9%</td><td class='num dn'>-0.17%</td><td class='kv'>前半 胜率39.1% / 期望-0.31%</td><td class='kv'>后半 胜率38.7% / 期望-0.05%</td></tr></tbody></table></div>
+<div class="kv">「胜率 / 期望」= 固定退出规则下的可兑现结果；「T+1 上涨 / 5日上涨」= 用户问财口径的原始概率。
+基准 ALL 为同期全市场随机抽样，代表「闭眼买」。</div>
+</div>
+
+<div class="card">
+<h2 style="border:0;margin:0 0 8px;font-size:16px">② 条件消融：逐条看哪条在加分</h2>
+<div class="tbl-wrap"><table data-wb><thead><tr><th>条件（叠加在三连阴之上）</th><th>信号数</th><th>T+1 上涨</th>
+<th>胜率</th><th>期望收益</th></tr></thead><tbody><tr><td>① 仅三连阴（基准）</td><td class='num'>223,879</td><td class='num'>49.3%</td><td class='num'>44.3%</td><td class='num up'>+0.01%</td></tr><tr><td>② +缩量（今日<昨日<前日）</td><td class='num'>81,307</td><td class='num'>48.0%</td><td class='num'>43.4%</td><td class='num dn'>-0.03%</td></tr><tr><td>③ +站上MA60</td><td class='num'>72,843</td><td class='num'>47.5%</td><td class='num'>43.0%</td><td class='num up'>+0.05%</td></tr><tr><td>④ +流通市值20~500亿</td><td class='num'>192,774</td><td class='num'>49.3%</td><td class='num'>44.2%</td><td class='num up'>+0.01%</td></tr><tr><td>⑤ +缩量 & 站上MA60</td><td class='num'>34,295</td><td class='num'>46.7%</td><td class='num'>42.6%</td><td class='num up'>+0.02%</td></tr><tr><td>⑥ A全套（②+③+④）</td><td class='num'>30,450</td><td class='num'>46.6%</td><td class='num'>42.5%</td><td class='num up'>+0.03%</td></tr><tr><td>⑦ +放量（反向对照）</td><td class='num'>26,226</td><td class='num'>51.1%</td><td class='num'>45.8%</td><td class='num up'>+0.02%</td></tr><tr><td>⑧ +跌破MA60（反向对照）</td><td class='num'>151,036</td><td class='num'>50.2%</td><td class='num'>44.9%</td><td class='num dn'>-0.01%</td></tr><tr><td>⑨ D主线（⑥+板块前5）</td><td class='num'>2,126</td><td class='num'>46.3%</td><td class='num'>39.5%</td><td class='num dn'>-0.10%</td></tr></tbody></table></div>
+<div class="kv">基准行 = 仅三连阴。可见：加「缩量」后胜率与期望<b>双降</b>；加「站上 MA60」胜率降、期望几乎不变；
+「流通市值 20~500 亿」<b>几乎无影响</b>；反向对照里「放量」与「跌破 MA60」<b>并不比原条件差</b>。</div>
+</div>
+
+<div class="card">
+<h2 style="border:0;margin:0 0 8px;font-size:16px">③ 跌幅分档：唯一稳健的维度</h2>
+<div class="tbl-wrap"><table data-wb><thead><tr><th>三连阴累计跌幅</th><th>信号数</th><th>T+1 上涨</th>
+<th>胜率</th><th>期望收益</th><th>走前验证（前半 / 后半期望）</th></tr></thead>
+<tbody><tr><td>跌 0~3%</td><td class='num'>69,395</td><td class='num'>47.6%</td><td class='num'>44.4%</td><td class='num dn'>-0.04%</td><td class='kv'>前半 +0.56% / 后半 -0.62%</td></tr><tr><td>跌 3~5%</td><td class='num'>47,246</td><td class='num'>48.0%</td><td class='num'>42.8%</td><td class='num dn'>-0.18%</td><td class='kv'>前半 +0.42% / 后半 -0.62%</td></tr><tr><td>跌 5~8%</td><td class='num'>44,483</td><td class='num'>50.3%</td><td class='num'>45.1%</td><td class='num up'>+0.08%</td><td class='kv'>前半 +0.72% / 后半 -0.30%</td></tr><tr><td>跌 8~12%</td><td class='num'>25,397</td><td class='num'>54.0%</td><td class='num'>47.7%</td><td class='num up'>+0.43%</td><td class='kv'>前半 +1.53% / 后半 -0.25%</td></tr><tr><td>跌 12~20%</td><td class='num'>11,814</td><td class='num'>55.3%</td><td class='num'>41.9%</td><td class='num dn'>-0.07%</td><td class='kv'>前半 +1.87% / 后半 -1.11%</td></tr><tr><td>跌 >20%</td><td class='num'>1,960</td><td class='num'>54.4%</td><td class='num'>20.9%</td><td class='num dn'>-2.39%</td><td class='kv'>前半 -0.16% / 后半 -2.85%</td></tr></tbody></table></div>
+<div class="kv">按方法论：只有「前半、后半<b>两半同向</b>」的条件才允许写进规则。
+<b>跌 8~12%</b> 两半相对基准均为正 → 采纳为观察档；<b>跌 &gt;20%</b> 两半同向为大负 → 列为禁区。</div>
+</div>
+
+
+<h2>人工二次核对清单（量化筛出后，逐条人工确认）</h2>
+<div class="card"><div class="chk">
+<label><input type="checkbox"> <b>① 是否主线题材？</b>板块逻辑有没有结束？（看板块强度页的「抢筹 / 出货」分布）</label>
+<label><input type="checkbox"> <b>② 三连阴是量化踩踏，还是基本面利空？</b>（本地无全市场利空历史库，此项<b>必须人工</b>：
+查近 20 日减持公告 / 监管问询 / 业绩预减）</label>
+<label><input type="checkbox"> <b>③ 下跌时成交量是否逐步萎缩？</b>抛压是否衰竭（注意：回测显示「缩量」本身不带来超额，
+但可作为<b>抛压观察项</b>）</label>
+<label><input type="checkbox"> <b>④ 股价是否在关键支撑位？</b>（MA60 / 前期平台 / 谷底）</label>
+<label><input type="checkbox"> <b>⑤ 板块情绪：</b>同板块其他个股有没有承接？是不是大面积退潮？</label>
+</div>
+<div class="kv" style="margin-top:10px">勾选框仅为本页交互，不保存。第 ② 条是本地数据缺口（利空库仅 18 天历史，未参与回测），
+也是本策略最大的<b>未验证风险</b>——把利空票误判为错杀票，正是回测中「跌 &gt;20% 期望 −2.39%」的主要来源。</div></div>
+
+<h2>买卖点算法（回测校准，非拍脑袋）</h2>
+<div class="card">
+<div class="bp"><b>买入：</b>信号在收盘后产生 → <b>T+1 开盘</b>为回测口径入场价；
+更优执行是<b>回踩不破谷底</b>时低吸，低吸区 = <b>谷底 × [1.00, 1.03]</b>。</div>
+<div class="bp"><b>止损：</b>取 <b>结构位（谷底 × 0.97）</b> 与 <b>固定 −6%</b> 两者中<b>更宽</b>的一个。
+依据：回测 MAE 均值 <b>−4.16%</b>，止损 3% 时胜率仅 33.9%、5% 为 43.5%、7% 为 47.2%——
+<b>止损过窄会被正常波动打掉</b>，这是本策略最常见的亏损来源。</div>
+<div class="bp"><b>目标：</b>T1 = 谷底 + 本轮跌幅 × 0.382，T2 = 谷底 + 本轮跌幅 × 0.618（与反转池 v6 同口径）。
+到 T1 先兑现一半，剩余移动止盈。</div>
+<div class="bp"><b>仓位：</b>由大盘环境给<b>仓位系数</b>（控 β），本页不因环境改变排序。
+回测显示后期全体转负是 β 所致，<b>降仓比换票更有效</b>。</div>
+</div>
+
+<h2><span class='bk' style='color:var(--up)'>★ 观察档</span>（跌 8~12%）· 221 只</h2><div class='box' style='border-color:var(--up);background:#fafafa'>两半同向跑赢基准：T+1涨54.0% / 胜率47.7% / 期望+0.43%（基准 48.7% / 44.3% / +0.01%）。本期主推。</div><div class='card'><div class='tbl-wrap'><table data-wb><thead><tr><th>代码</th><th>名称</th><th>现价</th><th>三连阴跌幅</th><th>谷底</th><th>低吸区</th><th>止损</th><th>目标 T1/T2</th><th>盈亏比</th><th>流通市值</th><th>行业</th><th>量价特征</th></tr></thead><tbody><tr><td>sz301235</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301235.html" target="_blank" rel="noopener noreferrer">华康洁净</a></td><td class='num'>42.02</td><td class='num dn'>-11.8%</td><td class='num'>41.80</td><td class='num'>41.80~43.05</td><td class='num dn'>39.50</td><td class='num up'>44.02 / 45.40</td><td class='num'>0.8</td><td class='num'>44亿</td><td>医疗器械</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300308</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300308.html" target="_blank" rel="noopener noreferrer">中际旭创</a></td><td class='num'>813.01</td><td class='num dn'>-11.9%</td><td class='num'>808.00</td><td class='num'>808.00~832.24</td><td class='num dn'>764.23</td><td class='num up'>851.74 / 878.76</td><td class='num'>0.8</td><td class='num'>9024亿</td><td>通信设备</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300174</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300174.html" target="_blank" rel="noopener noreferrer">元力股份</a></td><td class='num'>17.10</td><td class='num dn'>-11.4%</td><td class='num'>17.06</td><td class='num'>17.06~17.57</td><td class='num dn'>16.07</td><td class='num up'>17.91 / 18.44</td><td class='num'>0.8</td><td class='num'>62亿</td><td>化学制品</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh688196</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688196.html" target="_blank" rel="noopener noreferrer">卓越新能</a></td><td class='num'>30.63</td><td class='num dn'>-11.6%</td><td class='num'>30.47</td><td class='num'>30.47~31.38</td><td class='num dn'>28.79</td><td class='num up'>32.07 / 33.06</td><td class='num'>0.8</td><td class='num'>39亿</td><td>化学制品</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz001234</td><td><a class="emlk" href="https://quote.eastmoney.com/sz001234.html" target="_blank" rel="noopener noreferrer">泰慕士</a></td><td class='num'>28.67</td><td class='num dn'>-10.9%</td><td class='num'>28.67</td><td class='num'>28.67~29.53</td><td class='num dn'>26.95</td><td class='num up'>30.01 / 30.84</td><td class='num'>0.8</td><td class='num'>26亿</td><td>服装家纺</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag no'>放量</span></td></tr><tr><td>sz301626</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301626.html" target="_blank" rel="noopener noreferrer">苏州天脉</a></td><td class='num'>295.50</td><td class='num dn'>-11.7%</td><td class='num'>293.67</td><td class='num'>293.67~302.48</td><td class='num dn'>277.77</td><td class='num up'>309.31 / 318.96</td><td class='num'>0.8</td><td class='num'>155亿</td><td>消费电子</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300153</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300153.html" target="_blank" rel="noopener noreferrer">科泰电源</a></td><td class='num'>24.42</td><td class='num dn'>-11.4%</td><td class='num'>24.33</td><td class='num'>24.33~25.06</td><td class='num dn'>22.95</td><td class='num up'>25.56 / 26.32</td><td class='num'>0.8</td><td class='num'>78亿</td><td>其他电源设备Ⅱ</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh600815</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600815.html" target="_blank" rel="noopener noreferrer">厦工股份</a></td><td class='num'>3.77</td><td class='num dn'>-10.9%</td><td class='num'>3.77</td><td class='num'>3.77~3.88</td><td class='num dn'>3.54</td><td class='num up'>3.95 / 4.05</td><td class='num'>0.8</td><td class='num'>67亿</td><td>工程机械</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh600230</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600230.html" target="_blank" rel="noopener noreferrer">沧州大化</a></td><td class='num'>13.18</td><td class='num dn'>-11.1%</td><td class='num'>13.13</td><td class='num'>13.13~13.52</td><td class='num dn'>12.39</td><td class='num up'>13.78 / 14.17</td><td class='num'>0.8</td><td class='num'>55亿</td><td>化学制品</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh688026</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688026.html" target="_blank" rel="noopener noreferrer">洁特生物</a></td><td class='num'>24.54</td><td class='num dn'>-11.7%</td><td class='num'>24.33</td><td class='num'>24.33~25.06</td><td class='num dn'>23.07</td><td class='num up'>25.65 / 26.46</td><td class='num'>0.8</td><td class='num'>34亿</td><td>医疗器械</td><td><span class='tag ok'>缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh600172</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600172.html" target="_blank" rel="noopener noreferrer">黄河旋风</a></td><td class='num'>14.90</td><td class='num dn'>-11.0%</td><td class='num'>14.85</td><td class='num'>14.85~15.30</td><td class='num dn'>14.01</td><td class='num up'>15.57 / 16.02</td><td class='num'>0.8</td><td class='num'>191亿</td><td>通用设备</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh688131</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688131.html" target="_blank" rel="noopener noreferrer">皓元医药</a></td><td class='num'>97.60</td><td class='num dn'>-11.6%</td><td class='num'>96.80</td><td class='num'>96.80~99.70</td><td class='num dn'>91.74</td><td class='num up'>101.98 / 105.19</td><td class='num'>0.7</td><td class='num'>208亿</td><td>医疗服务</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh600703</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600703.html" target="_blank" rel="noopener noreferrer">三安光电</a></td><td class='num'>11.41</td><td class='num dn'>-11.1%</td><td class='num'>11.35</td><td class='num'>11.35~11.69</td><td class='num dn'>10.73</td><td class='num up'>11.92 / 12.26</td><td class='num'>0.7</td><td class='num'>569亿</td><td>光学光电子</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz002735</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002735.html" target="_blank" rel="noopener noreferrer">王子新材</a></td><td class='num'>10.65</td><td class='num dn'>-10.5%</td><td class='num'>10.64</td><td class='num'>10.64~10.96</td><td class='num dn'>10.01</td><td class='num up'>11.12 / 11.42</td><td class='num'>0.7</td><td class='num'>30亿</td><td>包装印刷</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300816</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300816.html" target="_blank" rel="noopener noreferrer">艾可蓝</a></td><td class='num'>58.27</td><td class='num dn'>-11.1%</td><td class='num'>57.93</td><td class='num'>57.93~59.67</td><td class='num dn'>54.77</td><td class='num up'>60.83 / 62.61</td><td class='num'>0.7</td><td class='num'>34亿</td><td>汽车零部件</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh603137</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603137.html" target="_blank" rel="noopener noreferrer">恒尚节能</a></td><td class='num'>17.98</td><td class='num dn'>-10.4%</td><td class='num'>17.97</td><td class='num'>17.97~18.51</td><td class='num dn'>16.90</td><td class='num up'>18.77 / 19.26</td><td class='num'>0.7</td><td class='num'>33亿</td><td>装修装饰Ⅱ</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz002779</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002779.html" target="_blank" rel="noopener noreferrer">中坚科技</a></td><td class='num'>76.35</td><td class='num dn'>-11.2%</td><td class='num'>75.79</td><td class='num'>75.79~78.06</td><td class='num dn'>71.77</td><td class='num up'>79.69 / 82.10</td><td class='num'>0.7</td><td class='num'>127亿</td><td>专用设备</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300920</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300920.html" target="_blank" rel="noopener noreferrer">润阳科技</a></td><td class='num'>30.83</td><td class='num dn'>-11.2%</td><td class='num'>30.60</td><td class='num'>30.60~31.52</td><td class='num dn'>28.98</td><td class='num up'>32.18 / 33.15</td><td class='num'>0.7</td><td class='num'>27亿</td><td>塑料</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh688202</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688202.html" target="_blank" rel="noopener noreferrer">美迪西</a></td><td class='num'>103.96</td><td class='num dn'>-11.2%</td><td class='num'>103.15</td><td class='num'>103.15~106.24</td><td class='num dn'>97.72</td><td class='num up'>108.47 / 111.76</td><td class='num'>0.7</td><td class='num'>140亿</td><td>医疗服务</td><td><span class='tag ok'>缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300819</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300819.html" target="_blank" rel="noopener noreferrer">聚杰微纤</a></td><td class='num'>44.75</td><td class='num dn'>-11.4%</td><td class='num'>44.35</td><td class='num'>44.35~45.68</td><td class='num dn'>42.06</td><td class='num up'>46.69 / 48.14</td><td class='num'>0.7</td><td class='num'>60亿</td><td>纺织制造</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300679</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300679.html" target="_blank" rel="noopener noreferrer">电连技术</a></td><td class='num'>40.91</td><td class='num dn'>-11.5%</td><td class='num'>40.50</td><td class='num'>40.50~41.72</td><td class='num dn'>38.46</td><td class='num up'>42.69 / 44.03</td><td class='num'>0.7</td><td class='num'>147亿</td><td>消费电子</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz002272</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002272.html" target="_blank" rel="noopener noreferrer">川润股份</a></td><td class='num'>14.23</td><td class='num dn'>-11.2%</td><td class='num'>14.12</td><td class='num'>14.12~14.54</td><td class='num dn'>13.38</td><td class='num up'>14.85 / 15.29</td><td class='num'>0.7</td><td class='num'>60亿</td><td>通用设备</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh601133</td><td><a class="emlk" href="https://quote.eastmoney.com/sh601133.html" target="_blank" rel="noopener noreferrer">柏诚股份</a></td><td class='num'>23.32</td><td class='num dn'>-10.4%</td><td class='num'>23.28</td><td class='num'>23.28~23.98</td><td class='num dn'>21.92</td><td class='num up'>24.33 / 24.97</td><td class='num'>0.7</td><td class='num'>122亿</td><td>专业工程</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz301252</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301252.html" target="_blank" rel="noopener noreferrer">同星科技</a></td><td class='num'>37.00</td><td class='num dn'>-10.6%</td><td class='num'>36.88</td><td class='num'>36.88~37.99</td><td class='num dn'>34.78</td><td class='num up'>38.60 / 39.65</td><td class='num'>0.7</td><td class='num'>50亿</td><td>家电零部件Ⅱ</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300749</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300749.html" target="_blank" rel="noopener noreferrer">顶固集创</a></td><td class='num'>22.06</td><td class='num dn'>-11.3%</td><td class='num'>21.85</td><td class='num'>21.85~22.51</td><td class='num dn'>20.74</td><td class='num up'>23.01 / 23.72</td><td class='num'>0.7</td><td class='num'>35亿</td><td>家居用品</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz301045</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301045.html" target="_blank" rel="noopener noreferrer">天禄科技</a></td><td class='num'>65.68</td><td class='num dn'>-11.3%</td><td class='num'>65.09</td><td class='num'>65.09~67.04</td><td class='num dn'>61.74</td><td class='num up'>68.50 / 70.60</td><td class='num'>0.7</td><td class='num'>60亿</td><td>光学光电子</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz002126</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002126.html" target="_blank" rel="noopener noreferrer">银轮股份</a></td><td class='num'>34.20</td><td class='num dn'>-10.8%</td><td class='num'>34.00</td><td class='num'>34.00~35.02</td><td class='num dn'>32.15</td><td class='num up'>35.65 / 36.68</td><td class='num'>0.7</td><td class='num'>272亿</td><td>汽车零部件</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh603890</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603890.html" target="_blank" rel="noopener noreferrer">春秋电子</a></td><td class='num'>14.91</td><td class='num dn'>-10.9%</td><td class='num'>14.81</td><td class='num'>14.81~15.25</td><td class='num dn'>14.02</td><td class='num up'>15.54 / 16.00</td><td class='num'>0.7</td><td class='num'>75亿</td><td>消费电子</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300593</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300593.html" target="_blank" rel="noopener noreferrer">新雷能</a></td><td class='num'>29.70</td><td class='num dn'>-11.7%</td><td class='num'>29.30</td><td class='num'>29.30~30.18</td><td class='num dn'>27.92</td><td class='num up'>30.96 / 31.99</td><td class='num'>0.7</td><td class='num'>134亿</td><td>其他电源设备Ⅱ</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz301191</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301191.html" target="_blank" rel="noopener noreferrer">菲菱科思</a></td><td class='num'>78.47</td><td class='num dn'>-10.9%</td><td class='num'>77.89</td><td class='num'>77.89~80.23</td><td class='num dn'>73.76</td><td class='num up'>81.79 / 84.21</td><td class='num'>0.7</td><td class='num'>57亿</td><td>通信设备</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr></tbody></table></div><div class='kv'>按盈亏比降序，展示前 30 只（共 221 只）。</div></div><h2><span class='bk' style='color:var(--blue)'>一般档</span>（跌 5~8%）· 341 只</h2><div class='box' style='border-color:var(--blue);background:#fafafa'>T+1涨50.3% / 胜率45.1% / 期望+0.08%，略优于基准但边际弱。</div><div class='card'><div class='tbl-wrap'><table data-wb><thead><tr><th>代码</th><th>名称</th><th>现价</th><th>三连阴跌幅</th><th>谷底</th><th>低吸区</th><th>止损</th><th>目标 T1/T2</th><th>盈亏比</th><th>流通市值</th><th>行业</th><th>量价特征</th></tr></thead><tbody><tr><td>sh603613</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603613.html" target="_blank" rel="noopener noreferrer">国联股份</a></td><td class='num'>18.87</td><td class='num dn'>-7.8%</td><td class='num'>18.84</td><td class='num'>18.84~19.41</td><td class='num dn'>17.74</td><td class='num up'>19.46 / 19.85</td><td class='num'>0.5</td><td class='num'>136亿</td><td>互联网电商</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300733</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300733.html" target="_blank" rel="noopener noreferrer">西菱动力</a></td><td class='num'>12.71</td><td class='num dn'>-7.7%</td><td class='num'>12.70</td><td class='num'>12.70~13.08</td><td class='num dn'>11.95</td><td class='num up'>13.11 / 13.36</td><td class='num'>0.5</td><td class='num'>37亿</td><td>汽车零部件</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh688811</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688811.html" target="_blank" rel="noopener noreferrer">有研复材</a></td><td class='num'>19.22</td><td class='num dn'>-7.7%</td><td class='num'>19.20</td><td class='num'>19.20~19.78</td><td class='num dn'>18.07</td><td class='num up'>19.82 / 20.20</td><td class='num'>0.5</td><td class='num'>18亿</td><td>金属新材料</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz002637</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002637.html" target="_blank" rel="noopener noreferrer">赞宇科技</a></td><td class='num'>10.08</td><td class='num dn'>-7.9%</td><td class='num'>10.05</td><td class='num'>10.05~10.35</td><td class='num dn'>9.48</td><td class='num up'>10.39 / 10.61</td><td class='num'>0.5</td><td class='num'>47亿</td><td>化学制品</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz000859</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000859.html" target="_blank" rel="noopener noreferrer">国风新材</a></td><td class='num'>8.62</td><td class='num dn'>-7.8%</td><td class='num'>8.60</td><td class='num'>8.60~8.86</td><td class='num dn'>8.10</td><td class='num up'>8.89 / 9.06</td><td class='num'>0.5</td><td class='num'>77亿</td><td>塑料</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh603505</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603505.html" target="_blank" rel="noopener noreferrer">金石资源</a></td><td class='num'>14.08</td><td class='num dn'>-7.5%</td><td class='num'>14.07</td><td class='num'>14.07~14.49</td><td class='num dn'>13.24</td><td class='num up'>14.51 / 14.78</td><td class='num'>0.5</td><td class='num'>119亿</td><td>化学制品</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag no'>放量</span></td></tr><tr><td>sh603262</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603262.html" target="_blank" rel="noopener noreferrer">技源集团</a></td><td class='num'>17.13</td><td class='num dn'>-8.0%</td><td class='num'>17.05</td><td class='num'>17.05~17.56</td><td class='num dn'>16.10</td><td class='num up'>17.65 / 18.01</td><td class='num'>0.5</td><td class='num'>18亿</td><td>食品加工</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh688102</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688102.html" target="_blank" rel="noopener noreferrer">斯瑞新材</a></td><td class='num'>29.14</td><td class='num dn'>-7.7%</td><td class='num'>29.05</td><td class='num'>29.05~29.92</td><td class='num dn'>27.39</td><td class='num up'>30.02 / 30.61</td><td class='num'>0.5</td><td class='num'>227亿</td><td>金属新材料</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh600313</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600313.html" target="_blank" rel="noopener noreferrer">农发种业</a></td><td class='num'>6.45</td><td class='num dn'>-7.7%</td><td class='num'>6.43</td><td class='num'>6.43~6.62</td><td class='num dn'>6.06</td><td class='num up'>6.64 / 6.78</td><td class='num'>0.5</td><td class='num'>70亿</td><td>种植业</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh600793</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600793.html" target="_blank" rel="noopener noreferrer">宜宾纸业</a></td><td class='num'>16.39</td><td class='num dn'>-7.6%</td><td class='num'>16.35</td><td class='num'>16.35~16.84</td><td class='num dn'>15.41</td><td class='num up'>16.88 / 17.20</td><td class='num'>0.5</td><td class='num'>29亿</td><td>造纸</td><td><span class='tag ok'>缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh688563</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688563.html" target="_blank" rel="noopener noreferrer">航材股份</a></td><td class='num'>50.12</td><td class='num dn'>-7.5%</td><td class='num'>50.00</td><td class='num'>50.00~51.50</td><td class='num dn'>47.11</td><td class='num up'>51.61 / 52.60</td><td class='num'>0.5</td><td class='num'>68亿</td><td>航空装备Ⅱ</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh688765</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688765.html" target="_blank" rel="noopener noreferrer">禾元生物-U</a></td><td class='num'>39.47</td><td class='num dn'>-7.2%</td><td class='num'>39.45</td><td class='num'>39.45~40.63</td><td class='num dn'>37.10</td><td class='num up'>40.63 / 41.37</td><td class='num'>0.5</td><td class='num'>28亿</td><td>—</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz002632</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002632.html" target="_blank" rel="noopener noreferrer">道明光学</a></td><td class='num'>9.02</td><td class='num dn'>-7.3%</td><td class='num'>9.01</td><td class='num'>9.01~9.28</td><td class='num dn'>8.48</td><td class='num up'>9.29 / 9.45</td><td class='num'>0.5</td><td class='num'>52亿</td><td>塑料</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300263</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300263.html" target="_blank" rel="noopener noreferrer">隆华科技</a></td><td class='num'>10.04</td><td class='num dn'>-7.8%</td><td class='num'>9.99</td><td class='num'>9.99~10.29</td><td class='num dn'>9.44</td><td class='num up'>10.33 / 10.55</td><td class='num'>0.5</td><td class='num'>97亿</td><td>通用设备</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh600671</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600671.html" target="_blank" rel="noopener noreferrer">天目药业</a></td><td class='num'>21.62</td><td class='num dn'>-7.2%</td><td class='num'>21.60</td><td class='num'>21.60~22.25</td><td class='num dn'>20.32</td><td class='num up'>22.25 / 22.65</td><td class='num'>0.5</td><td class='num'>26亿</td><td>中药Ⅱ</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz002338</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002338.html" target="_blank" rel="noopener noreferrer">奥普光电</a></td><td class='num'>43.17</td><td class='num dn'>-7.6%</td><td class='num'>43.00</td><td class='num'>43.00~44.29</td><td class='num dn'>40.58</td><td class='num up'>44.41 / 45.29</td><td class='num'>0.5</td><td class='num'>104亿</td><td>军工电子Ⅱ</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh603216</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603216.html" target="_blank" rel="noopener noreferrer">梦天家居</a></td><td class='num'>21.70</td><td class='num dn'>-7.8%</td><td class='num'>21.58</td><td class='num'>21.58~22.23</td><td class='num dn'>20.40</td><td class='num up'>22.32 / 22.79</td><td class='num'>0.5</td><td class='num'>48亿</td><td>家居用品</td><td><span class='tag ok'>缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz002965</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002965.html" target="_blank" rel="noopener noreferrer">祥鑫科技</a></td><td class='num'>30.00</td><td class='num dn'>-7.3%</td><td class='num'>29.91</td><td class='num'>29.91~30.81</td><td class='num dn'>28.20</td><td class='num up'>30.85 / 31.43</td><td class='num'>0.5</td><td class='num'>71亿</td><td>汽车零部件</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh603880</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603880.html" target="_blank" rel="noopener noreferrer">南卫股份</a></td><td class='num'>8.63</td><td class='num dn'>-7.2%</td><td class='num'>8.61</td><td class='num'>8.61~8.87</td><td class='num dn'>8.11</td><td class='num up'>8.87 / 9.04</td><td class='num'>0.5</td><td class='num'>25亿</td><td>医疗器械</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz301668</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301668.html" target="_blank" rel="noopener noreferrer">昊创瑞通</a></td><td class='num'>29.76</td><td class='num dn'>-7.6%</td><td class='num'>29.60</td><td class='num'>29.60~30.49</td><td class='num dn'>27.97</td><td class='num up'>30.59 / 31.21</td><td class='num'>0.5</td><td class='num'>14亿</td><td>电网设备</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz000930</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000930.html" target="_blank" rel="noopener noreferrer">中粮科技</a></td><td class='num'>5.02</td><td class='num dn'>-7.4%</td><td class='num'>5.00</td><td class='num'>5.00~5.15</td><td class='num dn'>4.72</td><td class='num up'>5.16 / 5.26</td><td class='num'>0.5</td><td class='num'>93亿</td><td>农产品加工</td><td><span class='tag ok'>缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh688690</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688690.html" target="_blank" rel="noopener noreferrer">纳微科技</a></td><td class='num'>45.28</td><td class='num dn'>-8.0%</td><td class='num'>44.90</td><td class='num'>44.90~46.25</td><td class='num dn'>42.56</td><td class='num up'>46.55 / 47.56</td><td class='num'>0.5</td><td class='num'>183亿</td><td>化学制药</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh603341</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603341.html" target="_blank" rel="noopener noreferrer">龙旗科技</a></td><td class='num'>35.42</td><td class='num dn'>-7.8%</td><td class='num'>35.16</td><td class='num'>35.16~36.21</td><td class='num dn'>33.29</td><td class='num up'>36.41 / 37.18</td><td class='num'>0.5</td><td class='num'>95亿</td><td>消费电子</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh688727</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688727.html" target="_blank" rel="noopener noreferrer">恒坤新材</a></td><td class='num'>45.36</td><td class='num dn'>-7.7%</td><td class='num'>45.06</td><td class='num'>45.06~46.41</td><td class='num dn'>42.64</td><td class='num up'>46.62 / 47.58</td><td class='num'>0.5</td><td class='num'>25亿</td><td>半导体</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh605168</td><td><a class="emlk" href="https://quote.eastmoney.com/sh605168.html" target="_blank" rel="noopener noreferrer">三人行</a></td><td class='num'>49.87</td><td class='num dn'>-7.2%</td><td class='num'>49.72</td><td class='num'>49.72~51.21</td><td class='num dn'>46.88</td><td class='num up'>51.25 / 52.20</td><td class='num'>0.5</td><td class='num'>105亿</td><td>广告营销</td><td><span class='tag ok'>缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300508</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300508.html" target="_blank" rel="noopener noreferrer">维宏股份</a></td><td class='num'>36.81</td><td class='num dn'>-6.9%</td><td class='num'>36.77</td><td class='num'>36.77~37.87</td><td class='num dn'>34.60</td><td class='num up'>37.83 / 38.48</td><td class='num'>0.5</td><td class='num'>30亿</td><td>计算机设备</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300303</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300303.html" target="_blank" rel="noopener noreferrer">聚飞光电</a></td><td class='num'>6.43</td><td class='num dn'>-7.6%</td><td class='num'>6.39</td><td class='num'>6.39~6.58</td><td class='num dn'>6.04</td><td class='num up'>6.61 / 6.74</td><td class='num'>0.5</td><td class='num'>85亿</td><td>光学光电子</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz301595</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301595.html" target="_blank" rel="noopener noreferrer">太力科技</a></td><td class='num'>46.61</td><td class='num dn'>-7.8%</td><td class='num'>46.26</td><td class='num'>46.26~47.65</td><td class='num dn'>43.81</td><td class='num up'>47.89 / 48.91</td><td class='num'>0.5</td><td class='num'>19亿</td><td>家居用品</td><td><span class='tag ok'>缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh688759</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688759.html" target="_blank" rel="noopener noreferrer">必贝特-U</a></td><td class='num'>21.57</td><td class='num dn'>-7.8%</td><td class='num'>21.40</td><td class='num'>21.40~22.04</td><td class='num dn'>20.28</td><td class='num up'>22.16 / 22.64</td><td class='num'>0.5</td><td class='num'>16亿</td><td>—</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz301213</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301213.html" target="_blank" rel="noopener noreferrer">观想科技</a></td><td class='num'>42.14</td><td class='num dn'>-7.8%</td><td class='num'>41.82</td><td class='num'>41.82~43.07</td><td class='num dn'>39.61</td><td class='num up'>43.30 / 44.21</td><td class='num'>0.5</td><td class='num'>31亿</td><td>军工电子Ⅱ</td><td><span class='tag ok'>缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr></tbody></table></div><div class='kv'>按盈亏比降序，展示前 30 只（共 341 只）。</div></div><h2><span class='bk' style='color:var(--muted)'>浅跌档</span>（跌 0~5%）· 595 只</h2><div class='box' style='border-color:var(--muted);background:#fafafa'>跌 0~5%：T+1涨≈47.8% / 期望 −0.09%，无优势，仅作观察。</div><div class='card'><div class='tbl-wrap'><table data-wb><thead><tr><th>代码</th><th>名称</th><th>现价</th><th>三连阴跌幅</th><th>谷底</th><th>低吸区</th><th>止损</th><th>目标 T1/T2</th><th>盈亏比</th><th>流通市值</th><th>行业</th><th>量价特征</th></tr></thead><tbody><tr><td>sh688091</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688091.html" target="_blank" rel="noopener noreferrer">上海谊众</a></td><td class='num'>38.83</td><td class='num dn'>-4.9%</td><td class='num'>38.80</td><td class='num'>38.80~39.96</td><td class='num dn'>36.50</td><td class='num up'>39.58 / 40.07</td><td class='num'>0.3</td><td class='num'>80亿</td><td>化学制药</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh601881</td><td><a class="emlk" href="https://quote.eastmoney.com/sh601881.html" target="_blank" rel="noopener noreferrer">中国银河</a></td><td class='num'>11.51</td><td class='num dn'>-4.8%</td><td class='num'>11.51</td><td class='num'>11.51~11.86</td><td class='num dn'>10.82</td><td class='num up'>11.73 / 11.87</td><td class='num'>0.3</td><td class='num'>834亿</td><td>证券Ⅱ</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh600702</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600702.html" target="_blank" rel="noopener noreferrer">舍得酒业</a></td><td class='num'>31.76</td><td class='num dn'>-4.9%</td><td class='num'>31.72</td><td class='num'>31.72~32.67</td><td class='num dn'>29.85</td><td class='num up'>32.35 / 32.75</td><td class='num'>0.3</td><td class='num'>105亿</td><td>白酒Ⅱ</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh603605</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603605.html" target="_blank" rel="noopener noreferrer">珀莱雅</a></td><td class='num'>53.98</td><td class='num dn'>-4.9%</td><td class='num'>53.87</td><td class='num'>53.87~55.49</td><td class='num dn'>50.74</td><td class='num up'>54.99 / 55.67</td><td class='num'>0.3</td><td class='num'>214亿</td><td>化妆品</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz000680</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000680.html" target="_blank" rel="noopener noreferrer">山推股份</a></td><td class='num'>8.82</td><td class='num dn'>-5.0%</td><td class='num'>8.80</td><td class='num'>8.80~9.06</td><td class='num dn'>8.29</td><td class='num up'>8.98 / 9.10</td><td class='num'>0.3</td><td class='num'>116亿</td><td>工程机械</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz000798</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000798.html" target="_blank" rel="noopener noreferrer">中水渔业</a></td><td class='num'>9.60</td><td class='num dn'>-4.9%</td><td class='num'>9.58</td><td class='num'>9.58~9.87</td><td class='num dn'>9.02</td><td class='num up'>9.77 / 9.90</td><td class='num'>0.3</td><td class='num'>35亿</td><td>渔业</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz002940</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002940.html" target="_blank" rel="noopener noreferrer">昂利康</a></td><td class='num'>22.23</td><td class='num dn'>-4.5%</td><td class='num'>22.23</td><td class='num'>22.23~22.90</td><td class='num dn'>20.90</td><td class='num up'>22.63 / 22.88</td><td class='num'>0.3</td><td class='num'>41亿</td><td>化学制药</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300715</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300715.html" target="_blank" rel="noopener noreferrer">凯伦股份</a></td><td class='num'>13.76</td><td class='num dn'>-4.8%</td><td class='num'>13.73</td><td class='num'>13.73~14.14</td><td class='num dn'>12.93</td><td class='num up'>14.01 / 14.17</td><td class='num'>0.3</td><td class='num'>44亿</td><td>装修建材</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh605090</td><td><a class="emlk" href="https://quote.eastmoney.com/sh605090.html" target="_blank" rel="noopener noreferrer">九丰能源</a></td><td class='num'>30.33</td><td class='num dn'>-4.6%</td><td class='num'>30.30</td><td class='num'>30.30~31.21</td><td class='num dn'>28.51</td><td class='num up'>30.87 / 31.22</td><td class='num'>0.3</td><td class='num'>214亿</td><td>燃气Ⅱ</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300436</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300436.html" target="_blank" rel="noopener noreferrer">广生堂</a></td><td class='num'>82.78</td><td class='num dn'>-4.9%</td><td class='num'>82.50</td><td class='num'>82.50~84.98</td><td class='num dn'>77.81</td><td class='num up'>84.25 / 85.33</td><td class='num'>0.3</td><td class='num'>113亿</td><td>化学制药</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz301073</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301073.html" target="_blank" rel="noopener noreferrer">君亭酒店</a></td><td class='num'>17.14</td><td class='num dn'>-4.8%</td><td class='num'>17.10</td><td class='num'>17.10~17.61</td><td class='num dn'>16.11</td><td class='num up'>17.44 / 17.66</td><td class='num'>0.3</td><td class='num'>31亿</td><td>酒店餐饮</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh603966</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603966.html" target="_blank" rel="noopener noreferrer">法兰泰克</a></td><td class='num'>7.30</td><td class='num dn'>-4.8%</td><td class='num'>7.28</td><td class='num'>7.28~7.50</td><td class='num dn'>6.86</td><td class='num up'>7.43 / 7.52</td><td class='num'>0.3</td><td class='num'>38亿</td><td>专用设备</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz002049</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002049.html" target="_blank" rel="noopener noreferrer">紫光国微</a></td><td class='num'>58.41</td><td class='num dn'>-4.8%</td><td class='num'>58.25</td><td class='num'>58.25~60.00</td><td class='num dn'>54.91</td><td class='num up'>59.44 / 60.18</td><td class='num'>0.3</td><td class='num'>492亿</td><td>半导体</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh601179</td><td><a class="emlk" href="https://quote.eastmoney.com/sh601179.html" target="_blank" rel="noopener noreferrer">中国西电</a></td><td class='num'>11.41</td><td class='num dn'>-4.9%</td><td class='num'>11.37</td><td class='num'>11.37~11.71</td><td class='num dn'>10.73</td><td class='num up'>11.61 / 11.76</td><td class='num'>0.3</td><td class='num'>585亿</td><td>电网设备</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz301638</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301638.html" target="_blank" rel="noopener noreferrer">南网数字</a></td><td class='num'>20.50</td><td class='num dn'>-4.4%</td><td class='num'>20.49</td><td class='num'>20.49~21.10</td><td class='num dn'>19.27</td><td class='num up'>20.86 / 21.08</td><td class='num'>0.3</td><td class='num'>51亿</td><td>IT服务Ⅱ</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh603050</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603050.html" target="_blank" rel="noopener noreferrer">科林电气</a></td><td class='num'>16.45</td><td class='num dn'>-4.8%</td><td class='num'>16.40</td><td class='num'>16.40~16.89</td><td class='num dn'>15.46</td><td class='num up'>16.74 / 16.94</td><td class='num'>0.3</td><td class='num'>66亿</td><td>电网设备</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh600396</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600396.html" target="_blank" rel="noopener noreferrer">华电辽能</a></td><td class='num'>12.35</td><td class='num dn'>-4.9%</td><td class='num'>12.30</td><td class='num'>12.30~12.67</td><td class='num dn'>11.61</td><td class='num up'>12.56 / 12.73</td><td class='num'>0.3</td><td class='num'>182亿</td><td>电力</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz002261</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002261.html" target="_blank" rel="noopener noreferrer">拓维信息</a></td><td class='num'>24.08</td><td class='num dn'>-4.6%</td><td class='num'>24.03</td><td class='num'>24.03~24.75</td><td class='num dn'>22.64</td><td class='num up'>24.49 / 24.78</td><td class='num'>0.3</td><td class='num'>276亿</td><td>软件开发</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz001258</td><td><a class="emlk" href="https://quote.eastmoney.com/sz001258.html" target="_blank" rel="noopener noreferrer">立新能源</a></td><td class='num'>10.12</td><td class='num dn'>-4.7%</td><td class='num'>10.09</td><td class='num'>10.09~10.39</td><td class='num dn'>9.51</td><td class='num up'>10.29 / 10.42</td><td class='num'>0.3</td><td class='num'>94亿</td><td>电力</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh603279</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603279.html" target="_blank" rel="noopener noreferrer">景津装备</a></td><td class='num'>10.71</td><td class='num dn'>-4.5%</td><td class='num'>10.69</td><td class='num'>10.69~11.01</td><td class='num dn'>10.07</td><td class='num up'>10.89 / 11.02</td><td class='num'>0.3</td><td class='num'>62亿</td><td>通用设备</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz001288</td><td><a class="emlk" href="https://quote.eastmoney.com/sz001288.html" target="_blank" rel="noopener noreferrer">运机集团</a></td><td class='num'>32.16</td><td class='num dn'>-4.5%</td><td class='num'>32.10</td><td class='num'>32.10~33.06</td><td class='num dn'>30.23</td><td class='num up'>32.71 / 33.08</td><td class='num'>0.3</td><td class='num'>49亿</td><td>专用设备</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz002626</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002626.html" target="_blank" rel="noopener noreferrer">金达威</a></td><td class='num'>15.96</td><td class='num dn'>-4.9%</td><td class='num'>15.89</td><td class='num'>15.89~16.37</td><td class='num dn'>15.00</td><td class='num up'>16.23 / 16.44</td><td class='num'>0.3</td><td class='num'>97亿</td><td>食品加工</td><td><span class='tag ok'>缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300775</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300775.html" target="_blank" rel="noopener noreferrer">三角防务</a></td><td class='num'>19.98</td><td class='num dn'>-4.7%</td><td class='num'>19.92</td><td class='num'>19.92~20.52</td><td class='num dn'>18.78</td><td class='num up'>20.32 / 20.56</td><td class='num'>0.3</td><td class='num'>106亿</td><td>航空装备Ⅱ</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh688321</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688321.html" target="_blank" rel="noopener noreferrer">微芯生物</a></td><td class='num'>24.92</td><td class='num dn'>-4.8%</td><td class='num'>24.82</td><td class='num'>24.82~25.56</td><td class='num dn'>23.42</td><td class='num up'>25.34 / 25.66</td><td class='num'>0.3</td><td class='num'>110亿</td><td>化学制药</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh600570</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600570.html" target="_blank" rel="noopener noreferrer">恒生电子</a></td><td class='num'>19.32</td><td class='num dn'>-4.4%</td><td class='num'>19.30</td><td class='num'>19.30~19.88</td><td class='num dn'>18.16</td><td class='num up'>19.64 / 19.86</td><td class='num'>0.3</td><td class='num'>366亿</td><td>软件开发</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300750</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300750.html" target="_blank" rel="noopener noreferrer">宁德时代</a></td><td class='num'>286.80</td><td class='num dn'>-4.7%</td><td class='num'>285.74</td><td class='num'>285.74~294.31</td><td class='num dn'>269.59</td><td class='num up'>291.57 / 295.17</td><td class='num'>0.3</td><td class='num'>12219亿</td><td>电池</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh600580</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600580.html" target="_blank" rel="noopener noreferrer">卧龙电驱</a></td><td class='num'>25.96</td><td class='num dn'>-4.4%</td><td class='num'>25.92</td><td class='num'>25.92~26.70</td><td class='num dn'>24.40</td><td class='num up'>26.39 / 26.68</td><td class='num'>0.3</td><td class='num'>404亿</td><td>电机Ⅱ</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz003009</td><td><a class="emlk" href="https://quote.eastmoney.com/sz003009.html" target="_blank" rel="noopener noreferrer">中天火箭</a></td><td class='num'>44.73</td><td class='num dn'>-4.2%</td><td class='num'>44.71</td><td class='num'>44.71~46.05</td><td class='num dn'>42.05</td><td class='num up'>45.47 / 45.94</td><td class='num'>0.3</td><td class='num'>74亿</td><td>航天装备Ⅱ</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz002318</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002318.html" target="_blank" rel="noopener noreferrer">久立特材</a></td><td class='num'>17.52</td><td class='num dn'>-4.3%</td><td class='num'>17.50</td><td class='num'>17.50~18.03</td><td class='num dn'>16.47</td><td class='num up'>17.81 / 18.00</td><td class='num'>0.3</td><td class='num'>167亿</td><td>特钢Ⅱ</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300059</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300059.html" target="_blank" rel="noopener noreferrer">东方财富</a></td><td class='num'>17.77</td><td class='num dn'>-4.7%</td><td class='num'>17.70</td><td class='num'>17.70~18.23</td><td class='num dn'>16.70</td><td class='num up'>18.06 / 18.29</td><td class='num'>0.3</td><td class='num'>2380亿</td><td>证券Ⅱ</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr></tbody></table></div><div class='kv'>按盈亏比降序，展示前 30 只（共 595 只）。</div></div><h2><span class='bk' style='color:var(--dn)'>⚠ 排雷档</span>（跌 12~20%）· 75 只</h2><div class='box' style='border-color:var(--dn);background:#fafafa'>跌 12~20%：胜率 41.9% / 期望 −0.07%，两半均劣化，禁止抄底。</div><div class='card'><div class='tbl-wrap'><table data-wb><thead><tr><th>代码</th><th>名称</th><th>现价</th><th>三连阴跌幅</th><th>谷底</th><th>低吸区</th><th>止损</th><th>目标 T1/T2</th><th>盈亏比</th><th>流通市值</th><th>行业</th><th>量价特征</th></tr></thead><tbody><tr><td>sh688781</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688781.html" target="_blank" rel="noopener noreferrer">视涯科技-UW</a></td><td class='num'>41.26</td><td class='num dn'>-20.0%</td><td class='num'>40.83</td><td class='num'>40.83~42.05</td><td class='num dn'>38.78</td><td class='num up'>44.93 / 47.46</td><td class='num'>1.5</td><td class='num'>17亿</td><td>—</td><td><span class='tag ok'>缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh688485</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688485.html" target="_blank" rel="noopener noreferrer">九州一轨</a></td><td class='num'>105.08</td><td class='num dn'>-17.9%</td><td class='num'>104.00</td><td class='num'>104.00~107.12</td><td class='num dn'>98.78</td><td class='num up'>113.18 / 118.84</td><td class='num'>1.3</td><td class='num'>158亿</td><td>轨交设备Ⅱ</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz301205</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301205.html" target="_blank" rel="noopener noreferrer">联特科技</a></td><td class='num'>263.48</td><td class='num dn'>-18.9%</td><td class='num'>258.16</td><td class='num'>258.16~265.90</td><td class='num dn'>247.67</td><td class='num up'>283.65 / 299.39</td><td class='num'>1.3</td><td class='num'>220亿</td><td>通信设备</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300345</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300345.html" target="_blank" rel="noopener noreferrer">华民股份</a></td><td class='num'>6.41</td><td class='num dn'>-16.6%</td><td class='num'>6.40</td><td class='num'>6.40~6.59</td><td class='num dn'>6.03</td><td class='num up'>6.89 / 7.20</td><td class='num'>1.3</td><td class='num'>31亿</td><td>光伏设备</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz002957</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002957.html" target="_blank" rel="noopener noreferrer">科瑞技术</a></td><td class='num'>36.35</td><td class='num dn'>-17.2%</td><td class='num'>36.12</td><td class='num'>36.12~37.20</td><td class='num dn'>34.17</td><td class='num up'>39.08 / 40.92</td><td class='num'>1.3</td><td class='num'>152亿</td><td>自动化设备</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz000593</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000593.html" target="_blank" rel="noopener noreferrer">德龙汇能</a></td><td class='num'>20.00</td><td class='num dn'>-17.3%</td><td class='num'>19.82</td><td class='num'>19.82~20.41</td><td class='num dn'>18.80</td><td class='num up'>21.49 / 22.52</td><td class='num'>1.2</td><td class='num'>72亿</td><td>燃气Ⅱ</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh600105</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600105.html" target="_blank" rel="noopener noreferrer">永鼎股份</a></td><td class='num'>37.00</td><td class='num dn'>-17.5%</td><td class='num'>36.18</td><td class='num'>36.18~37.27</td><td class='num dn'>34.78</td><td class='num up'>39.50 / 41.55</td><td class='num'>1.1</td><td class='num'>541亿</td><td>通信设备</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag no'>放量</span></td></tr><tr><td>sz301182</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301182.html" target="_blank" rel="noopener noreferrer">凯旺科技</a></td><td class='num'>60.60</td><td class='num dn'>-15.8%</td><td class='num'>60.17</td><td class='num'>60.17~61.98</td><td class='num dn'>56.96</td><td class='num up'>64.68 / 67.47</td><td class='num'>1.1</td><td class='num'>53亿</td><td>计算机设备</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300731</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300731.html" target="_blank" rel="noopener noreferrer">科创新源</a></td><td class='num'>44.94</td><td class='num dn'>-15.1%</td><td class='num'>44.88</td><td class='num'>44.88~46.23</td><td class='num dn'>42.24</td><td class='num up'>47.95 / 49.84</td><td class='num'>1.1</td><td class='num'>76亿</td><td>橡胶</td><td><span class='tag ok'>缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh600487</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600487.html" target="_blank" rel="noopener noreferrer">亨通光电</a></td><td class='num'>57.11</td><td class='num dn'>-18.3%</td><td class='num'>55.30</td><td class='num'>55.30~56.96</td><td class='num dn'>53.64</td><td class='num up'>60.89 / 64.35</td><td class='num'>1.1</td><td class='num'>1401亿</td><td>通信设备</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag no'>放量</span></td></tr><tr><td>sh688559</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688559.html" target="_blank" rel="noopener noreferrer">海目星</a></td><td class='num'>49.75</td><td class='num dn'>-15.9%</td><td class='num'>49.00</td><td class='num'>49.00~50.47</td><td class='num dn'>46.77</td><td class='num up'>52.89 / 55.30</td><td class='num'>1.1</td><td class='num'>123亿</td><td>自动化设备</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh603082</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603082.html" target="_blank" rel="noopener noreferrer">北自科技</a></td><td class='num'>42.00</td><td class='num dn'>-14.3%</td><td class='num'>41.95</td><td class='num'>41.95~43.21</td><td class='num dn'>39.48</td><td class='num up'>44.64 / 46.30</td><td class='num'>1.0</td><td class='num'>17亿</td><td>自动化设备</td><td><span class='tag ok'>缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh605376</td><td><a class="emlk" href="https://quote.eastmoney.com/sh605376.html" target="_blank" rel="noopener noreferrer">博迁新材</a></td><td class='num'>118.55</td><td class='num dn'>-14.8%</td><td class='num'>117.80</td><td class='num'>117.80~121.33</td><td class='num dn'>111.44</td><td class='num up'>125.96 / 130.99</td><td class='num'>1.0</td><td class='num'>310亿</td><td>能源金属</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh603270</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603270.html" target="_blank" rel="noopener noreferrer">金帝股份</a></td><td class='num'>31.87</td><td class='num dn'>-14.7%</td><td class='num'>31.69</td><td class='num'>31.69~32.64</td><td class='num dn'>29.96</td><td class='num up'>33.86 / 35.20</td><td class='num'>1.0</td><td class='num'>33亿</td><td>通用设备</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300112</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300112.html" target="_blank" rel="noopener noreferrer">万讯自控</a></td><td class='num'>10.09</td><td class='num dn'>-14.9%</td><td class='num'>10.02</td><td class='num'>10.02~10.32</td><td class='num dn'>9.48</td><td class='num up'>10.72 / 11.15</td><td class='num'>1.0</td><td class='num'>28亿</td><td>通用设备</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh688629</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688629.html" target="_blank" rel="noopener noreferrer">华丰科技</a></td><td class='num'>104.50</td><td class='num dn'>-15.1%</td><td class='num'>103.36</td><td class='num'>103.36~106.46</td><td class='num dn'>98.23</td><td class='num up'>110.92 / 115.59</td><td class='num'>1.0</td><td class='num'>482亿</td><td>军工电子Ⅱ</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh603938</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603938.html" target="_blank" rel="noopener noreferrer">三孚股份</a></td><td class='num'>43.56</td><td class='num dn'>-15.4%</td><td class='num'>42.92</td><td class='num'>42.92~44.21</td><td class='num dn'>40.95</td><td class='num up'>46.20 / 48.22</td><td class='num'>1.0</td><td class='num'>167亿</td><td>化学原料</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz002989</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002989.html" target="_blank" rel="noopener noreferrer">中天精装</a></td><td class='num'>23.60</td><td class='num dn'>-15.6%</td><td class='num'>23.20</td><td class='num'>23.20~23.90</td><td class='num dn'>22.18</td><td class='num up'>25.02 / 26.14</td><td class='num'>1.0</td><td class='num'>47亿</td><td>装修装饰Ⅱ</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz301338</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301338.html" target="_blank" rel="noopener noreferrer">凯格精机</a></td><td class='num'>89.07</td><td class='num dn'>-14.9%</td><td class='num'>87.80</td><td class='num'>87.80~90.43</td><td class='num dn'>83.73</td><td class='num up'>94.23 / 98.19</td><td class='num'>1.0</td><td class='num'>97亿</td><td>专用设备</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh605178</td><td><a class="emlk" href="https://quote.eastmoney.com/sh605178.html" target="_blank" rel="noopener noreferrer">时空科技</a></td><td class='num'>63.54</td><td class='num dn'>-14.0%</td><td class='num'>63.03</td><td class='num'>63.03~64.92</td><td class='num dn'>59.73</td><td class='num up'>67.18 / 69.75</td><td class='num'>1.0</td><td class='num'>63亿</td><td>专业工程</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh600186</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600186.html" target="_blank" rel="noopener noreferrer">莲花控股</a></td><td class='num'>11.57</td><td class='num dn'>-14.9%</td><td class='num'>11.39</td><td class='num'>11.39~11.73</td><td class='num dn'>10.88</td><td class='num up'>12.23 / 12.75</td><td class='num'>1.0</td><td class='num'>207亿</td><td>调味发酵品Ⅱ</td><td><span class='tag ok'>缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh601118</td><td><a class="emlk" href="https://quote.eastmoney.com/sh601118.html" target="_blank" rel="noopener noreferrer">海南橡胶</a></td><td class='num'>5.79</td><td class='num dn'>-13.1%</td><td class='num'>5.77</td><td class='num'>5.77~5.94</td><td class='num dn'>5.44</td><td class='num up'>6.11 / 6.32</td><td class='num'>0.9</td><td class='num'>248亿</td><td>种植业</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz002897</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002897.html" target="_blank" rel="noopener noreferrer">意华股份</a></td><td class='num'>58.46</td><td class='num dn'>-13.8%</td><td class='num'>57.86</td><td class='num'>57.86~59.60</td><td class='num dn'>54.95</td><td class='num up'>61.68 / 64.03</td><td class='num'>0.9</td><td class='num'>108亿</td><td>通信设备</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh600869</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600869.html" target="_blank" rel="noopener noreferrer">远东股份</a></td><td class='num'>18.03</td><td class='num dn'>-14.3%</td><td class='num'>17.78</td><td class='num'>17.78~18.31</td><td class='num dn'>16.95</td><td class='num up'>19.02 / 19.79</td><td class='num'>0.9</td><td class='num'>400亿</td><td>电网设备</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300870</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300870.html" target="_blank" rel="noopener noreferrer">欧陆通</a></td><td class='num'>181.40</td><td class='num dn'>-14.8%</td><td class='num'>178.08</td><td class='num'>178.08~183.42</td><td class='num dn'>170.52</td><td class='num up'>191.34 / 199.54</td><td class='num'>0.9</td><td class='num'>277亿</td><td>其他电源设备Ⅱ</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz301013</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301013.html" target="_blank" rel="noopener noreferrer">利和兴</a></td><td class='num'>34.00</td><td class='num dn'>-13.2%</td><td class='num'>33.82</td><td class='num'>33.82~34.83</td><td class='num dn'>31.96</td><td class='num up'>35.86 / 37.12</td><td class='num'>0.9</td><td class='num'>64亿</td><td>专用设备</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh688403</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688403.html" target="_blank" rel="noopener noreferrer">汇成股份</a></td><td class='num'>22.25</td><td class='num dn'>-13.7%</td><td class='num'>22.03</td><td class='num'>22.03~22.69</td><td class='num dn'>20.91</td><td class='num up'>23.47 / 24.35</td><td class='num'>0.9</td><td class='num'>221亿</td><td>半导体</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh603989</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603989.html" target="_blank" rel="noopener noreferrer">艾华集团</a></td><td class='num'>28.00</td><td class='num dn'>-15.8%</td><td class='num'>27.21</td><td class='num'>27.21~28.03</td><td class='num dn'>26.32</td><td class='num up'>29.52 / 30.96</td><td class='num'>0.9</td><td class='num'>112亿</td><td>元件</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz301093</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301093.html" target="_blank" rel="noopener noreferrer">华兰股份</a></td><td class='num'>63.11</td><td class='num dn'>-15.0%</td><td class='num'>61.80</td><td class='num'>61.80~63.65</td><td class='num dn'>59.32</td><td class='num up'>66.54 / 69.48</td><td class='num'>0.9</td><td class='num'>128亿</td><td>医疗器械</td><td><span class='tag ok'>缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300502</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300502.html" target="_blank" rel="noopener noreferrer">新易盛</a></td><td class='num'>392.91</td><td class='num dn'>-12.9%</td><td class='num'>391.33</td><td class='num'>391.33~403.07</td><td class='num dn'>369.34</td><td class='num up'>414.20 / 428.33</td><td class='num'>0.9</td><td class='num'>4930亿</td><td>通信设备</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr></tbody></table></div><div class='kv'>按盈亏比降序，展示前 30 只（共 75 只）。</div></div><h2><span class='bk' style='color:#b00020'>⛔ 深跌禁区</span>（跌 20~990%）· 9 只</h2><div class='box' style='border-color:#b00020;background:#fafafa'>跌 >20%：胜率仅 20.9% / 期望 −2.39%，两半同向为大负，坚决回避。</div><div class='card'><div class='tbl-wrap'><table data-wb><thead><tr><th>代码</th><th>名称</th><th>现价</th><th>三连阴跌幅</th><th>谷底</th><th>低吸区</th><th>止损</th><th>目标 T1/T2</th><th>盈亏比</th><th>流通市值</th><th>行业</th><th>量价特征</th></tr></thead><tbody><tr><td>sh600371</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600371.html" target="_blank" rel="noopener noreferrer">万向德农</a></td><td class='num'>12.84</td><td class='num dn'>-25.7%</td><td class='num'>12.84</td><td class='num'>12.84~13.23</td><td class='num dn'>12.07</td><td class='num up'>14.54 / 15.58</td><td class='num'>2.2</td><td class='num'>38亿</td><td>种植业</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz300862</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300862.html" target="_blank" rel="noopener noreferrer">蓝盾光电</a></td><td class='num'>46.11</td><td class='num dn'>-23.2%</td><td class='num'>45.75</td><td class='num'>45.75~47.12</td><td class='num dn'>43.34</td><td class='num up'>51.19 / 54.56</td><td class='num'>1.8</td><td class='num'>70亿</td><td>通用设备</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh688628</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688628.html" target="_blank" rel="noopener noreferrer">优利德</a></td><td class='num'>88.07</td><td class='num dn'>-23.0%</td><td class='num'>87.30</td><td class='num'>87.30~89.92</td><td class='num dn'>82.79</td><td class='num up'>97.67 / 104.07</td><td class='num'>1.8</td><td class='num'>99亿</td><td>通用设备</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz002827</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002827.html" target="_blank" rel="noopener noreferrer">高争民爆</a></td><td class='num'>62.04</td><td class='num dn'>-21.9%</td><td class='num'>62.04</td><td class='num'>62.04~63.90</td><td class='num dn'>58.32</td><td class='num up'>68.68 / 72.77</td><td class='num'>1.8</td><td class='num'>171亿</td><td>化学制品</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sz003036</td><td><a class="emlk" href="https://quote.eastmoney.com/sz003036.html" target="_blank" rel="noopener noreferrer">泰坦股份</a></td><td class='num'>46.46</td><td class='num dn'>-21.0%</td><td class='num'>46.22</td><td class='num'>46.22~47.61</td><td class='num dn'>43.67</td><td class='num up'>51.03 / 53.99</td><td class='num'>1.6</td><td class='num'>101亿</td><td>专用设备</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh603221</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603221.html" target="_blank" rel="noopener noreferrer">爱丽家居</a></td><td class='num'>25.43</td><td class='num dn'>-22.2%</td><td class='num'>24.95</td><td class='num'>24.95~25.70</td><td class='num dn'>23.90</td><td class='num up'>27.91 / 29.73</td><td class='num'>1.6</td><td class='num'>62亿</td><td>家居用品</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh600127</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600127.html" target="_blank" rel="noopener noreferrer">金健米业</a></td><td class='num'>13.36</td><td class='num dn'>-20.2%</td><td class='num'>13.36</td><td class='num'>13.36~13.76</td><td class='num dn'>12.56</td><td class='num up'>14.65 / 15.46</td><td class='num'>1.6</td><td class='num'>86亿</td><td>农产品加工</td><td><span class='tag gray'>非缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh600857</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600857.html" target="_blank" rel="noopener noreferrer">宁波中百</a></td><td class='num'>17.53</td><td class='num dn'>-22.0%</td><td class='num'>17.00</td><td class='num'>17.00~17.51</td><td class='num dn'>16.48</td><td class='num up'>19.09 / 20.39</td><td class='num'>1.5</td><td class='num'>39亿</td><td>一般零售</td><td><span class='tag gray'>非缩量</span><span class='tag no'>破MA60</span><span class='tag gray'>—</span></td></tr><tr><td>sh600664</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600664.html" target="_blank" rel="noopener noreferrer">哈药股份</a></td><td class='num'>7.14</td><td class='num dn'>-21.0%</td><td class='num'>6.92</td><td class='num'>6.92~7.13</td><td class='num dn'>6.71</td><td class='num up'>7.73 / 8.23</td><td class='num'>1.4</td><td class='num'>180亿</td><td>化学制药</td><td><span class='tag ok'>缩量</span><span class='tag ok'>站上MA60</span><span class='tag gray'>—</span></td></tr></tbody></table></div><div class='kv'>按盈亏比降序，展示前 9 只（共 9 只）。</div></div>
+
+<h2>局限与诚实披露</h2>
+<div class="card"><div class="kv">
+① <b>利空过滤未参与回测</b>：近 20 日减持 / 监管问询 / 业绩预减，本地仅 18 天历史样本，无法回溯；
+回测中的 A 桶<b>不含</b>该过滤，因此实盘若严格执行利空过滤，结果可能与回测不同（大概率更好，但<b>未经证实</b>）。<br>
+② <b>流通市值</b>为当前快照（腾讯 qt），历史回测中按价格缩放近似（假设股本不变）。<br>
+③ <b>行业分类</b>用当前申万二级静态映射近似历史归属；板块前 5 排名按成分股等权 20 日涨幅计算。<br>
+④ <b>前向窗口重叠</b> → 样本非独立；样本约 10 个月，跨年份有效性未验证。<br>
+⑤ <b>绝对胜率含 β</b>：本策略在样本后半段期望转负，结论以<b>相对基准</b>口径为主。<br>
+⑥ 本页为量化观察工具，<b>非个股推荐、非买卖建议</b>，决策责任在账户本人。</div></div>
+
+<div class="foot">数据基准 2026-09-29 ｜ 回测引擎 quant/_3yl_lab.py ｜ 实验室页
+<a href="lab.html" style="color:var(--blue)">lab.html</a></div>
+</div><script>
+(function(){
+  function cellVal(tr, idx, type){
+    var td = tr.cells[idx];
+    if(!td) return type==='n' ? -Infinity : '';
+    var raw = td.getAttribute('data-v');
+    var txt = (raw!==null? raw : td.textContent).trim();
+    if(type==='n'){
+      var v = parseFloat(txt.replace(/[,%\u00b7\u4e07\u4ebf+]/g,''));
+      return isNaN(v) ? -Infinity : v;
+    }
+    return txt;
+  }
+  document.querySelectorAll('table.sortable').forEach(function(tb){
+    var ths = tb.querySelectorAll('thead th[data-k]');
+    ths.forEach(function(th, ci){
+      th.classList.add('xh-sort');
+      th.addEventListener('click', function(){
+        var tbody = tb.tBodies[0];
+        if(!tbody) return;
+        var arr = Array.prototype.slice.call(tbody.rows);
+        var type = th.getAttribute('data-t') || 'n';
+        var cur = th.getAttribute('data-dir');
+        var dir = (cur === 'asc') ? 'desc' : 'asc';
+        ths.forEach(function(o){ o.removeAttribute('data-dir'); o.classList.remove('xh-asc','xh-desc'); });
+        th.setAttribute('data-dir', dir);
+        th.classList.add(dir==='asc' ? 'xh-asc' : 'xh-desc');
+        arr.sort(function(a,b){
+          var va = cellVal(a, ci, type), vb = cellVal(b, ci, type);
+          if(va < vb) return dir==='asc' ? -1 : 1;
+          if(va > vb) return dir==='asc' ? 1 : -1;
+          return 0;
+        });
+        arr.forEach(function(tr){ tbody.appendChild(tr); });
+      });
+    });
+  });
+})();
+</script>
+<!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--></body></html>
