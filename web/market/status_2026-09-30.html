@@ -3,7 +3,7 @@
 <head>
 <meta charset='UTF-8'>
 <meta name='viewport' content='width=device-width,initial-scale=1.0'>
-<title>A股量化助理 · 每日总览</title>
+<title>状态报告</title>
 <style>* { box-sizing: border-box; }
 body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
   background:#f5f6f8; color:#23262b; min-height:100vh; }
@@ -306,306 +306,30 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <div class='wrap'>
 
 <header>
-<h1>📊 A股量化助理 · 每日总览</h1>
-<p>大盘概览 / 板块热度 / 连板梯队 / 龙虎榜速览 — 数据口径 2026-09-30（大盘概览快照 2026-09-30 · 估值 2026-09-29）</p>
+<h1>📋 状态报告</h1>
+<p>2026-09-30 · 龙虎榜手动更新 + 全量数据刷新</p>
 </header>
-<div class='meta'>数据来源：腾讯自选股 <b>westock-mcp</b>（data_market_overview / tool_ranking / data_hot / data_quote / data_lhb）。</div>
 <div class='section'>
-<h2>📈 当日大盘概览 — 2026-09-30（快照）</h2>
-<div class='idxrow'>
-<div class='idx'>
-<div class='k'>上证指数</div>
-<div class='v'>3,842.19</div>
-<div class='c up'>+0.31%</div>
-<div class='hl'>H 3,851.22 · L 3,833.09</div>
+<h2>✅ 本轮完成情况</h2>
+<div class='amberbox' style='color:#1c2430'>1. <b>龙虎榜数据</b>：通过 westock-mcp data_lhb 拉取 2026-09-30 真实龙虎榜（机构榜 32 只、游资席位 106 个、机构+游资共振 27 只、席位胜率 28 条；龙虎榜全榜上榜 73 只）。已渲染 lhb.html（机构榜/共振/胜率）与 hotmoney.html（席位净买榜/胜率）。<br>2. <b>大盘/板块/连板刷新</b>：data_market_overview(2026-09-30)、data_hot(board)、tool_ranking(limitup_days) 全部更新为 2026-09-30（估值口径 2026-09-29）。<br>4. <b>推送</b>：本地已生成 6 个页面（含导航 index.html、龙虎榜归档页 lhb_2026-09-30.html），待经 GitHub 连接器推送至 dujoer/stocks 的 web/ 目录（main 分支，需仓库写权限）。注：早期 08-14 窗口收益/共振/Alpha 回测为远程分析页，本地未保留，本系统以龙虎榜机构榜、共振、席位胜率为核心。</div>
 </div>
-<div class='idx'>
-<div class='k'>深证成指</div>
-<div class='v'>12,887.62</div>
-<div class='c down'>-0.11%</div>
-<div class='hl'>H 12,966.45 · L 12,854.78</div>
-</div>
-<div class='idx'>
-<div class='k'>创业板指</div>
-<div class='v'>3,135.28</div>
-<div class='c down'>-0.23%</div>
-<div class='hl'>H 3,173.36 · L 3,125.49</div>
-</div>
-</div>
-<div class='bar'>
-<div style='background:linear-gradient(90deg,#b87064,#b8332a);width:46.1%'>涨 2567<br>
-<span style='font-size:10px;opacity:.9'>46.1%</span>
-</div>
-<div style='background:linear-gradient(90deg,rgba(154,154,164,.7),rgba(154,154,164,.55));width:3.2%'>平 181</div>
-<div style='background:linear-gradient(90deg,#7d9682,#1a9e5a);width:50.7%'>跌 2824<br>
-<span style='font-size:10px;opacity:.9'>50.7%</span>
-</div>
-</div>
+<div class='section'>
+<h2>📁 产出文件</h2>
 <div class='chiprow'>
-<div class='chip'>
-<div class='ck'>涨停</div>
-<div class='cv up'>53</div>
+<span class='pill'>index.html</span>
+<span class='pill'>daily_overview.html</span>
+<span class='pill'>lhb.html</span>
+<span class='pill'>hotmoney.html</span>
+<span class='pill'>lhb_2026-09-30.html</span>
+<span class='pill'>status_2026-09-30.html</span>
 </div>
-<div class='chip'>
-<div class='ck'>跌停</div>
-<div class='cv down'>4</div>
-</div>
-<div class='chip'>
-<div class='ck'>涨跌比</div>
-<div class='cv' style='color:#1a73e8'>0.91</div>
-</div>
-<div class='chip'>
-<div class='ck'>5日新高/低</div>
-<div class='cv' style='color:#8b9bb5'>885/1452</div>
-</div>
-<div class='chip'>
-<div class='ck'>20日新高/低</div>
-<div class='cv' style='color:#6b5b95'>330/604</div>
-</div>
-<div class='chip'>
-<div class='ck'>60日新高/低</div>
-<div class='cv' style='color:#8aaab3'>196/157</div>
-</div>
-</div>
-<div class='amberbox' style='color:#1c2430'>
-<span style='font-size:13px;color:#3a4048'>沪深京成交额</span> <span style='font-size:20px;font-weight:700'>14,380.18 亿</span> <span class='down' style='font-weight:700'>缩量</span>
-<div style='font-size:12px;color:#6b7280;margin-top:6px'>5日均 15,936.70 亿 (90.23%) · 10日均 17,874.77 亿 (80.45%) · 20日均 18,039.21 亿 (79.72%)</div>
-</div>
-<div class='note' style='color:#8a929c'>以上标签由 westock-mcp data_market_overview 按全市场量价/估值/风格自动生成（聚合/收盘口径 2026-09-30；估值口径滞后至 2026-09-29）。</div>
-<div class='chiprow'>
-<span class='pill' title='情绪：情绪狂热(涨停>50只，或者涨股比>70%，两融周增>2% )'>
-<b>情绪</b> 情绪狂热</span>
-<span class='pill' title='技术：偏弱(MACD死叉，或者RSI恐慌抛售时机，或者布林下轨附近)'>
-<b>技术</b> 偏弱</span>
-<span class='pill' title='估值：偏高区间(PE分位数70%~90%)'>
-<b>估值</b> 偏高区间</span>
-<span class='pill' title='量能：缩量下跌(成交额70~90%均值)'>
-<b>量能</b> 缩量下跌</span>
-<span class='pill' title='大小盘：均衡(大小盘差异 < ±3%)'>
-<b>大小盘</b> 均衡</span>
-<span class='pill' title='风格：价值占优(价值指数 > 成长指数 +2%~+5%)'>
-<b>风格</b> 价值占优</span>
-<span class='pill' title='行业轮动：温和分化(头部在涨,尾部在跌,头部尾部相差在2%~5%)'>
-<b>行业轮动</b> 温和分化</span>
-<span class='pill' title='个股宽度：普涨(创新高>200只，或者破位<10只)'>
-<b>个股宽度</b> 普涨</span>
-<span class='pill' title='短期趋势：弱势下跌(均线空头排列,或者短线下穿中线且距离中线以下距离较小)'>
-<b>短期趋势</b> 弱势下跌</span>
-<span class='pill' title='中长期趋势：弱势下跌(均线空头排列,或者短线下穿中线且距离中线以下距离较小)'>
-<b>中长期趋势</b> 弱势下跌</span>
-</div>
-<div style='font-size:13px;font-weight:700;color:#1c2430;margin:14px 0 8px'>风格 / 规模</div>
-<table data-wb>
-<tr>
-<th>风格/规模</th>
-<th class='num'>5日</th>
-<th class='num'>20日</th>
-</tr>
-<tr>
-<td>沪深300</td>
-<td class='num down'>-4.11%</td>
-<td class='num down'>-5.50%</td>
-</tr>
-<tr>
-<td>中证1000</td>
-<td class='num down'>-5.93%</td>
-<td class='num down'>-5.10%</td>
-</tr>
-<tr>
-<td>全指成长</td>
-<td class='num down'>-5.09%</td>
-<td class='num down'>-5.27%</td>
-</tr>
-<tr>
-<td>全指价值</td>
-<td class='num down'>-0.20%</td>
-<td class='num down'>-2.46%</td>
-</tr>
-</table>
-<div class='amberbox' style='color:#1c2430'>
-<b style='color:#1c2430'>中证全指估值</b>（口径 2026-09-29）：PE_TTM <span style='font-size:16px;font-weight:700'>19.73</span> · 3年分位 <span class='up'>61.24%</span> · 5年分位 <span class='up'>76.75%</span> · 10年分位 <span class='up'>71.03%</span> <span style='color:#8a929c;font-size:12px'>(PB 1.7 · 股息率 1.91%)</span>
-</div>
-<div style='font-size:14px;font-weight:700;color:#1c2430;margin:14px 0 8px'>📰 当日要闻（2026-09-30）</div>
-<ul style='margin:0;padding-left:18px;color:#6b7280'>
-</ul>
-<div style='font-size:14px;font-weight:700;color:#1c2430;margin:14px 0 8px'>🔧 技术摘要与解读</div>
-<table data-wb>
-<tr>
-<th>指标</th>
-<th class='num'>数值</th>
-<th>专业解读</th>
-</tr>
-<tr>
-<td style='color:#8a929c;font-size:12px'>MACD</td>
-<td class='num' style='font-weight:700;color:#1c2430'>-18.35</td>
-<td style='color:#6b7280;font-size:12px'>MACD 绿柱（小于 0），空头动能占优</td>
-</tr>
-<tr>
-<td style='color:#8a929c;font-size:12px'>DIF</td>
-<td class='num' style='font-weight:700;color:#1c2430'>-17.81</td>
-<td style='color:#6b7280;font-size:12px'>DIF 在 DEA 下方，死叉状态</td>
-</tr>
-<tr>
-<td style='color:#8a929c;font-size:12px'>DEA</td>
-<td class='num' style='font-weight:700;color:#1c2430'>-8.63</td>
-<td style='color:#6b7280;font-size:12px'>DEA 为 DIF 的 9 日平滑，代表中期趋势</td>
-</tr>
-<tr>
-<td style='color:#8a929c;font-size:12px'>KDJ-K</td>
-<td class='num' style='font-weight:700;color:#1c2430'>29.58</td>
-<td style='color:#6b7280;font-size:12px'>KDJ-K 处于中性区间</td>
-</tr>
-<tr>
-<td style='color:#8a929c;font-size:12px'>KDJ-D</td>
-<td class='num' style='font-weight:700;color:#1c2430'>40.58</td>
-<td style='color:#6b7280;font-size:12px'>D 线为 K 线平滑，慢速随机指标</td>
-</tr>
-<tr>
-<td style='color:#8a929c;font-size:12px'>KDJ-J</td>
-<td class='num' style='font-weight:700;color:#1c2430'>7.59</td>
-<td style='color:#6b7280;font-size:12px'>KDJ-J 处于中性区间</td>
-</tr>
-<tr>
-<td style='color:#8a929c;font-size:12px'>RSI6</td>
-<td class='num' style='font-weight:700;color:#1c2430'>34.04</td>
-<td style='color:#6b7280;font-size:12px'>RSI6 处于中性区间</td>
-</tr>
-<tr>
-<td style='color:#8a929c;font-size:12px'>MA5</td>
-<td class='num' style='font-weight:700;color:#1c2430'>3,864.23</td>
-<td style='color:#6b7280;font-size:12px'>短周期均线在 MA20 下方，短期偏弱</td>
-</tr>
-<tr>
-<td style='color:#8a929c;font-size:12px'>MA20</td>
-<td class='num' style='font-weight:700;color:#1c2430'>3,905.64</td>
-<td style='color:#6b7280;font-size:12px'>20 日均线，中期趋势参考</td>
-</tr>
-<tr>
-<td style='color:#8a929c;font-size:12px'>MA60</td>
-<td class='num' style='font-weight:700;color:#1c2430'>3,904.04</td>
-<td style='color:#6b7280;font-size:12px'>60 日均线，中长期趋势参考</td>
-</tr>
-<tr>
-<td style='color:#8a929c;font-size:12px'>布林下轨</td>
-<td class='num' style='font-weight:700;color:#1c2430'>3,821.74</td>
-<td style='color:#6b7280;font-size:12px'>弱势支撑位</td>
-</tr>
-<tr>
-<td style='color:#8a929c;font-size:12px'>布林中轨</td>
-<td class='num' style='font-weight:700;color:#1c2430'>3,905.64</td>
-<td style='color:#6b7280;font-size:12px'>多空分水岭（20 日均线）</td>
-</tr>
-<tr>
-<td style='color:#8a929c;font-size:12px'>布林上轨</td>
-<td class='num' style='font-weight:700;color:#1c2430'>3,989.54</td>
-<td style='color:#6b7280;font-size:12px'>强势压力位</td>
-</tr>
-</table>
-<div class='amberbox'>
-<div style='margin-bottom:8px'>
-<b>📌 专业点评：</b>缩量，情绪狂热，普涨，均衡，价值占优，偏高区间，涨跌比 0.91，短期弱势下跌。</div>
-<div style='border-top:1px dashed rgba(201,166,107,.25);padding-top:8px'>
-<b>🔮 次日展望：</b>量能收窄，明日大概率维持震荡；MACD 红柱/正值；DIF 上穿 DEA，短期偏多；KDJ 超买，短线有回调压力；MA5 在 MA20 上方；情绪偏高，次日分歧可能加大；估值处于历史高位，追高风险大。</div>
-</div>
+<div class='note'>数据落盘：quant/market_overview、board_hot、quotes、news.json、limitup、lhb（均为 2026-09-30）。生成脚本：quant/build_dashboards.py。</div>
 </div>
 <div class='section'>
-<h2>🔥 板块热度 — 2026-09-30 收盘</h2>
-<div>
-<span class='tag hot'>肿瘤疫苗 +9.67%</span>
-<span class='tag hot'>昨日连板 +4.25%</span>
-<span class='tag hot'>生物制品 +4.18%</span>
-<span class='tag hot'>医疗服务 +3.86%</span>
-<span class='tag hot'>CRO +3.79%</span>
-<span class='tag hot'>种植业 +3.72%</span>
-<span class='tag hot'>化学制药 +2.79%</span>
-<span class='tag hot'>医药生物 +2.73%</span>
-<span class='tag hot'>商用车 +2.57%</span>
-<span class='tag hot'>创新药 +2.49%</span>
-<span class='tag hot'>生物医药 +2.39%</span>
-<span class='tag hot'>白酒Ⅱ +2.19%</span>
-<span class='tag hot'>非白酒 +2.18%</span>
-<span class='tag hot'>昨日首板 +1.94%</span>
-<span class='tag hot'>贵金属 +1.81%</span>
-<span class='tag hot'>医疗器械 +1.52%</span>
-<span class='tag hot'>银行 +1.47%</span>
-<span class='tag hot'>乘用车 +1.47%</span>
+<h2>⚠️ 口径说明</h2>
+<div class='empty' style='text-align:left'>· 估值（PE 分位）接口最新快照为 2026-09-29，其余均为 2026-09-30。<br>· 窗口收益(alpha)回测未内置，链接至远程历史分析页。<br>· 所有资金数据为盘后公开龙虎榜，滞后且非未来收益承诺。</div>
 </div>
-<div class='note'>共 50 个板块入选排行；领涨：肿瘤疫苗 +9.67%、昨日连板 +4.25%、生物制品 +4.18%；领跌：龙头股 -1.72%、元件 -2.60%、半导体 -2.99%（数据来源：腾讯自选股板块排行）。</div>
-</div>
-<div class='section'>
-<h2>👑 当日连板梯队（多口径）— 2026-09-30</h2>
-<div class='note' style='color:#8a929c'>口径：全市场连续涨停天数（westock-mcp tool_ranking limitup_days）。共 20 只（全市场 56 只）。</div>
-<div class='ladder'>
-<span class='badge b6'>7连板</span>
-<span style='color:#8a929c;font-size:11px'>(1只)</span>：<span class='namechip'>
-</span>
-</div>
-<div class='ladder'>
-<span class='badge b4'>4连板</span>
-<span style='color:#8a929c;font-size:11px'>(1只)</span>：<span class='namechip'>
-</span>
-</div>
-<div class='ladder'>
-<span class='badge b3'>3连板</span>
-<span style='color:#8a929c;font-size:11px'>(4只)</span>：<span class='namechip'>
-</span>
-<span class='namechip'>
-</span>
-<span class='namechip'>
-</span>
-<span class='namechip'>
-</span>
-</div>
-<div class='ladder'>
-<span class='badge b2'>2连板</span>
-<span style='color:#8a929c;font-size:11px'>(6只)</span>：<span class='namechip'>
-</span>
-<span class='namechip'>
-</span>
-<span class='namechip'>
-</span>
-<span class='namechip'>
-</span>
-<span class='namechip'>
-</span>
-<span class='namechip'>
-</span>
-</div>
-<div class='ladder'>
-<span class='badge b1'>首板</span>
-<span style='color:#8a929c;font-size:11px'>(8只)</span>：<span class='namechip'>
-</span>
-<span class='namechip'>
-</span>
-<span class='namechip'>
-</span>
-<span class='namechip'>
-</span>
-<span class='namechip'>
-</span>
-<span class='namechip'>
-</span>
-<span class='namechip'>
-</span>
-<span class='namechip'>
-</span>
-</div>
-<div class='note'>资金龙头 / 板块龙头（按龙虎榜净买排序）见下方龙虎榜速览与龙虎榜分析页。</div>
-</div>
-<div class='section'>
-<h2>🐉 龙虎榜速览 — 2026-09-30</h2>
-<div class='amberbox' style='color:#1c2430'>
-<b>机构净买 TOP3</b>：华是科技(3.75亿)、<a class="emlk" href="https://quote.eastmoney.com/sz002388.html" target="_blank" rel="noopener noreferrer">新亚制程</a>(2.25亿)、<a class="emlk" href="https://quote.eastmoney.com/sz301218.html" target="_blank" rel="noopener noreferrer">华是科技</a>(2.06亿)<br>
-<b>游资净买 TOP 席位</b>：国信证券浙江互联网分公司(2.40亿)、深股通专用(1.86亿)、国泰海通证券三亚迎宾路(1.83亿)<br>
-<b>连板高度</b>： 7板，共 20 只（全市场 56 只）<br>
-<b>机构+游资共振</b>：江淮汽车(5.07亿) 等 27 只</div>
-<div style='margin-top:6px'>
-<a class='inlink' href='../lhb/lhb.html'>龙虎榜分析页(机构榜/共振/胜率) →</a>
-<a class='inlink' href='hotmoney.html'>游资看板(席位净买/胜率) →</a>
-<a class='inlink' href='../../index.html'>返回总门户 →</a>
-</div>
-</div>
-<footer>本报告由 A 股量化助理自动化生成 · 数据仅供参考，不构成投资建议 · 市场有风险，投资需谨慎</footer>
+<footer>由 A 股量化助理生成 · 仅供参考，不构成投资建议。</footer>
 </div>
 <!--WB_APP--><script id='wb-app'>
 /* ============================================================

@@ -1,0 +1,515 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MACD 水上金叉 + 20日主力净流入 · 2026-09-30</title><style>.wrap{max-width:1180px}
+h1{font-size:23px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+h2{font-size:18px;font-weight:600;margin:28px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--accent)}
+h3{font-size:15px;font-weight:600;margin:18px 0 8px}
+.sub{color:var(--muted);font-size:13px;margin-bottom:8px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:12px 0;
+  box-shadow:0 1px 2px rgba(60,64,67,.10)}
+.box{border-left:4px solid var(--accent);background:var(--accent-soft);padding:14px 18px;border-radius:0 10px 10px 0;margin:14px 0}
+.box.gold{border-color:var(--accent);background:var(--accent-soft)}
+.box.red{border-color:var(--green);background:#e6f4ea}
+.box.amber{border-color:#e37400;background:#fef7e0}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line-2);text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:11.5px;background:var(--hover)}
+tbody tr:hover{background:var(--hover)}
+.num{font-variant-numeric:tabular-nums}
+.up{color:var(--red)}.dn{color:var(--green)}.am{color:var(--accent)}
+.warn{color:#a8071a;font-weight:600}.amber-t{color:#b06000;font-weight:600}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;margin:1px 2px;white-space:nowrap}
+.tag.r{background:#fce8e6;color:#a8071a}
+.tag.y{background:#fef7e0;color:#8a6d00}
+.tag.g{background:#e6f4ea;color:#137333}
+.note{font-size:12px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px dashed var(--line-2)}
+.arch{font-size:13px;margin:4px 0}
+.arch a{color:var(--accent);text-decoration:none}
+.arch a:hover{text-decoration:underline}
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
+ul{margin:8px 0;padding-left:20px}li{margin:4px 0}
+.kpi{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.kpi div{flex:1;min-width:120px;background:var(--hover);border-radius:10px;padding:10px 14px}
+.kpi b{display:block;font-size:20px;color:var(--accent)}
+.kpi span{font-size:12px;color:var(--muted)}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:78vh;overflow-y:auto}
+.scroll table{min-width:1180px}
+thead th{position:sticky;top:0;z-index:2}
+th[data-k]{cursor:pointer;user-select:none}
+th[data-k]:hover{color:var(--accent)}
+th.sorted-asc:after{content:" ▴";color:var(--accent)}
+th.sorted-desc:after{content:" be";color:var(--accent)}
+.num{text-align:right}
+.hist{display:inline-block;font-size:10.5px;font-weight:700;color:#137333;background:#e6f4ea;border:1px solid #b7e1c3;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
+.newb{display:inline-block;font-size:10.5px;font-weight:700;color:#1a73e8;background:#e8f0fe;border:1px solid #c6dafc;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
+.streakb{display:inline-block;font-size:10.5px;font-weight:700;color:#76360c;background:#fdf0e3;border:1px solid #f3cf9f;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
+.hotb{display:inline-block;font-size:10.5px;font-weight:700;color:#a8071a;background:#fce8e6;border:1px solid #f3b1ab;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
+.resb{display:inline-block;font-size:10.5px;font-weight:700;color:#0b6b3a;background:#e6f4ea;border:1px solid #a8ddbe;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
+.histcol{white-space:normal;min-width:158px;max-width:215px}
+.note-inline{color:var(--muted)}
+.cmp{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.cmp div{flex:1;min-width:130px;border-radius:10px;padding:10px 14px;background:var(--hover)}
+.cmp b{display:block;font-size:19px}
+.cmp span{font-size:12px;color:var(--muted)}
+.cmp .cnew b{color:#1a73e8}.cmp .ccont b{color:#137333}.cmp .cout b{color:#a8071a}
+</style><!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  .navgrp{ padding:5px 6px 5px 5px !important; }
+}
+
+</style><!--/WB_THEME--></head>
+<body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a><a href='../three_yin/index.html'>三连阴</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class="wrap">
+<h1>MACD 水上金叉 + 20 日主力净流入 · 候选池</h1>
+<div class="sub">数据基准：2026-09-30 收盘｜ 方法：主力流入初筛 → 水上金叉 → 20 日净流入为正 ｜ 全市场 1488 → 最终 35 只</div>
+<div class='box' style='border-left:4px solid var(--accent)'><b>本板块已并入「精选池」，此处仅作技术面观察归档</b><br>「水上金叉 + 20 日主力净流入为正」已并入 <a href='../picks/index.html'><b>精选池</b></a>：最高档直接出池，次高档须通过「20 日主力净流入为正」才出池；未通过者一律折叠为仅跟踪。<br>本页继续每日扫描（同时作为高胜率候选池的基底），但<b>不再单独给出建仓建议</b>，请以精选池的当日出池名单为准。</div>
+
+<div class="box gold"><b>一句话：</b>本批经三层漏斗，全市场约 1488 只主力流入股中，仅 <b>35 只</b>同时满足
+<b>MACD 零轴上方金叉</b> 与 <b>20 日主力净流入为正</b>。这两个条件同时成立，意味着「趋势已转多 + 资金持续进场」，是相对稀缺的强势共振组合。</div>
+
+<div class='kpi'><div><b class='num'>1488</b><span>全市场主力流入初筛（&gt;0.3亿）</span></div><div><b class='num'>51</b><span>技术验证·水上金叉</span></div><div><b class='num'>35</b><span>20日净流入为正·最终入选</span></div><div><b class='num'>2026-09-30</b><span>数据基准（收盘）</span></div></div>
+
+<h2>一、筛选口径（三层漏斗）</h2>
+<div class='box' style='border-color:var(--accent);background:var(--accent-soft)'><b>初筛 · 主力流入池</b><br>westock tool_filter：preset=main_inflow，min_inflow=0.3 亿，market=hs。全市场约 1488 只满足，取前 200 进入技术验证。</div><div class='box' style='border-color:var(--accent);background:var(--accent-soft)'><b>技术 · 水上金叉</b><br>data_technical 取 MACD：要求 DIF &gt; 0 且 DEA &gt; 0 且 MACD 红柱 &gt; 0。三者同时在零轴上方 = 多头趋势已确立的真金叉，区别于零轴下方的「水下金叉」（仅是下跌中继反弹）。</div><div class='box' style='border-color:var(--accent);background:var(--accent-soft)'><b>资金 · 20 日净流入为正</b><br>data_fund_flow 取 MainNetFlow20D：要求 20 日主力净流入 &gt; 0。剔除「当日拉升热、近 20 日却在撤」的伪强势（如亨通光电 20 日净流出 −41 亿、<a class="emlk" href="https://quote.eastmoney.com/sh603466.html" target="_blank" rel="noopener noreferrer">风语筑</a> −1.6 亿，均被剔除）。</div>
+
+<h2>二、与上一期对比（2026-09-29 → 2026-09-30）</h2><div class='cmp'><div class='cnew'><b>0</b><span>本期新进（上期不在池内）</span></div><div class='ccont'><b>35</b><span>连续在榜（两期同时入选）</span></div><div class='cout'><b>0</b><span>上期已退出（本期不再满足）</span></div><div><b>35 → 35</b><span>入选数变化</span></div></div><div class='note'>名称后的 <span class='newb'>新</span> 蓝徽标 = 本期<b>首次入选</b>；<span class='hist'>09-11</span> 绿徽标 = 该标的<b>此前（不含今日）</b>曾入选，悬停可看全部记录；对应「历史入选」列（可排序）列出全部日期与池别（MACD 观察池 / 信号池双轨）。</div>
+
+<h2>三、重点关注 / 回避（综合结论）</h2><div class='cmp'><div class='cnew'><b>0</b><span>资金量价共振（可重点跟踪）</span></div><div class='ccont'><b>0</b><span>共振且连榜 ≥2 期（持续性已验证）</span></div><div class='cout'><b>0</b><span>高位过热·建议回避</span></div></div><div class='card'><table data-wb><tr><th style='width:96px'>名单</th><th>标的</th><th style='width:340px'>判定口径</th></tr><tr><td><b>重点关注</b></td><td class='note-inline'>—</td><td>主力 5/20 日净流入同为正 + 量比 ≥1（不缩量）+ 52 周分位 &lt;70 + 换手 ≤15% + 获利盘 &lt;95% + 非「20 日正 / 60 日负」反弹结构</td></tr><tr><td><b>回避</b></td><td class='note-inline'>—</td><td>52 周分位 ≥80 且（换手 &gt;15% 或 获利盘 ≥95%）—— 趋势虽在，但追高的赔率已明显劣化</td></tr></table><div class='note'>这两张名单是对「增强诊断列」散标签的<b>收敛</b>：单条标签只是提示，综合结论才对应操作。重点关注 ≠ 买入信号，仍须叠加退出纪律（跌破 MA20 / MACD 柱转负 / −8% 止损）。</div></div>
+
+<h2>四、候选总表（35 只 · 默认按 20 日主力净流入排序 · <span style="color:var(--accent)">点击任意列头切换排序</span>）</h2>
+<div class="card"><div class="scroll"><table class="sortable" data-wb>
+<thead><tr><th data-k="code" data-t="s">代码</th><th data-k="name" data-t="s">名称</th><th data-k="hist" data-t="s">历史入选</th><th data-k="streak" data-t="n">连榜</th><th data-k="close" data-t="n">现价</th><th data-k="chg" data-t="n">涨跌幅</th><th data-k="dif" data-t="n">DIF</th><th data-k="dea" data-t="n">DEA</th><th data-k="macd" data-t="n">MACD柱</th><th data-k="f20" data-t="n">20日主力(亿)</th><th data-k="fd" data-t="n">当日主力(亿)</th><th data-k="circ" data-t="n">流通占比%</th><th data-k="rank" data-t="n">主力排名</th></tr></thead>
+<tbody><tr><td class='am num' data-v='sh603186'>sh603186</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603186.html" target="_blank" rel="noopener noreferrer">华正新材</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-15 MACD观察池；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-14 MACD</span> <span class='tag g'>09-15 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-23 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='5'>5 期</td><td class='num' data-v='227.74'>227.74</td><td class='num up' data-v='1.37'>+1.37%</td><td class='num' data-v='14.4825'>14.482</td><td class='num' data-v='9.8629'>9.863</td><td class='num up' data-v='9.2392'>9.239</td><td class='num up' data-v='21.11'>+21.11</td><td class='num up' data-v='+1.5987'>+1.60</td><td class='num' data-v='0.45'>0.45</td><td class='num am' data-v='53'>53</td></tr><tr><td class='am num' data-v='sh601869'>sh601869</td><td><a class="emlk" href="https://quote.eastmoney.com/sh601869.html" target="_blank" rel="noopener noreferrer">长飞光纤</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-10 信号池·机构轨；2026-09-10 信号池·游资轨；2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-15 MACD观察池；2026-09-16 MACD观察池；2026-09-17 MACD观察池；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag y'>09-10 机构轨</span> <span class='tag y'>09-10 游资轨</span> <span class='tag g'>09-11 MACD</span> <span class='tag g'>09-14 MACD</span> <span class='tag g'>09-15 MACD</span> <span class='tag g'>09-16 MACD</span> <span class='tag g'>09-17 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-23 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='5'>5 期</td><td class='num' data-v='473.99'>473.99</td><td class='num up' data-v='8.78'>+8.78%</td><td class='num' data-v='20.4644'>20.464</td><td class='num' data-v='13.5124'>13.512</td><td class='num up' data-v='13.9039'>13.904</td><td class='num up' data-v='16.92'>+16.92</td><td class='num up' data-v='+4.9010'>+4.90</td><td class='num' data-v='0.25'>0.25</td><td class='num am' data-v='12'>12</td></tr><tr><td class='am num' data-v='sz002297'>sz002297</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002297.html" target="_blank" rel="noopener noreferrer">博云新材</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='4'>4 期</td><td class='num' data-v='23.53'>23.53</td><td class='num up' data-v='7.44'>+7.44%</td><td class='num' data-v='0.9524'>0.952</td><td class='num' data-v='0.4041'>0.404</td><td class='num up' data-v='1.0966'>1.097</td><td class='num up' data-v='7.83'>+7.83</td><td class='num up' data-v='+6.1434'>+6.14</td><td class='num' data-v='4.56'>4.56</td><td class='num am' data-v='9'>9</td></tr><tr><td class='am num' data-v='sh603936'>sh603936</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603936.html" target="_blank" rel="noopener noreferrer">博敏电子</a><span class='streakb' title='连续 6 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连6期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-16 信号池·机构轨；2026-09-16 信号池·游资轨；2026-09-18 MACD观察池；2026-09-21 信号池·机构轨；2026-09-21 信号池·游资轨；2026-09-22 MACD观察池；2026-09-22 信号池·机构轨；2026-09-22 信号池·游资轨；2026-09-23 MACD观察池；2026-09-23 信号池·机构轨；2026-09-23 信号池·游资轨；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池；2026-09-29 信号池·机构轨；2026-09-29 信号池·游资轨'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag y'>09-16 机构轨</span> <span class='tag y'>09-16 游资轨</span> <span class='tag g'>09-18 MACD</span> <span class='tag y'>09-21 机构轨</span> <span class='tag y'>09-21 游资轨</span> <span class='tag g'>09-22 MACD</span> <span class='tag y'>09-22 机构轨</span> <span class='tag y'>09-22 游资轨</span> <span class='tag g'>09-23 MACD</span> <span class='tag y'>09-23 机构轨</span> <span class='tag y'>09-23 游资轨</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span> <span class='tag y'>09-29 机构轨</span> <span class='tag y'>09-29 游资轨</span></td><td class='num' data-v='6'>6 期</td><td class='num' data-v='20.88'>20.88</td><td class='num up' data-v='10.01'>+10.01%</td><td class='num' data-v='0.6233'>0.623</td><td class='num' data-v='0.3381'>0.338</td><td class='num up' data-v='0.5705'>0.571</td><td class='num up' data-v='7.55'>+7.55</td><td class='num up' data-v='+4.2487'>+4.25</td><td class='num' data-v='3.23'>3.23</td><td class='num am' data-v='17'>17</td></tr><tr><td class='am num' data-v='sh601872'>sh601872</td><td><a class="emlk" href="https://quote.eastmoney.com/sh601872.html" target="_blank" rel="noopener noreferrer">招商轮船</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-15 MACD观察池；2026-09-17 MACD观察池；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-15 MACD</span> <span class='tag g'>09-17 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-23 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='5'>5 期</td><td class='num' data-v='20.0'>20.0</td><td class='num up' data-v='4.18'>+4.18%</td><td class='num' data-v='0.7202'>0.720</td><td class='num' data-v='0.6098'>0.610</td><td class='num up' data-v='0.2207'>0.221</td><td class='num up' data-v='7.49'>+7.49</td><td class='num up' data-v='+3.0828'>+3.08</td><td class='num' data-v='0.19'>0.19</td><td class='num am' data-v='24'>24</td></tr><tr><td class='am num' data-v='sz000823'>sz000823</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000823.html" target="_blank" rel="noopener noreferrer">超声电子</a><span class='streakb' title='连续 6 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连6期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-18 MACD观察池；2026-09-22 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-14 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-22 MACD</span> <span class='tag g'>09-23 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='6'>6 期</td><td class='num' data-v='20.57'>20.57</td><td class='num up' data-v='10.0'>+10.00%</td><td class='num' data-v='0.7754'>0.775</td><td class='num' data-v='0.2218'>0.222</td><td class='num up' data-v='1.1072'>1.107</td><td class='num up' data-v='6.77'>+6.77</td><td class='num up' data-v='+2.6273'>+2.63</td><td class='num' data-v='2.15'>2.15</td><td class='num am' data-v='29'>29</td></tr><tr><td class='am num' data-v='sh603228'>sh603228</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603228.html" target="_blank" rel="noopener noreferrer">景旺电子</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='4'>4 期</td><td class='num' data-v='111.75'>111.75</td><td class='num up' data-v='1.58'>+1.58%</td><td class='num' data-v='6.239'>6.239</td><td class='num' data-v='4.772'>4.772</td><td class='num up' data-v='2.9341'>2.934</td><td class='num up' data-v='6.5'>+6.50</td><td class='num up' data-v='+3.1391'>+3.14</td><td class='num' data-v='0.29'>0.29</td><td class='num am' data-v='23'>23</td></tr><tr><td class='am num' data-v='sz002602'>sz002602</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002602.html" target="_blank" rel="noopener noreferrer">世纪华通</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='4'>4 期</td><td class='num' data-v='15.56'>15.56</td><td class='num up' data-v='0.0'>+0.00%</td><td class='num' data-v='0.508'>0.508</td><td class='num' data-v='0.3586'>0.359</td><td class='num up' data-v='0.2987'>0.299</td><td class='num up' data-v='5.18'>+5.18</td><td class='num up' data-v='+0.8089'>+0.81</td><td class='num' data-v='0.08'>0.08</td><td class='num am' data-v='99'>99</td></tr><tr><td class='am num' data-v='sh600104'>sh600104</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600104.html" target="_blank" rel="noopener noreferrer">上汽集团</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='4'>4 期</td><td class='num' data-v='11.72'>11.72</td><td class='num up' data-v='5.11'>+5.11%</td><td class='num' data-v='0.2161'>0.216</td><td class='num' data-v='0.0829'>0.083</td><td class='num up' data-v='0.2663'>0.266</td><td class='num up' data-v='5.17'>+5.17</td><td class='num up' data-v='+4.7585'>+4.76</td><td class='num' data-v='0.35'>0.35</td><td class='num am' data-v='13'>13</td></tr><tr><td class='am num' data-v='sh603989'>sh603989</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603989.html" target="_blank" rel="noopener noreferrer">艾华集团</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='4'>4 期</td><td class='num' data-v='33.03'>33.03</td><td class='num up' data-v='4.01'>+4.01%</td><td class='num' data-v='0.7523'>0.752</td><td class='num' data-v='0.2307'>0.231</td><td class='num up' data-v='1.0432'>1.043</td><td class='num up' data-v='4.76'>+4.76</td><td class='num up' data-v='+0.9380'>+0.94</td><td class='num' data-v='0.71'>0.71</td><td class='num am' data-v='85'>85</td></tr><tr><td class='am num' data-v='sz002916'>sz002916</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002916.html" target="_blank" rel="noopener noreferrer">深南电路</a><span class='streakb' title='连续 8 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连8期</span><span class='hist' title='入选记录：2026-09-10 信号池·机构轨；2026-09-10 信号池·游资轨；2026-09-11 MACD观察池；2026-09-11 信号池·机构轨；2026-09-11 信号池·游资轨；2026-09-14 信号池·机构轨；2026-09-14 信号池·游资轨；2026-09-15 信号池·机构轨；2026-09-15 信号池·游资轨；2026-09-16 信号池·机构轨；2026-09-16 信号池·游资轨；2026-09-17 信号池·机构轨；2026-09-17 信号池·游资轨；2026-09-18 MACD观察池；2026-09-18 信号池·机构轨；2026-09-18 信号池·游资轨；2026-09-21 MACD观察池；2026-09-21 信号池·机构轨；2026-09-21 信号池·游资轨；2026-09-22 MACD观察池；2026-09-22 信号池·机构轨；2026-09-22 信号池·游资轨；2026-09-23 MACD观察池；2026-09-23 信号池·机构轨；2026-09-23 信号池·游资轨；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池；2026-09-29 信号池·机构轨；2026-09-29 信号池·游资轨'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag y'>09-10 机构轨</span> <span class='tag y'>09-10 游资轨</span> <span class='tag g'>09-11 MACD</span> <span class='tag y'>09-11 机构轨</span> <span class='tag y'>09-11 游资轨</span> <span class='tag y'>09-14 机构轨</span> <span class='tag y'>09-14 游资轨</span> <span class='tag y'>09-15 机构轨</span> <span class='tag y'>09-15 游资轨</span> <span class='tag y'>09-16 机构轨</span> <span class='tag y'>09-16 游资轨</span> <span class='tag y'>09-17 机构轨</span> <span class='tag y'>09-17 游资轨</span> <span class='tag g'>09-18 MACD</span> <span class='tag y'>09-18 机构轨</span> <span class='tag y'>09-18 游资轨</span> <span class='tag g'>09-21 MACD</span> <span class='tag y'>09-21 机构轨</span> <span class='tag y'>09-21 游资轨</span> <span class='tag g'>09-22 MACD</span> <span class='tag y'>09-22 机构轨</span> <span class='tag y'>09-22 游资轨</span> <span class='tag g'>09-23 MACD</span> <span class='tag y'>09-23 机构轨</span> <span class='tag y'>09-23 游资轨</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span> <span class='tag y'>09-29 机构轨</span> <span class='tag y'>09-29 游资轨</span></td><td class='num' data-v='8'>8 期</td><td class='num' data-v='396.68'>396.68</td><td class='num up' data-v='1.11'>+1.11%</td><td class='num' data-v='5.7556'>5.756</td><td class='num' data-v='0.5425'>0.542</td><td class='num up' data-v='10.4262'>10.426</td><td class='num up' data-v='4.66'>+4.66</td><td class='num up' data-v='+2.6238'>+2.62</td><td class='num' data-v='0.1'>0.10</td><td class='num am' data-v='30'>30</td></tr><tr><td class='am num' data-v='sh603533'>sh603533</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603533.html" target="_blank" rel="noopener noreferrer">掌阅科技</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='4'>4 期</td><td class='num' data-v='25.04'>25.04</td><td class='num up' data-v='4.57'>+4.57%</td><td class='num' data-v='0.8649'>0.865</td><td class='num' data-v='0.6714'>0.671</td><td class='num up' data-v='0.3869'>0.387</td><td class='num up' data-v='3.94'>+3.94</td><td class='num up' data-v='+1.3385'>+1.34</td><td class='num' data-v='1.22'>1.22</td><td class='num am' data-v='64'>64</td></tr><tr><td class='am num' data-v='sh688143'>sh688143</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688143.html" target="_blank" rel="noopener noreferrer">长盈通</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-21 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-21 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='4'>4 期</td><td class='num' data-v='195.0'>195.0</td><td class='num up' data-v='15.49'>+15.49%</td><td class='num' data-v='13.4409'>13.441</td><td class='num' data-v='12.4347'>12.435</td><td class='num up' data-v='2.0124'>2.012</td><td class='num up' data-v='3.77'>+3.77</td><td class='num up' data-v='+1.6544'>+1.65</td><td class='num' data-v='0.69'>0.69</td><td class='num am' data-v='51'>51</td></tr><tr><td class='am num' data-v='sz002815'>sz002815</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002815.html" target="_blank" rel="noopener noreferrer">崇达技术</a><span class='streakb' title='连续 6 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连6期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-18 MACD观察池；2026-09-22 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-14 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-22 MACD</span> <span class='tag g'>09-23 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='6'>6 期</td><td class='num' data-v='20.08'>20.08</td><td class='num up' data-v='10.03'>+10.03%</td><td class='num' data-v='1.2596'>1.260</td><td class='num' data-v='0.6592'>0.659</td><td class='num up' data-v='1.2009'>1.201</td><td class='num up' data-v='3.35'>+3.35</td><td class='num up' data-v='+2.2565'>+2.26</td><td class='num' data-v='1.45'>1.45</td><td class='num am' data-v='37'>37</td></tr><tr><td class='am num' data-v='sh603920'>sh603920</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603920.html" target="_blank" rel="noopener noreferrer">世运电路</a><span class='streakb' title='连续 9 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连9期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-15 MACD观察池；2026-09-17 MACD观察池；2026-09-18 MACD观察池；2026-09-21 MACD观察池；2026-09-22 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-14 MACD</span> <span class='tag g'>09-15 MACD</span> <span class='tag g'>09-17 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-21 MACD</span> <span class='tag g'>09-22 MACD</span> <span class='tag g'>09-23 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='9'>9 期</td><td class='num' data-v='41.45'>41.45</td><td class='num up' data-v='1.54'>+1.54%</td><td class='num' data-v='0.5366'>0.537</td><td class='num' data-v='0.084'>0.084</td><td class='num up' data-v='0.905'>0.905</td><td class='num up' data-v='3.18'>+3.18</td><td class='num up' data-v='+0.8540'>+0.85</td><td class='num' data-v='0.29'>0.29</td><td class='num am' data-v='94'>94</td></tr><tr><td class='am num' data-v='sz002902'>sz002902</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002902.html" target="_blank" rel="noopener noreferrer">铭普光磁</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-23 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='5'>5 期</td><td class='num' data-v='30.86'>30.86</td><td class='num up' data-v='10.02'>+10.02%</td><td class='num' data-v='0.9432'>0.943</td><td class='num' data-v='0.5146'>0.515</td><td class='num up' data-v='0.8573'>0.857</td><td class='num up' data-v='3.01'>+3.01</td><td class='num up' data-v='+3.3413'>+3.34</td><td class='num' data-v='5.81'>5.81</td><td class='num am' data-v='21'>21</td></tr><tr><td class='am num' data-v='sz002201'>sz002201</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002201.html" target="_blank" rel="noopener noreferrer">九鼎新材</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-23 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='5'>5 期</td><td class='num' data-v='11.09'>11.09</td><td class='num up' data-v='10.02'>+10.02%</td><td class='num' data-v='0.4384'>0.438</td><td class='num' data-v='0.2001'>0.200</td><td class='num up' data-v='0.4765'>0.476</td><td class='num up' data-v='2.88'>+2.88</td><td class='num up' data-v='+1.1221'>+1.12</td><td class='num' data-v='1.68'>1.68</td><td class='num am' data-v='70'>70</td></tr><tr><td class='am num' data-v='sz002181'>sz002181</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002181.html" target="_blank" rel="noopener noreferrer">粤传媒</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='4'>4 期</td><td class='num' data-v='9.73'>9.73</td><td class='num up' data-v='5.42'>+5.42%</td><td class='num' data-v='0.207'>0.207</td><td class='num' data-v='0.1099'>0.110</td><td class='num up' data-v='0.1941'>0.194</td><td class='num up' data-v='2.37'>+2.37</td><td class='num up' data-v='+1.0763'>+1.08</td><td class='num' data-v='0.97'>0.97</td><td class='num am' data-v='73'>73</td></tr><tr><td class='am num' data-v='sh688519'>sh688519</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688519.html" target="_blank" rel="noopener noreferrer">南亚新材</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-15 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-14 MACD</span> <span class='tag g'>09-15 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='4'>4 期</td><td class='num' data-v='327.07'>327.07</td><td class='num up' data-v='5.65'>+5.65%</td><td class='num' data-v='5.9518'>5.952</td><td class='num' data-v='3.3182'>3.318</td><td class='num up' data-v='5.2672'>5.267</td><td class='num up' data-v='1.97'>+1.97</td><td class='num up' data-v='+2.3576'>+2.36</td><td class='num' data-v='0.31'>0.31</td><td class='num am' data-v='36'>36</td></tr><tr><td class='am num' data-v='sh600255'>sh600255</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600255.html" target="_blank" rel="noopener noreferrer">鑫科材料</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='4'>4 期</td><td class='num' data-v='3.88'>3.88</td><td class='num up' data-v='4.43'>+4.43%</td><td class='num' data-v='0.1203'>0.120</td><td class='num' data-v='0.0657'>0.066</td><td class='num up' data-v='0.1093'>0.109</td><td class='num up' data-v='1.84'>+1.84</td><td class='num up' data-v='+1.0375'>+1.04</td><td class='num' data-v='1.48'>1.48</td><td class='num am' data-v='75'>75</td></tr><tr><td class='am num' data-v='sz300852'>sz300852</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300852.html" target="_blank" rel="noopener noreferrer">四会富仕</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-14 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-23 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='5'>5 期</td><td class='num' data-v='65.59'>65.59</td><td class='num up' data-v='3.1'>+3.10%</td><td class='num' data-v='3.9199'>3.920</td><td class='num' data-v='1.7833'>1.783</td><td class='num up' data-v='4.2732'>4.273</td><td class='num up' data-v='1.74'>+1.74</td><td class='num up' data-v='+0.8962'>+0.90</td><td class='num' data-v='0.88'>0.88</td><td class='num am' data-v='90'>90</td></tr><tr><td class='am num' data-v='sz301176'>sz301176</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301176.html" target="_blank" rel="noopener noreferrer">逸豪新材</a><span class='streakb' title='连续 6 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连6期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-22 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-22 MACD</span> <span class='tag g'>09-23 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='6'>6 期</td><td class='num' data-v='60.6'>60.6</td><td class='num up' data-v='7.28'>+7.28%</td><td class='num' data-v='1.6367'>1.637</td><td class='num' data-v='0.167'>0.167</td><td class='num up' data-v='2.9394'>2.939</td><td class='num up' data-v='1.65'>+1.65</td><td class='num up' data-v='+1.1022'>+1.10</td><td class='num' data-v='1.11'>1.11</td><td class='num am' data-v='72'>72</td></tr><tr><td class='am num' data-v='sz002517'>sz002517</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002517.html" target="_blank" rel="noopener noreferrer">恺英网络</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='4'>4 期</td><td class='num' data-v='17.71'>17.71</td><td class='num up' data-v='0.06'>+0.06%</td><td class='num' data-v='0.1589'>0.159</td><td class='num' data-v='0.0879'>0.088</td><td class='num up' data-v='0.142'>0.142</td><td class='num up' data-v='1.44'>+1.44</td><td class='num up' data-v='+0.9868'>+0.99</td><td class='num' data-v='0.3'>0.30</td><td class='num am' data-v='77'>77</td></tr><tr><td class='am num' data-v='sz301183'>sz301183</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301183.html" target="_blank" rel="noopener noreferrer">东田微</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-14 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-23 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='5'>5 期</td><td class='num' data-v='246.99'>246.99</td><td class='num up' data-v='4.93'>+4.93%</td><td class='num' data-v='10.1958'>10.196</td><td class='num' data-v='9.4683'>9.468</td><td class='num up' data-v='1.455'>1.455</td><td class='num up' data-v='1.33'>+1.33</td><td class='num up' data-v='+2.4190'>+2.42</td><td class='num' data-v='1.67'>1.67</td><td class='num am' data-v='35'>35</td></tr><tr><td class='am num' data-v='sz000070'>sz000070</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000070.html" target="_blank" rel="noopener noreferrer">特发信息</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-17 MACD观察池；2026-09-18 MACD观察池；2026-09-21 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-17 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-21 MACD</span> <span class='tag g'>09-23 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='5'>5 期</td><td class='num' data-v='17.16'>17.16</td><td class='num up' data-v='6.06'>+6.06%</td><td class='num' data-v='0.4009'>0.401</td><td class='num' data-v='0.2564'>0.256</td><td class='num up' data-v='0.2889'>0.289</td><td class='num up' data-v='1.27'>+1.27</td><td class='num up' data-v='+2.9196'>+2.92</td><td class='num' data-v='1.99'>1.99</td><td class='num am' data-v='26'>26</td></tr><tr><td class='am num' data-v='sh600967'>sh600967</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600967.html" target="_blank" rel="noopener noreferrer">内蒙一机</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='4'>4 期</td><td class='num' data-v='14.98'>14.98</td><td class='num up' data-v='9.99'>+9.99%</td><td class='num' data-v='0.7986'>0.799</td><td class='num' data-v='0.5054'>0.505</td><td class='num up' data-v='0.5864'>0.586</td><td class='num up' data-v='1.24'>+1.24</td><td class='num up' data-v='+8.0885'>+8.09</td><td class='num' data-v='3.17'>3.17</td><td class='num am' data-v='6'>6</td></tr><tr><td class='am num' data-v='sz002194'>sz002194</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002194.html" target="_blank" rel="noopener noreferrer">武汉凡谷</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='4'>4 期</td><td class='num' data-v='11.46'>11.46</td><td class='num up' data-v='5.52'>+5.52%</td><td class='num' data-v='0.2982'>0.298</td><td class='num' data-v='0.1978'>0.198</td><td class='num up' data-v='0.2008'>0.201</td><td class='num up' data-v='1.09'>+1.09</td><td class='num up' data-v='+4.6692'>+4.67</td><td class='num' data-v='7.92'>7.92</td><td class='num am' data-v='15'>15</td></tr><tr><td class='am num' data-v='sz003035'>sz003035</td><td><a class="emlk" href="https://quote.eastmoney.com/sz003035.html" target="_blank" rel="noopener noreferrer">南网能源</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='4'>4 期</td><td class='num' data-v='5.98'>5.98</td><td class='num up' data-v='2.02'>+2.02%</td><td class='num' data-v='0.0641'>0.064</td><td class='num' data-v='0.0316'>0.032</td><td class='num up' data-v='0.0648'>0.065</td><td class='num up' data-v='1.04'>+1.04</td><td class='num up' data-v='+0.9348'>+0.93</td><td class='num' data-v='0.41'>0.41</td><td class='num am' data-v='86'>86</td></tr><tr><td class='am num' data-v='sh600371'>sh600371</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600371.html" target="_blank" rel="noopener noreferrer">万向德农</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-10 信号池·机构轨；2026-09-10 信号池·游资轨；2026-09-11 MACD观察池；2026-09-14 信号池·机构轨；2026-09-14 信号池·游资轨；2026-09-15 信号池·机构轨；2026-09-15 信号池·游资轨；2026-09-16 信号池·机构轨；2026-09-16 信号池·游资轨；2026-09-17 信号池·机构轨；2026-09-17 信号池·游资轨；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag y'>09-10 机构轨</span> <span class='tag y'>09-10 游资轨</span> <span class='tag g'>09-11 MACD</span> <span class='tag y'>09-14 机构轨</span> <span class='tag y'>09-14 游资轨</span> <span class='tag y'>09-15 机构轨</span> <span class='tag y'>09-15 游资轨</span> <span class='tag y'>09-16 机构轨</span> <span class='tag y'>09-16 游资轨</span> <span class='tag y'>09-17 机构轨</span> <span class='tag y'>09-17 游资轨</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-23 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='5'>5 期</td><td class='num' data-v='14.78'>14.78</td><td class='num up' data-v='4.02'>+4.02%</td><td class='num' data-v='2.0058'>2.006</td><td class='num' data-v='1.7591'>1.759</td><td class='num up' data-v='0.4934'>0.493</td><td class='num up' data-v='0.6'>+0.60</td><td class='num up' data-v='+2.5165'>+2.52</td><td class='num' data-v='5.82'>5.82</td><td class='num am' data-v='32'>32</td></tr><tr><td class='am num' data-v='sh600706'>sh600706</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600706.html" target="_blank" rel="noopener noreferrer">曲江文旅</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='4'>4 期</td><td class='num' data-v='9.41'>9.41</td><td class='num up' data-v='2.62'>+2.62%</td><td class='num' data-v='0.4164'>0.416</td><td class='num' data-v='0.3352'>0.335</td><td class='num up' data-v='0.1623'>0.162</td><td class='num up' data-v='0.35'>+0.35</td><td class='num up' data-v='+1.4409'>+1.44</td><td class='num' data-v='6.03'>6.03</td><td class='num am' data-v='58'>58</td></tr><tr><td class='am num' data-v='sz000980'>sz000980</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000980.html" target="_blank" rel="noopener noreferrer">众泰汽车</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-17 MACD观察池；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-17 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-23 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='5'>5 期</td><td class='num' data-v='2.12'>2.12</td><td class='num up' data-v='9.84'>+9.84%</td><td class='num' data-v='0.0587'>0.059</td><td class='num' data-v='0.0105'>0.011</td><td class='num up' data-v='0.0963'>0.096</td><td class='num up' data-v='0.2'>+0.20</td><td class='num up' data-v='+1.8630'>+1.86</td><td class='num' data-v='1.74'>1.74</td><td class='num am' data-v='45'>45</td></tr><tr><td class='am num' data-v='sz000930'>sz000930</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000930.html" target="_blank" rel="noopener noreferrer">中粮科技</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='4'>4 期</td><td class='num' data-v='5.88'>5.88</td><td class='num dn' data-v='-1.48'>-1.48%</td><td class='num' data-v='0.3328'>0.333</td><td class='num' data-v='0.2062'>0.206</td><td class='num up' data-v='0.253'>0.253</td><td class='num up' data-v='0.15'>+0.15</td><td class='num up' data-v='+0.8511'>+0.85</td><td class='num' data-v='0.78'>0.78</td><td class='num am' data-v='95'>95</td></tr><tr><td class='am num' data-v='sh603136'>sh603136</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603136.html" target="_blank" rel="noopener noreferrer">天目湖</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='4'>4 期</td><td class='num' data-v='10.58'>10.58</td><td class='num up' data-v='9.98'>+9.98%</td><td class='num' data-v='0.2662'>0.266</td><td class='num' data-v='0.1773'>0.177</td><td class='num up' data-v='0.1779'>0.178</td><td class='num up' data-v='0.11'>+0.11</td><td class='num up' data-v='+0.8616'>+0.86</td><td class='num' data-v='3.01'>3.01</td><td class='num am' data-v='93'>93</td></tr><tr><td class='am num' data-v='sh600887'>sh600887</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600887.html" target="_blank" rel="noopener noreferrer">伊利股份</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-14 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-23 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='5'>5 期</td><td class='num' data-v='26.66'>26.66</td><td class='num up' data-v='0.45'>+0.45%</td><td class='num' data-v='0.1652'>0.165</td><td class='num' data-v='0.1354'>0.135</td><td class='num up' data-v='0.0596'>0.060</td><td class='num up' data-v='0.09'>+0.09</td><td class='num up' data-v='+1.4673'>+1.47</td><td class='num' data-v='0.09'>0.09</td><td class='num am' data-v='55'>55</td></tr><tr><td class='am num' data-v='sz002519'>sz002519</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002519.html" target="_blank" rel="noopener noreferrer">银河电子</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='histcol' data-v='2026-09-29'><span class='tag g'>09-11 MACD</span> <span class='tag g'>09-18 MACD</span> <span class='tag g'>09-24 MACD</span> <span class='tag g'>09-28 MACD</span> <span class='tag g'>09-29 MACD</span></td><td class='num' data-v='4'>4 期</td><td class='num' data-v='6.31'>6.31</td><td class='num up' data-v='9.93'>+9.93%</td><td class='num' data-v='0.1206'>0.121</td><td class='num' data-v='0.0637'>0.064</td><td class='num up' data-v='0.1138'>0.114</td><td class='num up' data-v='0.02'>+0.02</td><td class='num up' data-v='+2.0279'>+2.03</td><td class='num' data-v='2.86'>2.86</td><td class='num am' data-v='40'>40</td></tr></tbody></table></div>
+<div class="note">读法：DIF/DEA/MACD柱 均为正 = 水上金叉；20日主力(亿) 与 当日主力(亿) 为正 = 资金净流入；流通占比% 越高说明主力介入越深；主力排名 = 全市场 20 日主力净流入名次（越小越强）。<b>涨跌幅以 data_quote 收盘口径为准</b>（初筛接口为盘中口径，已统一）。<br>
+<b>排序：</b>所有列均可点击表头排序（数值列按真实数值比较，不受 %、单位、文本干扰）；<b>历史入选</b>列按最近一次入选日期排序。</div></div>
+
+<h2>五、增强诊断列（0 只，记录项 · 不参与筛选）</h2>
+<div class="box amber"><b>为什么是「记录」而不是「筛选条件」：</b>目前仅有 1 期样本（35 只），若直接把阈值变成硬条件，等于用一次观测去拟合规则（过拟合）。
+因此本批先把这些字段<b>如实记录并标红</b>，累积 20~30 个交易日后回测各阈值的分组表现，再决定哪几条升级为硬条件。
+本表顺序与总表一致，便于对照。<b>本表同样支持点击表头排序。</b></div>
+<div class="card"><div class="scroll"><table class="sortable" data-wb>
+<thead><tr><th data-k="code" data-t="s">代码</th><th data-k="name" data-t="s">名称</th><th data-k="pos52" data-t="n">52周分位</th><th data-k="vr" data-t="n">量比</th><th data-k="turn" data-t="n">换手%</th><th data-k="mf5" data-t="n">5日主力(亿)</th><th data-k="norm" data-t="n">20日÷流通市值%</th><th data-k="chg60" data-t="n">60日涨幅</th><th data-k="profit" data-t="n">获利盘%</th><th data-k="conc" data-t="n">集中度90</th><th data-k="tag" data-t="s">解读</th></tr></thead>
+<tbody><tr><td class='am num' data-v='sh603186'>sh603186</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603186.html" target="_blank" rel="noopener noreferrer">华正新材</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-15 MACD观察池；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh601869'>sh601869</td><td><a class="emlk" href="https://quote.eastmoney.com/sh601869.html" target="_blank" rel="noopener noreferrer">长飞光纤</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-10 信号池·机构轨；2026-09-10 信号池·游资轨；2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-15 MACD观察池；2026-09-16 MACD观察池；2026-09-17 MACD观察池；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002297'>sz002297</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002297.html" target="_blank" rel="noopener noreferrer">博云新材</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh603936'>sh603936</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603936.html" target="_blank" rel="noopener noreferrer">博敏电子</a><span class='streakb' title='连续 6 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连6期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-16 信号池·机构轨；2026-09-16 信号池·游资轨；2026-09-18 MACD观察池；2026-09-21 信号池·机构轨；2026-09-21 信号池·游资轨；2026-09-22 MACD观察池；2026-09-22 信号池·机构轨；2026-09-22 信号池·游资轨；2026-09-23 MACD观察池；2026-09-23 信号池·机构轨；2026-09-23 信号池·游资轨；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池；2026-09-29 信号池·机构轨；2026-09-29 信号池·游资轨'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh601872'>sh601872</td><td><a class="emlk" href="https://quote.eastmoney.com/sh601872.html" target="_blank" rel="noopener noreferrer">招商轮船</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-15 MACD观察池；2026-09-17 MACD观察池；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz000823'>sz000823</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000823.html" target="_blank" rel="noopener noreferrer">超声电子</a><span class='streakb' title='连续 6 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连6期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-18 MACD观察池；2026-09-22 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh603228'>sh603228</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603228.html" target="_blank" rel="noopener noreferrer">景旺电子</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002602'>sz002602</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002602.html" target="_blank" rel="noopener noreferrer">世纪华通</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh600104'>sh600104</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600104.html" target="_blank" rel="noopener noreferrer">上汽集团</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh603989'>sh603989</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603989.html" target="_blank" rel="noopener noreferrer">艾华集团</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002916'>sz002916</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002916.html" target="_blank" rel="noopener noreferrer">深南电路</a><span class='streakb' title='连续 8 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连8期</span><span class='hist' title='入选记录：2026-09-10 信号池·机构轨；2026-09-10 信号池·游资轨；2026-09-11 MACD观察池；2026-09-11 信号池·机构轨；2026-09-11 信号池·游资轨；2026-09-14 信号池·机构轨；2026-09-14 信号池·游资轨；2026-09-15 信号池·机构轨；2026-09-15 信号池·游资轨；2026-09-16 信号池·机构轨；2026-09-16 信号池·游资轨；2026-09-17 信号池·机构轨；2026-09-17 信号池·游资轨；2026-09-18 MACD观察池；2026-09-18 信号池·机构轨；2026-09-18 信号池·游资轨；2026-09-21 MACD观察池；2026-09-21 信号池·机构轨；2026-09-21 信号池·游资轨；2026-09-22 MACD观察池；2026-09-22 信号池·机构轨；2026-09-22 信号池·游资轨；2026-09-23 MACD观察池；2026-09-23 信号池·机构轨；2026-09-23 信号池·游资轨；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池；2026-09-29 信号池·机构轨；2026-09-29 信号池·游资轨'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh603533'>sh603533</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603533.html" target="_blank" rel="noopener noreferrer">掌阅科技</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh688143'>sh688143</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688143.html" target="_blank" rel="noopener noreferrer">长盈通</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-21 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002815'>sz002815</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002815.html" target="_blank" rel="noopener noreferrer">崇达技术</a><span class='streakb' title='连续 6 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连6期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-18 MACD观察池；2026-09-22 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh603920'>sh603920</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603920.html" target="_blank" rel="noopener noreferrer">世运电路</a><span class='streakb' title='连续 9 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连9期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-15 MACD观察池；2026-09-17 MACD观察池；2026-09-18 MACD观察池；2026-09-21 MACD观察池；2026-09-22 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002902'>sz002902</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002902.html" target="_blank" rel="noopener noreferrer">铭普光磁</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002201'>sz002201</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002201.html" target="_blank" rel="noopener noreferrer">九鼎新材</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002181'>sz002181</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002181.html" target="_blank" rel="noopener noreferrer">粤传媒</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh688519'>sh688519</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688519.html" target="_blank" rel="noopener noreferrer">南亚新材</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-15 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh600255'>sh600255</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600255.html" target="_blank" rel="noopener noreferrer">鑫科材料</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz300852'>sz300852</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300852.html" target="_blank" rel="noopener noreferrer">四会富仕</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz301176'>sz301176</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301176.html" target="_blank" rel="noopener noreferrer">逸豪新材</a><span class='streakb' title='连续 6 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连6期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-22 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002517'>sz002517</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002517.html" target="_blank" rel="noopener noreferrer">恺英网络</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz301183'>sz301183</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301183.html" target="_blank" rel="noopener noreferrer">东田微</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz000070'>sz000070</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000070.html" target="_blank" rel="noopener noreferrer">特发信息</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-17 MACD观察池；2026-09-18 MACD观察池；2026-09-21 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh600967'>sh600967</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600967.html" target="_blank" rel="noopener noreferrer">内蒙一机</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002194'>sz002194</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002194.html" target="_blank" rel="noopener noreferrer">武汉凡谷</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz003035'>sz003035</td><td><a class="emlk" href="https://quote.eastmoney.com/sz003035.html" target="_blank" rel="noopener noreferrer">南网能源</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh600371'>sh600371</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600371.html" target="_blank" rel="noopener noreferrer">万向德农</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-10 信号池·机构轨；2026-09-10 信号池·游资轨；2026-09-11 MACD观察池；2026-09-14 信号池·机构轨；2026-09-14 信号池·游资轨；2026-09-15 信号池·机构轨；2026-09-15 信号池·游资轨；2026-09-16 信号池·机构轨；2026-09-16 信号池·游资轨；2026-09-17 信号池·机构轨；2026-09-17 信号池·游资轨；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh600706'>sh600706</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600706.html" target="_blank" rel="noopener noreferrer">曲江文旅</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz000980'>sz000980</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000980.html" target="_blank" rel="noopener noreferrer">众泰汽车</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-17 MACD观察池；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz000930'>sz000930</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000930.html" target="_blank" rel="noopener noreferrer">中粮科技</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh603136'>sh603136</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603136.html" target="_blank" rel="noopener noreferrer">天目湖</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sh600887'>sh600887</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600887.html" target="_blank" rel="noopener noreferrer">伊利股份</a><span class='streakb' title='连续 5 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连5期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-14 MACD观察池；2026-09-18 MACD观察池；2026-09-23 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr><tr><td class='am num' data-v='sz002519'>sz002519</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002519.html" target="_blank" rel="noopener noreferrer">银河电子</a><span class='streakb' title='连续 4 期同时满足三层漏斗，趋势与资金的持续性已被反复验证'>连4期</span><span class='hist' title='入选记录：2026-09-11 MACD观察池；2026-09-18 MACD观察池；2026-09-24 MACD观察池；2026-09-28 MACD观察池；2026-09-29 MACD观察池'>09-29</span></td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='num'>—</td><td class='note' style='border:none;padding:0'>无增强数据</td></tr></tbody></table></div>
+<div class="note"><b>阈值口径：</b>粗体/彩色为越界警示 —— <span class="warn">红</span>=高风险特征（高位追涨 / 缩量金叉 / 60日背离 / 近5日净流出），<span class="amber-t">橙</span>=需留意（位置偏高 / 换手过热 / 获利盘过高）。<br>
+<b>本批警示分布：</b>无。</div>
+<div class="note">字段来源：data_quote + data_chip + data_fund_flow（同一交易日收盘）。归一化强度 = 20 日主力净额 ÷ 流通市值 × 100，用于横向可比（绝对净额会被大盘股系统性放大）。</div></div>
+
+<h2>六、诊断列判定规则</h2>
+<div class="card"><table data-wb>
+<tr><th>字段</th><th>定义 / 来源字段</th><th>警示触发条件</th></tr>
+<tr><td>52 周分位</td><td>pos52 = (现价 − 52周低) ÷ (52周高 − 52周低)</td><td>≥ 80% 标红（高位追涨）；≥ 70% 标橙</td></tr><tr><td>量比</td><td>volume_ratio</td><td>&lt; 1 标红：缩量金叉，无量突破易假</td></tr><tr><td>换手率</td><td>turnover_rate</td><td>&gt; 15% 标橙：换手过热，筹码剧烈易手</td></tr><tr><td>5 日主力净额</td><td>MainNetFlow5D</td><td>≤ 0 且 20 日仍为正 → 标红：资金减速 / 疑似派发</td></tr><tr><td>归一化强度</td><td>MainNetFlow20D ÷ 流通市值 × 100</td><td>横向可比口径，绝对值不可比</td></tr><tr><td>60 日涨幅</td><td>chg_60d</td><td>20 日为正而 60 日仍为负 → 标红：疑似反弹非趋势</td></tr><tr><td>获利盘</td><td>chipProfitRate</td><td>≥ 95% 标橙：全员获利，兑现压力集中</td></tr><tr><td>筹码集中度 90</td><td>chipConcentration90</td><td>越小越集中（辅助观察，不设阈值）</td></tr>
+</table>
+<div class="note">深入读法与常见误读见 <a href="method.html" style="color:var(--accent);text-decoration:none;font-weight:600">方法论页</a>。</div></div>
+
+<h2>七、关键概念说明</h2>
+<div class="card">
+<b>① 什么是 MACD 水上金叉？</b><br>
+MACD 由 DIF（快线）、DEA（慢线）、MACD 柱（红绿柱）组成。当 DIF 与 DEA 都位于 <b>零轴（0）上方</b> 且 DIF 上穿 DEA（金叉），称为「水上金叉」。它代表股价已站上中期成本、多头趋势确立后的回踩再进攻，成功率远高于零轴下方的「水下金叉」（后者多是下跌途中的技术反弹）。<br><br>
+<b>② 20 日主力净流入怎么看？</b><br>
+主力净流入 = 大单/机构主动买入额 − 主动卖出额。<b>注意它是「净额」不是「净值」，是流量不是存量</b>；口径为按单笔委托金额分档的大单净额，机构拆单会低估、对倒会高估，且累计值会掩盖时序（20 日为正可能是「前 15 日灌、近 5 日撤」）。因此它只能作<b>弱辅助信号</b>：转负可提示警惕，为正不能确认趋势 —— 这正是「5 日主力」列存在的意义。<br><br>
+<b>③ 两个条件为何要叠加？</b><br>
+单看水上金叉，可能已涨高、追涨风险大；单看主力流入，可能是短线游资一日游。两者共振 = 趋势与资金同向，才构成可跟踪的强势候选。<br><br>
+<b>④ 为什么加「位置」和「量能」？</b><br>
+水上金叉本质是趋势中继，但若发生在 52 周分位 80% 以上的极端位置，回撤风险显著抬升；若金叉当天量比不足 1（缩量），突破缺乏成交确认、更易假突破。这两条与「60 日涨幅仍为负」（疑似反弹）共同构成三道最常见的伪强势过滤网。
+</div>
+
+<h2>八、风险提示</h2>
+<div class="box red"><ul style="margin:8px 0 0;padding-left:20px;font-size:13.5px">
+<li>本页为<b>量化筛选结果</b>，非个股推荐、非买卖建议。入选仅代表同时满足筛选条件，不等于一定上涨。</li>
+<li><b>入选 ≠ 可买入</b>：增强列的告警若集中出现（如高位 + 缩量 + 60 日背离同时命中），应视为风险叠加，而非利好。</li>
+<li>退出规则比入场筛选更决定最终盈亏：建议跌破 MA20 或 MACD 死叉离场、单笔止损 −8%、盈利分批止盈。</li>
+<li>强势股波动大，介入须自设止损与仓位上限（本账户纪律：单票 ≤ 总资金 5%–8%，整体回撤 ≤ 15%）。</li>
+<li>数据每日变化，须按上述口径动态重扫复核。决策责任在账户本人。</li>
+</ul></div>
+
+<div class="foot">数据基准 2026-09-30 收盘；页面生成 2026-09-30。本候选池为量化筛选，非投资建议。</div>
+</div><script>
+(function(){
+  function cellVal(tr, idx, type){
+    var td = tr.cells[idx];
+    if(!td) return type==='n' ? -Infinity : '';
+    var raw = td.getAttribute('data-v');
+    var txt = (raw!==null? raw : td.textContent).trim();
+    if(type==='n'){
+      var v = parseFloat(txt.replace(/[,%\u00b7\u4e07\u4ebf+]/g,''));
+      return isNaN(v) ? -Infinity : v;
+    }
+    return txt;
+  }
+  document.querySelectorAll('table.sortable').forEach(function(tb){
+    var ths = tb.querySelectorAll('thead th[data-k]');
+    ths.forEach(function(th, ci){
+      th.addEventListener('click', function(){
+        var tbody = tb.tBodies[0];
+        if(!tbody) return;
+        var arr = Array.prototype.slice.call(tbody.rows);
+        var type = th.getAttribute('data-t') || 'n';
+        var cur = th.getAttribute('data-dir');
+        var dir = (cur === 'asc') ? 'desc' : 'asc';
+        ths.forEach(function(o){ o.removeAttribute('data-dir'); o.classList.remove('sorted-asc','sorted-desc'); });
+        th.setAttribute('data-dir', dir);
+        th.classList.add(dir==='asc' ? 'sorted-asc' : 'sorted-desc');
+        arr.sort(function(a,b){
+          var va = cellVal(a, ci, type), vb = cellVal(b, ci, type);
+          if(va < vb) return dir==='asc' ? -1 : 1;
+          if(va > vb) return dir==='asc' ? 1 : -1;
+          return 0;
+        });
+        arr.forEach(function(tr){ tbody.appendChild(tr); });
+      });
+    });
+  });
+})();
+</script>
+<!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--></body></html>

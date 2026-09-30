@@ -4,11 +4,14 @@
 =====================================
 基于 _accum_lab 的信号帧（机构/私募季度增持 I × 融资融券 1/3/5 日净增仓 M × 日频事件）做当日选股。
 定稿规则（20 交易日回测，移动止盈口径，证据见 lab.html）：
-  S 档 = 5日融资净买入占成交额 ≥4%（M强）+ 机构/私募季度增持（I）     → 胜率 80.9%（n=110）
-  A 档 = ≥3 信号共振 且 （融资增仓 M 或 机构/私募 I）                 → 胜率 68~69%（n≈424）
+  S 档 = 5日融资净买入占成交额 ≥4%（M强）+ 机构/私募季度增持（I）
+  A 档 = ≥3 信号共振 且 （融资增仓 M 或 机构/私募 I）
   B 档 = 2 个信号触发（观察仓）
   不入选 = 仅 1 个信号（≈基线，无超额）
-阈值敏感性（5日占比，单调）：≥0% 68.4 → ≥2% 70.6 → ≥4% 80.9 → ≥6% 91.2%。
+
+★ 胜率不是写死的：每次运行都会先调用 `_accum_lab.py --matured --no-html` 用最新 K 线
+  重跑回测并刷新 accum_result.json，页面上的胜率 / 基线 / 阈值敏感性 / 模块对照全部随之滚动。
+  回测只取「前瞻已走满 20 个交易日」的入场日，不把被截断的样本算成 20 日胜率（早期版本踩过这个坑）。
 
 每日持久化（与其它板块一致）：
   web/accumulation/combined_{DS}.html   当期页（历史留档）
@@ -21,7 +24,7 @@
 用法： python build_accum.py 2026-09-21
       python build_accum.py --all        # 重生成全部已归档期页面
 """
-import os, sys, json, collections
+import os, sys, json, collections, subprocess
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -47,6 +50,32 @@ def load_result():
     if os.path.exists(p):
         return json.load(open(p, encoding="utf-8"))
     return {}
+
+
+def refresh_result(days=20, timeout=1800):
+    """每日重算回测，刷新 accum_result.json —— 页面胜率因此随真实行情滚动更新，
+    不再是一份写死的历史快照。失败时沿用旧文件（页面会标出基准日）。"""
+    p = os.path.join(OUT, "accum_result.json")
+    before = ""
+    if os.path.exists(p):
+        try:
+            before = json.load(open(p, encoding="utf-8")).get("asof", "")
+        except Exception:
+            pass
+    cmd = [sys.executable, "-u", os.path.join(HERE, "_accum_lab.py"),
+           "--days", str(days), "--matured", "--no-html"]
+    try:
+        r = subprocess.run(cmd, cwd=HERE, capture_output=True, text=True, timeout=timeout)
+        tail = (r.stdout or "").strip().splitlines()
+        print("[回测重算] " + (tail[-1] if tail else "无输出"))
+        if r.returncode != 0:
+            print("[回测重算] 退出码 %s：%s" % (r.returncode, (r.stderr or "")[-400:]))
+    except Exception as e:
+        print("[回测重算] 失败（沿用旧结果）：%r" % (e,))
+    res = load_result()
+    print("[回测基准] 数据截至 %s｜入场窗口 %s｜完整前瞻=%s（上一版 %s）" % (
+        res.get("asof", "?"), res.get("window", []), res.get("matured"), before or "无"))
+    return res
 
 
 # ---------------------------------------------------------------
@@ -105,22 +134,32 @@ def upsert(hist, date, rows, universe_n, K):
 def settle(hist, K):
     """对历史每期每票回填事后收益（移动止盈口径，与回测同规则）。
     K 不变则结果不变，幂等；新交易日入库后旧期会自动重算。
+
+    ★ 成熟度：只有「真实退出」（硬止损/跟踪止盈/走满 MAXFWD 日）才计入胜率统计；
+    因数据只到今天而被强行「满期强平」的样本记为 pending，不混入胜率——
+    否则前几天的前瞻只有 3~7 根，算出来的「胜率」是截断数字，不是 20 日胜率。
     """
+    MAXFWD = getattr(L, "MAXFWD", 20)
     for h in hist:
         T = h.get("date", "")
         tot = 0
         win = 0
+        pend = 0
         sret = 0.0
         for p in h.get("picks", []):
             code = p.get("code")
             sim = L.simulate(K, code, T) if code in K else None
             if sim:
                 ret, w, fwd, rs = sim
+                matured = (rs in ("硬止损", "跟踪止盈")) or (fwd >= MAXFWD)
                 p["sim"] = {"ret": round(ret * 100, 2), "win": bool(w),
-                            "fwd": fwd, "reason": rs}
-                tot += 1
-                win += 1 if w else 0
-                sret += ret
+                            "fwd": fwd, "reason": rs, "matured": matured}
+                if matured:
+                    tot += 1
+                    win += 1 if w else 0
+                    sret += ret
+                else:
+                    pend += 1
             else:
                 p.pop("sim", None)
             # T+1 / T+5 裸收益（不走退出规则，仅供观察短期反应）
@@ -138,10 +177,16 @@ def settle(hist, K):
                 pass
             p["f1"], p["f5"] = f1, f5
         h["nSettle"] = tot
+        h["pending"] = pend
         h["wins"] = win
         h["wr"] = round(win / tot * 100, 1) if tot else None
         h["avg"] = round(sret / tot * 100, 2) if tot else None
     return hist
+
+
+def pending_summary(hist):
+    """未到期（前瞻不足）样本数合计。"""
+    return sum(h.get("pending", 0) for h in hist)
 
 
 def hist_summary(hist):
@@ -386,6 +431,17 @@ def render(date, rows, universe_n, res, hist):
 
     s_v6 = wr3("v6_M强(≥5日占比4%)+I")
     v3 = wr3("v3_≥3共振+M且I")
+    m_no_i = wr3("_对照_M无I")
+    i_no_m = wr3("_对照_I无M")
+    sel_wr = res.get("sel_wr", (0, 0.0, 0.0))
+    edge = (sel_wr[1] - base_wr[1]) if base_wr[0] else 0.0
+    _sw = (res.get("sig_wr", {}) or {}).get("m5") or (0, (0, 0.0, 0.0))
+    m5_wr = _sw[1] if isinstance(_sw, (list, tuple)) and len(_sw) == 2 else (0, 0.0, 0.0)
+    asof = res.get("asof", "")
+    win_ = res.get("window", []) or []
+    win_txt = (f"{win_[0]} ~ {win_[1]}" if len(win_) == 2 else "—")
+    matured = bool(res.get("matured", False))
+    n_pend = pending_summary(hist)
     cons_rows = "".join(
         f"<tr><td>≥{m} 个信号</td><td>{v[0]}</td>"
         f"<td style='color:{RED if v[1]>=60 else GRN};font-weight:700'>{v[1]:.1f}%</td><td>{v[2]:.2f}%</td></tr>"
@@ -459,8 +515,8 @@ td a{{color:#1c2430;text-decoration:none}} td a:hover{{color:{BLUE}}}
 </style></head><body><div class="wrap">
 <h1>增仓精选</h1>
 <p class="sub">数据日 {date} ｜ 候选域 {universe_n} 只（带日频增仓事件）｜ S 档 {len(S)} · A 档 {len(A)} · B 档 {len(B)}
-｜ <a href='history.html'>每日归档 · 兑现跟踪</a>（已 {summ['periods']} 期 / 累计结算 {summ['n']} 个，胜率
-<b style="color:{_ret_color((summ['wr'] or 0)-50)}">{summ['wr'] if summ['wr'] is not None else '—'}{'%' if summ['wr'] is not None else ''}</b>）</p>
+｜ <a href='history.html'>每日归档 · 兑现跟踪</a>（已 {summ['periods']} 期 / <b>已真实兑现</b> {summ['n']} 个，胜率
+<b style="color:{_ret_color((summ['wr'] or 0)-50)}">{summ['wr'] if summ['wr'] is not None else '—'}{'%' if summ['wr'] is not None else ''}</b>；另有 {n_pend} 个未走完 20 日，观察中不计入）</p>
 
 <div class="card"><h2>选股逻辑：机构/私募 × 融资增仓 双模块</h2>
 <div class="kpi">
@@ -468,11 +524,19 @@ td a{{color:#1c2430;text-decoration:none}} td a:hover{{color:{BLUE}}}
 <div class="k"><div class="v" style="color:{RED}">{v3[1]:.1f}%</div><div class="l">A 档胜率（≥3共振且M/I，n={v3[0]}）</div></div>
 <div class="k"><div class="v" style="color:#888">{base_wr[1]:.1f}%</div><div class="l">随机基线（{days}日回测）</div></div>
 <div class="k"><div class="v">{len(S)}</div><div class="l">今日 S 档（融资强增仓×机构私募）</div></div>
+<div class="k"><div class="v" style="color:{RED if edge > 0 else GRN}">{edge:+.1f}pp</div><div class="l">入选整体 vs 随机基线（{sel_wr[1]:.1f}% / n={sel_wr[0]}）</div></div>
 </div>
+<div class="evi" style="margin-top:12px;background:#f0faf3;border-color:#cfe9d8;color:#1a6b3c">
+<b>上面胜率是每日随行情重算的滚动回测值</b>：本次基准 <b>数据截至 {asof or '—'}</b>，
+入场日窗口 <b>{win_txt}</b>，{'每笔样本均完整走满 %d 个交易日（不走满的不计入）。' % days if matured else '<b style="color:#9a5b1e">含前瞻不足被截断的样本，仅供参考</b>。'}
+每次日更都会用最新 K 线重跑一次回测，数字会随市场变化而变动 —— 若你两次打开看到不同数值，是数据滚动导致的，不是页面出错。<br>
+<b style="color:#9a5b1e">口径修正说明</b>：早期版本用「最近 20 个交易日」当入场日，最后几天的样本前瞻只有 1~19 根就被强行「满期强平」，
+等于把几天的短期涨跌当成 20 日结果，S 档因此显示过 80%+ 的虚高胜率。改为只取<b>前瞻已走满 20 日</b>的入场日后，
+S 档 ≈62%、A 档 ≈60%、基线 ≈57%，超额明显收窄 —— <b>这是真实水平，之前那个数字不可用</b>。</div>
 <div class="evi" style="margin-top:12px"><b>条件模块（先验固定）</b>：<br>
 <b>Ⅰ 机构/私募增持（季度维度 Q2）</b>：私募 · 阳光私募 · 个人(牛散) · 公募 十大流通股东增持；<br>
 <b>Ⅱ 融资融券 1/3/5 日净增仓（日频，东财全量序列 · T+1 公布口径）</b>：融资净买入占成交额 ≥2%/4%/4% 触发，
-其中 <b>5 日占比是全信号最强单项</b>（79.8%，n=124）；<br>
+其中 <b>5 日占比</b>本次回测为 {m5_wr[1]:.1f}%（n={m5_wr[0]}）；<br>
 <b>Ⅲ 日频事件</b>：大宗交易（折价加权）· 高管增持 · 席位异动。<br>
 档位规则：<b>S 档</b> = 5日融资净买入占比≥4% 且 机构/私募增持（胜率 {s_v6[1]:.1f}%）；<b>A 档</b> = ≥3 信号共振且（M 或 I）（{v3[1]:.1f}%）；<b>B 档</b> = 2 信号观察仓。
 退出纪律与主升/反转池一致：止损 −12% ／ 浮盈 +6% 激活、回撤 3% 跟踪 ／ 满 20 日强平。证据见 <a href='lab.html'>回测证据页</a>。</div></div>
@@ -490,9 +554,9 @@ td a{{color:#1c2430;text-decoration:none}} td a:hover{{color:{BLUE}}}
 <div class="note">逐期留档 <code>combined_&#123;YYYYMMDD&#125;.html</code> ＋ 统计快照 <code>stat_&#123;YYYYMMDD&#125;.json</code>；
 完整逐票明细见 <a href='history.html'>每日归档页</a>。结算口径与回测一致（移动止盈）。</div></div>
 
-<div class="card"><h2>条件模块回测（最近 {days} 个交易日）</h2>
+<div class="card"><h2>条件模块回测（入场 {win_txt} · 数据截至 {asof or '—'}）</h2>
 <table><tr><th>模块组合</th><th>可测样本</th><th>胜率</th><th>均值收益</th></tr>{mod_rows}</table>
-<div class="note" style="margin-top:8px">对照：仅 M 无 I（n=15, 66.7%）／ 仅 I 无 M（n=46, 63.0%）—— 两模块组合才有最高胜率。</div></div>
+<div class="note" style="margin-top:8px">对照（随回测同步重算）：仅 M 无 I（n={m_no_i[0]}, {m_no_i[1]:.1f}%）／ 仅 I 无 M（n={i_no_m[0]}, {i_no_m[1]:.1f}%）—— 对照用于判断两模块是否真的互补，数值每日滚动。</div></div>
 
 <div class="card"><h2>5日融资占比阈值敏感性（单调 = 先验阈值非拟合）</h2>
 <table><tr><th>阈值</th><th>可测样本</th><th>胜率</th><th>均值收益</th></tr>{sens_rows}</table></div>
@@ -535,9 +599,9 @@ def _stat_name(date):
     return os.path.join(OUT, "stat_%s.json" % date.replace("-", ""))
 
 
-def run(date, K=None, hist=None):
-    """跑一期：入库 → 回填 → 出页（含 index/history）。返回 (date, rows, hist)。"""
-    res = load_result()
+def run(date, K=None, hist=None, refresh=True):
+    """跑一期：重算回测 → 入库 → 回填 → 出页（含 index/history）。返回 (date, rows, hist)。"""
+    res = refresh_result() if refresh else load_result()
     date, rows, universe_n, K = scan(date)
     hist = load_hist() if hist is None else hist
     hist = upsert(hist, date, rows, universe_n, K)

@@ -390,6 +390,12 @@ def simulate(K, code, T):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--days", type=int, default=20)
+    ap.add_argument("--matured", action="store_true", default=True,
+                    help="只取前瞻已满 MAXFWD 根的入场日（默认开启，保证每笔样本走完 20 日）")
+    ap.add_argument("--no-matured", dest="matured", action="store_false",
+                    help="旧口径：用最近 N 个交易日（含前瞻不足被截断的样本）")
+    ap.add_argument("--no-html", dest="html", action="store_false", default=True,
+                    help="跳过 lab.html 渲染（每日刷新 accum_result.json 时用，省时）")
     args = ap.parse_args()
 
     K = load_kline()
@@ -400,7 +406,16 @@ def main():
     print(f"[load] kline codes={len(K)} 交易日={cal[0]}~{cal[-1]} q2_flags={len(q2)} "
           f"margin_snaps={len(snaps)} margin_em={len(mh)}")
 
-    lastN = cal[-args.days:]
+    # 入场日窗口：matured 模式下取「已走完 MAXFWD 根」的那批交易日，
+    # 避免把前瞻只有 1~19 根、被强行「满期强平」的截断样本当成 20 日胜率。
+    if args.matured:
+        hi = max(0, len(cal) - MAXFWD)
+        lastN = cal[max(0, hi - args.days):hi]
+        print(f"[口径] 完整前瞻模式：入场日 {lastN[0] if lastN else '-'} ~ {lastN[-1] if lastN else '-'}"
+              f"（每笔样本均走满 {MAXFWD} 个交易日，末根 {cal[-1]}）")
+    else:
+        lastN = cal[-args.days:]
+        print(f"[口径] 旧模式（含截断样本）：入场日 {lastN[0]} ~ {lastN[-1]}")
     # 建代码名表
     names = {}
     c = json.load(open(CACHE, encoding="utf-8"))
@@ -559,6 +574,8 @@ def main():
 
     summary = {
         "days": args.days, "lastN": lastN,
+        "asof": cal[-1], "matured": bool(args.matured),
+        "window": [lastN[0], lastN[-1]] if lastN else [],
         "sel_wr": sel_wr, "base_wr": base_wr, "cons_wr": cons_wr,
         "sig_wr": {k: sig_wr[k] for k in ALLSIG},
         "day_rows": day_rows,
@@ -573,7 +590,9 @@ def main():
               ensure_ascii=False, indent=1)
 
     # 控制台
-    print(f"\n=== 增仓精选 回测（最近 {args.days} 交易日） ===")
+    print(f"\n=== 增仓精选 回测（入场 {summary['window'][0] if summary['window'] else '-'} ~ "
+          f"{summary['window'][-1] if summary['window'] else '-'}，数据截至 {cal[-1]}，"
+          f"{'每笔满 %d 日前瞻' % MAXFWD if args.matured else '含截断样本'}） ===")
     print(f"入选股可测样本 n={sel_wr[0]}  胜率={sel_wr[1]:.1f}%  均值收益={sel_wr[2]:.2f}%")
     print(f"基线(随机)   n={base_wr[0]}  胜率={base_wr[1]:.1f}%  均值收益={base_wr[2]:.2f}%")
     print(f"edge(胜率差) = {sel_wr[1]-base_wr[1]:+.1f}pp")
@@ -592,8 +611,11 @@ def main():
     for (a, b), cnt in pair.most_common(6):
         print(f"  {SIG_CN[a]} + {SIG_CN[b]}: {cnt}")
 
-    render_html(summary, q2, names, per_day_sel, K, frame_dummy=None)
-    print(f"\n[done] 证据页 -> {os.path.join(OUT,'lab.html')}")
+    if args.html:
+        render_html(summary, q2, names, per_day_sel, K, frame_dummy=None)
+        print(f"\n[done] 证据页 -> {os.path.join(OUT,'lab.html')}")
+    else:
+        print(f"\n[done] 已刷新 {os.path.join(OUT,'accum_result.json')}（跳过 lab.html）")
 
 # ============================================================
 # 5. 证据页
