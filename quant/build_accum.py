@@ -292,7 +292,11 @@ def archive_rows(hist, cur_date):
             wrc = "#8a929c"
         else:
             wrc = RED if wr >= 70 else (GOLD if wr >= 60 else "#8a929c")
-        settle_txt = f"{h.get('nSettle',0)}/{h.get('nS',0)+h.get('nA',0)}"
+        pend = h.get("pending", 0)
+        tiny = h.get("nSettle", 0) < 10
+        settle_txt = (f"{h.get('nSettle',0)}/{h.get('nS',0)+h.get('nA',0)}"
+                      + (f" <span style='color:#8a929c'>+{pend}观察中</span>" if pend else "")
+                      + (" <span style='color:#8a929c;font-weight:400'>样本过小</span>" if tiny else ""))
         out.append(
             f"<tr><td{cur}><a href='combined_{ds}.html'>{d}</a></td>"
             f"<td>{h.get('universe','—')}</td><td>{h.get('nS',0)}</td><td>{h.get('nA',0)}</td>"
@@ -313,7 +317,10 @@ def render_history(hist):
         rows.append(
             f"<tr><td><a href='combined_{ds}.html'>{d}</a></td>"
             f"<td>{h.get('universe','—')}</td><td>{h.get('nS',0)}</td><td>{h.get('nA',0)}</td>"
-            f"<td>{h.get('nB',0)}</td><td>{h.get('nSettle',0)}</td>"
+            f"<td>{h.get('nB',0)}</td>"
+            f"<td>{h.get('nSettle',0)}"
+            + (f" <span style='color:#8a929c;font-weight:400'>/{h.get('pending',0)}</span>" if h.get("pending", 0) else "")
+            + "</td>"
             f"<td style='color:{wrc};font-weight:700'>{wr if wr is not None else '—'}"
             f"{'%' if wr is not None else ''}</td>"
             f"<td style='color:{_ret_color(h.get('avg'))}'>{h.get('avg') if h.get('avg') is not None else '—'}</td></tr>")
@@ -351,8 +358,9 @@ def render_history(hist):
         detail.append(
             f"<div class='hrow'><div class='hd'><a href='combined_{ds}.html'>{d}</a>"
             f"<span class='hsub'>候选 {h.get('universe','—')} 只 · S {h.get('nS',0)} / A {h.get('nA',0)}"
-            f" · 已结算 {h.get('nSettle',0)}"
-            f" · 胜率 <b style='color:{_ret_color((wr or 0)-50)}'>{wr if wr is not None else '—'}"
+            f" · 已兑现 {h.get('nSettle',0)}"
+            + (f"（另有 {h.get('pending',0)} 个未走完 20 日，不计入胜率）" if h.get("pending", 0) else "")
+            + f" · 胜率 <b style='color:{_ret_color((wr or 0)-50)}'>{wr if wr is not None else '—'}"
             f"{'%' if wr is not None else ''}</b></span></div>"
             f"<table><tr><th>名称</th><th>档</th><th>共振</th><th>5日融资占比</th>"
             f"<th>T+1</th><th>T+5</th><th>结算（移动止盈）</th></tr>{''.join(trs)}</table></div>")
@@ -364,13 +372,14 @@ def render_history(hist):
 .why{{display:block;font-size:11px;color:#8a929c}}
 </style></head><body><div class="wrap">
 <h1>每日归档 · 兑现跟踪</h1>
-<p class="sub">共 {summ['periods']} 期 ｜ 已结算样本 {summ['n']} 个 ｜
+<p class="sub">共 {summ['periods']} 期 ｜ <b>已真实兑现</b> {summ['n']} 个（另有 {pending_summary(hist)} 个未走完 20 日，观察中不计入）｜
 累计可兑现胜率 <b style="color:{_ret_color((summ['wr'] or 0)-50)}">{summ['wr'] if summ['wr'] is not None else '—'}{'%' if summ['wr'] is not None else ''}</b>
-（与回测口径一致：止损 −12% ／ 浮盈 +6% 激活、回撤 3% 跟踪 ／ 满 20 日强平）｜
+（与回测口径一致：止损 −12% ／ 浮盈 +6% 激活、回撤 3% 跟踪 ／ 满 20 日强平；
+<b>只有真实退出（硬止损 / 跟踪止盈 / 走满 20 日）才计入胜率</b>，前瞻不足被截断的不算）｜
 <a href='index.html'>最新一期</a> · <a href='lab.html'>回测证据</a></p>
 
 <div class="card"><h2>各期概览</h2>
-<table><tr><th>数据日</th><th>候选域</th><th>S 档</th><th>A 档</th><th>B 档</th><th>已结算</th><th>胜率</th><th>均值收益</th></tr>
+<table><tr><th>数据日</th><th>候选域</th><th>S 档</th><th>A 档</th><th>B 档</th><th>已兑现 / 观察中</th><th>胜率</th><th>均值收益</th></tr>
 {''.join(rows) if rows else "<tr><td colspan='8'>暂无归档</td></tr>"}</table>
 <div class="note">T+1 / T+5 为裸涨跌幅（不走退出规则），结算列按移动止盈规则兑现；两者口径不同，别混用。</div></div>
 
@@ -529,7 +538,8 @@ td a{{color:#1c2430;text-decoration:none}} td a:hover{{color:{BLUE}}}
 <div class="evi" style="margin-top:12px;background:#f0faf3;border-color:#cfe9d8;color:#1a6b3c">
 <b>上面胜率是每日随行情重算的滚动回测值</b>：本次基准 <b>数据截至 {asof or '—'}</b>，
 入场日窗口 <b>{win_txt}</b>，{'每笔样本均完整走满 %d 个交易日（不走满的不计入）。' % days if matured else '<b style="color:#9a5b1e">含前瞻不足被截断的样本，仅供参考</b>。'}
-每次日更都会用最新 K 线重跑一次回测，数字会随市场变化而变动 —— 若你两次打开看到不同数值，是数据滚动导致的，不是页面出错。<br>
+每次日更都会用最新 K 线重跑一次回测，数字会随市场变化而变动 —— 若你两次打开看到不同数值，是数据滚动导致的，不是页面出错。
+{'' if date >= (max([h.get('date','') for h in hist]) if hist else date) else '<br><b style="color:#9a5b1e">注意：本页是历史期<b>回填重生成版</b>，回测基准用的是最新数据日，不等于该期当天当时的快照。</b>'}<br>
 <b style="color:#9a5b1e">口径修正说明</b>：早期版本用「最近 20 个交易日」当入场日，最后几天的样本前瞻只有 1~19 根就被强行「满期强平」，
 等于把几天的短期涨跌当成 20 日结果，S 档因此显示过 80%+ 的虚高胜率。改为只取<b>前瞻已走满 20 日</b>的入场日后，
 S 档 ≈62%、A 档 ≈60%、基线 ≈57%，超额明显收窄 —— <b>这是真实水平，之前那个数字不可用</b>。</div>
@@ -550,7 +560,7 @@ S 档 ≈62%、A 档 ≈60%、基线 ≈57%，超额明显收窄 —— <b>这�
 <div class="note">B 档（2 信号）仅作观察仓；1 信号 ≈基线，不入选。</div></div>
 
 <div class="card"><h2>历史归档（每日留档 · 事后结算）</h2>
-<table><tr><th>数据日</th><th>候选域</th><th>S</th><th>A</th><th>B</th><th>已结算</th><th>胜率</th></tr>{arc_rows}</table>
+<table><tr><th>数据日</th><th>候选域</th><th>S</th><th>A</th><th>B</th><th>已兑现 / 观察中</th><th>胜率</th></tr>{arc_rows}</table>
 <div class="note">逐期留档 <code>combined_&#123;YYYYMMDD&#125;.html</code> ＋ 统计快照 <code>stat_&#123;YYYYMMDD&#125;.json</code>；
 完整逐票明细见 <a href='history.html'>每日归档页</a>。结算口径与回测一致（移动止盈）。</div></div>
 
@@ -622,9 +632,12 @@ def main():
     flags = {a for a in sys.argv[1:] if a.startswith("--")}
     hist = load_hist()
     if "--all" in flags:
+        # 回填全部历史期：回测只重算一次（同一份 K 末根 → 各期共用），后续期直接复用
         K = None
+        first = True
         for h in sorted(hist, key=lambda x: x["date"]):
-            _, _, K, hist = run(h["date"], K=K, hist=hist)
+            _, _, K, hist = run(h["date"], K=K, hist=hist, refresh=first)
+            first = False
         print(f"[all] 重生成 {len(hist)} 期")
         return
     if args:

@@ -233,7 +233,7 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <h1>增仓精选</h1>
 <p class="sub">数据日 2026-09-30 ｜ 候选域 3609 只（带日频增仓事件）｜ S 档 5 · A 档 44 · B 档 125
 ｜ <a href='history.html'>每日归档 · 兑现跟踪</a>（已 8 期 / <b>已真实兑现</b> 74 个，胜率
-<b style="color:#ea4335">58.1%</b>；另有 235 个未走完 20 日，观察中不计入）</p>
+<b style="color:#ea4335">52.7%</b>；另有 251 个未走完 20 日，观察中不计入）</p>
 
 <div class="card"><h2>选股逻辑：机构/私募 × 融资增仓 双模块</h2>
 <div class="kpi">
@@ -246,7 +246,8 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <div class="evi" style="margin-top:12px;background:#f0faf3;border-color:#cfe9d8;color:#1a6b3c">
 <b>上面胜率是每日随行情重算的滚动回测值</b>：本次基准 <b>数据截至 2026-09-30</b>，
 入场日窗口 <b>2026-08-05 ~ 2026-09-01</b>，每笔样本均完整走满 20 个交易日（不走满的不计入）。
-每次日更都会用最新 K 线重跑一次回测，数字会随市场变化而变动 —— 若你两次打开看到不同数值，是数据滚动导致的，不是页面出错。<br>
+每次日更都会用最新 K 线重跑一次回测，数字会随市场变化而变动 —— 若你两次打开看到不同数值，是数据滚动导致的，不是页面出错。
+<br>
 <b style="color:#9a5b1e">口径修正说明</b>：早期版本用「最近 20 个交易日」当入场日，最后几天的样本前瞻只有 1~19 根就被强行「满期强平」，
 等于把几天的短期涨跌当成 20 日结果，S 档因此显示过 80%+ 的虚高胜率。改为只取<b>前瞻已走满 20 日</b>的入场日后，
 S 档 ≈62%、A 档 ≈60%、基线 ≈57%，超额明显收窄 —— <b>这是真实水平，之前那个数字不可用</b>。</div>
@@ -427,7 +428,7 @@ S 档 ≈62%、A 档 ≈60%、基线 ≈57%，超额明显收窄 —— <b>这�
 <div class="note">B 档（2 信号）仅作观察仓；1 信号 ≈基线，不入选。</div></div>
 
 <div class="card"><h2>历史归档（每日留档 · 事后结算）</h2>
-<table data-wb><tr><th>数据日</th><th>候选域</th><th>S</th><th>A</th><th>B</th><th>已结算</th><th>胜率</th></tr><tr><td style='font-weight:700'><a href='combined_20260930.html'>2026-09-30</a></td><td>3609</td><td>5</td><td>44</td><td>125</td><td>0/49</td><td style='color:#8a929c;font-weight:700'>待结算</td></tr><tr><td><a href='combined_20260929.html'>2026-09-29</a></td><td>3519</td><td>3</td><td>22</td><td>38</td><td>0/25</td><td style='color:#8a929c;font-weight:700'>待结算</td></tr><tr><td><a href='combined_20260928.html'>2026-09-28</a></td><td>3585</td><td>3</td><td>42</td><td>73</td><td>2/45</td><td style='color:#ea4335;font-weight:700'>100.0%</td></tr><tr><td><a href='combined_20260924.html'>2026-09-24</a></td><td>3544</td><td>8</td><td>30</td><td>52</td><td>6/38</td><td style='color:#8a929c;font-weight:700'>33.3%</td></tr><tr><td><a href='combined_20260923.html'>2026-09-23</a></td><td>3588</td><td>8</td><td>43</td><td>90</td><td>10/51</td><td style='color:#8a929c;font-weight:700'>30.0%</td></tr><tr><td><a href='combined_20260922.html'>2026-09-22</a></td><td>3585</td><td>8</td><td>42</td><td>96</td><td>15/50</td><td style='color:#8a929c;font-weight:700'>46.7%</td></tr><tr><td><a href='combined_20260921.html'>2026-09-21</a></td><td>3594</td><td>8</td><td>46</td><td>89</td><td>21/54</td><td style='color:#1a73e8;font-weight:700'>61.9%</td></tr><tr><td><a href='combined_20260918.html'>2026-09-18</a></td><td>3586</td><td>4</td><td>42</td><td>93</td><td>20/46</td><td style='color:#ea4335;font-weight:700'>80.0%</td></tr></table>
+<table data-wb><tr><th>数据日</th><th>候选域</th><th>S</th><th>A</th><th>B</th><th>已兑现 / 观察中</th><th>胜率</th></tr><tr><td style='font-weight:700'><a href='combined_20260930.html'>2026-09-30</a></td><td>3609</td><td>5</td><td>44</td><td>125</td><td>0/49 <span style='color:#8a929c;font-weight:400'>样本过小</span></td><td style='color:#8a929c;font-weight:700'>待结算</td></tr><tr><td><a href='combined_20260929.html'>2026-09-29</a></td><td>3591</td><td>4</td><td>34</td><td>101</td><td>1/38 <span style='color:#8a929c'>+37观察中</span> <span style='color:#8a929c;font-weight:400'>样本过小</span></td><td style='color:#ea4335;font-weight:700'>100.0%</td></tr><tr><td><a href='combined_20260928.html'>2026-09-28</a></td><td>3585</td><td>3</td><td>42</td><td>73</td><td>2/45 <span style='color:#8a929c'>+43观察中</span> <span style='color:#8a929c;font-weight:400'>样本过小</span></td><td style='color:#ea4335;font-weight:700'>100.0%</td></tr><tr><td><a href='combined_20260924.html'>2026-09-24</a></td><td>3544</td><td>3</td><td>28</td><td>75</td><td>6/31 <span style='color:#8a929c'>+25观察中</span> <span style='color:#8a929c;font-weight:400'>样本过小</span></td><td style='color:#8a929c;font-weight:700'>33.3%</td></tr><tr><td><a href='combined_20260923.html'>2026-09-23</a></td><td>3588</td><td>7</td><td>42</td><td>114</td><td>9/49 <span style='color:#8a929c'>+40观察中</span> <span style='color:#8a929c;font-weight:400'>样本过小</span></td><td style='color:#8a929c;font-weight:700'>22.2%</td></tr><tr><td><a href='combined_20260922.html'>2026-09-22</a></td><td>3585</td><td>7</td><td>51</td><td>138</td><td>15/58 <span style='color:#8a929c'>+43观察中</span></td><td style='color:#8a929c;font-weight:700'>20.0%</td></tr><tr><td><a href='combined_20260921.html'>2026-09-21</a></td><td>3594</td><td>10</td><td>46</td><td>91</td><td>21/56 <span style='color:#8a929c'>+35观察中</span></td><td style='color:#1a73e8;font-weight:700'>61.9%</td></tr><tr><td><a href='combined_20260918.html'>2026-09-18</a></td><td>3586</td><td>5</td><td>43</td><td>99</td><td>20/48 <span style='color:#8a929c'>+28观察中</span></td><td style='color:#ea4335;font-weight:700'>80.0%</td></tr></table>
 <div class="note">逐期留档 <code>combined_&#123;YYYYMMDD&#125;.html</code> ＋ 统计快照 <code>stat_&#123;YYYYMMDD&#125;.json</code>；
 完整逐票明细见 <a href='history.html'>每日归档页</a>。结算口径与回测一致（移动止盈）。</div></div>
 

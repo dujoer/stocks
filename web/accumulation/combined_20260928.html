@@ -232,22 +232,31 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <div class="wrap">
 <h1>增仓精选</h1>
 <p class="sub">数据日 2026-09-28 ｜ 候选域 3585 只（带日频增仓事件）｜ S 档 3 · A 档 42 · B 档 73
-｜ <a href='history.html'>每日归档 · 兑现跟踪</a>（已 6 期 / 累计结算 239 个，胜率
-<b style="color:#34a853">24.7%</b>）</p>
+｜ <a href='history.html'>每日归档 · 兑现跟踪</a>（已 8 期 / <b>已真实兑现</b> 74 个，胜率
+<b style="color:#ea4335">52.7%</b>；另有 251 个未走完 20 日，观察中不计入）</p>
 
 <div class="card"><h2>选股逻辑：机构/私募 × 融资增仓 双模块</h2>
 <div class="kpi">
-<div class="k" style="background:linear-gradient(135deg,#fffaf0,#fdf3e0);border-color:#ecd9ae"><div class="v" style="color:#1a73e8">80.4%</div><div class="l">S 档胜率（M强×机构私募，n=107）</div></div>
-<div class="k"><div class="v" style="color:#ea4335">69.1%</div><div class="l">A 档胜率（≥3共振且M/I，n=411）</div></div>
-<div class="k"><div class="v" style="color:#888">61.7%</div><div class="l">随机基线（20日回测）</div></div>
+<div class="k" style="background:linear-gradient(135deg,#fffaf0,#fdf3e0);border-color:#ecd9ae"><div class="v" style="color:#1a73e8">62.1%</div><div class="l">S 档胜率（M强×机构私募，n=66）</div></div>
+<div class="k"><div class="v" style="color:#ea4335">60.2%</div><div class="l">A 档胜率（≥3共振且M/I，n=251）</div></div>
+<div class="k"><div class="v" style="color:#888">57.3%</div><div class="l">随机基线（20日回测）</div></div>
 <div class="k"><div class="v">3</div><div class="l">今日 S 档（融资强增仓×机构私募）</div></div>
+<div class="k"><div class="v" style="color:#34a853">-3.2pp</div><div class="l">入选整体 vs 随机基线（54.2% / n=480）</div></div>
 </div>
+<div class="evi" style="margin-top:12px;background:#f0faf3;border-color:#cfe9d8;color:#1a6b3c">
+<b>上面胜率是每日随行情重算的滚动回测值</b>：本次基准 <b>数据截至 2026-09-30</b>，
+入场日窗口 <b>2026-08-05 ~ 2026-09-01</b>，每笔样本均完整走满 20 个交易日（不走满的不计入）。
+每次日更都会用最新 K 线重跑一次回测，数字会随市场变化而变动 —— 若你两次打开看到不同数值，是数据滚动导致的，不是页面出错。
+<br><b style="color:#9a5b1e">注意：本页是历史期<b>回填重生成版</b>，回测基准用的是最新数据日，不等于该期当天当时的快照。</b><br>
+<b style="color:#9a5b1e">口径修正说明</b>：早期版本用「最近 20 个交易日」当入场日，最后几天的样本前瞻只有 1~19 根就被强行「满期强平」，
+等于把几天的短期涨跌当成 20 日结果，S 档因此显示过 80%+ 的虚高胜率。改为只取<b>前瞻已走满 20 日</b>的入场日后，
+S 档 ≈62%、A 档 ≈60%、基线 ≈57%，超额明显收窄 —— <b>这是真实水平，之前那个数字不可用</b>。</div>
 <div class="evi" style="margin-top:12px"><b>条件模块（先验固定）</b>：<br>
 <b>Ⅰ 机构/私募增持（季度维度 Q2）</b>：私募 · 阳光私募 · 个人(牛散) · 公募 十大流通股东增持；<br>
 <b>Ⅱ 融资融券 1/3/5 日净增仓（日频，东财全量序列 · T+1 公布口径）</b>：融资净买入占成交额 ≥2%/4%/4% 触发，
-其中 <b>5 日占比是全信号最强单项</b>（79.8%，n=124）；<br>
+其中 <b>5 日占比</b>本次回测为 62.2%（n=74）；<br>
 <b>Ⅲ 日频事件</b>：大宗交易（折价加权）· 高管增持 · 席位异动。<br>
-档位规则：<b>S 档</b> = 5日融资净买入占比≥4% 且 机构/私募增持（胜率 80.4%）；<b>A 档</b> = ≥3 信号共振且（M 或 I）（69.1%）；<b>B 档</b> = 2 信号观察仓。
+档位规则：<b>S 档</b> = 5日融资净买入占比≥4% 且 机构/私募增持（胜率 62.1%）；<b>A 档</b> = ≥3 信号共振且（M 或 I）（60.2%）；<b>B 档</b> = 2 信号观察仓。
 退出纪律与主升/反转池一致：止损 −12% ／ 浮盈 +6% 激活、回撤 3% 跟踪 ／ 满 20 日强平。证据见 <a href='lab.html'>回测证据页</a>。</div></div>
 
 <div class="card"><h2>S 档 · 强增仓 × 机构私募（最高确定性）</h2>
@@ -419,24 +428,24 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <div class="note">B 档（2 信号）仅作观察仓；1 信号 ≈基线，不入选。</div></div>
 
 <div class="card"><h2>历史归档（每日留档 · 事后结算）</h2>
-<table data-wb><tr><th>数据日</th><th>候选域</th><th>S</th><th>A</th><th>B</th><th>已结算</th><th>胜率</th></tr><tr><td style='font-weight:700'><a href='combined_20260928.html'>2026-09-28</a></td><td>3585</td><td>3</td><td>42</td><td>73</td><td>0/45</td><td style='color:#8a929c;font-weight:700'>待结算</td></tr><tr><td><a href='combined_20260924.html'>2026-09-24</a></td><td>3544</td><td>8</td><td>30</td><td>52</td><td>38/38</td><td style='color:#8a929c;font-weight:700'>7.9%</td></tr><tr><td><a href='combined_20260923.html'>2026-09-23</a></td><td>3588</td><td>8</td><td>43</td><td>90</td><td>51/51</td><td style='color:#8a929c;font-weight:700'>13.7%</td></tr><tr><td><a href='combined_20260922.html'>2026-09-22</a></td><td>3585</td><td>8</td><td>42</td><td>96</td><td>50/50</td><td style='color:#8a929c;font-weight:700'>22.0%</td></tr><tr><td><a href='combined_20260921.html'>2026-09-21</a></td><td>3594</td><td>8</td><td>46</td><td>89</td><td>54/54</td><td style='color:#8a929c;font-weight:700'>29.6%</td></tr><tr><td><a href='combined_20260918.html'>2026-09-18</a></td><td>3586</td><td>4</td><td>42</td><td>93</td><td>46/46</td><td style='color:#8a929c;font-weight:700'>47.8%</td></tr></table>
+<table data-wb><tr><th>数据日</th><th>候选域</th><th>S</th><th>A</th><th>B</th><th>已兑现 / 观察中</th><th>胜率</th></tr><tr><td style='font-weight:700'><a href='combined_20260928.html'>2026-09-28</a></td><td>3585</td><td>3</td><td>42</td><td>73</td><td>2/45 <span style='color:#8a929c'>+43观察中</span> <span style='color:#8a929c;font-weight:400'>样本过小</span></td><td style='color:#ea4335;font-weight:700'>100.0%</td></tr><tr><td><a href='combined_20260924.html'>2026-09-24</a></td><td>3544</td><td>3</td><td>28</td><td>75</td><td>6/31 <span style='color:#8a929c'>+25观察中</span> <span style='color:#8a929c;font-weight:400'>样本过小</span></td><td style='color:#8a929c;font-weight:700'>33.3%</td></tr><tr><td><a href='combined_20260923.html'>2026-09-23</a></td><td>3588</td><td>7</td><td>42</td><td>114</td><td>9/49 <span style='color:#8a929c'>+40观察中</span> <span style='color:#8a929c;font-weight:400'>样本过小</span></td><td style='color:#8a929c;font-weight:700'>22.2%</td></tr><tr><td><a href='combined_20260922.html'>2026-09-22</a></td><td>3585</td><td>7</td><td>51</td><td>138</td><td>15/58 <span style='color:#8a929c'>+43观察中</span></td><td style='color:#8a929c;font-weight:700'>20.0%</td></tr><tr><td><a href='combined_20260921.html'>2026-09-21</a></td><td>3594</td><td>10</td><td>46</td><td>91</td><td>21/56 <span style='color:#8a929c'>+35观察中</span></td><td style='color:#1a73e8;font-weight:700'>61.9%</td></tr><tr><td><a href='combined_20260918.html'>2026-09-18</a></td><td>3586</td><td>5</td><td>43</td><td>99</td><td>20/48 <span style='color:#8a929c'>+28观察中</span></td><td style='color:#ea4335;font-weight:700'>80.0%</td></tr></table>
 <div class="note">逐期留档 <code>combined_&#123;YYYYMMDD&#125;.html</code> ＋ 统计快照 <code>stat_&#123;YYYYMMDD&#125;.json</code>；
 完整逐票明细见 <a href='history.html'>每日归档页</a>。结算口径与回测一致（移动止盈）。</div></div>
 
-<div class="card"><h2>条件模块回测（最近 20 个交易日）</h2>
-<table data-wb><tr><th>模块组合</th><th>可测样本</th><th>胜率</th><th>均值收益</th></tr><tr><td>现行≥3共振</td><td>470</td><td style='color:#1a73e8;font-weight:700'>68.3%</td><td>2.99%</td></tr><tr><td>≥3共振+融资增仓M</td><td>424</td><td style='color:#1a73e8;font-weight:700'>68.9%</td><td>3.16%</td></tr><tr><td>≥3共振+M或I</td><td>470</td><td style='color:#1a73e8;font-weight:700'>68.3%</td><td>2.99%</td></tr><tr><td>≥3共振+M且I</td><td>411</td><td style='color:#1a73e8;font-weight:700'>69.1%</td><td>3.22%</td></tr><tr><td>≥2共振+M且I</td><td>411</td><td style='color:#1a73e8;font-weight:700'>69.1%</td><td>3.22%</td></tr><tr><td>M且I(不限共振数)</td><td>411</td><td style='color:#1a73e8;font-weight:700'>69.1%</td><td>3.22%</td></tr><tr><td>S 档规则</td><td>107</td><td style='color:#ea4335;font-weight:700'>80.4%</td><td>5.25%</td></tr></table>
-<div class="note" style="margin-top:8px">对照：仅 M 无 I（n=15, 66.7%）／ 仅 I 无 M（n=46, 63.0%）—— 两模块组合才有最高胜率。</div></div>
+<div class="card"><h2>条件模块回测（入场 2026-08-05 ~ 2026-09-01 · 数据截至 2026-09-30）</h2>
+<table data-wb><tr><th>模块组合</th><th>可测样本</th><th>胜率</th><th>均值收益</th></tr><tr><td>现行≥3共振</td><td>303</td><td style='color:#1a73e8;font-weight:700'>56.1%</td><td>0.20%</td></tr><tr><td>≥3共振+融资增仓M</td><td>252</td><td style='color:#1a73e8;font-weight:700'>59.9%</td><td>1.03%</td></tr><tr><td>≥3共振+M或I</td><td>303</td><td style='color:#1a73e8;font-weight:700'>56.1%</td><td>0.20%</td></tr><tr><td>≥3共振+M且I</td><td>251</td><td style='color:#1a73e8;font-weight:700'>60.2%</td><td>1.05%</td></tr><tr><td>≥2共振+M且I</td><td>263</td><td style='color:#1a73e8;font-weight:700'>58.6%</td><td>0.81%</td></tr><tr><td>M且I(不限共振数)</td><td>263</td><td style='color:#1a73e8;font-weight:700'>58.6%</td><td>0.81%</td></tr><tr><td>S 档规则</td><td>66</td><td style='color:#1a73e8;font-weight:700'>62.1%</td><td>0.99%</td></tr></table>
+<div class="note" style="margin-top:8px">对照（随回测同步重算）：仅 M 无 I（n=8, 0.0%）／ 仅 I 无 M（n=192, 50.5%）—— 对照用于判断两模块是否真的互补，数值每日滚动。</div></div>
 
 <div class="card"><h2>5日融资占比阈值敏感性（单调 = 先验阈值非拟合）</h2>
-<table data-wb><tr><th>阈值</th><th>可测样本</th><th>胜率</th><th>均值收益</th></tr><tr><td>5日净买入占比 ≥0%</td><td>468</td><td style='color:#1a73e8;font-weight:700'>68.4%</td><td>3.00%</td></tr><tr><td>5日净买入占比 ≥1%</td><td>302</td><td style='color:#ea4335;font-weight:700'>70.2%</td><td>3.19%</td></tr><tr><td>5日净买入占比 ≥2%</td><td>218</td><td style='color:#ea4335;font-weight:700'>70.6%</td><td>3.42%</td></tr><tr><td>5日净买入占比 ≥3%</td><td>161</td><td style='color:#ea4335;font-weight:700'>74.5%</td><td>4.02%</td></tr><tr><td>5日净买入占比 ≥4%</td><td>110</td><td style='color:#ea4335;font-weight:700'>80.9%</td><td>5.16%</td></tr><tr><td>5日净买入占比 ≥6%</td><td>34</td><td style='color:#ea4335;font-weight:700'>91.2%</td><td>5.61%</td></tr></table></div>
+<table data-wb><tr><th>阈值</th><th>可测样本</th><th>胜率</th><th>均值收益</th></tr><tr><td>5日净买入占比 ≥0%</td><td>305</td><td style='color:#1a73e8;font-weight:700'>55.1%</td><td>0.25%</td></tr><tr><td>5日净买入占比 ≥1%</td><td>186</td><td style='color:#1a73e8;font-weight:700'>51.1%</td><td>-0.08%</td></tr><tr><td>5日净买入占比 ≥2%</td><td>126</td><td style='color:#1a73e8;font-weight:700'>54.0%</td><td>0.45%</td></tr><tr><td>5日净买入占比 ≥3%</td><td>94</td><td style='color:#1a73e8;font-weight:700'>59.6%</td><td>0.88%</td></tr><tr><td>5日净买入占比 ≥4%</td><td>66</td><td style='color:#1a73e8;font-weight:700'>62.1%</td><td>0.99%</td></tr><tr><td>5日净买入占比 ≥6%</td><td>17</td><td style='color:#ea4335;font-weight:700'>76.5%</td><td>3.64%</td></tr></table></div>
 
 <div class="card"><h2>共识度曲线</h2>
-<table data-wb><tr><th>共振门槛</th><th>可测样本</th><th>胜率</th><th>均值收益</th></tr><tr><td>≥1 个信号</td><td>472</td><td style='color:#ea4335;font-weight:700'>68.4%</td><td>3.00%</td></tr><tr><td>≥2 个信号</td><td>472</td><td style='color:#ea4335;font-weight:700'>68.4%</td><td>3.00%</td></tr><tr><td>≥3 个信号</td><td>470</td><td style='color:#ea4335;font-weight:700'>68.3%</td><td>2.99%</td></tr><tr><td>≥4 个信号</td><td>177</td><td style='color:#ea4335;font-weight:700'>76.3%</td><td>4.73%</td></tr><tr><td>≥5 个信号</td><td>48</td><td style='color:#ea4335;font-weight:700'>79.2%</td><td>6.50%</td></tr><tr><td>≥6 个信号</td><td>5</td><td style='color:#ea4335;font-weight:700'>60.0%</td><td>1.44%</td></tr></table></div>
+<table data-wb><tr><th>共振门槛</th><th>可测样本</th><th>胜率</th><th>均值收益</th></tr><tr><td>≥1 个信号</td><td>480</td><td style='color:#34a853;font-weight:700'>54.2%</td><td>-0.27%</td></tr><tr><td>≥2 个信号</td><td>463</td><td style='color:#34a853;font-weight:700'>54.2%</td><td>-0.30%</td></tr><tr><td>≥3 个信号</td><td>303</td><td style='color:#34a853;font-weight:700'>56.1%</td><td>0.20%</td></tr><tr><td>≥4 个信号</td><td>88</td><td style='color:#ea4335;font-weight:700'>60.2%</td><td>1.10%</td></tr><tr><td>≥5 个信号</td><td>20</td><td style='color:#34a853;font-weight:700'>55.0%</td><td>0.83%</td></tr><tr><td>≥6 个信号</td><td>1</td><td style='color:#34a853;font-weight:700'>0.0%</td><td>-1.52%</td></tr></table></div>
 
 <div class="rule"><b>⚠️ 数据覆盖与局限（务必阅读）</b><br>
 · 多空增仓维度已升级为<b>东财全量融资融券日频序列</b>（T+1 公布口径，事件域 945 只逐只抓取），不再是稀疏快照近似；但 5 日占比阈值 4% 为先验设定，敏感性已验证方向稳定（单调）。<br>
 · 私募/阳光私募/个人(牛散)/公募增持为 <b>2026Q2 季度维度</b>；阳光私募与一般私募/保险在股东名中难严格区分，事件可为 0。<br>
-· S 档 20 日样本 n=107，≥6% 占比档 n=34 更小；统计脆弱，须样本外持续验证，<b>退出纪律 &gt; 入场筛选</b>。<br>
+· S 档 20 日样本 n=66，≥6% 占比档 n=34 更小；统计脆弱，须样本外持续验证，<b>退出纪律 &gt; 入场筛选</b>。<br>
 · 高管增持覆盖 9-02 起；席位异动（龙虎榜）有断档日；大宗交易 20/20 日。<br>
 · 归档页的「累计胜率」是<b>逐交易日入选后真实走出来的结果</b>，样本随日累积，短期不代表稳态。</div>
 </div><!--WB_APP--><script id='wb-app'>
