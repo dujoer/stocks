@@ -123,9 +123,15 @@ FILES = [
     "quant/linkify.py",              # 全站个股名称外链后处理器
     # —— 增仓精选（2026-09-21）：机构/私募 × 融资融券 1/3/5 日净增仓 条件模块 ——
     "quant/_accum_lab.py",           # 实验室（信号帧 + 移动止盈回测 + 模块组合/阈值敏感性）
-    "quant/build_accum.py",          # 每日选股页（S=融资强增仓×机构私募 80.9%）
+    "quant/build_accum.py",          # 每日选股页（S=融资强增仓×机构私募；胜率由 matured 口径每日重算）
     "quant/_fetch_margin_em.py",     # 东财 datacenter 融资融券日频批量抓取（margin_em/ 本地缓存不推送，可复抓）
+    "quant/_accum_ablate.py",        # 因子消融实验室（留一法/分档/清洗后重组合）
+    "quant/_accum_oos.py",           # 严格样本外 + 随机对照（防过拟合闸门）
     "web/accumulation/accum_result.json",  # 回测汇总（模块组合/敏感性，供主页卡与审计）
+    # 消融/样本外结论：build_accum._ablate_block() 动态读这两个 JSON 渲染页面结论，
+    # 不推送 → 线上页面会退化成「尚未运行」，等于结论丢失。
+    "web/accumulation/accum_ablate.json",
+    "web/accumulation/accum_oos.json",
 ]
 
 # 自动纳入「带日期/版块」的页面与数据源，保证每一页都带统一导航、且数据可复现。

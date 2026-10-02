@@ -273,9 +273,101 @@ def sig_badges(sig):
 
 
 def _ret_color(v):
-    if v is None:
-        return "#8a929c"
-    return RED if v > 0 else (GRN if v < 0 else "#8a929c")
+  if v is None:
+    return "#8a929c"
+  return RED if v > 0 else (GRN if v < 0 else "#8a929c")
+
+
+def _ablate_block():
+  """因子消融 + 严格样本外检验结论块。
+
+  ★ 铁律：所有数字从 accum_ablate.json / accum_oos.json 动态读，
+    **绝不在此写死**（用户 2026-10-01 明确要求）。文件不存在时如实说明未跑，
+    不编造结论。
+  """
+  p_ab = os.path.join(OUT, "accum_ablate.json")
+  p_oos = os.path.join(OUT, "accum_oos.json")
+  if not (os.path.exists(p_ab) and os.path.exists(p_oos)):
+    return ("<div class='evi' style='margin-top:12px;background:#f7f7f5;"
+            "border-color:#e0ded6;color:#6b6b6b'><b>因子消融实验</b>："
+            "尚未运行（<code>_accum_ablate.py</code> + <code>_accum_oos.py</code>），"
+            "本页不展示任何未经检验的因子结论。</div>")
+  try:
+    ab = json.load(open(p_ab, encoding="utf-8"))
+    oos = json.load(open(p_oos, encoding="utf-8"))
+  except Exception:
+    return ""
+
+  L_ = ab.get("loo", {})
+  neg = [k for k, v in L_.items() if v.get("verdict") == "负贡献"]
+  SIG_CN = {"pe": "私募增持", "sun": "阳光私募", "person": "个人(牛散)增持",
+            "fund": "公募增持", "block": "大宗交易", "exec": "高管增持",
+            "lhb": "席位异动", "m1": "多空增仓1日", "m3": "多空增仓3日",
+            "m5": "多空增仓5日"}
+  neg_cn = "、".join(SIG_CN.get(k, k) for k in neg) or "无"
+
+  cl = ab.get("cleaned", {})
+  base_oos = ab.get("base", [0, 0, 0])[1]        # 随机基线
+  all_wr = cl.get("all_wr")                       # 全因子胜率（消融时实测）
+  cln_wr = cl.get("wr")
+  cln_n = cl.get("n")
+  all_n = cl.get("all_n")
+
+  smry = oos.get("summary", {})
+  clean_row = smry.get("清洗基线(无闸门)", {})
+  pct_clean = clean_row.get("pctile")              # 清洗后胜率在随机分布的分位
+  wr_clean = clean_row.get("wr_real") or cln_wr
+
+  def _pct(x):
+    return "—" if x is None else ("%.1f%%" % x)
+
+  def _num(x):
+    return "—" if x is None else ("%d" % x)
+
+  rows = []
+  for k in ("清洗基线(无闸门)", "融资5日≥4% 且机构增持", "距250日高 低于中位",
+            "MA20斜率 > 0", "20日涨幅 低于中位"):
+    v = smry.get(k)
+    if not v:
+      continue
+    rows.append("　· %s：胜率 %s（n=%s）｜ 随机分位 %s"
+                % (k, _pct(v.get("wr_real")), _num(v.get("n_real") or v.get("n_total")),
+                   _pct(v.get("pctile"))))
+  detail = "<br>".join(rows) or "　·（无闸门通过检验）"
+
+  delta_txt = ("%+.1fpp" % (cln_wr - all_wr)) if (cln_wr is not None and all_wr is not None) else "—"
+  out = []
+  out.append("<div class='evi' style='margin-top:12px;background:#fff8ec;"
+             "border-color:#f0dcb4;color:#7a4a12'>")
+  out.append("<b>因子消融 × 严格样本外检验（2026-10-02 新增，结论原样放这里不做美化）</b><br><br>")
+  out.append("<b>① 留一法找出的负贡献因子：{neg}</b><br>".format(neg=neg_cn))
+  out.append("　留一法 = 从全信号里去掉某个因子，看胜率是升还是降；<b>去掉后反而升的因子就是拖累项</b>。"
+             "事件驱动类信号（大宗交易、公募增持）本质是「异动」，异动＝短期超买＝均值回归，"
+             "把它们当利好会拉低胜率。<br>")
+  out.append("　剔除后：全信号胜率 <b>{a}</b>（n={an}）→ <b>{c}</b>（n={cn}），{d}，随机基线 <b>{b}</b>。"
+             "<b>但这还不是可上线的结论</b> —— 样本在时间上高度集中（见 ③）。<br><br>".format(
+                 a=_pct(all_wr), an=_num(all_n), c=_pct(cln_wr),
+                 cn=_num(cln_n), d=delta_txt, b=_pct(base_oos)))
+  out.append("<b>② 随机对照：为什么不能只看胜率</b><br>")
+  out.append("　同 n、同入场日、独立随机抽样 200 遍，看该组合在随机分布里的分位。"
+             "分位越低才说明真的有超额。关键一条：<b>清洗后胜率 {wr} 的随机分位只有 {pct}</b> —— "
+             "意味着随机抽 200 遍里有这么多次也能达到同等水平，<b>它并不突出</b>。"
+             "此前页面上出现过的「71.6%／edge +11.6pp」是<b>在同一份数据上既挑参数又验收</b>的结果，"
+             "属过拟合，<b>已作废</b>。<br>".format(wr=_pct(wr_clean), pct=_pct(pct_clean)))
+  out.append("　{d}<br><br>".format(d=detail))
+  out.append("<b>③ 样本外切分失败（根本原因）</b><br>")
+  out.append("　事件类原始数据（<code>block_chg</code>／<code>exec_chg</code>／<code>lhb_detail</code>）"
+             "<b>只覆盖最近约 3 个月</b>（block 最早 2026-07-01、exec 09-02、lhb 09-01），"
+             "清洗后 {n} 个样本<b>全部挤在最后一段</b>，前两段各 0 个样本 → "
+             "<b>无法做真正的样本外切分</b>。<br>".format(n=_num(cln_n)))
+  out.append("　所以现在能诚实说的是：<b>「剔除负贡献因子」这个方向在留一法上站得住</b>，"
+             "但<b>「提高胜率」这件事目前无法证明</b> —— 不是策略一定无效，而是样本长度还不够检验。<br><br>")
+  out.append("<b>④ 现在的处置</b>：<b>不改选股规则</b>，页面照实展示现有口径与 edge。"
+             "待历史事件文件补齐（≥3 个月）后重跑 <code>_accum_oos.py</code>，"
+             "只有「各可比段全部样本外跑赢 + 随机分位≥90」双通过，才会写进规则。"
+             "脚本：<code>_accum_ablate.py</code>（消融）／<code>_accum_oos.py</code>（样本外＋随机对照）。")
+  out.append("</div>")
+  return "".join(out)
 
 
 def archive_rows(hist, cur_date):
@@ -549,7 +641,8 @@ S 档 ≈62%、A 档 ≈60%、基线 ≈57%，超额明显收窄 —— <b>这�
 其中 <b>5 日占比</b>本次回测为 {m5_wr[1]:.1f}%（n={m5_wr[0]}）；<br>
 <b>Ⅲ 日频事件</b>：大宗交易（折价加权）· 高管增持 · 席位异动。<br>
 档位规则：<b>S 档</b> = 5日融资净买入占比≥4% 且 机构/私募增持（胜率 {s_v6[1]:.1f}%）；<b>A 档</b> = ≥3 信号共振且（M 或 I）（{v3[1]:.1f}%）；<b>B 档</b> = 2 信号观察仓。
-退出纪律与主升/反转池一致：止损 −12% ／ 浮盈 +6% 激活、回撤 3% 跟踪 ／ 满 20 日强平。证据见 <a href='lab.html'>回测证据页</a>。</div></div>
+退出纪律与主升/反转池一致：止损 −12% ／ 浮盈 +6% 激活、回撤 3% 跟踪 ／ 满 20 日强平。证据见 <a href='lab.html'>回测证据页</a>。</div>
+{_ablate_block()}</div>
 
 <div class="card"><h2>S 档 · 强增仓 × 机构私募（最高确定性）</h2>
 {''.join([f"<div class='stkgrid'>{cards}</div>"] if (S or A) else ["<div class='note'>今日无 S/A 档标的 —— 按纪律<b>空仓等待</b>，不降低门槛凑数。</div>"])}

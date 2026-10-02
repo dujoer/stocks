@@ -1,0 +1,388 @@
+{
+ "asof": "2026-09-30",
+ "window": [
+  "2025-11-07",
+  "2026-09-01"
+ ],
+ "folds": 3,
+ "base": [
+  2819,
+  60.02128414331323,
+  0.8430575540918759
+ ],
+ "n_all": 2836,
+ "n_clean": 566,
+ "neg_removed": [
+  "block",
+  "fund"
+ ],
+ "summary": {
+  "清洗基线(无闸门)": {
+   "folds": [
+    {
+     "fold": 1,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 2,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 3,
+     "n": 566,
+     "wr": 62.014134275618375,
+     "avg": 1.2049822881965706,
+     "edge_vs_base": 1.9928501323051435,
+     "win": true
+    }
+   ],
+   "cand_name": "清洗基线(无闸门)",
+   "th_field": null,
+   "wins": 1,
+   "tested": 1,
+   "n_total": 566,
+   "oos_ok": false,
+   "wr_real": 62.014134275618375,
+   "n_real": 566,
+   "pctile": 18.0
+  },
+  "融资5日≥4%": {
+   "folds": [
+    {
+     "fold": 1,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 2,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 3,
+     "n": 57,
+     "wr": 64.91228070175438,
+     "avg": 1.1873026413367287,
+     "edge_vs_base": 4.890996558441152,
+     "win": true
+    }
+   ],
+   "cand_name": "融资5日≥4%",
+   "th_field": null,
+   "wins": 1,
+   "tested": 1,
+   "n_total": 57,
+   "oos_ok": false,
+   "wr_real": 64.91228070175438,
+   "n_real": 57,
+   "pctile": 25.5
+  },
+  "融资5日≥4% 且机构增持": {
+   "folds": [
+    {
+     "fold": 1,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 2,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 3,
+     "n": 57,
+     "wr": 64.91228070175438,
+     "avg": 1.1873026413367287,
+     "edge_vs_base": 4.890996558441152,
+     "win": true
+    }
+   ],
+   "cand_name": "融资5日≥4% 且机构增持",
+   "th_field": null,
+   "wins": 1,
+   "tested": 1,
+   "n_total": 57,
+   "oos_ok": false,
+   "wr_real": 64.91228070175438,
+   "n_real": 57,
+   "pctile": 25.5
+  },
+  "ATR% 低于中位": {
+   "folds": [
+    {
+     "fold": 1,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 2,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 3,
+     "n": 0,
+     "wr": 0.0,
+     "avg": 0.0,
+     "edge_vs_base": -60.02128414331323,
+     "win": false
+    }
+   ],
+   "cand_name": "ATR% 低于中位",
+   "th_field": "vol_atr",
+   "wins": 0,
+   "tested": 1,
+   "n_total": 0,
+   "oos_ok": false,
+   "pctile": null
+  },
+  "20日均额 低于中位": {
+   "folds": [
+    {
+     "fold": 1,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 2,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 3,
+     "n": 0,
+     "wr": 0.0,
+     "avg": 0.0,
+     "edge_vs_base": -60.02128414331323,
+     "win": false
+    }
+   ],
+   "cand_name": "20日均额 低于中位",
+   "th_field": "amt20_log",
+   "wins": 0,
+   "tested": 1,
+   "n_total": 0,
+   "oos_ok": false,
+   "pctile": null
+  },
+  "20日均额 低于前1/3": {
+   "folds": [
+    {
+     "fold": 1,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 2,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 3,
+     "n": 0,
+     "wr": 0.0,
+     "avg": 0.0,
+     "edge_vs_base": -60.02128414331323,
+     "win": false
+    }
+   ],
+   "cand_name": "20日均额 低于前1/3",
+   "th_field": "amt20_log",
+   "wins": 0,
+   "tested": 1,
+   "n_total": 0,
+   "oos_ok": false,
+   "pctile": null
+  },
+  "距60日高回撤 > 中位": {
+   "folds": [
+    {
+     "fold": 1,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 2,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 3,
+     "n": 566,
+     "wr": 62.014134275618375,
+     "avg": 1.2049822881965706,
+     "edge_vs_base": 1.9928501323051435,
+     "win": true
+    }
+   ],
+   "cand_name": "距60日高回撤 > 中位",
+   "th_field": "dd60",
+   "wins": 1,
+   "tested": 1,
+   "n_total": 566,
+   "oos_ok": false,
+   "wr_real": 61.971830985915496,
+   "n_real": 284,
+   "pctile": 56.0
+  },
+  "距250日高 低于中位": {
+   "folds": [
+    {
+     "fold": 1,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 2,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 3,
+     "n": 564,
+     "wr": 62.234042553191486,
+     "avg": 1.2518084665235085,
+     "edge_vs_base": 2.212758409878255,
+     "win": true
+    }
+   ],
+   "cand_name": "距250日高 低于中位",
+   "th_field": "dist_hi250",
+   "wins": 1,
+   "tested": 1,
+   "n_total": 564,
+   "oos_ok": false,
+   "wr_real": 64.53900709219859,
+   "n_real": 282,
+   "pctile": 4.5
+  },
+  "60日涨幅 低于中位": {
+   "folds": [
+    {
+     "fold": 1,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 2,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 3,
+     "n": 394,
+     "wr": 60.40609137055838,
+     "avg": 1.213630875180695,
+     "edge_vs_base": 0.3848072272451475,
+     "win": true
+    }
+   ],
+   "cand_name": "60日涨幅 低于中位",
+   "th_field": "mom60",
+   "wins": 1,
+   "tested": 1,
+   "n_total": 394,
+   "oos_ok": false,
+   "wr_real": 59.57446808510638,
+   "n_real": 282,
+   "pctile": 99.5
+  },
+  "20日涨幅 低于中位": {
+   "folds": [
+    {
+     "fold": 1,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 2,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 3,
+     "n": 93,
+     "wr": 47.31182795698925,
+     "avg": 0.33962958769939844,
+     "edge_vs_base": -12.709456186323983,
+     "win": false
+    }
+   ],
+   "cand_name": "20日涨幅 低于中位",
+   "th_field": "mom20",
+   "wins": 0,
+   "tested": 1,
+   "n_total": 93,
+   "oos_ok": false,
+   "wr_real": 58.156028368794324,
+   "n_real": 282,
+   "pctile": 100.0
+  },
+  "MA20斜率 > 0": {
+   "folds": [
+    {
+     "fold": 1,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 2,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 3,
+     "n": 441,
+     "wr": 66.43990929705215,
+     "avg": 1.6173685135708435,
+     "edge_vs_base": 6.4186251537389225,
+     "win": true
+    }
+   ],
+   "cand_name": "MA20斜率 > 0",
+   "th_field": null,
+   "wins": 1,
+   "tested": 1,
+   "n_total": 441,
+   "oos_ok": false,
+   "wr_real": 66.43990929705215,
+   "n_real": 441,
+   "pctile": 0.0
+  },
+  "MA20斜率 < 0": {
+   "folds": [
+    {
+     "fold": 1,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 2,
+     "n": 0,
+     "skipped": true
+    },
+    {
+     "fold": 3,
+     "n": 122,
+     "wr": 47.540983606557376,
+     "avg": 0.0390201691353841,
+     "edge_vs_base": -12.480300536755855,
+     "win": false
+    }
+   ],
+   "cand_name": "MA20斜率 < 0",
+   "th_field": null,
+   "wins": 0,
+   "tested": 1,
+   "n_total": 122,
+   "oos_ok": false,
+   "wr_real": 47.540983606557376,
+   "n_real": 122,
+   "pctile": 100.0
+  }
+ },
+ "ok": []
+}
