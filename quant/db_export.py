@@ -233,8 +233,17 @@ def build_market(con):
 def main():
     con = db.connect()
     manifest = {"generated": "", "modules": []}
-    import datetime
-    manifest["generated"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    # ⚠ generated 用**数据日**（各表 date 列最大值），不用 datetime.now()：
+    # 运行时间戳会让 manifest.json 每次重跑都变 → 增量推送每次白推这 4MB 级文件。
+    max_d = ""
+    for key, (label, table, cols, order) in MODULES.items():
+        try:
+            row = con.execute("SELECT MAX(%s) FROM %s" % (cols[0][0], table)).fetchone()
+            if row and row[0] and (not max_d or str(row[0]) > max_d):
+                max_d = str(row[0])[:10]
+        except Exception as e:
+            print("[export] %s 取最大日期失败：%r" % (key, e))
+    manifest["generated"] = max_d
     total = 0
     for key, (label, table, cols, order) in MODULES.items():
         m = build_module(con, key, label, table, cols, order)

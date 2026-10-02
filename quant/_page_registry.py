@@ -100,14 +100,23 @@ FAMILIES = [
          date_re=r'(\d{4}-\d{2}-\d{2})',
          need='四路候选 + 行情补齐 + chip/fundflow（须等 lhb/block/exec 跑完）'),
 
+    # ⚠ stable_*.html 是**按日归档**的（每日一份快照），原先挂在 dated=False 的
+    # picks_entry 下 → scan_stable.py 整族漏跑也不会被门禁发现。已拆出独立族。
+    dict(key='picks_stable', label='全市场稳健分选股日快照',
+         patterns=['picks/stable_*.html'],
+         entry='picks/index.html', script='scan_stable.py',
+         freq='daily', dated=True, start='20260910',
+         date_re=r'(\d{4}-\d{2}-\d{2})',
+         need='须在 build_picks.py 之后跑（入口页只在 stable 页存在时才入链）；'
+              '先验 12 因子横截面分位，扫全市场可交易域'),
+
     dict(key='picks_entry', label='信号池入口/回测/实验室',
-         patterns=['picks/index.html', 'picks/backtest.html', 'picks/lab.html',
-                   'picks/stable_*.html'],
-         entry='picks/index.html', script='build_picks.py;_pick_lab.py;scan_stable.py',
+         patterns=['picks/index.html', 'picks/backtest.html', 'picks/lab.html'],
+         entry='picks/index.html', script='build_picks.py;_pick_lab.py',
          freq='daily',
          dated=False, start=None, date_re=None,
          need='同 picks；lab.html = 因子样本外功效实验室（先验固定集 vs 自动筛，_pick_lab.py）；'
-              'stable_YYYY-MM-DD.html = 全市场稳健分选股快照（scan_stable.py，由 picks 入口页静态入链）'),
+              'stable_YYYY-MM-DD.html 见 picks_stable 族'),
 
     dict(key='highwin', label='高胜率候选池（每日多因子扫描）',
          patterns=['picks/highwin_*.html'],

@@ -157,7 +157,9 @@ def scan(date, top=DEF_TOP, min_amt=DEF_MIN_AMT, min_price=DEF_MIN_PRICE):
 
     return {
         "date": date,
-        "generated": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+        # ⚠ 用数据日而非 datetime.now()：否则同一天重跑必变 → 归档页 sha 漂移、
+        # 增量推送每次都白推。生成时间属于运行元数据，不进数据产物。
+        "generated": date,
         "env": env,
         "universe": {"total": len(cache), "kept": len(uni), "drop": drop,
                      "band": band_cnt, "minAmtWan": min_amt, "minPrice": min_price},
@@ -255,7 +257,7 @@ tr:hover td{{background:#fcfbf8}}
 </style></head><body><div class='wrap'>
 <header>
   <h1>稳健分选股 · <span>全市场横截面</span></h1>
-  <div class='sub'>数据日 {D} · 生成 {GEN} · 模型 {VER} · 先验 {NF} 因子等权横截面分位（不筛、不调权）</div>
+  <div class='sub'>数据日 {D} · 模型 {VER} · 先验 {NF} 因子等权横截面分位（不筛、不调权）</div>
 </header>
 
 <div class='env'>

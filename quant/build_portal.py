@@ -456,7 +456,7 @@ STAT = {
     "sec": stat_sector(),
     "psy": stat_psy(),
     "elite": stat_industry_elite(),
-    "accum": stat_stock_accumulation(),
+    "accum_scan": stat_stock_accumulation(),
     "khealth": stat_known_health(),
     "research": stat_research(),
     "reversal": stat_reversal(),
@@ -603,7 +603,7 @@ ZONES = [
                 "ic": "📈", "t": "股票增持信号扫描", "href": "web/shareholder/stock-accumulation.html",
                 "func": "全市场 5544 只中报十大流通股东变动逐只扫描：增持 / 减持家数与股数，筛出「增持多于减持」并高亮知名私募 / 牛散加仓标的。",
                 "rel": "→ 健康度过滤（在上游 50 只上叠技术面）。",
-                "stat": STAT["accum"], "date": "2026-06-30", "fresh": badge("warn", "定期"),
+                "stat": STAT["accum_scan"], "date": "2026-06-30", "fresh": badge("warn", "定期"),
             },
             {
                 "ic": "🩺", "t": "知名加仓 · 量价健康度过滤", "href": "web/shareholder/known-accumulation-health.html",

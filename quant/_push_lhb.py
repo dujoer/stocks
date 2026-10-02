@@ -162,6 +162,12 @@ _AUTO_PATTERNS = [
     "web/data/*.json",
     # 增仓精选每日统计快照（供门户卡片取数；历史累积 quant/accum/history.json 属本地，不推送）
     "web/accumulation/stat_*.json",
+    # ⚠ 下面三族同样是「门户卡片取数用的每日 stat 快照」，早先漏在本清单外 →
+    #   页面能推、stat json 推不上去，门户在远端会读不到数。os.walk 兜底只捞 .html，救不了 json。
+    "web/selected/stat_*.json",
+    "web/quant_strategy/stat_*.json",
+    "web/three_yin/stat_*.json",
+    "web/picks/stable_*.json",
 ]
 # 覆盖度自检机制（2026-09-11 新增）：主题源 + 页面登记表 + 自检/归位/校验脚本
 for _p in ("quant/_theme.css", "quant/_app.js", "quant/_page_registry.py",
