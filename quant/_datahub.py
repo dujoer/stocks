@@ -129,42 +129,57 @@ def _all_codes():
 # 各维度抓取
 # ============================================================
 def dim_quotes(date, ctx, offline=True):
-    """全市场行情快照。
+    """全市场行情快照（**全市场 ~5200 只，不是事件域**）。
 
-    ⚠ **覆盖口径必须说清**：当日 `quotes/{DATE}.json` 只覆盖「事件域」
-    （龙虎榜 + 大宗 + 增减持的并集，典型 400~600 只），**不是全市场 5207 只**。
-    名称叫「全市场」会误导 → 页面与 manifest 均如实标注实际条数。
-    缺全市场快照时走腾讯批量补齐（限频风险，见 _fetch_long_kline 的教训）。
+    ★ 2026-10-03 修正（用户指出「不是全市场那无法分析最有价值的标的」）：
+      原实现读当日 `quotes/{DATE}.json`（只 524 只事件域）就返回，理由是
+      「避免重复联网」—— **这个取舍是错的**。事件域 524 只**无法做全市场
+      横截面分析**，而找「最有价值的标的」必须靠横截面分位排序。
+      实测腾讯 qt 快照**全市场 5207 只仅 0.3 分钟**（65 批 × 80 只），
+      根本不是瓶颈 —— 事件域口径是自缚手脚。
+    做法：仅当当日缓存覆盖 ≥ 全市场 60% 才复用，否则直接批量拉全市场。
     """
     out = {"src": "", "ok": False, "reason": "", "data": {}, "scope": "", "n": 0}
+    total = len(ctx.get("codes") or [])
     p = os.path.join(HERE, "quotes", "%s.json" % date)
     if os.path.exists(p):
         try:
             j = json.load(open(p, encoding="utf-8"))
             d = (j.get("data") or j)
             if isinstance(d, dict) and d:
-                out.update(src="quotes缓存", ok=True, data=d,
-                           scope="事件域（龙虎榜+大宗+增减持并集）", n=len(d))
-                return out
+                # 覆盖够大才当作全市场等价，否则继续拉全市场
+                if not total or len(d) >= total * 0.6:
+                    out.update(src="quotes缓存", ok=True, data=d,
+                               scope="全市场（复用当日缓存 %d/%d）" % (len(d), total),
+                               n=len(d))
+                    return out
         except Exception:
             pass
     if offline:
-        out["reason"] = "离线模式且当日 quotes 缓存缺失"
+        out["reason"] = "离线模式且当日 quotes 缓存覆盖不足（非全市场）"
         return out
     try:
         import _tx_fetch as T
-        codes = _all_codes()
+        codes = ctx["codes"]
         got = {}
-        B, GAP = 80, 0.12
+        B, GAP = 80, 0.05
         for i in range(0, len(codes), B):
-            grp = codes[i:i + B]
             try:
-                got.update(T.fetch_qt(grp) or {})
+                got.update(T.fetch_qt(codes[i:i + B]) or {})
             except Exception:
                 pass
             time.sleep(GAP)
         if got:
-            out.update(src="腾讯qt", ok=True, data=got, scope="全市场", n=len(got))
+            # ★ 快照无日期字段，必须交叉校验后才允许当 {date} 用
+            vd, vmsg = _verify_snapshot_date(date, got)
+            out["scope"] = "全市场（腾讯快照 %d/%d）" % (len(got), total)
+            out["n"] = len(got)
+            out["date_check"] = vmsg
+            if vd is False:
+                out.update(src="腾讯qt", ok=False, data={})
+                out["reason"] = vmsg
+            else:
+                out.update(src="腾讯qt", ok=True, data=got)
         else:
             out["reason"] = "腾讯快照全失败"
     except Exception as e:
@@ -226,8 +241,11 @@ def _event_codes(date):
 def dim_flow(date, ctx, offline=True):
     """主力资金流 1/5/10/20 日。走新浪批量（离线通道，不受 MCP 限频）。
 
-    ★ 覆盖 = **当日事件域**（非全市场）。新浪是每股一次请求，全市场 5207 只
-    约需 20+ 分钟且极易限流；各池子实际只需要事件域的票。
+    ★ 2026-10-03 修正：**改为全市场**。原先只取当日事件域（356 只），理由
+    「新浪是每股一次请求，全市场要 20+ 分钟」—— **实测是错的**：
+    600 只 4.2 秒（12 并发），**全市场 5207 只约 0.6 分钟**。
+      资金流是「主力净流入横截面分位」的必需输入，只覆盖事件域
+      → 无法在全市场范围比较谁更值得买 → 违背「找最有价值的标的」这一目的。
     """
     out = {"src": "", "ok": False, "reason": "", "data": {}, "scope": "", "n": 0}
     try:
@@ -236,9 +254,9 @@ def dim_flow(date, ctx, offline=True):
         if fn is None:
             out["reason"] = "fetch_rev_flow 无 sina_batch"
             return out
-        codes = _event_codes(date)
+        codes = ctx.get("codes") or _all_codes()
         if not codes:
-            out["reason"] = "当日事件域为空（lhb/block/exec 均缺）"
+            out["reason"] = "票池为空"
             return out
         lim = ctx.get("flow_limit", 0)
         if lim and len(codes) > lim:
@@ -246,12 +264,55 @@ def dim_flow(date, ctx, offline=True):
         got = fn(codes)
         if got:
             out.update(src="新浪MoneyFlow", ok=True, data=got,
-                       scope="当日事件域", n=len(got))
+                       scope="全市场（新浪 %d/%d）" % (len(got), len(codes)), n=len(got))
         else:
             out["reason"] = "新浪资金流全失败（%d 只）" % len(codes)
     except Exception as e:
         out["reason"] = "异常：%s" % str(e)[:80]
     return out
+
+
+def _verify_snapshot_date(date, got, sample=400):
+    """★ 交叉校验快照是否真的属于 {date}（防「无日期字段的快照冒充当日」）。
+
+    腾讯 `fetch_qt` 返回的快照**不带任何日期字段**，只有数值。
+    如果隔天重跑、或者接口返回了陈旧数据，光看 `ok=True` 是发现不了的
+    —— 这直接违反「不许编数据」。
+
+    做法：用 `_long_kline.json`（有明确 date 字段）交叉验证 `last`。
+    抽查若干只，比对「快照 last」与「{date} 日K 收盘」，要求完全一致。
+    不一致的比例超阈值 → 判失败，不允许当当日数据用。
+    """
+    lk_p = os.path.join(HERE, "_long_kline.json")
+    if not os.path.exists(lk_p):
+        return None, "无 _long_kline.json，无法校验快照日期"
+    try:
+        lk = json.load(open(lk_p, encoding="utf-8"))
+    except Exception as e:
+        return None, "读取日K失败：%s" % str(e)[:60]
+    keys = [c for c in list(got)[:sample] if c in lk and lk[c]]
+    if not keys:
+        return None, "无交集样本可校验"
+    ok = 0
+    bad = 0
+    for c in keys:
+        bars = lk[c]
+        if not bars or bars[-1].get("date") != date:
+            continue                     # 该票当日无K线（停牌/新股），跳过
+        a = got[c].get("last")
+        b = bars[-1].get("last")
+        if a and b and abs(float(a) - float(b)) <= max(0.02, float(b) * 1e-4):
+            ok += 1
+        else:
+            bad += 1
+    n = ok + bad
+    if n == 0:
+        return None, "样本均无当日K线，无法校验"
+    rate = 100.0 * bad / n
+    if rate > 2.0:
+        return False, ("快照与 %s 日K 收盘不一致 %.1f%%（%d/%d）→ 快照不是 %s 的数据，"
+                       "**拒绝当当日使用**" % (date, rate, bad, n, date))
+    return True, "快照已校验= %s（日K 交叉 %d/%d 一致）" % (date, ok, n)
 
 
 def dim_margin(date, ctx, offline=True):
@@ -381,7 +442,7 @@ FETCHERS = {
 # ============================================================
 # 主流程
 # ============================================================
-def run(date, only=None, offline=True, force=False, flow_limit=1200):
+def run(date, only=None, offline=True, force=False, flow_limit=0):
     prev = load_hub(date)
     # ⚠ 语义严格区分：
     #   --only X  → **增量补抓**（--force 也只重抓 X，其余维度保留）
@@ -476,8 +537,8 @@ def main():
                     help="只用离线源，不联网（默认联网，允许重试失败维度）")
     ap.add_argument("--force", action="store_true", help="忽略已有数据，全部重抓")
     ap.add_argument("--list", action="store_true", help="列出维度后退出")
-    ap.add_argument("--flow-limit", type=int, default=1200,
-                    help="资金流覆盖的票数上限（新浪每股一次请求，全市场太慢）")
+    ap.add_argument("--flow-limit", type=int, default=0,
+                    help="资金流票数上限；0=全市场（实测 5207 只约 0.6 分钟，无需限）")
     a = ap.parse_args()
     if a.list:
         print("可用维度：")

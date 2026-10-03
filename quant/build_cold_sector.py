@@ -188,6 +188,10 @@ def render(d, date):
 </div>
 
 <div class="section">
+<div class='ok' style='margin-top:12px'>
+<b>相关页面</b>：<a href='../cross_section/index.html'>全市场横截面 · 数据能力</a>（统一数据底座的<b>全市场</b> quotes + 主力资金流，4971 只可分析域，含字段覆盖统计与示例打分 —— 示例打分未过样本外检验，非选股结论）。
+</div>
+
 <h2>两年零主升的行业（%(ncold)d 个）</h2>
 <div class="sub" style="margin:0 0 10px">
 判据（先验固定、非拟合）：一段上涨同时满足 <b>涨幅 ≥ 60%%</b>、<b>持续 ≥ 60 个交易日</b>、

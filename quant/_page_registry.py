@@ -53,6 +53,14 @@ FAMILIES = [
          entry='lhb/lhb.html', script='build_dashboards.py', freq='daily',
          dated=False, start=None, date_re=None, need='同 lhb'),
 
+    dict(key='cross_section', label='全市场横截面（数据能力展示）',
+         patterns=['cross_section/index.html', 'cross_section/cross_2*.html'],
+         entry='cross_section/index.html', script='build_cross_section.py',
+         freq='daily', dated=True, start='20260930',
+         date_re=r'cross_(\d{8})\.html',
+         need='读 hub/{DATE}.json（统一数据底座，**全市场** quotes+flow，不联网）；'
+              '★只演示数据能力与字段覆盖，示例打分**未过样本外检验**，不构成选股结论'),
+
     dict(key='cold_sector', label='冷门行业榜（两年未主升·仅陈述事实）',
          patterns=['cold_sector/index.html', 'cold_sector/cold_2*.html'],
          entry='cold_sector/index.html', script='build_cold_sector.py',

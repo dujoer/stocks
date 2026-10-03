@@ -1,32 +1,29 @@
 <!DOCTYPE html>
 <html lang='zh-CN'><head><meta charset='UTF-8'>
 <meta name='viewport' content='width=device-width,initial-scale=1'>
-<title>冷门行业榜 · 两年未主升</title><style>* { box-sizing: border-box; }
+<title>全市场横截面 · 数据能力</title><style>* { box-sizing: border-box; }
 body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
   background:#f5f6f8; color:#23262b; }
-.wrap { max-width:1180px; margin:0 auto; padding:26px 20px 60px; }
+.wrap { max-width:1240px; margin:0 auto; padding:26px 20px 60px; }
 h1 { font-size:26px; margin:0 0 6px; }
 h2 { font-size:18px; margin:0 0 10px; }
 .sub { color:#6b7280; font-size:13px; line-height:1.8; margin-bottom:14px; }
 .section { background:#fff; border:1px solid rgba(0,0,0,.08); border-radius:12px;
   padding:16px 18px; margin:14px 0; }
 table { width:100%; border-collapse:collapse; font-size:13px; }
-th,td { padding:8px 10px; border-bottom:1px solid rgba(0,0,0,.07); text-align:right; }
-th:first-child,td:first-child { text-align:left; }
+th,td { padding:7px 9px; border-bottom:1px solid rgba(0,0,0,.07); text-align:right; }
+th:first-child,td:first-child,th.l,td.l { text-align:left; }
 th { background:#fafbfc; font-weight:600; color:#5b6168; font-size:12px; white-space:nowrap; }
 tbody tr:hover { background:#fafbfc; }
 .warn { background:#fff4e5; border:1px solid #f0c896; border-radius:12px;
   padding:14px 16px; color:#7a4a12; font-size:13px; line-height:1.85; margin:14px 0; }
-.warn b { color:#a8500a; }
 .ok { background:#eef6ff; border:1px solid #c9def5; border-radius:12px;
   padding:14px 16px; color:#1c4e80; font-size:13px; line-height:1.85; margin:14px 0; }
-.t0 { background:#e8f4ff; }
 .muted { color:#8b9199; }
-.sec-tag { display:inline-block; background:#eef6ff; color:#1c4e80; border-radius:6px;
-  padding:1px 7px; font-size:12px; margin-left:6px; }
-.cold-tag { display:inline-block; background:#eaf3de; color:#173404; border-radius:6px;
-  padding:1px 7px; font-size:12px; }
+.pos { color:#a32d2d; }
+.neg { color:#1a73e8; }
 a { color:#1a73e8; }
+.bar { display:inline-block; height:8px; background:#85b7eb; border-radius:4px; }
 .arch { display:flex; flex-wrap:wrap; gap:8px; }
 .arch a { background:#f5f6f8; border:1px solid rgba(0,0,0,.08); border-radius:8px;
   padding:5px 10px; font-size:12px; text-decoration:none; color:#1c4e80; }
@@ -226,72 +223,61 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a><a href='../three_yin/index.html'>三连阴</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
 <div class="wrap">
 
-<header><h1>冷门行业榜 <span class="sec-tag">已发生的事实</span></h1>
-<div class="sub">统计窗口 500 个交易日（约 2 年）｜数据日 <b>2026-09-30</b>｜
-样本 5050 只票（两年日K）｜大盘同期 <b>12.7%</b>（沪深300）</div></header>
+<header><h1>全市场横截面 <span style="font-size:14px;color:#6b7280;font-weight:400">数据能力展示</span></h1>
+<div class="sub">数据日 <b>2026-09-30</b>｜全市场 <b>5207</b> 只 → 可分析域 <b>4971</b> 只
+（剔除 ST/退市 · 股价&lt;2 元 · 停牌）｜<b>全市场抓取，非事件域抽样</b></div></header>
 
 <div class="warn">
-<b>⚠ 本页不提供任何买入建议，只陈述事实。</b><br>
-「两年没有主升过」是<b>已发生的历史</b>，可以拿来看；<b>它不等于「将要主升」</b>。<br>
-本页数据对应的选股策略已做过严格样本外检验（本页数据对应的策略做过严格检验：<b>策略胜率 56.4% vs 随机基线 58.2%（-1.8pp）</b>，）—— 结论是<b>跑输随机基线</b>，
-因此<b>不推荐任何个股、不标注任何买点</b>。详见页面底部「为什么不上线」。
-</div>
-
-<div class="section">
-<div class='ok' style='margin-top:12px'>
-<b>相关页面</b>：<a href='../cross_section/index.html'>全市场横截面 · 数据能力</a>（统一数据底座的<b>全市场</b> quotes + 主力资金流，4971 只可分析域，含字段覆盖统计与示例打分 —— 示例打分未过样本外检验，非选股结论）。
-</div>
-
-<h2>两年零主升的行业（5 个）</h2>
-<div class="sub" style="margin:0 0 10px">
-判据（先验固定、非拟合）：一段上涨同时满足 <b>涨幅 ≥ 60%</b>、<b>持续 ≥ 60 个交易日</b>、
-<b>跑赢沪深300 ≥ 25pp</b> 才算一次主升。窗口内没有满足的 = 零主升。</div>
-<table data-wb><thead><tr>
-<th>#</th><th>行业</th><th>成分股</th><th>主升次数</th><th>最强主升</th>
-<th>窗口涨幅</th><th>跑赢大盘</th><th>距区间高点</th><th>末次主升距今</th>
-</tr></thead><tbody><tr class='t0'><td><b>1</b></td><td style='text-align:left'><b>社会服务</b><span class='cold-tag'>两年零主升</span></td><td>86</td><td>0</td><td>0.0%</td><td>39.2%</td><td style='color:#a32d2d'>+4.3%</td><td>-19.1%</td><td>—</td></tr><tr class='t0'><td><b>2</b></td><td style='text-align:left'><b>农林牧渔</b><span class='cold-tag'>两年零主升</span></td><td>114</td><td>0</td><td>0.0%</td><td>51.5%</td><td style='color:#a32d2d'>+16.6%</td><td>-10.5%</td><td>—</td></tr><tr class='t0'><td><b>3</b></td><td style='text-align:left'><b>公用事业</b><span class='cold-tag'>两年零主升</span></td><td>139</td><td>0</td><td>0.0%</td><td>55.2%</td><td style='color:#a32d2d'>+20.3%</td><td>-17.0%</td><td>—</td></tr><tr class='t0'><td><b>4</b></td><td style='text-align:left'><b>交通运输</b><span class='cold-tag'>两年零主升</span></td><td>128</td><td>0</td><td>0.0%</td><td>31.9%</td><td style='color:#1a73e8'>-2.9%</td><td>-10.3%</td><td>—</td></tr><tr class='t0'><td><b>5</b></td><td style='text-align:left'><b>煤炭</b><span class='cold-tag'>两年零主升</span></td><td>33</td><td>0</td><td>0.0%</td><td>43.5%</td><td style='color:#a32d2d'>+8.6%</td><td>-8.2%</td><td>—</td></tr><tr><td><b>6</b></td><td style='text-align:left'><b>银行</b></td><td>42</td><td>1</td><td>60.6%</td><td>46.8%</td><td style='color:#a32d2d'>+12.0%</td><td>-5.1%</td><td>299 根前</td></tr><tr><td><b>7</b></td><td style='text-align:left'><b>钢铁</b></td><td>43</td><td>1</td><td>60.9%</td><td>43.5%</td><td style='color:#a32d2d'>+8.6%</td><td>-29.8%</td><td>285 根前</td></tr><tr><td><b>8</b></td><td style='text-align:left'><b>食品饮料</b></td><td>126</td><td>1</td><td>61.8%</td><td>30.9%</td><td style='color:#1a73e8'>-4.0%</td><td>-16.8%</td><td>437 根前</td></tr><tr><td><b>9</b></td><td style='text-align:left'><b>房地产</b></td><td>95</td><td>1</td><td>67.7%</td><td>51.5%</td><td style='color:#a32d2d'>+16.7%</td><td>-11.9%</td><td>250 根前</td></tr><tr><td><b>10</b></td><td style='text-align:left'><b>非银金融</b></td><td>79</td><td>1</td><td>70.2%</td><td>35.7%</td><td style='color:#a32d2d'>+0.8%</td><td>-20.3%</td><td>267 根前</td></tr><tr><td><b>11</b></td><td style='text-align:left'><b>建筑装饰</b></td><td>155</td><td>1</td><td>70.8%</td><td>70.2%</td><td style='color:#a32d2d'>+35.3%</td><td>-14.3%</td><td>251 根前</td></tr><tr><td><b>12</b></td><td style='text-align:left'><b>建筑材料</b></td><td>76</td><td>1</td><td>72.3%</td><td>73.8%</td><td style='color:#a32d2d'>+39.0%</td><td>-16.1%</td><td>266 根前</td></tr><tr><td><b>13</b></td><td style='text-align:left'><b>医药生物</b></td><td>504</td><td>1</td><td>72.7%</td><td>57.3%</td><td style='color:#a32d2d'>+22.5%</td><td>-8.9%</td><td>267 根前</td></tr><tr><td><b>14</b></td><td style='text-align:left'><b>纺织服饰</b></td><td>107</td><td>1</td><td>73.4%</td><td>72.3%</td><td style='color:#a32d2d'>+37.5%</td><td>-12.8%</td><td>251 根前</td></tr><tr><td><b>15</b></td><td style='text-align:left'><b>环保</b></td><td>134</td><td>1</td><td>75.6%</td><td>78.9%</td><td style='color:#a32d2d'>+44.0%</td><td>-15.1%</td><td>266 根前</td></tr><tr><td><b>16</b></td><td style='text-align:left'><b>轻工制造</b></td><td>167</td><td>1</td><td>75.6%</td><td>70.7%</td><td style='color:#a32d2d'>+35.9%</td><td>-13.5%</td><td>250 根前</td></tr><tr><td><b>17</b></td><td style='text-align:left'><b>美容护理</b></td><td>32</td><td>1</td><td>79.3%</td><td>40.8%</td><td style='color:#a32d2d'>+6.0%</td><td>-21.5%</td><td>266 根前</td></tr><tr><td><b>18</b></td><td style='text-align:left'><b>传媒</b></td><td>131</td><td>1</td><td>81.6%</td><td>57.6%</td><td style='color:#a32d2d'>+22.8%</td><td>-27.8%</td><td>266 根前</td></tr><tr><td><b>19</b></td><td style='text-align:left'><b>石油石化</b></td><td>48</td><td>1</td><td>82.1%</td><td>61.4%</td><td style='color:#a32d2d'>+26.5%</td><td>-24.9%</td><td>145 根前</td></tr><tr><td><b>20</b></td><td style='text-align:left'><b>家用电器</b></td><td>103</td><td>1</td><td>82.4%</td><td>65.4%</td><td style='color:#a32d2d'>+30.6%</td><td>-11.2%</td><td>266 根前</td></tr><tr><td><b>21</b></td><td style='text-align:left'><b>基础化工</b></td><td>449</td><td>1</td><td>84.1%</td><td>92.8%</td><td style='color:#a32d2d'>+58.0%</td><td>-13.2%</td><td>266 根前</td></tr><tr><td><b>22</b></td><td style='text-align:left'><b>综合</b></td><td>20</td><td>1</td><td>93.1%</td><td>73.1%</td><td style='color:#a32d2d'>+38.3%</td><td>-18.1%</td><td>251 根前</td></tr><tr><td><b>23</b></td><td style='text-align:left'><b>电力设备</b></td><td>415</td><td>1</td><td>93.7%</td><td>100.3%</td><td style='color:#a32d2d'>+65.5%</td><td>-25.6%</td><td>250 根前</td></tr><tr><td><b>24</b></td><td style='text-align:left'><b>商贸零售</b></td><td>100</td><td>1</td><td>95.9%</td><td>71.5%</td><td style='color:#a32d2d'>+36.6%</td><td>-20.6%</td><td>251 根前</td></tr><tr><td><b>25</b></td><td style='text-align:left'><b>汽车</b></td><td>320</td><td>1</td><td>100.4%</td><td>67.2%</td><td style='color:#a32d2d'>+32.4%</td><td>-22.8%</td><td>250 根前</td></tr><tr><td><b>26</b></td><td style='text-align:left'><b>有色金属</b></td><td>145</td><td>1</td><td>102.0%</td><td>139.2%</td><td style='color:#a32d2d'>+104.3%</td><td>-21.3%</td><td>253 根前</td></tr><tr><td><b>27</b></td><td style='text-align:left'><b>国防军工</b></td><td>140</td><td>1</td><td>104.5%</td><td>72.6%</td><td style='color:#a32d2d'>+37.7%</td><td>-36.2%</td><td>267 根前</td></tr><tr><td><b>28</b></td><td style='text-align:left'><b>机械设备</b></td><td>610</td><td>1</td><td>113.7%</td><td>125.8%</td><td style='color:#a32d2d'>+90.9%</td><td>-14.6%</td><td>250 根前</td></tr><tr><td><b>29</b></td><td style='text-align:left'><b>计算机</b></td><td>357</td><td>1</td><td>124.4%</td><td>76.4%</td><td style='color:#a32d2d'>+41.6%</td><td>-27.5%</td><td>266 根前</td></tr><tr><td><b>30</b></td><td style='text-align:left'><b>通信</b></td><td>127</td><td>1</td><td>130.3%</td><td>149.6%</td><td style='color:#a32d2d'>+114.8%</td><td>-19.8%</td><td>262 根前</td></tr><tr><td><b>31</b></td><td style='text-align:left'><b>电子</b></td><td>518</td><td>2</td><td>108.2%</td><td>178.6%</td><td style='color:#a32d2d'>+143.8%</td><td>-22.7%</td><td>65 根前</td></tr></tbody></table>
+<b>⚠ 本页只演示「数据能力」，不构成任何买入建议。</b><br>
+下面那张 Top30 表是<b>先验固定、等权</b>的示例打分，<b>没有通过样本外检验</b>，
+因此<b>不是选股结论</b>。要得到可用的选股结论，必须先过四道闸门
+（无未来函数 / 样本外 walk-forward / 随机对照 / 退出可兑现）。
+<br>本页面<b>不联网</b>，全部数据来自统一数据底座 <code>hub/20260930.json</code>。
 </div>
 
 <div class="ok">
-<b>为什么不上线（2026-10-03 实测，41 万笔成熟样本，每笔走满 20 日）</b><br>
-
-<table style="margin-top:8px" data-wb><thead><tr><th>组合</th><th>样本 n</th><th>胜率</th><th>均值收益</th></tr></thead>
-<tbody>
-<tr><td style="text-align:left"><b>冷门行业</b>（15 个，两年少主升）内任意选</td><td>415,766</td>
-<td><b>55.4%</b></td><td>0.12%</td></tr>
-<tr><td style="text-align:left">热门行业（16 个）内任意选</td><td>775,444</td>
-<td><b>59.7%</b></td><td>0.61%</td></tr>
-<tr><td style="text-align:left">全市场随机基线</td><td>392,848</td><td>58.2%</td><td>0.43%</td></tr>
-</tbody></table>
-<br><b>冷门 vs 热门 = −4.3pp，冷门 vs 基线 = −2.8pp。</b>
-<br>即：<b>「两年没主升」在 A 股是负向信号（刚刚不涨），不是正向买点。</b>
-<br>这解释了为什么在此类行业里做技术面选股必然跑输随机 —— <b>池子入口就选错了一边</b>。
-<br><br>此外 5 个技术因子（低位 / 企稳 / 放量 / 领涨 / 波动收敛）做过消融：
-<b>正反两个方向都跑输随机</b>（edge −0.1 ~ −2.9pp），
-说明这些维度的档位差异纯属统计噪声，<b>不携带胜率信息</b>。
-<br>结论：<b>宁可不选，也不推一个跑输随机的池子。</b>
+<b>为什么现在能做全市场横截面（2026-10-03 修正）</b><br>
+原方案 quotes/flow 只覆盖事件域（524 / 356 只），理由是「避免重复联网」——
+<b>这个取舍是错的</b>：事件域覆盖不到全市场，就<b>无法做横截面分位</b>，
+也就无法回答「全市场里哪只最值得买」，而这正是分析的最终目的。<br>
+实测纠正：腾讯快照<b>全市场 5207 只 21 秒</b>（65 批 × 80 只）；新浪资金流
+<b>全市场 5207 只 59 秒</b>（12 并发）。两者都<b>不是瓶颈</b>，事件域口径纯属自缚手脚。
+<br><b>★ 日期真实性校验</b>：腾讯快照<b>不带任何日期字段</b>，隔天重跑无法自证是当日数据。
+底座已用日K交叉验证 —— 快照已校验= 2026-09-30（日K 交叉 399/399 一致）。
 </div>
 
 <div class="section">
-<h2>数据口径与已知偏差</h2>
-<div class="sub" style="margin:0">
-① <b>行业指数为事后重建</b>：用 <code>q2_full/_code2industry.json</code>（5543 票 → 31 行业）按
-<b>等权</b>收益平均重建。分类源不含历史成分，故存在<b>成分漂移偏差</b>，非官方板块指数。<br>
-② <b>等权而非成交额加权</b>：成交额加权会让高换手/热门票主导指数（实测会让某行业 2 年虚增到 +3529%，
-同期成分股中位仅 +17%）。<br>
-③ <b>大盘基准用真实指数</b>（沪深300，腾讯可回溯 760 根），不用自建 —— 自建会因退市股缺席、
-覆盖门槛、科创板成交额单位差 114 倍而虚增到 +1087%。<br>
-④ 样本为 <b>两年日K 底座</b>（5050 只 × 780 根），次新股/长期停牌 157 只未纳入。<br>
-⑤ 本页<b>不产生任何个股推荐</b>，页面上没有「买入」「目标价」字样。
+<div class='ok' style='margin-top:12px'><b>相关页面</b>：<a href='../cold_sector/index.html'>冷门行业榜（两年未主升）</a> —— 用两年日K 重建行业指数识别「哪些行业两年零主升」，仅陈述事实、不作买卖依据（策略已证伪：冷门 55.4% &lt; 热门 59.7%）。</div>
+<h2>字段覆盖统计（可分析域 4971 只）</h2>
+<div class="sub" style="margin:0 0 10px">覆盖率高才谈得上「横截面分析」。</div>
+<table data-wb><thead><tr><th class="l">字段</th><th>有值只数</th><th class="l">覆盖率</th></tr></thead>
+<tbody><tr><td class='l'>现价 / 涨跌幅</td><td>2220 / 4971</td><td class='l'><span class='bar' style='width:45px'></span> 44.7%</td></tr><tr><td class='l'>流通市值</td><td>4971 / 4971</td><td class='l'><span class='bar' style='width:100px'></span> 100.0%</td></tr><tr><td class='l'>换手率 / 量比</td><td>4971 / 4971</td><td class='l'><span class='bar' style='width:100px'></span> 100.0%</td></tr><tr><td class='l'>52 周高低（位置因子）</td><td>0 / 4971</td><td class='l'><span class='bar' style='width:0px'></span> 0.0%</td></tr><tr><td class='l'>PE / PB</td><td>3586 / 4971</td><td class='l'><span class='bar' style='width:72px'></span> 72.1%</td></tr><tr><td class='l'>主力资金 1 日</td><td>2113 / 4971</td><td class='l'><span class='bar' style='width:43px'></span> 42.5%</td></tr><tr><td class='l'>主力资金 5 日</td><td>1589 / 4971</td><td class='l'><span class='bar' style='width:32px'></span> 32.0%</td></tr><tr><td class='l'>主力资金 20 日</td><td>2049 / 4971</td><td class='l'><span class='bar' style='width:41px'></span> 41.2%</td></tr></tbody></table>
+<div class="sub" style="margin:10px 0 0">
+行情口径：<b>全市场（腾讯快照 5207/5207）</b>｜资金流口径：<b>全市场（新浪 5207/5207）</b>
 </div>
 </div>
 
-<div class='section'><h2>历史快照</h2><div class='arch'><a href='cold_20260930.html'>20260930</a></div></div>
+<div class="section">
+<h2>示例打分 · Top30（<b style="color:#a8500a">未过样本外检验，不是选股结论</b>）</h2>
+<div class="sub" style="margin:0 0 10px">
+先验固定 7 因子等权（方向由经济逻辑给定，不筛不调权）：
+主力资金 20 日 25% · 5 日 20% · 1 日 10% · 换手 10% · 量比 10% · 当日涨幅 10% · 距 52 周高 15%。
+<b>权重未经检验，仅用于展示分位计算能力。</b>
+</div>
+<table data-wb><thead><tr>
+<th>#</th><th class="l">代码</th><th class="l">名称</th><th>现价</th><th>涨跌</th>
+<th>换手%</th><th>量比</th><th>主力1日</th><th>主力5日</th><th>主力20日</th>
+<th>流通市值</th><th>评分</th>
+</tr></thead><tbody><tr><td>1</td><td class='l'>sz000678</td><td class='l'><a href='https://quote.eastmoney.com/sz000678.html' target='_blank'>襄阳轴承</a></td><td>12.89</td><td class='pos'>+9.98%</td><td>19.65</td><td>5.44</td><td>3.8亿</td><td>8.5亿</td><td>8.4亿</td><td>59亿</td><td>0.988</td></tr><tr><td>2</td><td class='l'>sh600418</td><td class='l'><a href='https://quote.eastmoney.com/sh600418.html' target='_blank'>江淮汽车</a></td><td>27.47</td><td class='pos'>+5.49%</td><td>12.19</td><td>1.46</td><td>12.0亿</td><td>42.9亿</td><td>48.8亿</td><td>619亿</td><td>0.984</td></tr><tr><td>3</td><td class='l'>sz002866</td><td class='l'><a href='https://quote.eastmoney.com/sz002866.html' target='_blank'>传艺科技</a></td><td>16.90</td><td class='pos'>+10.03%</td><td>18.65</td><td>5.70</td><td>4.4亿</td><td>5.7亿</td><td>5.2亿</td><td>31亿</td><td>0.982</td></tr><tr><td>4</td><td class='l'>sz002962</td><td class='l'><a href='https://quote.eastmoney.com/sz002962.html' target='_blank'>五方光电</a></td><td>16.17</td><td class='pos'>+10.00%</td><td>17.06</td><td>1.68</td><td>3.5亿</td><td>6.8亿</td><td>6.8亿</td><td>34亿</td><td>0.981</td></tr><tr><td>5</td><td class='l'>sh603127</td><td class='l'><a href='https://quote.eastmoney.com/sh603127.html' target='_blank'>昭衍新药</a></td><td>49.30</td><td class='pos'>+10.00%</td><td>8.83</td><td>1.48</td><td>9.9亿</td><td>11.7亿</td><td>9.5亿</td><td>309亿</td><td>0.979</td></tr><tr><td>6</td><td class='l'>sz000011</td><td class='l'><a href='https://quote.eastmoney.com/sz000011.html' target='_blank'>深物业A</a></td><td>12.24</td><td class='pos'>+9.97%</td><td>17.07</td><td>3.97</td><td>1.5亿</td><td>4.8亿</td><td>5.0亿</td><td>64亿</td><td>0.978</td></tr><tr><td>7</td><td class='l'>sz000504</td><td class='l'><a href='https://quote.eastmoney.com/sz000504.html' target='_blank'>南华生物</a></td><td>12.42</td><td class='pos'>+10.01%</td><td>22.51</td><td>1.11</td><td>2.7亿</td><td>11.2亿</td><td>14.2亿</td><td>41亿</td><td>0.974</td></tr><tr><td>8</td><td class='l'>sh603200</td><td class='l'><a href='https://quote.eastmoney.com/sh603200.html' target='_blank'>上海洗霸</a></td><td>44.74</td><td class='pos'>+10.01%</td><td>13.87</td><td>6.07</td><td>3.5亿</td><td>4.6亿</td><td>3.5亿</td><td>79亿</td><td>0.973</td></tr><tr><td>9</td><td class='l'>sh600719</td><td class='l'><a href='https://quote.eastmoney.com/sh600719.html' target='_blank'>大连热电</a></td><td>8.72</td><td class='pos'>+6.60%</td><td>16.50</td><td>2.16</td><td>2.4亿</td><td>2.8亿</td><td>3.9亿</td><td>35亿</td><td>0.970</td></tr><tr><td>10</td><td class='l'>sz002244</td><td class='l'><a href='https://quote.eastmoney.com/sz002244.html' target='_blank'>滨江集团</a></td><td>10.14</td><td class='pos'>+7.19%</td><td>6.50</td><td>3.13</td><td>0.3亿</td><td>4.5亿</td><td>7.8亿</td><td>280亿</td><td>0.968</td></tr><tr><td>11</td><td class='l'>sh603538</td><td class='l'><a href='https://quote.eastmoney.com/sh603538.html' target='_blank'>美诺华</a></td><td>28.59</td><td class='pos'>+10.00%</td><td>14.11</td><td>1.12</td><td>6.6亿</td><td>3.5亿</td><td>9.4亿</td><td>96亿</td><td>0.968</td></tr><tr><td>12</td><td class='l'>sh600707</td><td class='l'><a href='https://quote.eastmoney.com/sh600707.html' target='_blank'>彩虹股份</a></td><td>10.08</td><td class='pos'>+5.33%</td><td>7.71</td><td>1.18</td><td>1.3亿</td><td>7.7亿</td><td>20.1亿</td><td>362亿</td><td>0.968</td></tr><tr><td>13</td><td class='l'>sz002242</td><td class='l'><a href='https://quote.eastmoney.com/sz002242.html' target='_blank'>九阳股份</a></td><td>12.50</td><td class='pos'>+10.04%</td><td>4.59</td><td>1.67</td><td>2.9亿</td><td>5.4亿</td><td>6.7亿</td><td>95亿</td><td>0.967</td></tr><tr><td>14</td><td class='l'>sz002074</td><td class='l'><a href='https://quote.eastmoney.com/sz002074.html' target='_blank'>国轩高科</a></td><td>29.50</td><td class='pos'>+2.86%</td><td>6.88</td><td>3.20</td><td>0.9亿</td><td>7.0亿</td><td>9.2亿</td><td>512亿</td><td>0.967</td></tr><tr><td>15</td><td class='l'>sz301080</td><td class='l'><a href='https://quote.eastmoney.com/sz301080.html' target='_blank'>百普赛斯</a></td><td>141.07</td><td class='pos'>+14.69%</td><td>16.51</td><td>1.17</td><td>1.6亿</td><td>2.1亿</td><td>9.2亿</td><td>179亿</td><td>0.965</td></tr><tr><td>16</td><td class='l'>sz002531</td><td class='l'><a href='https://quote.eastmoney.com/sz002531.html' target='_blank'>天顺风能</a></td><td>7.98</td><td class='pos'>+4.45%</td><td>9.73</td><td>1.26</td><td>0.7亿</td><td>3.1亿</td><td>10.6亿</td><td>143亿</td><td>0.964</td></tr><tr><td>17</td><td class='l'>sz301190</td><td class='l'><a href='https://quote.eastmoney.com/sz301190.html' target='_blank'>善水科技</a></td><td>35.93</td><td class='pos'>+20.01%</td><td>7.95</td><td>1.25</td><td>1.3亿</td><td>5.9亿</td><td>5.6亿</td><td>65亿</td><td>0.964</td></tr><tr><td>18</td><td class='l'>sh603906</td><td class='l'><a href='https://quote.eastmoney.com/sh603906.html' target='_blank'>龙蟠科技</a></td><td>19.04</td><td class='pos'>+9.99%</td><td>6.57</td><td>3.88</td><td>4.5亿</td><td>4.2亿</td><td>2.8亿</td><td>107亿</td><td>0.963</td></tr><tr><td>19</td><td class='l'>sz002273</td><td class='l'><a href='https://quote.eastmoney.com/sz002273.html' target='_blank'>水晶光电</a></td><td>24.40</td><td class='pos'>+3.79%</td><td>6.40</td><td>2.69</td><td>5.4亿</td><td>3.7亿</td><td>4.2亿</td><td>333亿</td><td>0.963</td></tr><tr><td>20</td><td class='l'>sz000513</td><td class='l'><a href='https://quote.eastmoney.com/sz000513.html' target='_blank'>丽珠集团</a></td><td>32.90</td><td class='pos'>+2.08%</td><td>8.13</td><td>2.04</td><td>1.4亿</td><td>11.0亿</td><td>11.3亿</td><td>187亿</td><td>0.962</td></tr><tr><td>21</td><td class='l'>sz002487</td><td class='l'><a href='https://quote.eastmoney.com/sz002487.html' target='_blank'>大金重工</a></td><td>46.29</td><td class='pos'>+7.83%</td><td>14.96</td><td>1.23</td><td>2.5亿</td><td>7.1亿</td><td>3.8亿</td><td>292亿</td><td>0.961</td></tr><tr><td>22</td><td class='l'>sh600072</td><td class='l'><a href='https://quote.eastmoney.com/sh600072.html' target='_blank'>中船科技</a></td><td>9.70</td><td class='pos'>+9.98%</td><td>4.09</td><td>3.05</td><td>3.6亿</td><td>3.6亿</td><td>4.1亿</td><td>105亿</td><td>0.960</td></tr><tr><td>23</td><td class='l'>sz002164</td><td class='l'><a href='https://quote.eastmoney.com/sz002164.html' target='_blank'>宁波东力</a></td><td>13.26</td><td class='pos'>+10.04%</td><td>10.41</td><td>0.95</td><td>3.4亿</td><td>7.4亿</td><td>11.5亿</td><td>64亿</td><td>0.959</td></tr><tr><td>24</td><td class='l'>sh688137</td><td class='l'><a href='https://quote.eastmoney.com/sh688137.html' target='_blank'>近岸蛋白</a></td><td>160.39</td><td class='pos'>+13.47%</td><td>14.92</td><td>1.07</td><td>1.5亿</td><td>1.7亿</td><td>9.5亿</td><td>112亿</td><td>0.956</td></tr><tr><td>25</td><td class='l'>sh600592</td><td class='l'><a href='https://quote.eastmoney.com/sh600592.html' target='_blank'>龙溪股份</a></td><td>16.20</td><td class='pos'>+9.98%</td><td>4.72</td><td>2.03</td><td>2.3亿</td><td>2.5亿</td><td>3.0亿</td><td>65亿</td><td>0.954</td></tr><tr><td>26</td><td class='l'>sh605366</td><td class='l'><a href='https://quote.eastmoney.com/sh605366.html' target='_blank'>宏柏新材</a></td><td>10.41</td><td class='pos'>+6.77%</td><td>11.67</td><td>1.31</td><td>1.2亿</td><td>2.1亿</td><td>3.5亿</td><td>80亿</td><td>0.953</td></tr><tr><td>27</td><td class='l'>sz002821</td><td class='l'><a href='https://quote.eastmoney.com/sz002821.html' target='_blank'>凯莱英</a></td><td>188.62</td><td class='pos'>+5.30%</td><td>3.34</td><td>1.44</td><td>2.4亿</td><td>1.9亿</td><td>12.7亿</td><td>598亿</td><td>0.953</td></tr><tr><td>28</td><td class='l'>sh600802</td><td class='l'><a href='https://quote.eastmoney.com/sh600802.html' target='_blank'>福建水泥</a></td><td>7.24</td><td class='pos'>+4.32%</td><td>24.29</td><td>1.70</td><td>0.1亿</td><td>4.2亿</td><td>4.7亿</td><td>33亿</td><td>0.953</td></tr><tr><td>29</td><td class='l'>sh688806</td><td class='l'><a href='https://quote.eastmoney.com/sh688806.html' target='_blank'>泰诺麦博-U</a></td><td>30.67</td><td class='pos'>+19.99%</td><td>23.59</td><td>1.45</td><td>1.9亿</td><td>1.8亿</td><td>2.0亿</td><td>16亿</td><td>0.951</td></tr><tr><td>30</td><td class='l'>sh601811</td><td class='l'><a href='https://quote.eastmoney.com/sh601811.html' target='_blank'>新华文轩</a></td><td>21.12</td><td class='pos'>+3.68%</td><td>7.26</td><td>1.95</td><td>0.6亿</td><td>0.7亿</td><td>6.1亿</td><td>167亿</td><td>0.950</td></tr></tbody></table>
+</div>
+
+<div class='section'><h2>历史快照</h2><div class='arch'><a href='cross_20260930.html'>20260930</a></div></div>
 <footer>
-本页由 <code>build_cold_sector.py</code> 生成，引擎 <code>_cold_sector.py</code>，
-闸门 <code>_cold_oos.py</code>，消融 <code>_cold_ablate.py</code>。<br>
-纪律：<b>宁可不选，不能乱选</b> —— 未通过样本外检验的策略一律不出票。
-<br>数据日 2026-09-30｜本页所有数字均由当日真实数据重算，无写死值。
+本页由 <code>build_cross_section.py</code> 生成，数据源 <code>_datahub.py</code>（统一数据底座），
+门禁 <code>_datahub_gate.py</code>。<br>
+纪律：<b>宁可不选，不能乱选</b>；<b>不许编数据</b> —— 快照无日期字段，
+已强制与日K交叉校验，未通过则拒绝当当日使用。
+<br>数据日 2026-09-30｜全市场口径，非抽样。
 </footer>
 </div><!--WB_APP--><script id='wb-app'>
 /* ============================================================
