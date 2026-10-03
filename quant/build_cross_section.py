@@ -132,34 +132,37 @@ def build(date):
         })
 
     # ---- 字段覆盖统计（证明数据有多全）----
+    # ⚠ 上一版用「中文名 → 键名」手工映射，**算错了**（现价 44.7%、52周高低 0%）。
+    #   正确做法：直接用腾讯快照的**原始键名**统计。
+    #   键名：last / change_percent / circulating_market_cap / turnover_rate /
+    #        volume_ratio / high_52week / low_52week / pe_ratio / pb_ratio
     cover = [
-        ("现价 / 涨跌幅", "last / chg", 2),
-        ("流通市值", "cap", 1),
-        ("换手率 / 量比", "turn / vr", 2),
-        ("52 周高低（位置因子）", "h52 / l52", 2),
-        ("PE / PB", "pe / pb", 2),
-        ("主力资金 1 日", "mf1", 1),
-        ("主力资金 5 日", "mf5", 1),
-        ("主力资金 20 日", "mf20", 1),
+        ("现价 / 涨跌幅", ["last", "change_percent"]),
+        ("流通市值", ["circulating_market_cap"]),
+        ("换手率 / 量比", ["turnover_rate", "volume_ratio"]),
+        ("52 周高 / 52 周低", ["high_52week", "low_52week"]),
+        ("PE / PB", ["pe_ratio", "pb_ratio"]),
+        ("主力资金 1 日", ["mf1"]),
+        ("主力资金 5 日", ["mf5"]),
+        ("主力资金 20 日", ["mf20"]),
     ]
+    n_all_dom = max(1, len(rows))
     cov_rows = []
-    for cn, _fld, need in cover:
-        ks = cn.split(" / ")
+    for cn, keys in cover:
         n_ok = 0
-        for r in rows:
-            ok = True
-            for k in ks:
-                v = r.get({"现价": "last", "涨跌幅": "chg", "流通市值": "cap",
-                           "换手率": "turn", "量比": "vr", "52 周高": "h52",
-                           "52 周低": "l52", "PE": "pe", "PB": "pb",
-                           "主力资金 1 日": "mf1", "主力资金 5 日": "mf5",
-                           "主力资金 20 日": "mf20"}.get(k, k), 0.0)
-                if not v or v <= 0:
-                    ok = False
-                    break
-            if ok:
-                n_ok += 1
-        cov_rows.append((cn, n_ok, 100.0 * n_ok / max(1, len(rows))))
+        for c in dom:
+            vq = q[c]
+            if keys[0].startswith("mf"):          # 资金流在 flow 维度
+                vf = f.get(c) or {}
+                if all((vf.get(k) or 0) > 0 for k in keys):
+                    n_ok += 1
+            else:
+                # 涨跌幅可为 0（平盘），算「有值」；其余要求 > 0
+                if all((vq.get(k) is not None) and
+                       ((vq.get(k) > 0) if k != "change_percent" else (vq.get(k) is not None))
+                       for k in keys):
+                    n_ok += 1
+        cov_rows.append((cn, n_ok, 100.0 * n_ok / n_all_dom))
 
     # ---- 先验固定等权示例打分（明确非选股结论）----
     for fld, hb in (("mf20", True), ("mf5", True), ("mf1", True),
@@ -191,9 +194,10 @@ def render(d):
 
     def cov_tr(cn, n, pct):
         w = int(round(pct))
-        return ("<tr><td class='l'>%s</td><td>%d / %d</td>"
-                "<td class='l'><span class='bar' style='width:%dpx'></span> %.1f%%</td></tr>"
-                % (cn, n, len(rows), w, pct))
+        return ("<tr><td class='l'>" + cn + "</td><td>" + str(n) + " / "
+                + str(len(d["dom"])) + "</td><td class='l'>"
+                + "<span class='bar' style='width:" + str(w) + "px'></span> "
+                + ("%.1f%%" % pct) + "</td></tr>")
 
     def top_tr(i, r):
         cls = "pos" if r["chg"] > 0 else ("neg" if r["chg"] < 0 else "")
