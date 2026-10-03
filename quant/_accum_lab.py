@@ -295,6 +295,9 @@ def signal_frame(T, K, q2, snaps, cal, mh=None):
     for d in (block, execa, lhb):
         codes.update(d.keys())
     codes.update(q2.keys())
+    # ⚠ 必须排序固定迭代顺序：str 的 hash 受 PYTHONHASHSEED 随机化，
+    # 直接迭代 set 会让 frame 的插入顺序随进程变 → 并列排序结果漂移 → 回测数字每次跑都不一样
+    codes = sorted(codes)
 
     # 日频强度归一（横截面）
     def norm(vals):
@@ -445,7 +448,8 @@ def main():
             for k in ALLSIG:
                 if k in sig and sig[k] > 0:
                     sig_events[k].append((code, T))
-        scored.sort(key=lambda x: -x[1])
+        # 末位以 code 兜底：并列分数若不限定，结果取决于上游 dict 顺序 → 页面数字会漂
+        scored.sort(key=lambda x: (-x[1], x[0]))
         sel = scored[:TOPN]
         per_day_sel.append((T, sel))
         # 入选股回测

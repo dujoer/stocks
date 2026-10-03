@@ -42,6 +42,40 @@ SIG_CN = L.SIG_CN
 SIG_ORDER = ["pe", "sun", "person", "fund", "block", "exec", "lhb", "m1", "m3", "m5"]
 I_KEYS = ("pe", "sun", "person", "fund")
 M_KEYS = ("m1", "m3", "m5")
+
+# 分档出票许可：由 quant/_accum_tier_gate.py 的显著性检验产出，
+# 只有「逐日平衡 edge > 0 且 bootstrap 通过率(R3，三种子最小值) ≥ 95%」的档才算出票。
+# 「候选改法」一类是在同一批样本里挑出来的变体，永不参与判定（挑赢家本身就是过拟合）。
+EVIDENCE = os.path.join(HERE, "_accum_tier_gate.json")
+RULE2TIER = {"S 档（现行生产）": "S",
+             "A 档（现行生产·M或I）": "A",
+             "B 档（观察仓·2信号）": "B"}
+
+
+def tier_evidence():
+    """读分档显著性证据；读不出任何东西时返回 {}（调用方按「不出票」处理，fail-safe）。"""
+    try:
+        d = json.load(open(EVIDENCE, encoding="utf-8"))
+    except Exception:
+        return {}
+    per = d.get("per") or {}
+    # json.dump 会把 int 键写成 str，两边都要兜住
+    pk = d.get("primary")
+    st = (per.get(str(pk)) or per.get(pk) or {}).get("stat") or {}
+    if not st and per:                      # 再兜一层：拿最大的那个窗口
+        try:
+            st = per[sorted(per.keys(), key=lambda x: int(x))[-1]].get("stat") or {}
+        except Exception:
+            st = {}
+    out = {}
+    for name, tier in RULE2TIER.items():
+        s = st.get(name)
+        if not s:
+            continue
+        out[tier] = {"ok": bool(s.get("edge", 0) > 0 and (s.get("er3_min") or 0) >= 0.95),
+                     "edge": s.get("edge", 0.0), "r3": s.get("er3_min", 0.0),
+                     "wr": s.get("wr", 0.0), "days": s.get("days", 0), "n": s.get("n", 0)}
+    return out
 TIER_CN = {"S": "S 强共振", "A": "A 共振", "B": "B 观察"}
 
 
@@ -599,7 +633,24 @@ def render(date, rows, universe_n, res, hist):
 <span class='sc'>增仓分 {r["score"]:.2f}</span></div>
 <div class='sg'>{sig_badges(r["sig"])}</div></div>"""
 
-    cards = "".join(card(r) for r in (S + A)[:40])
+
+    # ---- 分档出票许可（读显著性证据，读不到 = 一律不出票）----
+    evd = tier_evidence()
+    emit = sorted(t for t, v in evd.items() if v.get("ok"))
+    ev_rows = "".join(
+        "<tr><td>%s</td><td class='num'>%d</td><td class='num'>%d</td>"
+        "<td class='num' style='color:%s;font-weight:700'>%+.2f pp</td>"
+        "<td class='num'>%.0f%%</td><td>%s</td></tr>"
+        % (TIER_CN.get(t, t), (evd[t]["n"] or 0), (evd[t]["days"] or 0),
+           (RED if evd[t]["edge"] > 0 else GRN), evd[t]["edge"],
+           (evd[t]["r3"] or 0) * 100,
+           ("<b style='color:%s'>可出票</b>" % RED) if evd[t]["ok"] else "未达 95% 门槛 → 不出票")
+        for t in sorted(evd.keys()))
+    ev_tbl = ("<table><tr><th>档位</th><th class='num'>回测样本</th><th class='num'>入场日</th>"
+              "<th class='num'>逐日平衡超额</th><th class='num'>R3（保守）</th><th>判定</th></tr>"
+              "%s</table>" % ev_rows) if ev_rows else ""
+    emit_txt = ("、".join(TIER_CN.get(t, t) for t in emit)) if emit else "无"
+    cards = "".join(card(r) for r in [x for x in (S + A + B) if x["tier"] in emit][:40])
 
     def trow(r, i):
         return (f"<tr><td>{i}</td><td><a href='https://quote.eastmoney.com/{r['code']}.html' "
@@ -657,7 +708,7 @@ td a{{color:#1c2430;text-decoration:none}} td a:hover{{color:{BLUE}}}
 <div class="card"><h2>选股逻辑：机构/私募 × 融资增仓 双模块</h2>
 <div class="kpi">
 <div class="k" style="background:linear-gradient(135deg,#fffaf0,#fdf3e0);border-color:#ecd9ae"><div class="v" style="color:{GOLD}">{s_v6[1]:.1f}%</div><div class="l">S 档胜率（M强×机构私募，n={s_v6[0]}）</div></div>
-<div class="k"><div class="v" style="color:{RED}">{v3[1]:.1f}%</div><div class="l">A 档胜率（≥3共振且M/I，n={v3[0]}）</div></div>
+<div class="k"><div class="v" style="color:{GRN if (evd.get('A',{}).get('wr') or 0) < 55 else BLUE}">{(evd.get('A',{}).get('wr') or 0):.1f}%</div><div class="l">A 档胜率（现行规则「≥3共振且 M 或 I」· 全候选域口径，n={evd.get('A',{}).get('n',0)}）</div></div>
 <div class="k"><div class="v" style="color:#888">{base_wr[1]:.1f}%</div><div class="l">随机基线（{days}日回测）</div></div>
 <div class="k"><div class="v">{len(S)}</div><div class="l">今日 S 档（融资强增仓×机构私募）</div></div>
 <div class="k"><div class="v" style="color:{RED if edge > 0 else GRN}">{edge:+.1f}pp</div><div class="l">入选整体 vs 随机基线（{sel_wr[1]:.1f}% / n={sel_wr[0]}）</div></div>
@@ -675,18 +726,32 @@ S 档 ≈62%、A 档 ≈60%、基线 ≈57%，超额明显收窄 —— <b>这�
 <b>Ⅱ 融资融券 1/3/5 日净增仓（日频，东财全量序列 · T+1 公布口径）</b>：融资净买入占成交额 ≥2%/4%/4% 触发，
 其中 <b>5 日占比</b>本次回测为 {m5_wr[1]:.1f}%（n={m5_wr[0]}）；<br>
 <b>Ⅲ 日频事件</b>：大宗交易（折价加权）· 高管增持 · 席位异动。<br>
-档位规则：<b>S 档</b> = 5日融资净买入占比≥4% 且 机构/私募增持（胜率 {s_v6[1]:.1f}%）；<b>A 档</b> = ≥3 信号共振且（M 或 I）（{v3[1]:.1f}%）；<b>B 档</b> = 2 信号观察仓。
-退出纪律与主升/反转池一致：止损 −12% ／ 浮盈 +6% 激活、回撤 3% 跟踪 ／ 满 20 日强平。证据见 <a href='lab.html'>回测证据页</a>。</div>
+档位规则：<b>S 档</b> = 5日融资净买入占比≥4% 且 机构/私募增持；<b>A 档</b> = ≥3 信号共振且（M <b>或</b> I）；<b>B 档</b> = 2 信号观察仓。
+退出纪律与主升/反转池一致：止损 −12% ／ 浮盈 +6% 激活、回撤 3% 跟踪 ／ 满 20 日强平。证据见 <a href='lab.html'>回测证据页（top25 口径）</a>。<br>
+<span class="note">口径更正：早期版本把 A 档写成「≥3共振且（M 或 I）」却标注 59.4% ——
+那个数字属于「M <b>且</b> I」的另一种写法。按<b>生产实际执行的规则</b>在<b>全候选域</b>上重算，
+A 档胜率只有 {evd.get('A',{}).get('wr',0):.1f}%（n={evd.get('A',{}).get('n',0)}），低于同期候选域整体水平。</span></div>
 {_ablate_block()}
 {_hub_note(date)}</div>
 
-<div class="card"><h2>S 档 · 强增仓 × 机构私募（最高确定性）</h2>
-{''.join([f"<div class='stkgrid'>{cards}</div>"] if (S or A) else ["<div class='note'>今日无 S/A 档标的 —— 按纪律<b>空仓等待</b>，不降低门槛凑数。</div>"])}
+<div class="card"><h2>分档出票许可（由显著性检验决定，不是人工挑选）</h2>
+{ev_tbl or "<div class='note'>未读到分档显著性证据 → 一律不出票。</div>"}
+<div class="evi" style="margin-top:10px">
+判据沿用大盘环境门控的同一把尺子：<b>逐日平衡超额 &gt; 0 且 bootstrap 通过率 ≥ 95%</b> 才算达标，
+否则宁可空仓。<b>本期可出票的档位：{emit_txt}。</b>
+未达标的档仍照原规则列出（数据不隐藏），但<b>不作为买入依据</b>。
+完整判定过程见 <a href='tier_gate.html'>分档规则显著性检验 tier_gate.html</a>。</div></div>
+
+<div class="card"><h2>{'可执行档位' if emit else '本期无可执行标的'}（由显著性门槛决定）</h2>
+{(("<div class='stkgrid'>%s</div>" % cards) if cards else
+  "<div class='note'>本期<b>没有任何档位通过显著性门槛</b>，不出票。<br>"
+  "触发明细仍完整列在下面的名单里（数据不隐藏，可自行跟踪），但本页不把它们当作已验证的买入信号。"
+  "宁可不选，不乱选。</div>")}
 </div>
 
 <div class="card"><h2>完整名单（S + A + B 档）</h2>
 <table><tr><th>#</th><th>名称</th><th>代码</th><th>档</th><th>共振数</th><th>5日融资占比</th><th>增仓分</th><th>触发信号</th></tr>{tbl}</table>
-<div class="note">B 档（2 信号）仅作观察仓；1 信号 ≈基线，不入选。</div></div>
+<div class="note">名单按规则照实列出（不隐藏数据）；只有带出票许可的档位才算买入依据 —— 本期<b>可出票：{emit_txt}</b>。B 档（2 信号）仅作观察仓；1 信号 ≈基线，不入选。</div></div>
 
 <div class="card"><h2>历史归档（每日留档 · 事后结算）</h2>
 <table><tr><th>数据日</th><th>候选域</th><th>S</th><th>A</th><th>B</th><th>已兑现 / 观察中</th><th>胜率</th></tr>{arc_rows}</table>

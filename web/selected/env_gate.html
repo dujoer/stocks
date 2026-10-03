@@ -2,7 +2,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>主升精选 · 环境门控系数样本外验证 · 2026-01-20~2026-08-26</title><style>
 :root{--bg:#fbfbfd;--card:#fff;--text:#1d1d1f;--muted:#6e6e73;--line:#e5e5e7;
- --up:#ff3b30;--dn:#34c759;--blue:#0071e3;--gold:#b8893b;}
+ --up:#ff3b30;--dn:#34c759;--blue:#0071e3;--gold:#1a73e8;}
 *{box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
  background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:0}
@@ -22,8 +22,201 @@ th{color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa;white-
 .up{color:var(--up)}.dn{color:var(--dn)}.am{color:var(--blue)}
 .kv{font-size:12.5px;color:var(--muted)}
 .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
-</style></head>
-<body><div class="wrap">
+</style><!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  .navgrp{ padding:5px 6px 5px 5px !important; }
+}
+
+</style><!--/WB_THEME--></head>
+<body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a><a href='../three_yin/index.html'>三连阴</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class="wrap">
 <h1>主升精选 · 大盘环境门控系数样本外验证</h1>
 <div class="sub">面板 2026-01-20 ~ 2026-08-26 ｜ 可用信号日 30 个（强势 8 / 震荡 9 /
 弱势 7 / 破位 6）｜ 退出规则 −12% 硬止损 / +6% 激活 / 3% 回撤 / 满 20 日强平</div>
@@ -37,7 +230,7 @@ th{color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa;white-
 <div class="box red"><b>⚠️ 样本量敏感性提示（换采样步长复核后的修正）：</b>
 本页结论是按 <b>step=5</b> 采样（30 个有效信号日，其中强势仅 8 日）得出的。
 换采样步长复核后（见 <a href='env_gate_sens.html' style='color:var(--blue)'>样本量敏感性检验</a>）：
-<div class="card"><table>
+<div class="card"><table data-wb>
 <thead><tr><th>环境档</th><th>各步长下的策略层绝对均收益</th><th>跨步长同号</th><th>修正后的判定</th></tr></thead>
 <tbody><tr><td>强势</td><td class='num'>3日 +0.68% ／ 5日 +2.21% ／ 6日 +0.30% ／ 9日 +0.95%</td><td>是</td><td><b>开仓（跨步长稳定为正）</b></td></tr><tr><td>震荡</td><td class='num'>3日 +0.82% ／ 5日 -0.37% ／ 6日 +0.80% ／ 9日 +0.40%</td><td><b>否（翻转）</b></td><td><b>不可判（符号随采样翻转）</b></td></tr><tr><td>弱势</td><td class='num'>3日 -1.04% ／ 5日 -1.05% ／ 6日 -1.06% ／ 9日 -0.24%</td><td>是</td><td><b>空仓（跨步长稳定为负）</b></td></tr><tr><td>破位</td><td class='num'>3日 +0.49% ／ 5日 -0.10% ／ 6日 +0.29% ／ 9日 +1.69%</td><td><b>否（翻转）</b></td><td><b>不可判（符号随采样翻转）</b></td></tr></tbody></table></div>
 <b>强势开仓</b>与<b>弱势空仓</b>跨步长稳定，这两条保留；
@@ -51,21 +244,21 @@ th{color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa;white-
 所以门控只能决定<b>要不要出手</b>，不能声明它提高了选股胜率。</div>
 
 <h2>一、环境分能不能预测后向收益？（全域随机持有，非选股层）</h2>
-<div class="card"><table>
+<div class="card"><table data-wb>
 <thead><tr><th>环境档</th><th>信号日</th><th>笔数</th><th>均收益</th><th>95% 区间（按日整块重抽）</th><th>胜率</th></tr></thead>
 <tbody><tr><td>强势</td><td class='num'>8</td><td class='num'>38159</td><td class='num'>-0.78</td><td class='num'>[-2.38, +0.72]</td><td class='num'>57.7%</td></tr><tr><td>震荡</td><td class='num'>9</td><td class='num'>42939</td><td class='num'>-1.80</td><td class='num'>[-3.31, -0.53]</td><td class='num'>51.9%</td></tr><tr><td>弱势</td><td class='num'>7</td><td class='num'>33492</td><td class='num'>-2.06</td><td class='num'>[-4.20, +0.04]</td><td class='num'>52.0%</td></tr><tr><td>破位</td><td class='num'>6</td><td class='num'>28491</td><td class='num'>+1.35</td><td class='num'>[+0.18, +2.37]</td><td class='num'>71.5%</td></tr></tbody></table>
 <div class="kv">均收益随环境分单调递减？<b>否</b>：破位（指数远低于 MA20）后 20 日反而最好，震荡/弱势最差。
 这说明拿连续的环境分去调仓位系数站不住；能站住的是「分数高（指数在 MA20 上方且上行）时选股有 alpha、分数低时没有甚至为负」这个方向。</div></div>
 
 <h2>二、各档策略相对同日全票的 edge（R1 等量对照 · R2 真选股层 · R3 双条件）</h2>
-<div class="card"><table>
+<div class="card"><table data-wb>
 <thead><tr><th>环境档</th><th>信号日</th><th>策略逐日均</th><th>同日全票逐日均</th><th>edge</th><th>95% 区间</th><th>R3 通过率</th><th>判定</th></tr></thead>
 <tbody><tr><td>强势</td><td class='num'>8</td><td class='num'>+2.21</td><td class='num'>-0.73</td><td class='num'>+2.94pp</td><td class='num'>[+1.50, +4.31]</td><td class='num'>100.0%</td><td>通过</td></tr><tr><td>震荡</td><td class='num'>9</td><td class='num'>-0.38</td><td class='num'>-1.77</td><td class='num'>+1.39pp</td><td class='num'>[-0.45, +3.04]</td><td class='num'>89.6%</td><td>不通过</td></tr><tr><td>弱势</td><td class='num'>7</td><td class='num'>-1.06</td><td class='num'>-2.02</td><td class='num'>+0.96pp</td><td class='num'>[-0.71, +2.71]</td><td class='num'>83.1%</td><td>不通过</td></tr><tr><td>破位</td><td class='num'>6</td><td class='num'>-0.10</td><td class='num'>+1.36</td><td class='num'>-1.45pp</td><td class='num'>[-3.19, +0.42]</td><td class='num'>9.2%</td><td>不通过</td></tr></tbody></table>
 <div class="kv">「同日全票逐日均」= 同一天全市场票的等权平均，日期层的 β 已被消掉，剩下的是横截面选股能力。
 <b>只有强势档 edge 显著且 R3 100% 通过</b>；破位档 edge 为负（破位时追强不如随便买），其余两档不显著。</div></div>
 
 <h2>三、反推仓位系数（均值-方差有效口径，按日 block bootstrap）</h2>
-<div class="card"><table>
+<div class="card"><table data-wb>
 <thead><tr><th>环境档</th><th>信号日</th><th>笔数</th><th>均收益</th><th>标准差</th><th>mean/sd</th><th>相对系数（强势=1）</th><th>相对系数 95% 区间</th></tr></thead>
 <tbody><tr><td>强势</td><td class='num'>8</td><td class='num'>1909</td><td class='num'>+2.21</td><td class='num'>8.82</td><td class='num'>+0.2503</td><td class='num up'>+1.00</td><td class='num'>[+0.60, +1.42]</td></tr><tr><td>震荡</td><td class='num'>9</td><td class='num'>2147</td><td class='num'>-0.37</td><td class='num'>9.13</td><td class='num'>-0.0408</td><td class='num dn'>-0.16</td><td class='num'>[-0.93, +0.52]</td></tr><tr><td>弱势</td><td class='num'>7</td><td class='num'>1675</td><td class='num'>-1.05</td><td class='num'>9.06</td><td class='num'>-0.1163</td><td class='num dn'>-0.46</td><td class='num'>[-1.17, +0.25]</td></tr><tr><td>破位</td><td class='num'>6</td><td class='num'>1425</td><td class='num'>-0.10</td><td class='num'>8.37</td><td class='num'>-0.0114</td><td class='num dn'>-0.05</td><td class='num'>[-0.58, +0.46]</td></tr></tbody></table>
 <div class="kv">固定风险预算时 i 档最优暴露 f<sub>i</sub> = σ/sd<sub>i</sub>，可达均值 = (mean<sub>i</sub>/sd<sub>i</sub>)·σ，
@@ -79,7 +272,7 @@ th{color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa;white-
 符号稳定的只有强势（正）与震荡、弱势（负）；震荡/弱势两档同时为负 = 结论一致指向<b>不出手</b>。</div></div>
 
 <h2>五、环境分连续分位（每 0.5 一档）</h2>
-<div class="card"><table>
+<div class="card"><table data-wb>
 <thead><tr><th>环境分</th><th>笔数</th><th>均收益</th><th>胜率</th><th>mean/sd</th></tr></thead>
 <tbody><tr><td>≈1.5</td><td class='num'>477</td><td class='num'>-1.60</td><td class='num'>53.7%</td><td class='num'>-0.1998</td></tr><tr><td>≈2.0</td><td class='num'>948</td><td class='num'>+0.66</td><td class='num'>64.6%</td><td class='num'>+0.0786</td></tr><tr><td>≈2.5</td><td class='num'>719</td><td class='num'>-2.75</td><td class='num'>48.1%</td><td class='num'>-0.2954</td></tr><tr><td>≈3.0</td><td class='num'>1199</td><td class='num'>+0.41</td><td class='num'>67.1%</td><td class='num'>+0.0471</td></tr><tr><td>≈3.5</td><td class='num'>1672</td><td class='num'>-0.84</td><td class='num'>60.1%</td><td class='num'>-0.0901</td></tr><tr><td>≈4.0</td><td class='num'>1899</td><td class='num'>+2.03</td><td class='num'>73.8%</td><td class='num'>+0.2286</td></tr><tr><td>≈4.5</td><td class='num'>242</td><td class='num'>+2.77</td><td class='num'>81.0%</td><td class='num'>+0.3617</td></tr></tbody></table>
 <div class="kv">真正有区分的是<b>高分端</b>（≥4.0 两档 mean/sd 约 +0.24 / +0.36）与低分端（≈2.5 档 −0.30），
@@ -105,4 +298,168 @@ core 只在最近 6 个信号日落盘，这些日之外退化为纯指数口径
 「强势开仓、其余空仓」只应用于<b>主升精选</b>。当前生产 ENV_RULE 里 弱势=0.55、震荡=0.8 仍保留原值，属于未经验证的风险预算参数。</div></div>
 
 <div class="foot">本页为量化验证记录，非个股推荐、非买卖建议。决策责任在账户本人。证据生成脚本 quant/_env_gate_lab.py。</div>
-</div></body></html>
+</div><!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--></body></html>
