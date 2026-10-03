@@ -144,6 +144,7 @@ FILES = [
     "quant/_flow_lead_lag.py",       # 资金流领先/滞后判定（结论：领先但无增量，不进规则）
     "quant/_nonprice_lead.py",       # 非价量（位置类）因子检验（结论：低位有效应但无超额）
     "quant/_pullback_probe.py",      # 强势行业回调买点检验（结论：9 定义全负，不出票）
+    "quant/_strategy_gate.py",       # ★策略结论门禁（R1等量/R2真选股层/R3判定双条件）
     "web/accumulation/accum_result.json",  # 回测汇总（模块组合/敏感性，供主页卡与审计）
     # 消融/样本外结论：build_accum._ablate_block() 动态读这两个 JSON 渲染页面结论，
     # 不推送 → 线上页面会退化成「尚未运行」，等于结论丢失。
