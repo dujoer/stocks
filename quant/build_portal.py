@@ -751,7 +751,9 @@ update_steps = [
      "一次性把 <b>行情快照 / 主力资金流 / 融资融券 / 龙虎榜 / 大宗 / 增减持 / 板块 / 日K</b> 8 个维度"
      "汇总落 <code>quant/hub/{DATE}.json</code> + <code>manifest.json</code>，各池子<b>只读不抓</b>，"
      "消除重复请求导致的限频。补抓单维度用 <code>--only quotes</code>；核对各来源数据日用 "
-     "<code>python quant/_datahub_api.py --date {DATE} --verify</code>（会报出落后于当日的维度）。"),
+     "<code>python quant/_datahub_api.py --date {DATE} --verify</code>（会报出落后于当日的维度）。"
+     "再跑 <code>python quant/_datahub_archive.py --date {DATE}</code> 沉淀当日切片（1.5MB），"
+     "供后续做时间序列检验。★资金流序列已落 <code>hub/flowseq_{DATE}.json</code>（250 日，16MB，<b>不推送</b>）。"),
     ("② 龙虎榜主看板", "<code>python quant/build_lhb_enriched.py</code> → <code>python quant/build_dashboards.py --date {DATE}</code>，重写 web/ 下各页面（<b>会重建 web/lhb/index.html</b>）。席位明细最易漏，漏跑则全榜表从 9 列退化 6 列。"),
     ("③ 高管增减持", "<code>tool_event(manager_sharechg, limit=700)</code>；<b>降级期</b>经东财 <code>RPT_EXECUTIVE_HOLD_DETAILS</code> 回补（变动日口径、覆盖约 76%）→ 落 <code>quant/exec_chg/{DATE}.json</code> → <code>python quant/gen_exec.py --date {DATE}</code> → <code>python quant/build_exec.py --date {DATE}</code>。"),
     ("④ 大宗交易", "<code>block_past_30(limit=3000)</code>；<b>降级期</b>经东财 <code>RPT_DATA_BLOCKTRADE</code>（pageSize=5000；折扣 <code>discount=-PREMIUM_RATIO*100</code>，正=折价）→ 落 <code>quant/block_chg/{DATE}.json</code> → <code>python quant/gen_block.py --date {DATE}</code> → <code>python quant/build_block.py --date {DATE}</code>。"),

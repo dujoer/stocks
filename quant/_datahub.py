@@ -265,8 +265,44 @@ def dim_flow(date, ctx, offline=True):
         if got:
             out.update(src="新浪MoneyFlow", ok=True, data=got,
                        scope="全市场（新浪 %d/%d）" % (len(got), len(codes)), n=len(got))
+            out["hist_dates"] = _flow_hist_span(got)
         else:
             out["reason"] = "新浪资金流全失败（%d 只）" % len(codes)
+            return out
+
+        # ★ 同时落**逐日序列**（2026-10-03 新增）。
+        #   `sina_flow()` 只把 25 天逐日 netamount 压成 mf1/mf5/mf10/mf20 聚合值就丢掉了，
+        #   而「资金流能否预测未来」这个问题**必须**有历史序列才能答（否则只能做截面，
+        #   分不清「涨→流入」还是「流入→涨」）。故这里补抓序列，单独存 `seq`。
+        seq = _fetch_flow_series(codes, num=ctx.get("flow_win") or 250)
+        if seq:
+            # ★ 单独存 `flowseq_{DATE}.json`，**不塞进 hub 主文件**：
+            #   序列约 3.4MB，塞进去会让 hub 涨到 ~6MB 且每天都要重推。
+            seq_path = os.path.join(HUB, "flowseq_%s.json" % DS(date))
+            # ★ 列式存储：日期表共用一份（各票交易日基本一致），
+            #   每票只存数值数组 → 体积从 ~32MB 降到 ~11MB。
+            #   row_dates[i] 对应每票 values[i]（缺期为 None）。
+            alld = sorted({d for v in seq.values() for d, _x in v})
+            di = {d: i for i, d in enumerate(alld)}
+            col = {}
+            for c, v in seq.items():
+                arr = [None] * len(alld)
+                for d, x in v:
+                    j = di.get(d)
+                    if j is not None:
+                        arr[j] = x
+                col[c] = arr
+            json.dump({"asof": date, "n": len(seq), "layout": "col",
+                       "row_dates": alld, "span": _seq_span(seq),
+                       "n_dates": len(alld), "values": col},
+                      open(seq_path, "w", encoding="utf-8"), ensure_ascii=False)
+            out["seq_file"] = os.path.basename(seq_path)
+            out["seq_n"] = len(seq)
+            out["seq_span"] = _seq_span(seq)
+            out["scope"] += "；另存逐日序列 %s" % out["seq_file"]
+        else:
+            out["seq_file"] = ""
+            out["seq_note"] = "序列抓取失败：资金流只有当日聚合值，无法回溯检验"
     except Exception as e:
         out["reason"] = "异常：%s" % str(e)[:80]
     return out
@@ -313,6 +349,67 @@ def _verify_snapshot_date(date, got, sample=400):
         return False, ("快照与 %s 日K 收盘不一致 %.1f%%（%d/%d）→ 快照不是 %s 的数据，"
                        "**拒绝当当日使用**" % (date, rate, bad, n, date))
     return True, "快照已校验= %s（日K 交叉 %d/%d 一致）" % (date, ok, n)
+
+
+def _fetch_flow_series(codes, num=25, workers=12):
+    """抓新浪**逐日**主力净流入序列 → {code: [[date, netamount], ...]}（升序）。
+
+    为什么要单独抓：`sina_flow()` 返回的只是聚合视图（mf1/mf5/mf10/mf20），
+    逐日明细被丢弃。而「资金流是领先还是滞后」必须用序列回答。
+    """
+    from concurrent.futures import ThreadPoolExecutor
+    import fetch_rev_flow as FR
+
+    def one(c):
+        try:
+            rows = FR._sina_rows(c, num)
+        except Exception:
+            return None
+        if not rows:
+            return None
+        out = []
+        for r in rows:
+            try:
+                out.append([r.get("opendate"), float(r.get("netamount") or 0)])
+            except Exception:
+                continue
+        # 新浪返回是倒序（最新在前）→ 转为升序
+        out.sort(key=lambda x: x[0] or "")
+        return out or None
+
+    res = {}
+    try:
+        with ThreadPoolExecutor(max_workers=workers) as ex:
+            for c, v in zip(codes, ex.map(one, codes)):
+                if v:
+                    res[c] = v
+    except Exception:
+        return res or None
+    return res or None
+
+
+def _seq_span(seq):
+    if not seq:
+        return ""
+    first = next(iter(seq.values()))
+    if not first:
+        return ""
+    ds = [r[0] for r in first if r and r[0]]
+    return ("%s ~ %s（%d 日）" % (min(ds), max(ds), len(ds))) if ds else ""
+
+
+def _flow_hist_span(got):
+    """新浪每股返回 25 天逐日序列 → 报告历史覆盖区间（可回溯性检查）。
+
+    ★ 2026-10-03 重要发现：`_sina_rows(code, 25)` 返回的是**逐日** netamount，
+      底座存的 mf1/mf5/mf20 只是它的聚合视图。
+      → **历史资金流可以回溯**，不必等「每日沉淀 40 天」才能做时间序列检验。
+      这条直接决定「资金流因子能否预测未来」今天就可验证。
+    """
+    ds = [v.get("date") for v in got.values() if v.get("date")]
+    if not ds:
+        return ""
+    return "%s ~ %s" % (min(ds), max(ds))
 
 
 def dim_margin(date, ctx, offline=True):
@@ -442,7 +539,7 @@ FETCHERS = {
 # ============================================================
 # 主流程
 # ============================================================
-def run(date, only=None, offline=True, force=False, flow_limit=0):
+def run(date, only=None, offline=True, force=False, flow_limit=0, flow_win=250):
     prev = load_hub(date)
     # ⚠ 语义严格区分：
     #   --only X  → **增量补抓**（--force 也只重抓 X，其余维度保留）
@@ -460,7 +557,7 @@ def run(date, only=None, offline=True, force=False, flow_limit=0):
         "dims": dims,
     }
     codes = _all_codes()
-    ctx = {"codes": codes, "flow_limit": flow_limit}
+    ctx = {"codes": codes, "flow_limit": flow_limit, "flow_win": flow_win}
     todo = [d for d in DIM_ORDER if (only is None or d in only)]
 
     print("[底座] %s｜维度 %d/%d｜票池 %d 只｜%s"
@@ -537,6 +634,8 @@ def main():
                     help="只用离线源，不联网（默认联网，允许重试失败维度）")
     ap.add_argument("--force", action="store_true", help="忽略已有数据，全部重抓")
     ap.add_argument("--list", action="store_true", help="列出维度后退出")
+    ap.add_argument("--flow-win", type=int, default=250,
+                    help="资金流逐日序列回溯天数（新浪实测最多 250 天≈1年）")
     ap.add_argument("--flow-limit", type=int, default=0,
                     help="资金流票数上限；0=全市场（实测 5207 只约 0.6 分钟，无需限）")
     a = ap.parse_args()
@@ -551,7 +650,7 @@ def main():
         print("未知维度：%s（用 --list 看全部）" % bad)
         return
     run(a.date, only=only, offline=a.offline, force=a.force,
-        flow_limit=a.flow_limit)
+        flow_limit=a.flow_limit, flow_win=a.flow_win)
 
 
 if __name__ == "__main__":
