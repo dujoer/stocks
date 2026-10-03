@@ -53,6 +53,15 @@ FAMILIES = [
          entry='lhb/lhb.html', script='build_dashboards.py', freq='daily',
          dated=False, start=None, date_re=None, need='同 lhb'),
 
+    dict(key='cold_sector', label='冷门行业榜（两年未主升·仅陈述事实）',
+         patterns=['cold_sector/index.html', 'cold_sector/cold_2*.html'],
+         entry='cold_sector/index.html', script='build_cold_sector.py',
+         freq='weekly', dated=True, start='20260930',
+         date_re=r'cold_(\d{8})\.html',
+         need='引擎 _cold_sector.py（等权行业指数，两年日K底座 _long_kline.json）；'
+              '★只陈述「哪些行业两年零主升」这一已发生事实，**不产生任何个股推荐**（闸门未通过），'
+              '页面禁止出现买入/目标价/买点语境'),
+
     dict(key='sector', label='板块强度日页',
          patterns=['sector/sector-strength-2*.html'],
          entry='sector/index.html', script='run_daily_sector.py', freq='daily',

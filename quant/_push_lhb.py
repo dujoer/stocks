@@ -127,6 +127,13 @@ FILES = [
     "quant/_fetch_margin_em.py",     # 东财 datacenter 融资融券日频批量抓取（margin_em/ 本地缓存不推送，可复抓）
     "quant/_accum_ablate.py",        # 因子消融实验室（留一法/分档/清洗后重组合）
     "quant/_accum_oos.py",           # 严格样本外 + 随机对照（防过拟合闸门）
+    # 冷门行业池（2026-10-03）：引擎 / 闸门 / 消融 / 页面生成器 + 事实数据
+    "quant/_fetch_long_kline.py",    # 两年日K 底座抓取（_long_kline.json 本地缓存不推送，可复抓）
+    "quant/_cold_sector.py",         # 行业指数重建 + 主升识别 + 冷门榜引擎
+    "quant/_cold_oos.py",            # 四道闸门（未过则不出票）
+    "quant/_cold_ablate.py",         # 5 因子消融
+    "quant/_cold_single.py",         # 单维度严格检验
+    "quant/build_cold_sector.py",    # 冷门榜页面（只陈述事实，不含个股推荐）
     "web/accumulation/accum_result.json",  # 回测汇总（模块组合/敏感性，供主页卡与审计）
     # 消融/样本外结论：build_accum._ablate_block() 动态读这两个 JSON 渲染页面结论，
     # 不推送 → 线上页面会退化成「尚未运行」，等于结论丢失。

@@ -197,6 +197,8 @@ def build_html(trend):
         f"    <div class='idx'><div class='k'>最新一日均强</div><div class='v'>{latest_strength:.3f}</div></div>\n"
         f"    <div class='idx'><div class='k'>最新一日上涨占比</div><div class='v'>{latest_upratio:.1f}%</div></div>\n"
         f"    <div class='idx'><a href='trend.html'><div class='k'>趋势看板（日/周/月）</div><div class='v gold'>{'查看 →'}</div></a></div>\n"
+        # 冷门行业榜：两年未主升的「已发生事实」，仅陈述不作买卖依据（2026-10-03 新增）
+        f"    <div class='idx'><a href='../cold_sector/index.html'><div class='k'>冷门行业榜（两年未主升）</div><div class='v gold'>{'仅事实 →'}</div></a></div>\n"
         "  </div>\n"
         "</div>\n"
         "<div class='section'>\n"

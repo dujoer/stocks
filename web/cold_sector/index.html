@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang='zh-CN'><head><meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>冷门行业榜 · 两年未主升</title><style>* { box-sizing: border-box; }
+body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:#f5f6f8; color:#23262b; }
+.wrap { max-width:1180px; margin:0 auto; padding:26px 20px 60px; }
+h1 { font-size:26px; margin:0 0 6px; }
+h2 { font-size:18px; margin:0 0 10px; }
+.sub { color:#6b7280; font-size:13px; line-height:1.8; margin-bottom:14px; }
+.section { background:#fff; border:1px solid rgba(0,0,0,.08); border-radius:12px;
+  padding:16px 18px; margin:14px 0; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th,td { padding:8px 10px; border-bottom:1px solid rgba(0,0,0,.07); text-align:right; }
+th:first-child,td:first-child { text-align:left; }
+th { background:#fafbfc; font-weight:600; color:#5b6168; font-size:12px; white-space:nowrap; }
+tbody tr:hover { background:#fafbfc; }
+.warn { background:#fff4e5; border:1px solid #f0c896; border-radius:12px;
+  padding:14px 16px; color:#7a4a12; font-size:13px; line-height:1.85; margin:14px 0; }
+.warn b { color:#a8500a; }
+.ok { background:#eef6ff; border:1px solid #c9def5; border-radius:12px;
+  padding:14px 16px; color:#1c4e80; font-size:13px; line-height:1.85; margin:14px 0; }
+.t0 { background:#e8f4ff; }
+.muted { color:#8b9199; }
+.sec-tag { display:inline-block; background:#eef6ff; color:#1c4e80; border-radius:6px;
+  padding:1px 7px; font-size:12px; margin-left:6px; }
+.cold-tag { display:inline-block; background:#eaf3de; color:#173404; border-radius:6px;
+  padding:1px 7px; font-size:12px; }
+a { color:#1a73e8; }
+.arch { display:flex; flex-wrap:wrap; gap:8px; }
+.arch a { background:#f5f6f8; border:1px solid rgba(0,0,0,.08); border-radius:8px;
+  padding:5px 10px; font-size:12px; text-decoration:none; color:#1c4e80; }
+footer { margin-top:24px; color:#9aa0a6; font-size:12px; line-height:1.8; }
+</style><!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  .navgrp{ padding:5px 6px 5px 5px !important; }
+}
+
+</style><!--/WB_THEME--></head><body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a><a href='../three_yin/index.html'>三连阴</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class="wrap">
+
+<header><h1>冷门行业榜 <span class="sec-tag">已发生的事实</span></h1>
+<div class="sub">统计窗口 500 个交易日（约 2 年）｜数据日 <b>2026-09-30</b>｜
+样本 5050 只票（两年日K）｜大盘同期 <b>12.7%</b>（沪深300）</div></header>
+
+<div class="warn">
+<b>⚠ 本页不提供任何买入建议，只陈述事实。</b><br>
+「两年没有主升过」是<b>已发生的历史</b>，可以拿来看；<b>它不等于「将要主升」</b>。<br>
+本页数据对应的选股策略已做过严格样本外检验（本页数据对应的策略做过严格检验：<b>策略胜率 56.4% vs 随机基线 58.2%（-1.8pp）</b>，）—— 结论是<b>跑输随机基线</b>，
+因此<b>不推荐任何个股、不标注任何买点</b>。详见页面底部「为什么不上线」。
+</div>
+
+<div class="section">
+<h2>两年零主升的行业（5 个）</h2>
+<div class="sub" style="margin:0 0 10px">
+判据（先验固定、非拟合）：一段上涨同时满足 <b>涨幅 ≥ 60%</b>、<b>持续 ≥ 60 个交易日</b>、
+<b>跑赢沪深300 ≥ 25pp</b> 才算一次主升。窗口内没有满足的 = 零主升。</div>
+<table data-wb><thead><tr>
+<th>#</th><th>行业</th><th>成分股</th><th>主升次数</th><th>最强主升</th>
+<th>窗口涨幅</th><th>跑赢大盘</th><th>距区间高点</th><th>末次主升距今</th>
+</tr></thead><tbody><tr class='t0'><td><b>1</b></td><td style='text-align:left'><b>社会服务</b><span class='cold-tag'>两年零主升</span></td><td>86</td><td>0</td><td>0.0%</td><td>39.2%</td><td style='color:#a32d2d'>+4.3%</td><td>-19.1%</td><td>—</td></tr><tr class='t0'><td><b>2</b></td><td style='text-align:left'><b>农林牧渔</b><span class='cold-tag'>两年零主升</span></td><td>114</td><td>0</td><td>0.0%</td><td>51.5%</td><td style='color:#a32d2d'>+16.6%</td><td>-10.5%</td><td>—</td></tr><tr class='t0'><td><b>3</b></td><td style='text-align:left'><b>公用事业</b><span class='cold-tag'>两年零主升</span></td><td>139</td><td>0</td><td>0.0%</td><td>55.2%</td><td style='color:#a32d2d'>+20.3%</td><td>-17.0%</td><td>—</td></tr><tr class='t0'><td><b>4</b></td><td style='text-align:left'><b>交通运输</b><span class='cold-tag'>两年零主升</span></td><td>128</td><td>0</td><td>0.0%</td><td>31.9%</td><td style='color:#1a73e8'>-2.9%</td><td>-10.3%</td><td>—</td></tr><tr class='t0'><td><b>5</b></td><td style='text-align:left'><b>煤炭</b><span class='cold-tag'>两年零主升</span></td><td>33</td><td>0</td><td>0.0%</td><td>43.5%</td><td style='color:#a32d2d'>+8.6%</td><td>-8.2%</td><td>—</td></tr><tr><td><b>6</b></td><td style='text-align:left'><b>银行</b></td><td>42</td><td>1</td><td>60.6%</td><td>46.8%</td><td style='color:#a32d2d'>+12.0%</td><td>-5.1%</td><td>299 根前</td></tr><tr><td><b>7</b></td><td style='text-align:left'><b>钢铁</b></td><td>43</td><td>1</td><td>60.9%</td><td>43.5%</td><td style='color:#a32d2d'>+8.6%</td><td>-29.8%</td><td>285 根前</td></tr><tr><td><b>8</b></td><td style='text-align:left'><b>食品饮料</b></td><td>126</td><td>1</td><td>61.8%</td><td>30.9%</td><td style='color:#1a73e8'>-4.0%</td><td>-16.8%</td><td>437 根前</td></tr><tr><td><b>9</b></td><td style='text-align:left'><b>房地产</b></td><td>95</td><td>1</td><td>67.7%</td><td>51.5%</td><td style='color:#a32d2d'>+16.7%</td><td>-11.9%</td><td>250 根前</td></tr><tr><td><b>10</b></td><td style='text-align:left'><b>非银金融</b></td><td>79</td><td>1</td><td>70.2%</td><td>35.7%</td><td style='color:#a32d2d'>+0.8%</td><td>-20.3%</td><td>267 根前</td></tr><tr><td><b>11</b></td><td style='text-align:left'><b>建筑装饰</b></td><td>155</td><td>1</td><td>70.8%</td><td>70.2%</td><td style='color:#a32d2d'>+35.3%</td><td>-14.3%</td><td>251 根前</td></tr><tr><td><b>12</b></td><td style='text-align:left'><b>建筑材料</b></td><td>76</td><td>1</td><td>72.3%</td><td>73.8%</td><td style='color:#a32d2d'>+39.0%</td><td>-16.1%</td><td>266 根前</td></tr><tr><td><b>13</b></td><td style='text-align:left'><b>医药生物</b></td><td>504</td><td>1</td><td>72.7%</td><td>57.3%</td><td style='color:#a32d2d'>+22.5%</td><td>-8.9%</td><td>267 根前</td></tr><tr><td><b>14</b></td><td style='text-align:left'><b>纺织服饰</b></td><td>107</td><td>1</td><td>73.4%</td><td>72.3%</td><td style='color:#a32d2d'>+37.5%</td><td>-12.8%</td><td>251 根前</td></tr><tr><td><b>15</b></td><td style='text-align:left'><b>环保</b></td><td>134</td><td>1</td><td>75.6%</td><td>78.9%</td><td style='color:#a32d2d'>+44.0%</td><td>-15.1%</td><td>266 根前</td></tr><tr><td><b>16</b></td><td style='text-align:left'><b>轻工制造</b></td><td>167</td><td>1</td><td>75.6%</td><td>70.7%</td><td style='color:#a32d2d'>+35.9%</td><td>-13.5%</td><td>250 根前</td></tr><tr><td><b>17</b></td><td style='text-align:left'><b>美容护理</b></td><td>32</td><td>1</td><td>79.3%</td><td>40.8%</td><td style='color:#a32d2d'>+6.0%</td><td>-21.5%</td><td>266 根前</td></tr><tr><td><b>18</b></td><td style='text-align:left'><b>传媒</b></td><td>131</td><td>1</td><td>81.6%</td><td>57.6%</td><td style='color:#a32d2d'>+22.8%</td><td>-27.8%</td><td>266 根前</td></tr><tr><td><b>19</b></td><td style='text-align:left'><b>石油石化</b></td><td>48</td><td>1</td><td>82.1%</td><td>61.4%</td><td style='color:#a32d2d'>+26.5%</td><td>-24.9%</td><td>145 根前</td></tr><tr><td><b>20</b></td><td style='text-align:left'><b>家用电器</b></td><td>103</td><td>1</td><td>82.4%</td><td>65.4%</td><td style='color:#a32d2d'>+30.6%</td><td>-11.2%</td><td>266 根前</td></tr><tr><td><b>21</b></td><td style='text-align:left'><b>基础化工</b></td><td>449</td><td>1</td><td>84.1%</td><td>92.8%</td><td style='color:#a32d2d'>+58.0%</td><td>-13.2%</td><td>266 根前</td></tr><tr><td><b>22</b></td><td style='text-align:left'><b>综合</b></td><td>20</td><td>1</td><td>93.1%</td><td>73.1%</td><td style='color:#a32d2d'>+38.3%</td><td>-18.1%</td><td>251 根前</td></tr><tr><td><b>23</b></td><td style='text-align:left'><b>电力设备</b></td><td>415</td><td>1</td><td>93.7%</td><td>100.3%</td><td style='color:#a32d2d'>+65.5%</td><td>-25.6%</td><td>250 根前</td></tr><tr><td><b>24</b></td><td style='text-align:left'><b>商贸零售</b></td><td>100</td><td>1</td><td>95.9%</td><td>71.5%</td><td style='color:#a32d2d'>+36.6%</td><td>-20.6%</td><td>251 根前</td></tr><tr><td><b>25</b></td><td style='text-align:left'><b>汽车</b></td><td>320</td><td>1</td><td>100.4%</td><td>67.2%</td><td style='color:#a32d2d'>+32.4%</td><td>-22.8%</td><td>250 根前</td></tr><tr><td><b>26</b></td><td style='text-align:left'><b>有色金属</b></td><td>145</td><td>1</td><td>102.0%</td><td>139.2%</td><td style='color:#a32d2d'>+104.3%</td><td>-21.3%</td><td>253 根前</td></tr><tr><td><b>27</b></td><td style='text-align:left'><b>国防军工</b></td><td>140</td><td>1</td><td>104.5%</td><td>72.6%</td><td style='color:#a32d2d'>+37.7%</td><td>-36.2%</td><td>267 根前</td></tr><tr><td><b>28</b></td><td style='text-align:left'><b>机械设备</b></td><td>610</td><td>1</td><td>113.7%</td><td>125.8%</td><td style='color:#a32d2d'>+90.9%</td><td>-14.6%</td><td>250 根前</td></tr><tr><td><b>29</b></td><td style='text-align:left'><b>计算机</b></td><td>357</td><td>1</td><td>124.4%</td><td>76.4%</td><td style='color:#a32d2d'>+41.6%</td><td>-27.5%</td><td>266 根前</td></tr><tr><td><b>30</b></td><td style='text-align:left'><b>通信</b></td><td>127</td><td>1</td><td>130.3%</td><td>149.6%</td><td style='color:#a32d2d'>+114.8%</td><td>-19.8%</td><td>262 根前</td></tr><tr><td><b>31</b></td><td style='text-align:left'><b>电子</b></td><td>518</td><td>2</td><td>108.2%</td><td>178.6%</td><td style='color:#a32d2d'>+143.8%</td><td>-22.7%</td><td>65 根前</td></tr></tbody></table>
+</div>
+
+<div class="ok">
+<b>为什么不上线（2026-10-03 实测，41 万笔成熟样本，每笔走满 20 日）</b><br>
+
+<table style="margin-top:8px" data-wb><thead><tr><th>组合</th><th>样本 n</th><th>胜率</th><th>均值收益</th></tr></thead>
+<tbody>
+<tr><td style="text-align:left"><b>冷门行业</b>（15 个，两年少主升）内任意选</td><td>415,766</td>
+<td><b>55.4%</b></td><td>0.12%</td></tr>
+<tr><td style="text-align:left">热门行业（16 个）内任意选</td><td>775,444</td>
+<td><b>59.7%</b></td><td>0.61%</td></tr>
+<tr><td style="text-align:left">全市场随机基线</td><td>392,848</td><td>58.2%</td><td>0.43%</td></tr>
+</tbody></table>
+<br><b>冷门 vs 热门 = −4.3pp，冷门 vs 基线 = −2.8pp。</b>
+<br>即：<b>「两年没主升」在 A 股是负向信号（刚刚不涨），不是正向买点。</b>
+<br>这解释了为什么在此类行业里做技术面选股必然跑输随机 —— <b>池子入口就选错了一边</b>。
+<br><br>此外 5 个技术因子（低位 / 企稳 / 放量 / 领涨 / 波动收敛）做过消融：
+<b>正反两个方向都跑输随机</b>（edge −0.1 ~ −2.9pp），
+说明这些维度的档位差异纯属统计噪声，<b>不携带胜率信息</b>。
+<br>结论：<b>宁可不选，也不推一个跑输随机的池子。</b>
+</div>
+
+<div class="section">
+<h2>数据口径与已知偏差</h2>
+<div class="sub" style="margin:0">
+① <b>行业指数为事后重建</b>：用 <code>q2_full/_code2industry.json</code>（5543 票 → 31 行业）按
+<b>等权</b>收益平均重建。分类源不含历史成分，故存在<b>成分漂移偏差</b>，非官方板块指数。<br>
+② <b>等权而非成交额加权</b>：成交额加权会让高换手/热门票主导指数（实测会让某行业 2 年虚增到 +3529%，
+同期成分股中位仅 +17%）。<br>
+③ <b>大盘基准用真实指数</b>（沪深300，腾讯可回溯 760 根），不用自建 —— 自建会因退市股缺席、
+覆盖门槛、科创板成交额单位差 114 倍而虚增到 +1087%。<br>
+④ 样本为 <b>两年日K 底座</b>（5050 只 × 780 根），次新股/长期停牌 157 只未纳入。<br>
+⑤ 本页<b>不产生任何个股推荐</b>，页面上没有「买入」「目标价」字样。
+</div>
+</div>
+
+<div class='section'><h2>历史快照</h2><div class='arch'><a href='cold_20260930.html'>20260930</a></div></div>
+<footer>
+本页由 <code>build_cold_sector.py</code> 生成，引擎 <code>_cold_sector.py</code>，
+闸门 <code>_cold_oos.py</code>，消融 <code>_cold_ablate.py</code>。<br>
+纪律：<b>宁可不选，不能乱选</b> —— 未通过样本外检验的策略一律不出票。
+<br>数据日 2026-09-30｜本页所有数字均由当日真实数据重算，无写死值。
+</footer>
+</div><!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--></body></html>
