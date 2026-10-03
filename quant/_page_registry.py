@@ -154,6 +154,14 @@ FAMILIES = [
          need='同 tplus；lab.html = 做T特征功效实验室（全市场域样本外实证，_tplus_lab.py 生成，'
               '选股能力与买卖点参数以此为准）'),
 
+    dict(key='tplus_envgate', label='做T池·环境门控样本外验证（共用 ENV_RULE 折数的独立场景检验 → 判「不可判」）',
+         patterns=['tplus/env_gate.html'],
+         entry='tplus/env_gate.html', script='_tplus_env_gate.py', freq='once',
+         dated=False, start=None, date_re=None,
+         need='_tplus_lab_panel.json（93331 行 / 196 日做T面板）+ _idxkline.env_score（生产 composite 口径复刻）+ '
+              '_tplus_lab._sim_default（线上现行做T模拟）；结论：四档 edge 95% 区间全部跨 0、R3 通过率仅 48%~78%、'
+              '反推相对区间宽到 ±3 → 与环境分连续分位非单调，判「不可判」，做T池 ENV_RULE 保持原值不动，'
+              '且不套用主升精选的二值门控（做T点估计上弱势档 +1.50 高于强势 +1.00，照搬会做反）'),
     dict(key='research', label='个股调研', patterns=['research/research-*.html'],
          entry='research/index.html', script=None, freq='on_demand',
          dated=True, start=None, date_re=r'(\d{8})', need='按需触发'),
