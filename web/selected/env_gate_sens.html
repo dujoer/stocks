@@ -1,0 +1,78 @@
+<!DOCTYPE html><html lang='zh-CN'><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>主升精选 · 环境门控结论的样本量敏感性检验</title><style>
+:root{--bg:#fbfbfd;--card:#fff;--text:#1d1d1f;--muted:#6e6e73;--line:#e5e5e7;
+ --up:#ff3b30;--dn:#34c759;--blue:#0071e3;--gold:#a97b2e;}
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+ background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:0}
+.wrap{max-width:1020px;margin:0 auto;padding:26px 18px 56px}
+h1{font-size:23px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+h2{font-size:18px;font-weight:600;margin:28px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--blue)}
+.sub{color:var(--muted);font-size:13px;margin-bottom:8px}
+.card{background:var(--card);border-radius:16px;padding:14px 20px;margin:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.box{border-left:4px solid var(--blue);background:#f0f7ff;padding:13px 18px;border-radius:0 12px 12px 0;margin:14px 0}
+.box.gold{border-color:var(--gold);background:#fffaf0}
+.box.red{border-color:#c0392b;background:#fdf1f0}
+.box.green{border-color:var(--dn);background:#f0faf3}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0}
+th,td{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{white-space:nowrap;color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa}
+.num{font-variant-numeric:tabular-nums;text-align:right}
+.up{color:var(--up)}.dn{color:var(--dn)}.dim{color:#b0b3b8}
+.note{font-size:12.5px;color:var(--muted);margin-top:8px}
+li{margin:5px 0}
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
+</style></head><body><div class='wrap'>
+<h1>主升精选 · 环境门控结论的样本量敏感性检验</h1>
+<div class='sub'>一次密扫描 step=3（243,121 行 / 96 个信号日）→ 派生 3 组步长。横截面分位是<b>日内</b>计算的，所以从密扫描里抽日期子集与直接按该步长扫描<b>严格同结果</b>；显著性 = 按日 block bootstrap 800 次。</div>
+<div class='box gold'><b>要回答的问题：</b>主升精选已上线的二值门控（强势开仓、其余空仓），强势档 edge 原来只由 <b>8 个信号日</b>撑着。这么少的样本，结论是「效应真实但被低估」，还是「小样本噪声」？</div>
+<div class='box'><b>跨步长一致性判定（这是本页的主结论）：</b>
+<table><tr><th>环境档</th><th>各步长下的绝对均收益</th><th>跨步长是否同号</th><th>判定</th></tr>
+<tr><td>强势</td><td class='num'>3日 +0.68 ／ 5日 +2.21 ／ 6日 +0.30 ／ 9日 +0.95</td><td>是</td><td><b>开仓（跨步长稳定为正）</b></td></tr>
+<tr><td>震荡</td><td class='num'>3日 +0.82 ／ 5日 -0.37 ／ 6日 +0.80 ／ 9日 +0.40</td><td><b>否（翻转）</b></td><td><b>不可判（符号随采样翻转）</b></td></tr>
+<tr><td>弱势</td><td class='num'>3日 -1.04 ／ 5日 -1.05 ／ 6日 -1.06 ／ 9日 -0.24</td><td>是</td><td><b>空仓（跨步长稳定为负）</b></td></tr>
+<tr><td>破位</td><td class='num'>3日 +0.49 ／ 5日 -0.10 ／ 6日 +0.29 ／ 9日 +1.69</td><td><b>否（翻转）</b></td><td><b>不可判（符号随采样翻转）</b></td></tr>
+</table></div>
+<div class='box red'><b>对已上线二值门控的影响：</b>
+「强势开仓」跨步长稳定成立（四组步长下绝对收益均为正），这条<b>保留</b>。
+「弱势空仓」跨步长稳定为负，这条<b>有依据</b>。
+但「震荡、破位」档的绝对收益<b>符号随采样步长翻转</b>（换一组采样日期就变号），说明原证据页给出的负值并非稳定效应。按红线：这两档的正确定性是<b>「不可判」</b> —— 生产上仍按「宁可不选」<b>空仓</b>，但那是<b>纪律而非数据结论</b>，页面上不能写成「数据证明该档该空仓」。</div>
+<h2>步长 3 日（96 个信号日 / 有效 51 日）</h2>
+<table><tr><th>环境档</th><th>信号日</th><th>笔数</th><th>策略层绝对均收益</th><th>笔级 sd</th><th>f = mean/sd</th><th>相对系数（强势=1）</th><th>相对 95% 区间</th><th>相对 edge</th><th>edge R3</th><th>留一法（edge）</th></tr>
+<tr><td>强势</td><td class='num'>16</td><td class='num'>3,801</td><td class='num up'><b>+0.68%</b></td><td class='num'>9.29</td><td class='num'>+0.0733</td><td class='num up'><b>+1.00</b></td><td class='num'>[-0.03, +0.18]</td><td class='num dim'>+1.56</td><td class='num dim'>100%</td><td class='num dim'>[+1.26, +1.83]</td></tr>
+<tr><td>震荡</td><td class='num'>11</td><td class='num'>2,630</td><td class='num up'><b>+0.82%</b></td><td class='num'>8.85</td><td class='num'>+0.0929</td><td class='num up'><b>+1.27</b></td><td class='num'>[-0.04, +0.22]</td><td class='num dim'>+2.27</td><td class='num dim'>100%</td><td class='num dim'>[+1.86, +2.79]</td></tr>
+<tr><td>弱势</td><td class='num'>11</td><td class='num'>2,644</td><td class='num dn'><b>-1.04%</b></td><td class='num'>9.25</td><td class='num'>-0.1118</td><td class='num dn'><b>-1.53</b></td><td class='num'>[-0.24, +0.02]</td><td class='num dim'>+1.57</td><td class='num dim'>99%</td><td class='num dim'>[+1.14, +1.93]</td></tr>
+<tr><td>破位</td><td class='num'>13</td><td class='num'>3,081</td><td class='num up'><b>+0.49%</b></td><td class='num'>8.17</td><td class='num'>+0.0601</td><td class='num up'><b>+0.82</b></td><td class='num'>[-0.09, +0.22]</td><td class='num dim'>-1.32</td><td class='num dim'>4%</td><td class='num dim'>[-1.77, -1.03]</td></tr>
+</table>
+<div class='note'>「相对系数」= (mean/sd) 之比并归一到强势 = 1；<b>≤0 即数据反推该档应空仓</b>。右三列（相对 edge / R3 / 留一）是相对同日全票的口径，只说明「选股有没有 alpha」，<b>不决定要不要出手</b> —— 决定要不要出手的是绝对收益那一列。</div>
+<h2>步长 6 日（48 个信号日 / 有效 26 日）</h2>
+<table><tr><th>环境档</th><th>信号日</th><th>笔数</th><th>策略层绝对均收益</th><th>笔级 sd</th><th>f = mean/sd</th><th>相对系数（强势=1）</th><th>相对 95% 区间</th><th>相对 edge</th><th>edge R3</th><th>留一法（edge）</th></tr>
+<tr><td>强势</td><td class='num'>8</td><td class='num'>1,905</td><td class='num up'><b>+0.30%</b></td><td class='num'>9.52</td><td class='num'>+0.0313</td><td class='num up'><b>+1.00</b></td><td class='num'>[-0.11, +0.19]</td><td class='num dim'>+1.89</td><td class='num dim'>98%</td><td class='num dim'>[+1.35, +2.52]</td></tr>
+<tr><td>震荡</td><td class='num'>6</td><td class='num'>1,430</td><td class='num up'><b>+0.80%</b></td><td class='num'>8.79</td><td class='num'>+0.0909</td><td class='num up'><b>+2.91</b></td><td class='num'>[-0.13, +0.33]</td><td class='num dim'>+2.12</td><td class='num dim'>99%</td><td class='num dim'>[+1.27, +2.84]</td></tr>
+<tr><td>弱势</td><td class='num'>6</td><td class='num'>1,438</td><td class='num dn'><b>-1.06%</b></td><td class='num'>9.30</td><td class='num'>-0.1144</td><td class='num dn'><b>-3.65</b></td><td class='num'>[-0.31, +0.10]</td><td class='num dim'>+1.12</td><td class='num dim'>82%</td><td class='num dim'>[+0.17, +1.74]</td></tr>
+<tr><td>破位</td><td class='num'>6</td><td class='num'>1,422</td><td class='num up'><b>+0.29%</b></td><td class='num'>8.19</td><td class='num'>+0.0352</td><td class='num up'><b>+1.12</b></td><td class='num'>[-0.17, +0.24]</td><td class='num dim'>-1.65</td><td class='num dim'>8%</td><td class='num dim'>[-2.78, -1.05]</td></tr>
+</table>
+<div class='note'>「相对系数」= (mean/sd) 之比并归一到强势 = 1；<b>≤0 即数据反推该档应空仓</b>。右三列（相对 edge / R3 / 留一）是相对同日全票的口径，只说明「选股有没有 alpha」，<b>不决定要不要出手</b> —— 决定要不要出手的是绝对收益那一列。</div>
+<h2>步长 9 日（32 个信号日 / 有效 17 日）</h2>
+<table><tr><th>环境档</th><th>信号日</th><th>笔数</th><th>策略层绝对均收益</th><th>笔级 sd</th><th>f = mean/sd</th><th>相对系数（强势=1）</th><th>相对 95% 区间</th><th>相对 edge</th><th>edge R3</th><th>留一法（edge）</th></tr>
+<tr><td>强势</td><td class='num'>4</td><td class='num'>946</td><td class='num up'><b>+0.95%</b></td><td class='num'>9.54</td><td class='num'>+0.0991</td><td class='num up'><b>+1.00</b></td><td class='num'>[-0.15, +0.33]</td><td class='num dim'>+0.72</td><td class='num dim'>70%</td><td class='num dim'>[-0.60, +1.81]</td></tr>
+<tr><td>震荡</td><td class='num'>5</td><td class='num'>1,200</td><td class='num up'><b>+0.40%</b></td><td class='num'>9.14</td><td class='num'>+0.0436</td><td class='num up'><b>+0.44</b></td><td class='num'>[-0.17, +0.25]</td><td class='num dim'>+3.35</td><td class='num dim'>100%</td><td class='num dim'>[+2.61, +4.31]</td></tr>
+<tr><td>弱势</td><td class='num'>2</td><td class='num'>486</td><td class='num dn'><b>-0.24%</b></td><td class='num'>9.37</td><td class='num'>-0.0256</td><td class='num dn'><b>-0.26</b></td><td class='num'>[-0.09, +0.04]</td><td class='num dim'>+1.16</td><td class='num dim'>73%</td><td class='num dim'>[-0.44, +2.75]</td></tr>
+<tr><td>破位</td><td class='num'>6</td><td class='num'>1,423</td><td class='num up'><b>+1.69%</b></td><td class='num'>7.81</td><td class='num'>+0.2161</td><td class='num up'><b>+2.18</b></td><td class='num'>[+0.03, +0.40]</td><td class='num dim'>-0.98</td><td class='num dim'>18%</td><td class='num dim'>[-1.90, -0.21]</td></tr>
+</table>
+<div class='note'>「相对系数」= (mean/sd) 之比并归一到强势 = 1；<b>≤0 即数据反推该档应空仓</b>。右三列（相对 edge / R3 / 留一）是相对同日全票的口径，只说明「选股有没有 alpha」，<b>不决定要不要出手</b> —— 决定要不要出手的是绝对收益那一列。</div>
+<h2>横向对比：强势档随样本量变化</h2>
+<table><tr><th>步长</th><th>强势档信号日</th><th>edge</th><th>95% 区间</th><th>R3</th><th>留一法下限</th></tr>
+<tr><td>3 日</td><td class='num'>16</td><td class='num '>+1.56</td><td class='num'>[+0.49, +2.54]</td><td class='num'>100%</td><td class='num'>+1.26</td></tr>
+<tr><td>6 日</td><td class='num'>8</td><td class='num '>+1.89</td><td class='num'>[+0.37, +3.30]</td><td class='num'>98%</td><td class='num'>+1.35</td></tr>
+<tr><td>9 日</td><td class='num'>4</td><td class='num '>+0.72</td><td class='num'>[-1.30, +2.88]</td><td class='num'>70%</td><td class='num'>-0.60</td></tr>
+</table>
+<h2>局限</h2><div class='card'><ul>
+<li>派生子集与直接扫描同结果，前提是<b>横截面分位只在该信号日内计算</b>（本项目满足）；若将来改成跨日面板打分，本页的「一次扫描派生多组」做法就失效。</li>
+<li>样本量放大只能检验<b>采样密度</b>，不能凭空造出新信息 —— 相邻信号日的前向窗口仍是重叠的，所以 step=3 的有效样本量并不等于独立观测数，block bootstrap 已按日整块重抽来处理这一点。</li>
+<li>本页只做检验，<b>不改</b>生产；二值门控是否保留由 selected/env_gate.html 的证据决定。</li>
+<li>结果落 <code>quant/_env_gate_sens.json</code>；种子固定 20261003。</li>
+</ul></div>
+<div class='foot'>主升精选 · 环境门控样本量敏感性检验 ｜ 无未来函数（只用 ≤ 信号日的收盘与画像）</div>
+</div></body></html>

@@ -219,6 +219,15 @@ FAMILIES = [
          entry='selected/env_gate.html', script='_env_gate_lab.py', freq='once',
          dated=False, start=None, date_re=None,
          need='_txk_cache.json（全市场日K 逐日重建完整横截面）+ _idxkline.index_env/env_score（生产 composite 口径逐项复刻）+ market_profile/{DATE}.json；结论：反推相对系数强势 +1.00[+0.62,+1.38] 显著为正、震荡 -0.16、弱势 -0.46、破位 -0.05 → 主升精选门控改二值（强势开仓、其余空仓）；做T池 ENV_RULE 未验证、保持原值不动'),
+    dict(key='selected_envgate_sens', label='主升精选·环境门控结论的样本量/步长敏感性检验',
+         patterns=['selected/env_gate_sens.html'],
+         entry='selected/env_gate_sens.html', script='_env_gate_sens.py', freq='once',
+         dated=False, start=None, date_re=None,
+         need='复用 _env_gate_lab.build（加了 cache/nm 外部传入以支持多组步长共用一次扫描）；'
+              'step=3 密扫描（243121 行 / 96 信号日）派生 3/6/9 + 基准 step=5 交叉校验口径。'
+              '★ 结论：强势档跨 4 组步长绝对收益全正（开仓有据）、弱势档全负（空仓有据），'
+              '但震荡/破位档符号随采样翻转 → 判「不可判」，生产仍空仓但那是纪律不是数据结论；'
+              '口径要点：反推系数必须用「策略层绝对收益」而非相对 edge，否则会得出相反错觉'),
     dict(key='accumulation', label='增仓精选（7 维增持/增仓信号 + 1/3/5 日多空增仓 · 共识选股池）',
         patterns=['accumulation/combined_*.html', 'accumulation/index.html',
                   'accumulation/lab.html', 'accumulation/history.html'],
