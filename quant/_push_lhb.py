@@ -134,6 +134,10 @@ FILES = [
     "quant/_cold_ablate.py",         # 5 因子消融
     "quant/_cold_single.py",         # 单维度严格检验
     "quant/build_cold_sector.py",    # 冷门榜页面（只陈述事实，不含个股推荐）
+    # 统一数据底座（2026-10-03）：每日一次抓取、各模块只读
+    "quant/_datahub.py",             # 8 维度汇总落 hub/{DATE}.json + manifest
+    "quant/_datahub_api.py",         # 模块接入层（只读 API / 零改造垫片 / 口径核对）
+    "quant/_datahub_gate.py",        # 底座门禁（覆盖 8/8、数据日一致性、防旧底座冒充当日）
     "web/accumulation/accum_result.json",  # 回测汇总（模块组合/敏感性，供主页卡与审计）
     # 消融/样本外结论：build_accum._ablate_block() 动态读这两个 JSON 渲染页面结论，
     # 不推送 → 线上页面会退化成「尚未运行」，等于结论丢失。

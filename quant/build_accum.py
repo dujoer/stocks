@@ -278,6 +278,41 @@ def _ret_color(v):
   return RED if v > 0 else (GRN if v < 0 else "#8a929c")
 
 
+def _hub_note(date):
+  """底座溯源：本次数据来自哪个源、覆盖多少、哪个维度滞后。
+
+  ★ 融资融券是**数据源客观滞后**（东财实测末根 2026-08-19，滞后 42 天，
+    接口参数已核对无误）。页面必须如实标注，不能让人以为是当日数据。
+  """
+  hp = os.path.join(HERE, "hub", "%s.json" % (date.replace("-", "") if date else ""))
+  mp = os.path.join(HERE, "hub", "manifest.json")
+  if not (os.path.exists(hp) and os.path.exists(mp)):
+    return ("<div class='evi' style='margin-top:12px;background:#f7f7f5;"
+            "border-color:#e0ded6;color:#6b6b6b'><b>数据溯源</b>："
+            "未接入统一数据底座（<code>_datahub.py</code>），本页各数据源独立抓取。"
+            "建议先跑 <code>python quant/_datahub.py --date {D}</code>。</div>"
+            .replace("{D}", date or "—"))
+  try:
+    mf = json.load(open(mp, encoding="utf-8"))
+  except Exception:
+    return ""
+  src = mf.get("sources") or {}
+  cnt = mf.get("counts") or {}
+  rows = []
+  for k in ("margin", "exec", "block", "lhb", "quotes", "flow"):
+    if k in src:
+      rows.append("　· %s：%s（%s 只）" % (k, src[k], cnt.get(k, "—")))
+  return ("<div class='evi' style='margin-top:12px;background:#f2f7fd;"
+          "border-color:#cfe0f5;color:#1a4e85'><b>数据溯源（统一数据底座）</b>："
+          "本次数据日 <b>{D}</b>，底座覆盖 <b>{cov}</b>。<br>{rows}<br>"
+          "<b style='color:#9a5b1e'>⚠ 融资融券维度数据源客观滞后</b>："
+          "东财接口实测末根为 2026-08-19（滞后 42 天，接口参数已核对无误）。"
+          "因此本池的「融资 1/3/5 日增仓」模块用的是 8 月中旬的真实数据，"
+          "<b>不是 9 月末的</b> —— 该模块结论请按此理解。</div>"
+          .replace("{D}", date or "—").replace("{cov}", mf.get("coverage", "—"))
+          .replace("{rows}", "<br>".join(rows) or "—"))
+
+
 def _ablate_block():
   """因子消融 + 严格样本外检验结论块。
 
@@ -642,7 +677,8 @@ S 档 ≈62%、A 档 ≈60%、基线 ≈57%，超额明显收窄 —— <b>这�
 <b>Ⅲ 日频事件</b>：大宗交易（折价加权）· 高管增持 · 席位异动。<br>
 档位规则：<b>S 档</b> = 5日融资净买入占比≥4% 且 机构/私募增持（胜率 {s_v6[1]:.1f}%）；<b>A 档</b> = ≥3 信号共振且（M 或 I）（{v3[1]:.1f}%）；<b>B 档</b> = 2 信号观察仓。
 退出纪律与主升/反转池一致：止损 −12% ／ 浮盈 +6% 激活、回撤 3% 跟踪 ／ 满 20 日强平。证据见 <a href='lab.html'>回测证据页</a>。</div>
-{_ablate_block()}</div>
+{_ablate_block()}
+{_hub_note(date)}</div>
 
 <div class="card"><h2>S 档 · 强增仓 × 机构私募（最高确定性）</h2>
 {''.join([f"<div class='stkgrid'>{cards}</div>"] if (S or A) else ["<div class='note'>今日无 S/A 档标的 —— 按纪律<b>空仓等待</b>，不降低门槛凑数。</div>"])}

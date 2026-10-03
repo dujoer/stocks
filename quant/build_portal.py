@@ -747,6 +747,11 @@ _n_cards = sum(len(z["cards"]) for z in ZONES)
 # ---- 每日更新清单 ----
 update_steps = [
     ("① 拉取当日快照", "经 westock-mcp 拉取 market_overview / board_hot / quotes / limitup / lhb / news，分别落盘到 <code>quant/</code> 对应子目录的 <b>{DATE}.json</b>；再补 <code>lhb</code> 个股明细（分 3 批）与分项 4 次 <code>type</code>。<b>降级期</b> market_overview / limitup / board_hot 可能返回 error_type=2，缺失即诚实标注降级，<b>不得用旧数据冒充当日</b>。"),
+    ("①·补 统一数据底座", "<b>2026-10-03 新增，建议每日第一步跑</b>：<code>python quant/_datahub.py --date {DATE}</code>。"
+     "一次性把 <b>行情快照 / 主力资金流 / 融资融券 / 龙虎榜 / 大宗 / 增减持 / 板块 / 日K</b> 8 个维度"
+     "汇总落 <code>quant/hub/{DATE}.json</code> + <code>manifest.json</code>，各池子<b>只读不抓</b>，"
+     "消除重复请求导致的限频。补抓单维度用 <code>--only quotes</code>；核对各来源数据日用 "
+     "<code>python quant/_datahub_api.py --date {DATE} --verify</code>（会报出落后于当日的维度）。"),
     ("② 龙虎榜主看板", "<code>python quant/build_lhb_enriched.py</code> → <code>python quant/build_dashboards.py --date {DATE}</code>，重写 web/ 下各页面（<b>会重建 web/lhb/index.html</b>）。席位明细最易漏，漏跑则全榜表从 9 列退化 6 列。"),
     ("③ 高管增减持", "<code>tool_event(manager_sharechg, limit=700)</code>；<b>降级期</b>经东财 <code>RPT_EXECUTIVE_HOLD_DETAILS</code> 回补（变动日口径、覆盖约 76%）→ 落 <code>quant/exec_chg/{DATE}.json</code> → <code>python quant/gen_exec.py --date {DATE}</code> → <code>python quant/build_exec.py --date {DATE}</code>。"),
     ("④ 大宗交易", "<code>block_past_30(limit=3000)</code>；<b>降级期</b>经东财 <code>RPT_DATA_BLOCKTRADE</code>（pageSize=5000；折扣 <code>discount=-PREMIUM_RATIO*100</code>，正=折价）→ 落 <code>quant/block_chg/{DATE}.json</code> → <code>python quant/gen_block.py --date {DATE}</code> → <code>python quant/build_block.py --date {DATE}</code>。"),
