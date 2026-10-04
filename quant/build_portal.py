@@ -746,6 +746,13 @@ _n_cards = sum(len(z["cards"]) for z in ZONES)
 
 # ---- 每日更新清单 ----
 update_steps = [
+    ("⏱ 一键全链（推荐日常用这条）", "<b>不用记 13 条命令</b>：<code>python quant/daily_all.py</code> 会自动取"
+     "<b>最新数据日</b>（各子系统快照日的最大值，不是日历今天）并串完 13 步；"
+     "<code>--check</code> 先体检（哪些步能做/哪些缺当日数据），<code>--list</code> 看完整步骤表，"
+     "<code>--from N --to M</code> 只跑某几步，<code>--push</code> 跑完推送。"
+     "第③④⑤⑩ 步需要先经 MCP 实拉当日原始数据，脚本<b>只检依赖、缺就诚实跳过</b>，"
+     "<b>绝不拿旧数据凑</b>；取数指引会在输出里直接打出来。"
+     "单步重跑：<code>python quant/daily_all.py {DATE} --from 6 --to 6</code>。"),
     ("① 拉取当日快照", "经 westock-mcp 拉取 market_overview / board_hot / quotes / limitup / lhb / news，分别落盘到 <code>quant/</code> 对应子目录的 <b>{DATE}.json</b>；再补 <code>lhb</code> 个股明细（分 3 批）与分项 4 次 <code>type</code>。<b>降级期</b> market_overview / limitup / board_hot 可能返回 error_type=2，缺失即诚实标注降级，<b>不得用旧数据冒充当日</b>。"),
     ("①·补 统一数据底座", "<b>2026-10-03 新增，建议每日第一步跑</b>：<code>python quant/_datahub.py --date {DATE}</code>。"
      "一次性把 <b>行情快照 / 主力资金流 / 融资融券 / 龙虎榜 / 大宗 / 增减持 / 板块 / 日K</b> 8 个维度"

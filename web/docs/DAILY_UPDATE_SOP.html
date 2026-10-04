@@ -237,6 +237,23 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 
 <div class="note">本手册与「总门户」(index.html) 搭配使用：总门户显示各子系统最新数据日期与新鲜度；本手册说明「如何把最新一天做出来」。每次盘后按子系统依次完成数据落盘 → 生成 → 校验。</div>
 
+<div class="card" style="border-left:4px solid #0b8043">
+<h3 style="margin-top:0">⏱ 一键全链（日常只用这一条）</h3>
+<p>不用记 13 条命令：<code>python quant/daily_all.py</code> 会自动取<b>最新数据日</b>（各子系统快照日的最大值，<b>不是日历今天</b>）并串完全部 13 步。</p>
+<table data-wb>
+<tr><th>命令</th><th>作用</th></tr>
+<tr><td><code>python quant/daily_all.py</code></td><td>自动取最新数据日，跑完 13 步（推荐日常用这条）</td></tr>
+<tr><td><code>python quant/daily_all.py --check</code></td><td><b>先体检</b>：哪些步能做、哪些缺当日数据（不执行任何命令）</td></tr>
+<tr><td><code>python quant/daily_all.py --list</code></td><td>打印完整 13 步与每步命令 / 依赖</td></tr>
+<tr><td><code>python quant/daily_all.py 2026-09-30</code></td><td>指定数据日期跑（<code>{DATE}</code> 用带横线格式）</td></tr>
+<tr><td><code>python quant/daily_all.py --from 6 --to 6</code></td><td>只跑第 6 步（<b>单步重跑</b>用这个）</td></tr>
+<tr><td><code>python quant/daily_all.py --only auto</code></td><td>只跑纯本地自动段（不碰需联网的步骤）</td></tr>
+<tr><td><code>python quant/daily_all.py --push</code></td><td>跑完并推送（<b>需关闭沙箱</b>）</td></tr>
+</table>
+<p><b>第 ③④⑤⑩ 步需要先经 MCP 实拉当日原始数据</b>，脚本<b>只检依赖、缺就诚实跳过</b>，<b>绝不拿旧数据凑</b>；缺哪一步、取数命令是什么，会直接打在输出里（<code>--check</code> 可随时复看）。</p>
+<p>门禁（第 13 步）不过时会<b>自动停止</b>后续步骤，避免把不合格产物推上去。</p>
+</div>
+
 <h2>一、系统总览与依赖</h2>
 <div class="card">
 <p><b>10 个子系统，统一由项目根目录的 <code>index.html</code>（总门户）入口。</b>本机为 macOS 时项目根是 <code>/Users/&lt;user&gt;/Downloads/workbuddy/股票</code>；<b>所有脚本已改为由 <code>__file__</code> 推导路径</b>，无需再改盘符，在项目根执行 <code>python quant/xxx.py</code> 即可。</p>
