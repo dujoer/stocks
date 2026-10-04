@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>「想筛选赚钱的」该改哪一层 —— 主升精选收益归因实测</title>
+<style>
+* { box-sizing:border-box; }
+body { margin:0; background:#f5f6f8; color:#1c2430;
+  font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif; line-height:1.75; font-size:15px; }
+.wrap { max-width:1160px; margin:0 auto; padding:36px 22px 70px; }
+header.top { border-bottom:3px solid #1f4e79; padding-bottom:18px; margin-bottom:26px; }
+h1 { font-size:26px; margin:0 0 6px; }
+.sub { color:#5a6573; font-size:14px; }
+h2 { font-size:21px; margin:42px 0 14px; padding-left:12px; border-left:5px solid #1f4e79; }
+h3 { font-size:16.5px; margin:26px 0 8px; color:#1f4e79; }
+p { margin:9px 0; }
+code { background:#eef4fa; color:#1f4e79; padding:1px 6px; border-radius:5px; font-size:13px; }
+.card { background:#fff; border:1px solid #e3e7ec; border-radius:14px; padding:18px 20px; margin:14px 0;
+  box-shadow:0 1px 4px rgba(20,30,50,.04); }
+table { width:100%; border-collapse:collapse; font-size:13px; margin:10px 0; }
+th,td { border:1px solid #e3e7ec; padding:7px 9px; text-align:left; vertical-align:top; }
+th { background:#f0f3f7; white-space:nowrap; }
+td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.note { background:#fffaf0; border-left:4px solid #b7791f; padding:12px 16px; margin:14px 0;
+  border-radius:0 8px 8px 0; font-size:14px; }
+.danger { background:#fdecea; border-left:4px solid #c0392b; padding:12px 16px; margin:14px 0;
+  border-radius:0 8px 8px 0; font-size:14px; }
+.ok { background:#e6f6ee; border-left:4px solid #128a52; padding:12px 16px; margin:14px 0;
+  border-radius:0 8px 8px 0; font-size:14px; }
+.big { font-size:21px; font-weight:700; }
+.up { color:#ea4335; font-weight:700; }
+.down { color:#34a853; font-weight:700; }
+.muted { color:#98a2b3; }
+a { color:#1f4e79; }
+footer { margin-top:48px; padding-top:18px; border-top:1px solid #e3e7ec; font-size:12px; color:#7b8794; line-height:1.8; }
+ul { margin:8px 0; padding-left:22px; } li { margin:5px 0; }
+.kicker { color:#7b8794; font-size:12px; letter-spacing:.2em; text-transform:uppercase; }
+.hl { background:#fff8e6; }
+.cur { background:#fff4e5; }
+.warnbox { border:2px solid #c0392b; }
+</style><!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  .navgrp{ padding:5px 6px 5px 5px !important; }
+}
+
+</style><!--/WB_THEME--></head>
+<body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../diagnosis/index.html'>个股研判</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a><a href='../three_yin/index.html'>三连阴</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<div class="wrap">
+<header class="top">
+<div class="kicker">实测证据 ｜ 主升精选</div>
+<h1>「想筛选赚钱的」——先把「赚钱」拆成三层，再看到底缺哪一层</h1>
+<div class="sub">数据截至 2026-09-30 收盘 ｜ 主样本 2023-08-07 ~ 2026-08-26
+（149 个采样日 · 600,194 行）｜ 复样本 2025-11-12 ~ 2026-08-31（40 个采样日）</div>
+</header>
+
+<div class="card warnbox">
+<h3 style="margin-top:0">三句话结论</h3>
+<p><b>① 不是「选股没调好」。</b>现役 9 个先验因子（趋势＋资金）在两个互相独立的样本上，
+都是<b>固定持有口径下的负 alpha</b>：A 档（分数最前 5%）相对胜率 42.7%、
+超额 <span class='down'>-7.29pp</span>；而尾档（最后 5%）超额 <span class='up'>+4.02pp</span>。
+换句话说，<b>把这套打分反过来用反而更接近赚钱方向</b>。</p>
+<p><b>② 页面上的「60%+ 可兑现胜率」是退出规则造成的错觉。</b>
+全样本套现行移动止盈，胜率 60.2%，但单笔均值只有
+<span class='up'>+0.501%</span>、盈亏比 0.76 ——
+<b>赢的次数多、每次赢得薄</b>。这不是选股能力的证据。</p>
+<p class="big">③ 本轮最重要的发现在第四节：<br>
+<b>同一组参数、同一张网格，只改「成交假设」，结果就在 <span class='up'>+0.80%</span>
+与 <span class='up'>+0.17%</span> 之间大幅摆动，跨度 2.4pp
+—— 与收益本身同量级。</b><br>
+这意味着<b>任何基于这张网格的参数选择都不可靠</b>；且在 3 年样本上，
+<b>没有任何一组退出参数能「两半同向且为正」（0 / 150）</b>。</p>
+</div>
+
+<h2>一、先证伪「选股方向」：分数越高，越不会涨</h2>
+<p>把同一批样本按现役 9 因子等权分排序，取域内最前 5% 与最后 5%，
+与域内全体比较<b>相对胜率</b>（前向 20 日收益 &gt; 同日域内等权中位数，≈ 剔除行情后的选股能力）。</p>
+<table data-wb>
+<tr><th>口径</th><th class="num">主样本（3 年）</th><th class="num">复样本（10 个月）</th></tr>
+<tr><td>域内全体（基线）</td><td class="num">50.0%（定义）</td><td class="num">50.0%（定义）</td></tr>
+<tr class="hl"><td><b>A 档（分数最前 5%）</b></td>
+<td class="num">42.7% ｜ 超额 <span class='down'>-7.29pp</span></td>
+<td class="num">44.3% ｜ 超额 <span class='down'>-5.71pp</span></td></tr>
+<tr class="hl"><td><b>尾档（分数最后 5%）</b></td>
+<td class="num">54.0% ｜ 超额 <span class='up'>+4.02pp</span></td>
+<td class="num">53.0% ｜ 超额 <span class='up'>+2.95pp</span></td></tr>
+<tr><td>A 档绝对收益（未扣费）</td><td class="num"><span class='up'>+0.31%</span></td><td class="num"><span class='up'>+0.05%</span></td></tr>
+<tr><td>尾档绝对收益（未扣费）</td><td class="num"><span class='up'>+2.20%</span></td><td class="num"><span class='up'>+1.23%</span></td></tr>
+</table>
+<div class="danger">两个样本给出同一方向，且 3 年样本上差距更大 ——
+A 档 <span class='down'>-7.29pp</span> vs 尾档 <span class='up'>+4.02pp</span>，相差 <b>11.3pp</b>。
+这不像「这一期行情特殊」，更像<b>整族「趋势＋资金」先验与当前 A 股中短期收益方向相反</b>。</div>
+
+<h2>二、逐因子看：拖后腿的是谁</h2>
+<p>每个因子按<b>训练半</b>分位切 5 桶，报<b>测试半</b>各桶相对胜率（%），以及前后两半的 Q5−Q1。
+先验为「↑越大越好」的因子，若 Q5−Q1 为负且两半同号 → <b>方向反了</b>。</p>
+<table data-wb>
+<tr><th>因子</th><th>先验方向</th><th class="num">Q1</th><th class="num">Q2</th><th class="num">Q3</th><th class="num">Q4</th><th class="num">Q5</th>
+<th class="num">Q5−Q1<br>前半</th><th class="num">Q5−Q1<br>后半</th><th>判定</th></tr>
+<tr><td>近20日动量</td><td>↑越大越好</td><td class='num'>53.8</td><td class='num'>50.0</td><td class='num'>50.9</td><td class='num'>49.9</td><td class='num'>45.7</td><td class='num'><span class='down'>-9.0</span></td><td class='num'><span class='down'>-8.2</span></td><td><span class='down'>先验方向反了·两半稳定</span></td></tr>
+<tr><td>近60日动量</td><td>↑越大越好</td><td class='num'>56.3</td><td class='num'>51.6</td><td class='num'>50.6</td><td class='num'>48.3</td><td class='num'>44.8</td><td class='num'><span class='down'>-8.2</span></td><td class='num'><span class='down'>-11.4</span></td><td><span class='down'>先验方向反了·两半稳定</span></td></tr>
+<tr><td>站上MA60</td><td>↑越大越好</td><td class='num'>56.9</td><td class='num'>51.1</td><td class='num'>50.4</td><td class='num'>48.4</td><td class='num'>44.8</td><td class='num'><span class='down'>-9.8</span></td><td class='num'><span class='down'>-12.0</span></td><td><span class='down'>先验方向反了·两半稳定</span></td></tr>
+<tr><td>MA20斜率</td><td>↑越大越好</td><td class='num'>55.1</td><td class='num'>51.2</td><td class='num'>50.4</td><td class='num'>48.4</td><td class='num'>46.0</td><td class='num'><span class='down'>-5.2</span></td><td class='num'><span class='down'>-9.1</span></td><td><span class='down'>先验方向反了·两半稳定</span></td></tr>
+<tr><td>均线多头强度</td><td>↑越大越好</td><td class='num'>56.8</td><td class='num'>50.8</td><td class='num'>50.3</td><td class='num'>48.2</td><td class='num'>45.2</td><td class='num'><span class='down'>-8.8</span></td><td class='num'><span class='down'>-11.6</span></td><td><span class='down'>先验方向反了·两半稳定</span></td></tr>
+<tr><td>接近近20日高</td><td>↑越大越好</td><td class='num'>50.4</td><td class='num'>48.6</td><td class='num'>48.9</td><td class='num'>50.5</td><td class='num'>51.0</td><td class='num'><span class='down'>-0.9</span></td><td class='num'><span class='up'>+0.6</span></td><td><span class='muted'>方向不稳定</span></td></tr>
+<tr><td>上涨放量占比</td><td>↑越大越好</td><td class='num'>53.0</td><td class='num'>51.5</td><td class='num'>50.0</td><td class='num'>47.9</td><td class='num'>45.9</td><td class='num'><span class='down'>-5.5</span></td><td class='num'><span class='down'>-7.1</span></td><td><span class='down'>先验方向反了·两半稳定</span></td></tr>
+<tr><td>量能放大</td><td>↑越大越好</td><td class='num'>52.1</td><td class='num'>52.0</td><td class='num'>51.4</td><td class='num'>48.9</td><td class='num'>44.2</td><td class='num'><span class='down'>-7.2</span></td><td class='num'><span class='down'>-7.9</span></td><td><span class='down'>先验方向反了·两半稳定</span></td></tr>
+<tr><td>回调缩量</td><td>↓越小越好</td><td class='num'>52.0</td><td class='num'>51.8</td><td class='num'>50.8</td><td class='num'>48.9</td><td class='num'>44.5</td><td class='num'><span class='down'>-5.6</span></td><td class='num'><span class='down'>-7.5</span></td><td><span class='up'>方向一致</span></td></tr>
+</table>
+<div class="note">9 个因子里 <b>8 个「两半同向为负」</b>：越是强势/放量/多头排列，其后 20 日相对胜率越低。
+唯一例外「接近近 20 日高」前半正、后半负 —— 方向不稳定，不能当有效因子。<b>问题不在单个因子的阈值，而在整族先验的方向。</b></div>
+
+<h2>三、收益归因：胜率是从哪来的</h2>
+<p>同一批票，分别用「前向 20 日收益」与「现行移动止盈规则（−12% / +6% 激活 / 回撤 3% / 最多 20 日）」结算：</p>
+<table data-wb>
+<tr><th>样本</th><th class="num">入场口径<br>前向 20 日收益</th><th class="num">入场口径<br>胜率</th>
+<th class="num">现行退出<br>单笔均值</th><th class="num">现行退出<br>胜率</th><th class="num">现行退出<br>盈亏比</th></tr>
+<tr><td>主样本 · 域内全体</td>
+<td class="num"><span class='up'>+1.40%</span></td><td class="num">48.9%</td>
+<td class="num"><span class='up'>+0.501%</span></td><td class="num">60.2%</td>
+<td class="num">0.76</td></tr>
+<tr><td>主样本 · A 档</td>
+<td class="num"><span class='up'>+0.31%</span></td><td class="num">42.4%</td>
+<td class="num"><span class='down'>-0.047%</span></td><td class="num">57.1%</td>
+<td class="num">0.74</td></tr>
+<tr><td>复样本 · 域内全体</td>
+<td class="num"><span class='up'>+0.40%</span></td><td class="num">45.8%</td>
+<td class="num"><span class='up'>+0.202%</span></td><td class="num">60.3%</td>
+<td class="num">0.69</td></tr>
+<tr><td>复样本 · A 档</td>
+<td class="num"><span class='up'>+0.05%</span></td><td class="num">42.6%</td>
+<td class="num"><span class='up'>+0.691%</span></td><td class="num">60.8%</td>
+<td class="num">0.76</td></tr>
+</table>
+<div class="danger"><b>看「域内全体」这一行：</b>胜率 60.2%、
+单笔 <span class='up'>+0.501%</span>、盈亏比 0.76。
+<b>这组数字不该被读作「策略成立了」</b>——它是「赢 3 次赚的钱，输 1 次还回去」的典型结构。
+而 A 档的入场口径（固定 20 日）只有 <span class='up'>+0.31%</span>，
+<b>还低于域内全体 <span class='up'>+1.40%</span></b>。</div>
+
+<h3>A 档在退出口径下「看起来更好」，是因为波动更大</h3>
+<table data-wb>
+<tr><th>主样本</th><th class="num">MFE（20 日内最大涨幅）</th><th class="num">MAE（20 日内最大回撤）</th></tr>
+<tr><td>域内全体</td><td class="num">12.94%</td><td class="num">-9.27%</td></tr>
+<tr class="hl"><td>A 档</td><td class="num">18.10%</td><td class="num">-13.52%</td></tr>
+<tr><td>尾档</td><td class="num">12.95%</td><td class="num">-8.85%</td></tr>
+</table>
+<p>A 档的振幅显著更大（MFE 18.1% vs 全体 12.9%）。
+<b>「浮盈 +6% 激活、回撤 3% 走」这条规则天然偏袒振幅大的票</b> ——
+它更容易触发激活、更容易把浮盈锁成一笔「盈利」。
+这就是 A 档胜率好看、而固定持有口径却是负 alpha 的机械原因。</p>
+
+<h2>四、★ 本页的核心：同一张网格，换「成交假设」就换结论</h2>
+<p>退出规则网格（止损 × 激活阈值 × 跟踪回撤 × 最长持有，共 150 组），
+在 A 档上跑，按<b>前后两半平均</b>排名（不在单独一半挑最优），净均值扣往返 0.15pp。
+两处成交假设对结果影响极大：</p>
+<ul>
+<li><b>日内路径：</b>跟踪止盈的止损价依赖「当日最高价」。同根 K 线里「先冲高、后回落」与「先回落、后冲高」
+结果完全相反 —— 前者几乎必然能以「最高价×(1−回撤)」成交，是<b>系统性高估</b>。</li>
+<li><b>跳空成交：</b>若当日<b>开盘</b>已在止损线之下，限价单不可能以止损价成交，
+必须以<b>开盘价</b>成交。缺这一步，大阴线/跳空的亏损被系统性低估成「刚好止损在线上」。</li>
+</ul>
+<h3>最优参数（止损 12% ｜ 10% 才激活 ｜ 回撤 8% ｜ 最多持 20 日）在四种假设下：</h3>
+<table data-wb>
+<tr><th>成交假设</th><th class="num">A 档（扣 0.15pp）</th><th class="num">全样本（扣 0.15pp）</th></tr>
+<tr><td>保守日内 + 跳空成交</td><td class='num'><span class='up'>+0.169%</span></td><td class='num'><span class='up'>+0.796%</span></td></tr>
+<tr><td>乐观日内 + 跳空成交</td><td class='num'><span class='down'>-1.582%</span></td><td class='num'><span class='down'>-0.576%</span></td></tr>
+<tr class='hl'><td>保守日内 + 忽略跳空</td><td class='num'><span class='up'>+0.804%</span></td><td class='num'><span class='up'>+1.074%</span></td></tr>
+<tr class='hl'><td>乐观日内 + 忽略跳空</td><td class='num'><span class='down'>-1.439%</span></td><td class='num'><span class='down'>-0.517%</span></td></tr>
+</table>
+<div class="danger"><b>同一组参数，四种假设下 A 档从
+<span class='down'>-1.582%</span> 到 <span class='up'>+0.804%</span>，
+跨度 2.4pp —— 与收益本身同量级。</b>
+其中「忽略跳空」两行明显高于「含跳空」两行（跳空处理会把结果打下一档），
+而日内路径假设的影响同样巨大。<br>
+这不是参数问题，是<b>回测口径问题</b> —— 也是本页最值得带走的一条：
+<b>跟踪止盈类规则的收益量级（约 ±1pp）完全被成交假设支配，而交易成本（0.15pp）就在同一量级，
+据此挑参数等于在拟合噪声。</b></div>
+
+<h3>修正后的完整网格（前 12 名，两列均为扣费后净均值）</h3>
+<table data-wb>
+<tr><th class="num">名次</th><th>参数（止损 ｜ 激活 ｜ 回撤 ｜ 持有）</th>
+<th class="num">前半</th><th class="num">后半</th><th class="num">两半平均(净)</th>
+<th class="num">平均持有</th><th class="num">MAE</th><th class="num">盈亏比</th><th>跨期</th></tr>
+<tr><td class='num'>1</td><td>止损 12% ｜ 10% 才激活 ｜ 回撤 8% ｜ 最多持 20 日</td><td class='num'><span class='down'>-0.357</span></td><td class='num'><span class='up'>+0.812</span></td><td class='num'><span class='up'>+0.078</span></td><td class='num'>9.7天</td><td class='num'>-6.6%</td><td class='num'>1.03</td><td><span class=down>反向</span></td></tr>
+<tr><td class='num'>2</td><td>止损 15% ｜ 10% 才激活 ｜ 回撤 8% ｜ 最多持 20 日</td><td class='num'><span class='down'>-0.542</span></td><td class='num'><span class='up'>+0.991</span></td><td class='num'><span class='up'>+0.074</span></td><td class='num'>10.9天</td><td class='num'>-7.6%</td><td class='num'>0.92</td><td><span class=down>反向</span></td></tr>
+<tr><td class='num'>3</td><td>止损 20% ｜ 10% 才激活 ｜ 回撤 8% ｜ 最多持 20 日</td><td class='num'><span class='down'>-0.620</span></td><td class='num'><span class='up'>+1.051</span></td><td class='num'><span class='up'>+0.065</span></td><td class='num'>12.4天</td><td class='num'>-9.0%</td><td class='num'>0.83</td><td><span class=down>反向</span></td></tr>
+<tr><td class='num'>4</td><td>止损 8% ｜ 10% 才激活 ｜ 回撤 8% ｜ 最多持 20 日</td><td class='num'><span class='down'>-0.271</span></td><td class='num'><span class='up'>+0.647</span></td><td class='num'><span class='up'>+0.038</span></td><td class='num'>7.4天</td><td class='num'>-5.1%</td><td class='num'>1.41</td><td><span class=down>反向</span></td></tr>
+<tr><td class='num'>5</td><td>止损 12% ｜ 6% 才激活 ｜ 回撤 8% ｜ 最多持 20 日</td><td class='num'><span class='down'>-0.326</span></td><td class='num'><span class='up'>+0.615</span></td><td class='num'><span class='down'>-0.005</span></td><td class='num'>8.3天</td><td class='num'>-5.8%</td><td class='num'>1.22</td><td><span class=down>反向</span></td></tr>
+<tr><td class='num'>6</td><td>止损 15% ｜ 6% 才激活 ｜ 回撤 8% ｜ 最多持 20 日</td><td class='num'><span class='down'>-0.467</span></td><td class='num'><span class='up'>+0.734</span></td><td class='num'><span class='down'>-0.017</span></td><td class='num'>9.3天</td><td class='num'>-6.6%</td><td class='num'>1.12</td><td><span class=down>反向</span></td></tr>
+<tr><td class='num'>7</td><td>止损 20% ｜ 6% 才激活 ｜ 回撤 8% ｜ 最多持 20 日</td><td class='num'><span class='down'>-0.515</span></td><td class='num'><span class='up'>+0.779</span></td><td class='num'><span class='down'>-0.018</span></td><td class='num'>10.4天</td><td class='num'>-7.7%</td><td class='num'>1.04</td><td><span class=down>反向</span></td></tr>
+<tr><td class='num'>8</td><td>止损 12% ｜ 10% 才激活 ｜ 回撤 5% ｜ 最多持 20 日</td><td class='num'><span class='down'>-0.381</span></td><td class='num'><span class='up'>+0.630</span></td><td class='num'><span class='down'>-0.026</span></td><td class='num'>9.2天</td><td class='num'>-6.6%</td><td class='num'>1.01</td><td><span class=down>反向</span></td></tr>
+<tr><td class='num'>9</td><td>止损 15% ｜ 10% 才激活 ｜ 回撤 5% ｜ 最多持 20 日</td><td class='num'><span class='down'>-0.570</span></td><td class='num'><span class='up'>+0.779</span></td><td class='num'><span class='down'>-0.046</span></td><td class='num'>10.3天</td><td class='num'>-7.6%</td><td class='num'>0.89</td><td><span class=down>反向</span></td></tr>
+<tr><td class='num'>10</td><td>止损 8% ｜ 10% 才激活 ｜ 回撤 5% ｜ 最多持 20 日</td><td class='num'><span class='down'>-0.309</span></td><td class='num'><span class='up'>+0.513</span></td><td class='num'><span class='down'>-0.048</span></td><td class='num'>6.9天</td><td class='num'>-5.0%</td><td class='num'>1.37</td><td><span class=down>反向</span></td></tr>
+<tr><td class='num'>11</td><td>止损 6% ｜ 10% 才激活 ｜ 回撤 8% ｜ 最多持 20 日</td><td class='num'><span class='down'>-0.285</span></td><td class='num'><span class='up'>+0.476</span></td><td class='num'><span class='down'>-0.055</span></td><td class='num'>6.0天</td><td class='num'>-4.3%</td><td class='num'>1.81</td><td><span class=down>反向</span></td></tr>
+<tr><td class='num'>12</td><td>止损 8% ｜ 6% 才激活 ｜ 回撤 8% ｜ 最多持 20 日</td><td class='num'><span class='down'>-0.302</span></td><td class='num'><span class='up'>+0.485</span></td><td class='num'><span class='down'>-0.058</span></td><td class='num'>6.5天</td><td class='num'>-4.7%</td><td class='num'>1.54</td><td><span class=down>反向</span></td></tr>
+</table>
+<div class="warnbox card">
+<b>三个必须一起读的数字：</b>
+<ul>
+<li>现行参数（−12% / +6% / 3% / 20 日）两半平均 <b><span class='down'>-0.260%</span></b>，
+名次 <b>56/150</b>，且两半
+<b class=down>反向</b> —— <b>前半 <span class='down'>-0.511</span> / 后半 <span class='up'>+0.291</span></b>。</li>
+<li>全网格里「两半同向 <b>且</b> 两半平均为正」的组合只有 <b>0/150</b>。</li>
+<li>网格第一名净均值也仅 <b><span class='up'>+0.078%</span></b>（前半 <span class='down'>-0.357</span> / 后半 <span class='up'>+0.812</span>）。
+把「前半最优」拿去后半验证，名次 14/150。</li>
+</ul>
+</div>
+
+<h3>换成最优参数后，选股还有增量吗？</h3>
+<table data-wb>
+<tr><th>同一最优退出口径（已扣费）</th><th class="num">净单笔均值</th><th class="num">胜率</th><th class="num">平均持有</th></tr>
+<tr><td>A 档（域内前 5%）</td><td class="num"><span class='up'>+0.169%</span></td><td class="num">50.4%</td><td class="num">9.6天</td></tr>
+<tr><td>域内全体</td><td class="num"><span class='up'>+0.796%</span></td><td class="num">52.4%</td><td class="num">14.4天</td></tr>
+<tr class="hl"><td><b>选股增量</b></td><td class="num"><span class='down'>-0.627pp</span></td><td class="num">—</td><td class="num">—</td></tr>
+</table>
+<p>在最优退出口径下，A 档相对域内全体的净增量是 <b><span class='down'>-0.627pp</span></b> ——
+<b>选股层不但不贡献，还倒扣。</b></p>
+
+<h2>五、两个样本的交叉验证</h2>
+<table data-wb>
+<tr><th>检验项</th><th class="num">主样本（3 年 · 600,194 行）</th><th class="num">复样本（10 个月 · 166,669 行）</th></tr>
+<tr><td>样本区间</td><td class='num'>2023-08-07 ~ 2026-08-26</td><td class='num'>2025-11-12 ~ 2026-08-31</td></tr>
+<tr><td>面板行数 / 采样日</td><td class='num'>600,194 / 149</td><td class='num'>166,669 / 40</td></tr>
+<tr><td>A 档（域内前 5%）相对胜率超额</td><td class='num'><span class='down'>-7.29pp</span></td><td class='num'><span class='down'>-5.71pp</span></td></tr>
+<tr><td>尾档（域内后 5%）相对胜率超额</td><td class='num'><span class='up'>+4.02pp</span></td><td class='num'><span class='up'>+2.95pp</span></td></tr>
+<tr><td>A 档 MFE（20 日内最大涨幅）</td><td class='num'>18.10%</td><td class='num'>20.84%</td></tr>
+<tr><td>全样本 MFE</td><td class='num'>12.94%</td><td class='num'>13.30%</td></tr>
+<tr><td>现行退出 · A 档单笔均值（扣费后见下）</td><td class='num'><span class='down'>-0.05pp</span></td><td class='num'><span class='up'>+0.69pp</span></td></tr>
+<tr><td>现行退出 · 全样本单笔均值</td><td class='num'><span class='up'>+0.50pp</span></td><td class='num'><span class='up'>+0.20pp</span></td></tr>
+<tr><td>现行参数网格名次</td><td class='num'>56/150</td><td class='num'>51/150</td></tr>
+<tr><td>网格中「两半同向且为正」的组合</td><td class='num'>0/150</td><td class='num'>112/150</td></tr>
+</table>
+<p>换数据源、换长度，结论方向一致；差异主要在「退出网格的名次」这一类噪声大的量上 ——
+这恰好说明<b>参数排名不可靠，方向性结论才可靠</b>。</p>
+
+<h2>六、那到底该怎么优化？—— 按可信度排序</h2>
+<div class="card">
+<h3 style="margin-top:0">第一步（一定先做）：把所有退出/入场回测的成交假设补齐</h3>
+<ul>
+<li>跟踪止盈必须用<b>保守的日内处理</b>（不假设「先高后低」），并在止损位上加入
+<b>「跳空以开盘价成交」</b>。</li>
+<li>本轮实测：同一组最优参数，<b>忽略跳空</b>时 A 档 <span class='up'>+0.804%</span>；
+<b>补上跳空成交</b>后 <span class='up'>+0.169%</span>。
+<b>结论完全不同，而代码改动只有几行</b>。</li>
+</ul>
+<h3>第二步（需单独一轮验证）：换先验族，而不是调参</h3>
+<ul>
+<li>趋势＋资金先验在两个样本上都是负 alpha，尾档（低动量/缩量/非多头）反而有
+<span class='up'>+4.02pp</span> 的相对优势 —— 这与项目<b>反转池</b>的既有结论同向
+（有效因子是「本轮跌幅 ≥30% ＋ 启动证据 ≥2 条」）。</li>
+<li>但 <b>尾档 +4.0pp 是弱优势</b>，低动量票里混着大量「下跌中继」。
+必须走完整四道核验（无未来函数 / walk-forward / 随机对照 / 退出可兑现）才能改生产，
+<b>不能直接翻转现有打分</b>。</li>
+</ul>
+<h3>第三步（不要做）：继续加因子 / 微调权重去凑胜率</h3>
+<ul>
+<li>整族先验方向不对时，加因子只会放大噪声。这正是因子实验室的第一条纪律。</li>
+</ul>
+<h3>本轮的落地决定</h3>
+<ul>
+<li><b>维持</b>现有生产配置不变（没有找到「两半同向且为正」的替代参数）。</li>
+<li>修订退出规则回测口径（第一步），后续所有池子的退出验证都按新口径重算。</li>
+<li>「筛选赚钱的」在这套数据与本框架下：<b>当前没有可兑现的稳定优势 → 宁可不选</b>。</li>
+</ul>
+</div>
+
+<h2>七、局限（必须一起读）</h2>
+<ul>
+<li><b>样本跨度：</b>主样本 2023-08-07 ~ 2026-08-26（约 3 年），仍未覆盖完整牛熊；
+「换到别的年份是否成立」无法在本页验证。</li>
+<li><b>窗口重叠：</b>前向 20 日窗口互相重叠、采样步长 5 日 → 样本非独立，
+pp 差应按「日期聚类」理解，不能当独立样本做显著性检验。</li>
+<li><b>成本近似：</b>净均值只扣 0.15pp 往返成本，未计冲击成本、涨跌停无法成交、以及
+「同一日 190+ 只票同时调仓」的容量约束。</li>
+<li><b>口径差异：</b>入场能力用「前向 20 日固定持有」，与主升生产页的「可兑现胜率（移动止盈）」
+是两种口径，<b>只能对比方向，不能对比数值</b>。生产页的高胜率没有错，错的是把它读作「选股能力」。</li>
+<li><b>域：</b>全市场 A 股正股剔 ST/退 + 20 日均额 ≥3000 万 + 现价 ≥2 元，与主升生产域一致。</li>
+</ul>
+
+<footer>
+数据截至 2026-09-30 收盘 ｜ 实测脚本 <code>quant/_selected_attrib.py</code>
+（重跑：<code>python quant/_selected_attrib.py --date 2026-09-30 --source long</code>）<br>
+产物：<code>quant/_selected_attrib_long.json</code>（3 年）· <code>quant/_selected_attrib_txk.json</code>（10 个月）<br>
+本页只陈述<strong>已算出的事实</strong>，不给「改个参数就能稳赚」的建议。
+｜ <a href="../../index.html">← 返回总门户</a>
+｜ <a href="dip_buy_evidence.html">相关：高上涨率＋低吸实测</a>
+｜ <a href="news_nextday_evidence.html">相关：提前拿消息→次日必涨</a>
+</footer>
+</div>
+<!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--></body></html>
