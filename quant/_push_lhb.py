@@ -145,6 +145,9 @@ FILES = [
     "quant/_nonprice_lead.py",       # 非价量（位置类）因子检验（结论：低位有效应但无超额）
     "quant/_pullback_probe.py",      # 强势行业回调买点检验（结论：9 定义全负，不出票）
     "quant/_strategy_gate.py",       # ★策略结论门禁（R1等量/R2真选股层/R3判定双条件）
+    "quant/_event_nextday_probe.py",  # ★「提前拿消息→次日必涨」实测（结论：剔封板后超额 −0.78pp）
+    "quant/gen_news_nextday_page.py",  # 上述结论证据页生成器 → web/docs/news_nextday_evidence.html
+    "quant/_diag_remote_diff.py",     # 本地 vs 远端 blob 差异诊断（判断「谁新」，避免推错方向）
     "web/accumulation/accum_result.json",  # 回测汇总（模块组合/敏感性，供主页卡与审计）
     # 消融/样本外结论：build_accum._ablate_block() 动态读这两个 JSON 渲染页面结论，
     # 不推送 → 线上页面会退化成「尚未运行」，等于结论丢失。
