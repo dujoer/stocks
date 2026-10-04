@@ -762,6 +762,15 @@ ZONES = [
                 "stat": "实测三口径 ｜ 含等量对照 ｜ 脚本可重跑复现",
                 "date": TODAY.strftime("%Y-%m-%d"), "fresh": badge("fresh", "文档"),
             },
+            {
+                "ic": "🎯", "t": "「高上涨率 + 低吸」能不能赚钱（实测证据）",
+                "href": "web/docs/dip_buy_evidence.html",
+                "func": "把「上涨率高的信号」与「用低吸买入」拆成两层分别实测：四个 T 日收盘可知的先验信号"
+                        "× 四个低吸折扣档 × 两个持有期，逐日 block bootstrap 对照「直接追高」。",
+                "rel": "← 回答「不看涨停、只看上涨率高的票、靠低吸赚钱，这个方法可行吗」。",
+                "stat": "50 万行全市场日K ｜ 池化净期望逐日对照 ｜ 脚本可重跑复现",
+                "date": TODAY.strftime("%Y-%m-%d"), "fresh": badge("fresh", "文档"),
+            },
         ],
     },
 ]
