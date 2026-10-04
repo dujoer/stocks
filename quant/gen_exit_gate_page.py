@@ -144,6 +144,28 @@ def main():
             return (label, t["n"], t["wr"], t["ret"], t["wr_gap"], t["ret_gap"], "仅跳空", doc_name)
         return (label, None, None, None, None, None, "缺证据", doc_name)
 
+    def add_3yl(label, doc, key, doc_name):
+        ea = (doc or {}).get("exit_assumption") or {}
+        for t in ea.get("tiers", []):
+            if t.get("key") != key or not t.get("n"):
+                continue
+            return (label, t["n"], t["wr"], t["mean"],
+                    t["wr_gap"], t["mean_gap"], "仅跳空", doc_name)
+        return (label, None, None, None, None, None, "缺证据", doc_name)
+
+    def add_tplus(label, doc, grade, doc_name):
+        """做T的「胜率/均值」另有含义：这里 胜率列=往返率(%)、均值列=池化每次期望(%)。"""
+        ea = (doc or {}).get("exit_assumption") or {}
+        for t in ea.get("tiers", []):
+            if t.get("grade") != grade or not t.get("n"):
+                continue
+            return (label + "（左=往返率，右=每次期望）", t["n"],
+                    t["round_abs"], t["pooled"],
+                    t["round_abs_cons"], t["pooled_cons"], "T+1 约束", doc_name)
+        return (label, None, None, None, None, None, "缺证据", doc_name)
+
+    _3yl, _tp = _ld("_3yl_tier_gate.json"), _ld("_tplus_tier_gate.json")
+
     pool = [
         ("主升精选 A 档（域内前 5%）", a["n_rows"], old["top_wr"], old["top_mean"],
          real["top_wr"], real["top_mean"], "四口径", "本页"),
@@ -155,6 +177,10 @@ def main():
         add_gap("增仓 S 档（现行生产）", _acc, 60, "S 档（现行生产）", "_accum_tier_gate.json"),
         add_gap("增仓 A 档（现行生产·M或I）", _acc, 60, "A 档（现行生产·M或I）", "_accum_tier_gate.json"),
         add_gap("增仓全候选域（对照）", _acc, 60, "全候选域（无筛选对照）", "_accum_tier_gate.json"),
+        add_3yl("三连阴 ★观察档（8~12%）", _3yl, "obs", "_3yl_tier_gate.json"),
+        add_3yl("三连阴 ⚠排雷档（12~20%）", _3yl, "deep", "_3yl_tier_gate.json"),
+        add_tplus("做T A 档（域内前 10%）", _tp, "A", "_tplus_tier_gate.json"),
+        add_tplus("做T B 档（前 10~25%）", _tp, "B", "_tplus_tier_gate.json"),
     ]
 
     pool_rows_html = ""
@@ -175,6 +201,54 @@ def main():
             f"<td class='num'><b>{pc(w1)}</b></td><td class='num'><b>{sp(m1, '%', 3)}</b></td>"
             f"<td class='num {clsw}'>{dw:+.2f}pp</td>"
             f"<td class='muted'>{kind}<br>{src}</td></tr>")
+
+    # ---- 环境门控两口径复核（主升精选的出票依据，必须单独查）----
+    _envL, _envR = _ld("_env_gate_lab.json"), _ld("_env_gate_lab_realistic.json")
+    if not _envL or not _envR:
+        env_rows_html = ("<tr class='cur'><td colspan='8' class='muted'>⚠️ 可实现口径未核验："
+                         "缺 quant/_env_gate_lab_realistic.json（跑 "
+                         "<code>python quant/_env_gate_lab.py --mode realistic --no-html</code> 生成）</td></tr>")
+        env_note = ("核验完成前，环境门控的 edge 与系数均按<b>旧乐观口径</b>计算，"
+                    "<b>不可作为调参依据</b>，也不可据此放宽出票。")
+    else:
+        env_rows_html = ""
+        for k in ("强势", "震荡", "弱势", "破位"):
+            ea = (_envL.get("edge_out") or {}).get(k)
+            eb = (_envR.get("edge_out") or {}).get(k)
+            if not ea or not eb:
+                continue
+            ok = eb["edge"] > 0 and eb.get("pass_rate", 0) >= 95
+            clsd = "up" if (eb["edge"] - ea["edge"]) >= 0 else "down"
+            verdict = "✅ 仍成立" if ok else ("⚠️ 不稳（R3 不足）" if eb["edge"] > 0 else "不通过")
+            env_rows_html += (
+                f"<tr><td><b>{k}</b></td><td class='num'>{ea['nd']}</td>"
+                f"<td class='num'>{ea['edge']:+.3f}pp</td>"
+                f"<td class='num'>{ea.get('pass_rate', 0):.1f}%</td>"
+                f"<td class='num'><b>{eb['edge']:+.3f}pp</b></td>"
+                f"<td class='num'><b>{eb.get('pass_rate', 0):.1f}%</b></td>"
+                f"<td class='num {clsd}'>{eb['edge'] - ea['edge']:+.3f}pp</td>"
+                f"<td class='muted'>{verdict}</td></tr>")
+        sa = (_envL.get("edge_out") or {}).get("强势") or {}
+        sb = (_envR.get("edge_out") or {}).get("强势") or {}
+        s_ok = sb.get("edge", 0) > 0 and sb.get("pass_rate", 0) >= 95
+        wa = (_envL.get("edge_out") or {}).get("弱势") or {}
+        wb = (_envR.get("edge_out") or {}).get("弱势") or {}
+        if s_ok:
+            env_note = (
+                f"<b>结论：强势档（唯一开仓档）仍然成立</b> —— edge "
+                f"{sa.get('edge', 0):+.3f} → <b>{sb.get('edge', 0):+.3f} pp</b>、R3 "
+                f"{sa.get('pass_rate', 0):.1f}% → <b>{sb.get('pass_rate', 0):.1f}%</b>，"
+                f"留一区间仍全正。二值门控「强势开仓」的依据<b>没有被成交假设推翻</b>，主升精选维持原判。"
+                f"⚠️ 但幅度普遍缩水（强势 −{abs(sb.get('edge', 0) - sa.get('edge', 0)):.3f}pp、"
+                f"弱势 {(wb.get('edge', 0) - wa.get('edge', 0)):+.3f}pp），"
+                f"<b>弱势档的留一区间已跨零</b> —— 该档本就判空仓、绝对收益在新口径下更负，"
+                f"空仓方向不变，但「弱势档有正 edge」这个说法以后不能再用。")
+        else:
+            env_note = (
+                f"<b>⚠️ 结论：强势档在可实现口径下不再成立</b> —— edge "
+                f"{sa.get('edge', 0):+.3f} → {sb.get('edge', 0):+.3f} pp、R3 "
+                f"{sa.get('pass_rate', 0):.1f}% → {sb.get('pass_rate', 0):.1f}%。"
+                f"按红线（宁可不选），<b>主升精选应停止出票</b>，直到用可实现口径重新取得证据。")
 
     rows_tbl = ""
     for m in a["modes"]:
@@ -332,12 +406,32 @@ def main():
 方向与主升相反。这再次说明：靠这套口径去<b>挑参数</b>就是在拟合噪声。<br>
 ③ <b>增仓池基本不受影响</b>：它的跟踪止盈是<b>收盘触发、收盘成交</b>（不含「同根 K 线先冲高后回落」的路径假设），
 唯一可修的是硬止损跳空；而硬止损无论按止损线价、还是按更差的开盘价成交<b>都记为亏</b>，
-胜率不变、均值只轻微下移（±0.1pp 量级）。<b>做T / 三连阴</b>两池的收益口径不是移动止盈
-（分别是日内往返与 T+1 涨跌），本审计<b>不适用</b>，不作外推。
+胜率不变、均值只轻微下移（±0.1pp 量级）。<br>
+④ <b>三连阴 / 做T 用各自的口径单独复核</b>（不是移动止盈，所以不能套用同一张表）：<br>
+　· 三连阴买入价本就是 <b>T+1 开盘</b>（真实可得、无日内路径问题），唯一能修的是跳空，
+　　修正后<b>胜率 Δ 0.00pp、均值 Δ 不超过 0.06pp</b> —— 基本不受影响；<br>
+　· 做T是<b>反T</b>（先买后卖），受 A 股 <b>T+1</b> 约束，当日买入当日不能卖出，
+　　旧模拟却把「同根 K 线既摸买区又摸卖区」记为完成一轮。改为次日及以后才能卖出后，
+　　A 档往返率 5.15%→5.02%、池化每次期望 −0.125%→−0.142% —— <b>该池本就判「不出票」，结论不变</b>；
+　　注意 A 档逐日 edge 反而<b>升高</b>（+0.537→+0.595pp），这再次说明<b>不能用换口径的涨跌去改规则</b>。
 </div>
 </div>
 
-<h2>六、本页能说什么、不能说什么</h2>
+<h2>六、主升精选的出票依据：环境门控两口径复核</h2>
+<div class="card">
+<p>主升精选是<b>主推池</b>，它的出票闸门不是「档位 edge」，而是<b>大盘环境门控</b>（强势开仓、其余空仓）。
+而门控系数与 edge 全部由 <code>_env_gate_lab.py</code> 用<b>旧乐观口径</b>的收益反推 ——
+所以这一项必须单独复核：<b>如果强势档在可实现口径下不再成立，主推池就该停票。</b></p>
+<table>
+<thead><tr><th>环境档</th><th class="num">信号日</th><th class="num">旧 edge</th><th class="num">旧 R3</th>
+<th class="num">可实现 edge</th><th class="num">可实现 R3</th><th class="num">Δ edge</th><th>判据（edge&gt;0 且 R3≥95%）</th></tr></thead>
+<tbody>
+{env_rows_html}
+</tbody></table>
+<div class="note">{env_note}</div>
+</div>
+
+<h2>七、本页能说什么、不能说什么</h2>
 <div class="card">
 <ul>
 <li><b>能说：</b>生产页面披露的 65.5% 依赖一组未披露的成交假设；换用保守口径后测试半为
@@ -350,7 +444,7 @@ def main():
 据此选参就是拟合噪声（同源证据见 <a href="selected_attrib_evidence.html">收益归因页</a> 的退出网格）。</li>
 </ul></div>
 
-<h2>七、口径定义与复跑</h2>
+<h2>八、口径定义与复跑</h2>
 <div class="card">
 <ul>
 <li><b>域：</b>全市场 A 股正股剔 ST/退 + 20 日均额 ≥3000 万 + 现价 ≥2 元（与主升生产域一致）。</li>

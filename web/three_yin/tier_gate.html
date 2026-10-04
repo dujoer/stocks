@@ -249,7 +249,9 @@ R3 = bootstrap 中 edge&gt;0 的比例（按日整块重抽 800 次，门槛 95%
 <div class="kv">`build_3yl.py` 只读本页证据；观察档不达标即标注<b>不出票（宁可不选）</b>，
 其余四档是排除/警示档，不涉及出票。</div>
 
-<h2>七、口径与局限</h2>
+<h2>七、退出回测的成交假设（两口径并列）</h2><div class='card'><table data-wb><thead><tr><th>档</th><th>笔数</th><th>旧胜率</th><th>旧均值</th><th>跳空修正 胜率</th><th>跳空修正 均值</th><th>Δ胜率</th><th>Δ均值</th></tr></thead><tbody><tr><td><b>★ 观察档（8~12%）</b></td><td class='num'>4355</td><td class='num'>44.9%</td><td class='num'>+0.056%</td><td class='num'>44.9%</td><td class='num'>+0.050%</td><td class='num'>+0.000pp</td><td class='num'>-0.006pp</td></tr><tr><td><b>一般档（5~8%）</b></td><td class='num'>6984</td><td class='num'>41.2%</td><td class='num'>-0.136%</td><td class='num'>41.2%</td><td class='num'>-0.141%</td><td class='num'>+0.000pp</td><td class='num'>-0.005pp</td></tr><tr><td><b>浅跌档（0~5%）</b></td><td class='num'>19630</td><td class='num'>42.7%</td><td class='num'>-0.178%</td><td class='num'>42.7%</td><td class='num'>-0.165%</td><td class='num'>+0.000pp</td><td class='num'>+0.013pp</td></tr><tr><td><b>⚠ 排雷档（12~20%）</b></td><td class='num'>1761</td><td class='num'>42.9%</td><td class='num'>+0.091%</td><td class='num'>42.9%</td><td class='num'>+0.065%</td><td class='num'>+0.000pp</td><td class='num'>-0.026pp</td></tr><tr><td><b>⛔ 深跌禁区（>20%）</b></td><td class='num'>217</td><td class='num'>30.8%</td><td class='num'>-0.598%</td><td class='num'>30.8%</td><td class='num'>-0.542%</td><td class='num'>+0.000pp</td><td class='num'>+0.055pp</td></tr></tbody></table><div class='kv'>本池买入价已经是 <b>T+1 开盘</b>（真实可得，不存在日内路径问题），唯一能修的是 <b>仅跳空：触发日开盘已穿止损/止盈线 → 按开盘价成交</b>：旧口径在触发日一律按止损价/止盈价成交，可实现口径改为「开盘已穿线则按开盘价成交」—— 止损方向更差、止盈方向更好，<b>净方向由实测决定</b>。止损跳空更差、止盈跳空更好，净方向由实测决定；选股规则与阈值一律未改。信号定义、分档阈值、止损/止盈百分比一律<b>未改</b>。</div></div>
+
+<h2>八、口径与局限</h2>
 <div class="card"><ul>
 <li>信号：收盘连续 3 日下跌 + 近 3 日无停牌跳空 + 量 &gt; 0；<b>累计跌幅</b>
     = 1 − 信号日收盘 / 三连阴开始前一日收盘（与 <code>build_3yl.scan()</code>、<code>_3yl_lab</code> 一字不差）。</li>

@@ -155,6 +155,15 @@ FILES = [
     "quant/_exit_sim.py",             # ★ 移动止盈「单一退出模拟口径」（日内路径 × 跳空 两个开关）
     "quant/_exit_assumption_audit.py",  # ★ 在生产主升面板上复核生产胜率的成交假设审计
     "quant/gen_exit_gate_page.py",    # 上述审计证据页生成器 → web/docs/exit_assumption_evidence.html
+    # ---- 成交假设审计「推广到全部池」（2026-10-05）----
+    "quant/_env_gate_lab.py",         # ★ 主升精选出票依据（环境门控）→ 加 --mode legacy|realistic 两口径
+    "quant/_env_gate_lab_realistic.json",  # 可实现口径产物（env_gate.html 第七节的对照数字来源）
+    "quant/_3yl_lab.py",              # ★ 三连阴 outcome_gap（只修跳空：穿线日按开盘价成交）
+    "quant/_3yl_tier_gate.py",        # 三连阴门禁 + exit_assumption 段
+    "quant/_3yl_gate_page.py",        # 三连阴证据页 → web/three_yin/tier_gate.html
+    "quant/_tplus_lab.py",            # ★ 做T _sim_realistic（反T 遵守 A 股 T+1：当日买不可当日卖）
+    "quant/_tplus_tier_gate.py",      # 做T门禁 + exit_assumption 段
+    "quant/_tplus_gate_page.py",      # 做T证据页 → web/tplus/tier_gate.html
     "web/accumulation/accum_result.json",  # 回测汇总（模块组合/敏感性，供主页卡与审计）
     # 消融/样本外结论：build_accum._ablate_block() 动态读这两个 JSON 渲染页面结论，
     # 不推送 → 线上页面会退化成「尚未运行」，等于结论丢失。
