@@ -40,6 +40,7 @@ SECTIONS = [
     ("行业最强", "shareholder/2026-q2-industry-elite.html"),
     ("牛人追踪", "shareholder/tracker.html"),
     ("个股调研", "research/index.html"),
+    ("个股研判", "diagnosis/index.html"),
     ("底部反转", "reversal/index.html"),
     ("主升精选", "selected/index.html"),
     ("增仓精选", "accumulation/index.html"),
@@ -70,6 +71,7 @@ MODULES = [
     ]),
     ("选股与策略", [
         ("个股调研", "research/index.html"),
+        ("个股研判", "diagnosis/index.html"),
         ("底部反转", "reversal/index.html"),
         ("主升精选", "selected/index.html"),
         ("增仓精选", "accumulation/index.html"),

@@ -65,6 +65,7 @@ lhb_d, lhb_f = latest(r"^lhb_(\d{4}-\d{2}-\d{2})\.html$", os.path.join(WEB, "lhb
 sec_d, sec_f = latest(r"^sector-strength-(\d{8})\.html$", os.path.join(WEB, "sector"))
 psy_d, psy_f = latest(r"^crowd-psychology-risk-radar-(\d{8})\.html$", os.path.join(WEB, "psychology"))
 research_d, research_f = latest(r"^research-.*?-(\d{8})\.html$", os.path.join(WEB, "research"))
+diag_d, diag_f = latest(r"^diag-.*?-(\d{8})\.html$", os.path.join(WEB, "diagnosis"))
 reversal_d, reversal_f = latest(r"^watchlist_(\d{8})\.html$", os.path.join(WEB, "reversal"))
 macd_d, macd_f = latest(r"^watchlist_(\d{8})\.html$", os.path.join(WEB, "macd"))
 selected_d, selected_f = latest(r"^combined_(\d{8})\.html$", os.path.join(WEB, "selected"))
@@ -279,6 +280,33 @@ def stat_research():
     return f"已生成 <b>{n}</b> 篇个股调研报告（青木科技 / 上海九百等）"
 
 
+def stat_diagnosis():
+    """个股四层研判：统计已研判只数 + 自动化平台/出局比例（读 quant/diag/*.json）。"""
+    d = os.path.join(QUANT, "diag")
+    if not os.path.isdir(d):
+        return ""
+    files = [f for f in os.listdir(d) if f.endswith(".json") and not f.endswith(".meta.json")]
+    if not files:
+        return ""
+    n_out = 0
+    n = 0
+    for f in files:
+        try:
+            rep = json.load(open(os.path.join(d, f), encoding="utf-8"))
+        except Exception:
+            continue
+        v = rep.get("verdict") or {}
+        if not v:
+            continue
+        n += 1
+        if v.get("档位码") == "out":
+            n_out += 1
+    if not n:
+        return f"已归档 <b>{len(files)}</b> 期研判记录"
+    return (f"已研判 <b>{n}</b> 期 ｜ 硬否决出局 <b>{n_out}</b> 期 ｜ "
+            "四道独立否决 + 两段式打分 + 三周期分设")
+
+
 def stat_reversal():
     """底部反转观察池：已累积期数 + 最新一期日期"""
     d = os.path.join(WEB, "reversal")
@@ -459,6 +487,7 @@ STAT = {
     "accum_scan": stat_stock_accumulation(),
     "khealth": stat_known_health(),
     "research": stat_research(),
+    "diagnosis": stat_diagnosis(),
     "reversal": stat_reversal(),
     "macd": stat_macd(),
     "selected": stat_selected(),
@@ -471,6 +500,7 @@ mkt_txt, mkt_cls = freshness(mkt_d)
 sec_txt, sec_cls = freshness(sec_d)
 psy_txt, psy_cls = freshness(psy_d)
 research_txt, research_cls = freshness(research_d)
+diag_txt, diag_cls = freshness(diag_d) if diag_d else ("—", "stale")
 reversal_txt, reversal_cls = freshness(reversal_d)
 selected_txt, selected_cls = freshness(selected_d) if selected_d else ("—", "stale")
 accum_txt, accum_cls = freshness(accum_d) if accum_d else ("—", "stale")
@@ -661,6 +691,18 @@ ZONES = [
                 "stat": STAT["research"], "date": fmt(research_d), "fresh": badge(research_cls, research_txt),
             },
             {
+                "ic": "🧪", "t": "个股四层研判", "href": "web/diagnosis/index.html",
+                "func": "<b>四层研判法 v2</b>：① 数据地基 → ② <b>四道独立否决</b>"
+                        "（单季拆分 / 内部人行为 / 涨停归因 / 现金流校验，硬否决成立即出局）→ "
+                        "③ <b>两段式打分</b>（B 组只降档、A 组出 0 / 0.5 / 1 子分）→ ④ 三周期分设结论。"
+                        "含负基数告警、TTM 扣非 PE、营运资金占用等口径自检。"
+                        "<b>只出「可被证伪的判断清单」，不给买卖结论</b>。",
+                "rel": "← 各池筛选后的单只深挖 → 数据中心（查历年）。"
+                       "与「个股调研」的分工：调研＝七条标准逐项对照；研判＝四道否决先证伪再打分。",
+                "stat": STAT["diagnosis"], "date": fmt(diag_d),
+                "fresh": badge(diag_cls, diag_txt),
+            },
+            {
                 "ic": "🧬", "t": "量化策略板（短/中/长 + 买卖点）", "href": "web/quant_strategy/index.html",
                 "func": ("把已在样本外证实的各池因子族（<b>趋势 / 资金 / 反转 / 做T / 增仓</b>）重组成 "
                          "<b>短线 / 中线 / 长线</b> 三种持有周期视角，各自给 <b>买区 / 止损 / 目标 / 盈亏比</b>。"
@@ -709,6 +751,15 @@ ZONES = [
                 "func": "把全站 15 个数据维度按「每日 / 季频 / 按需 / 门禁」四档归类，附可勾选并本地保存的每日必做清单与关键时间红线。",
                 "rel": "← 本文档「每日更新时间建议」的完整版。",
                 "stat": "22 个维度 ｜ 四档节奏 ｜ 可勾选清单",
+                "date": TODAY.strftime("%Y-%m-%d"), "fresh": badge("fresh", "文档"),
+            },
+            {
+                "ic": "🔍", "t": "「提前拿消息 → 次日必涨」为何不成立（实测证据）",
+                "href": "web/docs/news_nextday_evidence.html",
+                "func": "用「涨停」这个 T 日最强公开事件实测 T→T+1 收益，三口径并列（全样本 / 剔除买不进 / 同日非涨停对照），"
+                        "结果：剔封板后真实超额为负。附「合法可得信息能否推出方向」的逐项排查表。",
+                "rel": "← 回答「有没有提前一天拿到消息、次日大概率涨的方法」。",
+                "stat": "实测三口径 ｜ 含等量对照 ｜ 脚本可重跑复现",
                 "date": TODAY.strftime("%Y-%m-%d"), "fresh": badge("fresh", "文档"),
             },
         ],
@@ -819,6 +870,7 @@ RELATIONSHIPS = [
     ("📈 增持信号扫描", "→ 健康度过滤（技术面）", "← 数据中心"),
     ("🩺 健康度过滤", "← 增持信号扫描（上游 50 只）", "→ 个股调研（最终单只）"),
     ("🔍 个股调研", "← 板块强度 / 牛人追踪 / 健康度（筛选上游）", "→ 数据中心（查历年）"),
+    ("🧪 个股四层研判", "← 各池筛选后的单只深挖（四道否决先证伪）", "→ 数据中心（查历年）"),
     ("🗄️ 数据中心", "← 所有上方页面的历史数据源", ""),
 ]
 

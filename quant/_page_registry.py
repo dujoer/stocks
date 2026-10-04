@@ -195,6 +195,26 @@ FAMILIES = [
          script=None, freq='on_demand', dated=False, start=None,
          date_re=None, need=None),
 
+    # 【2026-10-04 新增】四层研判是把「个股调研」的方法论换成 v2：
+    # 调研＝七条标准逐项对照；研判＝四道否决先证伪再打分。两者并存，不互相覆盖。
+    dict(key='diagnosis', label='个股四层研判（数据地基 → 四道独立否决 → 两段式打分 → 三周期）',
+         patterns=['diagnosis/diag-*.html'],
+         entry='diagnosis/index.html',
+         script='build_diag.py', freq='on_demand',
+         dated=True, start=None, date_re=r'(\d{8})',
+         need='按需触发：python quant/build_diag.py --code <代码>。'
+              'stock_diag.diagnose() 经 westock CLI 实拉 利润表 / 现金流 / 资产负债表 / 行情 / 技术指标 → '
+              '落 quant/diag/{code}_{DS}.json（含 verdict 档位，单一来源）→ diag_render 渲染。'
+              '人工补充走 quant/diag/{code}_{DS}.meta.json（B 组判定 / 内部人行为 / 三周期结论）。'
+              '★ 只出「可被证伪的判断清单」，不给买卖结论；未被否决 ≠ 通过；硬否决成立即出局'),
+
+    dict(key='diagnosis_entry', label='个股四层研判入口',
+         patterns=['diagnosis/index.html'], entry='diagnosis/index.html',
+         script='build_diag.py', freq='on_demand', dated=False, start=None,
+         date_re=None,
+         need='python quant/build_diag.py --rebuild-index（扫描 quant/diag/*.json 自动重建，'
+              '按最新研判日倒序，带历史各期横链）'),
+
     dict(key='reversal', label='底部反转观察池（每日扫描 · v5 全市场域）',
          patterns=['reversal/watchlist_*.html'],
          entry='reversal/index.html', script='rev_pool.py', freq='daily',
