@@ -188,6 +188,16 @@ FAMILIES = [
                             '避免两套渲染互相打架）；backtest.html 为旧种子宇宙的退出规则对照（仅参考）；'
                             'lab.html 为特征功效实验室（14 节样本外实证，选股能力以此为准，由 _rev_lab.py 生成）'),
 
+    dict(key='reversal_tiergate', label='底部反转 · 分档出票核验（出票许可依据）',
+         patterns=['reversal/tier_gate.html'], entry='reversal/index.html',
+         script='_rev_tier_gate.py;_rev_gate_page.py', freq='on_demand',
+         dated=False, start=None, date_re=None,
+         need='【2026-10-04 新增】按生产真实出票口径（旧硬门槛 ∩ 阶段底部＋启动证据≥2 ∩ 组合分前 10%）'
+              '在全市场日K上重建面板，逐日平衡 edge（对照＝同日全市场域）＋按日 block bootstrap＋R3＋留一法'
+              '＋前后半＋步长敏感性。结论：A 档（现行出票）edge −0.238pp、R3 29.9%、留一全负、跨步长符号翻转 '
+              '→ 判「不可出票」；B 档点估计最正但 R3 跨步长不过线；真正稳定为负的是旧硬门槛（跌得多）本身 −0.56pp。'
+              'rev_pool.py 只读本页产出的 emit_license()，读不到即 fail-safe 不出票'),
+
     dict(key='reversal_method', label='底部反转方法论 Playbook',
          patterns=['reversal/method.html'], entry='reversal/index.html',
          script=None, freq='on_demand', dated=False, start=None,

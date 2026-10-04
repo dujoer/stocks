@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<title>底部反转池 · 分档出票核验</title></head>
+<body><div class="wrap"><h1>底部反转池 v6 · 分档出票核验</h1>
+<div class="note">本页回答一个问题：<b>页面上那张「走前验证」表打出来的数字，是不是你真正会买的那批票？</b>
+生产实际出票 = 旧硬门槛 ∩ 阶段底部＋启动证据 ≥2 条 ∩ 组合分属于域内前 10%（A 档），
+2026-09-30 只出了 52 只；而页面原表第 ④ 组有 2159 条。<b>不是同一批票。</b><br>
+本页按<b>生产真实出票口径</b>在<b>全市场日K</b>上重建面板（逐日逐票复刻每一道闸门），
+用主升/做T 门控同一套方法重新判定：逐日平衡 edge + 按日 block bootstrap + R3 + 留一法 + 前后半 + 步长敏感性。</div>
+
+<div class='box red'><b>结论：现行出票条件（A 档）拿不出「跑赢随便买」的证据，本期不出票。</b><br>A 档相对<b>同日全市场域</b>的逐日平衡超额为 -0.238 pp（R3 29.9%，留一法区间 [-0.391, -0.052] <b>全为负</b>）；另一组步长（step3）为 -0.025 pp —— <b>符号翻转</b>。绝对胜率 63.41% 看着不低，但同一对照（随便买）的胜率是 62.95%，两者几乎一样；而<b>平均收益 -0.23% 明显低于对照的 0.01%</b>（赢面小、亏面大）。<br>按红线「宁可不选，不能乱选」，<b>本期不按 A 档出票</b>，列表照列但<b>不作买入依据</b>；B 档（组合分 10~25%）点估计最正（+0.763 pp，后半 +1.351 pp），但 R3 跨步长 95% / 85% 未稳定过线，同样只记为待验证。</div>
+
+<h2>一、各档判定（对照 = 同日全市场域逐日均值，即「随便买」）</h2>
+<table><tr><th>规则</th><th class="num">信号日</th><th class="num">笔数</th>
+<th class="num">绝对收益</th><th class="num">绝对胜率</th>
+<th class="num">对照收益</th><th class="num">对照胜率</th>
+<th class="num">edge（pp）</th><th class="num">R3</th><th class="num">留一法</th></tr>
+<tr><td>全市场域（随便买 · 绝对对照）</td><td class='num'>191</td><td class='num'>166701</td><td class='num'>1.15%</td><td class='num'>63.27%</td><td class='num'>1.15%</td><td class='num'>63.27%</td><td class='num dn'><b>+0.000</b></td><td class='num'>0.0%</td><td class='num'>[+0.000, +0.000]</td></tr>
+<tr><td>仅旧硬门槛（跌得多，v5 域）</td><td class='num'>180</td><td class='num'>100816</td><td class='num'>-0.06%</td><td class='num'>60.00%</td><td class='num'>0.50%</td><td class='num'>61.76%</td><td class='num dn'><b>-0.557</b></td><td class='num'>0.1%</td><td class='num'>[-0.616, -0.434]</td></tr>
+<tr><td>旧硬门槛 + 阶段底部＋启动证据（不看组合分）</td><td class='num'>122</td><td class='num'>14476</td><td class='num'>-0.11%</td><td class='num'>60.18%</td><td class='num'>-0.35%</td><td class='num'>60.30%</td><td class='num up'><b>+0.237</b></td><td class='num'>66.8%</td><td class='num'>[+0.040, +0.338]</td></tr>
+<tr><td>现行出票：旧硬门槛 + 阶段底部＋证据≥2 + 组合分前 10%</td><td class='num'>34</td><td class='num'>646</td><td class='num'>-0.23%</td><td class='num'>63.41%</td><td class='num'>0.01%</td><td class='num'>62.95%</td><td class='num dn'><b>-0.238</b></td><td class='num'>29.9%</td><td class='num'>[-0.391, -0.052]</td></tr>
+<tr><td>旧硬门槛 + 阶段底部＋证据≥2 + 组合分 10~25%</td><td class='num'>65</td><td class='num'>2231</td><td class='num'>0.91%</td><td class='num'>68.67%</td><td class='num'>0.14%</td><td class='num'>63.28%</td><td class='num up'><b>+0.763</b></td><td class='num'>95.1%</td><td class='num'>[+0.612, +0.967]</td></tr>
+</table>
+<div class="note">edge = 该档当日均值 − <b>同日</b>全市场域当日均值，再对日取平均（逐日平衡，剔除大盘日影响）。
+R3 = bootstrap（按日整块重抽 %d 次）中 edge &gt; 0 的比例；判据是 <b>edge&gt;0 且 R3≥95%</b>。
+「全市场域」那一行 edge 恒为 0，只用来看绝对基准：这段时期（2025-09 ~ 2026-09）随便买
+<b>移动止盈后 +1.15%</b>、胜率 63.27%。</div>
+
+<h2>二、为什么页面原表不能直接用（子集 vs 母集）</h2>
+<div class="box warn"><b>原表 ① 深跌域全体 n=13801 / 胜率 59.9% ，④ 本页采用 n=2159 / 胜率 65.0%</b> ——
+④ 是 ① 的<b>子集</b>（先过旧硬门槛、再叠闸门）。子集相对母集的绝对胜率天然偏高，这不是超额；
+且两者样本量比 <b>6.4 : 1</b>，直接违反 R1 等量对照（要求 ≥0.5），也没有任何显著性区间。
+本页改成<b>逐日平衡</b>＋<b>同日对照</b>后，同一条闸门（不看组合分那组）的超额只有 +0.237 pp，不是 +5.1pp。</div>
+
+<h2>三、两种对照口径并列（供交叉核对）</h2>
+<div class="note">左列是「相对随便买」（本页主口径），右列是「相对同日深跌域母集」＝原表 ① vs ④ 的口径。
+两个问题答案不同：<b>相对深跌域，闸门是有用的</b>；<b>但相对全市场随便买，它没带来增量。</b></div>
+<table><tr><th>规则</th><th class="num">vs 全市场 edge</th><th class="num">R3</th><th class="num">留一法</th></tr><tr><td>全市场域（随便买 · 绝对对照）</td><td class='num'>+0.000</td><td class='num'>0.0%</td><td class='num'>[+0.000, +0.000]</td></tr>
+<tr><td>仅旧硬门槛（跌得多，v5 域）</td><td class='num'>+0.000</td><td class='num'>0.0%</td><td class='num'>[+0.000, +0.000]</td></tr>
+<tr><td>旧硬门槛 + 阶段底部＋启动证据（不看组合分）</td><td class='num'>+0.785</td><td class='num'>96.8%</td><td class='num'>[+0.593, +0.884]</td></tr>
+<tr><td>现行出票：旧硬门槛 + 阶段底部＋证据≥2 + 组合分前 10%</td><td class='num'>-0.033</td><td class='num'>46.1%</td><td class='num'>[-0.216, +0.128]</td></tr>
+<tr><td>旧硬门槛 + 阶段底部＋证据≥2 + 组合分 10~25%</td><td class='num'>+0.982</td><td class='num'>97.2%</td><td class='num'>[+0.818, +1.214]</td></tr></table>
+
+<h2>四、逐档结论</h2>
+<table><tr><th>规则</th><th>判定</th></tr><tr><td>现行出票：旧硬门槛 + 阶段底部＋证据≥2 + 组合分前 10%</td><td>超额为负且留一法全负 → <b>不应出票</b></td></tr>
+<tr><td>旧硬门槛 + 阶段底部＋证据≥2 + 组合分 10~25%</td><td>成立（可出票）</td></tr>
+<tr><td>旧硬门槛 + 阶段底部＋启动证据（不看组合分）</td><td>符号随采样/半区翻转 → <b>不可判，不作买入依据</b></td></tr>
+<tr><td>仅旧硬门槛（跌得多，v5 域）</td><td><b>旧硬门槛本身是负向筛选</b>：两个步长、前后半全部为负（留一全负）→ 域定义要改，不是闸门的问题</td></tr></table>
+
+<h2>五、前 / 后半稳定性（一段行情不能代表全部）</h2>
+<table><tr><th>规则</th><th>前半</th><th>后半</th></tr><tr><td>现行出票：旧硬门槛 + 阶段底部＋证据≥2 + 组合分前 10%</td><td class='num'>前半 edge +0.022</td><td class='num'>后半 edge -0.498</td></tr>
+<tr><td>旧硬门槛 + 阶段底部＋证据≥2 + 组合分 10~25%</td><td class='num'>前半 edge +0.157</td><td class='num'>后半 edge +1.351</td></tr>
+<tr><td>旧硬门槛 + 阶段底部＋启动证据（不看组合分）</td><td class='num'>前半 edge +0.283</td><td class='num'>后半 edge +0.192</td></tr>
+<tr><td>仅旧硬门槛（跌得多，v5 域）</td><td class='num'>前半 edge -0.599</td><td class='num'>后半 edge -0.515</td></tr></table>
+
+<h2>六、步长敏感性（同一规则换个采样密度还成不成立）</h2>
+<table><tr><th>规则</th><th class="num">step5 信号日</th><th class="num">step5 edge</th><th class="num">step5 R3</th>
+<th class="num">step3 信号日</th><th class="num">step3 edge</th><th class="num">step3 R3</th></tr><tr><td>现行出票：旧硬门槛 + 阶段底部＋证据≥2 + 组合分前 10%</td><td class='num'>34</td><td class='num'>-0.238</td><td class='num'>29.9%</td><td class='num'>76</td><td class='num'>-0.025</td><td class='num'>47.5%</td></tr>
+<tr><td>旧硬门槛 + 阶段底部＋证据≥2 + 组合分 10~25%</td><td class='num'>65</td><td class='num'>+0.763</td><td class='num'>95.1%</td><td class='num'>111</td><td class='num'>+0.655</td><td class='num'>85.5%</td></tr>
+<tr><td>旧硬门槛 + 阶段底部＋启动证据（不看组合分）</td><td class='num'>122</td><td class='num'>+0.237</td><td class='num'>66.8%</td><td class='num'>162</td><td class='num'>+0.048</td><td class='num'>55.4%</td></tr>
+<tr><td>仅旧硬门槛（跌得多，v5 域）</td><td class='num'>180</td><td class='num'>-0.557</td><td class='num'>0.1%</td><td class='num'>181</td><td class='num'>-0.250</td><td class='num'>0.2%</td></tr></table>
+<div class="note">判据不是「点估计好不好看」，而是<b>符号会不会随采样翻转</b>。
+A 档（现行出票）−%s pp / %s pp 符号翻转，且后半 %s pp；
+真正稳定为负的是<b>旧硬门槛（跌得多）本身</b>（-0.557 / -0.250 pp，R3 均在 0~1%）—— 换句话说，
+v5 那套「距 52 周高回撤 ≥18%」的域定义是<b>负向筛选</b>，这才是主要问题来源，闸门反而不是。</div>
+
+<h2>七、复刻是否正确（自检）</h2>
+<div class="note">本页 HARD 档（仅旧硬门槛）复刻出的绝对胜率 <b>%s%%</b>（%d 个信号日 / %d 笔），
+与页面原表 ①「深跌域全体 59.9%」几乎一致 → 说明闸门体系的复刻没有跑偏；
+两处口径差异（本页硬门槛的 52 周高取<b>全段最高</b>，与 <code>rev_pool.evaluate</code> 一致；
+本页不做 700 只抽样而用<b>全市场</b>）只会让样本更大、结论更保守。</div>
+
+<h2>八、出票许可（机器判定，读不到就 fail-safe）</h2>
+<table><tr><th>档</th><th>可出票？</th><th>依据</th></tr><tr><td>A 档（现行出票）</td><td>不出票</td><td>主步长 edge -0.238 pp ≤ 0；R3 29.9% < 95% 门槛；step3 edge -0.025 pp ≤ 0</td></tr><tr><td>B 档（10~25%）</td><td>不出票</td><td>step3 R3 85.5% < 95%（跨步长未稳定过线）</td></tr><tr><td>闸门全开</td><td>不出票</td><td>R3 66.8% < 95% 门槛；step3 R3 55.4% < 95%（跨步长未稳定过线）</td></tr></table>
+<div class="note"><code>rev_pool.py</code> 每日调用 <code>_rev_gate_page.emit_license()</code>：
+只有 <b>edge&gt;0 且 R3≥95% 且跨步长同号</b>的档才允许出票；<b>读不到证据 JSON 一律不出票</b>。
+本期许可 = <b>见表</b>。</div>
+
+<h2>九、局限与口径声明</h2>
+<div class="card"><ul>
+<li>样本只覆盖 2025-09 ~ 2026-09 一段行情；反转类策略与市场状态强相关，<b>本页结论不声称适用于所有行情</b>，
+只声明「在这段样本内拿不出正超额 → 不出票（宁可不选）」。</li>
+<li>阶段底部用<b>即时检测</b>复刻（生产是「锚定 + 版本化」写盘）。锚定只影响谷底值是否随行情漂移，
+对本页的逐日平衡比较不改变方向；若要完全一致需按日回放 anchor，属另一个工程。</li>
+<li>A 档只有 34 个信号日 / 646 笔 —— <b>样本本身就小</b>；这正是本页判「不可判」而不是判「有效」的原因。
+要么放宽闸门攒样本，要么等行情走出来，都不该在样本不足时出票。</li>
+<li>退出生效参数沿用全项目统一口径：−12% 硬止损 / +6% 激活移动止盈 / 回撤 3% 跟踪 / 满 20 日强平。</li>
+<li>本页只判定「现有规则有没有超额」，<b>不做规则改良</b>：B 档点估计最好也只列为待验证，不代表改用它就能赚钱。</li>
+</ul></div>
+
+<div class="note"><a href="index.html">← 返回底部反转观察池</a> ｜ <a href="watchlist_20260930.html">最新观察名单</a></div>
+</div></body></html>
