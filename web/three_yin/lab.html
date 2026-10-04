@@ -2,7 +2,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>三连阴实验室 · 样本外回测证据</title><style>
 :root{--bg:#fbfbfd;--card:#fff;--text:#1d1d1f;--muted:#6e6e73;--line:#e5e5e7;
- --up:#ff3b30;--dn:#34c759;--blue:#0071e3;--gold:#1a73e8;--orange:#ff9500;--purple:#af52de;}
+ --up:#ff3b30;--dn:#34c759;--blue:#0071e3;--gold:#b8893b;--orange:#ff9500;--purple:#af52de;}
 *{box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
  background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:0}
@@ -55,201 +55,8 @@ th{color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa;white-
 .xh-sort:hover{color:#1a73e8}
 .xh-sort.xh-asc:after{content:" \25b4";color:#1a73e8}
 .xh-sort.xh-desc:after{content:" \25be";color:#1a73e8}
-</style><!--WB_THEME--><style id='wb-theme'>
-/* ============================================================
-   统一设计系统 (A股看板) — Google Material 风·朴素简洁
-   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
-   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
-   导航：按模块分组、整条 flex 换行，不再横向滚动。
-   ============================================================ */
-:root{
-  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
-  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
-  --red:#ea4335; --green:#34a853;
-  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
-}
-*{box-sizing:border-box;}
-html,body{margin:0;padding:0;}
-body{
-  background:var(--bg); color:var(--ink);
-  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
-  -webkit-font-smoothing:antialiased;
-}
-a{color:var(--accent); text-decoration:none;}
-a:hover{text-decoration:underline;}
-.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
-
-/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
-.topnav{
-  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
-  gap:8px 10px !important;
-  max-width:1440px !important; margin:0 auto 22px !important;
-  padding:14px 16px !important;
-  background:var(--surface) !important;
-  border:1px solid var(--line) !important; border-radius:12px !important;
-  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
-  font-size:13px !important;
-}
-.topnav a{
-  display:inline-block !important; color:var(--ink) !important;
-  text-decoration:none !important; padding:4px 11px !important;
-  border-radius:16px !important; white-space:nowrap !important;
-  background:transparent !important; border:none !important;
-  transition:background .15s,color .15s !important; font-size:13px !important;
-  flex-shrink:0 !important;
-}
-.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
-.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
-.topnav a.home{
-  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
-  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
-}
-.topnav a.home:hover{ background:#1765cc !important; }
-.topnav a.xlink{ color:var(--muted) !important; }
-/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
-.navgrp{
-  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
-  gap:4px !important; padding:6px 8px 6px 6px !important;
-  background:var(--bg) !important; border:1px solid var(--line-2) !important;
-  border-radius:10px !important; flex-shrink:0 !important;
-}
-.navgrp-l{
-  display:inline-flex !important; align-items:center !important;
-  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
-  background:var(--hover) !important; border-radius:12px !important;
-  padding:3px 9px !important; margin-right:6px !important;
-  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
-}
-
-/* ---------- 页头 ---------- */
-header{margin:0 0 8px;}
-header h1{
-  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
-  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
-}
-header .sub{color:var(--muted); font-size:13px;}
-
-/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
-.section{
-  margin:22px 0; background:var(--surface); border:1px solid var(--line);
-  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
-}
-.section > h2, .section > h3{
-  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
-}
-.section > h3{ font-size:15px; opacity:.92; }
-
-/* ---------- 表格（列表页统一） ---------- */
-table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
-caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
-thead th{
-  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
-  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
-}
-tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
-tbody tr:hover{ background:var(--hover); }
-.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
-.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
-.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
-.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
-
-/* 排序表头 */
-th.sort{ cursor:pointer; user-select:none; position:relative; }
-th.sort:hover{ color:var(--accent); }
-th.sort.sorted{ color:var(--accent); }
-th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
-th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
-th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
-
-/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
-.wb-search{
-  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
-  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
-  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
-}
-.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
-.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
-
-/* ---------- 星级/标签/徽章 ---------- */
-.chip,.badge{
-  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
-  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
-}
-/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
-.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
-.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
-.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
-.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
-
-/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
-.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
-.arch a{
-  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
-  background:var(--surface); border:1px solid var(--line); color:var(--ink);
-  text-decoration:none; white-space:nowrap;
-}
-.arch a:hover{
-  border-color:var(--accent); color:var(--accent);
-  background:var(--accent-soft); text-decoration:none;
-}
-
-/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
-.note{
-  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
-  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
-}
-.note b{ color:var(--ink); }
-/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
-span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
-  background:none !important; border:0 !important; border-left:0 !important;
-  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
-  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
-  font-weight:400; display:inline;
-}
-
-/* ---------- 页脚 ---------- */
-footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
-
-/* ---------- 杂色压制兜底 ---------- */
-.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
-.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
-
-/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
-.lhb{ table-layout:fixed !important; }
-.lhb th, .lhb td{ vertical-align:middle !important; }
-.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
-.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
-.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
-.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
-.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
-.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
-.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
-.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
-.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
-.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
-.lhb tr.detail td{ width:auto !important; }
-
-/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
-a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
-a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
-a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
-a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
-
-/* ---------- 响应式 ---------- */
-@media (max-width:700px){
-  .wrap{ padding:16px 12px 40px; }
-  header h1{ font-size:22px; }
-  table{ font-size:12px; }
-  thead th,tbody td{ padding:7px 7px; }
-  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
-  .topnav a{ padding:4px 9px; font-size:12px; }
-  .navgrp{ padding:5px 6px 5px 5px !important; }
-}
-
-</style><!--/WB_THEME--></head>
-<body>
-<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a><a href='index.html'>三连阴</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
-<div class="wrap">
+</style></head>
+<body><div class="wrap">
 <h1>三连阴实验室 · 样本外回测证据</h1>
 <div class="sub">回测窗口 <b>2025-10-31 ~ 2026-09-18</b>（218 个交易日）｜
 可回测域 <b>5,007</b> 只 ｜ 信号总量 <b>223,879</b> 条 ｜
@@ -273,7 +80,7 @@ A 优质三连阴胜率 42.5% / 期望 +0.03%，
 </div></div>
 
 <h2>① 主结果：四套规则 vs 基准</h2>
-<div class="card"><div class="tbl-wrap"><table data-wb><thead><tr><th>规则</th><th>信号数</th>
+<div class="card"><div class="tbl-wrap"><table><thead><tr><th>规则</th><th>信号数</th>
 <th>T+1上涨</th><th>5日上涨</th><th>5日最大涨幅</th><th>胜率</th><th>期望</th><th>MAE</th>
 <th>走前·前半(胜率/期望)</th><th>走前·后半(胜率/期望)</th></tr></thead>
 <tbody><tr><td><b>全市场随便买（绝对基准）</b></td><td class='num'>36,653</td><td class='num'>48.7%</td><td class='num'>47.7%</td><td class='num'>+5.73%</td><td class='num'>45.9%</td><td class='num up'>+0.20%</td><td class='num'>-3.75%</td><td class='kv'>50.5% / +0.58%</td><td class='kv'>41.8% / -0.13%</td></tr><tr><td><b>B 普通三连阴</b></td><td class='num'>223,879</td><td class='num'>49.3%</td><td class='num'>47.9%</td><td class='num'>+5.62%</td><td class='num'>44.3%</td><td class='num up'>+0.01%</td><td class='num'>-3.96%</td><td class='kv'>51.6% / +0.63%</td><td class='kv'>39.2% / -0.42%</td></tr><tr><td><b>A 优质三连阴（原条件）</b></td><td class='num'>30,450</td><td class='num'>46.6%</td><td class='num'>44.8%</td><td class='num'>+6.49%</td><td class='num'>42.5%</td><td class='num up'>+0.03%</td><td class='num'>-4.16%</td><td class='kv'>46.9% / +0.44%</td><td class='kv'>36.7% / -0.52%</td></tr><tr><td><b>C 高危三连阴</b></td><td class='num'>155,562</td><td class='num'>50.1%</td><td class='num'>49.1%</td><td class='num'>+5.29%</td><td class='num'>44.9%</td><td class='num dn'>-0.01%</td><td class='num'>-3.89%</td><td class='kv'>55.6% / +0.89%</td><td class='kv'>38.1% / -0.57%</td></tr><tr><td><b>D 龙头主线三连阴</b></td><td class='num'>1,751</td><td class='num'>45.7%</td><td class='num'>42.1%</td><td class='num'>+8.34%</td><td class='num'>38.9%</td><td class='num dn'>-0.17%</td><td class='num'>-4.86%</td><td class='kv'>39.1% / -0.31%</td><td class='kv'>38.7% / -0.05%</td></tr></tbody></table></div>
@@ -281,26 +88,26 @@ A 优质三连阴胜率 42.5% / 期望 +0.03%，
 否则会被正常波动打掉。</div></div>
 
 <h2>② 条件消融：哪条在加分</h2>
-<div class="card"><div class="tbl-wrap"><table data-wb><thead><tr><th>条件（叠加在三连阴之上）</th>
+<div class="card"><div class="tbl-wrap"><table><thead><tr><th>条件（叠加在三连阴之上）</th>
 <th>信号数</th><th>T+1上涨</th><th>胜率</th><th>期望</th><th>走前(前半/后半期望)</th></tr></thead>
 <tbody><tr><td>① 仅三连阴（基准）</td><td class='num'>223,879</td><td class='num'>49.3%</td><td class='num'>44.3%</td><td class='num up'>+0.01%</td><td class='kv'></td></tr><tr><td>② +缩量（今日<昨日<前日）</td><td class='num'>81,307</td><td class='num'>48.0%</td><td class='num'>43.4%</td><td class='num dn'>-0.03%</td><td class='kv'></td></tr><tr><td>③ +站上MA60</td><td class='num'>72,843</td><td class='num'>47.5%</td><td class='num'>43.0%</td><td class='num up'>+0.05%</td><td class='kv'></td></tr><tr><td>④ +流通市值20~500亿</td><td class='num'>192,774</td><td class='num'>49.3%</td><td class='num'>44.2%</td><td class='num up'>+0.01%</td><td class='kv'></td></tr><tr><td>⑤ +缩量 & 站上MA60</td><td class='num'>34,295</td><td class='num'>46.7%</td><td class='num'>42.6%</td><td class='num up'>+0.02%</td><td class='kv'></td></tr><tr><td>⑥ A全套（②+③+④）</td><td class='num'>30,450</td><td class='num'>46.6%</td><td class='num'>42.5%</td><td class='num up'>+0.03%</td><td class='kv'></td></tr><tr><td>⑦ +放量（反向对照）</td><td class='num'>26,226</td><td class='num'>51.1%</td><td class='num'>45.8%</td><td class='num up'>+0.02%</td><td class='kv'></td></tr><tr><td>⑧ +跌破MA60（反向对照）</td><td class='num'>151,036</td><td class='num'>50.2%</td><td class='num'>44.9%</td><td class='num dn'>-0.01%</td><td class='kv'></td></tr><tr><td>⑨ D主线（⑥+板块前5）</td><td class='num'>2,126</td><td class='num'>46.3%</td><td class='num'>39.5%</td><td class='num dn'>-0.10%</td><td class='kv'></td></tr></tbody></table></div>
 <div class="kv">关键：<b>缩量</b>使胜率与期望双降；<b>站上 MA60</b> 使胜率降；<b>市值区间</b>几乎无影响；
 反向对照中<b>放量</b>与<b>跌破 MA60</b> 并不比原条件差 —— 与用户原假设相反。</div></div>
 
 <h2>③ 跌幅分档：唯一稳健维度</h2>
-<div class="card"><div class="tbl-wrap"><table data-wb><thead><tr><th>三连阴累计跌幅</th><th>信号数</th>
+<div class="card"><div class="tbl-wrap"><table><thead><tr><th>三连阴累计跌幅</th><th>信号数</th>
 <th>T+1上涨</th><th>胜率</th><th>期望</th><th>走前(前半/后半期望)</th></tr></thead>
 <tbody><tr><td>跌 0~3%</td><td class='num'>69,395</td><td class='num'>47.6%</td><td class='num'>44.4%</td><td class='num dn'>-0.04%</td><td class='kv'>+0.56% / -0.62%</td></tr><tr><td>跌 3~5%</td><td class='num'>47,246</td><td class='num'>48.0%</td><td class='num'>42.8%</td><td class='num dn'>-0.18%</td><td class='kv'>+0.42% / -0.62%</td></tr><tr><td>跌 5~8%</td><td class='num'>44,483</td><td class='num'>50.3%</td><td class='num'>45.1%</td><td class='num up'>+0.08%</td><td class='kv'>+0.72% / -0.30%</td></tr><tr><td>跌 8~12%</td><td class='num'>25,397</td><td class='num'>54.0%</td><td class='num'>47.7%</td><td class='num up'>+0.43%</td><td class='kv'>+1.53% / -0.25%</td></tr><tr><td>跌 12~20%</td><td class='num'>11,814</td><td class='num'>55.3%</td><td class='num'>41.9%</td><td class='num dn'>-0.07%</td><td class='kv'>+1.87% / -1.11%</td></tr><tr><td>跌 >20%</td><td class='num'>1,960</td><td class='num'>54.4%</td><td class='num'>20.9%</td><td class='num dn'>-2.39%</td><td class='kv'>-0.16% / -2.85%</td></tr></tbody></table></div></div>
 
 <h2>④ 改进版候选：跌 8~12% 档 × 其它条件</h2>
-<div class="card"><div class="tbl-wrap"><table data-wb><thead><tr><th>组合</th><th>信号数</th>
+<div class="card"><div class="tbl-wrap"><table><thead><tr><th>组合</th><th>信号数</th>
 <th>T+1上涨</th><th>胜率</th><th>期望</th><th>走前(前半/后半期望)</th></tr></thead>
 <tbody><tr><td>跌幅8~12%（单独）</td><td class='num'>25,397</td><td class='num'>54.0%</td><td class='num'>47.7%</td><td class='num up'>+0.43%</td><td class='kv'>+1.53% / -0.25%</td></tr><tr><td>+站上MA60</td><td class='num'>7,207</td><td class='num'>48.4%</td><td class='num'>41.3%</td><td class='num up'>+0.01%</td><td class='kv'>+0.54% / -0.52%</td></tr><tr><td>+缩量</td><td class='num'>8,463</td><td class='num'>51.7%</td><td class='num'>44.5%</td><td class='num up'>+0.18%</td><td class='kv'>+0.95% / -0.29%</td></tr><tr><td>+市值20~500亿</td><td class='num'>22,007</td><td class='num'>54.0%</td><td class='num'>47.3%</td><td class='num up'>+0.39%</td><td class='kv'>+1.53% / -0.38%</td></tr><tr><td>+站上MA60&缩量</td><td class='num'>3,352</td><td class='num'>46.0%</td><td class='num'>41.4%</td><td class='num up'>+0.01%</td><td class='kv'>+0.56% / -0.58%</td></tr><tr><td>+站上MA60&市值</td><td class='num'>6,388</td><td class='num'>47.6%</td><td class='num'>41.0%</td><td class='num dn'>-0.02%</td><td class='kv'>+0.55% / -0.61%</td></tr><tr><td>全条件（改进版A+）</td><td class='num'>3,052</td><td class='num'>45.5%</td><td class='num'>41.4%</td><td class='num up'>+0.02%</td><td class='kv'>+0.58% / -0.61%</td></tr></tbody></table></div>
 <div class="kv">在跌 8~12% 档内<b>再加</b>「站上 MA60」「缩量」都会<b>降低</b>收益（两半同向为负），
 所以改进版<b>只保留跌幅分档</b>，不再叠加原条件。</div></div>
 
 <h2>⑤ 参数敏感性（止损 / 止盈 / 持有期）</h2>
-<div class="card"><div class="tbl-wrap"><table data-wb><thead><tr><th>止损</th><th>止盈</th><th>持有</th>
+<div class="card"><div class="tbl-wrap"><table><thead><tr><th>止损</th><th>止盈</th><th>持有</th>
 <th>ALL基准期望</th><th>B期望</th><th>A期望</th><th>C期望</th><th>D期望</th></tr></thead>
 <tbody><tr><td class='num'>3%</td><td class='num'>5%</td><td class='num'>3日</td><td class='num up'>+0.15%</td><td class='num dn'>-0.07%</td><td class='num dn'>-0.02%</td><td class='num dn'>-0.14%</td><td class='num dn'>-0.11%</td></tr><tr><td class='num'>3%</td><td class='num'>8%</td><td class='num'>3日</td><td class='num up'>+0.21%</td><td class='num dn'>-0.05%</td><td class='num up'>+0.09%</td><td class='num dn'>-0.11%</td><td class='num dn'>-0.03%</td></tr><tr><td class='num'>3%</td><td class='num'>12%</td><td class='num'>3日</td><td class='num up'>+0.25%</td><td class='num dn'>-0.02%</td><td class='num up'>+0.11%</td><td class='num dn'>-0.09%</td><td class='num dn'>-0.04%</td></tr><tr><td class='num'>3%</td><td class='num'>20%</td><td class='num'>3日</td><td class='num up'>+0.29%</td><td class='num dn'>-0.01%</td><td class='num up'>+0.13%</td><td class='num dn'>-0.08%</td><td class='num dn'>-0.11%</td></tr><tr><td class='num'>5%</td><td class='num'>5%</td><td class='num'>3日</td><td class='num up'>+0.13%</td><td class='num dn'>-0.07%</td><td class='num up'>+0.00%</td><td class='num dn'>-0.09%</td><td class='num dn'>-0.25%</td></tr><tr><td class='num'>5%</td><td class='num'>8%</td><td class='num'>3日</td><td class='num up'>+0.16%</td><td class='num dn'>-0.07%</td><td class='num up'>+0.09%</td><td class='num dn'>-0.08%</td><td class='num dn'>-0.17%</td></tr><tr><td class='num'>5%</td><td class='num'>12%</td><td class='num'>3日</td><td class='num up'>+0.20%</td><td class='num dn'>-0.06%</td><td class='num up'>+0.11%</td><td class='num dn'>-0.08%</td><td class='num dn'>-0.25%</td></tr><tr><td class='num'>5%</td><td class='num'>20%</td><td class='num'>3日</td><td class='num up'>+0.22%</td><td class='num dn'>-0.05%</td><td class='num up'>+0.12%</td><td class='num dn'>-0.07%</td><td class='num dn'>-0.34%</td></tr><tr><td class='num'>7%</td><td class='num'>5%</td><td class='num'>3日</td><td class='num up'>+0.11%</td><td class='num dn'>-0.03%</td><td class='num dn'>-0.01%</td><td class='num dn'>-0.05%</td><td class='num dn'>-0.31%</td></tr><tr><td class='num'>7%</td><td class='num'>8%</td><td class='num'>3日</td><td class='num up'>+0.13%</td><td class='num dn'>-0.05%</td><td class='num up'>+0.06%</td><td class='num dn'>-0.05%</td><td class='num dn'>-0.26%</td></tr><tr><td class='num'>7%</td><td class='num'>12%</td><td class='num'>3日</td><td class='num up'>+0.16%</td><td class='num dn'>-0.02%</td><td class='num up'>+0.07%</td><td class='num dn'>-0.06%</td><td class='num dn'>-0.38%</td></tr><tr><td class='num'>7%</td><td class='num'>20%</td><td class='num'>3日</td><td class='num up'>+0.19%</td><td class='num dn'>-0.01%</td><td class='num up'>+0.08%</td><td class='num dn'>-0.05%</td><td class='num dn'>-0.49%</td></tr><tr><td class='num'>10%</td><td class='num'>5%</td><td class='num'>3日</td><td class='num up'>+0.14%</td><td class='num dn'>-0.00%</td><td class='num up'>+0.01%</td><td class='num up'>+0.03%</td><td class='num dn'>-0.28%</td></tr><tr><td class='num'>10%</td><td class='num'>8%</td><td class='num'>3日</td><td class='num up'>+0.15%</td><td class='num dn'>-0.03%</td><td class='num up'>+0.08%</td><td class='num up'>+0.03%</td><td class='num dn'>-0.24%</td></tr><tr><td class='num'>10%</td><td class='num'>12%</td><td class='num'>3日</td><td class='num up'>+0.17%</td><td class='num dn'>-0.01%</td><td class='num up'>+0.08%</td><td class='num up'>+0.02%</td><td class='num dn'>-0.39%</td></tr><tr><td class='num'>10%</td><td class='num'>20%</td><td class='num'>3日</td><td class='num up'>+0.21%</td><td class='num up'>+0.01%</td><td class='num up'>+0.08%</td><td class='num up'>+0.03%</td><td class='num dn'>-0.51%</td></tr><tr><td class='num'>3%</td><td class='num'>5%</td><td class='num'>5日</td><td class='num up'>+0.16%</td><td class='num dn'>-0.04%</td><td class='num dn'>-0.01%</td><td class='num dn'>-0.11%</td><td class='num dn'>-0.15%</td></tr><tr><td class='num'>3%</td><td class='num'>8%</td><td class='num'>5日</td><td class='num up'>+0.26%</td><td class='num up'>+0.05%</td><td class='num up'>+0.13%</td><td class='num dn'>-0.03%</td><td class='num dn'>-0.03%</td></tr><tr><td class='num'>3%</td><td class='num'>12%</td><td class='num'>5日</td><td class='num up'>+0.34%</td><td class='num up'>+0.11%</td><td class='num up'>+0.20%</td><td class='num up'>+0.06%</td><td class='num up'>+0.02%</td></tr><tr><td class='num'>3%</td><td class='num'>20%</td><td class='num'>5日</td><td class='num up'>+0.42%</td><td class='num up'>+0.15%</td><td class='num up'>+0.25%</td><td class='num up'>+0.07%</td><td class='num up'>+0.03%</td></tr><tr><td class='num'>5%</td><td class='num'>5%</td><td class='num'>5日</td><td class='num up'>+0.13%</td><td class='num dn'>-0.04%</td><td class='num up'>+0.04%</td><td class='num dn'>-0.06%</td><td class='num dn'>-0.26%</td></tr><tr><td class='num'>5%</td><td class='num'>8%</td><td class='num'>5日</td><td class='num up'>+0.21%</td><td class='num up'>+0.03%</td><td class='num up'>+0.17%</td><td class='num up'>+0.02%</td><td class='num dn'>-0.17%</td></tr><tr><td class='num'>5%</td><td class='num'>12%</td><td class='num'>5日</td><td class='num up'>+0.30%</td><td class='num up'>+0.07%</td><td class='num up'>+0.23%</td><td class='num up'>+0.10%</td><td class='num dn'>-0.16%</td></tr><tr><td class='num'>5%</td><td class='num'>20%</td><td class='num'>5日</td><td class='num up'>+0.38%</td><td class='num up'>+0.10%</td><td class='num up'>+0.26%</td><td class='num up'>+0.12%</td><td class='num dn'>-0.22%</td></tr><tr><td class='num'>7%</td><td class='num'>5%</td><td class='num'>5日</td><td class='num up'>+0.12%</td><td class='num up'>+0.00%</td><td class='num up'>+0.03%</td><td class='num up'>+0.01%</td><td class='num dn'>-0.33%</td></tr><tr><td class='num'>7%</td><td class='num'>8%</td><td class='num'>5日</td><td class='num up'>+0.18%</td><td class='num up'>+0.05%</td><td class='num up'>+0.12%</td><td class='num up'>+0.08%</td><td class='num dn'>-0.27%</td></tr><tr><td class='num'>7%</td><td class='num'>12%</td><td class='num'>5日</td><td class='num up'>+0.28%</td><td class='num up'>+0.10%</td><td class='num up'>+0.18%</td><td class='num up'>+0.14%</td><td class='num dn'>-0.32%</td></tr><tr><td class='num'>7%</td><td class='num'>20%</td><td class='num'>5日</td><td class='num up'>+0.37%</td><td class='num up'>+0.14%</td><td class='num up'>+0.21%</td><td class='num up'>+0.16%</td><td class='num dn'>-0.44%</td></tr><tr><td class='num'>10%</td><td class='num'>5%</td><td class='num'>5日</td><td class='num up'>+0.13%</td><td class='num up'>+0.03%</td><td class='num up'>+0.01%</td><td class='num up'>+0.07%</td><td class='num dn'>-0.37%</td></tr><tr><td class='num'>10%</td><td class='num'>8%</td><td class='num'>5日</td><td class='num up'>+0.19%</td><td class='num up'>+0.07%</td><td class='num up'>+0.13%</td><td class='num up'>+0.16%</td><td class='num dn'>-0.30%</td></tr><tr><td class='num'>10%</td><td class='num'>12%</td><td class='num'>5日</td><td class='num up'>+0.26%</td><td class='num up'>+0.13%</td><td class='num up'>+0.17%</td><td class='num up'>+0.22%</td><td class='num dn'>-0.44%</td></tr><tr><td class='num'>10%</td><td class='num'>20%</td><td class='num'>5日</td><td class='num up'>+0.36%</td><td class='num up'>+0.18%</td><td class='num up'>+0.19%</td><td class='num up'>+0.24%</td><td class='num dn'>-0.60%</td></tr><tr><td class='num'>3%</td><td class='num'>5%</td><td class='num'>10日</td><td class='num up'>+0.15%</td><td class='num dn'>-0.05%</td><td class='num dn'>-0.03%</td><td class='num dn'>-0.14%</td><td class='num dn'>-0.12%</td></tr><tr><td class='num'>3%</td><td class='num'>8%</td><td class='num'>10日</td><td class='num up'>+0.24%</td><td class='num up'>+0.02%</td><td class='num up'>+0.07%</td><td class='num dn'>-0.08%</td><td class='num up'>+0.05%</td></tr><tr><td class='num'>3%</td><td class='num'>12%</td><td class='num'>10日</td><td class='num up'>+0.31%</td><td class='num up'>+0.07%</td><td class='num up'>+0.13%</td><td class='num dn'>-0.00%</td><td class='num up'>+0.22%</td></tr><tr><td class='num'>3%</td><td class='num'>20%</td><td class='num'>10日</td><td class='num up'>+0.41%</td><td class='num up'>+0.08%</td><td class='num up'>+0.17%</td><td class='num dn'>-0.05%</td><td class='num up'>+0.41%</td></tr><tr><td class='num'>5%</td><td class='num'>5%</td><td class='num'>10日</td><td class='num up'>+0.10%</td><td class='num dn'>-0.10%</td><td class='num dn'>-0.01%</td><td class='num dn'>-0.13%</td><td class='num dn'>-0.22%</td></tr><tr><td class='num'>5%</td><td class='num'>8%</td><td class='num'>10日</td><td class='num up'>+0.18%</td><td class='num dn'>-0.07%</td><td class='num up'>+0.07%</td><td class='num dn'>-0.12%</td><td class='num dn'>-0.04%</td></tr><tr><td class='num'>5%</td><td class='num'>12%</td><td class='num'>10日</td><td class='num up'>+0.24%</td><td class='num dn'>-0.04%</td><td class='num up'>+0.11%</td><td class='num dn'>-0.08%</td><td class='num up'>+0.07%</td></tr><tr><td class='num'>5%</td><td class='num'>20%</td><td class='num'>10日</td><td class='num up'>+0.34%</td><td class='num dn'>-0.05%</td><td class='num up'>+0.10%</td><td class='num dn'>-0.12%</td><td class='num up'>+0.19%</td></tr><tr><td class='num'>7%</td><td class='num'>5%</td><td class='num'>10日</td><td class='num up'>+0.06%</td><td class='num dn'>-0.10%</td><td class='num dn'>-0.06%</td><td class='num dn'>-0.16%</td><td class='num dn'>-0.24%</td></tr><tr><td class='num'>7%</td><td class='num'>8%</td><td class='num'>10日</td><td class='num up'>+0.15%</td><td class='num dn'>-0.12%</td><td class='num dn'>-0.02%</td><td class='num dn'>-0.22%</td><td class='num dn'>-0.11%</td></tr><tr><td class='num'>7%</td><td class='num'>12%</td><td class='num'>10日</td><td class='num up'>+0.22%</td><td class='num dn'>-0.11%</td><td class='num dn'>-0.01%</td><td class='num dn'>-0.20%</td><td class='num dn'>-0.10%</td></tr><tr><td class='num'>7%</td><td class='num'>20%</td><td class='num'>10日</td><td class='num up'>+0.31%</td><td class='num dn'>-0.13%</td><td class='num up'>+0.01%</td><td class='num dn'>-0.24%</td><td class='num dn'>-0.02%</td></tr><tr><td class='num'>10%</td><td class='num'>5%</td><td class='num'>10日</td><td class='num up'>+0.05%</td><td class='num dn'>-0.16%</td><td class='num dn'>-0.09%</td><td class='num dn'>-0.18%</td><td class='num dn'>-0.35%</td></tr><tr><td class='num'>10%</td><td class='num'>8%</td><td class='num'>10日</td><td class='num up'>+0.12%</td><td class='num dn'>-0.17%</td><td class='num dn'>-0.05%</td><td class='num dn'>-0.23%</td><td class='num dn'>-0.27%</td></tr><tr><td class='num'>10%</td><td class='num'>12%</td><td class='num'>10日</td><td class='num up'>+0.17%</td><td class='num dn'>-0.15%</td><td class='num dn'>-0.08%</td><td class='num dn'>-0.22%</td><td class='num dn'>-0.43%</td></tr><tr><td class='num'>10%</td><td class='num'>20%</td><td class='num'>10日</td><td class='num up'>+0.26%</td><td class='num dn'>-0.16%</td><td class='num dn'>-0.08%</td><td class='num dn'>-0.26%</td><td class='num dn'>-0.46%</td></tr></tbody></table></div>
 <div class="kv">网格<b>仅作敏感性展示，不用于挑选参数</b>（挑最优会过拟合）。可观察到的稳健结构：
@@ -320,7 +127,7 @@ A 优质三连阴胜率 42.5% / 期望 +0.03%，
 <b>只有前后半同时优于这个基准的分组，才被写进选股规则</b>。</div>
 
 <h3 style="font-size:13.5px;margin:16px 0 2px">★ 波动率（ATR%）——唯一两半同向、且单调的维度</h3>
-<div class="tbl-wrap"><table data-wb><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th>
+<div class="tbl-wrap"><table><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th>
 <th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead>
 <tbody><tr><td><span class='tag ok'>★★★</span>ATR 2.0~2.5%</td><td class='num'>412</td><td class='num'>80.8%</td><td class='num'><b>88.3%</b></td><td class='num up'>+3.42%</td><td class='kv'>+3.49% / +0.64%</td><td>✅</td></tr><tr><td><span class='tag ok'>★★★</span>ATR 2.5~3.0%</td><td class='num'>974</td><td class='num'>75.2%</td><td class='num'><b>80.6%</b></td><td class='num up'>+3.09%</td><td class='kv'>+3.41% / -0.66%</td><td></td></tr><tr><td><span class='tag ok'>★★</span>ATR 3.0~3.5%</td><td class='num'>1,257</td><td class='num'>69.5%</td><td class='num'><b>69.7%</b></td><td class='num up'>+2.20%</td><td class='kv'>+2.80% / +0.18%</td><td></td></tr><tr><td><span class='tag ok'>★★</span>ATR 3.5~4.0%</td><td class='num'>1,698</td><td class='num'>63.3%</td><td class='num'><b>62.1%</b></td><td class='num up'>+1.62%</td><td class='kv'>+2.17% / +0.87%</td><td>✅</td></tr><tr><td><span class='tag mid'>★</span>ATR 4.0~5.0%</td><td class='num'>4,836</td><td class='num'>54.2%</td><td class='num'><b>53.1%</b></td><td class='num up'>+0.89%</td><td class='kv'>+1.26% / +0.65%</td><td>✅</td></tr><tr><td><span class='tag gray'>—</span>ATR 5.0~7.0%</td><td class='num'>9,170</td><td class='num'>50.6%</td><td class='num'><b>42.2%</b></td><td class='num dn'>-0.04%</td><td class='kv'>+0.62% / -0.32%</td><td></td></tr><tr><td><span class='tag no'>✕ 回避</span>ATR>7.0%</td><td class='num'>6,851</td><td class='num'>48.1%</td><td class='num'><b>35.8%</b></td><td class='num dn'>-0.51%</td><td class='kv'>+0.53% / -0.88%</td><td></td></tr></tbody></table></div>
 <div class="box green"><b>为什么可信：</b>胜率随 ATR 单调下降（88.3% → 80.6% → 69.7% → 62.1% → 53.1% → 42.2% → 35.8%）。
@@ -330,12 +137,12 @@ A 优质三连阴胜率 42.5% / 期望 +0.03%，
 <b>方向判断能力本身也更强</b>。</div>
 
 <h3 style="font-size:13.5px;margin:16px 0 2px">波动率 × 成交额 四象限</h3>
-<div class="tbl-wrap"><table data-wb><thead><tr><th>组合</th><th>样本</th><th>T+1上涨</th>
+<div class="tbl-wrap"><table><thead><tr><th>组合</th><th>样本</th><th>T+1上涨</th>
 <th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead>
 <tbody><tr><td>ATR2~4% × 额<1亿</td><td class='num'>1,868</td><td class='num'>73.8%</td><td class='num'><b>77.7%</b></td><td class='num up'>+3.08%</td><td class='kv'>+3.81% / +1.29%</td><td>✅</td></tr><tr><td>ATR2~4% × 额≥1亿</td><td class='num'>2,473</td><td class='num'>66.1%</td><td class='num'><b>65.9%</b></td><td class='num up'>+1.69%</td><td class='kv'>+2.21% / -0.11%</td><td></td></tr><tr><td>ATR>4% × 额<1亿</td><td class='num'>3,154</td><td class='num'>48.9%</td><td class='num'><b>53.4%</b></td><td class='num up'>+0.99%</td><td class='kv'>+2.11% / +0.80%</td><td>✅</td></tr><tr><td>ATR>4% × 额≥1亿</td><td class='num'>17,703</td><td class='num'>50.9%</td><td class='num'><b>40.7%</b></td><td class='num dn'>-0.15%</td><td class='kv'>+0.68% / -0.57%</td><td></td></tr></tbody></table></div>
 
 <h3 style="font-size:13.5px;margin:16px 0 2px">其余 10 个维度（多数为「前半好、后半差」＝ β 而非 alpha）</h3>
-<h3 style='font-size:13.5px;margin:14px 0 2px'>量能形态</h3><div class='tbl-wrap'><table data-wb><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>放量（今日>昨日>前日）</td><td class='num'>3,992</td><td class='num'>58.7%</td><td class='num'><b>55.7%</b></td><td class='num up'>+1.03%</td><td class='kv'>+2.68% / -0.35%</td><td></td></tr><tr><td>量能无序</td><td class='num'>12,858</td><td class='num'>53.9%</td><td class='num'><b>47.2%</b></td><td class='num up'>+0.41%</td><td class='kv'>+1.46% / -0.21%</td><td></td></tr><tr><td>缩量（今日<昨日<前日）</td><td class='num'>8,392</td><td class='num'>51.5%</td><td class='num'><b>44.2%</b></td><td class='num up'>+0.14%</td><td class='kv'>+0.85% / -0.28%</td><td></td></tr></tbody></table></div><h3 style='font-size:13.5px;margin:14px 0 2px'>均线位置</h3><div class='tbl-wrap'><table><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>跌破MA60</td><td class='num'>18,109</td><td class='num'>56.1%</td><td class='num'><b>50.2%</b></td><td class='num up'>+0.59%</td><td class='kv'>+2.08% / -0.17%</td><td></td></tr><tr><td>站上MA60</td><td class='num'>7,133</td><td class='num'>48.2%</td><td class='num'><b>41.0%</b></td><td class='num dn'>-0.03%</td><td class='kv'>+0.47% / -0.51%</td><td></td></tr></tbody></table></div><h3 style='font-size:13.5px;margin:14px 0 2px'>距MA60远近</h3><div class='tbl-wrap'><table data-wb><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>远离MA60(>15%)</td><td class='num'>9,715</td><td class='num'>54.0%</td><td class='num'><b>48.3%</b></td><td class='num up'>+0.52%</td><td class='kv'>+1.51% / +0.20%</td><td></td></tr><tr><td>中度偏离(5~15%)</td><td class='num'>10,219</td><td class='num'>55.0%</td><td class='num'><b>48.3%</b></td><td class='num up'>+0.41%</td><td class='kv'>+1.71% / -0.68%</td><td></td></tr><tr><td>贴近MA60(|距|<5%)</td><td class='num'>5,308</td><td class='num'>51.6%</td><td class='num'><b>44.8%</b></td><td class='num up'>+0.23%</td><td class='kv'>+1.08% / -0.60%</td><td></td></tr></tbody></table></div><h3 style='font-size:13.5px;margin:14px 0 2px'>流通市值</h3><div class='tbl-wrap'><table data-wb><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>小市值(<50亿)</td><td class='num'>10,168</td><td class='num'>54.5%</td><td class='num'><b>52.7%</b></td><td class='num up'>+0.91%</td><td class='kv'>+2.44% / +0.12%</td><td></td></tr><tr><td>中市值(50~200亿)</td><td class='num'>10,680</td><td class='num'>53.3%</td><td class='num'><b>44.7%</b></td><td class='num up'>+0.10%</td><td class='kv'>+1.10% / -0.61%</td><td></td></tr><tr><td>大市值(>200亿)</td><td class='num'>4,394</td><td class='num'>53.8%</td><td class='num'><b>42.8%</b></td><td class='num up'>+0.04%</td><td class='kv'>+0.63% / -0.37%</td><td></td></tr></tbody></table></div><h3 style='font-size:13.5px;margin:14px 0 2px'>距60日高回撤</h3><div class='tbl-wrap'><table data-wb><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>中位区(回撤15~30%)</td><td class='num'>13,166</td><td class='num'>54.0%</td><td class='num'><b>47.9%</b></td><td class='num up'>+0.43%</td><td class='kv'>+1.48% / -0.43%</td><td></td></tr><tr><td>深跌区(回撤>30%)</td><td class='num'>8,612</td><td class='num'>55.0%</td><td class='num'><b>47.6%</b></td><td class='num up'>+0.40%</td><td class='kv'>+2.08% / +0.00%</td><td></td></tr><tr><td>高位区(距60日高<15%)</td><td class='num'>3,464</td><td class='num'>50.5%</td><td class='num'><b>46.3%</b></td><td class='num up'>+0.39%</td><td class='kv'>+1.05% / -0.59%</td><td></td></tr></tbody></table></div><h3 style='font-size:13.5px;margin:14px 0 2px'>近20日强弱</h3><div class='tbl-wrap'><table data-wb><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>弱势续跌(近20日<-10%)</td><td class='num'>11,740</td><td class='num'>57.6%</td><td class='num'><b>52.6%</b></td><td class='num up'>+0.81%</td><td class='kv'>+2.38% / +0.07%</td><td></td></tr><tr><td>中性(-10%~10%)</td><td class='num'>9,866</td><td class='num'>52.5%</td><td class='num'><b>44.5%</b></td><td class='num up'>+0.14%</td><td class='kv'>+1.06% / -0.57%</td><td></td></tr><tr><td>强势回调(近20日>10%)</td><td class='num'>3,636</td><td class='num'>45.7%</td><td class='num'><b>39.4%</b></td><td class='num dn'>-0.11%</td><td class='kv'>+0.57% / -0.64%</td><td></td></tr></tbody></table></div><h3 style='font-size:13.5px;margin:14px 0 2px'>MA20位置</h3><div class='tbl-wrap'><table data-wb><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>深破MA20(<=-3%)</td><td class='num'>19,929</td><td class='num'>55.6%</td><td class='num'><b>49.2%</b></td><td class='num up'>+0.51%</td><td class='kv'>+1.79% / -0.22%</td><td></td></tr><tr><td>MA20上方</td><td class='num'>3,359</td><td class='num'>47.6%</td><td class='num'><b>41.0%</b></td><td class='num up'>+0.09%</td><td class='kv'>+0.59% / -0.34%</td><td></td></tr><tr><td>刚破MA20(>-3%)</td><td class='num'>1,954</td><td class='num'>47.2%</td><td class='num'><b>42.0%</b></td><td class='num dn'>-0.02%</td><td class='kv'>+0.59% / -0.47%</td><td></td></tr></tbody></table></div><h3 style='font-size:13.5px;margin:14px 0 2px'>跌幅结构</h3><div class='tbl-wrap'><table data-wb><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>下跌加速(末日跌幅>首日130%)</td><td class='num'>8,586</td><td class='num'>58.5%</td><td class='num'><b>51.4%</b></td><td class='num up'>+0.77%</td><td class='kv'>+2.15% / -0.38%</td><td></td></tr><tr><td>匀速下跌</td><td class='num'>4,388</td><td class='num'>54.9%</td><td class='num'><b>47.4%</b></td><td class='num up'>+0.45%</td><td class='kv'>+0.69% / +0.32%</td><td></td></tr><tr><td>抛压衰竭(末日跌幅<首日70%)</td><td class='num'>12,268</td><td class='num'>50.3%</td><td class='num'><b>45.0%</b></td><td class='num up'>+0.16%</td><td class='kv'>+1.16% / -0.39%</td><td></td></tr></tbody></table></div><h3 style='font-size:13.5px;margin:14px 0 2px'>K线形态</h3><div class='tbl-wrap'><table><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>三日真阴线(收<开)</td><td class='num'>16,563</td><td class='num'>55.4%</td><td class='num'><b>49.8%</b></td><td class='num up'>+0.61%</td><td class='kv'>+1.54% / +0.05%</td><td></td></tr><tr><td>含假阴线</td><td class='num'>8,679</td><td class='num'>50.9%</td><td class='num'><b>43.4%</b></td><td class='num up'>+0.04%</td><td class='kv'>+1.40% / -0.84%</td><td></td></tr></tbody></table></div><h3 style='font-size:13.5px;margin:14px 0 2px'>成交额活跃度</h3><div class='tbl-wrap'><table data-wb><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>清淡(<1亿)</td><td class='num'>5,052</td><td class='num'>58.3%</td><td class='num'><b>62.6%</b></td><td class='num up'>+1.78%</td><td class='kv'>+3.39% / +0.88%</td><td>✅</td></tr><tr><td>中等(1~3亿)</td><td class='num'>7,907</td><td class='num'>54.8%</td><td class='num'><b>48.1%</b></td><td class='num up'>+0.41%</td><td class='kv'>+1.61% / -0.37%</td><td></td></tr><tr><td>活跃(20日均额≥3亿)</td><td class='num'>12,283</td><td class='num'>51.5%</td><td class='num'><b>41.0%</b></td><td class='num dn'>-0.14%</td><td class='kv'>+0.69% / -0.67%</td><td></td></tr></tbody></table></div>
+<h3 style='font-size:13.5px;margin:14px 0 2px'>量能形态</h3><div class='tbl-wrap'><table><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>放量（今日>昨日>前日）</td><td class='num'>3,992</td><td class='num'>58.7%</td><td class='num'><b>55.7%</b></td><td class='num up'>+1.03%</td><td class='kv'>+2.68% / -0.35%</td><td></td></tr><tr><td>量能无序</td><td class='num'>12,858</td><td class='num'>53.9%</td><td class='num'><b>47.2%</b></td><td class='num up'>+0.41%</td><td class='kv'>+1.46% / -0.21%</td><td></td></tr><tr><td>缩量（今日<昨日<前日）</td><td class='num'>8,392</td><td class='num'>51.5%</td><td class='num'><b>44.2%</b></td><td class='num up'>+0.14%</td><td class='kv'>+0.85% / -0.28%</td><td></td></tr></tbody></table></div><h3 style='font-size:13.5px;margin:14px 0 2px'>均线位置</h3><div class='tbl-wrap'><table><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>跌破MA60</td><td class='num'>18,109</td><td class='num'>56.1%</td><td class='num'><b>50.2%</b></td><td class='num up'>+0.59%</td><td class='kv'>+2.08% / -0.17%</td><td></td></tr><tr><td>站上MA60</td><td class='num'>7,133</td><td class='num'>48.2%</td><td class='num'><b>41.0%</b></td><td class='num dn'>-0.03%</td><td class='kv'>+0.47% / -0.51%</td><td></td></tr></tbody></table></div><h3 style='font-size:13.5px;margin:14px 0 2px'>距MA60远近</h3><div class='tbl-wrap'><table><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>远离MA60(>15%)</td><td class='num'>9,715</td><td class='num'>54.0%</td><td class='num'><b>48.3%</b></td><td class='num up'>+0.52%</td><td class='kv'>+1.51% / +0.20%</td><td></td></tr><tr><td>中度偏离(5~15%)</td><td class='num'>10,219</td><td class='num'>55.0%</td><td class='num'><b>48.3%</b></td><td class='num up'>+0.41%</td><td class='kv'>+1.71% / -0.68%</td><td></td></tr><tr><td>贴近MA60(|距|<5%)</td><td class='num'>5,308</td><td class='num'>51.6%</td><td class='num'><b>44.8%</b></td><td class='num up'>+0.23%</td><td class='kv'>+1.08% / -0.60%</td><td></td></tr></tbody></table></div><h3 style='font-size:13.5px;margin:14px 0 2px'>流通市值</h3><div class='tbl-wrap'><table><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>小市值(<50亿)</td><td class='num'>10,168</td><td class='num'>54.5%</td><td class='num'><b>52.7%</b></td><td class='num up'>+0.91%</td><td class='kv'>+2.44% / +0.12%</td><td></td></tr><tr><td>中市值(50~200亿)</td><td class='num'>10,680</td><td class='num'>53.3%</td><td class='num'><b>44.7%</b></td><td class='num up'>+0.10%</td><td class='kv'>+1.10% / -0.61%</td><td></td></tr><tr><td>大市值(>200亿)</td><td class='num'>4,394</td><td class='num'>53.8%</td><td class='num'><b>42.8%</b></td><td class='num up'>+0.04%</td><td class='kv'>+0.63% / -0.37%</td><td></td></tr></tbody></table></div><h3 style='font-size:13.5px;margin:14px 0 2px'>距60日高回撤</h3><div class='tbl-wrap'><table><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>中位区(回撤15~30%)</td><td class='num'>13,166</td><td class='num'>54.0%</td><td class='num'><b>47.9%</b></td><td class='num up'>+0.43%</td><td class='kv'>+1.48% / -0.43%</td><td></td></tr><tr><td>深跌区(回撤>30%)</td><td class='num'>8,612</td><td class='num'>55.0%</td><td class='num'><b>47.6%</b></td><td class='num up'>+0.40%</td><td class='kv'>+2.08% / +0.00%</td><td></td></tr><tr><td>高位区(距60日高<15%)</td><td class='num'>3,464</td><td class='num'>50.5%</td><td class='num'><b>46.3%</b></td><td class='num up'>+0.39%</td><td class='kv'>+1.05% / -0.59%</td><td></td></tr></tbody></table></div><h3 style='font-size:13.5px;margin:14px 0 2px'>近20日强弱</h3><div class='tbl-wrap'><table><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>弱势续跌(近20日<-10%)</td><td class='num'>11,740</td><td class='num'>57.6%</td><td class='num'><b>52.6%</b></td><td class='num up'>+0.81%</td><td class='kv'>+2.38% / +0.07%</td><td></td></tr><tr><td>中性(-10%~10%)</td><td class='num'>9,866</td><td class='num'>52.5%</td><td class='num'><b>44.5%</b></td><td class='num up'>+0.14%</td><td class='kv'>+1.06% / -0.57%</td><td></td></tr><tr><td>强势回调(近20日>10%)</td><td class='num'>3,636</td><td class='num'>45.7%</td><td class='num'><b>39.4%</b></td><td class='num dn'>-0.11%</td><td class='kv'>+0.57% / -0.64%</td><td></td></tr></tbody></table></div><h3 style='font-size:13.5px;margin:14px 0 2px'>MA20位置</h3><div class='tbl-wrap'><table><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>深破MA20(<=-3%)</td><td class='num'>19,929</td><td class='num'>55.6%</td><td class='num'><b>49.2%</b></td><td class='num up'>+0.51%</td><td class='kv'>+1.79% / -0.22%</td><td></td></tr><tr><td>MA20上方</td><td class='num'>3,359</td><td class='num'>47.6%</td><td class='num'><b>41.0%</b></td><td class='num up'>+0.09%</td><td class='kv'>+0.59% / -0.34%</td><td></td></tr><tr><td>刚破MA20(>-3%)</td><td class='num'>1,954</td><td class='num'>47.2%</td><td class='num'><b>42.0%</b></td><td class='num dn'>-0.02%</td><td class='kv'>+0.59% / -0.47%</td><td></td></tr></tbody></table></div><h3 style='font-size:13.5px;margin:14px 0 2px'>跌幅结构</h3><div class='tbl-wrap'><table><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>下跌加速(末日跌幅>首日130%)</td><td class='num'>8,586</td><td class='num'>58.5%</td><td class='num'><b>51.4%</b></td><td class='num up'>+0.77%</td><td class='kv'>+2.15% / -0.38%</td><td></td></tr><tr><td>匀速下跌</td><td class='num'>4,388</td><td class='num'>54.9%</td><td class='num'><b>47.4%</b></td><td class='num up'>+0.45%</td><td class='kv'>+0.69% / +0.32%</td><td></td></tr><tr><td>抛压衰竭(末日跌幅<首日70%)</td><td class='num'>12,268</td><td class='num'>50.3%</td><td class='num'><b>45.0%</b></td><td class='num up'>+0.16%</td><td class='kv'>+1.16% / -0.39%</td><td></td></tr></tbody></table></div><h3 style='font-size:13.5px;margin:14px 0 2px'>K线形态</h3><div class='tbl-wrap'><table><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>三日真阴线(收<开)</td><td class='num'>16,563</td><td class='num'>55.4%</td><td class='num'><b>49.8%</b></td><td class='num up'>+0.61%</td><td class='kv'>+1.54% / +0.05%</td><td></td></tr><tr><td>含假阴线</td><td class='num'>8,679</td><td class='num'>50.9%</td><td class='num'><b>43.4%</b></td><td class='num up'>+0.04%</td><td class='kv'>+1.40% / -0.84%</td><td></td></tr></tbody></table></div><h3 style='font-size:13.5px;margin:14px 0 2px'>成交额活跃度</h3><div class='tbl-wrap'><table><thead><tr><th>分组</th><th>样本</th><th>T+1上涨</th><th>历史胜率</th><th>期望</th><th>前半/后半</th><th>两半同向</th></tr></thead><tbody><tr><td>清淡(<1亿)</td><td class='num'>5,052</td><td class='num'>58.3%</td><td class='num'><b>62.6%</b></td><td class='num up'>+1.78%</td><td class='kv'>+3.39% / +0.88%</td><td>✅</td></tr><tr><td>中等(1~3亿)</td><td class='num'>7,907</td><td class='num'>54.8%</td><td class='num'><b>48.1%</b></td><td class='num up'>+0.41%</td><td class='kv'>+1.61% / -0.37%</td><td></td></tr><tr><td>活跃(20日均额≥3亿)</td><td class='num'>12,283</td><td class='num'>51.5%</td><td class='num'><b>41.0%</b></td><td class='num dn'>-0.14%</td><td class='kv'>+0.69% / -0.67%</td><td></td></tr></tbody></table></div>
 <div class="box red"><b>读表提醒：</b>上表中多数分组呈现「前半大幅为正、后半为负」的形态，
 例如「小市值」「放量」「弱势续跌」在前半期望 +2.4% ~ +2.7%，后半却掉到 +0.1% ~ −0.35%。
 这是<b>市场 β（样本前半上涨、后半回落）</b>造成的，<b>不是选股能力</b>。
@@ -347,168 +154,4 @@ A 优质三连阴胜率 42.5% / 期望 +0.03%，
 
 <div class="foot">回测引擎 quant/_3yl_lab.py ｜ 每日页
 <a href="index.html" style="color:var(--blue)">返回三连阴观察池</a></div>
-</div><!--WB_APP--><script id='wb-app'>
-/* ============================================================
-   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
-   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
-        ③ 每表上方搜索框做全表筛选。
-   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
-   ============================================================ */
-(function () {
-  "use strict";
-
-  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
-     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
-     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
-     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
-  try {
-    function pageKey(pathname) {
-      var p = String(pathname || "").replace(/\.html$/i, "");
-      var i = p.indexOf("/web/");
-      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
-      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
-    }
-    function keyOf(href) {
-      var cut = String(href || "").split("#")[0];
-      var q = cut.indexOf("?");
-      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
-      var p = q > -1 ? cut.slice(0, q) : cut;
-      try { p = new URL(p, location.href).pathname; } catch (e) {}
-      return { key: pageKey(p), search: search };
-    }
-    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
-
-    var curKey = pageKey(location.pathname);
-    var curSearch = (location.search || "").toLowerCase();
-    var entries = [];
-    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
-      var h = a.getAttribute("href") || "";
-      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
-      var info = keyOf(a.href || h);
-      if (!info.key) return;
-      if (curSearch && !info.search) return;
-      if (info.search && curSearch.indexOf(info.search) < 0) return;
-      entries.push({ a: a, key: info.key });
-    });
-
-    /* 1) 精确命中 */
-    var picked = entries.filter(function (e) { return e.key === curKey; });
-
-    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
-    if (!picked.length) {
-      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
-      if (pre.length) {
-        pre.sort(function (x, y) { return y.key.length - x.key.length; });
-        picked = [pre[0]];
-      }
-    }
-
-    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
-    if (!picked.length) {
-      var cd = dirOf(curKey), uniq = {};
-      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
-      var ks = Object.keys(uniq);
-      if (ks.length === 1) {
-        picked = [uniq[ks[0]]];
-      } else if (ks.length > 1) {
-        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
-        if (idx.length === 1) picked = [uniq[idx[0]]];
-      }
-    }
-
-    picked.forEach(function (e) { e.a.classList.add("cur"); });
-  } catch (e) {}
-
-  /* 工具：判断单元格是否为数值 */
-  function isNum(s) {
-    if (s == null) return false;
-    s = String(s).replace(/[,\s%]/g, "");
-    if (s === "" || s === "—" || s === "-") return false;
-    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
-  }
-  function cellText(tr, ci) {
-    var c = tr.children[ci];
-    if (!c) return "";
-    if (c.dataset) {
-      if (c.dataset.val !== undefined) return c.dataset.val;
-      if (c.dataset.v !== undefined) return c.dataset.v;
-    }
-    return c.textContent || "";
-  }
-
-  /* ②+③ 列表表排序 + 筛选 */
-  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
-    var thead = tbl.querySelector("thead");
-    if (!thead) return;
-    var ths = thead.querySelectorAll("th");
-    if (ths.length < 1) return;
-
-    /* 搜索框 */
-    try {
-      var box = document.createElement("input");
-      box.type = "search";
-      box.className = "wb-search";
-      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
-      box.setAttribute("aria-label", "筛选表格");
-      tbl.parentNode.insertBefore(box, tbl);
-      box.addEventListener("input", function () {
-        var q = box.value.trim().toLowerCase();
-        var rows = tbl.querySelectorAll("tbody tr");
-        var shown = 0;
-        rows.forEach(function (tr) {
-          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
-          tr.style.display = hit ? "" : "none";
-          if (hit) shown++;
-        });
-        var old = tbl.parentNode.querySelector(".wb-empty");
-        if (old) old.parentNode.removeChild(old);
-        if (q && shown === 0) {
-          var tip = document.createElement("div");
-          tip.className = "wb-empty";
-          tip.textContent = "无匹配结果";
-          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
-        }
-      });
-    } catch (e) {}
-
-    /* 排序：列级数值自动识别。
-       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
-       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
-    var hasCustom = !!thead.querySelector("th[data-k]");
-    if (!hasCustom) ths.forEach(function (th, ci) {
-      if (th.dataset && th.dataset.noSort !== undefined) return;
-      th.style.cursor = "pointer";
-      th.classList.add("sort");
-      th.addEventListener("click", function () {
-        var numeric = th.classList.contains("num");
-        if (!numeric) {
-          var sample = tbl.querySelectorAll("tbody tr");
-          var nN = 0, nT = 0;
-          sample.forEach(function (r) {
-            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
-          });
-          numeric = nT > 0 && nN / nT >= 0.7;
-        }
-        var asc = th.dataset.asc !== "1";
-        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
-        rows.sort(function (a, b) {
-          var va = cellText(a, ci), vb = cellText(b, ci);
-          if (numeric) {
-            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
-            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
-            return asc ? fa - fb : fb - fa;
-          }
-          va = String(va || ""); vb = String(vb || "");
-          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
-        });
-        var tb = tbl.querySelector("tbody");
-        rows.forEach(function (r) { tb.appendChild(r); });
-        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
-        th.classList.add("sorted");
-        th.dataset.asc = asc ? "1" : "0";
-      });
-    });
-  });
-})();
-
-</script><!--/WB_APP--></body></html>
+</div></body></html>

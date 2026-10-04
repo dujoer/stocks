@@ -265,6 +265,18 @@ FAMILIES = [
         date_re=r'(\d{8})',
         need='_txk_cache.json（全市场日K）+ rev/bottom_state.json（底部锚定）；先验固定因子集（短/中/长三族，等权横截面分位）→ 按持有周期分类并给量化买卖点（箱体/趋势/底部锚定）；环境只控β不控排序；综合视图非叠加alpha'),
 
+    dict(key='three_yin_tiergate', label='三连阴 · 分档出票核验（出票许可依据）',
+         patterns=['three_yin/tier_gate.html'],
+         entry='three_yin/index.html',
+         script='_3yl_tier_gate.py;_3yl_tier_gate.py --sens --step 3;_3yl_gate_page.py',
+         freq='on_demand',
+         dated=False, start=None, date_re=None,
+         need='【2026-10-04 新增】核验页面原写「观察档(跌8~12%)两半同向跑赢基准、期望+0.43%(基准+0.01%)，本期主推」。'
+              '那个对照是**该档 vs 全体三连阴母集（母集含它自己）**= 子集对母集、且无显著性区间。'
+              '按统一口径逐日平衡重算：obs 档 n=4355 母集 edge +0.001pp / R3 50.4%、等量(同日非本档) +0.059pp / R3 59.8%、'
+              '留一[-0.070,+0.087] 跨 0 → 判「不可出票」。原结论原样保留不删改。'
+              'build_3yl.py 读 emit_license()，读不到即 fail-safe 不出票'),
+
     dict(key='three_yin', label='三连阴（量化错杀）观察池 + 实验室',
         patterns=['three_yin/sanyin_*.html', 'three_yin/index.html', 'three_yin/lab.html'],
         entry='three_yin/index.html',

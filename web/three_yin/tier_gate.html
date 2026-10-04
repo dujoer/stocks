@@ -1,0 +1,73 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>三连阴 · 分档出票核验</title></head><body>
+<div class="wrap">
+<h1>三连阴 · 分档出票核验</h1>
+<div class="card"><b>本页核验一个具体问题：页面写「★ 观察档（跌 8~12%）两半同向跑赢基准，本期主推」——这句话成立吗？</b><br>① 原结论的对照是 <b>该档 vs 全体三连阴母集</b>，而母集里含它自己 —— 这是「子集对母集」，不是等量对照（R1），且原结论<b>没有给任何显著性区间</b>。<br>② 本页按全项目统一口径重算：<b>逐日平衡</b> edge（该档逐日均 − 同日对照逐日均）、按日 block bootstrap {boot} 次算 R3、留一法、前/后半、跨步长敏感性。<br>③ 双对照并列给出：<b>母集对照</b>（含自己，偏向低估）与 <b>等量对照</b>（同日非本档 = 「买这档 vs 买别的三连阴」的真实差异）。<b>出票许可取更严的等量对照</b>。<br><b>原结论原样保留</b>（见第一节），不删改历史判定；两者不一致时以本页为准，并写明原因。</div>
+<div class='box red' style='border-color:#b00020'><b>⚠ 结论：★ 观察档本期不出票（宁可不选）</b><br>逐日平衡后，母集对照 edge <b>+0.001pp pp</b>（R3 <b>50.4%</b>，门槛 95%），更严格的等量对照（同日非本档）edge <b>—pp pp</b>（R3 <b>—%</b>）。留一法区间：母集 [—, —]、等量 [—, —]。<br>原结论「两半同向跑赢基准」在<b>前后半</b>上是 前后半同向（前半 — / 后半 —）。；但「跑赢母集」与「edge 显著为正」是两件事 —— 原结论只答了前者。<br><b>不写「改个阈值就能用」的建议</b>，只记录已算出的事实。</div>
+
+<h2>一、原结论（原样保留，不删改）</h2>
+<div class="card">`_3yl_lab.py` 与观察池页面写的是：<b>★ 观察档（跌 8~12%）两半同向跑赢基准：
+T+1 涨 54.0% / 胜率 47.7% / 期望 +0.43%（基准 48.7% / 44.3% / +0.01%），本期主推。</b>
+<div class="kv">这是<b>全样本摊平</b>对比（把该档所有信号堆在一起比均值），不是逐日平衡。
+对照「基准」= 全体三连阴，<b>含观察档自己</b>。方向性参考有价值，但它<b>不等于</b>
+「买观察档能跑赢同一天买其它三连阴」，也没有给置信区间。</div></div>
+
+<h2>二、逐日平衡 edge（母集对照：同日全体三连阴，含本档）</h2>
+<table><thead><tr><th>档</th><th>笔数</th><th>绝对收益</th><th>胜率</th>
+<th>edge</th><th>R3</th><th>留一法区间</th></tr></thead><tbody><tr><td><b>★ 观察档（跌 8~12%）· 页面所称「本期主推」</b></td><td class='num'>4355</td><td class='num'>0.1%</td><td class='num'>44.9%</td><td class='num up'>+0.001pp</td><td class='num dn'>50.4%</td><td class='kv'>[-0.070, +0.087]</td></tr>
+<tr><td><b>一般档（跌 5~8%）</b></td><td class='num'>6984</td><td class='num'>-0.1%</td><td class='num'>41.2%</td><td class='num up'>+0.006pp</td><td class='num dn'>51.6%</td><td class='kv'>[-0.031, +0.042]</td></tr>
+<tr><td><b>浅跌档（跌 0~5%）</b></td><td class='num'>19630</td><td class='num'>-0.2%</td><td class='num'>42.7%</td><td class='num dn'>-0.029pp</td><td class='num dn'>36.1%</td><td class='kv'>[-0.072, +0.044]</td></tr>
+<tr><td><b>⚠ 排雷档（跌 12~20%）</b></td><td class='num'>1761</td><td class='num'>0.1%</td><td class='num'>42.9%</td><td class='num up'>+0.205pp</td><td class='num dn'>68.6%</td><td class='kv'>[+0.023, +0.380]</td></tr>
+<tr><td><b>⛔ 深跌禁区（跌 >20%）</b></td><td class='num'>217</td><td class='num'>-0.6%</td><td class='num'>30.8%</td><td class='num dn'>-0.432pp</td><td class='num dn'>25.8%</td><td class='kv'>[-0.702, -0.183]</td></tr></tbody></table>
+<div class="kv">edge = 该档逐日均值 − 同日全三连阴逐日均值（逐日平衡）。
+R3 = bootstrap 中 edge&gt;0 的比例（按日整块重抽 800 次，门槛 95%）。
+留一法 = 去掉任意一天后 edge 的极值范围；<b>区间跨 0 就说明结论由个别交易日撑着</b>。</div>
+
+<h2>三、等量对照（★ 这一节才是「买这档 vs 买别的三连阴」）</h2>
+<table><thead><tr><th>档</th><th>对照绝对收益</th><th>对照胜率</th>
+<th>edge</th><th>R3</th><th>留一法区间</th></tr></thead><tbody><tr><td><b>★ 观察档（跌 8~12%）· 页面所称「本期主推」</b></td><td class='num'>-0.2%</td><td class='num'>41.6%</td><td class='num up'>+0.059pp</td><td class='num dn'>59.8%</td><td class='kv'>[-0.086, +0.150]</td></tr>
+<tr><td><b>一般档（跌 5~8%）</b></td><td class='num'>-0.1%</td><td class='num'>42.7%</td><td class='num up'>+0.013pp</td><td class='num dn'>53.2%</td><td class='kv'>[-0.031, +0.058]</td></tr>
+<tr><td><b>浅跌档（跌 0~5%）</b></td><td class='num'>-0.1%</td><td class='num'>42.6%</td><td class='num dn'>-0.080pp</td><td class='num dn'>34.0%</td><td class='kv'>[-0.142, +0.065]</td></tr>
+<tr><td><b>⚠ 排雷档（跌 12~20%）</b></td><td class='num'>-0.1%</td><td class='num'>43.1%</td><td class='num up'>+0.199pp</td><td class='num dn'>67.4%</td><td class='kv'>[+0.013, +0.375]</td></tr>
+<tr><td><b>⛔ 深跌禁区（跌 >20%）</b></td><td class='num'>-0.2%</td><td class='num'>42.2%</td><td class='num dn'>-0.442pp</td><td class='num dn'>25.0%</td><td class='kv'>[-0.714, -0.193]</td></tr></tbody></table>
+<div class="kv">对照 = <b>同日、非本档</b>的三连阴信号（不含观察档自己）。
+母集对照含自己 → 偏向低估；等量对照不含自己 → 真实差异。
+<b>两档数字不一致甚至反向时，以本节为准</b>（出票许可亦按本节判定）。</div>
+
+<h2>四、前 / 后半稳定性</h2>
+<table><thead><tr><th>档</th><th>前半 / 后半 edge（母集对照）</th></tr></thead><tbody><tr><td><b>★ 观察档（跌 8~12%）· 页面所称「本期主推」</b></td><td class='kv'>前半 -0.108pp（20 日中 10 日为正） ｜ 后半 +0.111pp（20 日中 12 日为正）</td></tr>
+<tr><td><b>一般档（跌 5~8%）</b></td><td class='kv'>前半 -0.047pp（19 日中 10 日为正） ｜ 后半 +0.058pp（19 日中 8 日为正）</td></tr>
+<tr><td><b>浅跌档（跌 0~5%）</b></td><td class='kv'>前半 -0.114pp（19 日中 8 日为正） ｜ 后半 +0.051pp（20 日中 9 日为正）</td></tr>
+<tr><td><b>⚠ 排雷档（跌 12~20%）</b></td><td class='kv'>前半 +0.261pp（18 日中 8 日为正） ｜ 后半 +0.150pp（18 日中 9 日为正）</td></tr>
+<tr><td><b>⛔ 深跌禁区（跌 >20%）</b></td><td class='kv'>前半 -1.230pp（15 日中 5 日为正） ｜ 后半 +0.367pp（15 日中 8 日为正）</td></tr></tbody></table>
+<div class="kv">单段行情容易把结论锁在一个市场状态里；只有两半同向才算稳。</div>
+
+<h2>五、跨步长敏感性（主口径 step5 vs 派生 step3）</h2>
+<table><thead><tr><th>档</th><th>step3 edge</th><th>step3 R3</th><th>与主口径符号</th></tr></thead>
+<tbody><tr><td><b>★ 观察档（跌 8~12%）· 页面所称「本期主推」</b></td><td class='num up'>+0.114pp</td><td class='num dn'>79.4%</td><td class='kv'>同号</td></tr>
+<tr><td><b>一般档（跌 5~8%）</b></td><td class='num up'>+0.002pp</td><td class='num dn'>48.4%</td><td class='kv'>同号</td></tr>
+<tr><td><b>浅跌档（跌 0~5%）</b></td><td class='num up'>+0.033pp</td><td class='num dn'>68.8%</td><td class='kv'>翻号</td></tr>
+<tr><td><b>⚠ 排雷档（跌 12~20%）</b></td><td class='num dn'>-0.165pp</td><td class='num dn'>33.6%</td><td class='kv'>翻号</td></tr>
+<tr><td><b>⛔ 深跌禁区（跌 >20%）</b></td><td class='num dn'>-0.364pp</td><td class='num dn'>26.8%</td><td class='kv'>同号</td></tr></tbody></table>
+<div class="kv">换采样步长结论就翻号 = 结论锁在采样格点上，不是规律。</div>
+
+<h2>六、出票许可（机器判定，读不到就 fail-safe）</h2>
+<table><thead><tr><th>档</th><th>可出票？</th><th>依据</th></tr></thead><tbody><tr><td>★ 观察档（跌 8~12%）· 页面所称「本期主推」</td><td class='dn'>不出票</td><td class='kv'>R3 50.4% < 95% 门槛；step3 R3 79.4% < 95%</td></tr></tbody></table>
+<div class="kv">`build_3yl.py` 只读本页证据；观察档不达标即标注<b>不出票（宁可不选）</b>，
+其余四档是排除/警示档，不涉及出票。</div>
+
+<h2>七、口径与局限</h2>
+<div class="card"><ul>
+<li>信号：收盘连续 3 日下跌 + 近 3 日无停牌跳空 + 量 &gt; 0；<b>累计跌幅</b>
+    = 1 − 信号日收盘 / 三连阴开始前一日收盘（与 <code>build_3yl.scan()</code>、<code>_3yl_lab</code> 一字不差）。</li>
+<li>退出：T+1 开盘买入 / 止损 5% / 止盈 8% / 持有 5 日；同日双触保守记止损。</li>
+<li>回测窗口 2025-10-31 ~ 2026-09-21；域 = 全市场离线日K（剔 ST / 退市 / 北交所 / 无市值）。</li>
+<li>本页只判定<b>现有分档规则</b>有没有超额，<b>不做规则改良</b>：edge 为负不代表反向做能赚钱，
+    是不该拿它出票。</li>
+<li>生产 scan 还叠了「现价 ≥2 元 + 20 日均额 ≥2000 万」两条流动性门槛（<code>build_3yl</code> 的
+    PRICE_MIN / AMT_MIN）。本页面板<b>未叠这两条</b> → 结论偏宽松，属<b>放宽而非收紧</b>，
+    不会把不合格的档说成合格。</li>
+</ul></div>
+<div class="note"><a href="index.html">← 返回三连阴观察池</a> ｜ <a href="sanyin_20260930.html">当期观察池页面</a> ｜ <a href="lab.html">原始回测实验室</a></div>
+</div></body></html>
