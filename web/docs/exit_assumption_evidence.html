@@ -1,26 +1,41 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>主升精选 · 因子样本外功效实验室 · 2025-10-30~2026-08-20</title><style>
-:root{--bg:#fbfbfd;--card:#fff;--text:#1d1d1f;--muted:#6e6e73;--line:#e5e5e7;
- --up:#ff3b30;--dn:#34c759;--blue:#0071e3;--gold:#1a73e8;--orange:#ff9500;--purple:#af52de;}
-*{box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
- background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:0}
-.wrap{max-width:1040px;margin:0 auto;padding:28px 18px 56px}
-h1{font-size:23px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
-h2{font-size:18px;font-weight:600;margin:26px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--blue)}
-.sub{color:var(--muted);font-size:13px;margin-bottom:8px}
-.card{background:var(--card);border-radius:16px;padding:16px 20px;margin:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.box{border-left:4px solid var(--blue);background:#f0f7ff;padding:14px 18px;border-radius:0 12px 12px 0;margin:14px 0}
-.box.gold{border-color:var(--gold);background:#fffaf0}
-.box.green{border-color:var(--dn);background:#f0faf3}
-.box.red{border-color:var(--up);background:#fff5f4}
-table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0}
-th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
-th{color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa}
-.num{font-variant-numeric:tabular-nums}
-.up{color:var(--up)}.dn{color:var(--dn)}.am{color:var(--blue)}
-.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
+<title>退出回测「成交假设」口径审计 · 主升精选</title>
+<style>
+* { box-sizing:border-box; }
+body { margin:0; background:#f5f6f8; color:#1c2430;
+  font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif; line-height:1.75; font-size:15px; }
+.wrap { max-width:1160px; margin:0 auto; padding:36px 22px 70px; }
+header.top { border-bottom:3px solid #1f4e79; padding-bottom:18px; margin-bottom:26px; }
+h1 { font-size:26px; margin:0 0 6px; }
+.sub { color:#5a6573; font-size:14px; }
+h2 { font-size:21px; margin:42px 0 14px; padding-left:12px; border-left:5px solid #1f4e79; }
+h3 { font-size:16.5px; margin:26px 0 8px; color:#1f4e79; }
+p { margin:9px 0; }
+code { background:#eef4fa; color:#1f4e79; padding:1px 6px; border-radius:5px; font-size:13px; }
+.card { background:#fff; border:1px solid #e3e7ec; border-radius:14px; padding:18px 20px; margin:14px 0;
+  box-shadow:0 1px 4px rgba(20,30,50,.04); }
+table { width:100%; border-collapse:collapse; font-size:13px; margin:10px 0; }
+th,td { border:1px solid #e3e7ec; padding:7px 9px; text-align:left; vertical-align:top; }
+th { background:#f0f3f7; white-space:nowrap; }
+td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.note { background:#fffaf0; border-left:4px solid #b7791f; padding:12px 16px; margin:14px 0;
+  border-radius:0 8px 8px 0; font-size:14px; }
+.danger { background:#fdecea; border-left:4px solid #c0392b; padding:12px 16px; margin:14px 0;
+  border-radius:0 8px 8px 0; font-size:14px; }
+.ok { background:#e6f6ee; border-left:4px solid #128a52; padding:12px 16px; margin:14px 0;
+  border-radius:0 8px 8px 0; font-size:14px; }
+.big { font-size:21px; font-weight:700; }
+.up { color:#ea4335; font-weight:700; }
+.down { color:#34a853; font-weight:700; }
+.muted { color:#98a2b3; }
+a { color:#1f4e79; }
+footer { margin-top:48px; padding-top:18px; border-top:1px solid #e3e7ec; font-size:12px; color:#7b8794; line-height:1.8; }
+ul { margin:8px 0; padding-left:22px; } li { margin:5px 0; }
+.kicker { color:#7b8794; font-size:12px; letter-spacing:.2em; text-transform:uppercase; }
+.hl { background:#fff8e6; }
+.cur { background:#fff4e5; }
+.warnbox { border:2px solid #c0392b; }
 </style><!--WB_THEME--><style id='wb-theme'>
 /* ============================================================
    统一设计系统 (A股看板) — Google Material 风·朴素简洁
@@ -212,72 +227,151 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
   .navgrp{ padding:5px 6px 5px 5px !important; }
 }
 
-</style><!--/WB_THEME--></head>
-<body>
-<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../diagnosis/index.html'>个股研判</a><a href='../reversal/index.html'>底部反转</a><a href='index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a><a href='../three_yin/index.html'>三连阴</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+</style><!--/WB_THEME--></head><body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../diagnosis/index.html'>个股研判</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a><a href='../three_yin/index.html'>三连阴</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
 <div class="wrap">
-<h1>主升精选 · 因子样本外功效实验室</h1>
-<div class="sub">样本区间 2025-10-30 ~ 2026-08-20（162177 行 · 面板由 _txk_cache.json 全市场日K 实时算）｜ 版本 selected_v1</div>
+<header class="top">
+<div class="kicker">QUANT · 口径审计</div>
+<h1>退出回测的「成交假设」口径审计</h1>
+<div class="sub">主升精选生产面板 162,177 行 ｜ 参数 止损 12% · 激活 +6% ·
+回撤 3% · 满 20 日 ｜ 往返成本 0.15pp ｜ 两半切分 2026-04-07</div>
+</header>
 
-<div class="box gold"><b>核心结论（v1 · 全市场域）：</b>先验固定因子集（趋势+资金双确认，9 因子等权横截面分位）
-A 档（域内前 <b>5%</b>）严格样本外可兑现胜率
-<b>65.5283290830469</b>（基线 62.7%），
-训练半 68.66025372926251 / 测试半 65.5283290830469。
-选股能力以本页为准。</div>
+<div class="danger warnbox">
+<p class="big">结论：生产页面披露的「A 档严格样本外可兑现胜率 65.5%」，
+是<b>特定成交假设</b>下的产物，不是数据本身的属性。</p>
+<p>同一批生产样本、同一组参数，只改「日内路径」与「跳空」两个假设，A 档可兑现胜率在
+<b>60.29% ~ 67.40%</b> 之间摆动（跨度 <b>7.11pp</b>）；
+单笔净收益在 <b><span class='up'>+0.437%</span> ~ <span class='up'>+1.983%</span></b>
+之间摆动（跨度 <b>1.546pp</b>，是收益本身的数倍）。</p>
+<p>在最保守口径（<b>保守日内 + 跳空成交</b>）下，A 档可兑现胜率降到 <b>60.29%</b>，
+其中<b>测试半 58.39% 已低于页面自设的 60% 门槛</b>
+—— 页面上「训练半 / 测试半两半同向均 &gt;60%」的表述<b>不成立</b>。</p>
+<p style="margin-bottom:0">更关键的是：<b>生产页面的口径说明里完全没有提到这两个假设</b>，
+读者无从知道 65.5% 究竟站在哪一档假设上。</p>
+</div>
 
-<div class="box red"><b>⚠️ 口径先说清（与 web/reversal 完全可比）：</b>胜率 = 信号日收盘买入 → 移动止盈
-（−12% 硬止损 / 浮盈 +6% 激活 / 回撤 3% / 满 20 日强平）退出规则下<b>盈利交易占比</b>。
-绝对胜率 = alpha + beta（普涨里随便买都赢）；本页同时报<b>相对胜率</b>（beat20 = 个股 20 日收益 &gt; 同日域内中位数）作 alpha 证据。<br>
-★ <b>成交假设必须先声明</b>：本页数字默认<b>乐观口径</b>（同根 K 线「先冲高、后回落」+ 忽略跳空）。同一批样本、同一组参数，改按<b>可实现口径</b>（保守日内 + 跳空以开盘价成交）重算，A 档胜率为 <b>60.3%</b>（测试半 58.4%）。</div>
+<h2>一、四种成交假设的完整对照</h2>
+<div class="card">
+<table data-wb>
+<thead><tr><th rowspan="2">成交假设</th><th colspan="3" class="num">全样本（域内全体）</th>
+<th colspan="3" class="num">A 档（域内前 5%）</th><th colspan="2" class="num">A 档两半</th></tr>
+<tr><th class="num">可兑现胜率</th><th class="num">单笔均值</th><th class="num">净均值</th>
+<th class="num">可兑现胜率</th><th class="num">单笔均值</th><th class="num">净均值</th>
+<th class="num">前半</th><th class="num">后半</th></tr></thead>
+<tbody><tr class='cur'><td>旧口径（乐观日内·忽略跳空） ★旧生产口径</td><td class='num'>62.70%</td><td class='num'><span class='down'>-0.102%</span></td><td class='num'><span class='down'>-0.252%</span></td><td class='num'><b>67.40%</b></td><td class='num'><span class='up'>+0.831%</span></td><td class='num'><span class='up'>+0.681%</span></td><td class='num'>69.38%</td><td class='num'>65.83%</td></tr><tr><td>保守日内·忽略跳空</td><td class='num'>62.62%</td><td class='num'><span class='up'>+0.909%</span></td><td class='num'><span class='up'>+0.759%</span></td><td class='num'><b>67.28%</b></td><td class='num'><span class='up'>+2.133%</span></td><td class='num'><span class='up'>+1.983%</span></td><td class='num'>69.38%</td><td class='num'>65.61%</td></tr><tr><td>乐观日内·跳空成交</td><td class='num'>62.65%</td><td class='num'><span class='down'>-0.159%</span></td><td class='num'><span class='down'>-0.309%</span></td><td class='num'><b>67.38%</b></td><td class='num'><span class='up'>+0.726%</span></td><td class='num'><span class='up'>+0.576%</span></td><td class='num'>69.33%</td><td class='num'>65.83%</td></tr><tr><td>可实现口径（保守日内·跳空成交） ★可实现口径</td><td class='num'>60.53%</td><td class='num'><span class='up'>+0.214%</span></td><td class='num'><span class='up'>+0.064%</span></td><td class='num'><b>60.29%</b></td><td class='num'><span class='up'>+0.587%</span></td><td class='num'><span class='up'>+0.437%</span></td><td class='num'>62.69%</td><td class='num'>58.39%</td></tr></tbody></table>
+<div class="note" style="margin-bottom:0">
+「可兑现胜率」＝该退出规则下盈利交易占比；「净均值」＝单笔均值 − 0.15pp 往返成本。
+橙色行是<b>生产页面当前实际披露的口径</b>；标 ★可实现口径的行为<b>最保守</b>口径。
+</div></div>
 
-<div class='box red' style='border-color:#b00020'><b>⚠️ 成交假设口径审计（本页所有胜率的解释前提）：</b><br>本页数字用的是<b>乐观口径</b>：同根 K 线视作「先冲高、后回落」（止盈线当日即被抬高并可能触发），且<b>忽略跳空</b>（开盘已跌破止盈线时仍按止盈线价成交）。<br>同一批样本（162177 行）、同一组参数，改按<b>可实现口径</b>（先用截至昨日的止盈线判断当日是否跌破 + 跳空以开盘价成交）重算：A 档可兑现胜率 <b>67.4% → 60.3%</b>，测试半 <b>65.8% → 58.4%</b>（<b>低于本页自设的 60% 门槛</b>）；单笔净均值 <b>+0.681% → +0.437%</b>。<br>旧口径在全样本上被<b>精确复现</b>（62.7%，与冻结模型记录一致），证明差异<b>只来自成交假设</b>，不是换了一批样本。<b>跳空修正是单向的（只会更差），必须补。</b><br>完整四假设对照与机制说明见 <a href='../docs/exit_assumption_evidence.html' style='color:var(--blue)'>退出回测口径审计证据页</a>。</div>
+<h2>二、这不是样本差异 —— 旧口径被精确复现</h2>
+<div class="card">
+<p>把冻结模型 <code>_selected_model.json</code>（built_at 2026-10-04 22:04）记录的证据，
+与本次在<b>同一批面板</b>上重跑旧口径的结果对照：</p>
+<table><thead><tr><th>指标</th><th class="num">冻结模型记录</th><th class="num">本次旧口径重跑</th><th>判定</th></tr></thead>
+<tbody><tr><td>全样本可兑现胜率</td><td class='num'>62.70%</td><td class='num'>62.70%</td><td class='num'><b class="up">完全一致</b></td></tr><tr><td>全样本单笔均值</td><td class='num'><span class='down'>-0.102%</span></td><td class='num'><span class='down'>-0.102%</span></td><td class='num'>一致</td></tr></tbody></table>
+<div class="ok" style="margin-bottom:0">
+全样本可兑现胜率 <b>62.70%</b> 与本次重跑 <b>62.70%</b> 完全一致
+—— 证明两组数字来自同一批样本，<b>下面的差异只可能来自「成交假设」本身</b>，不是换了一批票或换了一段时间。
+</div></div>
 
-<h2>一、截断比例曲线（先验集 · 全样本）</h2>
-<div class="card"><table data-wb>
-<thead><tr><th>截断</th><th>样本</th><th>全样本胜率</th><th>训练半</th><th>测试半</th><th>vs 全体 edge</th><th>均收益</th></tr></thead>
-<tbody><tr><td>前 1%</td><td class='num'>1692</td><td class='num up'>66.7%</td><td class='num'>69.3%</td><td class='num'>64.7%</td><td class='num up'>+4.0pp</td><td class='num up'>+0.95%</td></tr><tr><td>前 2%</td><td class='num'>3281</td><td class='num up'>66.8%</td><td class='num'>69.4%</td><td class='num'>64.7%</td><td class='num up'>+4.1pp</td><td class='num up'>+0.82%</td></tr><tr><td>前 3%</td><td class='num'>4891</td><td class='num up'>66.9%</td><td class='num'>69.4%</td><td class='num'>64.9%</td><td class='num up'>+4.2pp</td><td class='num up'>+0.77%</td></tr><tr><td>前 5%</td><td class='num'>8102</td><td class='num up'>67.4%</td><td class='num'>69.4%</td><td class='num'>65.8%</td><td class='num up'>+4.7pp</td><td class='num up'>+0.83%</td></tr><tr><td>前 10%</td><td class='num'>16192</td><td class='num up'>66.9%</td><td class='num'>68.7%</td><td class='num'>65.5%</td><td class='num up'>+4.2pp</td><td class='num up'>+0.71%</td></tr><tr><td>前 20%</td><td class='num'>32375</td><td class='num up'>66.4%</td><td class='num'>68.1%</td><td class='num'>65.0%</td><td class='num up'>+3.7pp</td><td class='num up'>+0.57%</td></tr><tr><td>前 30%</td><td class='num'>48548</td><td class='num up'>65.9%</td><td class='num'>67.4%</td><td class='num'>64.7%</td><td class='num up'>+3.2pp</td><td class='num up'>+0.46%</td></tr></tbody></table>
-<div class="note">A 档取「严格样本外（测试半）可兑现胜率稳定 ≥60% 且 edge≥0」的<b>最严</b>截断比例（前 5%）；
-越严越空仓、但胜率越稳。⚠ 表中「训练半与测试半同向」是<b>乐观成交口径</b>下的结论；
-改按可实现口径（保守日内 + 跳空成交）后测试半会跌破 60%（见上方口径审计框）——
-即「优势不强烈依赖期间」这一句<b>不稳健</b>，请以口径审计证据页为准。</div></div>
+<h2>三、两个假设各做了什么</h2>
 
-<h2>二、严格样本外（先验 vs 自动筛）</h2>
-<div class="card"><table>
-<thead><tr><th>方法</th><th>样本</th><th>测试半胜率</th><th>edge</th><th>均收益</th></tr></thead>
-<tbody><tr><td>先验固定集</td><td class='num'>9019</td><td class='num'>65.5%</td><td class='num'>+4.4pp</td><td class='num'>+0.54%</td></tr><tr><td>自动筛因子</td><td class='num'>9019</td><td class='num'>59.1%</td><td class='num'>-2.0pp</td><td class='num'>-0.98%</td></tr></tbody></table>
-<div class="note">「自动筛因子」= 训练段按极差挑方向、测试段用；若其 edge 接近先验集，说明筛因子动作不产生 alpha（过拟合量）。</div></div>
+<h3>① 日内路径：同根 K 线里，先冲高还是先探底？</h3>
+<div class="card">
+<p>跟踪止盈的止损线依赖「持仓期最高价」。若写成「同根 K 线先创新高 → 再回落」，
+止损线会在<b>当日</b>就被抬高并可能立即触发 —— <b>赢家被提前平掉</b>；
+若写成「先探底 → 再冲高」，同一根 K 线就不会触发。</p>
+<table><thead><tr><th>（忽略跳空时）A 档</th><th class="num">可兑现胜率</th><th class="num">单笔均值</th></tr></thead><tbody>
+<tr><td>乐观日内（先冲高后回落，旧口径）</td><td class="num">67.40%</td>
+<td class="num"><span class='up'>+0.831%</span></td></tr>
+<tr><td>保守日内（先用昨日止盈线判跌破）</td><td class="num">67.28%</td>
+<td class="num"><span class='up'>+2.133%</span></td></tr>
+</tbody></table>
+<p>两版在<b>均值上差 <span class='up'>+1.302pp</span></b>
+—— 而输出产物只差一个布尔开关。<b>这个方向没有「谁更保守」的固定答案</b>（加不加跳空会翻转），
+说明它对均值的影响是<b>假设噪声</b>；而对胜率，它把赢家的「赢多赢少」改掉，直接改变胜负判定。</p>
+</div>
 
-<h2>三、训练半 vs 测试半（最重要：优势是否依赖期间）</h2>
-<div class="card"><table>
-<thead><tr><th>半区</th><th>样本</th><th>可兑现胜率</th><th>均收益</th></tr></thead>
-<tbody><tr><td>训练半</td><td class='num'>7173</td><td class='num'>68.7%</td><td class='num'>+0.94%</td></tr><tr><td>测试半</td><td class='num'>9019</td><td class='num'>65.5%</td><td class='num'>+0.54%</td></tr></tbody></table></div>
+<h3>② 跳空：开盘已破止损线，还能按止损线成交吗？</h3>
+<div class="card">
+<p>不能。限价单在跳空低开时只能以<b>开盘价</b>成交（比止损线更差）。
+这是一个<b>单向</b>修正 —— 只会让结果更差，永远不会更好。</p>
+<table><thead><tr><th>（保守日内下）A 档</th><th class="num">可兑现胜率</th><th class="num">单笔均值</th></tr></thead><tbody>
+<tr><td>忽略跳空</td><td class="num">67.28%</td>
+<td class="num"><span class='up'>+2.133%</span></td></tr>
+<tr><td>跳空以开盘价成交</td><td class="num">60.29%</td>
+<td class="num"><span class='up'>+0.587%</span></td></tr>
+</tbody></table>
+<div class="danger" style="margin-bottom:0">
+补上跳空后，A 档可兑现胜率从 <b>67.28%</b> 掉到 <b>60.29%</b>
+（<b><span class='down'>-6.99pp</span></b>），
+单笔均值从 <span class='up'>+2.133%</span> 掉到 <span class='up'>+0.587%</span>。
+<b>这一步是必须补的</b>：它单向、无争议，不补就是系统性低估亏损。
+</div></div>
 
-<h2>四、退出规则网格（A 档前10% · 移动止盈）</h2>
-<div class="card"><table data-wb>
-<thead><tr><th>规则</th><th>胜率</th><th>均收益</th><th>触止盈率</th><th>触止损率</th><th>最坏MAE</th></tr></thead>
-<tbody><tr><td>激活 +4% / 回撤 2%</td><td class='num'>74.4%</td><td class='num'>+1.35%</td><td class='num'>73.9%</td><td class='num'>21.0%</td><td class='num dn'>-28.2%</td></tr><tr><td>激活 +4% / 回撤 3%</td><td class='num'>74.4%</td><td class='num'>+0.60%</td><td class='num'>73.9%</td><td class='num'>21.0%</td><td class='num dn'>-28.2%</td></tr><tr><td>激活 +6% / 回撤 2%</td><td class='num'>66.9%</td><td class='num'>+1.39%</td><td class='num'>65.4%</td><td class='num'>26.7%</td><td class='num dn'>-28.2%</td></tr><tr><td>激活 +6% / 回撤 3%</td><td class='num'>66.9%</td><td class='num'>+0.71%</td><td class='num'>65.4%</td><td class='num'>26.7%</td><td class='num dn'>-28.2%</td></tr><tr><td>激活 +8% / 回撤 2%</td><td class='num'>61.0%</td><td class='num'>+1.43%</td><td class='num'>58.2%</td><td class='num'>31.0%</td><td class='num dn'>-28.2%</td></tr><tr><td>激活 +8% / 回撤 3%</td><td class='num'>61.0%</td><td class='num'>+0.81%</td><td class='num'>58.2%</td><td class='num'>31.0%</td><td class='num dn'>-28.2%</td></tr></tbody></table>
-<div class="note">胜率与单笔均收益是一对权衡：激活点越低（越早锁利）胜率越高、单笔越薄。主口径取 激活+6%/回撤3%。</div></div>
+<h2>四、独立采样互证（换一套采样方式，结论不变）</h2>
+<div class="card">
+<p>上面的审计跑在<b>生产面板</b>（逐股各自采样，样本日错位）。为排除「结论是这套采样造成的」，
+另用<b>日历对齐采样</b>（每个采样日取全市场横截面）独立重跑同一口径：</p>
+<table><thead><tr><th>可实现口径（保守日内 + 跳空成交）· A 档</th>
+<th class="num">可兑现胜率</th><th class="num">单笔均值</th><th class="num">样本</th></tr></thead><tbody>
+<tr><td>生产面板 · 逐股采样（本页主口径）</td>
+<td class="num">60.29%</td><td class="num"><span class='up'>+0.587%</span></td>
+<td class="num">162,177 行</td></tr>
+<tr><td>归因探针 · 日历对齐采样（独立互证）</td>
+<td class="num">60.78%</td><td class="num"><span class='up'>+0.691%</span></td>
+<td class="num">8,333 行</td></tr>
+</tbody></table>
+<p>差 <span class='up'>+0.104pp</span>、胜率差
+0.49% —— <b>两套独立采样互相印证</b>，
+说明「可实现口径下 A 档胜率约 60%、测试半跌破 60%」不是采样造成的。</p>
+<div class="note" style="margin-bottom:0">
+同一探针还显示：A 档的<b>相对胜率</b>（前向 20 日跑赢同日域内中位数）只有 <b>44.28%</b>
+（超额 <b><span class='down'>-5.7pp</span></b>），即先验打分方向在这个样本期<b>整体为负</b>
+—— 这是另一条独立的问题，详见
+<a href="selected_attrib_evidence.html">主升精选收益归因实测</a>。
+</div></div>
 
-<h2>五、环境门控（按广度分桶 · 仅控 β）</h2>
-<div class="card"><table>
-<thead><tr><th>环境</th><th>胜率</th><th>edge</th></tr></thead>
-<tbody></tbody></table>
-<div class="note">若各桶 edge 在训练半/测试半方向不一致，则环境门控<b>只给仓位系数</b>、不预判 alpha。</div></div>
+<h2>五、本页能说什么、不能说什么</h2>
+<div class="card">
+<ul>
+<li><b>能说：</b>生产页面披露的 65.5% 依赖一组未披露的成交假设；换用保守口径后测试半为
+58.39%，「两半均 &gt;60%」的表述不成立。旧口径可被精确复现，差异不是样本造成的。</li>
+<li><b>能说：</b>「跳空以开盘价成交」是单向、无争议的修正，必须补上。</li>
+<li><b>不能说：</b>「可实现口径就是正确答案」。日内路径的真实顺序逐笔不可知，
+真实值落在 60.29% ~ 67.40% 之间的某处，<b>本页无法分辨</b>。
+本页把它当口径下限，是「宁可保守」的纪律，不是数据证明。</li>
+<li><b>不能做：</b>用这四种假设里的任何一种去<b>挑参数</b>。跨度 1.546pp 与收益同量级，
+据此选参就是拟合噪声（同源证据见 <a href="selected_attrib_evidence.html">收益归因页</a> 的退出网格）。</li>
+</ul></div>
 
-<h2>六、因子集（方向由经济逻辑给定，等权、不筛不调权）</h2>
-<div class="card"><div class="kv">
-近20日动量(↑越大越好)、近60日动量(↑越大越好)、站上MA60(↑越大越好)、MA20斜率(↑越大越好)、均线多头强度(↑越大越好)、接近近20日高(↑越大越好)、上涨放量占比(↑越大越好)、量能放大(↑越大越好)、回调缩量(↓越小越好)
-<br>全部为比率/价格比因子（rel20/above_ma60/up_vol 等），规避跨板块成交量单位差
-（科创板按股、其余按手，差 100 倍）。</div></div>
+<h2>六、口径定义与复跑</h2>
+<div class="card">
+<ul>
+<li><b>域：</b>全市场 A 股正股剔 ST/退 + 20 日均额 ≥3000 万 + 现价 ≥2 元（与主升生产域一致）。</li>
+<li><b>退出参数：</b>止损 −12% ／ 浮盈 +6% 激活 ／
+回撤 3% ／ 满 20 日强平（与生产冻结模型一致）。</li>
+<li><b>日内路径</b>：保守版＝先用「截至前一日的止盈线」判断当日是否跌破，再用当日高点上移；
+乐观版＝同根 K 线先创新高、再回落触发。<b>跳空</b>：开盘 ≤ 止盈线时以开盘价成交。</li>
+<li>面板 <code>_selected_lab_panel.json</code>（162,177 行，另从 <code>_txk_cache.json</code>
+重建前向开盘价，剔除 0 行）。</li>
+<li>⚠ 面板构建于 2026-09-21，缓存此后有除权前复权调整：抽样 600 行中 96.3% 数值完全一致、
+3.7% 相差中位 0.6%（不影响结论）。</li>
+</ul></div>
 
-<h2>七、局限</h2>
-<div class="card"><div class="kv">
-① 前向 20 日窗口重叠 → 样本非独立；② 样本约 10 个月，换年份是否成立无法验证；
-③ 主力资金用「上涨放量占比」价量代理（离线源只给最新日真实主力净流入，历史序列不可得）；
-选股日叠加真实主力净流入（新浪/mcp）作加分；④ 绝对胜率含 beta，结论以相对口径为主。</div></div>
-
-<div class="foot">本页为基于离线日K的量化筛选与方法论，非个股推荐、非买卖建议。决策责任在账户本人。</div>
-</div><!--WB_APP--><script id='wb-app'>
+<footer>
+数据截至 2026-09-30 ｜ 实测脚本 <code>quant/_exit_assumption_audit.py</code>
+（重跑：<code>python quant/_exit_assumption_audit.py --panel _selected_lab_panel.json --pct 0.05</code>）<br>
+统一口径模块 <code>quant/_exit_sim.py</code> ｜ 独立互证 <code>quant/_selected_attrib.py --source txk</code><br>
+本页只陈述<strong>已算出的事实</strong>；「可实现口径」是<strong>最保守</strong>而非正确答案。
+｜ <a href="../../index.html">← 返回总门户</a>
+｜ <a href="selected_attrib_evidence.html">相关：主升精选收益归因</a>
+｜ <a href="dip_buy_evidence.html">相关：高上涨率＋低吸</a>
+</footer>
+</div>
+<!--WB_APP--><script id='wb-app'>
 /* ============================================================
    通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
    功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序

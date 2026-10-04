@@ -152,6 +152,9 @@ FILES = [
     "quant/_diag_remote_diff.py",     # 本地 vs 远端 blob 差异诊断（判断「谁新」，避免推错方向）
     "quant/_selected_attrib.py",      # ★ 主升精选收益归因 + 退出网格（发现：成交假设支配结论）
     "quant/gen_attrib_page.py",       # 上述结论证据页生成器 → web/docs/selected_attrib_evidence.html
+    "quant/_exit_sim.py",             # ★ 移动止盈「单一退出模拟口径」（日内路径 × 跳空 两个开关）
+    "quant/_exit_assumption_audit.py",  # ★ 在生产主升面板上复核生产胜率的成交假设审计
+    "quant/gen_exit_gate_page.py",    # 上述审计证据页生成器 → web/docs/exit_assumption_evidence.html
     "web/accumulation/accum_result.json",  # 回测汇总（模块组合/敏感性，供主页卡与审计）
     # 消融/样本外结论：build_accum._ablate_block() 动态读这两个 JSON 渲染页面结论，
     # 不推送 → 线上页面会退化成「尚未运行」，等于结论丢失。
