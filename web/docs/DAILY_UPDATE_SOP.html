@@ -243,7 +243,7 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <table data-wb>
 <tr><th>命令</th><th>作用</th></tr>
 <tr><td><code>python quant/daily_all.py</code></td><td>自动取最新数据日，跑完 13 步（推荐日常用这条）</td></tr>
-<tr><td><code>python quant/daily_all.py --check</code></td><td><b>先体检</b>：哪些步能做、哪些缺当日数据（不执行任何命令）</td></tr>
+<tr><td><code>python quant/daily_all.py --check</code></td><td><b>先体检</b>：哪些步能做、哪些缺当日数据、<b>westock 取数通道是否可用</b>（不执行任何命令）</td></tr>
 <tr><td><code>python quant/daily_all.py --list</code></td><td>打印完整 13 步与每步命令 / 依赖</td></tr>
 <tr><td><code>python quant/daily_all.py 2026-09-30</code></td><td>指定数据日期跑（<code>{DATE}</code> 用带横线格式）</td></tr>
 <tr><td><code>python quant/daily_all.py --from 6 --to 6</code></td><td>只跑第 6 步（<b>单步重跑</b>用这个）</td></tr>
@@ -251,6 +251,15 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <tr><td><code>python quant/daily_all.py --push</code></td><td>跑完并推送（<b>需关闭沙箱</b>）</td></tr>
 </table>
 <p><b>第 ③④⑤⑩ 步需要先经 MCP 实拉当日原始数据</b>，脚本<b>只检依赖、缺就诚实跳过</b>，<b>绝不拿旧数据凑</b>；缺哪一步、取数命令是什么，会直接打在输出里（<code>--check</code> 可随时复看）。</p>
+<p>其中第 ⑩ 步（MACD + 高胜率）要落三段原始数据，用这个统一脚本抓（<b>支持断点续抓</b>，重跑只补缺的；原 <code>_fetch_macd_2026092X.py</code> 系列已并入它）：</p>
+<pre><code>python quant/_fetch_macd_raw.py --date 2026-09-30
+  # → macd_raw_pool_20260930.json   （tool_filter 主力流入初筛）
+  # → macd_raw_tech_20260930.json  （data_technical 分批，MACD/DEA/柱）
+  # → macd_raw_flow_20260930.json  （data_fund_flow 分批，MainNetFlow20D）
+python quant/macd_build.py 20260930 --raw   # 之后才能重扫</code></pre>
+<p><b>⚠ 取数前会自动体检 westock MCP 通道</b>：端点端口可连但 <code>initialize</code> 握手返回 500（<code>internal_error</code>）时
+<b>重试无用</b> —— 那是后端会话不可用，<b>重启 WorkBuddy 应用</b>通常可恢复。
+通道不通时脚本直接退出，绝不产出「看起来像当日」的旧数据。</p>
 <p>门禁（第 13 步）不过时会<b>自动停止</b>后续步骤，避免把不合格产物推上去。</p>
 </div>
 
