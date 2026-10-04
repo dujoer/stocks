@@ -3,8 +3,8 @@
 <title>高胜率候选池 · 分档出票核验</title></head><body>
 <div class="wrap">
 <h1>高胜率候选池 · 分档出票核验</h1>
-<div class="card"><b>本页是「高胜率候选池」的出票合法性核验</b>（逐日平衡 edge + 按日 block bootstrap + 留一法 + 前/后半 + 跨步长）。<br>① 生产打分满分 100 分，其中<b>只有技术 25 + 位置 15 = 40 分在历史上可前推</b>；资金/筹码/板块/龙虎榜/高管大宗都来自当日盘后快照与事件源，回测时不存在 → <b>记 0 降级</b>。<br>② 因此本页 CORE 档 =「可得子分前 10%」，<b>不是</b>生产那批「全维 ≥68 的核心候选」；生产核心档是否真有超额，本页判 <b>不可判</b>（缺 60 分维度，无法复原）。<br>③ <b>但有一件事不用统计就能定：底池的数据本身是过期的</b>——自 2026-09-24 起连续 4 期 MACD 快照逐字节相同、收盘价反查 35/35 只等于 2026-09-11（见第六节）。这是数据就绪问题，优先级高于一切策略优化。</div>
-<div class='box red' style='border-color:#b00020'><b>⚠ 先说结论：高胜率候选池本期不出票（宁可不选）—— 底池是旧数据，不是策略问题</b><br>MACD 技术底池自 <b>2026-09-24</b> 起<b>连续 4 期逐字节没有重扫</b>（dif / dea / close 全同）；把冻结快照里的收盘价拿去日K 反查，<b>35 / 35 只精确等于 2026-09-11</b>。<br>也就是说，这几期页面上标的「当期候选」用的是一份 <b>2026-09-11 的旧快照</b>冒充当日数据 —— 直接违反「严禁用旧数据冒充当日」。<br>因此<b>先修底池重扫，再谈胜率</b>；在数据修好之前，本池候选<b>不作任何买入依据</b>。</div>
+<div class="card"><b>本页是「高胜率候选池」的出票合法性核验</b>（逐日平衡 edge + 按日 block bootstrap + 留一法 + 前/后半 + 跨步长）。<br>① 生产打分满分 100 分，其中<b>只有技术 25 + 位置 15 = 40 分在历史上可前推</b>；资金/筹码/板块/龙虎榜/高管大宗都来自当日盘后快照与事件源，回测时不存在 → <b>记 0 降级</b>。<br>② 因此本页 CORE 档 =「可得子分前 10%」，<b>不是</b>生产那批「全维 ≥68 的核心候选」；生产核心档是否真有超额，本页判 <b>不可判</b>（缺 60 分维度，无法复原）。<br>③ <b>但有一件事不用统计就能定：底池的数据本身是过期的</b>——自 2026-09-17 起连续 6 期 MACD 快照逐字节相同、收盘价反查 35/35 只等于 2026-09-11（见第六节）。这是数据就绪问题，优先级高于一切策略优化。</div>
+<div class='box red' style='border-color:#b00020'><b>⚠ 先说结论：高胜率候选池本期不出票（宁可不选）—— 底池是旧数据，不是策略问题</b><br>MACD 技术底池自 <b>2026-09-17</b> 起<b>连续 6 期逐字节没有重扫</b>（dif / dea / close 全同）；把冻结快照里的收盘价拿去日K 反查，<b>35 / 35 只精确等于 2026-09-11</b>。<br>也就是说，这几期页面上标的「当期候选」用的是一份 <b>2026-09-11 的旧快照</b>冒充当日数据 —— 直接违反「严禁用旧数据冒充当日」。<br>因此<b>先修底池重扫，再谈胜率</b>；在数据修好之前，本池候选<b>不作任何买入依据</b>。</div>
 <h2>一、逐档结果（对照 = 同日全市场域，逐日平衡 edge）</h2>
 <table><thead><tr><th>档</th><th>笔数</th><th>绝对收益</th><th>胜率</th>
 <th>edge</th><th>R3</th><th>留一法区间</th></tr></thead><tbody><tr><td><b>CORE 档（可得子分前 10%，近似核心候选）</b></td><td class='num'>1603</td><td class='num'>-1.43</td><td class='num'>55.51%</td><td class='num dn'>-1.310pp</td><td class='num dn'>4.20%</td><td class='kv'>[-1.627, -1.068]</td></tr>
@@ -63,11 +63,11 @@ R3 = bootstrap 中 edge>0 的比例（按日整块重抽 800 次，门槛 95%）
 <tr><td>2026-09-15</td><td class='num'>39</td><td class='num'>197</td><td class='num'>51</td><td class='kv'>—</td></tr>
 <tr><td>2026-09-16</td><td class='num'>37</td><td class='num'>192</td><td class='num'>47</td><td class='kv'>—</td></tr>
 <tr><td>2026-09-17</td><td class='num'>50</td><td class='num'>200</td><td class='num'>62</td><td class='kv'>—</td></tr>
-<tr><td>2026-09-18</td><td class='num'>35</td><td class='num'>100</td><td class='num'>51</td><td class='kv'>—</td></tr>
+<tr><td>2026-09-18</td><td class='num'>35</td><td class='num'>100</td><td class='num'>51</td><td class='kv'><span style='color:#ea4335;font-weight:700'>冻结；close 反查 35/35 只 = 2026-09-11</span></td></tr>
 <tr><td>2026-09-21</td><td class='num'>66</td><td class='num'>197</td><td class='num'>70</td><td class='kv'>—</td></tr>
 <tr><td>2026-09-22</td><td class='num'>55</td><td class='num'>226</td><td class='num'>60</td><td class='kv'>—</td></tr>
 <tr><td>2026-09-23</td><td class='num'>983</td><td class='num'>4971</td><td class='num'>1212</td><td class='kv'>—</td></tr>
-<tr><td>2026-09-24</td><td class='num'>35</td><td class='num'>100</td><td class='num'>51</td><td class='kv'><span style='color:#ea4335;font-weight:700'>扫描量骤降（4971 → 100）</span></td></tr>
+<tr><td>2026-09-24</td><td class='num'>35</td><td class='num'>100</td><td class='num'>51</td><td class='kv'><span style='color:#ea4335;font-weight:700'>冻结；close 反查 35/35 只 = 2026-09-11</span></td></tr>
 <tr><td>2026-09-28</td><td class='num'>35</td><td class='num'>100</td><td class='num'>51</td><td class='kv'><span style='color:#ea4335;font-weight:700'>冻结；close 反查 35/35 只 = 2026-09-11</span></td></tr>
 <tr><td>2026-09-29</td><td class='num'>35</td><td class='num'>100</td><td class='num'>51</td><td class='kv'><span style='color:#ea4335;font-weight:700'>冻结；close 反查 35/35 只 = 2026-09-11</span></td></tr>
 <tr><td>2026-09-30</td><td class='num'>35</td><td class='num'>100</td><td class='num'>51</td><td class='kv'><span style='color:#ea4335;font-weight:700'>冻结；close 反查 35/35 只 = 2026-09-11</span></td></tr></tbody></table>
@@ -77,7 +77,7 @@ R3 = bootstrap 中 edge>0 的比例（按日整块重抽 800 次，门槛 95%）
 <b>这一节不依赖任何回测口径，是纯数据事实</b>，所以它对「本期能不能出票」有否决权。</div>
 
 <h2>七、出票许可（机器判定，读不到就 fail-safe）</h2>
-<table><thead><tr><th>档</th><th>可出票？</th><th>依据</th></tr></thead><tbody><tr><td>CORE 档（可得子分前 10%，近似核心候选）</td><td class='dn'>不出票</td><td class='kv'>主步长 edge -1.310pp ≤ 0；R3 4.2% < 95% 门槛；step3 edge -0.604pp ≤ 0；【数据闸】MACD 底池自 2026-09-24 起连续 4 期逐字节未重扫（dif/dea/close 全同），其收盘价反查 35/35 只精确等于 2026-09-11 —— 属旧快照冒充当日</td></tr><tr><td>MID 档（可得子分 10~30%）</td><td class='dn'>不出票</td><td class='kv'>主步长 edge -0.280pp ≤ 0；R3 35.0% < 95% 门槛；step3 edge -1.563pp ≤ 0；【数据闸】MACD 底池自 2026-09-24 起连续 4 期逐字节未重扫（dif/dea/close 全同），其收盘价反查 35/35 只精确等于 2026-09-11 —— 属旧快照冒充当日</td></tr><tr><td>TAIL 档（可得子分 30% 以后）</td><td class='dn'>不出票</td><td class='kv'>主步长 edge -0.197pp ≤ 0；R3 38.5% < 95% 门槛；step3 edge -0.013pp ≤ 0；【数据闸】MACD 底池自 2026-09-24 起连续 4 期逐字节未重扫（dif/dea/close 全同），其收盘价反查 35/35 只精确等于 2026-09-11 —— 属旧快照冒充当日</td></tr></tbody></table>
+<table><thead><tr><th>档</th><th>可出票？</th><th>依据</th></tr></thead><tbody><tr><td>CORE 档（可得子分前 10%，近似核心候选）</td><td class='dn'>不出票</td><td class='kv'>主步长 edge -1.310pp ≤ 0；R3 4.2% < 95% 门槛；step3 edge -0.604pp ≤ 0；【数据闸】MACD 底池自 2026-09-17 起连续 6 期逐字节未重扫（dif/dea/close 全同），其收盘价反查 35/35 只精确等于 2026-09-11 —— 属旧快照冒充当日</td></tr><tr><td>MID 档（可得子分 10~30%）</td><td class='dn'>不出票</td><td class='kv'>主步长 edge -0.280pp ≤ 0；R3 35.0% < 95% 门槛；step3 edge -1.563pp ≤ 0；【数据闸】MACD 底池自 2026-09-17 起连续 6 期逐字节未重扫（dif/dea/close 全同），其收盘价反查 35/35 只精确等于 2026-09-11 —— 属旧快照冒充当日</td></tr><tr><td>TAIL 档（可得子分 30% 以后）</td><td class='dn'>不出票</td><td class='kv'>主步长 edge -0.197pp ≤ 0；R3 38.5% < 95% 门槛；step3 edge -0.013pp ≤ 0；【数据闸】MACD 底池自 2026-09-17 起连续 6 期逐字节未重扫（dif/dea/close 全同），其收盘价反查 35/35 只精确等于 2026-09-11 —— 属旧快照冒充当日</td></tr></tbody></table>
 <div class="kv">`gen_highwin.py` 只读本页证据；CORE/MID/TAIL 任一档不达标即标注<b>不出票（宁可不选）</b>。
 只满足主步长就放行，属放宽阈值凑数，与项目红线冲突，故不写这条规则。<br>
 另有一道<b>数据有效性闸</b>（与统计无关）：底池快照是旧数据时，即使 edge 为正也压住出票 ——
