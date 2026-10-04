@@ -203,6 +203,66 @@ def main():
             f"<td class='muted'>{kind}<br>{src}</td></tr>")
 
     # ---- 环境门控两口径复核（主升精选的出票依据，必须单独查）----
+    # ---- 七、选股 alpha：截断比例曲线两口径对照 ----
+    _mL, _mR = _ld("_selected_model.json"), _ld("_selected_model_realistic.json")
+    if not _mL or not _mR:
+        sel_rows_html = ("<tr class='cur'><td colspan='8' class='muted'>⚠️ 可实现口径未核验："
+                         "缺 quant/_selected_model.json 或 quant/_selected_model_realistic.json"
+                         "（跑 <code>python quant/_selected_lab.py --mode realistic</code> 生成后者）</td></tr>")
+        sel_note = ("核验完成前，A 档截断比例（前 5%）与「选股有 alpha」的说法均<b>不可判</b>，"
+                    "不得引用生产页胜率作为选股能力的证据。")
+    else:
+        _cl = {round(float(c["pct"]), 4): c
+               for c in ((_mL.get("evidence") or {}).get("curve") or [])}
+        _cr = {round(float(c["pct"]), 4): c
+               for c in ((_mR.get("evidence") or {}).get("curve") or [])}
+        _tl = (((_mL.get("evidence") or {}).get("pct_gate") or {}).get("test_wr_by_pct") or {})
+        _tr = (((_mR.get("evidence") or {}).get("pct_gate") or {}).get("test_wr_by_pct") or {})
+        _base = (_mL.get("evidence") or {}).get("base_wr")
+        sel_rows_html = ""
+        for _p in sorted(_cr):
+            _b = _cr[_p]
+            _a = _cl.get(_p, {})
+            _ea, _eb = _a.get("edge"), _b.get("edge")
+            _ta = _tl.get(str(_p))
+            _tb = _tr.get(str(_p))
+            _hit = (_tb is not None and _tb >= 60.0)
+            _trcls = " class='cur'" if abs(_p - 0.05) < 1e-9 else ""
+            _td_ta = f"{_ta:.1f}%" if _ta is not None else "—"
+            _td_ea = f"{_ea:+.2f}pp" if _ea is not None else "—"
+            _cls_ea = "up" if (_ea or 0) >= 0 else "down"
+            _td_tb = f"{_tb:.1f}%" if _tb is not None else "—"
+            _cls_tb = "up" if _hit else "down"
+            _cls_eb = "up" if (_eb or 0) >= 0 else "down"
+            sel_rows_html += (
+                f"<tr{_trcls}>"
+                f"<td>前 {_p * 100:.0f}%</td>"
+                f"<td class='num'>{_a.get('n') or _b.get('n') or '—'}</td>"
+                f"<td class='num'>{_a.get('wr', 0):.1f}%</td>"
+                f"<td class='num'>{_td_ta}</td>"
+                f"<td class='num {_cls_ea}'>{_td_ea}</td>"
+                f"<td class='num'><b>{_b.get('wr', 0):.1f}%</b></td>"
+                f"<td class='num {_cls_tb}'>{_td_tb}</td>"
+                f"<td class='num {_cls_eb}'><b>{_eb:+.2f}pp</b></td>"
+                f"</tr>")
+        _e1 = _cr.get(0.01, {}).get("edge")
+        _e5 = _cr.get(0.05, {}).get("edge")
+        _e2 = _cr.get(0.20, {}).get("edge")
+        _rp = (_mR.get("pct") or 0) * 100
+        sel_note = (
+            f"① 可实现口径下 edge 随截断<b>单调上升</b>（前 1% {_e1:+.2f}pp → 前 5% {_e5:+.2f}pp "
+            f"→ 前 20% {_e2:+.2f}pp），方向是<b>越精选越差</b>。<br>"
+            f"② 现行判据「测试半 ≥60% 且 edge≥0」在可实现口径下指向<b>前 {_rp:.0f}%</b>"
+            f"（前 5% 的测试半只有 {_tr.get('0.05', float('nan')):.1f}%，未达门槛）。<br>"
+            f"③ 但这是个<b>绝对胜率门槛</b>：pct 越宽，组合越接近域内平均（基线 "
+            f"{_base:.1f}%），所以「满足 60%」主要是<b>稀释效应</b>，不是 alpha 证据——"
+            f"它与「前 1% edge 为负」自相矛盾。<br>"
+            f"<b>处置：生产 A 档维持前 5% 不变</b>。三条理由：用换口径的涨跌调 pct 属拟合噪声；"
+            f"环境门控证据（第六节强势档）是按前 5% 口径算的，改 pct 会让该证据失去对应；"
+            f"前 20% 的 edge 提升无法解释为选股能力。<br>"
+            f"⚠ <b>结论</b>：A 档（前 5%）的可实现 edge = <b>{_e5:+.2f}pp</b>，不显著为正 → "
+            f"<b>选股不提供独立 alpha</b>。主升精选的成立依据是<b>环境门控</b>，不是选股。")
+
     _envL, _envR = _ld("_env_gate_lab.json"), _ld("_env_gate_lab_realistic.json")
     if not _envL or not _envR:
         env_rows_html = ("<tr class='cur'><td colspan='8' class='muted'>⚠️ 可实现口径未核验："
@@ -431,7 +491,22 @@ def main():
 <div class="note">{env_note}</div>
 </div>
 
-<h2>七、本页能说什么、不能说什么</h2>
+<h2>七、选股到底有没有 alpha：截断比例曲线的两口径对照</h2>
+<div class="card">
+<p>上一节只回答「什么时候开仓」。这一节回答「买什么」——主升精选 A 档的现行判据是
+<code>_selected_lab.py</code> 里的「测试半胜率 ≥60% 且 edge≥0」，而它同样建立在<b>旧乐观口径</b>上。
+下面把<b>同一批票、同一批因子</b>在两个口径下按截断比例逐档摆出来。</p>
+<table>
+<thead><tr><th>截断</th><th class="num">样本</th><th class="num">旧胜率</th><th class="num">旧测试半</th>
+<th class="num">旧 edge</th><th class="num">可实现胜率</th><th class="num">可实现测试半</th>
+<th class="num">可实现 edge</th></tr></thead>
+<tbody>
+{sel_rows_html}
+</tbody></table>
+<div class="note">{sel_note}</div>
+</div>
+
+<h2>八、本页能说什么、不能说什么</h2>
 <div class="card">
 <ul>
 <li><b>能说：</b>生产页面披露的 65.5% 依赖一组未披露的成交假设；换用保守口径后测试半为
@@ -444,7 +519,7 @@ def main():
 据此选参就是拟合噪声（同源证据见 <a href="selected_attrib_evidence.html">收益归因页</a> 的退出网格）。</li>
 </ul></div>
 
-<h2>八、口径定义与复跑</h2>
+<h2>九、口径定义与复跑</h2>
 <div class="card">
 <ul>
 <li><b>域：</b>全市场 A 股正股剔 ST/退 + 20 日均额 ≥3000 万 + 现价 ≥2 元（与主升生产域一致）。</li>

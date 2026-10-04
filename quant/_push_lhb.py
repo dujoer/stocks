@@ -158,6 +158,7 @@ FILES = [
     # ---- 成交假设审计「推广到全部池」（2026-10-05）----
     "quant/_env_gate_lab.py",         # ★ 主升精选出票依据（环境门控）→ 加 --mode legacy|realistic 两口径
     "quant/_env_gate_lab_realistic.json",  # 可实现口径产物（env_gate.html 第七节的对照数字来源）
+    "quant/_selected_model_realistic.json",  # 可实现口径截断曲线（lab.html 右两列 + 证据页第七节来源）
     "quant/_3yl_lab.py",              # ★ 三连阴 outcome_gap（只修跳空：穿线日按开盘价成交）
     "quant/_3yl_tier_gate.py",        # 三连阴门禁 + exit_assumption 段
     "quant/_3yl_gate_page.py",        # 三连阴证据页 → web/three_yin/tier_gate.html

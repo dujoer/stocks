@@ -377,7 +377,22 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <div class="note"><b>结论：强势档（唯一开仓档）仍然成立</b> —— edge +2.936 → <b>+2.443 pp</b>、R3 100.0% → <b>99.9%</b>，留一区间仍全正。二值门控「强势开仓」的依据<b>没有被成交假设推翻</b>，主升精选维持原判。⚠️ 但幅度普遍缩水（强势 −0.493pp、弱势 -0.656pp），<b>弱势档的留一区间已跨零</b> —— 该档本就判空仓、绝对收益在新口径下更负，空仓方向不变，但「弱势档有正 edge」这个说法以后不能再用。</div>
 </div>
 
-<h2>七、本页能说什么、不能说什么</h2>
+<h2>七、选股到底有没有 alpha：截断比例曲线的两口径对照</h2>
+<div class="card">
+<p>上一节只回答「什么时候开仓」。这一节回答「买什么」——主升精选 A 档的现行判据是
+<code>_selected_lab.py</code> 里的「测试半胜率 ≥60% 且 edge≥0」，而它同样建立在<b>旧乐观口径</b>上。
+下面把<b>同一批票、同一批因子</b>在两个口径下按截断比例逐档摆出来。</p>
+<table data-wb>
+<thead><tr><th>截断</th><th class="num">样本</th><th class="num">旧胜率</th><th class="num">旧测试半</th>
+<th class="num">旧 edge</th><th class="num">可实现胜率</th><th class="num">可实现测试半</th>
+<th class="num">可实现 edge</th></tr></thead>
+<tbody>
+<tr><td>前 1%</td><td class='num'>1692</td><td class='num'>66.7%</td><td class='num'>64.7%</td><td class='num up'>+4.02pp</td><td class='num'><b>56.6%</b></td><td class='num down'>54.5%</td><td class='num down'><b>-3.97pp</b></td></tr><tr><td>前 2%</td><td class='num'>3281</td><td class='num'>66.8%</td><td class='num'>64.7%</td><td class='num up'>+4.08pp</td><td class='num'><b>57.3%</b></td><td class='num down'>55.1%</td><td class='num down'><b>-3.23pp</b></td></tr><tr><td>前 3%</td><td class='num'>4891</td><td class='num'>66.9%</td><td class='num'>64.9%</td><td class='num up'>+4.20pp</td><td class='num'><b>58.7%</b></td><td class='num down'>56.5%</td><td class='num down'><b>-1.83pp</b></td></tr><tr class='cur'><td>前 5%</td><td class='num'>8102</td><td class='num'>67.4%</td><td class='num'>65.8%</td><td class='num up'>+4.70pp</td><td class='num'><b>60.3%</b></td><td class='num down'>58.4%</td><td class='num down'><b>-0.24pp</b></td></tr><tr><td>前 10%</td><td class='num'>16192</td><td class='num'>66.9%</td><td class='num'>65.5%</td><td class='num up'>+4.21pp</td><td class='num'><b>61.0%</b></td><td class='num down'>59.1%</td><td class='num up'><b>+0.44pp</b></td></tr><tr><td>前 20%</td><td class='num'>32375</td><td class='num'>66.4%</td><td class='num'>65.0%</td><td class='num up'>+3.68pp</td><td class='num'><b>61.8%</b></td><td class='num up'>60.0%</td><td class='num up'><b>+1.31pp</b></td></tr><tr><td>前 30%</td><td class='num'>48548</td><td class='num'>65.9%</td><td class='num'>64.7%</td><td class='num up'>+3.17pp</td><td class='num'><b>62.0%</b></td><td class='num up'>60.4%</td><td class='num up'><b>+1.49pp</b></td></tr>
+</tbody></table>
+<div class="note">① 可实现口径下 edge 随截断<b>单调上升</b>（前 1% -3.97pp → 前 5% -0.24pp → 前 20% +1.31pp），方向是<b>越精选越差</b>。<br>② 现行判据「测试半 ≥60% 且 edge≥0」在可实现口径下指向<b>前 20%</b>（前 5% 的测试半只有 58.4%，未达门槛）。<br>③ 但这是个<b>绝对胜率门槛</b>：pct 越宽，组合越接近域内平均（基线 62.7%），所以「满足 60%」主要是<b>稀释效应</b>，不是 alpha 证据——它与「前 1% edge 为负」自相矛盾。<br><b>处置：生产 A 档维持前 5% 不变</b>。三条理由：用换口径的涨跌调 pct 属拟合噪声；环境门控证据（第六节强势档）是按前 5% 口径算的，改 pct 会让该证据失去对应；前 20% 的 edge 提升无法解释为选股能力。<br>⚠ <b>结论</b>：A 档（前 5%）的可实现 edge = <b>-0.24pp</b>，不显著为正 → <b>选股不提供独立 alpha</b>。主升精选的成立依据是<b>环境门控</b>，不是选股。</div>
+</div>
+
+<h2>八、本页能说什么、不能说什么</h2>
 <div class="card">
 <ul>
 <li><b>能说：</b>生产页面披露的 65.5% 依赖一组未披露的成交假设；换用保守口径后测试半为
@@ -390,7 +405,7 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 据此选参就是拟合噪声（同源证据见 <a href="selected_attrib_evidence.html">收益归因页</a> 的退出网格）。</li>
 </ul></div>
 
-<h2>八、口径定义与复跑</h2>
+<h2>九、口径定义与复跑</h2>
 <div class="card">
 <ul>
 <li><b>域：</b>全市场 A 股正股剔 ST/退 + 20 日均额 ≥3000 万 + 现价 ≥2 元（与主升生产域一致）。</li>
