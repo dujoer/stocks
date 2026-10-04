@@ -44,7 +44,8 @@ MIN_DAILY = 1        # 至少触发 1 个日频信号（block/exec/lhb/margin）
 # ============================================================
 def load_kline():
     c = json.load(open(CACHE, encoding="utf-8"))
-    # code -> (dates[], last[], high[], low[])  ；bar keys: date,open,last,high,low,volume
+    # code -> (dates[], last[], high[], low[], amt[], open[])  ；bar keys: date,open,last,high,low,volume
+    # ★ open 为「跳空修正」审计追加的第 6 位；旧代码用 K[code][:4] 解包，不受影响。
     K = {}
     for code, bars in c.items():
         if not bars:
@@ -52,7 +53,8 @@ def load_kline():
         ds = [b["date"] for b in bars]
         vu = 1.0 if code.startswith("sh688") else 100.0
         amt = [(b.get("volume") or 0) * vu * (b.get("last") or 0) for b in bars]
-        K[code] = (ds, [b["last"] for b in bars], [b["high"] for b in bars], [b["low"] for b in bars], amt)
+        K[code] = (ds, [b["last"] for b in bars], [b["high"] for b in bars],
+                   [b["low"] for b in bars], amt, [b.get("open") for b in bars])
     return K
 
 def trading_days(K):
@@ -235,7 +237,7 @@ def margin_em_event(code, T, K, mh):
         return None
     if code not in K:
         return None
-    ds, _last, _high, _low, amt = K[code]
+    ds, _last, _high, _low, amt = K[code][:5]
     row = None
     for r in rows:
         if r["date"] < T:
@@ -354,10 +356,17 @@ def composite(sig):
 # ============================================================
 # 3. 移动止盈回测
 # ============================================================
-def simulate(K, code, T):
+def simulate(K, code, T, gap=False):
+    """移动止盈回测。gap=True 启用**跳空修正**：开盘已跌破硬止损线时以开盘价成交（更差）。
+
+    ⚠ 本池的跟踪止盈用**收盘价**触发（`cl <= peak*(1-TRAIL)`）并以收盘价成交 ——
+      属于「收盘触发」家族，**不含**同根 K 线「先冲高后回落」的路径假设；
+      唯一需要修正的成交假设是**硬止损跳空**。故此处只有一个 gap 开关，不引入 cons。
+    """
     if code not in K:
         return None
     ds, last, high, low = K[code][:4]
+    opens = K[code][5] if len(K[code]) > 5 else None
     try:
         i = ds.index(T)
     except ValueError:
@@ -371,6 +380,12 @@ def simulate(K, code, T):
     peak = entry
     for k in range(1, fwd + 1):
         hi = high[i + k]; lo = low[i + k]; cl = last[i + k]
+        # 跳空优先：开盘已在硬止损线之下 → 只能以开盘价成交
+        if gap and opens is not None:
+            op = opens[i + k]
+            if op and op <= entry * (1 - STOP):
+                ret = op / entry - 1
+                return (ret, ret > 0, k, "跳空止损")
         if hi > peak:
             peak = hi
         # 硬止损

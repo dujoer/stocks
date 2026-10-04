@@ -107,6 +107,141 @@ MODES = [
     ("可实现口径（保守日内·跳空成交）", True, True),
 ]
 
+MODE_OLD = "旧口径（乐观日内·忽略跳空）"
+MODE_REAL = "可实现口径（保守日内·跳空成交）"
+
+
+def sim_trail_lists(fl, fh, fc, px, stop=STOP, act=ACT, trail=TRAIL, maxfwd=MAXFWD,
+                    cons=False, fO=None):
+    """**list 模式**：与 `_selected_lab._sim_trail` 完全同形（默认 cons=False 逐位一致）。
+
+    fl/fh = T+1..T+hold 的 low/high；fc = T+hold 收盘标量；fO = 前向开盘序列（给定时启用跳空修正）。
+    返回 dict(win, pnl, hold, hit_tp, hit_stop, mae)，与 `_selected_lab._sim_trail` 同键。
+    """
+    hi = px
+    lo = fl[0] if fl else px
+    cur = px * (1 - stop)
+    activated = (act <= 0)
+    m = min(len(fl), len(fh))
+    for j in range(m):
+        # 跳空优先（两版都适用）：开盘已在止损线之下 → 以开盘价成交
+        if fO is not None and fO[j] and fO[j] <= cur:
+            return {"win": fO[j] > px, "pnl": (fO[j] / px - 1) * 100, "hold": j + 1,
+                    "hit_tp": activated, "hit_stop": not activated,
+                    "mae": (lo / px - 1) * 100}
+        if cons:
+            # 保守：先用「截至昨日」的止盈线判当日是否跌破，再上移
+            if fl[j] <= cur:
+                pnl = (cur / px - 1) * 100
+                return {"win": pnl > 0, "pnl": pnl, "hold": j + 1, "hit_tp": activated,
+                        "hit_stop": not activated, "mae": (lo / px - 1) * 100}
+            if fh[j] > hi:
+                hi = fh[j]
+            if fl[j] < lo:
+                lo = fl[j]
+            if not activated and hi >= px * (1 + act):
+                activated = True
+            if activated:
+                ts = hi * (1 - trail)
+                if ts > cur:
+                    cur = ts
+            continue
+        if fh[j] > hi:
+            hi = fh[j]
+        if fl[j] < lo:
+            lo = fl[j]
+        if not activated and hi >= px * (1 + act):
+            activated = True
+        if activated:
+            ts = hi * (1 - trail)
+            if ts > cur:
+                cur = ts
+        if fl[j] <= cur:
+            pnl = (cur / px - 1) * 100
+            return {"win": pnl > 0, "pnl": pnl, "hold": j + 1, "hit_tp": activated,
+                    "hit_stop": not activated, "mae": (lo / px - 1) * 100}
+    last = fc if fc is not None else (fl[-1] if fl else px)
+    return {"win": last > px, "pnl": (last / px - 1) * 100, "hold": m,
+            "hit_tp": activated, "hit_stop": False, "mae": (lo / px - 1) * 100}
+
+
+def sim_trail_bars(k, i, px, stop=STOP, act=ACT, trail=TRAIL, maxfwd=MAXFWD,
+                   cons=False, gap=False):
+    """**bars 模式**：与 `_rbot` / `rev_pool._sim_trail` 同形（默认逐位一致）。
+
+    ★ 与 list 模式的两处固有限制（必须保留才能复刻旧值，勿「顺手修正」）：
+      · `lo` 从**信号日**的 low 起算（list 模式从 T+1 起算）→ 只影响 mae，不影响退出判定；
+      · 越界时以 `k[-1].last` 兜底。
+    cons/gap 语义同 `sim_trail_lists`。返回 dict(win, pnl, hold, hit_tp, hit_stop, mae)。
+    """
+    n = len(k)
+    hi = px
+    _l0 = k[i].get("low")
+    lo = _l0 if _l0 else px
+    cur = px * (1 - stop)
+    activated = (act <= 0)
+    j = 1
+    while j <= maxfwd:
+        if i + j >= n:
+            last = k[-1]["last"]
+            return {"win": last > px, "pnl": (last / px - 1) * 100, "hold": j - 1,
+                    "hit_tp": activated, "hit_stop": False, "mae": (lo / px - 1) * 100}
+        b = k[i + j]
+        o = b.get("open")
+        if gap and o and o <= cur:
+            return {"win": o > px, "pnl": (o / px - 1) * 100, "hold": j,
+                    "hit_tp": activated, "hit_stop": not activated,
+                    "mae": (lo / px - 1) * 100}
+        if cons:
+            if b["low"] <= cur:
+                pnl = (cur / px - 1) * 100
+                return {"win": pnl > 0, "pnl": pnl, "hold": j, "hit_tp": activated,
+                        "hit_stop": not activated, "mae": (lo / px - 1) * 100}
+            if b["high"] > hi:
+                hi = b["high"]
+            if b["low"] < lo:
+                lo = b["low"]
+            if not activated and hi >= px * (1 + act):
+                activated = True
+            if activated:
+                ts = hi * (1 - trail)
+                if ts > cur:
+                    cur = ts
+            j += 1
+            continue
+        if b["high"] > hi:
+            hi = b["high"]
+        if b["low"] < lo:
+            lo = b["low"]
+        if not activated and hi >= px * (1 + act):
+            activated = True
+        if activated:
+            ts = hi * (1 - trail)
+            if ts > cur:
+                cur = ts
+        if b["low"] <= cur:
+            pnl = (cur / px - 1) * 100
+            return {"win": pnl > 0, "pnl": pnl, "hold": j, "hit_tp": activated,
+                    "hit_stop": not activated, "mae": (lo / px - 1) * 100}
+        j += 1
+    last = k[i + maxfwd]["last"]
+    return {"win": last > px, "pnl": (last / px - 1) * 100, "hold": maxfwd,
+            "hit_tp": activated, "hit_stop": False, "mae": (lo / px - 1) * 100}
+
+
+def four_pnl(fl, fh, fc, px, stop=STOP, act=ACT, trail=TRAIL, maxfwd=MAXFWD, fO=None):
+    """一次给出四种假设下的单笔收益（%），顺序同 `MODES`。
+
+    fO 为 None（或含 None）时，跳空两档退化为「忽略跳空」——调用方须自行保证 fO 完整，
+    否则会在页面上把两档写成「相同」而掩盖问题；审计脚本已对 fO 缺失的样本整行剔除。
+    """
+    out = []
+    for _name, cons, gap in MODES:
+        r = sim_trail_lists(fl, fh, fc, px, stop, act, trail, maxfwd,
+                            cons=cons, fO=(fO if gap else None))
+        out.append(r["pnl"])
+    return out
+
 
 def run_mode(rows, mode, px_key="_close", stop=STOP, act=ACT, trail=TRAIL,
              hold=MAXFWD):

@@ -117,6 +117,65 @@ def main():
     span_net = round(max(top_nets) - min(top_nets), 3)
     span_wr = round(max(top_wrs) - min(top_wrs), 2)
 
+    # ---- 跨池复核：反转 / 高胜率 / 增仓 ----
+    def _ld(fn):
+        try:
+            return json.load(open(os.path.join(QUANT, fn), encoding="utf-8"))
+        except Exception:
+            return None
+
+    _rev, _hw, _acc = (_ld("_rev_tier_gate.json"), _ld("_hw_tier_gate.json"),
+                       _ld("_accum_tier_gate.json"))
+
+    def add4(label, doc, tier, doc_name):
+        ea = (doc or {}).get("exit_assumption") or {}
+        for t in ea.get("tiers", []):
+            if t.get("tier") != tier or not t.get("rows"):
+                continue
+            m0, mz = t["rows"][0], t["rows"][-1]
+            return (label, t["n"], m0["wr"], m0["mean"], mz["wr"], mz["mean"], "四口径", doc_name)
+        return (label, None, None, None, None, None, "缺证据", doc_name)
+
+    def add_gap(label, doc, win, rule, doc_name):
+        ea = ((doc or {}).get("per") or {}).get(str(win), {}).get("exit_assumption") or {}
+        for t in ea.get("tiers", []):
+            if t.get("rule") != rule or not t.get("n"):
+                continue
+            return (label, t["n"], t["wr"], t["ret"], t["wr_gap"], t["ret_gap"], "仅跳空", doc_name)
+        return (label, None, None, None, None, None, "缺证据", doc_name)
+
+    pool = [
+        ("主升精选 A 档（域内前 5%）", a["n_rows"], old["top_wr"], old["top_mean"],
+         real["top_wr"], real["top_mean"], "四口径", "本页"),
+        add4("反转池 A 档（现行出票）", _rev, "A", "_rev_tier_gate.json"),
+        add4("反转池 BOT 档（底部+证据≥2）", _rev, "BOT", "_rev_tier_gate.json"),
+        add4("反转池 HARD 档（仅旧硬门槛）", _rev, "HARD", "_rev_tier_gate.json"),
+        add4("高胜率 CORE 档（可得子分前 10%）", _hw, "CORE", "_hw_tier_gate.json"),
+        add4("高胜率 BASE 档（MACD 水上红柱底池）", _hw, "BASE", "_hw_tier_gate.json"),
+        add_gap("增仓 S 档（现行生产）", _acc, 60, "S 档（现行生产）", "_accum_tier_gate.json"),
+        add_gap("增仓 A 档（现行生产·M或I）", _acc, 60, "A 档（现行生产·M或I）", "_accum_tier_gate.json"),
+        add_gap("增仓全候选域（对照）", _acc, 60, "全候选域（无筛选对照）", "_accum_tier_gate.json"),
+    ]
+
+    pool_rows_html = ""
+    for label, n, w0, m0, w1, m1, kind, src in pool:
+        if n is None:
+            pool_rows_html += (f"<tr class='cur'><td>{label}</td><td class='num'>—</td>"
+                               f"<td class='num'>—</td><td class='num'>—</td>"
+                               f"<td class='num'>—</td><td class='num'>—</td>"
+                               f"<td class='num'>—</td><td class='muted'>{kind}</td></tr>")
+            continue
+        dw = w1 - w0
+        dm = m1 - m0
+        clsw = "up" if dw >= 0 else "down"
+        clsm = "up" if dm >= 0 else "down"
+        pool_rows_html += (
+            f"<tr><td>{label}</td><td class='num'>{n:,}</td>"
+            f"<td class='num'>{pc(w0)}</td><td class='num'>{sp(m0, '%', 3)}</td>"
+            f"<td class='num'><b>{pc(w1)}</b></td><td class='num'><b>{sp(m1, '%', 3)}</b></td>"
+            f"<td class='num {clsw}'>{dw:+.2f}pp</td>"
+            f"<td class='muted'>{kind}<br>{src}</td></tr>")
+
     rows_tbl = ""
     for m in a["modes"]:
         star = " ★旧生产口径" if m["cons"] is False and m["gap"] is False else ""
@@ -255,7 +314,30 @@ def main():
 <a href="selected_attrib_evidence.html">主升精选收益归因实测</a>。
 </div></div>
 
-<h2>五、本页能说什么、不能说什么</h2>
+<h2>五、跨池复核：其他池受不受同一个假设影响</h2>
+<div class="card">
+<p>同一套「移动止盈」口径被<b>四个池</b>共用过。把同样的修正<b>逐池重跑</b>（不改任何选股规则、不改退出参数，
+只换成交假设）的结果如下：</p>
+<table>
+<thead><tr><th>池 / 档</th><th class="num">笔数</th><th class="num">旧口径胜率</th><th class="num">旧口径均值</th>
+<th class="num">可实现胜率</th><th class="num">可实现均值</th><th class="num">Δ胜率</th><th>修正类型</th></tr></thead>
+<tbody>
+{pool_rows_html}
+</tbody></table>
+<div class="note">
+<b>三点结论：</b><br>
+① <b>主升精选受影响最大</b>（A 档 −7.1pp）；其次是<b>高胜率池</b>（CORE 档 −4.4pp，修正后均值仍为负，
+该池本来就判「不出票」）；<br>
+② <b>反转池</b>与主升共用同一实现，A 档 −1.7pp，但修正后<b>均值由负转正</b> —— 旧口径同时<b>压低</b>了它，
+方向与主升相反。这再次说明：靠这套口径去<b>挑参数</b>就是在拟合噪声。<br>
+③ <b>增仓池基本不受影响</b>：它的跟踪止盈是<b>收盘触发、收盘成交</b>（不含「同根 K 线先冲高后回落」的路径假设），
+唯一可修的是硬止损跳空；而硬止损无论按止损线价、还是按更差的开盘价成交<b>都记为亏</b>，
+胜率不变、均值只轻微下移（±0.1pp 量级）。<b>做T / 三连阴</b>两池的收益口径不是移动止盈
+（分别是日内往返与 T+1 涨跌），本审计<b>不适用</b>，不作外推。
+</div>
+</div>
+
+<h2>六、本页能说什么、不能说什么</h2>
 <div class="card">
 <ul>
 <li><b>能说：</b>生产页面披露的 65.5% 依赖一组未披露的成交假设；换用保守口径后测试半为
@@ -268,7 +350,7 @@ def main():
 据此选参就是拟合噪声（同源证据见 <a href="selected_attrib_evidence.html">收益归因页</a> 的退出网格）。</li>
 </ul></div>
 
-<h2>六、口径定义与复跑</h2>
+<h2>七、口径定义与复跑</h2>
 <div class="card">
 <ul>
 <li><b>域：</b>全市场 A 股正股剔 ST/退 + 20 日均额 ≥3000 万 + 现价 ≥2 元（与主升生产域一致）。</li>
@@ -285,7 +367,10 @@ def main():
 <footer>
 数据截至 2026-09-30 ｜ 实测脚本 <code>quant/_exit_assumption_audit.py</code>
 （重跑：<code>python quant/_exit_assumption_audit.py --panel _selected_lab_panel.json --pct {pct}</code>）<br>
-统一口径模块 <code>quant/_exit_sim.py</code> ｜ 独立互证 <code>quant/_selected_attrib.py --source txk</code><br>
+统一口径模块 <code>quant/_exit_sim.py</code>（<code>_rbot</code> / <code>rev_pool</code> / <code>_selected_lab</code>
+三个入口已全部收敛到它）｜ 独立互证 <code>quant/_selected_attrib.py --source txk</code><br>
+跨池复核：<code>python quant/_rev_tier_gate.py</code> ／ <code>_hw_tier_gate.py</code> ／
+<code>_accum_tier_gate.py --boot 2000</code><br>
 本页只陈述<strong>已算出的事实</strong>；「可实现口径」是<strong>最保守</strong>而非正确答案。
 ｜ <a href="../../index.html">← 返回总门户</a>
 ｜ <a href="selected_attrib_evidence.html">相关：主升精选收益归因</a>

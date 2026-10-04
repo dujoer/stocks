@@ -334,7 +334,30 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <a href="selected_attrib_evidence.html">主升精选收益归因实测</a>。
 </div></div>
 
-<h2>五、本页能说什么、不能说什么</h2>
+<h2>五、跨池复核：其他池受不受同一个假设影响</h2>
+<div class="card">
+<p>同一套「移动止盈」口径被<b>四个池</b>共用过。把同样的修正<b>逐池重跑</b>（不改任何选股规则、不改退出参数，
+只换成交假设）的结果如下：</p>
+<table data-wb>
+<thead><tr><th>池 / 档</th><th class="num">笔数</th><th class="num">旧口径胜率</th><th class="num">旧口径均值</th>
+<th class="num">可实现胜率</th><th class="num">可实现均值</th><th class="num">Δ胜率</th><th>修正类型</th></tr></thead>
+<tbody>
+<tr><td>主升精选 A 档（域内前 5%）</td><td class='num'>162,177</td><td class='num'>67.40%</td><td class='num'><span class='up'>+0.831%</span></td><td class='num'><b>60.29%</b></td><td class='num'><b><span class='up'>+0.587%</span></b></td><td class='num down'>-7.11pp</td><td class='muted'>四口径<br>本页</td></tr><tr><td>反转池 A 档（现行出票）</td><td class='num'>646</td><td class='num'>61.76%</td><td class='num'><span class='down'>-0.051%</span></td><td class='num'><b>60.06%</b></td><td class='num'><b><span class='up'>+0.257%</span></b></td><td class='num down'>-1.70pp</td><td class='muted'>四口径<br>_rev_tier_gate.json</td></tr><tr><td>反转池 BOT 档（底部+证据≥2）</td><td class='num'>14,476</td><td class='num'>63.92%</td><td class='num'><span class='up'>+0.054%</span></td><td class='num'><b>62.65%</b></td><td class='num'><b><span class='up'>+0.431%</span></b></td><td class='num down'>-1.27pp</td><td class='muted'>四口径<br>_rev_tier_gate.json</td></tr><tr><td>反转池 HARD 档（仅旧硬门槛）</td><td class='num'>100,816</td><td class='num'>61.89%</td><td class='num'><span class='down'>-0.349%</span></td><td class='num'><b>60.01%</b></td><td class='num'><b><span class='down'>-0.042%</span></b></td><td class='num down'>-1.88pp</td><td class='muted'>四口径<br>_rev_tier_gate.json</td></tr><tr><td>高胜率 CORE 档（可得子分前 10%）</td><td class='num'>1,603</td><td class='num'>57.89%</td><td class='num'><span class='down'>-1.277%</span></td><td class='num'><b>53.46%</b></td><td class='num'><b><span class='down'>-1.307%</span></b></td><td class='num down'>-4.43pp</td><td class='muted'>四口径<br>_hw_tier_gate.json</td></tr><tr><td>高胜率 BASE 档（MACD 水上红柱底池）</td><td class='num'>16,080</td><td class='num'>62.42%</td><td class='num'><span class='down'>-0.370%</span></td><td class='num'><b>56.79%</b></td><td class='num'><b><span class='down'>-0.395%</span></b></td><td class='num down'>-5.63pp</td><td class='muted'>四口径<br>_hw_tier_gate.json</td></tr><tr><td>增仓 S 档（现行生产）</td><td class='num'>70</td><td class='num'>62.86%</td><td class='num'><span class='up'>+1.446%</span></td><td class='num'><b>62.86%</b></td><td class='num'><b><span class='up'>+1.344%</span></b></td><td class='num up'>+0.00pp</td><td class='muted'>仅跳空<br>_accum_tier_gate.json</td></tr><tr><td>增仓 A 档（现行生产·M或I）</td><td class='num'>460</td><td class='num'>52.17%</td><td class='num'><span class='down'>-0.542%</span></td><td class='num'><b>52.17%</b></td><td class='num'><b><span class='down'>-0.585%</span></b></td><td class='num up'>+0.00pp</td><td class='muted'>仅跳空<br>_accum_tier_gate.json</td></tr><tr><td>增仓全候选域（对照）</td><td class='num'>2,827</td><td class='num'>55.43%</td><td class='num'><span class='down'>-0.187%</span></td><td class='num'><b>55.43%</b></td><td class='num'><b><span class='down'>-0.228%</span></b></td><td class='num up'>+0.00pp</td><td class='muted'>仅跳空<br>_accum_tier_gate.json</td></tr>
+</tbody></table>
+<div class="note">
+<b>三点结论：</b><br>
+① <b>主升精选受影响最大</b>（A 档 −7.1pp）；其次是<b>高胜率池</b>（CORE 档 −4.4pp，修正后均值仍为负，
+该池本来就判「不出票」）；<br>
+② <b>反转池</b>与主升共用同一实现，A 档 −1.7pp，但修正后<b>均值由负转正</b> —— 旧口径同时<b>压低</b>了它，
+方向与主升相反。这再次说明：靠这套口径去<b>挑参数</b>就是在拟合噪声。<br>
+③ <b>增仓池基本不受影响</b>：它的跟踪止盈是<b>收盘触发、收盘成交</b>（不含「同根 K 线先冲高后回落」的路径假设），
+唯一可修的是硬止损跳空；而硬止损无论按止损线价、还是按更差的开盘价成交<b>都记为亏</b>，
+胜率不变、均值只轻微下移（±0.1pp 量级）。<b>做T / 三连阴</b>两池的收益口径不是移动止盈
+（分别是日内往返与 T+1 涨跌），本审计<b>不适用</b>，不作外推。
+</div>
+</div>
+
+<h2>六、本页能说什么、不能说什么</h2>
 <div class="card">
 <ul>
 <li><b>能说：</b>生产页面披露的 65.5% 依赖一组未披露的成交假设；换用保守口径后测试半为
@@ -347,7 +370,7 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 据此选参就是拟合噪声（同源证据见 <a href="selected_attrib_evidence.html">收益归因页</a> 的退出网格）。</li>
 </ul></div>
 
-<h2>六、口径定义与复跑</h2>
+<h2>七、口径定义与复跑</h2>
 <div class="card">
 <ul>
 <li><b>域：</b>全市场 A 股正股剔 ST/退 + 20 日均额 ≥3000 万 + 现价 ≥2 元（与主升生产域一致）。</li>
@@ -364,7 +387,10 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <footer>
 数据截至 2026-09-30 ｜ 实测脚本 <code>quant/_exit_assumption_audit.py</code>
 （重跑：<code>python quant/_exit_assumption_audit.py --panel _selected_lab_panel.json --pct 0.05</code>）<br>
-统一口径模块 <code>quant/_exit_sim.py</code> ｜ 独立互证 <code>quant/_selected_attrib.py --source txk</code><br>
+统一口径模块 <code>quant/_exit_sim.py</code>（<code>_rbot</code> / <code>rev_pool</code> / <code>_selected_lab</code>
+三个入口已全部收敛到它）｜ 独立互证 <code>quant/_selected_attrib.py --source txk</code><br>
+跨池复核：<code>python quant/_rev_tier_gate.py</code> ／ <code>_hw_tier_gate.py</code> ／
+<code>_accum_tier_gate.py --boot 2000</code><br>
 本页只陈述<strong>已算出的事实</strong>；「可实现口径」是<strong>最保守</strong>而非正确答案。
 ｜ <a href="../../index.html">← 返回总门户</a>
 ｜ <a href="selected_attrib_evidence.html">相关：主升精选收益归因</a>
