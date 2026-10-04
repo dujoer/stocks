@@ -135,6 +135,18 @@ FAMILIES = [
          need='同 picks；lab.html = 因子样本外功效实验室（先验固定集 vs 自动筛，_pick_lab.py）；'
               'stable_YYYY-MM-DD.html 见 picks_stable 族'),
 
+    dict(key='highwin_tiergate', label='高胜率池 · 分档出票核验（出票许可依据）',
+         patterns=['picks/highwin_tier_gate.html'],
+         entry='picks/index.html',
+         script='_hw_tier_gate.py;_hw_tier_gate.py --sens --step 3;_hw_gate_page.py',
+         freq='on_demand',
+         dated=False, start=None, date_re=None,
+         need='【2026-10-04 新增】按可得维度（技术25+位置15=40分，缺 60 分不可前推→记 0 降级）'
+              '重建面板，CORE 档 edge −1.31pp / R3 4.2% / step3 −0.60pp → 统计上不可出票；'
+              '但更硬的结论是**数据闸**：MACD 底池自 2026-09-24 起连续 4 期逐字节未重扫，'
+              '其 close 反查 35/35 精确等于 2026-09-11 = 旧快照冒充当日 → 一律不出票。'
+              'gen_highwin.py 读 emit_license()，读不到即 fail-safe 不出票'),
+
     dict(key='highwin', label='高胜率候选池（每日多因子扫描）',
          patterns=['picks/highwin_*.html'],
          entry='picks/index.html',

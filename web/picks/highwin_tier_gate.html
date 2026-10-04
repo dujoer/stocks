@@ -1,0 +1,97 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>高胜率候选池 · 分档出票核验</title></head><body>
+<div class="wrap">
+<h1>高胜率候选池 · 分档出票核验</h1>
+<div class="card"><b>本页是「高胜率候选池」的出票合法性核验</b>（逐日平衡 edge + 按日 block bootstrap + 留一法 + 前/后半 + 跨步长）。<br>① 生产打分满分 100 分，其中<b>只有技术 25 + 位置 15 = 40 分在历史上可前推</b>；资金/筹码/板块/龙虎榜/高管大宗都来自当日盘后快照与事件源，回测时不存在 → <b>记 0 降级</b>。<br>② 因此本页 CORE 档 =「可得子分前 10%」，<b>不是</b>生产那批「全维 ≥68 的核心候选」；生产核心档是否真有超额，本页判 <b>不可判</b>（缺 60 分维度，无法复原）。<br>③ <b>但有一件事不用统计就能定：底池的数据本身是过期的</b>——自 2026-09-24 起连续 4 期 MACD 快照逐字节相同、收盘价反查 35/35 只等于 2026-09-11（见第六节）。这是数据就绪问题，优先级高于一切策略优化。</div>
+<div class='box red' style='border-color:#b00020'><b>⚠ 先说结论：高胜率候选池本期不出票（宁可不选）—— 底池是旧数据，不是策略问题</b><br>MACD 技术底池自 <b>2026-09-24</b> 起<b>连续 4 期逐字节没有重扫</b>（dif / dea / close 全同）；把冻结快照里的收盘价拿去日K 反查，<b>35 / 35 只精确等于 2026-09-11</b>。<br>也就是说，这几期页面上标的「当期候选」用的是一份 <b>2026-09-11 的旧快照</b>冒充当日数据 —— 直接违反「严禁用旧数据冒充当日」。<br>因此<b>先修底池重扫，再谈胜率</b>；在数据修好之前，本池候选<b>不作任何买入依据</b>。</div>
+<h2>一、逐档结果（对照 = 同日全市场域，逐日平衡 edge）</h2>
+<table><thead><tr><th>档</th><th>笔数</th><th>绝对收益</th><th>胜率</th>
+<th>edge</th><th>R3</th><th>留一法区间</th></tr></thead><tbody><tr><td><b>CORE 档（可得子分前 10%，近似核心候选）</b></td><td class='num'>1603</td><td class='num'>-1.43</td><td class='num'>55.51%</td><td class='num dn'>-1.310pp</td><td class='num dn'>4.20%</td><td class='kv'>[-1.627, -1.068]</td></tr>
+<tr><td><b>MID 档（可得子分 10~30%）</b></td><td class='num'>3215</td><td class='num'>-0.77</td><td class='num'>59.04%</td><td class='num dn'>-0.280pp</td><td class='num dn'>35.00%</td><td class='kv'>[-0.570, -0.064]</td></tr>
+<tr><td><b>TAIL 档（可得子分 30% 以后）</b></td><td class='num'>9230</td><td class='num'>-0.16</td><td class='num'>59.31%</td><td class='num dn'>-0.197pp</td><td class='num dn'>38.50%</td><td class='kv'>[-0.429, +0.100]</td></tr>
+<tr><td><b>BASE 底池（当日 MACD 水上红柱全体）</b></td><td class='num'>16080</td><td class='num'>0.07</td><td class='num'>59.67%</td><td class='num up'>+0.060pp</td><td class='num dn'>53.40%</td><td class='kv'>[-0.162, +0.353]</td></tr>
+<tr><td><b>ALL 全市场域（随便买 · 绝对对照）</b></td><td class='num'>103890</td><td class='num'>-0.14</td><td class='num'>58.65%</td><td class='num dn'>+0.000pp</td><td class='num dn'>0.00%</td><td class='kv'>[+0.000, +0.000]</td></tr></tbody></table>
+<div class="kv">edge = 该档逐日均值 − 同日全市场逐日均值（逐日平衡，不是把大池子摊平比绝对值）。
+R3 = bootstrap 中 edge>0 的比例（按日整块重抽 800 次，门槛 95%）。</div>
+
+<h2>二、把「底池效应」和「打分增量」拆开</h2>
+<table><thead><tr><th>档</th><th>edge（相对底池母集）</th><th>R3</th><th>留一法区间</th></tr></thead>
+<tbody><tr><td><b>CORE 档（可得子分前 10%，近似核心候选）</b></td><td class='num dn'>-1.274pp</td><td class='num dn'>2.60%</td><td class='kv'>[-1.538, -1.044]</td></tr>
+<tr><td><b>MID 档（可得子分 10~30%）</b></td><td class='num dn'>-0.490pp</td><td class='num dn'>20.80%</td><td class='kv'>[-0.715, -0.202]</td></tr>
+<tr><td><b>TAIL 档（可得子分 30% 以后）</b></td><td class='num dn'>-0.091pp</td><td class='num dn'>41.00%</td><td class='kv'>[-0.210, +0.125]</td></tr>
+<tr><td><b>BASE 底池（当日 MACD 水上红柱全体）</b></td><td class='num dn'>—</td><td class='num dn'>—</td><td class='kv'>[—, —]</td></tr>
+<tr><td><b>ALL 全市场域（随便买 · 绝对对照）</b></td><td class='num dn'>—</td><td class='num dn'>—</td><td class='kv'>[—, —]</td></tr></tbody></table>
+<div class="kv">底池 = MACD 水上红柱（天然偏强的一批票）。相对<b>底池母集</b>的 edge 才是<b>打分本身</b>的增量；
+相对全市场的 edge 里还掺着「底池是不是本身就强」这一块。BASE 一行同时给出它相对「非底池」的 edge。</div>
+
+<h2>三、前 / 后半稳定性</h2>
+<table><thead><tr><th>档</th><th>前半 / 后半 edge</th></tr></thead><tbody><tr><td><b>CORE 档（可得子分前 10%，近似核心候选）</b></td><td class='kv'>前半 -1.060pp（27 日中 15 日为正） ｜ 后半 -1.551pp（28 日中 11 日为正）</td></tr>
+<tr><td><b>MID 档（可得子分 10~30%）</b></td><td class='kv'>前半 -0.116pp（32 日中 18 日为正） ｜ 后半 -0.438pp（33 日中 14 日为正）</td></tr>
+<tr><td><b>TAIL 档（可得子分 30% 以后）</b></td><td class='kv'>前半 +0.766pp（38 日中 23 日为正） ｜ 后半 -1.159pp（38 日中 12 日为正）</td></tr>
+<tr><td><b>BASE 底池（当日 MACD 水上红柱全体）</b></td><td class='kv'>前半 +1.309pp（39 日中 26 日为正） ｜ 后半 -1.188pp（39 日中 14 日为正）</td></tr>
+<tr><td><b>ALL 全市场域（随便买 · 绝对对照）</b></td><td class='kv'>前半 +0.000pp（57 日中 0 日为正） ｜ 后半 +0.000pp（57 日中 0 日为正）</td></tr></tbody></table>
+<div class="kv">单段行情容易把结论锁在一个市场状态里；只有两半同向才算稳。</div>
+
+<h2>四、跨步长敏感性（主口径 step5 vs 派生 step3）</h2>
+<table><thead><tr><th>档</th><th>step3 edge</th><th>step3 R3</th><th>与主口径符号</th></tr></thead>
+<tbody><tr><td><b>CORE 档（可得子分前 10%，近似核心候选）</b></td><td class='num dn'>-0.604pp</td><td class='num dn'>16.20%</td><td class='kv'>同号</td></tr>
+<tr><td><b>MID 档（可得子分 10~30%）</b></td><td class='num dn'>-1.563pp</td><td class='num dn'>0.10%</td><td class='kv'>同号</td></tr>
+<tr><td><b>TAIL 档（可得子分 30% 以后）</b></td><td class='num dn'>-0.013pp</td><td class='num dn'>49.90%</td><td class='kv'>同号</td></tr>
+<tr><td><b>BASE 底池（当日 MACD 水上红柱全体）</b></td><td class='num dn'>-0.482pp</td><td class='num dn'>13.20%</td><td class='kv'>翻号</td></tr>
+<tr><td><b>ALL 全市场域（随便买 · 绝对对照）</b></td><td class='num dn'>+0.000pp</td><td class='num dn'>0.00%</td><td class='kv'>翻号</td></tr></tbody></table>
+
+<h2>五、复刻自检：本页 CORE 与生产那批核心候选是不是同一批？</h2>
+<table><thead><tr><th>数据日</th><th>生产候选数</th><th>生产 tech_scanned</th><th>本地复刻底池</th>
+<th>生产标的命中本地的比例</th></tr></thead><tbody><tr><td>2026-09-18</td><td class='num'>35</td><td class='num'>100</td><td class='num'>393</td><td class='num dn'>8.60%</td></tr>
+<tr><td>2026-09-21</td><td class='num'>66</td><td class='num'>197</td><td class='num'>393</td><td class='num dn'>16.70%</td></tr>
+<tr><td>2026-09-22</td><td class='num'>55</td><td class='num'>226</td><td class='num'>393</td><td class='num dn'>23.60%</td></tr>
+<tr><td>2026-09-23</td><td class='num'>983</td><td class='num'>4971</td><td class='num'>393</td><td class='num dn'>11.90%</td></tr>
+<tr><td>2026-09-24</td><td class='num'>35</td><td class='num'>100</td><td class='num'>393</td><td class='num dn'>8.60%</td></tr>
+<tr><td>2026-09-28</td><td class='num'>35</td><td class='num'>100</td><td class='num'>393</td><td class='num dn'>8.60%</td></tr>
+<tr><td>2026-09-29</td><td class='num'>35</td><td class='num'>100</td><td class='num'>393</td><td class='num dn'>8.60%</td></tr>
+<tr><td>2026-09-30</td><td class='num'>35</td><td class='num'>100</td><td class='num'>393</td><td class='num dn'>8.60%</td></tr></tbody></table>
+<div class="kv">本地底池用 <code>_txk_cache.json</code>（腾讯前复权日K）复刻生产的「DIF>0 且 DEA>0 且 MACD 红柱>0」。
+比例接近 100% 才说明复刻没跑偏；实测偏低 → 本页结论只适用于「可得维度这套打分本身」，
+<b>不能直接套到生产名单</b>。另外：生产还叠了「20 日主力净流入&gt;0」这一条（本页无此数据，未复刻），
+生产候选必然是本地底池的子集，命中率不该是 0，低命中说明两边口径确实不同源。</div>
+
+<h2>六、生产底池有没有真的每天重扫（冻结检查）</h2>
+<table><thead><tr><th>数据日</th><th>候选数</th><th>tech_scanned</th><th>水上金叉数</th><th>判定</th></tr></thead>
+<tbody><tr><td>2026-09-11</td><td class='num'>35</td><td class='num'>100</td><td class='num'>51</td><td class='kv'>—</td></tr>
+<tr><td>2026-09-14</td><td class='num'>55</td><td class='num'>55</td><td class='num'>55</td><td class='kv'>—</td></tr>
+<tr><td>2026-09-15</td><td class='num'>39</td><td class='num'>197</td><td class='num'>51</td><td class='kv'>—</td></tr>
+<tr><td>2026-09-16</td><td class='num'>37</td><td class='num'>192</td><td class='num'>47</td><td class='kv'>—</td></tr>
+<tr><td>2026-09-17</td><td class='num'>50</td><td class='num'>200</td><td class='num'>62</td><td class='kv'>—</td></tr>
+<tr><td>2026-09-18</td><td class='num'>35</td><td class='num'>100</td><td class='num'>51</td><td class='kv'>—</td></tr>
+<tr><td>2026-09-21</td><td class='num'>66</td><td class='num'>197</td><td class='num'>70</td><td class='kv'>—</td></tr>
+<tr><td>2026-09-22</td><td class='num'>55</td><td class='num'>226</td><td class='num'>60</td><td class='kv'>—</td></tr>
+<tr><td>2026-09-23</td><td class='num'>983</td><td class='num'>4971</td><td class='num'>1212</td><td class='kv'>—</td></tr>
+<tr><td>2026-09-24</td><td class='num'>35</td><td class='num'>100</td><td class='num'>51</td><td class='kv'><span style='color:#ea4335;font-weight:700'>扫描量骤降（4971 → 100）</span></td></tr>
+<tr><td>2026-09-28</td><td class='num'>35</td><td class='num'>100</td><td class='num'>51</td><td class='kv'><span style='color:#ea4335;font-weight:700'>冻结；close 反查 35/35 只 = 2026-09-11</span></td></tr>
+<tr><td>2026-09-29</td><td class='num'>35</td><td class='num'>100</td><td class='num'>51</td><td class='kv'><span style='color:#ea4335;font-weight:700'>冻结；close 反查 35/35 只 = 2026-09-11</span></td></tr>
+<tr><td>2026-09-30</td><td class='num'>35</td><td class='num'>100</td><td class='num'>51</td><td class='kv'><span style='color:#ea4335;font-weight:700'>冻结；close 反查 35/35 只 = 2026-09-11</span></td></tr></tbody></table>
+<div class="kv">「冻结」= 与上一天是<b>整批</b>标的、且 dif / dea / close 逐字节相同（不是抽样前 5 只）。
+再把冻结快照里的 close 拿去 <code>_txk_cache.json</code> 日K 反查它本来是哪天的价格 ——
+若集体落在同一个更早的日子，就说明这几天的「当日池」是旧快照在复用。
+<b>这一节不依赖任何回测口径，是纯数据事实</b>，所以它对「本期能不能出票」有否决权。</div>
+
+<h2>七、出票许可（机器判定，读不到就 fail-safe）</h2>
+<table><thead><tr><th>档</th><th>可出票？</th><th>依据</th></tr></thead><tbody><tr><td>CORE 档（可得子分前 10%，近似核心候选）</td><td class='dn'>不出票</td><td class='kv'>主步长 edge -1.310pp ≤ 0；R3 4.2% < 95% 门槛；step3 edge -0.604pp ≤ 0；【数据闸】MACD 底池自 2026-09-24 起连续 4 期逐字节未重扫（dif/dea/close 全同），其收盘价反查 35/35 只精确等于 2026-09-11 —— 属旧快照冒充当日</td></tr><tr><td>MID 档（可得子分 10~30%）</td><td class='dn'>不出票</td><td class='kv'>主步长 edge -0.280pp ≤ 0；R3 35.0% < 95% 门槛；step3 edge -1.563pp ≤ 0；【数据闸】MACD 底池自 2026-09-24 起连续 4 期逐字节未重扫（dif/dea/close 全同），其收盘价反查 35/35 只精确等于 2026-09-11 —— 属旧快照冒充当日</td></tr><tr><td>TAIL 档（可得子分 30% 以后）</td><td class='dn'>不出票</td><td class='kv'>主步长 edge -0.197pp ≤ 0；R3 38.5% < 95% 门槛；step3 edge -0.013pp ≤ 0；【数据闸】MACD 底池自 2026-09-24 起连续 4 期逐字节未重扫（dif/dea/close 全同），其收盘价反查 35/35 只精确等于 2026-09-11 —— 属旧快照冒充当日</td></tr></tbody></table>
+<div class="kv">`gen_highwin.py` 只读本页证据；CORE/MID/TAIL 任一档不达标即标注<b>不出票（宁可不选）</b>。
+只满足主步长就放行，属放宽阈值凑数，与项目红线冲突，故不写这条规则。<br>
+另有一道<b>数据有效性闸</b>（与统计无关）：底池快照是旧数据时，即使 edge 为正也压住出票 ——
+底注：edge 衡量的是「这套打分在历史上选得比随便买好多少」，底池过期时这个数字连适用对象都没有。</div>
+
+<h2>八、局限与口径声明</h2>
+<div class="card"><ul>
+<li>可得维度只有 40 分，<b>生产核心候选（全维 ≥68）的合法性在本页判「不可判」</b> —— 不是「没用」，是<b>没法验</b>。</li>
+<li>资金（20）/筹码（15）/板块（12）/龙虎榜（8）/高管大宗（5）在回测时不可得，按纪律<b>记 0 降级</b>，
+    因此本页总分上限 40，CORE 阈值是「前 10%」而非 68 分。</li>
+<li>退出生效参数沿用全项目统一口径：−12% 硬止损 / +6% 激活移动止盈 / 回撤 3% 跟踪 / 满 20 日强平；
+    买入价 = 信号日收盘（与生产「次日开盘」略有出入，属放宽，只会让结论偏保守）。</li>
+<li>本页<b>只判定现有规则有没有超额，不做规则改良</b>：负 edge 也不代表「反向做」能赚钱，只是不该拿它出票。</li>
+<li>CORE 档样本 55 个信号日 / 1603 笔 —— 样本偏小，正是本页判「不可出票」而不是判「有效」的原因。</li>
+</ul></div>
+<div class="note"><a href="index.html">← 返回自选/候选池首页</a> ｜ <a href="highwin_20260930.html">高胜率候选池当期页面</a></div>
+</div></body></html>

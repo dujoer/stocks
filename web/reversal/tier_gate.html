@@ -34,7 +34,7 @@ R3 = bootstrap（按日整块重抽 %d 次）中 edge &gt; 0 的比例；判据�
 <h2>三、两种对照口径并列（供交叉核对）</h2>
 <div class="note">左列是「相对随便买」（本页主口径），右列是「相对同日深跌域母集」＝原表 ① vs ④ 的口径。
 两个问题答案不同：<b>相对深跌域，闸门是有用的</b>；<b>但相对全市场随便买，它没带来增量。</b></div>
-<table><tr><th>规则</th><th class="num">vs 全市场 edge</th><th class="num">R3</th><th class="num">留一法</th></tr><tr><td>全市场域（随便买 · 绝对对照）</td><td class='num'>+0.000</td><td class='num'>0.0%</td><td class='num'>[+0.000, +0.000]</td></tr>
+<table><tr><th>规则</th><th class="num">vs 全市场 edge</th><th class="num">R3</th><th class="num">留一法</th></tr><tr><td>全市场域（随便买 · 绝对对照）</td><td class='num'>+0.557</td><td class='num'>99.9%</td><td class='num'>[+0.434, +0.616]</td></tr>
 <tr><td>仅旧硬门槛（跌得多，v5 域）</td><td class='num'>+0.000</td><td class='num'>0.0%</td><td class='num'>[+0.000, +0.000]</td></tr>
 <tr><td>旧硬门槛 + 阶段底部＋启动证据（不看组合分）</td><td class='num'>+0.785</td><td class='num'>96.8%</td><td class='num'>[+0.593, +0.884]</td></tr>
 <tr><td>现行出票：旧硬门槛 + 阶段底部＋证据≥2 + 组合分前 10%</td><td class='num'>-0.033</td><td class='num'>46.1%</td><td class='num'>[-0.216, +0.128]</td></tr>
@@ -70,7 +70,7 @@ v5 那套「距 52 周高回撤 ≥18%」的域定义是<b>负向筛选</b>，�
 本页不做 700 只抽样而用<b>全市场</b>）只会让样本更大、结论更保守。</div>
 
 <h2>八、出票许可（机器判定，读不到就 fail-safe）</h2>
-<table><tr><th>档</th><th>可出票？</th><th>依据</th></tr><tr><td>A 档（现行出票）</td><td>不出票</td><td>主步长 edge -0.238 pp ≤ 0；R3 29.9% < 95% 门槛；step3 edge -0.025 pp ≤ 0</td></tr><tr><td>B 档（10~25%）</td><td>不出票</td><td>step3 R3 85.5% < 95%（跨步长未稳定过线）</td></tr><tr><td>闸门全开</td><td>不出票</td><td>R3 66.8% < 95% 门槛；step3 R3 55.4% < 95%（跨步长未稳定过线）</td></tr></table>
+<table><tr><th>档</th><th>可出票？</th><th>依据</th></tr><tr><td>A 档（现行出票）</td><td>不出票</td><td>主步长 edge -0.238pp ≤ 0；R3 29.9% < 95% 门槛；step3 edge -0.025pp ≤ 0</td></tr><tr><td>B 档（10~25%）</td><td>不出票</td><td>step3 R3 85.5% < 95%</td></tr><tr><td>闸门全开</td><td>不出票</td><td>R3 66.8% < 95% 门槛；step3 R3 55.4% < 95%</td></tr></table>
 <div class="note"><code>rev_pool.py</code> 每日调用 <code>_rev_gate_page.emit_license()</code>：
 只有 <b>edge&gt;0 且 R3≥95% 且跨步长同号</b>的档才允许出票；<b>读不到证据 JSON 一律不出票</b>。
 本期许可 = <b>见表</b>。</div>
