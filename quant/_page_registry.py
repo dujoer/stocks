@@ -155,6 +155,18 @@ FAMILIES = [
          date_re=r'(\d{8})',
          need='基底=MACD水上金叉池(macd_scan_{DATE}.json)；增强=data_quote→_raw_extract/quote_{DATE}.json、data_technical→tech、data_chip→chip + sector_daily + lhb + exec_chg + block_chg'),
 
+    dict(key='tplus_tiergate', label='做T池 · 分档出票核验（出票许可依据）',
+         patterns=['tplus/tier_gate.html'],
+         entry='tplus/index.html',
+         script='_tplus_tier_gate.py;_tplus_tier_gate.py --sens --step 3;_tplus_gate_page.py',
+         freq='on_demand',
+         dated=False, start=None, date_re=None,
+         need='【2026-10-04 新增】做T是区间操作，**逐日平衡与池化口径可反向**：A 档逐日 edge +0.5368pp / '
+              'R3 95.0% / 留一[+0.395,+0.674] 全正 / 前后半同向（看着能出票），'
+              '但「触买后」池化期望 **−0.2823%**、往返率仅 5.15%（同域非 A 档 12.65%）'
+              '= 分数越高越难成交。故在 _gate_common.emit_license 新增**池化闸**(pool_key)；'
+              'build_tplus.py 许可不过 → 主榜与操作手册清空 + 红框'),
+
     dict(key='tplus', label='做T池日页', patterns=['tplus/tplus-*.html'],
          entry='tplus/index.html', script='build_tplus.py', freq='daily',
          dated=True, start='20260910', date_re=r'(\d{4}-\d{2}-\d{2})',

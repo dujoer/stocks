@@ -1,0 +1,64 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>做T池 · 分档出票核验</title></head><body>
+<div class="wrap">
+<h1>做T池 · 分档出票核验</h1>
+<div class="card"><b>本页核验：做T池「A 档 = 可重点做T」这条规则，两个口径给出<b>相反</b>的答案</b><br>① <b>逐日平衡 edge</b>（每天该档均 − 同日非本档均）：A 档 <b>+0.5368pp pp</b>，R3 <b>95.0%</b>、留一法 [+0.3951, +0.6743] 全正、前后半同向 —— 单看这一项像<b>可以出票</b>。<br>② <b>池化口径</b>（实际做一笔的期望）：A 档<b>触买后 -0.2823%%</b>（全体 -0.1253%%）—— 做T 是区间操作，<b>「没成交」也是一种结果</b>，不成交的空值会把池化均值拉平，而逐日平衡几乎看不出这部分。<br>③ 两者的差额来自成交率：A 档只有 <b>44.4%</b> 的信号进过买卖区，<b>往返率仅 5.2%（同域非 A 档 12.7%）</b> —— 分数越高成交越少，「适合做T」这个说法本身与数据相反。<br>④ 本池额外设一道<b>池化闸</b>：逐日平衡为正但触买后期望 ≤0 → 一律不出票。只报逐日平衡就放行，等于拿一个不反映真实执行的数字出票。</div>
+<div class='box red' style='border-color:#b00020'><b>⚠ 结论：做T池 A 档本期不出票（宁可不选）</b><br>逐日平衡 edge +0.5368pp pp（R3 95.0%，门槛 95%）本身是达标的，但<b>池化口径为负</b>：实际触买后做一笔的期望 <b>-0.2823%%</b>，往返率只有 <b>5.2%</b>、而同域非 A 档有 12.7%。<br>也就是说这条规则选出的是<b>「看起来安静但很难成交」</b>的票 —— 分数越高成交越少。<b>宁可不选</b>：不能拿「每天都重选更优」的数字，去支撑「实际做一笔能赚」的结论。</div>
+
+<h2>一、逐日平衡 edge（对照 = 同日非本档，不含自己）</h2>
+<table><thead><tr><th>档</th><th>笔数</th><th>edge</th><th>R3</th>
+<th>留一法区间</th></tr></thead><tbody><tr><td><b>A 档（域内前 10%·可重点做T·主榜唯一出票档）</b></td><td class='num'>9352</td><td class='num up'>+0.5368pp</td><td class='num up'>95.0%</td><td class='kv'>[+0.3951, +0.6743]</td></tr>
+<tr><td><b>B 档（前 10~25%·适合做T）</b></td><td class='num'>14002</td><td class='num up'>+0.3174pp</td><td class='num dn'>89.2%</td><td class='kv'>[+0.2410, +0.3751]</td></tr>
+<tr><td><b>C 档（其余·仅跟踪）</b></td><td class='num'>69970</td><td class='num dn'>-0.4466pp</td><td class='num dn'>3.0%</td><td class='kv'>[-0.5098, -0.3843]</td></tr></tbody></table>
+<div class="kv">edge = 该档逐日均值 − 同日非本档逐日均值（逐日平衡，不是把两堆样本摊平比）。
+R3 = bootstrap 中 edge&gt;0 的比例（按日整块重抽 800 次，门槛 95%）。
+留一法 = 去掉任意一天后 edge 的极值；<b>区间跨 0 说明结论由个别交易日撑着</b>。</div>
+
+<h2>二、★ 池化口径（做T的真实执行口径，本页结论的关键）</h2>
+<table><thead><tr><th>档</th><th>触买后期望（实际做一笔）</th><th>全体期望</th>
+<th>触买率</th><th>往返率</th><th>止损率</th></tr></thead><tbody><tr><td><b>A 档（域内前 10%·可重点做T·主榜唯一出票档）</b></td><td class='num dn'>-0.2823%</td><td class='num'>-0.1253%</td><td class='num'>44.4%</td><td class='num'>5.2%</td><td class='num'>19.1%</td></tr>
+<tr><td><b>B 档（前 10~25%·适合做T）</b></td><td class='num dn'>-0.7759%</td><td class='num'>-0.3934%</td><td class='num'>50.7%</td><td class='num'>7.5%</td><td class='num'>21.2%</td></tr>
+<tr><td><b>C 档（其余·仅跟踪）</b></td><td class='num dn'>-0.7299%</td><td class='num'>-0.4758%</td><td class='num'>65.2%</td><td class='num'>13.7%</td><td class='num'>25.0%</td></tr></tbody></table>
+<div class="kv"><b>触买后期望</b> = 只统计真的进过买区的信号，模拟到卖出/止损/到期的真实收益 ——
+这是「我做一笔能不能赚」。<b>全体期望</b>把没成交的也算进来（记 0 或极小值），
+会被 <code>kind=none</code>（当日既没触买区也没触卖区）稀释。
+<br>做T 的关键不是「每天都重选更优」（那是逐日平衡在问的），而是
+<b>「进去之后能不能走出来」</b>。A 档触买后为负、往返率又最低 → 两个口径都在说同一件事：
+<b>这档票难成交</b>。</div>
+
+<h2>三、前 / 后半稳定性</h2>
+<table><thead><tr><th>档</th><th>前半 / 后半 edge</th></tr></thead><tbody><tr><td><b>A 档（域内前 10%·可重点做T·主榜唯一出票档）</b></td><td class='kv'>前半 +0.1791pp（94 日中 45 日为正） ｜ 后半 +0.8907pp（95 日中 59 日为正）</td></tr>
+<tr><td><b>B 档（前 10~25%·适合做T）</b></td><td class='kv'>前半 +0.3260pp（94 日中 49 日为正） ｜ 后半 +0.3089pp（95 日中 50 日为正）</td></tr>
+<tr><td><b>C 档（其余·仅跟踪）</b></td><td class='kv'>前半 -0.1329pp（92 日中 49 日为正） ｜ 后半 -0.7570pp（93 日中 35 日为正）</td></tr></tbody></table>
+<div class="kv">单段行情容易把结论锁在一个市场状态里；只有两半同向才算稳。</div>
+
+<h2>四、跨步长敏感性</h2>
+<table><thead><tr><th>档</th><th>step3 edge</th><th>step3 R3</th><th>与主口径符号</th></tr></thead>
+<tbody><tr><td><b>A 档（域内前 10%·可重点做T·主榜唯一出票档）</b></td><td class='num up'>+0.6280pp</td><td class='num dn'>90.1%</td><td class='kv'>同号</td></tr>
+<tr><td><b>B 档（前 10~25%·适合做T）</b></td><td class='num dn'>-0.1187pp</td><td class='num dn'>40.0%</td><td class='kv'>翻号</td></tr>
+<tr><td><b>C 档（其余·仅跟踪）</b></td><td class='num dn'>-0.1868pp</td><td class='num dn'>33.0%</td><td class='kv'>同号</td></tr></tbody></table>
+<div class="kv">⚠ 本池面板由 <code>_tplus_lab</code> 离线重建时<b>已稀疏采样</b>
+（196 个信号日跨 10 个月，非逐日全量），所以此处 step3 与主口径<b>共用同一份面板</b>，
+只作符号一致性参考，<b>不是独立的采样步长验证</b>。</div>
+
+<h2>五、出票许可（机器判定，读不到就 fail-safe）</h2>
+<table><thead><tr><th>档</th><th>可出票？</th><th>依据</th></tr></thead><tbody><tr><td>A 档（域内前 10%·可重点做T·主榜唯一出票档）</td><td class='dn'>不出票</td><td class='kv'>step3 R3 90.1% < 95%；【池化闸】A 档「pooled_hitbuy」-0.2823% ≤ 0 —— 逐日平衡为正只是「每天都重选更优」，不等于实际成交能赚</td></tr></tbody></table>
+<div class="kv">做T只有 A 档进主榜与操作手册（<code>build_tplus</code>：anchors = release ∧ grade==A），
+故许可只判 A 档。闸门顺序：<b>数据闸 → 统计闸（edge/R3/跨步长）→ 池化闸</b>，任一不过即不出票。</div>
+
+<h2>六、口径与局限</h2>
+<div class="card"><ul>
+<li>打分因子 = <code>_tplus_lab.PRIOR</code> 的 9 个先验固定因子（不在本页挑、不网格搜），
+    逐日在<b>域内</b>转横截面分位后等权平均；分档 A=前10% / B=前25% / C=其余
+    （与 <code>build_tplus.rank_rows</code> 同口径）。</li>
+<li>做T模拟 = <code>_tplus_lab._sim_default</code>（线上现行：买区 +2% / 卖区 max(2.5%, 1.2×ATR%) /
+    止损 −6% / 持有 5 日；同日既触买又触卖保守记完成一轮）。<b>参数一律不在本页调</b>。</li>
+<li>面板窗口 2025-11-11 ~ 2026-09-03（196 个信号日），数据全离线真实日K，不联网、不补造。</li>
+<li>本池<b>不重复已证伪的结论</b>：环境门控（<code>_tplus_env_gate</code>）已独立判「不可判」，
+    主升精选的二值门控<b>严禁</b>套用到做T（点估计上弱势档还高于强势档）。</li>
+<li>本页判定的是<b>「A 档这条规则有没有超额」</b>，<b>不做规则改良</b>：负 edge 不代表反向做能赚，
+    是不该拿它出票。</li>
+</ul></div>
+<div class="note"><a href="index.html">← 返回做T池</a> ｜ <a href="tplus-2026-09-30.html">当期做T池页面</a> ｜ <a href="lab.html">原始回测实验室</a> ｜ <a href="env_gate.html">环境门控核验</a></div>
+</div></body></html>
