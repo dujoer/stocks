@@ -57,6 +57,10 @@ STEADY_GAP = 0.12            # 最大/最小 K 胜率差超过它 → 判「单�
 
 RUN_LABELS = {1: "首板", 2: "二板", 3: "三板", 4: "四板", 5: "五板", 6: "六板以上"}
 
+# 网格遍历顺序（只影响产物里键的排列；口径与顺序无关）
+STAGE_ORDER = ("冰点", "回暖", "高潮", "退潮")
+RUN_ORDER = ("首板", "二板", "三板", "四板", "五板", "六板以上")
+
 
 def run_bucket(run):
     """连板数 → 分组标签（>=6 归到「六板以上」，再往上样本会碎成针）。"""
@@ -477,6 +481,7 @@ def candidates(ds, sig, closes, runs, best, quotes, stages):
 EXEC_STOP = 0.05            # 跌破买入价 5%（页面第六节）
 EXEC_HOLD = 5               # 满 5 个交易日时间止损
 EXEC_DEFER = 5              # 跌停卖不掉时最多顺延几个交易日
+EXEC_COST = 0.002           # 双边交易成本假设（印花税 0.05% + 佣金 + 过户费），保守取 0.2%
 
 
 def _bar_at(bars, date):
@@ -591,21 +596,32 @@ def realizable(cache, sig, stages, stage, run_name, hold=EXEC_HOLD):
       **严禁**看到它数字好就回去把止损删掉 —— 那是在同一份数据上挑口径，
       正是红线里的「挑最好看的那个窗口」。要改规则必须重走 walk-forward + 随机对照。
     """
-    def pick(stage_only, run_only):
-        out = []
-        for d, lst in sorted(sig.items()):
-            if stages.get(d) != stage_only:
-                continue
-            for code, _c, run in lst:
-                if run_only is not None and run_bucket(run) != run_only:
-                    continue
-                one = _scan_one(cache, stages, d, code, hold)
-                if one:
-                    out.append(one)
-        return out
+    rows = _scan_stage(cache, sig, stages, stage, hold)
+    tgt = [one for b, one in rows if b == run_name]
+    base = [one for _b, one in rows]
+    return _summarize(tgt, base, stage, run_name, hold)
 
-    tgt = pick(stage, run_name)
-    base = pick(stage, None)
+
+def _scan_stage(cache, sig, stages, stage, hold):
+    """扫出某情绪阶段**全部涨停票**的实现结果，带连板桶标签。
+
+    ★ 网格口径的关键：**一个阶段只扫一遍**（旧写法是「形态扫一遍、基线再扫一遍」，
+      同一份数据算两次＝无用功）。形态 = 从这份全样本里按连板桶过滤，基线 = 全样本本身。
+      既省一半机时，又保证两边成交假设天然完全一致（不会悄悄用不同口径比）。
+    """
+    out = []
+    for d, lst in sorted(sig.items()):
+        if stages.get(d) != stage:
+            continue
+        for code, _c, run in lst:
+            one = _scan_one(cache, stages, d, code, hold)
+            if one:
+                out.append((run_bucket(run), one))
+    return out
+
+
+def _summarize(tgt, base, stage, run_name, hold):
+    """某形态的实现结果 vs 同阶段全样本基线 → 结论 dict。"""
     n_unx = sum(1 for r in tgt if r["unexec"])
     reasons = collections.Counter()
     for r in tgt:
@@ -641,7 +657,38 @@ def realizable(cache, sig, stages, stage, run_name, hold=EXEC_HOLD):
         d["optimism_pp"] = (d["page"]["win"] - r1["win"]) * 100
     else:
         d["optimism_pp"] = None
+    # ★ 绝对判据（**能不能赚**）：毛利扣掉固定双边成本后是否仍为正。
+    #   ⚠ 这与「第④道 pass」是两码事：pass 是**相对**判据（比同阶段同口径基线好），
+    #     而基线自身就是负期望 —— **赢了基线不等于能赚**。
+    #   成本假设写死（EXEC_COST），不做参数扫描，避免「调成本把结论调好看」。
+    if r1:
+        d["net_mean"] = r1["mean"] - EXEC_COST
+        d["net_positive"] = bool(r1["mean"] > EXEC_COST)
+    else:
+        d["net_mean"] = None
+        d["net_positive"] = None
     return d
+
+
+def realizable_grid(cache, sig, stages, hold=EXEC_HOLD):
+    """把**全部** (阶段 × 连板桶) 组合都过一遍第④道，回答「是不是整个龙道诀都不可执行」。
+
+    上一轮只给当前最优那一个形态判了死刑 —— 那答不了「别的形态呢」。
+    这里把 4 阶段 × 6 连板桶共 24 格全跑可实现口径，每格与**同阶段、同口径**基线对照。
+    返回 {stage: {run_bucket: summarize_dict}}；每阶段全样本只扫一遍（见 _scan_stage）。
+    """
+    grid = {}
+    for stage in STAGE_ORDER:
+        rows = _scan_stage(cache, sig, stages, stage, hold)
+        if not rows:
+            continue
+        base = [one for _b, one in rows]
+        cell = {}
+        for rb in RUN_ORDER:
+            t = [one for b, one in rows if b == rb]
+            cell[rb] = _summarize(t, base, stage, rb, hold)
+        grid[stage] = cell
+    return grid
 
 
 # ------------------------------------------------------------------ 自测
@@ -805,6 +852,14 @@ def main():
     else:
         res["exec"] = None
 
+    # ★ 第④道全网格：4 阶段 × 6 连板桶全过一遍，回答
+    #   「是不是整个龙道诀都不可执行」（只验当前最优那一个答不了这个）。
+    try:
+        res["exec_grid"] = realizable_grid(cache, sig, res["stages"], EXEC_HOLD)
+    except Exception as e:
+        res["exec_grid"] = dict(err=str(e)[:120])
+        print("[odds] 全网格核验失败：%s" % str(e)[:80])
+
     res.pop("stages", None)          # 250 项的中间表，不进产物
 
     res = norm_keys(res)        # 落盘前统一把 int 键规范成 str
@@ -842,6 +897,19 @@ def main():
               % (_p(ex.get("base_rule_open1")), ex.get("n_unexec") or 0, ex.get("n_sample") or 0,
                  (ex.get("unexec_rate") or 0) * 100,
                  "通过" if ex.get("pass") else ("不通过" if ex.get("pass") is False else "不可判")))
+    g = res.get("exec_grid") or {}
+    if g and not g.get("err"):
+        tot = passed = netpos = 0
+        for _st, cell in g.items():
+            for _rb, r in cell.items():
+                if r.get("pass") is not None:
+                    tot += 1
+                    if r["pass"]:
+                        passed += 1
+                if r.get("net_positive"):
+                    netpos += 1
+        print("        第④道全网格：可判 %d 格、过相对判据 %d 格、**扣成本后净均值为正 %d 格**"
+              % (tot, passed, netpos))
     print("[odds] 落盘 %s" % path)
     return 0
 

@@ -642,6 +642,72 @@ def render_cand(ctx):
 RISK_PER_TRADE = 0.015      # 单笔风险预算（占本金）—— 用来从「历史最差」反推仓位上限
 
 
+def render_grid(eg):
+    """全阶段 × 全连板桶 的第④道网格：回答「是不是整个龙道诀都不可执行」。"""
+    o = ["<h3>先说结论：把 24 个（阶段 × 连板）组合全过一遍第④道 —— 能执行的<b>没有</b></h3>"]
+
+    def _gwp(s):
+        return "—" if not s else "%.1f%%" % (s["win"] * 100)
+
+    def _gsp(v):
+        return "—" if v is None else ("%+.2f%%" % (v * 100)).replace("-", "−")
+
+    def _gpp(v):
+        return "—" if v is None else ("%+.1fpp" % v).replace("-", "−")
+
+    tot = pn = nn = 0
+    for _st, cell in eg.items():
+        for _rb, r in cell.items():
+            if r.get("pass") is not None:
+                tot += 1
+            if r.get("pass"):
+                pn += 1
+            if r.get("net_positive"):
+                nn += 1
+    o.append("<div class='warn'>上一轮只给「当前最优」那<b>一个</b>形态判了死刑，答不了「别的形态呢」。"
+             "这一轮把 <b>4 阶段 × 6 连板桶 = 24 格</b>全按真实成交约束"
+             "（次日开盘入场、封死跌停顺延、一字买不进剔除）跑了一遍："
+             "<b>%d 格</b>样本够判，其中 <b>%d 格</b>胜率高于同阶段、同口径的基线；"
+             "但<b>扣掉双边成本（0.2%%）后净均值为正的，只剩 %d 格</b>。</div>" % (tot, pn, nn))
+    o.append("<div class='note'><b>「过判据」和「能赚钱」是两件事，别混。</b>"
+             "判据是<b>相对</b>的：胜率比同阶段随便买涨停票高就算过。"
+             "但请看每一格的基线本身 —— 在 −5% 止损 + 满 5 日的可实现打法下，"
+             "<b>涨停票整体就是负期望</b>（各阶段基线均值 −0.3% 到 −1.1%），"
+             "根子是 −5% 这条止损线对涨停票<b>太近</b>，日内噪音就能打掉。"
+             "所以<b>赢了基线不等于不亏</b>，要横向看最后一列的「净均值」。</div>")
+    for st, cell in eg.items():
+        o.append("<div class='card' style='padding:10px 12px'><b>%s期</b>" % st)
+        o.append("<table><tr><th>连板形态</th><th class='num'>样本</th><th class='num'>买不进</th>"
+                 "<th class='num'>页面口径</th><th class='num'>可实现胜率</th>"
+                 "<th class='num'>净均值</th><th class='num'>相对基线</th><th>第④道</th></tr>")
+        for rb, r in cell.items():
+            ro = r.get("rule_open1")
+            n = r.get("n_sample") or 0
+            if ro is None:
+                o.append("<tr><td>%s</td><td class='num'>%d</td><td class='num'>—</td>"
+                         "<td class='num'>—</td><td class='num'>—</td><td class='num'>—</td>"
+                         "<td class='num'>—</td><td>样本不足</td></tr>" % (rb, n))
+                continue
+            if r.get("net_positive"):
+                verdict, sty = "<b>过 · 净正</b>", " style=\"background:#fff4ef\""
+            elif r.get("pass"):
+                verdict, sty = "过 · 仍亏", ""
+            else:
+                verdict, sty = "不过", ""
+            o.append("<tr%s><td>%s</td><td class='num'>%d</td><td class='num'>%.1f%%</td>"
+                     "<td class='num'>%s</td><td class='num'>%s</td><td class='num'>%s</td>"
+                     "<td class='num'>%s</td><td>%s</td></tr>"
+                     % (sty, rb, n, (r.get("unexec_rate") or 0) * 100,
+                        _gwp(r.get("page")), _gwp(ro), _gsp(r.get("net_mean")),
+                        _gpp(r.get("edge_pp")), verdict))
+        o.append("</table></div>")
+    o.append("<div class='note'>读法：<b>页面口径</b>＝第四节那个静态胜率；"
+             "<b>可实现胜率</b>＝按真实成交约束重算；<b>净均值</b>＝可实现口径下每次交易的"
+             "平均收益、已扣 0.2% 双边成本；<b>相对基线</b>＝可实现胜率 − 同阶段同口径基线。"
+             "四列里只有 <b>净均值 &gt; 0</b> 才代表这套打法本身不亏。</div>")
+    return "".join(o)
+
+
 def render_plan(ctx):
     o = ["<h2>六、配套的操作方案（规则层，不是指令）</h2>"]
     od = ctx.get("odds") or {}
@@ -666,7 +732,11 @@ def render_plan(ctx):
                  "这种时候不判「通过」，也不判「不通过」，而是<b>不给结论</b>。"
                  "下面的方案因此只是纸面推导。</div>" % ex["err"][:80])
     elif ex:
-        o.append("<h3>先说结论：第④道「退出可兑现」补做了，结果是<b>不通过</b></h3>")
+        eg = od.get("exec_grid") or {}
+        if eg and not eg.get("err"):
+            o.append(render_grid(eg))
+        o.append("<h3>再细看当前这个形态（%s期 · %s）差在哪</h3>"
+                 % (ex.get("stage") or "—", ex.get("run") or "—"))
         o.append("<div class='warn'>这一节最该看的就是下面这张表。<b>同一个形态、同一批样本</b>，"
                  "只把「买在哪、怎么卖」换成真实成交约束，胜率就从 <b>%s</b> 掉到 <b>%s</b>，"
                  "而且<b>低于同口径的基线</b>（%s）<b>%+.1fpp</b> —— 也就是说，"
@@ -775,7 +845,12 @@ def render_plan(ctx):
                  "第 ④ 道<b>补做后不通过</b>。按红线，<b>四道不全过就不出票</b>。"
                  "第四节「胜率最高的形态」作为<b>历史统计规律</b>仍然成立（那是真的），"
                  "但<b>「按上面这套规则去做能赚钱」这个推论不成立</b>："
-                 "换成买得到、卖得掉的打法，它的胜率反而<b>低于</b>同阶段随便买涨停票。</div>")
+                 "换成买得到、卖得掉的打法，它的胜率反而<b>低于</b>同阶段随便买涨停票。"
+                 "<br>而且这不是<b>这一个</b>形态的问题：本节开头把 24 格全过了，"
+                 "扣成本后净均值为正的<b>只有 1 格</b>（回暖期 · 五板，样本仅 54 只），"
+                 "其余<b>全部为负</b> —— 说明问题出在<b>这套退出规则本身</b>（−5% 止损太近），"
+                 "不是「形态选错了」。要救它得先证明换成别的退出能站住，"
+                 "而那必须重走 walk-forward + 随机对照，<b>不能拿这份数据现挑</b>。</div>")
     else:
         o.append("<div class='warn'><b>这条方案还过不了出票闸，先别当真</b>："
                  "它现在只是<b>研究结论</b>。四道里前三道已满足，第 ④ 道「退出可兑现」"
