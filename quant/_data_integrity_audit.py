@@ -348,6 +348,19 @@ def main():
         pass
     ma_sites = _ma
 
+    # 长K统一层直读 + C3 判据自测（现读，不写死）
+    lk_rows = []
+    selftest_cases = 0
+    try:
+        import _txk as _TX
+        _ld = os.path.join(HERE, "_long_kline.json")
+        if os.path.exists(_ld):
+            lk_rows = _TX.scan_longk_readers(HERE)      # 只在真有长K缓存时统计
+        selftest_cases = len(_TX._SELFTEST_CASES) * 2   # 日K / 长K 各跑一遍
+    except Exception:
+        pass                                            # 读不到就当 0，别让渲染崩
+    lk_scripts = len(lk_rows)
+
     # ---------------- 渲染 ----------------
     def lic_table():
         if not ad:
@@ -565,8 +578,17 @@ dict 迭代序随字符串 hash 变 → 只是<b>输出键序</b>漂，bootstrap
 这是数据源（东财）自身滞后，非本地漏跑；影响面已由修复 4 的数据闸围住。</li>
 <li><b>日K主缓存直读已收敛</b>：本轮扫下来绕过统一层直接读 <code>_txk_cache.json</code> 的脚本
 剩 <b>{txk_scripts}</b> 个 / <b>{txk_points}</b> 处（写路径 <code>_tx_fetch.py</code> 等按白名单豁免）。
-这道判断已接进门禁的 <b>C3</b> 项 —— 以后新增直读会被当场拦下，不再靠人工 grep
-（上一轮手工改了 11 个调用点，仍漏掉日更底座 <code>_datahub.py</code>，就是这个原因）。</li>
+这道判断已接进门禁的 <b>C3</b> 项，并<b>扩到长K <code>_long_kline.json</code>（401MB，比日K还大）</b>——
+另一条统一层 <code>_longk.py</code> 的直读同样扫，当前日K <b>0</b> 条 / 长K <b>{lk_scripts}</b> 条。
+（上一轮手工改了 11 个调用点，仍漏掉日更底座 <code>_datahub.py</code>，就是这个原因）</li>
+<li><b>C3 这道门禁自己也被验了真</b>：判据（<code>_txk.scan_text</code>）抽成纯函数后配了
+<b>{selftest_cases} 组内置样例</b>（字面量内嵌 / 大写常量 / 局部别名 / 改道后不算 / 只列文件名不
+load / 已接统一层 / 注释里提到 —— 日K 长K 各跑一遍），<code>python _txk.py --selftest</code> 可单独跑，
+每次门禁也会先自证再判人；样例对不上就直接判「判据坏了，下面 0 条不可信」，<b>不让假绿灯溜过去</b>。
+更狠的一步是<b>故障注入</b>：临时塞一个故意直读的脚本进 <code>quant/</code>，门禁当场报出「行 5」、
+退出码变 2 才放行 —— <b>不注入验证过「0 条」的门禁，等于没有门禁</b>。
+顺带修了个误报：判据原先不剥注释，会把「门禁自己那行注释提及 <code>json.load … _txk_cache.json</code>」
+当成真直读，<b>门禁拿自己当靶子</b>。现在先剥行尾注释（<code>#</code> 在引号内不算注释）。</li>
 <li><b><code>MA</code> / <code>ATR</code> 有多处本地实现</b>：<code>{ma_sites}</code> 行各写各的。
 当前口径一致，未强制合并——合并在 297 个脚本的仓库里属侵入改造，风险大于收益。</li>
 <li><b>推送白名单漏网（门禁 C2 抓出）</b>：日更链路里 <b>13 个生成器脚本</b>没进

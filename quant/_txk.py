@@ -39,6 +39,7 @@
 from __future__ import annotations
 import os
 import io
+import re
 import glob
 import json
 import time
@@ -238,53 +239,155 @@ TXK_READ_ALLOW = (
     "_datahub_api.py",               # 在线服务口，自己管连接与新鲜度校验
 )
 
+#: 长K统一层 `_longk.py`（管 401MB 的 _long_kline.json）的豁免名单。
+#: ★ 与 TXK_READ_ALLOW 分开列：不能让日K侧的豁免顺带盖掉长K侧，
+#:   也不能反过来 —— 两条缓存各有各的写路径。
+LONG_READ_ALLOW = (
+    "_longk.py",                     # 统一层自身
+    "_data_integrity_audit.py",
+    "_datahub_api.py",
+    "_fetch_long_kline.py",          # ★ 写路径：抓取并回写长K缓存
+)
 
-def scan_txk_readers(quant_dir=None, skip=None):
-    """扫出「直读 _txk_cache.json 却没走统一层」的脚本 → [(name, 处数, [行号])]。
+_ASSIGN_RE = re.compile(r"^\s*(\w+)\s*=")
+#: 抓 `json.load(open(<变量>(, ...))` 里的变量名
+_LOADARG_RE = re.compile(r"json\.load\(\s*open\(\s*(\w+)")
+
+
+def _strip_comment(line):
+    """去掉行尾注释（`#` 只有落在引号外才算注释）。返回剥过的新行（原行不变）。"""
+    q = None
+    for i, ch in enumerate(line):
+        if q:
+            if ch == q:
+                q = None
+        elif ch in "\"'":
+            q = ch
+        elif ch == "#":
+            return line[:i].rstrip()
+    return line.rstrip()
+
+
+def scan_text(text, token, importer):
+    """从**一段源码文本**里找「直读该缓存却没走统一层」的位置 → [(行号, 归因)]。
+
+    纯函数（不碰文件系统），所以能拿内置样例做**反向自测** —— 这道门禁自己
+    也从没被验过会不会假绿，正则一改就悄悄失效，必须能自证。
 
     用轻量数据流追踪而非文本匹配：`p = …_txk_cache.json` 之后 `json.load(open(p))`
     是真直读，但同一个 `p` 随后被改成 `macd_scan_*.json` 就不是了。只做文本匹配
     会两头错（漏检局部别名 + 误报改道后的 load）。
     """
-    import re
+    if re.search(r"^import %s\b" % re.escape(importer), text, re.M):
+        return []                     # 已接统一层 → 不判（自测里显式验这条）
+    state, hits = {}, []
+    for i, raw in enumerate(text.split("\n"), 1):
+        # ★ 先剥注释：门禁自己那行注释就写着「json.load 打开 _txk_cache.json」，
+        #   不剥的话门禁拿自己当靶子报一条（实测真发生过），白白消耗可信度。
+        #   `#` 在引号内不算注释，字符串里的文件名要留着。
+        L = _strip_comment(raw)
+        m = _ASSIGN_RE.match(L)
+        if m:                                          # 行首赋值：更新「该变量此刻指向什么」
+            state[m.group(1)] = (token in L)
+        if "json.load" not in L:
+            continue
+        if token in L:                                 # 字面量内嵌
+            hits.append((i, "literal"))
+            continue
+        for v in _LOADARG_RE.findall(L):
+            if state.get(v):
+                hits.append((i, "alias:" + v))
+                break
+    ded = []
+    for h in hits:                                     # 相邻行合并，避免一处两行算两下
+        if not ded or h[0] - ded[-1][0] > 1:
+            ded.append(h)
+    return ded
+
+
+def scan_readers(token, importer, allow=(), quant_dir=None, skip=None):
+    """扫 quant/*.py，返回「直读 <token> 却没 import <importer>」的脚本 → [(名, 处数, [行号])]。"""
     base = quant_dir or HERE
     skip = set(skip or ()) | {os.path.basename(__file__)}   # 自身别扫
     out = []
     for path in sorted(glob.glob(os.path.join(base, "*.py"))):
         name = os.path.basename(path)
-        if name in skip or name in TXK_READ_ALLOW or name.startswith("_legacy"):
+        if name in skip or name in allow or name.startswith("_legacy"):
             continue
         try:
-            lines = io.open(path, encoding="utf-8").read().split("\n")
+            text = io.open(path, encoding="utf-8").read()
         except OSError:
             continue
-        if re.search(r"^import _txk\b", "\n".join(lines), re.M):
-            continue                                   # 已接统一层
-        state, hits, _ASSIGN = {}, [], re.compile(r"^\s*(\w+)\s*=")
-        for i, L in enumerate(lines, 1):
-            m = _ASSIGN.match(L)
-            if not m:
-                continue
-            if "_txk_cache" in L:
-                state[m.group(1)] = True               # 此刻该变量指向大缓存
-            else:
-                state[m.group(1)] = False              # 被别的赋值覆盖
-            if "json.load" not in L:
-                continue
-            if "_txk_cache" in L:                      # 字面量内嵌
-                hits.append(i)
-                continue
-            for v in re.findall(r"json\.load\(\s*open\(\s*(\w+)", L):
-                if state.get(v):
-                    hits.append(i)
-                    break
-        hits = [h for j, h in enumerate(hits) if j == 0 or h - hits[j - 1] > 1]
+        hits = scan_text(text, token, importer)
         if hits:
-            out.append((name, len(hits), hits))
+            out.append((name, len(hits), [h[0] for h in hits]))
     return out
 
 
+def scan_txk_readers(quant_dir=None, skip=None):
+    """★ 单一真源：门禁 C3 与审计页都调它，别在别处另写一份判据。"""
+    return scan_readers("_txk_cache", "_txk", TXK_READ_ALLOW, quant_dir, skip)
+
+
+def scan_longk_readers(quant_dir=None, skip=None):
+    """长K（401MB _long_kline.json）的直读扫描，与日K同一套判据。"""
+    return scan_readers("_long_kline", "_longk", LONG_READ_ALLOW, quant_dir, skip)
+
+
+#: (说明, 源码文本, 期望命中的条数)。0 条 = 期望它**不**报（负例）。
+#: 覆盖四种形态：字面量内嵌 / 大写常量 / 局部别名 / 改道后不应误报；
+#: 外加一条「已 import 统一层」—— 此时即使有裸 load 也不该报。
+#: 样例用 `{tok}` 占位：同一组形态对日K / 长K 都跑一遍，别把文件名写死进样例
+#: （第一版就把 `_txk_cache.json` 硬编码了，长K 三条正例全测不出来 —— 自测当场炸出来）。
+_SELFTEST_CASES = (
+    ("字面量内嵌",
+     'cache = json.load(open(os.path.join(Q, "{tok}")))', 1),
+    ("大写常量",
+     'CACHE = os.path.join(Q, "{tok}")\nk = json.load(open(CACHE, encoding="utf-8"))', 1),
+    ("局部别名",
+     'p = os.path.join(QUANT, "{tok}")\nk = json.load(open(p, encoding="utf-8"))', 1),
+    ("改道后不算直读",
+     'p = os.path.join(QUANT, "{tok}")\np = os.path.join(QUANT, "macd_scan.json")\nk = json.load(open(p))', 0),
+    ("只列文件名不 load",
+     'CACHE = os.path.join(Q, "{tok}")\nprint(CACHE)', 0),
+    ("已接统一层则不报",
+     'import {imp}\nbars = json.load(open("{tok}"))', 0),
+    ("注释里提到不算直读",
+     '# 说明：这里 json.load 打开 "{tok}" 只是注释\nk = 1', 0),
+    ("行尾注释不挡住真直读",
+     'p = os.path.join(QUANT, "{tok}")  # 本地大缓存\nk = json.load(open(p))  # 直接读', 1),
+)
+
+
+def selftest_scan(verbose=True):
+    """反向自测扫描器本身：内置样例跑一遍，命中条数不符就炸。
+
+    ★ 这道门禁自己也会失效（正则/数据流一改就假绿），所以「门禁」之前先有「门禁的门禁」。
+    返回(bool, [str])；失败即 SystemExit，不会被当成通过。
+    """
+    bad, lines = [], []
+    for token, importer in (("_txk_cache", "_txk"), ("_long_kline", "_longk")):
+        for desc, tpl, want in _SELFTEST_CASES:
+            src = tpl.format(tok=token, imp=importer)
+            got = len(scan_text(src, token, importer))
+            ok = (got == want)
+            if not ok:
+                bad.append("%s/%s：期望 %d 处，实际 %d 处" % (token, desc, want, got))
+            lines.append("    %-4s %-18s %-14s 期望 %d / 实得 %d"
+                         % ("ok" if ok else "FAIL", token, desc, want, got))
+    if verbose:
+        print("[C3 判据自测] %d 组样例" % (2 * len(_SELFTEST_CASES)))
+        print("\n".join(lines))
+        print("    结果：%s" % ("PASS" if not bad else "FAIL"))
+    return (not bad), bad
+
+
 if __name__ == "__main__":
+    if "--selftest" in sys.argv:
+        ok, bad = selftest_scan()
+        for b in bad:
+            print("  ! " + b)
+        raise SystemExit(0 if ok else 1)
     t0 = time.time()
     d = load()
     t1 = time.time()

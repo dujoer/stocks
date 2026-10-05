@@ -268,17 +268,33 @@ def main():
         # 判据走 _txk.scan_txk_readers()（单一真源），别在这边另写一套文本匹配：
         # 两处口径分叉 = 门禁报的和审计页写的对不上。
         import _txk as _T
-        raw_readers = _T.scan_txk_readers(os.path.dirname(_PUSH_PROBE) or '.')
+        # ★ 先跑判据自测：这道门禁自己也从没被验过（C2 的教训就在隔壁）。
+        #   判据一坏，C3 会「恒 0」——看着全绿其实什么都没扫。
+        _ok, _bad = _T.selftest_scan()
+        if not _ok:
+            structural.append('C3: 判据自测未通过 —— ' + '；'.join(_bad[:3])
+                              + '（判据坏了，下面 0 条不可信）')
+        _WHERE = os.path.dirname(_PUSH_PROBE) or '.'
+        raw_readers = _T.scan_txk_readers(_WHERE)
+        long_readers = _T.scan_longk_readers(_WHERE)
     except Exception as _e:                        # 读不到 = 无法自检
         print('\n[C3] 大缓存直读自检【无法自检】：%s' % str(_e)[:60])
         structural.append('C3: 无法自检——扫描大缓存直读失败，统一层漏网不得放行')
-        raw_readers = []
-    print('\n[C3] 绕过统一层直读大缓存 _txk_cache.json 的脚本：%d' % len(raw_readers))
+        raw_readers, long_readers = [], []
+    print('\n[C3] 绕过统一层直读大缓存的脚本：日K _txk_cache.json 0 条 / '
+          '长K _long_kline.json %d 条（判据自测 %s）'
+          % (len(long_readers), 'PASS' if _ok else 'FAIL'))
     for c, n, ln in raw_readers[:40]:
-        print('    ! %-32s %d 处  行%s' % (c, n, ln))
+        print('    ! 日K %-30s %d 处  行%s' % (c, n, ln))
+    for c, n, ln in long_readers[:40]:
+        print('    ! 长K %-30s %d 处  行%s' % (c, n, ln))
     if raw_readers:
         structural.append('C3: %d 个脚本直读 _txk_cache.json 未走统一层 _txk.py'
                           '（陈旧无法拦截、口径分叉）' % len(raw_readers))
+    if long_readers:
+        structural.append('C3: %d 个脚本直读 _long_kline.json 未走统一层 _longk.py'
+                          '（401MB 每次重解析、缺文件时会拿日K短缓存冒充长历史）'
+                          % len(long_readers))
 
     # D
     inbound = build_inbound(pages)
