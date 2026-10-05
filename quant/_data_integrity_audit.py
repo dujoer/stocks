@@ -296,7 +296,7 @@ B 档在 20 日 R3=92.6% 不达标却在 60 日 99.95% 被放行 —— 这是�
 <h3>修复 3 · K 线缓存无新鲜度校验</h3>
 <div class="danger"><b>问题</b>：<code>_tx_fetch.fetch_kline</code> 命中缓存只看条数
 （<code>len ≥ n-8</code>）、<b>不看末根日期</b>，旧价会被静默当作当日价算指标。
-实测缓存 {stale_txt} 只票末根 &lt; {asof}，另有 {len(kf.get("nonstock") or [])} 个非股票代码
+实测缓存 {stale_txt} 末根 &lt; {asof}，另有 {len(kf.get("nonstock") or [])} 个非股票代码
 （可转债）混入。</div>
 <div class="ok"><b>修复</b>：新增 <code>set_asof()</code> / <code>stale_codes()</code> / <code>is_stock()</code>；
 命中缓存时校验末根 ≥ asof，陈旧则<b>自动重新联网补拉</b>；日更第一步

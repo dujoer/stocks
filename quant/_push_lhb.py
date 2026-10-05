@@ -11,9 +11,13 @@
 鉴权方式：读取环境变量 GH_PAT（或 GITHUB_TOKEN）作为 Bearer Token，绝不硬编码。
 本地私有 token 文件路径（~/.workbuddy，不在仓库内、不会被上传）：C:/Users/nonoy/.workbuddy/gh_pat.txt
 用法：
-    set GH_PAT=ghp_xxx
-    python quant/_push_lhb.py
-说明：本脚本仅做 Contents API 的 create/update；每个文件独立提交，失败不阻断其余。
+    python quant/_push_lhb.py --dry-run     # 只列差异清单，不写入（推荐先跑这个）
+    python quant/_push_lhb.py               # 逐文件 PUT（Contents API）
+    python quant/_push_lhb.py --only web/docs/   # 只推某子目录
+说明：本脚本仅做 Contents API 的 create/update；每个文件独立提交。
+      ⚠ **大批量（数百文件）请改用 `_push_incremental.py`** —— 它按 git blob sha 算增量、
+      走 Git Data API 批量提交，快得多（本脚本逐文件 PUT 在沙箱 10 分钟硬超时下会被 SIGTERM）。
+      本脚本适合小批量/单文件精修。
       强制排除任何含 portfolio / bottom-up / portfolio_analysis 的文件（硬规矩：不对外展示持仓/选股）。
 """
 import os, sys, json, base64, glob as _glob, re, urllib.request, urllib.error
@@ -43,6 +47,10 @@ EXCLUDE_FRAGMENTS = ("portfolio", "bottom-up", "portfolio_analysis", "_all_store
                      "_mcp_cache")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# commit message 前缀。历史坑：原实现把一段**写死的旧文案**贴在每个文件上
+# （「做T池加箱体…修复排序双重绑定」），与当次改动无关 —— 记录失真。
+# 现改为可用环境变量 PUSH_MSG 覆盖，默认中性描述。
+COMMIT_MSG = os.environ.get("PUSH_MSG") or "chore: 日更同步（页面/生成器/数据源）"
 
 # (本地相对仓库根的路径) — 框架 / 生成器 / 门户 / 手册（本次重构真实改动/新增的文件）
 FILES = [
@@ -294,7 +302,7 @@ def push_file(rel):
     content = base64.b64encode(raw).decode("ascii")
     sha = get_sha(rel)
     body = {
-        "message": f"feat: 做T池加箱体最大理论涨幅列 · 选股模块统一加宽 1440 · 修复排序双重绑定（{rel})",
+        "message": f"{COMMIT_MSG}（{rel}）",
         "content": content,
         "branch": BRANCH,
     }
@@ -308,12 +316,84 @@ def push_file(rel):
     except urllib.error.HTTPError as e:
         print(f"  ❌ 失败 {rel}: HTTP {e.code} {e.read().decode('utf-8','replace')[:200]}")
 
+def _prepare(rel):
+    """读出待推内容的最终字节（含与 push_file 相同的防御性清洗）。不存在返回 None。"""
+    local = os.path.join(ROOT, rel)
+    if not os.path.exists(local):
+        return None
+    with open(local, "rb") as f:
+        raw = f.read()
+    if rel.endswith(".html"):
+        try:
+            txt = raw.decode("utf-8")
+            txt = re.sub(r' data-page-node-id="[^"]*"', "", txt)
+            raw = txt.encode("utf-8")
+        except Exception:
+            pass
+    return raw
+
+
+def local_blob_sha(raw):
+    """git blob sha —— 与 GitHub contents API 返回的 sha 同口径，用于 dry-run 比对。"""
+    import hashlib
+    h = hashlib.sha1()
+    h.update(b"blob %d\0" % len(raw))
+    h.update(raw)
+    return h.hexdigest()
+
+
+def dry_run(targets):
+    """只比对本地与远端 blob sha，列出「待推/已一致/缺失」，不写入任何东西。
+
+    ★ 2026-10-05 加：此前本脚本**没有 --dry-run**，误传该参数会被 argparse 之外
+      的写法静默忽略 → 直接真实全量推送。补上后，推送前可先核对清单。
+    """
+    new = upd = same = miss = 0
+    pend = []
+    for rel in targets:
+        raw = _prepare(rel)
+        if raw is None:
+            miss += 1
+            print(f"  缺失(本地不存在): {rel}")
+            continue
+        remote = get_sha(rel)
+        if remote is None:
+            new += 1
+            pend.append(rel)
+            print(f"  [新建] {rel}")
+        elif remote == local_blob_sha(raw):
+            same += 1
+        else:
+            upd += 1
+            pend.append(rel)
+            print(f"  [更新] {rel}")
+    print(f"\n=== dry-run 汇总 === 待推 {len(pend)} 个（新建 {new} / 更新 {upd}）｜"
+          f"已一致 {same} 个｜本地缺失 {miss} 个")
+    print("（dry-run：未写入任何文件。确认无误后去掉 --dry-run 再跑。）")
+    return pend
+
+
 if __name__ == "__main__":
+    import argparse
+    _ap = argparse.ArgumentParser(add_help=True,
+                                  description="推送 web/ 全站页面、生成器与数据源到 GitHub")
+    _ap.add_argument("--dry-run", action="store_true",
+                     help="只列出与远端的差异（新建/更新/已一致），不实际推送")
+    _ap.add_argument("--only", default=None,
+                     help="只处理路径含该子串的文件（便于小批量推送）")
+    _a, _unknown = _ap.parse_known_args()
+    if _unknown:
+        print("⚠ 忽略无法识别的参数：%s" % " ".join(_unknown))
     if not TOKEN:
         print("未检测到 GH_PAT / GITHUB_TOKEN 环境变量，无法推送。")
-        print("请先执行： set GH_PAT=你的GitHubPAT  然后再运行本脚本。")
+        print("请先执行： export GH_PAT=你的GitHubPAT  然后再运行本脚本。")
         sys.exit(2)
-    print(f"推送到 {REPO}@{BRANCH} ...")
-    for rel in FILES:
+    _targets = [r for r in FILES if (not _a.only or _a.only in r)]
+    print(f"推送到 {REPO}@{BRANCH} ... 目标 {len(_targets)} 个文件"
+          + ("（dry-run，不写入）" if _a.dry_run else ""))
+    if _a.dry_run:
+        dry_run(_targets)
+        sys.exit(0)
+    for rel in _targets:
         push_file(rel)
     print("完成。")

@@ -266,7 +266,7 @@ v5 那套「距 52 周高回撤 ≥18%」的域定义是<b>负向筛选</b>，�
 <table data-wb><tr><th>档</th><th>可出票？</th><th>依据</th></tr><tr><td>A 档（现行出票）</td><td>不出票</td><td>主步长 edge -0.238pp ≤ 0；R3 29.9% < 95% 门槛；step3 edge -0.025pp ≤ 0</td></tr><tr><td>B 档（10~25%）</td><td>不出票</td><td>step3 R3 85.5% < 95%</td></tr><tr><td>闸门全开</td><td>不出票</td><td>R3 66.8% < 95% 门槛；step3 R3 55.4% < 95%</td></tr></table>
 <div class="note"><code>rev_pool.py</code> 每日调用 <code>_rev_gate_page.emit_license()</code>：
 只有 <b>edge&gt;0 且 R3≥95% 且跨步长同号</b>的档才允许出票；<b>读不到证据 JSON 一律不出票</b>。
-本期许可 = <b>见表</b>。</div>
+本期许可 = <b>全部档位不出票</b>。</div>
 
 <h2>九、退出回测的成交假设（同一批票，只改成交假设）</h2><div class='box red'><b>本页所有胜率/均值都用「移动止盈」口径结算，而这个口径本身依赖两处人为假设：</b><br>① <b>日内路径</b>：旧实现假设同一根 K 线「先冲高（上移止盈线）→ 再回落（触发卖出）」→ 系统性乐观；<br>② <b>跳空</b>：开盘已跌破止损线时，旧实现仍按「止损线价」成交，真实只能按<b>开盘价</b>成交（更差）。<br>只把这两处换成可兑现版本，现行出票档（A 档）的绝对胜率就是 <b>61.76% → 60.06%（-1.70pp）</b>。⇒ 页面上的绝对胜率请以「可实现口径」为准。</div><table data-wb><tr><th>档</th><th class='num'>笔数</th><th class='num'>旧口径胜率</th><th class='num'>旧口径均值</th><th class='num'>可实现胜率</th><th class='num'>可实现均值</th><th class='num'>Δ胜率</th><th class='num'>Δ均值</th></tr><tr><td>现行出票：旧硬门槛 + 阶段底部＋证据≥2 + 组合分前 10%</td><td class='num'>646</td><td class='num'>61.76%</td><td class='num'>-0.051%</td><td class='num'><b>60.06%</b></td><td class='num'><b>+0.257%</b></td><td class='num dn'>-1.70pp</td><td class='num up'>+0.308pp</td></tr>
 <tr><td>旧硬门槛 + 阶段底部＋启动证据（不看组合分）</td><td class='num'>14476</td><td class='num'>63.92%</td><td class='num'>+0.054%</td><td class='num'><b>62.65%</b></td><td class='num'><b>+0.431%</b></td><td class='num dn'>-1.27pp</td><td class='num up'>+0.377pp</td></tr>

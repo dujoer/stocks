@@ -294,7 +294,7 @@ B 档在 20 日 R3=92.6% 不达标却在 60 日 99.95% 被放行 —— 这是�
 <h3>修复 3 · K 线缓存无新鲜度校验</h3>
 <div class="danger"><b>问题</b>：<code>_tx_fetch.fetch_kline</code> 命中缓存只看条数
 （<code>len ≥ n-8</code>）、<b>不看末根日期</b>，旧价会被静默当作当日价算指标。
-实测缓存 8 / 5049 只（0.16%） 只票末根 &lt; 2026-09-30，另有 5 个非股票代码
+实测缓存 8 / 5049 只（0.16%） 末根 &lt; 2026-09-30，另有 5 个非股票代码
 （可转债）混入。</div>
 <div class="ok"><b>修复</b>：新增 <code>set_asof()</code> / <code>stale_codes()</code> / <code>is_stock()</code>；
 命中缓存时校验末根 ≥ asof，陈旧则<b>自动重新联网补拉</b>；日更第一步
@@ -343,7 +343,7 @@ B 档在 20 日 R3=92.6% 不达标却在 60 日 99.95% 被放行 —— 这是�
 若某产物缺失，本页对应处显示「无法自检」而不是沿用上次的数字。</div>
 
 <footer>
-生成于 2026-10-05 14:49:31 ·
+生成于 2026-10-05 15:14:39 ·
 <code>quant/_data_integrity_audit.py</code> ·
 数据底座 <code>hub/manifest.json</code>（2026-09-30）<br>
 相关页面：<a href="exit_assumption_evidence.html">退出成交假设证据</a> ｜
