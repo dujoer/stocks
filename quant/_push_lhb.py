@@ -170,6 +170,11 @@ FILES = [
     # 不推送 → 线上页面会退化成「尚未运行」，等于结论丢失。
     "web/accumulation/accum_ablate.json",
     "web/accumulation/accum_oos.json",
+    # ---- 数据与逻辑一致性审计「统一获取 / 不重复 / 筛选严格」（2026-10-05）----
+    "quant/_gate_common.py",          # ★ 出票许可公共统计层（跨窗口判据 tier_license_windows 单一真源）
+    "quant/_accum_tier_gate.py",      # ★ 增仓池分档门禁（判据统一 + 数据有效性闸 + 窗口固定 2000）
+    "quant/_rev_gate_page.py",        # 反转池证据页生成器（许可返回值的语义反义修正）
+    "quant/_data_integrity_audit.py", # ★ 上述审计结论证据页生成器 → web/docs/data_integrity_audit.html
 ]
 
 # 自动纳入「带日期/版块」的页面与数据源，保证每一页都带统一导航、且数据可复现。
