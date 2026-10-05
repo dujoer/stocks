@@ -29,6 +29,71 @@ UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/120.0 Safari/537.36")
 
 _cache = None
+# ★ 当期数据日（可选）。设置后 `fetch_kline` 会对缓存做**新鲜度校验**：
+#   缓存里末根 K 线日期 < ASOF 时视为陈旧 → 自动重新联网补拉，而不是把旧价当当日价用。
+#   历史坑（2026-10-05 审计发现）：原逻辑命中条件只有 `len(c[code]) >= need`，
+#   完全不看末根日期 —— 缓存里 8 只（三峡新材/信达证券/建兴院/0028 等）末根停在
+#   09-11~09-29，却会被下游当成 09-30 的价算指标，属「旧数据冒充当日」的静默通道。
+_ASOF = None
+
+
+def set_asof(date):
+    """设置当期数据日（'YYYY-MM-DD' 或 'YYYYMMDD'）。日更第一步 `_datahub.py` 会调用，
+    使整条链共享同一个新鲜度基准。不设置 = 关闭新鲜度校验（保持旧行为）。"""
+    global _ASOF
+    if not date:
+        _ASOF = None
+        return
+    s = str(date).replace("-", "")
+    _ASOF = "%s-%s-%s" % (s[:4], s[4:6], s[6:8]) if len(s) == 8 else str(date)
+
+
+def get_asof():
+    return _ASOF
+
+
+def _norm_date(d):
+    s = str(d or "").replace("-", "")
+    return "%s-%s-%s" % (s[:4], s[4:6], s[6:8]) if len(s) == 8 else str(d)
+
+
+def last_date(code):
+    """缓存里该代码的末根 K 线日期（无则 None）。"""
+    bars = _load().get(code) or []
+    return bars[-1]["date"] if bars else None
+
+
+def stale_codes(asof=None, only_prefixes=None):
+    """末根 K 线日期 < asof 的代码（诊断用，不改数据）。
+
+    only_prefixes：只统计这些前缀（默认全部）。返回 [(code, last_date), ...]。
+    """
+    a = _norm_date(asof or _ASOF)
+    if not a:
+        return []
+    out = []
+    for code, bars in _load().items():
+        if not bars:
+            continue
+        if only_prefixes and not code.startswith(tuple(only_prefixes)):
+            continue
+        d = bars[-1].get("date")
+        if d and _norm_date(d) < a:
+            out.append((code, d))
+    return sorted(out)
+
+
+# A 股股票代码：沪 sh60/sh688、深 sz00/sz30、北 bj。排除可转债(sh11x/sz12x)、基金(sh51x/sz15x)等。
+_STOCK_RE = None
+
+
+def is_stock(code):
+    """是否 A 股股票代码（用于把缓存里混入的可转债/基金剔出去）。"""
+    global _STOCK_RE
+    if _STOCK_RE is None:
+        import re as _re
+        _STOCK_RE = _re.compile(r"^(sh6\d{5}|sz[03]\d{5}|bj[489]\d{5})$")
+    return bool(_STOCK_RE.match(code or ""))
 
 
 def _load():
@@ -82,11 +147,20 @@ def amount(bars, code, i=None, win=None):
     return sum(vals) / len(vals) if win else sum(vals)
 
 
-def fetch_kline(code, n=250, retries=3):
-    """腾讯前复权日K，升序 [{date,open,last,high,low,volume}]。失败返回 []。"""
+def fetch_kline(code, n=250, retries=3, asof=None):
+    """腾讯前复权日K，升序 [{date,open,last,high,low,volume}]。失败返回 []。
+
+    ★ 新鲜度（2026-10-05 加）：命中缓存的条件除「条数够」外，还要求末根 K 线日期
+      ≥ asof（默认取全局 `set_asof` 的值）。陈旧 → 视为未命中，重新联网补拉。
+      拉回来仍陈旧（真停牌/退市）则**照样返回**（与旧行为一致，避免下游突然拿不到数据），
+      由 `stale_codes()` 暴露给门禁。未设 asof = 关闭校验，保持旧行为。
+    """
     c = _load()
-    if code in c and len(c[code]) >= max(30, n - 8):
-        return c[code]
+    a = _norm_date(asof or _ASOF)
+    need = max(30, n - 8)
+    if code in c and len(c[code]) >= need:
+        if not a or _norm_date(c[code][-1].get("date")) >= a:
+            return c[code]
     url = "%s?param=%s,day,,,%d,qfq" % (TX_KLINE, code, n)
     for i in range(retries):
         try:
@@ -107,7 +181,8 @@ def fetch_kline(code, n=250, retries=3):
                 return out
         except Exception:
             time.sleep(0.5 * (i + 1))
-    return []
+    # 拉取失败：若缓存里有（陈旧）数据，仍返回 —— 但调用方可用 stale_codes() 识别
+    return c.get(code, [])
 
 
 def fetch_qt(codes, batch=80):
