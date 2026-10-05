@@ -56,6 +56,7 @@ COMMIT_MSG = os.environ.get("PUSH_MSG") or "chore: 日更同步（页面/生成�
 FILES = [
     # —— 总门户 + 操作手册 ——
     "index.html",
+    ".nojekyll",                       # ★ 关掉 Jekyll，否则 quant/_*.py 在线上一律 404（无法复现）
     "web/docs/DAILY_UPDATE_SOP.html",
     # —— 导航与门户/总览生成器 ——
     "quant/_nav.py",
