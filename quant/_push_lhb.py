@@ -122,6 +122,22 @@ FILES = [
     "quant/_pick_lab.py",            # 实验室（面板/特征功效/五道检验/环境门控）
     "quant/pick_score.py",           # 稳健分（先验固定因子集，供 build_picks/scan_stable 消费）
     "quant/scan_stable.py",          # 全市场稳健分选股（可交易域内横截面排序）
+    # —— 日更链路曾漏登记的生成器（2026-10-05 由门禁 C2 抓出：页面在册、脚本不在册
+    #    → 线上能看数字却无法复算）。登记后 C2 判据才有意义，缺一即失效。 ——
+    "quant/gen_picks.py",            # 精选候选池（三路信号：增减持/高管/大宗）
+    "quant/build_picks.py",          # 精选池合并打分 → picks/*.json
+    "quant/backtest_picks.py",       # 精选池历史胜率回测
+    "quant/scan_strong.py",          # 做T 强趋势扫描（_strong_scan_{D}.json）
+    "quant/gen_tplus.py",            # 做T 池 universe 生成
+    "quant/build_tplus.py",          # 做T 页面渲染（index + tplus-{D} + history）
+    "quant/gen_highwin.py",          # 高胜率候选页（web/picks/highwin_{D}.html）
+    "quant/build_highwin.py",        # 高胜率候选池 → picks/highwin_{D}.json
+    "quant/gen_macd.py",             # MACD 候选页（watchlist_{D}.html + index + method）
+    "quant/macd_build.py",           # MACD 三层漏斗扫描 → macd_scan_{D}.json
+    "quant/build_macd_extra.py",     # MACD 附加维度（供 macd_build 合并）
+    "quant/rev_pool.py",             # 反转观察池（谷底锚定写盘 + watchlist 渲染）
+    "quant/gen_watchlist.py",        # 反转观察页（web/reversal/index.html）
+    "quant/build_psychology.py",     # 情绪雷达页（web/psychology/*.html）
     "quant/_pick_model.json",        # 冻结模型 + 样本外证据摘要
     "quant/_pick_lab_result.json",   # 实验室完整结果（供审计/复现）
     "quant/fetch_rev_flow.py",       # 反转池主力资金流（MCP 优先 · 新浪离线兜底）

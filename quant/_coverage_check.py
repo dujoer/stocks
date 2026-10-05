@@ -240,11 +240,13 @@ def main():
             _s.loader.exec_module(_m)
         finally:
             sys.stdout = _sv
+        # ★ 必须按整条命令行抽文件名：format 之后尾部带 --date {D} 等参数，
+        #   再用 endswith('.py') 会把每个脚本都漏掉（实测只解析出 8 条，真值 37 条）。
         for _row in _m.STEPS:
-            for _part in _re.split(r'\s*&&\s*|\s*;\s*', _row[3].format(D='YYYY-MM-DD', DS='YYYYMMDD')):
-                _p = _part.strip()
-                if _p.endswith('.py'):
-                    chain.add(_p.split()[0])
+            _cmd = _row[3].format(D='YYYY-MM-DD', DS='YYYYMMDD')
+            for _f in _re.findall(r'(?:^|[\s;>&|]|python[^\s]*|python3[^\s]*)'
+                                  r'([\w\-]+\.py)(?=[\s>]|;|&&|$)', _cmd):
+                chain.add(os.path.basename(_f))
         chain.add('daily_all.py')                  # 主入口不在自己链路里，单列
         chain.discard('_push_incremental.py')      # 推送工具自身不必在册
     except Exception as _e:                        # ★ 读不到 = 无法自检，绝不能当成「全在册」
