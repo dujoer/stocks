@@ -35,7 +35,7 @@ R3 **判定双条件**：任何被标为「可上线 / 显著 / 最优」的结�
     python _strategy_gate.py --strict            # 警告也算失败
 """
 from __future__ import annotations
-import os, sys, json, glob, argparse
+import os, sys, json, glob, argparse, tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -46,15 +46,91 @@ ROOT = os.path.dirname(HERE)
 CLAIM_KEYS = ("可上线", "显著", "最优", "★可采信", "有增量", "通过")
 PASS_KEYS = ("pass", "ok", "oos_ok", "trust", "verified")
 
-# 建议扫描的目录（结论类 JSON 所在）
-SCAN_DIRS = [
-    ("web/accumulation", ".json"),
-    ("web/selected", ".json"),
-    ("web/cold_sector", ".json"),
-    ("quant/hub", ".json"),
-]
-# 明确排除（大体量 / 非结论文件）
+# 随机分位字段名 —— ★ 2026-10-05 收紧：原来把 `pct` 也算进去，
+# 但 `pct` 在选股模型里是**截断比例**（前 1%/2%/5%/20%），量级 0.01~0.3，
+# 判 `<=5` 恒真 → R3「随机分位<=5%」被架空成恒真判据，
+# 「前 1% 截断、edge=−3.97pp」这种明显更差的策略照样放行（已坐实为假绿）。
+# 只认名字里明确带「分位/percentile」的字段。
+PCTILE_KEYS = ("pctile", "pctile_vs", "pctile_vs_random", "percentile",
+               "percentile_vs", "rand_pctile", "随机分位")
+
+# ★ 扫描范围（2026-10-05 收敛）：从「写死 4 个目录」改为「全仓结论 JSON」。
+# 原范围 web/accumulation / web/selected / web/cold_sector / quant/hub
+# 漏掉五池的 *_tier_gate.json（增仓/高胜率/反转/做T/三连阴），它们全在 quant/ 根下
+# → 这道「策略结论门禁」对最核心的五池证据**一次都没检查过**。
+# 实测对照注入：同一份「宣称可上线 + edge=−4.5pp + 分位100%」的坏结论，
+#   放 quant/ → 门禁「通过（0 问题）」；放 web/selected/ → 当场 FAIL。
+# 固定目录清单 = 下次新增目录又会漏（和门禁 C2 同族的病），故改为按内容识别。
+SCAN_DIRS = ("quant", "web")
+MAX_SCAN_BYTES = 3_000_000                    # 大缓存不扫
 SKIP_WORDS = ("hist", "flowseq", "manifest", "hub/2")
+# 明确非结论文件（原始抓取 / 估值快照 / 新闻 / 个股诊断 / 观察池扫描快照）
+NON_CONCLUSION = ("raw_", "sector_valuation_", "news.json", "watchlist_scan_",
+                  ".meta.json", "_cache", "sector_strength", "cost_")
+# 判据前沿：关键词出现在前 N 个字符内即算「像结论」——
+# 挡新闻标题（「伊朗：…将通过提高霍尔木兹海峡关税…」的「通过」在第 13 字）与
+# 个股诊断长句（「次高档·…技术确认通过」，第 18 字）被当成策略宣称。
+CLAIM_HEAD_CHARS = 10
+# 短串兜底的上限。2026-10-05 自测抓到的真实误报：个股 relNote
+# 「次高档·20日主力净流入为正，技术确认通过」仅 21 字，被旧值 24 放行；
+# 收紧到 16 后仍留足「结论」「可上线，分位<=5%」这类真短句。
+CLAIM_MAXLEN = 16
+# 实测校准：真实文件里 `param = "反T · 最优（贴支撑+近目标0.4+紧止损−2%）"` 的关键词
+# 落在第 5 字符 → 前沿要够宽；而新闻标题的关键词在第 13 字符、个股长句在第 18 字符
+# → 前沿 10 能把这两类误报挡在门外。
+
+
+def _norm_is_edge(k):
+    """键名是否表示 edge。认前缀/后缀变体：`edge` / `edge_vs_base` /
+    `edge_round`（做T往返口径）/ `edge_ret` / `edge_pp` / `*_edge`。"""
+    kl = k.lower()
+    return kl == "edge" or kl.startswith("edge") or kl.endswith("_edge")
+
+
+def _norm_is_pctile(k):
+    """键名是否表示随机分位。只认明确分位语义（比例型 pct 不算，见 PCTILE_KEYS）。"""
+    kl = k.lower()
+    return (kl in PCTILE_KEYS or kl.startswith("pctile")
+            or kl.startswith("percentile") or kl.endswith("_pctile")
+            or kl.endswith("_percentile"))
+
+
+def _is_claim(v):
+    """值是否像「策略结论宣称」。长句里夹一个关键词不算（防新闻/个股长文误报）。"""
+    if not isinstance(v, str):
+        return False
+    t = v.strip()
+    if not t:
+        return False
+    for c in CLAIM_KEYS:
+        if c in t and (t.startswith(c) or len(t) <= CLAIM_MAXLEN
+                       or c in t[:CLAIM_HEAD_CHARS]):
+            return True
+    return False
+
+
+def looks_like_conclusion(path):
+    """是否该当「结论文件」来查。非结论一律不进门禁，避免噪声淹没真信号。"""
+    b = os.path.basename(path)
+    if any(s in b for s in NON_CONCLUSION):
+        return False
+    try:
+        if os.path.getsize(path) > MAX_SCAN_BYTES:
+            return False
+    except OSError:
+        return False
+    try:
+        j = json.load(open(path, encoding="utf-8"))
+    except Exception:
+        # 解析失败：不是已知非结论名 → 仍当候选，让「数据损坏」这个真信号出来
+        return not any(s in b for s in NON_CONCLUSION)
+    for _p, k, v in _walk_keys(j):
+        if isinstance(v, (int, float)) and (_norm_is_edge(k) or _norm_is_pctile(k)):
+            return True
+    for _p, _k, v in _walk_keys(j):
+        if _is_claim(v):
+            return True
+    return False
 
 
 def _walk_keys(obj, path="", depth=0, out=None):
@@ -89,11 +165,15 @@ def check_file(path):
     edge_vals = []
     pct_vals = []
     for p, k, v in flat:
-        if isinstance(v, str) and any(c in v for c in CLAIM_KEYS):
+        if _is_claim(v):
             claim_hits.append((p, v))
-        if k in ("edge", "edge_vs_base") and isinstance(v, (int, float)):
+        # ★ 键名覆盖：原型 `_txk` 之外还有 edge_round / edge_ret / edge_pp 等写法
+        # （做T实验室就用 edge_round，实测因此误报「没有 edge 数字」）。
+        # 只认精确键会两头错：既误报，也会漏判真问题。
+        if (_norm_is_edge(k)) and isinstance(v, (int, float)):
             edge_vals.append((p, float(v)))
-        if k in ("pctile", "pctile_vs", "pct") and isinstance(v, (int, float)):
+        # 只认明确分位字段（见 PCTILE_KEYS 注释：pct 是截断比例，不算分位）
+        if (_norm_is_pctile(k)) and isinstance(v, (int, float)):
             pct_vals.append((p, float(v)))
     info["claims"] = len(claim_hits)
     info["edge_n"] = len(edge_vals)
@@ -219,12 +299,20 @@ def check_file(path):
 
     # ---- R2：真实选股层 ----
     # 策略样本应有 per-day / per-industry 之类上限；若无，且单策略 n 极大（>10万），可疑
+    # ★ 2026-10-05 放宽字段名：原来只认 per_day/per_ind/per_industry/top/topn/cap，
+    # 换一种写法（topk / top_n / *_cap / limit / quota / k）就认不出 → 误报「疑无选股层」。
     has_cap = False
     for p, k, v in flat:
-        if k in ("per_day", "per_ind", "per_industry", "top", "topn", "TOPN", "cap"):
-            if isinstance(v, int) and 0 < v <= 200:
-                has_cap = True
-                break
+        kl = k.lower()
+        if not (kl in ("per_day", "per_ind", "per_industry", "per_stock", "top",
+                       "topn", "top_n", "topk", "top_k", "cap", "k", "limit",
+                       "quota", "max_per_day")
+                or kl.startswith("top") or kl.endswith("_cap")
+                or kl.endswith("_top") or kl.startswith("per_")):
+            continue
+        if isinstance(v, int) and 0 < v <= 500:
+            has_cap = True
+            break
     info["has_cap"] = has_cap
     if strat_ns and not has_cap:
         big = max(v for _p, v in strat_ns)
@@ -236,27 +324,114 @@ def check_file(path):
     return problems, warns, info
 
 
+# ------------------------------------------------------------------
+# 判据自测：「判据自己也要被验真」。2026-10-05 修 R3 时坐实过两起假绿，
+# 不先自证一遍，下面那些「0 问题」可能又是判据恒真/扫不到造成的。
+# ------------------------------------------------------------------
+_SELFTEST_CASES = (
+    ("坏结论（edge<0 + 分位100 + 宣称可上线）必须被 R3 拦下",
+     {"结论": "可上线", "strats": {"A": {"baseline_n": 5000, "n": 40,
+                                        "edge": -4.5, "pctile": 100, "per_day": 5}}},
+     lambda p, w, i: len(p) >= 1),
+    ("合法结论（edge>0 + 分位<=5）不得报错",
+     {"结论": "可上线", "strats": {"A": {"baseline_n": 5000, "n": 40,
+                                        "edge": 2.3, "pctile": 3, "top": 5}}},
+     lambda p, w, i: len(p) == 0),
+    ("★pct 是截断比例不是随机分位：pct=0.01 不得让 R3 放行",
+     {"结论": "可上线", "curve": [{"pct": 0.01, "edge": -3.97}]},
+     lambda p, w, i: len(p) + len(w) >= 1 and i.get("pct_n", 0) == 0),
+    ("新闻长句夹「通过」不算策略宣称",
+     {"items": [{"title": "伊朗：若利益受损，将通过提高霍尔木兹海峡关税等方式反制"}]},
+     lambda p, w, i: i.get("claims", 0) == 0),
+    ("个股诊断长句夹「通过」不算策略宣称",
+     {"relNote": "次高档·20日主力净流入为正，技术确认通过"},
+     lambda p, w, i: i.get("claims", 0) == 0),
+    ("★无 edge 数字的「最优」宣称必须被拦（对应 _tplus_lab_result）",
+     {"env_combo": [{"param": "反T · 最优（贴支撑+近目标0.4+紧止损−2%）"}]},
+     lambda p, w, i: len(p) >= 1),
+    ("扫描快照里的说明性 _doc 不算策略宣称",
+     {"_doc": "底部反转观察池 v6（阶段底部锚定 ＋ 回升启动确认），"
+              "只保留通过全部闸门且属域内组合分前 10% 的标的"},
+     lambda p, w, i: i.get("claims", 0) == 0),
+    ("★edge_round / edge_ret 变体必须被认成 edge（做T实验室口径，防误报）",
+     {"env_combo": [{"param": "反T · 最优（贴支撑+近目标0.4+紧止损−2%）",
+                     "edge_round": 4.29, "pctile": 2}]},
+     lambda p, w, i: i.get("edge_n", 0) >= 1 and len(p) == 0),
+    ("★缺随机分位的「最优」宣称必须给警告（evidence 不足，不能当结论）",
+     {"结论": "可上线", "env_combo": [{"param": "反T · 最优", "edge_round": 4.29}]},
+     lambda p, w, i: any("随机分位" in str(x) for x in w)),
+)
+
+
+def selftest():
+    """跑判据自测。返回 (是否全过, [(PASS/FAIL, 描述)])"""
+    res = []
+    td = tempfile.mkdtemp(prefix="strategy_gate_")
+    for desc, obj, chk in _SELFTEST_CASES:
+        tmp = os.path.join(td, "case.json")
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(obj, f, ensure_ascii=False)
+        p, w, i = check_file(tmp)
+        ok = bool(chk(p, w, i))
+        res.append((ok, desc))
+    # B. 扫描范围自证：五池的 *_tier_gate 必须落在扫描范围内
+    #    （这条挡「把 SCAN_DIRS 改回写死目录」的回归）
+    gates = []
+    qd = os.path.join(ROOT, "quant")
+    if os.path.isdir(qd):
+        gates = sorted(f for f in os.listdir(qd) if f.endswith("_tier_gate.json"))
+    miss = [f for f in gates if not looks_like_conclusion(os.path.join(qd, f))]
+    res.append((bool(gates) and not miss,
+                "扫描范围覆盖五池 *_tier_gate（%d 个，漏 %d 个）"
+                % (len(gates), len(miss))))
+    # C. 非结论文件必须被排除（新闻 / 原始抓取 / 个股 meta）
+    excl = []
+    for rel in ("quant/news.json", "quant/raw_2026-08-21_000.json",
+                "quant/diag/sz002119_20260930.meta.json"):
+        fp = os.path.join(ROOT, rel)
+        if os.path.exists(fp) and looks_like_conclusion(fp):
+            excl.append(rel)
+    res.append((not excl, "非结论文件被正确排除%s" % ("（漏：%s）" % excl if excl else "")))
+    return all(ok for ok, _ in res), res
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--file", default="")
     ap.add_argument("--strict", action="store_true", help="警告也算失败")
+    ap.add_argument("--selftest", action="store_true",
+                    help="只跑判据自测（自证门禁的门禁），验证判据真的会拦/真的不误报")
     a = ap.parse_args()
+
+    if a.selftest:
+        ok, res = selftest()
+        for s, d in res:
+            print("%s %s" % ("PASS" if s else "FAIL", d))
+        print("\n判据自测：%d/%d %s" % (sum(1 for s, _ in res if s), len(res),
+                                     "PASS" if ok else "FAIL"))
+        return 0 if ok else 1
 
     files = []
     if a.file:
         files = [a.file if os.path.isabs(a.file) else os.path.join(ROOT, a.file)]
     else:
-        for d, pat in SCAN_DIRS:
-            p = os.path.join(ROOT, d)
+        # 扫 SCAN_DIRS 下所有 .json，用「内容像结论」而不是「目录写死」来筛
+        for rel in SCAN_DIRS:
+            p = os.path.join(ROOT, rel)
             if not os.path.isdir(p):
                 continue
-            for f in glob.glob(os.path.join(p, "*" + pat)):
-                if any(w in os.path.basename(f) for w in SKIP_WORDS):
-                    continue                    # 大体量 / 非结论文件
-                files.append(f)
+            for dp, _dn, fns in os.walk(p):
+                for fn in fns:
+                    if not fn.endswith(".json") or any(w in fn for w in SKIP_WORDS):
+                        continue
+                    f = os.path.join(dp, fn)
+                    if looks_like_conclusion(f):
+                        files.append(f)
+        files = sorted(set(files))
 
     print("== 策略结论门禁（R1 等量 / R2 真选股层 / R3 判定双条件）==")
-    print("扫描 %d 个结论文件\n" % len(files))
+    print("扫描 %d 个结论文件（范围：%s 全仓，按内容识别非按目录写死）\n"
+          % (len(files), " + ".join(SCAN_DIRS)))
     tot_p = tot_w = 0
     for f in files:
         rel = os.path.relpath(f, ROOT)

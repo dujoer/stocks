@@ -332,6 +332,34 @@ def main():
     txk_points = tf["points"] if tf.get("points") is not None else 0
     txk_rev = tf["rev_loads"] or 0
     txk_concl_b = ("%s" % tf["concl_b"]) if tf["concl_b"] else "—"
+    # ---- 策略门禁 _strategy_gate 自证（2026-10-05 本轮新做）----
+    sg_err = ""
+    sg_files = sg_probs = sg_warns = 0
+    try:
+        import _strategy_gate as SG
+        _sg_files = []
+        for rel in SG.SCAN_DIRS:
+            _dp0 = os.path.join(SG.ROOT, rel)
+            if not os.path.isdir(_dp0):
+                continue
+            for dp, _dn, fns in os.walk(_dp0):
+                for fn in fns:
+                    if fn.endswith(".json") and not any(w in fn for w in SG.SKIP_WORDS):
+                        fp = os.path.join(dp, fn)
+                        if SG.looks_like_conclusion(fp):
+                            _sg_files.append(fp)
+        for _sgf in _sg_files:                    # ★ 别叫 _f：模块级格式化函数就叫 _f，会被覆盖
+            _pr, _wn, _i = SG.check_file(_sgf)
+            sg_probs += len(_pr)
+            sg_warns += len(_wn)
+        sg_files = len(_sg_files)
+        _ok, _res = SG.selftest()
+        sg_self = "%d/%d" % (sum(1 for s, _ in _res if s), len(_res))
+        sg_ok = _ok
+    except Exception as _e:
+        sg_self, sg_ok = "—", False
+        sg_err = str(_e)[:60]
+
     # MA/ATR 分叉实现点（遗留项，如实报数量）
     _ma = 0
     try:
@@ -600,6 +628,31 @@ load / 已接统一层 / 注释里提到 —— 日K 长K 各跑一遍），<cod
 参数，<code>endswith('.py')</code> 全部落空，只解析了 8 条、又恰好都在册，于是「恒 0」。
 改成在整条命令行里抽文件名后解析出 37 条，漏网项当场现形——
 <b>自检规则自己也会被验真，「某个检查项恒 0」必须先怀疑解析落空。</b></li>
+<li><b>策略门禁 <code>_strategy_gate</code> 曾被两处判据架空（已修，但警告是真缺口）</b>：
+① <b>扫不到五池</b> —— 原扫描范围写死四个目录（<code>web/accumulation</code> /
+<code>web/selected</code> / <code>web/cold_sector</code> / <code>quant/hub</code>），
+而五池的 <code>*_tier_gate.json</code>（增仓 / 高胜率 / 反转 / 做T / 三连阴）全在
+<code>quant/</code> 根下 —— <b>这道「策略结论门禁」对最核心的五池证据一次都没检查过</b>。
+对照注入实测：同一份「宣称可上线 + edge −4.5pp + 分位 100%」的坏结论，
+放 <code>quant/</code> → 门禁「通过（0 问题）」；放 <code>web/selected/</code> → 当场 FAIL。
+② <b>R3 被 <code>pct</code> 架空</b> —— 判据把 <code>pct</code>（截断比例，值 0.01~0.3）
+当随机分位判 <code>&lt;=5</code>，<b>恒真</b>：「前 1% 截断、edge −3.97pp」这种明显更差的策略
+照样放行（已构造复现）。现改为只认 <code>pctile</code> / <code>percentile</code> / 随机分位。
+顺带修掉三处误报源：新闻标题「伊朗：…<b>通过</b>提高霍尔木兹海峡关税」、
+个股 <code>relNote</code>「…技术确认<b>通过</b>」、扫描快照的 <code>_doc</code> 说明，
+都被当成策略宣称；收紧为「关键词在前 10 字、或短串 ≤16 字」；
+另外 <code>edge_round</code> / <code>edge_ret</code>（做T实验室的口径）原先不认，
+误报「没有 edge 数字」，现按前缀 / 后缀覆盖。
+现状：扫 <b>{sg_files}</b> 个结论文件（按内容识别，不再按目录写死）／
+<b>{sg_probs}</b> 个问题／<b>{sg_warns}</b> 条警告／判据自测 <b>{sg_self}</b>。
+那 9 条警告<b>是真缺口，不是噪声</b>：6 条「疑无真实选股层」（n 其实是逐日样本量，判据还得再细）、
+3 条「宣称可上线却没随机分位」（做T实验室 + 主升精选两个模型）——
+按「读不到证据不出结论」，这几处<b>该补随机对照证据，不能靠放宽判据把它消掉</b>。</li>
+<li><b>2 个损坏的 JSON 仍躺在 <code>quant/</code></b>：<code>sector_valuation_20260909.json</code>
+（12,571 字节，报在 char 12571 ≈ 文件末尾）与 <code>raw_2026-08-21_000.json</code>
+（75,704 字节，报在 char 74285）。两者 utf-8 严格解码都通过，<b>不是编码问题，是文件本身写坏了</b>
+（疑似写一半被截断）。已按「非结论文件」排除出门禁扫描，免得噪声淹没真信号；
+<b>未擅自删除</b> —— 数据如实留痕，等你确认后再处理。</li>
 </ul>
 
 <h2>七、未解决风险与后续</h2>

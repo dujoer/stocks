@@ -327,7 +327,7 @@ B 档在 20 日 R3=92.6% 不达标却在 60 日 99.95% 被放行 —— 这是�
 <div class="ok"><b>修复</b>：新增唯一入口 <code>_txk.py</code>——mtime 感知的进程内共享缓存
 （写回自动失效，不会读到旧版本）+ <code>set_asof()</code> 陈旧即 fail-safe 返回空 +
 <code>src_label()</code> 把「数据截至 X」标进产物 + 可选日志 <code>WB_TXK_LOG</code>。
-实测：同一进程内 3 次 load，由 3×0.612s 降到 <b>1×0.612s + 2×0.00002s</b>；
+实测：同一进程内 3 次 load，由 3×0.579s 降到 <b>1×0.579s + 2×0.00002s</b>；
 <code>_txk.load()</code> 与直读<b>内容完全等价</b>（5049 票逐票一致）。</div>
 <div class="danger"><b>过程中现场抓到的 fail-open</b>：陈旧拦截第一版「只把 <code>stale_blocks</code> 加一，
 仍然把 5049 条旧数据交出去」——计数与拦截不一致，正是「有该键 ≠ 已通过」。
@@ -348,7 +348,7 @@ dict 迭代序随字符串 hash 变 → 只是<b>输出键序</b>漂，bootstrap
 <h2>三、有效率实测（现跑现测，不写死）</h2>
 <h3>长K加载：抽公共层 <code>_longk.py</code> 前后</h3>
 <table data-wb><tr><th>调用</th><th class="num">耗时</th><th>结果</th></tr>
-<tr><td>首次 <code>load_long()</code>（真读盘）</td><td class="num"><b>1.94s</b></td><td>5050 只</td></tr>
+<tr><td>首次 <code>load_long()</code>（真读盘）</td><td class="num"><b>1.80s</b></td><td>5050 只</td></tr>
 <tr><td>二次 <code>load_long()</code>（缓存命中）</td><td class="num"><b>0.0000s</b></td><td>两次返回同一对象</td></tr>
 </table>
 <div class="note">统一前：6+ 个脚本各自 <code>json.load</code> 同一份 <b>402 MB</b> 文件，
@@ -357,7 +357,7 @@ dict 迭代序随字符串 hash 变 → 只是<b>输出键序</b>漂，bootstrap
 现在：6 个消费脚本 + 1 个生产者全部走 <code>_longk.load_long()</code>，
 mtime 感知的进程内缓存让同一进程只解析一次；缺文件一律返回空并<b>显式报「无长历史」</b>，
 不再拿短缓存冒充。</div>
-<div class="ok">实测本进程累计解析 <b>1</b> 次 / 1.94s / 401.5MB —— 若为 1 次即说明共享缓存生效。</div>
+<div class="ok">实测本进程累计解析 <b>1</b> 次 / 1.80s / 401.5MB —— 若为 1 次即说明共享缓存生效。</div>
 <h3>日K主缓存 <code>_txk_cache.json</code>（本轮解析次数）</h3>
 <div class='note'>本轮 <code>_daily_profile.json</code> 里没有 <code>txk_load</code> 记录（跑过一次完整日更才会写；或在任一脚本上设 <code>WB_TXK_LOG=1</code> 现测）。<b>这里不估数、不猜数。</b></div>
 <h3>磁盘上的大产物（每次跑都要解析）</h3>
@@ -407,6 +407,31 @@ load / 已接统一层 / 注释里提到 —— 日K 长K 各跑一遍），<cod
 参数，<code>endswith('.py')</code> 全部落空，只解析了 8 条、又恰好都在册，于是「恒 0」。
 改成在整条命令行里抽文件名后解析出 37 条，漏网项当场现形——
 <b>自检规则自己也会被验真，「某个检查项恒 0」必须先怀疑解析落空。</b></li>
+<li><b>策略门禁 <code>_strategy_gate</code> 曾被两处判据架空（已修，但警告是真缺口）</b>：
+① <b>扫不到五池</b> —— 原扫描范围写死四个目录（<code>web/accumulation</code> /
+<code>web/selected</code> / <code>web/cold_sector</code> / <code>quant/hub</code>），
+而五池的 <code>*_tier_gate.json</code>（增仓 / 高胜率 / 反转 / 做T / 三连阴）全在
+<code>quant/</code> 根下 —— <b>这道「策略结论门禁」对最核心的五池证据一次都没检查过</b>。
+对照注入实测：同一份「宣称可上线 + edge −4.5pp + 分位 100%」的坏结论，
+放 <code>quant/</code> → 门禁「通过（0 问题）」；放 <code>web/selected/</code> → 当场 FAIL。
+② <b>R3 被 <code>pct</code> 架空</b> —— 判据把 <code>pct</code>（截断比例，值 0.01~0.3）
+当随机分位判 <code>&lt;=5</code>，<b>恒真</b>：「前 1% 截断、edge −3.97pp」这种明显更差的策略
+照样放行（已构造复现）。现改为只认 <code>pctile</code> / <code>percentile</code> / 随机分位。
+顺带修掉三处误报源：新闻标题「伊朗：…<b>通过</b>提高霍尔木兹海峡关税」、
+个股 <code>relNote</code>「…技术确认<b>通过</b>」、扫描快照的 <code>_doc</code> 说明，
+都被当成策略宣称；收紧为「关键词在前 10 字、或短串 ≤16 字」；
+另外 <code>edge_round</code> / <code>edge_ret</code>（做T实验室的口径）原先不认，
+误报「没有 edge 数字」，现按前缀 / 后缀覆盖。
+现状：扫 <b>31</b> 个结论文件（按内容识别，不再按目录写死）／
+<b>0</b> 个问题／<b>9</b> 条警告／判据自测 <b>11/11</b>。
+那 9 条警告<b>是真缺口，不是噪声</b>：6 条「疑无真实选股层」（n 其实是逐日样本量，判据还得再细）、
+3 条「宣称可上线却没随机分位」（做T实验室 + 主升精选两个模型）——
+按「读不到证据不出结论」，这几处<b>该补随机对照证据，不能靠放宽判据把它消掉</b>。</li>
+<li><b>2 个损坏的 JSON 仍躺在 <code>quant/</code></b>：<code>sector_valuation_20260909.json</code>
+（12,571 字节，报在 char 12571 ≈ 文件末尾）与 <code>raw_2026-08-21_000.json</code>
+（75,704 字节，报在 char 74285）。两者 utf-8 严格解码都通过，<b>不是编码问题，是文件本身写坏了</b>
+（疑似写一半被截断）。已按「非结论文件」排除出门禁扫描，免得噪声淹没真信号；
+<b>未擅自删除</b> —— 数据如实留痕，等你确认后再处理。</li>
 </ul>
 
 <h2>七、未解决风险与后续</h2>
@@ -414,7 +439,7 @@ load / 已接统一层 / 注释里提到 —— 日K 长K 各跑一遍），<cod
 若某产物缺失，本页对应处显示「无法自检」而不是沿用上次的数字。</div>
 
 <footer>
-生成于 2026-10-05 22:39:02 ·
+生成于 2026-10-06 00:05:46 ·
 <code>quant/_data_integrity_audit.py</code> ·
 数据底座 <code>hub/manifest.json</code>（2026-09-30）<br>
 相关页面：<a href="exit_assumption_evidence.html">退出成交假设证据</a> ｜
