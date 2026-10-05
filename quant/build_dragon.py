@@ -708,6 +708,70 @@ def render_grid(eg):
     return "".join(o)
 
 
+def render_stop_sens(ss):
+    """附加检验：把 −5% 放宽容，能不能救（预注册档位 + 前后半段同号检验）。"""
+    o = ["<h3>附加检验：把 −5% 放宽容，能不能救？ —— 不能</h3>"]
+
+    def _sp(v):
+        return "—" if v is None else ("%+.2f%%" % (v * 100)).replace("-", "−")
+
+    def _pn(v):
+        return "—" if v is None else ("%+.2fpp" % (v * 100)).replace("-", "−")
+
+    cells = ss.get("cells") or {}
+    n_ok = n_bad = n_inc = 0
+    for _k, c in cells.items():
+        if c.get("consistent") is None:
+            continue
+        if c["consistent"]:
+            if (c.get("gain_first") or 0) > 0:
+                n_ok += 1
+            else:
+                n_bad += 1
+        else:
+            n_inc += 1
+    nj = n_ok + n_bad + n_inc
+    o.append("<div class='warn'>上一轮把根因归到「<b>−5%% 止损太近</b>」，这一轮直接验它。"
+             "办法是<b>先把 5 个档位定死</b>（−5%% / −8%% / −10%% / −12%% / 无止损），"
+             "再看「放宽止损」这个动作在<b>前半段与后半段</b>上是否<b>同号</b> —— "
+             "只在单窗口上好看不算数，两个窗口都得一致才算。"
+             "<br>结论：<b>不是普遍规律</b>。%d 个可判格里，<b>%d 格两段都变好、%d 格两段都变差、"
+             "%d 格前后半段直接反号</b>（反号率 %.0f%%）—— 方向接近随机。"
+             "<b>「放宽止损能救」是单窗口上的过拟合幻觉。</b></div>"
+             % (nj, n_ok, n_bad, n_inc, (n_inc / nj * 100) if nj else 0))
+    o.append("<table><tr><th>形态</th><th class='num'>前半段：−5% → 无止损（增益）</th>"
+             "<th class='num'>后半段：−5% → 无止损（增益）</th><th>两段是否同号</th></tr>")
+    for k, c in cells.items():
+        a, b = c.get("first") or {}, c.get("second") or {}
+        if "−5%" not in a or "−5%" not in b:
+            o.append("<tr><td>%s</td><td class='num'>—</td><td class='num'>—</td>"
+                     "<td>样本不足</td></tr>" % k)
+            continue
+        g1, g2 = c.get("gain_first"), c.get("gain_second")
+        if c.get("consistent"):
+            verdict, sty = ("同号（都变好）" if (g1 or 0) > 0 else "同号（都变差）"), ""
+        else:
+            verdict, sty = "<b>★ 异号</b>", " style=\"background:#fff9f2\""
+        o.append("<tr%s><td>%s</td><td class='num'>%s → %s（%s）</td>"
+                 "<td class='num'>%s → %s（%s）</td><td>%s</td></tr>"
+                 % (sty, k,
+                    _sp(a["−5%"]["net_mean"]), _sp(a["无止损"]["net_mean"]), _pn(g1),
+                    _sp(b["−5%"]["net_mean"]), _sp(b["无止损"]["net_mean"]), _pn(g2),
+                    verdict))
+    o.append("</table>")
+    o.append("<div class='note'>三点得一起读："
+             "① 「无止损」是<b>极端假设、不是可执行规则</b> —— 回撤全留给你（单笔最差到 −40%% 量级），"
+             "均值略好不等于能用；"
+             "② 有 <b>%d 格</b>是<b>一致地「放宽更差」</b>，对这些形态，「−5%% 太近」这个说法本身就错了；"
+             "③ 即便「两段都变好」的那 <b>%d 格</b>，放宽后的<b>绝对净收益大多仍是负的</b>。"
+             "另外前半段与后半段的整体水平差得很远（同一格能差好几个点），"
+             "说明<b>结论强烈依赖行情区间</b>，这本身就是「不可依赖」的证据。</div>" % (n_bad, n_ok))
+    o.append("<div class='warn'><b>所以：不许拿「放宽止损」去救这套规则。</b>"
+             "这条根因假设已被跨窗口检验证伪。真要换退出规则，必须重新走 walk-forward + 随机对照，"
+             "而不是在这份数据上把档位调一调 —— 那正是红线要拦的「挑最好看的那个」。</div>")
+    return "".join(o)
+
+
 def render_plan(ctx):
     o = ["<h2>六、配套的操作方案（规则层，不是指令）</h2>"]
     od = ctx.get("odds") or {}
@@ -722,10 +786,10 @@ def render_plan(ctx):
         return "—" if not s else "%.1f%%" % (s["win"] * 100)
 
     def _m(s):
-        return "—" if not s else "%+.2f%%" % (s["mean"] * 100)
+        return "—" if not s else ("%+.2f%%" % (s["mean"] * 100)).replace("-", "−")
 
     def _md(s):
-        return "—" if not s else "%+.2f%%" % (s["med"] * 100)
+        return "—" if not s else ("%+.2f%%" % (s["med"] * 100)).replace("-", "−")
 
     if ex.get("err"):
         o.append("<div class='warn'><b>第④道读不到</b>（%s）—— 按 fail-safe，"
@@ -735,14 +799,17 @@ def render_plan(ctx):
         eg = od.get("exec_grid") or {}
         if eg and not eg.get("err"):
             o.append(render_grid(eg))
+        ssens = od.get("stop_sens") or {}
+        if ssens and not ssens.get("err"):
+            o.append(render_stop_sens(ssens))
         o.append("<h3>再细看当前这个形态（%s期 · %s）差在哪</h3>"
                  % (ex.get("stage") or "—", ex.get("run") or "—"))
         o.append("<div class='warn'>这一节最该看的就是下面这张表。<b>同一个形态、同一批样本</b>，"
                  "只把「买在哪、怎么卖」换成真实成交约束，胜率就从 <b>%s</b> 掉到 <b>%s</b>，"
-                 "而且<b>低于同口径的基线</b>（%s）<b>%+.1fpp</b> —— 也就是说，"
+                 "而且<b>低于同口径的基线</b>（%s）<b>%.1fpp</b> —— 也就是说，"
                  "换成能真的做出来的打法，这个形态<b>没有超额</b>。</div>"
                  % (_w(ex.get("page")), _w(ex.get("rule_open1")),
-                    _w(ex.get("base_rule_open1")), ex.get("edge_pp") or 0))
+                    _w(ex.get("base_rule_open1")), abs(ex.get("edge_pp") or 0)))
         o.append("<table><tr><th>口径</th><th class='num'>样本</th><th class='num'>胜率</th>"
                  "<th class='num'>中位</th><th>说明</th></tr>")
         rows = [
@@ -804,7 +871,7 @@ def render_plan(ctx):
     # ★ 仓位与止损：全部用「历史最差」反推，不拍脑袋给数；数字一律用纯文本，
     #   别把 -26.7% 显示成红色的 +26.7%（那看起来像赚了 26.7%）。
     def _p(v):
-        return "—" if v is None else "%+.2f%%" % (v * 100)
+        return "—" if v is None else ("%+.2f%%" % (v * 100)).replace("-", "−")
 
     worst5, worst1 = abs(b["5"]["worst"]) or 0.267, abs(b["1"]["worst"]) or 0.102
     pos5 = RISK_PER_TRADE / worst5 * 100
@@ -848,9 +915,12 @@ def render_plan(ctx):
                  "换成买得到、卖得掉的打法，它的胜率反而<b>低于</b>同阶段随便买涨停票。"
                  "<br>而且这不是<b>这一个</b>形态的问题：本节开头把 24 格全过了，"
                  "扣成本后净均值为正的<b>只有 1 格</b>（回暖期 · 五板，样本仅 54 只），"
-                 "其余<b>全部为负</b> —— 说明问题出在<b>这套退出规则本身</b>（−5% 止损太近），"
-                 "不是「形态选错了」。要救它得先证明换成别的退出能站住，"
-                 "而那必须重走 walk-forward + 随机对照，<b>不能拿这份数据现挑</b>。</div>")
+                 "其余<b>全部为负</b>。本轮还专门验了「是不是 −5% 止损太近」——"
+                 "<b>验不过</b>（见上面「附加检验」）：放宽止损在前后半段有 39% 的格直接反号，"
+                 "既不是普遍解药，也不是调一个参数能救的。"
+                 "所以问题出在<b>这套打法本身</b>（买涨停票 + 固定持有期），"
+                 "而不是「形态选错了」。真要换，必须重新走 walk-forward + 随机对照，"
+                 "<b>不能拿这份数据现挑</b>。</div>")
     else:
         o.append("<div class='warn'><b>这条方案还过不了出票闸，先别当真</b>："
                  "它现在只是<b>研究结论</b>。四道里前三道已满足，第 ④ 道「退出可兑现」"

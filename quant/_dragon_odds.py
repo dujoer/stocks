@@ -61,6 +61,11 @@ RUN_LABELS = {1: "首板", 2: "二板", 3: "三板", 4: "四板", 5: "五板", 6
 STAGE_ORDER = ("冰点", "回暖", "高潮", "退潮")
 RUN_ORDER = ("首板", "二板", "三板", "四板", "五板", "六板以上")
 
+# ★ 止损宽度敏感性：**预注册**的档位（先定后跑，不许事后挑一个好看的档）。
+#   0 = 不设止损（持有到期/转段才走）—— 注意这是**极端假设、不是可执行规则**（回撤极大）。
+STOP_GRID = (0.05, 0.08, 0.10, 0.12, 0.0)
+STOP_LABELS = {0.05: "−5%", 0.08: "−8%", 0.10: "−10%", 0.12: "−12%", 0.0: "无止损"}
+
 
 def run_bucket(run):
     """连板数 → 分组标签（>=6 归到「六板以上」，再往上样本会碎成针）。"""
@@ -691,6 +696,77 @@ def realizable_grid(cache, sig, stages, hold=EXEC_HOLD):
     return grid
 
 
+def stop_sensitivity(cache, sig, stages, hold=EXEC_HOLD, stops=STOP_GRID):
+    """附加检验：**把 −5% 放宽容，能不能救？**
+
+    ⚠ 判据**先定后跑**（预注册，不许事后挑一个好看的档）：
+      对每个 (阶段 × 形态) 格，比较「最窄档 −5%」与「最宽档 无止损」的**净均值**之差
+      gain = 净均值(无止损) − 净均值(−5%)，要求它在**前半段与后半段同号**，
+      才算「放宽止损有效」是稳定关系。
+      只看全样本、或只看前半段就下结论 = **单窗口挑优**（红线禁区）。
+    返回 {cells, summary}；每个 cell 里 first/second 各含 5 个档位的 n/win/mean/worst/net_mean。
+    """
+    days = sorted(sig.keys())
+    mid = days[len(days) // 2] if days else None
+    bucket = collections.defaultdict(list)     # (stage, run, stop, half) -> [ret]
+    for d, lst in sorted(sig.items()):
+        st = stages.get(d)
+        half = "first" if (mid and d <= mid) else "second"
+        for code, _c, run in lst:
+            bars = cache.get(code)
+            if not bars:
+                continue
+            i0 = _bar_at(bars, d)
+            if i0 < 0 or i0 + hold >= len(bars):
+                continue
+            c0 = float(bars[i0]["last"])
+            if not c0:
+                continue
+            b1 = bars[i0 + 1]
+            o1 = float(b1.get("open") or b1["last"])
+            if M.is_sealed_up(float(b1.get("low") or o1), c0, M.limit_pct(code)):
+                continue                        # 一字买不进，与第④道同口径剔除
+            rb = run_bucket(run)
+            for s in stops:
+                r = _sim_rule(bars, i0 + 1, o1, code, stages, hold, stop=s)
+                if r:
+                    bucket[(st, rb, s, half)].append(r[0])
+
+    def _cell_stat(st, rb, s, half):
+        xs = bucket.get((st, rb, s, half)) or []
+        if len(xs) < MIN_OOS:
+            return None
+        m = sum(xs) / len(xs)
+        return dict(n=len(xs), mean=m, net_mean=m - EXEC_COST,
+                    win=sum(1 for x in xs if x > 0) / len(xs), worst=min(xs))
+
+    l0, lw = STOP_LABELS[stops[0]], STOP_LABELS[0.0]
+    cells, n_cons, n_inc = {}, 0, 0
+    for st in STAGE_ORDER:
+        for rb in RUN_ORDER:
+            first, second = {}, {}
+            for s in stops:
+                a, b = _cell_stat(st, rb, s, "first"), _cell_stat(st, rb, s, "second")
+                if a:
+                    first[STOP_LABELS[s]] = a
+                if b:
+                    second[STOP_LABELS[s]] = b
+            gf = (first[lw]["net_mean"] - first[l0]["net_mean"]) if (l0 in first and lw in first) else None
+            gs = (second[lw]["net_mean"] - second[l0]["net_mean"]) if (l0 in second and lw in second) else None
+            cons = None if (gf is None or gs is None) else ((gf > 0) == (gs > 0))
+            if cons is not None:
+                if cons:
+                    n_cons += 1
+                else:
+                    n_inc += 1
+            cells["%s|%s" % (st, rb)] = dict(first=first, second=second,
+                                             gain_first=gf, gain_second=gs, consistent=cons)
+    return dict(stops=[STOP_LABELS[s] for s in stops], mid=mid, hold=hold, cost=EXEC_COST,
+                cells=cells, n_cells=len(cells),
+                n_consistent=n_cons, n_inconsistent=n_inc,
+                gain_def="净均值(无止损) − 净均值(−5%)，要求前半段/后半段同号")
+
+
 # ------------------------------------------------------------------ 自测
 def selftest():
     ok = [0, 0]
@@ -860,6 +936,13 @@ def main():
         res["exec_grid"] = dict(err=str(e)[:120])
         print("[odds] 全网格核验失败：%s" % str(e)[:80])
 
+    # ★ 附加检验：根因假设「−5% 止损太近」是否为真 —— 预注册档位 + 前后半段同号检验。
+    try:
+        res["stop_sens"] = stop_sensitivity(cache, sig, res["stages"], EXEC_HOLD)
+    except Exception as e:
+        res["stop_sens"] = dict(err=str(e)[:120])
+        print("[odds] 止损敏感性核验失败：%s" % str(e)[:80])
+
     res.pop("stages", None)          # 250 项的中间表，不进产物
 
     res = norm_keys(res)        # 落盘前统一把 int 键规范成 str
@@ -910,6 +993,11 @@ def main():
                     netpos += 1
         print("        第④道全网格：可判 %d 格、过相对判据 %d 格、**扣成本后净均值为正 %d 格**"
               % (tot, passed, netpos))
+    ss = res.get("stop_sens") or {}
+    if ss and not ss.get("err"):
+        print("        止损宽度敏感性（%d 格）：前/后半段**同号** %d 格、**异号** %d 格（分界 %s）"
+              % (ss.get("n_cells", 0), ss.get("n_consistent", 0),
+                 ss.get("n_inconsistent", 0), ss.get("mid")))
     print("[odds] 落盘 %s" % path)
     return 0
 
