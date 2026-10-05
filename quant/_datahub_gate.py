@@ -195,6 +195,59 @@ def main():
                      "还是漏跑（空仓不出页属正常）"
                      % "、".join("%s(%s)" % (c, d) for c, d in lagged))
 
+    # ⑧ ★ 双 K 线缓存覆盖一致性（2026-10-06 加）
+    #    底座有一条「日K主缓存」`_txk_cache`（252 根）和一条「长历史」`_long_kline`（780 根），
+    #    两者**并不互相包含**：实测 2026-09-30 用同一套涨停口径判出来
+    #      短缓存 53 家 / 长历史 55 家；差异来自双方各自的**覆盖洞**——
+    #      短缓存缺 sh600340 的 09-29（前收错 → 假涨停）、并整只缺 4 只真涨停；
+    #      长缓存整只缺 sh688806（当日真涨停）。
+    #    ⇒ 同一天两个缓存能给出不同家数，是**数据缺陷**，不是口径问题。
+    #      这里只**报事实 + 列差异代码**（不 FAIL）：因为「哪个缓存才是权威」需要单独定，
+    #      而在此之前任何依赖涨停家数的跨页比较都可能踩到它。改动前先看这段再决定用哪份。
+    print("\n[检查] 双 K 线缓存覆盖（%s 的涨停判定）" % date)
+    try:
+        import _mkt_emo as _M
+        import _tx_fetch as _T2
+
+        def _zt(cache):
+            out = {}
+            for code, bars in (cache or {}).items():
+                if not _T2.is_stock(code):
+                    continue
+                idx = None
+                for i, b in enumerate(bars):
+                    if b.get("date") == date:
+                        idx = i
+                        break
+                if idx is None or idx == 0:
+                    continue
+                prev = float(bars[idx - 1]["last"])
+                c = float(bars[idx]["last"])
+                px = _M.limit_price(prev, _M.limit_pct(code))
+                if px is not None and c >= px * _M.ZT_TOL:
+                    out[code] = True
+            return out
+
+        _s = _zt(_T2._load())
+        _l = _zt(__import__("_longk").load_long())
+        only_s = sorted(set(_s) - set(_l))
+        only_l = sorted(set(_l) - set(_s))
+        print("   短缓存 %d 家 / 长历史 %d 家" % (len(_s), len(_l)))
+        if only_s or only_l:
+            if only_s:
+                print("   仅短缓存判为涨停（长历史无/非涨停）：%s" % "、".join(only_s[:12]))
+            if only_l:
+                print("   仅长历史判为涨停（短缓存缺失或非涨停）：%s" % "、".join(only_l[:12]))
+            warns.append("双 K 线缓存对 %s 的涨停判定不一致（短 %d / 长 %d，差异 %d 只：%s）"
+                         "—— 两缓存覆盖各有洞，依赖涨停家数的跨页比较可能因此失真"
+                         % (date, len(_s), len(_l), len(only_s) + len(only_l),
+                            "、".join((only_s + only_l)[:10])))
+        else:
+            print("   ✓ 两个缓存的涨停判定完全一致")
+    except Exception as e:
+        print("   ? 无法自检：%s" % str(e)[:80])
+        warns.append("双 K 线缓存一致性无法自检：%s" % str(e)[:60])
+
     # ---- 结论 ----
     print("")
     for w in warns:

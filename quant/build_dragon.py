@@ -44,10 +44,31 @@ FORWARD_DAYS = 5      # 阶段 → 后续表现回看的天数
 
 
 # ------------------------------------------------------------------ 数据层
-def load_quotes():
-    """读日K（统一层）。读不到抛异常，由调用方降级，绝不返回空数据冒充。"""
+def load_quotes(prefer_long=False):
+    """读日K（统一层）。读不到抛异常，由调用方降级，绝不返回空数据冒充。
+
+    ⚠ **本页刻意用短缓存（`_txk_cache`，252 根）**，不是为了省时间，是为了**对齐**：
+      本页第一~三节的「涨停家数 / 炸板率 / 连板高度」是全站要对齐的日更数字，
+      [C5] 门禁拿它与「大盘概览」逐日比。若这里换成 780 根长历史，
+      2026-09-30 会出现「大盘概览 53 / 龙道诀 55」的跨页矛盾（实测已触发 C5 FAIL）。
+      两个缓存的覆盖并不互相包含（各自都有洞，详见 .workbuddy/memory 记录），
+      在这个数据缺口修好之前，**页面之间宁可口径一致、并把缺口单独报出来**，
+      也不要让同一页面系统的两个数字互相打架。
+      第四~六节的**胜率统计**是另一回事：那是研究量（不受 [C5] 约束），
+      由 `_dragon_odds.py` 走 780 根长历史算，页面上已标明样本期。
+
+    返回 (cache, 来源标签)。
+    """
+    if prefer_long:
+        try:
+            import _longk as LK
+            c = LK.load_long()
+            if c:
+                return c, LK.src_label()
+        except Exception:
+            pass
     import _txk
-    return _txk.load()
+    return _txk.load(), "_txk_cache(252 根·与全站对齐)"
 
 
 def build_series(cache):
@@ -61,10 +82,15 @@ def build_series(cache):
     # ★ 2026-10-06：封板/炸板/连板判定收口到统一真源 `_mkt_emo`（原来这里自写一份），
     #   与「群体心理/大盘概览」用同一口径，页面之间不再出现两套涨停家数。
     import _mkt_emo as M
+    import _tx_fetch                      # 复用抓取层的代码资格判据（别在本地再抄一份）
     day = collections.defaultdict(list)
     ret = collections.defaultdict(list)     # date -> [日涨跌幅]
     for code, bars in cache.items():
         if len(bars) < 3:
+            continue
+        # ★ 缓存里混过可转债（sh11x / sz12x）：它没有 10% 涨跌停这回事，
+        #   但会被 `limit_pct` 按 10% 判 → 转债涨 10% 就成了「假涨停」。
+        if not _tx_fetch.is_stock(code):
             continue
         for r in M.scan_one(code, bars):
             day[r["date"]].append((code, r["closed"], r["touched"], r["run"]))
@@ -289,6 +315,17 @@ def render(ctx):
           "本项目规则是「读不到证据就不给结论」——此处保留空缺，不会用旧数据或估计值填上。</div>"
           % ctx["err"])
     else:
+        # ★ 两套样本口径必须当面说清楚，否则读者会拿第一节的「252 日」去理解第四节的「780 日」
+        _od = ctx.get("odds") or {}
+        A("<div class='note'><b>先说清样本口径，本页有两套：</b>"
+          "① <b>第一~三节</b>的<b>情绪定位</b>用 <b>%d</b> 个交易日（日K <code>%s</code>）——"
+          "它必须与全站其它页面的「涨停家数」对齐，由 [C5] 门禁逐日校验，所以用的是同一份短缓存；"
+          "② <b>第四~六节</b>的<b>胜率统计</b>是研究量、不受那个约束，"
+          "走的是 <b>%d</b> 个交易日的长历史（<code>%s</code>，%s ~ %s）。"
+          "两套数据不是同一批，数字<b>只在本节内可比</b>，跨节不要混着算。</div>"
+          % (ctx["ndays"], ctx["src"], _od.get("sample_days") or 0,
+             _od.get("kline_label") or "—", _od.get("sample_first") or "—",
+             _od.get("sample_last") or "—"))
         A(render_stage(ctx))
         A(render_verses(ctx))
         A(render_calib(ctx))
@@ -298,7 +335,7 @@ def render(ctx):
         A(render_hot(ctx))
         A(render_uses(ctx))
 
-    A(render_risk())
+    A(render_risk(ctx))
     A("<footer>%s ｜ 生成脚本 <code>quant/build_dragon.py</code> ｜ "
       "胜率统计真源 <code>quant/_dragon_odds.py</code>（产出 "
       "<code>quant/dragon/odds_{DS}.json</code>）｜ "
@@ -456,6 +493,55 @@ def _win(r, k):
     return ("%.1f%%" % (s["win"] * 100)) if s else "—"
 
 
+def _grid_counts(od):
+    """第④道全网格的（可判, 过相对判据, 扣成本净正）格数。"""
+    eg = od.get("exec_grid") or {}
+    tot = pn = nn = 0
+    for _st, cell in eg.items():
+        if not isinstance(cell, dict):
+            continue
+        for _rb, r in cell.items():
+            if r.get("pass") is not None:
+                tot += 1
+            if r.get("pass"):
+                pn += 1
+            if r.get("net_positive"):
+                nn += 1
+    return tot, pn, nn
+
+
+def _probe_counts(od):
+    """既有退出探针的（可判, 过相对判据, 扣成本净正）格数。"""
+    ep = od.get("exit_probe") or {}
+    if ep.get("err"):
+        return 0, 0, 0
+    return (ep.get("n_judged") or 0, ep.get("n_pass") or 0, ep.get("n_net_positive") or 0)
+
+
+def _exec_verdict(ctx):
+    """第④道结论的**统一说法**（页面各处别再各写一句，否则结论一变就自相矛盾）。
+
+    返回 (短标签, 完整句)。三种状态都覆盖：过 / 不过 / 不可判。
+    ⚠ 「过相对判据」不等于「能赚钱」：判据只比胜率高低，边际可能只有零点几个 pp。
+    """
+    ex = (ctx.get("odds") or {}).get("exec") or {}
+    p = ex.get("pass")
+    edge = abs(ex.get("edge_pp") or 0)
+    tot, _pn, nn = _grid_counts(ctx.get("odds") or {})
+    tail = ("<br>而且这不是<b>某一个</b>形态的问题：把 4 阶段 × 6 连板桶全过一遍，"
+            "%d 格里扣成本后<b>净均值为正的有 %d 格</b>。" % (tot, nn))
+    if p is True:
+        return ("过 · 仍亏",
+                "第④道「退出可兑现」<b>过了相对判据</b> —— 可实现口径胜率只比同阶段基线高"
+                "<b>%.1fpp</b>（这个量级属噪音），但<b>扣掉双边成本后净均值仍为负</b>："
+                "所以它<b>仍然不是一条能执行的规则</b>，只是「比乱买略好一点」。%s" % (edge, tail))
+    if p is False:
+        return ("不通过",
+                "第④道「退出可兑现」已补做、<b>不通过</b> —— 换成买得到、卖得掉的打法后，"
+                "胜率<b>低于</b>同阶段同口径基线 <b>%.1fpp</b>。%s" % (edge, tail))
+    return ("不可判", "第④道<b>不可判</b>（读不到证据）—— 按 fail-safe，不判通过也不判不通过。" + tail)
+
+
 def render_odds(ctx):
     od = ctx.get("odds") or {}
     o = []
@@ -470,12 +556,17 @@ def render_odds(ctx):
     is_cur = bool(od.get("cand_for", {}).get("is_cur_stage")) or \
         (b["stage"] == cur)
     o.append("<div class='note'>形态 = <b>「%s期 · %s」</b>，意思是："
-                 "市场情绪判定为<b>%s</b>、当天收盘封涨停、<b>连板数正好是 %s</b>"
-                 "（四板＝当日是这只票连起来的第 4 个涨停）时，"
-             "以当日收盘价买入、往后持有 K 天的胜率。%s</div>"
+             "市场情绪判定为<b>%s</b>、当天收盘封涨停、<b>连板数正好是 %s</b>"
+             "（就是这只票<b>连续</b>第 N 个涨停，N 即上面的板数）时，"
+             "以当日收盘价买入、往后持有 K 天的胜率。%s"
+             "<br><b>本节样本期</b>：%s ~ %s，共 <b>%d</b> 个交易日"
+             "（日K 来源 <code>%s</code>）。样本期越长，这类统计越不容易是运气 ——"
+             "但同时也意味着<b>横跨了完全不同的几段行情</b>，别把整个样本期的平均值当成今天的预期。</div>"
              % (b["stage"], b["run"], b["stage"], b["run"],
-                "这就是<b>当前阶段</b>（今天判定为%s）的最优形态。"
-                % cur if is_cur else "（注：这是<b>全样本</b>最优，不是当前阶段最优。）"))
+                ("这就是<b>当前阶段</b>（今天判定为 %s）的最优形态。" % cur) if is_cur
+                else "（注：这是<b>全样本</b>最优，不是当前阶段最优。）",
+                od.get("sample_first") or "—", od.get("sample_last") or "—",
+                od.get("sample_days") or 0, od.get("kline_label") or "—"))
 
     # ---- 主指标 ----
     o.append("<div class='grid'>")
@@ -507,7 +598,7 @@ def render_odds(ctx):
                         "达标" if r["enough"] else "样本不足", mark))
         o.append("</table>")
         o.append("<div class='note'><b>表里的规律（可核，不是解释是数据）</b>"
-                 "<ul><li>同一阶段里，连板<b>越高</b>、K=1 胜率<b>越高</b>：%s</li>"
+                 "<ul><li>%s</li>"
                  "<li>越低位的票越接近「扔硬币」：%s</li></ul></div>"
                  % (_stage_order_note(rows, b), _stage_base_note(rows, b)))
 
@@ -580,16 +671,26 @@ def render_odds(ctx):
     return "".join(o)
 
 
+_RUN_ORDER = ("首板", "二板", "三板", "四板", "五板", "六板以上")
+
+
 def _stage_order_note(rows, best):
-    """表里「连板越高、胜率越高」的规律，用真实数字说出来。"""
-    hi = [r for r in rows if r["enough"] and r.get("1")]
+    """「连板越高、胜率越高」这条规律到底成不成立 —— 用真实数字说，成立才敢说成立。
+
+    ★ 只按**连板顺序**判单调，不按胜率排序后自说自话（那是拿排序结果当规律）。
+    """
+    hi = [r for r in rows if r.get("enough") and r.get("1") and r["run"] in _RUN_ORDER]
     if len(hi) < 2:
         return "样本不足以排顺序。"
-    hi.sort(key=lambda x: (not x["enough"], -x["1"]["win"]))
-    top, low = hi[0], hi[-1]
-    return "达标形态里 %s 的 K=1 胜率最高（%.1f%%），最低的是 %s（%.1f%%），差 %.1fpp" % (
-        top["run"], top["1"]["win"] * 100, low["run"], low["1"]["win"] * 100,
-        (top["1"]["win"] - low["1"]["win"]) * 100)
+    seq = sorted(((r["run"], r["1"]["win"]) for r in hi),
+                 key=lambda x: _RUN_ORDER.index(x[0]))
+    mono = all(seq[i][1] <= seq[i + 1][1] + 1e-12 for i in range(len(seq) - 1))
+    top = max(seq, key=lambda x: x[1])
+    low = min(seq, key=lambda x: x[1])
+    head = ("同一阶段里，<b>连板越高、K=1 胜率越高</b>（按连板顺序单调）：" if mono else
+            "同一阶段里，K=1 胜率<b>并不随连板数单调变化</b>（所以不能简单说「板越高越好」）：")
+    return head + "达标形态里最高的是 <b>%s</b>（%.1f%%），最低的是 <b>%s</b>（%.1f%%），差 %.1fpp" % (
+        top[0], top[1] * 100, low[0], low[1] * 100, (top[1] - low[1]) * 100)
 
 
 def _stage_base_note(rows, best):
@@ -606,15 +707,21 @@ def render_cand(ctx):
     for_ = (ctx.get("odds") or {}).get("cand_for") or {}
     if not cand:
         o.append("<div class='warn'>今天（数据日 %s）<b>没有</b>出现符合「%s / %s」的标的。"
-                 "这份名单是<b>条件满足才生成</b>的 —— 空就是空，"
+                 "%s这份名单是<b>条件满足才生成</b>的 —— 空就是空，"
                  "本页不会拿别阶段的票来充数、也不会给一个「最像的」凑数。</div>"
-                 % (ctx["asof"], for_.get("stage", "—"), for_.get("run", "—")))
+                 % (ctx["asof"], for_.get("stage", "—"), for_.get("run", "—"),
+                    "" if for_.get("is_cur_stage") else
+                    "⚠ 注意：这个形态<b>不是当前阶段的最优</b>（当前阶段没有达标形态，"
+                    "只能退回全样本最优）—— 所以这里「空」尤其正常。<br>"))
         return "".join(o)
+    _tag, _sentence = _exec_verdict(ctx)
     o.append("<div class='warn'><b>这不是推荐，是观察名单。</b>"
-             "它只说明「今天确实出现了这个历史胜率最高的形态」；"
-             "而且这个形态<b>四道自检只过了三道</b> —— 第④道「退出可兑现」已补做、"
-             "<b>结果不通过</b>（见第六节），所以它<b>连「历史统计规律」都还没升级成「能用」</b>。"
-             "本页不给买卖点位。看名单是为了「盯盘时知道该看谁」，不是「该买谁」。</div>")
+             "它只说明「今天确实出现了这个历史胜率最高的形态」；%s"
+             "至于能不能<b>真的做出来、做出来赚不赚</b>，看第④道 —— %s"
+             "本页不给买卖点位。看名单是为了「盯盘时知道该看谁」，不是「该买谁」。</div>"
+             % ("" if for_.get("is_cur_stage") else
+                "⚠ 注意：<b>它不是当前阶段的最优形态</b>（当前阶段没达标形态，退回了全样本最优）。",
+                _sentence))
     o.append("<table><tr><th>代码</th><th>名称</th><th class='num'>连板</th>"
              "<th class='num'>收盘</th><th class='num'>换手率</th>"
              "<th class='num'>自身历史样本</th><th class='num'>自身历史胜率</th></tr>")
@@ -644,7 +751,6 @@ RISK_PER_TRADE = 0.015      # 单笔风险预算（占本金）—— 用来从�
 
 def render_grid(eg):
     """全阶段 × 全连板桶 的第④道网格：回答「是不是整个龙道诀都不可执行」。"""
-    o = ["<h3>先说结论：把 24 个（阶段 × 连板）组合全过一遍第④道 —— 能执行的<b>没有</b></h3>"]
 
     def _gwp(s):
         return "—" if not s else "%.1f%%" % (s["win"] * 100)
@@ -664,6 +770,9 @@ def render_grid(eg):
                 pn += 1
             if r.get("net_positive"):
                 nn += 1
+    o = ["<h3>先把 %d 个（阶段 × 连板）组合全过一遍第④道 —— "
+         "扣成本后<b>能赚钱的：%s</b></h3>"
+         % (tot, "没有" if nn == 0 else "只有 %d 格" % nn)]
     o.append("<div class='warn'>上一轮只给「当前最优」那<b>一个</b>形态判了死刑，答不了「别的形态呢」。"
              "这一轮把 <b>4 阶段 × 6 连板桶 = 24 格</b>全按真实成交约束"
              "（次日开盘入场、封死跌停顺延、一字买不进剔除）跑了一遍："
@@ -671,10 +780,12 @@ def render_grid(eg):
              "但<b>扣掉双边成本（0.2%%）后净均值为正的，只剩 %d 格</b>。</div>" % (tot, pn, nn))
     o.append("<div class='note'><b>「过判据」和「能赚钱」是两件事，别混。</b>"
              "判据是<b>相对</b>的：胜率比同阶段随便买涨停票高就算过。"
-             "但请看每一格的基线本身 —— 在 −5% 止损 + 满 5 日的可实现打法下，"
-             "<b>涨停票整体就是负期望</b>（各阶段基线均值 −0.3% 到 −1.1%），"
-             "根子是 −5% 这条止损线对涨停票<b>太近</b>，日内噪音就能打掉。"
-             "所以<b>赢了基线不等于不亏</b>，要横向看最后一列的「净均值」。</div>")
+             "但请看每一格的<b>净均值</b>那一列 —— 在可实现打法下，"
+             "<b>涨停票整体就是负期望</b>（各阶段基线净均值全为负，见下面「既有退出探针」）。"
+             "所以<b>赢了基线不等于不亏</b>。"
+             "还要看<b>超出多少</b>：像 0.3pp 这种量级的「过」，就是噪音，"
+             "不能读成「有超额」。根因也不在某个参数上（「−5% 止损太近」已被附加检验证伪），"
+             "而是<b>这套「买涨停票」的打法本身</b>。</div>")
     for st, cell in eg.items():
         o.append("<div class='card' style='padding:10px 12px'><b>%s期</b>" % st)
         o.append("<table><tr><th>连板形态</th><th class='num'>样本</th><th class='num'>买不进</th>"
@@ -772,6 +883,170 @@ def render_stop_sens(ss):
     return "".join(o)
 
 
+def render_exit_probe(ep):
+    """附加检验 B：换成**项目既有**退出实现（`_exit_sim.py` 移动止盈），能不能救。"""
+    o = ["<h3>附加检验 B：换成项目本来就在用的移动止盈，能不能救？</h3>"]
+
+    def _p(v):
+        return "—" if v is None else ("%+.2f%%" % (v * 100)).replace("-", "−")
+
+    def _w(s):
+        return "—" if not s else "%.1f%%" % (s["win"] * 100)
+
+    pr = ep.get("params") or {}
+    sb = ep.get("stage_base") or {}
+    cells = ep.get("cells") or {}
+    n_judged = ep.get("n_judged") or 0
+    n_pass = ep.get("n_pass") or 0
+    n_net = ep.get("n_net_positive") or 0
+    cost = ep.get("cost") or 0
+
+    o.append("<div class='card'><b>这次换的不是我临时拍的线，是项目里唯一那套退出实现</b>"
+             "<ul>"
+             "<li><b>出场</b>：<code>_exit_sim.py</code> 的移动止盈 —— 硬止损 −%d%%、"
+             "涨到 +%d%% 激活、从最高点回撤 %d%% 走人、最长持有 %s 个交易日。"
+             "<b>这是生产参数，固定一个档位、不做扫描</b>"
+             "（上一轮已经证明「在这份数据上把参数调一调」是幻觉）。</li>"
+             "<li><b>成交假设</b>：%s；入场用 <b>%s</b>，T+1 一字封板买不进的样本<b>剔除并计数</b>。</li>"
+             "<li><b>对照基线</b>：同一情绪阶段的<b>全部涨停票</b>，用<b>完全相同</b>的退出与成交假设算 ——"
+             "两边口径不一致就是拿假超额。</li>"
+             "</ul></div>"
+             % (int(round(pr.get("stop", 0) * 100)), int(round(pr.get("act", 0) * 100)),
+                int(round(pr.get("trail", 0) * 100)), pr.get("maxfwd"),
+                ep.get("mode") or "—", ep.get("entry") or "—"))
+
+    o.append("<div class='warn'>结论：<b>换退出确实把「几乎全负」拉回来了一些，但仍然不成立</b>。"
+             "%d 个可判格里 <b>%d 格</b>过了相对判据（胜率高于同阶段基线），"
+             "扣掉 <b>%.1f%%</b> 双边成本后<b>净均值为正的只剩 %d 格</b>。</div>"
+             % (n_judged, n_pass, cost * 100, n_net))
+
+    o.append("<h4>关键在「阶段」，不在「连板形态」</h4>")
+    o.append("<div class='note'>把<b>该阶段的全部涨停票</b>（不分连板）用同一套退出跑一遍，"
+             "看净均值正负 —— 这张表才是这一节的答案。</div>")
+    o.append("<table><tr><th>情绪阶段</th><th class='num'>样本</th><th class='num'>交易日</th>"
+             "<th class='num'>净均值</th><th class='num'>前半段</th><th class='num'>后半段</th>"
+             "<th>两段是否同号</th></tr>")
+    order = ("冰点", "回暖", "高潮", "退潮")
+    for st in order:
+        v = sb.get(st)
+        if not v:
+            continue
+        sty = ' style="background:#fff5f5"' if v.get("both_positive") else ""
+        if v.get("consistent") is True:
+            verdict = "是" + ("（<b>两段都为正</b>）" if v.get("both_positive") else "（两段都为负）")
+        elif v.get("consistent") is False:
+            verdict = "<b>★ 否（前后段反号）</b>"
+        else:
+            verdict = "样本不足"
+        o.append("<tr%s><td><b>%s</b></td><td class='num'>%d</td><td class='num'>%d</td>"
+                 "<td class='num'>%s</td><td class='num'>%s</td><td class='num'>%s</td>"
+                 "<td>%s</td></tr>"
+                 % (sty, st, v.get("n") or 0, v.get("n_days") or 0,
+                    _p(v.get("net")), _p(v.get("net_first")), _p(v.get("net_second")), verdict))
+    o.append("</table>")
+
+    pos_st = [st for st in order if sb.get(st, {}).get("net") is not None and sb[st]["net"] > 0]
+    neg_st = [st for st in order if sb.get(st, {}).get("net") is not None and sb[st]["net"] <= 0]
+
+    def _st_txt(lst):
+        return "、".join("<b>%s</b>（净 %s）" % (st, _p(sb[st]["net"])) for st in lst) or "无"
+
+    lead = ("读法：换既有退出后，<b>转正的只有 %s</b>；%s 仍为负 —— "
+            % (_st_txt(pos_st), _st_txt(neg_st))) if pos_st else (
+        "读法：换既有退出后，<b>四个阶段一个都没转正</b>（%s）—— " % _st_txt(neg_st))
+    o.append("<div class='note'>%s"
+             "也就是说「买涨停票」这件事在<b>多数情绪阶段本身就是负期望</b>，"
+             "退出换好只是把亏损收窄，改不了正负号。这一节和第四节问的是两件事："
+             "第四节问「买什么<b>形态</b>」，这一节问「配什么<b>退出</b>」。</div>" % lead)
+
+    # 净正格单独点出来，并说清它们为什么还不足以当结论
+    net_cells = sorted([(k, c) for k, c in cells.items() if c.get("net_positive")],
+                       key=lambda kv: -kv[1]["net_mean"])
+    if net_cells:
+        o.append("<h4>那 %d 个「净正格」值不值得信？</h4>" % len(net_cells))
+        o.append("<table><tr><th>形态</th><th class='num'>样本</th><th class='num'>买不进</th>"
+                 "<th class='num'>可实现胜率</th><th class='num'>净均值</th>"
+                 "<th class='num'>同阶段基线净值</th><th class='num'>形态本身的贡献</th>"
+                 "<th class='num'>前半/后半</th><th>能不能当结论</th></tr>")
+        for k, c in net_cells:
+            r = c.get("real") or {}
+            b = c.get("base_real") or {}
+            contrib = None
+            if r.get("mean") is not None and b.get("mean") is not None:
+                contrib = r["mean"] - b["mean"]          # 形态相对阶段的净贡献（未扣成本，两边同口径）
+            stage_pos = (b.get("mean") or 0) > cost
+            if c["n_sample"] < 100 or not c.get("both_positive"):
+                ok = "<b>不够</b>：%s" % ("样本只有 %d 只" % c["n_sample"] if c["n_sample"] < 100
+                                          else "前半/后半不同号")
+            elif stage_pos:
+                ok = ("<b>主要是阶段效应</b>：基线本身就为正，形态只多贡献 %s"
+                      % _p(contrib))
+            else:
+                ok = "两段都为正、样本够 —— 但阶段本身是负的，属个案"
+            o.append("<tr><td><b>%s</b></td><td class='num'>%d</td><td class='num'>%s</td>"
+                     "<td class='num'>%s</td><td class='num'>%s</td><td class='num'>%s</td>"
+                     "<td class='num'>%s</td><td class='num'>%s / %s</td><td>%s</td></tr>"
+                     % (k, c["n_sample"],
+                        ("%.0f%%" % (c["unexec_rate"] * 100)) if c.get("unexec_rate") else "—",
+                        _w(r), _p(c.get("net_mean")), _p((b.get("mean") - cost) if b.get("mean") is not None else None),
+                        _p(contrib), _p(c.get("net_first")), _p(c.get("net_second")), ok))
+        o.append("</table>")
+    else:
+        o.append("<div class='warn'>连一格「扣成本后净均值为正」的都没有。</div>")
+
+    # 全格明细
+    o.append("<h4>全部 %d 格（按净均值从高到低）</h4>" % len(cells))
+    o.append("<table><tr><th>形态</th><th class='num'>样本</th><th class='num'>买不进</th>"
+             "<th class='num'>页面口径胜率</th><th class='num'>可实现胜率</th>"
+             "<th class='num'>净均值</th><th class='num'>同阶段基线胜率</th>"
+             "<th class='num'>超额</th><th>第④道</th></tr>")
+    rows = sorted(cells.items(),
+                  key=lambda kv: -(kv[1]["net_mean"] if kv[1].get("net_mean") is not None else -9))
+    for k, c in rows:
+        r = c.get("real")
+        b = c.get("base_real")
+        if c.get("net_mean") is None:
+            verdict, sty = "样本不足", ""
+        elif c.get("net_positive"):
+            verdict, sty = "<b>过 · 净正</b>", ' style="background:#fff5f5"'
+        elif c.get("pass"):
+            verdict, sty = "过 · 仍亏", ""
+        else:
+            verdict, sty = "不通过", ""
+        o.append("<tr%s><td>%s</td><td class='num'>%d</td><td class='num'>%s</td>"
+                 "<td class='num'>%s</td><td class='num'>%s</td><td class='num'>%s</td>"
+                 "<td class='num'>%s</td><td class='num'>%s</td><td>%s</td></tr>"
+                 % (sty, k, c.get("n_sample") or 0,
+                    ("%.0f%%" % (c["unexec_rate"] * 100)) if c.get("unexec_rate") else "—",
+                    _w(c.get("page")), _w(r), _p(c.get("net_mean")), _w(b),
+                    ("%+.1fpp" % c["edge_pp"]).replace("-", "−") if c.get("edge_pp") is not None else "—",
+                    verdict))
+    o.append("</table>")
+
+    o.append("<div class='note'><b>三点交代</b>："
+             "① 既有退出<b>没有</b>处理「当天封死跌停、根本卖不掉」的情形"
+             "（它只在<b>跳空低开</b>时改按开盘价成交），所以这一节的数字<b>仍偏乐观</b>，真实只会更差；"
+             "② 样本跨度 %s ~ %s、共 <b>%d</b> 个交易日（来源 %s），"
+             "像「高潮」这种薄阶段只有 <b>%d</b> 个交易日 —— "
+             "<b>样本越薄的格越容易翻号，别单独拿一格的符号当结论</b>；"
+             "③ 本节与第四节的「胜率」不是一回事：第四节是<b>固定持有 5 日</b>的统计规律，"
+             "这一节是<b>移动止盈</b>下的可实现收益，两个数不能互相印证，也不能互相替代。</div>"
+             % (ep.get("sample_first") or "—", ep.get("sample_last") or "—",
+                ep.get("sample_days") or 0, ep.get("kline_label") or "—",
+                (sb.get("高潮") or {}).get("n_days") or 0))
+
+    o.append("<div class='warn'><b>所以这一节的结论是</b>：把这个模块临时拍的 −5%% 止损换成"
+             "项目本来就在用的移动止盈，<b>整体仍然不成立</b> —— "
+             "4 个情绪阶段里有 <b>%d 个</b>净均值为正%s；"
+             "24 格里扣成本后净正的只有 <b>%d 格</b>。"
+             "<b>问题不在某一条退出线上，在「买涨停票」这个动作本身。</b>"
+             "要推翻这个结论，得换一个<b>入场</b>逻辑重新走四道验证，"
+             "而不是继续在这套数据上换退出参数。</div>"
+             % (len(pos_st), ("（%s）" % "、".join(pos_st)) if pos_st else "",
+                ep.get("n_net_positive") or 0))
+    return "".join(o)
+
+
 def render_plan(ctx):
     o = ["<h2>六、配套的操作方案（规则层，不是指令）</h2>"]
     od = ctx.get("odds") or {}
@@ -802,14 +1077,24 @@ def render_plan(ctx):
         ssens = od.get("stop_sens") or {}
         if ssens and not ssens.get("err"):
             o.append(render_stop_sens(ssens))
+        eprobe = od.get("exit_probe") or {}
+        if eprobe and not eprobe.get("err"):
+            o.append(render_exit_probe(eprobe))
         o.append("<h3>再细看当前这个形态（%s期 · %s）差在哪</h3>"
                  % (ex.get("stage") or "—", ex.get("run") or "—"))
+        _bw = _w(ex.get("base_rule_open1"))
+        if ex.get("pass") is True:
+            _cmp = ("换口径后仍然<b>略高于</b>同口径基线（%s），但只高 <b>%.1fpp</b> —— "
+                    "这个差距是<b>噪音量级</b>；而且<b>扣掉成本后净均值仍为负</b>，"
+                    "所以它只是「比乱买略好」，<b>不是能执行的规则</b>。" % (_bw, abs(ex.get("edge_pp") or 0)))
+        elif ex.get("pass") is False:
+            _cmp = ("而且<b>低于</b>同口径的基线（%s）<b>%.1fpp</b> —— 也就是说，"
+                    "换成能真的做出来的打法，这个形态<b>没有超额</b>。" % (_bw, abs(ex.get("edge_pp") or 0)))
+        else:
+            _cmp = "同口径基线读不到，这一格的比较<b>不可判</b>（按 fail-safe 不给结论）。"
         o.append("<div class='warn'>这一节最该看的就是下面这张表。<b>同一个形态、同一批样本</b>，"
-                 "只把「买在哪、怎么卖」换成真实成交约束，胜率就从 <b>%s</b> 掉到 <b>%s</b>，"
-                 "而且<b>低于同口径的基线</b>（%s）<b>%.1fpp</b> —— 也就是说，"
-                 "换成能真的做出来的打法，这个形态<b>没有超额</b>。</div>"
-                 % (_w(ex.get("page")), _w(ex.get("rule_open1")),
-                    _w(ex.get("base_rule_open1")), abs(ex.get("edge_pp") or 0)))
+                 "只把「买在哪、怎么卖」换成真实成交约束，胜率就从 <b>%s</b> 掉到 <b>%s</b>；%s</div>"
+                 % (_w(ex.get("page")), _w(ex.get("rule_open1")), _cmp))
         o.append("<table><tr><th>口径</th><th class='num'>样本</th><th class='num'>胜率</th>"
                  "<th class='num'>中位</th><th>说明</th></tr>")
         rows = [
@@ -906,25 +1191,23 @@ def render_plan(ctx):
                 _p(b["1"]["worst"]), min(pos1, 30.0),
                 int(abs(b["1"]["worst"]) * 100 / 2.0), bestK,
                 w_first, w_second))
-    if ex and ex.get("pass") is False:
-        o.append("<div class='warn'><b>结论：这一节的东西现在不能执行</b> —— "
-                 "四道自检里 ①②③ 已过（无未来函数 / walk-forward / 随机对照），"
-                 "第 ④ 道<b>补做后不通过</b>。按红线，<b>四道不全过就不出票</b>。"
-                 "第四节「胜率最高的形态」作为<b>历史统计规律</b>仍然成立（那是真的），"
-                 "但<b>「按上面这套规则去做能赚钱」这个推论不成立</b>："
-                 "换成买得到、卖得掉的打法，它的胜率反而<b>低于</b>同阶段随便买涨停票。"
-                 "<br>而且这不是<b>这一个</b>形态的问题：本节开头把 24 格全过了，"
-                 "扣成本后净均值为正的<b>只有 1 格</b>（回暖期 · 五板，样本仅 54 只），"
-                 "其余<b>全部为负</b>。本轮还专门验了「是不是 −5% 止损太近」——"
-                 "<b>验不过</b>（见上面「附加检验」）：放宽止损在前后半段有 39% 的格直接反号，"
-                 "既不是普遍解药，也不是调一个参数能救的。"
-                 "所以问题出在<b>这套打法本身</b>（买涨停票 + 固定持有期），"
-                 "而不是「形态选错了」。真要换，必须重新走 walk-forward + 随机对照，"
-                 "<b>不能拿这份数据现挑</b>。</div>")
-    else:
-        o.append("<div class='warn'><b>这条方案还过不了出票闸，先别当真</b>："
-                 "它现在只是<b>研究结论</b>。四道里前三道已满足，第 ④ 道「退出可兑现」"
-                 "见本节开头。</div>")
+    _tag, _sentence = _exec_verdict(ctx)
+    _tot, _pn, _nn = _grid_counts(od)
+    _ps, _psp, _psn = _probe_counts(od)
+    o.append("<div class='warn'><b>结论：这一节的东西现在不能执行。</b>"
+             "四道自检里 ①②③ 已过（无未来函数 / walk-forward / 随机对照），"
+             "第 ④ 道「退出可兑现」的结果是：%s"
+             "<br>而且这不是<b>某一个</b>形态的问题：把 4 阶段 × 6 连板桶全过一遍，"
+             "<b>%d 格</b>里扣成本后净均值为正的有 <b>%d 格</b>；"
+             "再把退出换成项目本来就在用的移动止盈（<code>_exit_sim.py</code>），"
+             "<b>%d 格</b>里净均值为正的也只有 <b>%d 格</b>。"
+             "同时「是不是 −5%% 止损太近」这条根因假设<b>已被跨窗口检验证伪</b>"
+             "（放宽止损在前/后半段大量反号，见上面「附加检验」）。"
+             "所以问题出在<b>这套打法本身</b>（买涨停票 + 固定持有期/止盈），"
+             "不是「形态选错了」，也不是「调一个参数能救」。"
+             "真要翻案，必须换一个<b>入场</b>逻辑重新走 walk-forward + 随机对照，"
+             "<b>不能拿这份数据现挑</b>。</div>"
+             % (_sentence, _tot, _nn, _ps, _psn))
     o.append("<div class='note'>模拟口径与 `_exit_sim.py`（本项目移动止盈的唯一实现）保持同一套假设："
              "<b>跳空按开盘价成交</b>、<b>跌停封死卖不掉要顺延</b>、<b>一字板买不进要剔除</b>。"
              "要验证退出假设请走它，别在别处重算一套。</div>")
@@ -1003,19 +1286,18 @@ def render_uses(ctx):
     return "".join(o)
 
 
-def render_risk():
+def render_risk(ctx):
+    _tag, _sentence = _exec_verdict(ctx)
     return ("<h2>九、使用边界</h2>"
             "<div class='warn'><b>风险提示</b>：本页是<b>方法论科普 + 情绪周期定位</b>，"
             "不构成任何买卖建议。龙头战法波动极大，连板梯队本身就在告诉你风险："
             "六成以上的二板走不到三板。<ul>"
             "<li>第五节给的是<b>「这个形态今天出现了」的观察名单</b>，"
-            "不是个股推荐、不给买卖点位。<b>四道自检只过了三道</b> —— "
-            "第④道「退出可兑现」已补做、<b>不通过</b>（见第六节），"
-            "所以它<b>目前连「可执行的规则」都不是</b>。</li>"
+            "不是个股推荐、不给买卖点位。它能不能变成可执行规则，看第④道 —— %s</li>"
             "<li>所有分位只用<b>截至当日</b>的滚动窗口，不含未来数据；这是能做到的事，"
             "但历史统计 ≠ 预测。</li>"
             "<li>数据读到哪天就写到哪天。若显示「无法自检」，就是真没读到，不用估计值补。</li>"
-            "</ul></div>")
+            "</ul></div>" % _sentence)
 
 
 # ------------------------------------------------------------------ 主流程
@@ -1032,16 +1314,19 @@ def main():
         except Exception:
             asof = ""
 
-    ctx = dict(asof=asof or "未知", src="_txk_cache.json", ndays=0, ncodes=0, err="")
+    ctx = dict(asof=asof or "未知", src="—", ndays=0, ncodes=0, err="")
     try:
-        cache = load_quotes()
+        cache, src_label = load_quotes()
+        ctx["src"] = src_label
         if not cache:
             raise RuntimeError("日K缓存为空")
         # 截断到 asof，避免把未来数据混进来
+        # ⚠ 两边都先去横线再比（`'-'` 码点小于数字 → 混用格式时这个过滤会静默失效）
         if asof:
+            ad = _digits(asof)
             trimmed = {}
             for code, bars in cache.items():
-                bs = [b for b in bars if b["date"] <= asof]
+                bs = [b for b in bars if _digits(b["date"]) <= ad]
                 if bs:
                     trimmed[code] = bs
             cache = trimmed

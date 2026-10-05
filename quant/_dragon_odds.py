@@ -45,6 +45,9 @@ if HERE not in sys.path:
 
 import _mkt_emo as M          # 情绪指标 / 滚动分位 / 四阶段判定 —— 唯一真源
 import _txk
+import _exit_sim as X         # 移动止盈 —— 项目**唯一**退出实现（禁在别处再抄一套）
+import _longk as LK           # 长历史日K —— 项目**唯一**加载入口（禁拿 250 根短缓存冒充长历史）
+import _tx_fetch              # 只为复用 is_stock()（代码资格判据，避免再抄一份）
 
 HOLDS = (1, 3, 5)            # 持有天数（跨步长一致性：三个都看）
 MIN_N = 30                   # 单单元格样本下限：低于这个数不给结论
@@ -72,6 +75,16 @@ def run_bucket(run):
     return RUN_LABELS.get(run, "六板以上")
 
 
+def _dig(s):
+    """去掉日期串里的横线。
+
+    ⚠ 本项目同时存在 `2026-09-30`（带横线）与 `20260930`（无横线）两种写法，
+      而 `'-'` 的码点小于数字 → `"2026-10-01" <= "20260930"` 竟然是 **True**。
+      任何跨格式的日期比较/拼接都必须先过这里，否则过滤会**静默失效**（踩过两次）。
+    """
+    return (s or "").replace("-", "")
+
+
 # ------------------------------------------------------------------ 扫描
 def scan(cache):
     """一次遍历日K，同时产出市场逐日情绪、每日涨停票清单、每票收盘/连板序列。
@@ -92,6 +105,11 @@ def scan(cache):
 
     for code, bars in cache.items():
         if len(bars) < 2:
+            continue
+        # ★ 只认 A 股股票：缓存里混过可转债（sh11x / sz12x）。可转债没有 10% 涨跌停这回事，
+        #   但 `limit_pct` 会按 10% 判 → 转债涨 10% 被当「涨停」进 sig，虚增家数还污染连板。
+        #   （实测 `_txk_cache` 里 5 只、全样本 7 次假涨停；`_long_kline` 干净。）
+        if not _tx_fetch.is_stock(code):
             continue
         dts, cls, rns = [], [], []
         prev = None
@@ -767,6 +785,173 @@ def stop_sensitivity(cache, sig, stages, hold=EXEC_HOLD, stops=STOP_GRID):
                 gain_def="净均值(无止损) − 净均值(−5%)，要求前半段/后半段同号")
 
 
+# ------------------------------------------------------------------ 附加检验 B：
+#   「把我们**本来就在用的**那套退出换上去，能不能救？」
+#
+#   上一轮把 −5% 止损放宽到无止损，证明「调止损参数」这条路是过拟合幻觉。
+#   但 −5% 那条线本来就是本模块临时拍的、不是项目的退出规则。项目真正在用的退出只有一套：
+#   `_exit_sim.py` 的移动止盈（−12% 硬止损 / +6% 激活 / 3% 回撤 / 最长 20 日）。
+#   ⇒ 这一节把**项目既有退出**（生产参数、**一个档位、不做扫描**）原样接到同一批信号上。
+#
+#   ★ 纪律三条：
+#     ① **不自己发明退出规则**（那会变成第二次「在同一份数据上调参数」）；
+#     ② 必须取 `_exit_sim` 的**可实现口径**（`cons=True, gap=True`＝保守日内 + 跳空成交），
+#        拿旧口径的乐观数去比基线＝换口径占便宜，和上一轮同一个坑；
+#     ③ 入场同样走可实现口径（T+1 开盘；T+1 一字封板剔除并计数），否则和基线不可比。
+EXIT_PROBE_SRC = "_exit_sim.py（项目唯一退出实现；生产参数，不扫描）"
+EXIT_PROBE_MODE = "可实现口径（保守日内 + 跳空成交）"
+
+
+def _probe_one(cache, d, code):
+    """某票某日、用**既有退出实现**跑一遍。返回 dict(page, real, unexec) 或 None。
+
+    page = 信号日收盘价买入 + 旧口径（乐观日内 / 忽略跳空）→ 与页面口径可比
+    real = T+1 开盘价买入 + 可实现口径（保守日内 / 跳空成交）→ 最接近真实
+    """
+    bars = cache.get(code)
+    if not bars:
+        return None
+    i0 = _bar_at(bars, d)
+    # 前向窗口不足 → 丢样（★ 不拿最后可得价糊弄；且 page/real 要同样宽才可比）
+    if i0 < 0 or i0 + X.MAXFWD + 1 >= len(bars):
+        return None
+    c0 = float(bars[i0]["last"])
+    if not c0:
+        return None
+    page = X.sim_trail_bars(bars, i0, c0, cons=False, gap=False)["pnl"] / 100.0
+    b1 = bars[i0 + 1]
+    o1 = float(b1.get("open") or b1["last"])
+    # T+1 一字封板 = 买不进（判据走真源）→ 剔除并计数，不假装买到了
+    if M.is_sealed_up(float(b1.get("low") or o1), c0, M.limit_pct(code)):
+        return dict(page=page, real=None, unexec=True)
+    real = X.sim_trail_bars(bars, i0 + 1, o1, cons=True, gap=True)["pnl"] / 100.0
+    return dict(page=page, real=real, unexec=False)
+
+
+def _agg_f(rows, field):
+    """对**浮点**口径做汇总（`_agg` 是给 (ret, reason, t) 三元组用的，别混）。
+
+    ⚠ 判 None 用 `is not None`，不能用 `if r.get(field)` —— 收益正好 0.0 会被当假值丢掉。
+    """
+    xs = [r[field] for r in rows if r.get(field) is not None]
+    if len(xs) < MIN_N:
+        return None
+    s = _stat(xs)
+    s["n"] = len(xs)
+    return s
+
+
+def exit_probe_grid(cache, sig, stages):
+    """全部 (阶段 × 连板桶) 换成既有退出实现，与**同阶段同口径**基线比。
+
+    两层判据（与第④道一致，防「假通过」）：
+      ① 相对：real 胜率 > 同阶段全部涨停票的 real 胜率；
+      ② 绝对：real 均值 − 固定双边成本 > 0 —— 因为基线自己可能就是负期望。
+    另按信号日中位数切前半/后半段，看净均值符号是否**同号**（防单窗口亮眼）。
+    """
+    days = sorted(sig.keys())
+    mid = days[len(days) // 2] if days else None
+    cells, n_judged, n_pass, n_netpos = {}, 0, 0, 0
+    stage_sum = {}
+    for stage in STAGE_ORDER:
+        allrows, byrb, sdays = [], collections.defaultdict(list), 0
+        for d, lst in sorted(sig.items()):
+            if stages.get(d) != stage:
+                continue
+            sdays += 1
+            half = "first" if (mid and d <= mid) else "second"
+            for code, _c, run in lst:
+                one = _probe_one(cache, d, code)
+                if not one:
+                    continue
+                allrows.append((half, one))
+                byrb[run_bucket(run)].append((half, one))
+        if not allrows:
+            continue
+
+        def _hmean(sel):
+            xs = [o["real"] for h, o in allrows if h == sel and o.get("real") is not None]
+            if len(xs) < MIN_OOS:
+                return None, 0
+            return sum(xs) / len(xs) - EXEC_COST, len(xs)
+
+        bn = _agg_f([o for _h, o in allrows], "real")
+        net = (bn["mean"] - EXEC_COST) if bn else None
+        f, fn = _hmean("first")
+        s, sn = _hmean("second")
+        stage_sum[stage] = dict(
+            n=len(allrows), n_days=sdays, net=net,
+            net_first=f, net_second=s, n_first=fn, n_second=sn,
+            consistent=None if (f is None or s is None) else ((f > 0) == (s > 0)),
+            both_positive=None if (f is None or s is None) else bool(f > 0 and s > 0))
+
+        base = [o for _h, o in allrows]
+        for rb in RUN_ORDER:
+            rows = byrb.get(rb) or []
+            cell = _probe_summarize([o for _h, o in rows], base, rows, stage, rb)
+            cells["%s|%s" % (stage, rb)] = cell
+            if cell.get("pass") is not None:
+                n_judged += 1
+            if cell.get("pass"):
+                n_pass += 1
+            if cell.get("net_positive"):
+                n_netpos += 1
+    best = None
+    for k, c in cells.items():
+        if c.get("net_mean") is None:
+            continue
+        if best is None or c["net_mean"] > cells[best]["net_mean"]:
+            best = k
+    # 阶段层结论：净均值为正的阶段（这是「择时」视角，与「选股」视角分开报）
+    pos_stages = [st for st in STAGE_ORDER if (stage_sum.get(st) or {}).get("net") is not None
+                  and stage_sum[st]["net"] > 0 and stage_sum[st].get("both_positive")]
+    return dict(src=EXIT_PROBE_SRC, mode=EXIT_PROBE_MODE, entry="T+1 开盘价",
+                params=dict(stop=X.STOP, act=X.ACT, trail=X.TRAIL, maxfwd=X.MAXFWD),
+                hold=X.MAXFWD, mid=mid, cost=EXEC_COST,
+                n_cells=len(cells), n_judged=n_judged,
+                n_pass=n_pass, n_net_positive=n_netpos, best=best,
+                stage_base=stage_sum, pos_stages=pos_stages,
+                cells=cells)
+
+
+def _probe_summarize(tgt, base, rows, stage, rb):
+    """某形态在既有退出下的结论 dict（相对判据 + 绝对判据 + 前后半段）。"""
+    n_unx = sum(1 for r in tgt if r["unexec"])
+    d = dict(stage=stage, run=rb, n_sample=len(tgt), n_unexec=n_unx,
+             unexec_rate=(n_unx / len(tgt)) if tgt else None,
+             page=_agg_f(tgt, "page"), real=_agg_f(tgt, "real"),
+             base_real=_agg_f(base, "real"), base_n=len(base))
+    r, br = d["real"], d["base_real"]
+    if r and br:
+        d["edge_pp"] = (r["win"] - br["win"]) * 100
+        d["pass"] = bool(r["win"] > br["win"])
+    else:
+        d["edge_pp"] = None
+        d["pass"] = None
+    if d["page"] and r:
+        d["optimism_pp"] = (d["page"]["win"] - r["win"]) * 100
+    else:
+        d["optimism_pp"] = None
+    if r:
+        d["net_mean"] = r["mean"] - EXEC_COST
+        d["net_positive"] = bool(r["mean"] > EXEC_COST)
+    else:
+        d["net_mean"] = None
+        d["net_positive"] = None
+
+    def _half(sel):
+        xs = [o["real"] for h, o in rows if h == sel and o.get("real") is not None]
+        if len(xs) < MIN_OOS:
+            return None
+        return sum(xs) / len(xs) - EXEC_COST
+
+    f, s = _half("first"), _half("second")
+    d["net_first"], d["net_second"] = f, s
+    d["consistent"] = None if (f is None or s is None) else ((f > 0) == (s > 0))
+    d["both_positive"] = None if (f is None or s is None) else bool(f > 0 and s > 0)
+    return d
+
+
 # ------------------------------------------------------------------ 自测
 def selftest():
     ok = [0, 0]
@@ -840,6 +1025,33 @@ def selftest():
     chk("前向不足返回 None", _sim_rule([mk("20260101", 10.0, 10.0)], 0, 10.0,
                                        "sh600000", st) is None)
 
+    print("— ⑥ 既有退出探针：口径与可执行性 —")
+    def _mk_seq(c0, o1, tail):
+        """信号日收盘 c0；T+1 开盘 o1；其后 len(tail) 天按给定价横盘。"""
+        out = [mk("20260101", c0, c0), mk("20260102", o1, o1)]
+        for i, px in enumerate(tail):
+            out.append(mk("202601%02d" % (3 + i), px, px))
+        return out
+
+    # ① T+1 一字封板（10.00 → 11.00 一字）→ 买不进：unexec=True 且 real=None
+    b = [mk("20260101", 10.0, 10.0)] + [mk("202601%02d" % (2 + i), 11.0, 11.0)
+                                      for i in range(21)]
+    one = _probe_one({"sh600000": b}, "20260101", "sh600000")
+    chk("T+1 一字封板判「买不进」", one and one["unexec"] is True and one["real"] is None,
+        "%s" % (one,))
+    # ② 前向窗口不足 → 丢样
+    chk("前向不足返回 None", _probe_one({"sh600000": b[:10]}, "20260101", "sh600000") is None)
+    # ③ 跳空高开 10.00 → 10.80（未触板，涨停价是 11.00）：页面口径按信号日收盘买
+    #    → 把 T+1 那 8% 也算进去；可实现口径要等 T+1 开盘才买得到 → 之后没动就是 0%。
+    b = _mk_seq(10.0, 10.8, [10.8] * 20)
+    one = _probe_one({"sh600000": b}, "20260101", "sh600000")
+    chk("页面口径把跳空算进收益", one and abs(one["page"] - 0.08) < 1e-9, "%s" % (one,))
+    chk("可实现口径只算 T+1 开盘之后",
+        one and one.get("real") is not None and abs(one["real"]) < 1e-9, "%s" % (one,))
+    # ④ _agg_f 不能把收益正好 0.0 的样本当假值丢掉
+    z = _agg_f([{"x": 0.0}] * MIN_N, "x")
+    chk("_agg_f 保留收益 0.0 的样本", z is not None and z["n"] == MIN_N, "%s" % (z,))
+
     print("\n自测：%d/%d 通过" % (ok[0], ok[1]))
     return ok[0] == ok[1]
 
@@ -872,23 +1084,31 @@ def load_quotes_names(asof=None):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", default="", help="数据截止日 YYYY-MM-DD（默认取日K缓存最新日）")
+    ap.add_argument("--src", default="auto", choices=("auto", "long", "short"),
+                    help="日K来源：auto=有长历史就用长历史（默认）")
     ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args()
     if a.selftest:
         return 0 if selftest() else 1
 
+    # ★ 日K来源：默认优先**长历史**（`_longk`，2023-07-17 起 780 根 ≈ 3.2 年）。
+    #   本模块的结论全是统计量（胜率/均值/分位），样本期从一年变三年是**换更充分的证据**，
+    #   不是换口径；但必须把来源写进产物，绝不让「一年样本」冒充「三年样本」。
+    src = "long" if (a.src == "long" or (a.src == "auto" and os.path.exists(LK.LONG))) else "short"
     try:
-        cache = _txk.load()
+        cache = LK.load_long() if src == "long" else _txk.load()
     except Exception as e:
         print("[odds] 读日K失败：%s" % str(e)[:80])
         return 1
     if not cache:
-        print("[odds] 日K缓存为空 —— 按红线不出结论")
+        print("[odds] 日K为空（来源 %s）—— 按红线不出结论" % src)
         return 1
+    src_label = LK.src_label() if src == "long" else "_txk_cache(250 根短缓存)"
 
-    asof = a.date.replace("-", "") if a.date else ""
+    asof = _dig(a.date) if a.date else ""
     if asof:
-        cache = {c: [b for b in bars if b["date"] <= asof] for c, bars in cache.items()}
+        # ⚠ 两边都先去横线再比（见 _dig 注释）；否则「2026-10-01」会被判 ≤ 「20260930」
+        cache = {c: [b for b in bars if _dig(b["date"]) <= asof] for c, bars in cache.items()}
     try:
         series, sig, closes, runs, univ = scan(cache)
     except Exception as e:
@@ -916,6 +1136,12 @@ def main():
     res["cand"] = candidates(ds, sig, closes, runs, bc, quotes, res["stages"]) if bc else []
     res["quotes_src"] = qsrc
     res["gen"] = "quant/_dragon_odds.py"
+    # ★ 日K来源与样本跨度（页面必须显示，否则「三年」与「一年」看不出区别）
+    res["kline_src"] = src
+    res["kline_label"] = src_label
+    res["sample_days"] = len(series)
+    res["sample_first"] = series[0]["date"] if series else None
+    res["sample_last"] = series[-1]["date"] if series else None
 
     # ★ 第④道「退出可兑现」：对同一个形态跑真实成交约束。
     #   算不出来就写 err，**绝不退化成「默认通过」**。
@@ -942,6 +1168,21 @@ def main():
     except Exception as e:
         res["stop_sens"] = dict(err=str(e)[:120])
         print("[odds] 止损敏感性核验失败：%s" % str(e)[:80])
+
+    # ★ 附加检验 B：换上**项目既有退出实现**（`_exit_sim.py` 移动止盈，生产参数不扫描）
+    #   能不能救 —— 这是「调止损参数」被证伪后剩下唯一还算公平的一问。
+    try:
+        res["exit_probe"] = exit_probe_grid(cache, sig, res["stages"])
+    except Exception as e:
+        res["exit_probe"] = dict(err=str(e)[:120])
+        print("[odds] 既有退出探针失败：%s" % str(e)[:80])
+    if isinstance(res.get("exit_probe"), dict) and not res["exit_probe"].get("err"):
+        # 样本跨度随探针一起落盘 —— 页面必须标出「三年」还是「一年」，否则同一组数字看不出区别
+        ep = res["exit_probe"]
+        ep["kline_label"] = src_label
+        ep["sample_days"] = len(series)
+        ep["sample_first"] = series[0]["date"] if series else None
+        ep["sample_last"] = series[-1]["date"] if series else None
 
     res.pop("stages", None)          # 250 项的中间表，不进产物
 
@@ -998,6 +1239,21 @@ def main():
         print("        止损宽度敏感性（%d 格）：前/后半段**同号** %d 格、**异号** %d 格（分界 %s）"
               % (ss.get("n_cells", 0), ss.get("n_consistent", 0),
                  ss.get("n_inconsistent", 0), ss.get("mid")))
+    ep = res.get("exit_probe") or {}
+    if ep and not ep.get("err"):
+        print("        既有退出探针（%s 生产参数）：可判 %d 格、过相对判据 %d 格、"
+              "**扣成本净正 %d 格**；最优格 %s"
+              % (EXIT_PROBE_SRC.split("（")[0], ep.get("n_judged", 0), ep.get("n_pass", 0),
+                 ep.get("n_net_positive", 0), ep.get("best") or "无"))
+        sb = ep.get("stage_base") or {}
+        print("        各阶段「全部涨停票」同口径基线净均值：%s"
+              % "、".join("%s %s" % (st, ("%+.2f%%" % (sb[st]["net"] * 100))
+                                    if sb.get(st, {}).get("net") is not None else "—")
+                          for st in STAGE_ORDER if st in sb))
+        if ep.get("pos_stages"):
+            print("        ★ 两段都为正的阶段：%s" % "、".join(ep["pos_stages"]))
+        else:
+            print("        ★ 没有任何阶段能做到「两段都为正」")
     print("[odds] 落盘 %s" % path)
     return 0
 
