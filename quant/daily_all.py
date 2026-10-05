@@ -184,7 +184,9 @@ def run_one(cmd, dry=False):
         if dry:
             continue
         t0 = time.time()
-        r = subprocess.run([PY] + part.split(), cwd=QUANT)
+        env = dict(os.environ)
+        env["WB_TXK_LOG"] = "1"        # 开 txk 加载日志 → 收尾时能统计「128MB 到底解析了几次」
+        r = subprocess.run([PY] + part.split(), cwd=QUANT, env=env)
         dt = time.time() - t0
         TIMINGS.append((part, round(dt, 2), r.returncode))
         print("    · 耗时 %.2fs（退出码 %d）" % (dt, r.returncode))
@@ -192,6 +194,41 @@ def run_one(cmd, dry=False):
             print("    !! 退出码 %d —— %s" % (r.returncode, part))
             ok = False
     return ok
+
+
+def _txk_summary():
+    """汇总本轮所有子进程对 128MB 日K缓存的解析次数与耗时。
+
+    这不是「优化了多少」的口号：把 `_txk_cache.json` 的加载次数数出来，
+    才能证明统一层真的把重复解析降下来了（缺文件时不猜数字，返回 None）。
+    """
+    p = os.path.join(QUANT, "_txk_loadlog.jsonl")
+    if not os.path.exists(p):
+        return None
+    rows = []
+    try:
+        with open(p, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    rows.append(json.loads(line))
+    except Exception:
+        return None
+    if not rows:
+        return None
+    per = {}
+    for r in rows:
+        k = r.get("script") or "?"
+        per.setdefault(k, {"loads": 0, "secs": 0.0, "mb": 0.0})
+        per[k]["loads"] += 1
+        per[k]["secs"] = round(per[k]["secs"] + r.get("secs", 0.0), 3)
+        per[k]["mb"] = round(per[k]["mb"] + r.get("mb", 0.0), 1)
+    return {"n_loads": len(rows),
+            "total_secs": round(sum(r.get("secs", 0.0) for r in rows), 2),
+            "mb_per_load": rows[0].get("mb"),
+            "total_mb_parsed": round(sum(r.get("mb", 0.0) for r in rows), 1),
+            "per_script": [{"script": k, "loads": v["loads"], "secs": v["secs"],
+                            "mb": v["mb"]} for k, v in sorted(per.items())]}
 
 
 def dump_profile(date, failed):
@@ -209,6 +246,10 @@ def dump_profile(date, failed):
         out["kline_load"] = _longk.load_stats()
     except Exception:
         pass
+    try:
+        out["txk_load"] = _txk_summary()
+    except Exception:
+        pass
     p = os.path.join(QUANT, "_daily_profile.json")
     try:
         json.dump(out, open(p, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
@@ -221,6 +262,13 @@ def dump_profile(date, failed):
         kl = out["kline_load"]
         print("    长K加载：%d 次 / %.2fs / %.1fMB（进程内共享缓存后应为 1 次）"
               % (kl["loads"], kl["secs"], kl["bytes_mb"]))
+    tl = out.get("txk_load")
+    if tl:
+        print("    日K主缓存：%d 次解析 / 合计 %.2fs / 每次 %.1fMB"
+              % (tl["n_loads"], tl["total_secs"], tl["mb_per_load"] or 0))
+        for s in tl["per_script"][:6]:
+            print("        %-28s %d 次 %.2fs" % (s["script"], s["loads"], s["secs"]))
+        print("        ↑ 每脚本内多次 load 已由 _txk 进程内共享缓存合并")
     return out
 
 
@@ -248,6 +296,12 @@ def main():
 
     D = a.date or a.date_pos or _latest_data_date().strftime("%Y-%m-%d")
     DS = D.replace("-", "")
+    # 每轮清空 txk 加载日志：log 只描述「本轮」，profile 里的次数才可横向对比
+    _lp = os.path.join(QUANT, "_txk_loadlog.jsonl")
+    try:
+        open(_lp, "w").close()
+    except OSError:
+        pass
     print("=== 每日全链 · 数据日期 %s（DS=%s）===" % (D, DS))
     if D == datetime.date.today().strftime("%Y-%m-%d"):
         print("提示：今天可能是非交易日。若无当日数据，请用 --date 指定最近交易日。")

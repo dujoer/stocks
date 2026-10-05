@@ -19,6 +19,7 @@
 输出：quant/_rev_lab_result.json、quant/_rev_lab_panel.json、web/reversal/lab.html
 """
 from __future__ import annotations
+import _txk
 import os, sys, json, math, statistics
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -102,7 +103,7 @@ def build_panel(step=STEP):
     硬门槛（进域条件）：距 52 周高回撤 ≥ 18% ＋ 未跌破 MA60×0.75 ＋ 20 日均成交额 ≥ 3000 万。
     只有过门槛的 (标的, 交易日) 才写入面板 —— 域外样本对冲截面排序无意义，且能让面板体量小一个量级。
     """
-    cache = json.load(open(os.path.join(QUANT, "_txk_cache.json"), encoding="utf-8"))
+    cache = _txk.load()
     codes = [c for c in cache if len(cache[c]) >= MINI + FMAX + 5]
     global LAST_UNIVERSE_N
     LAST_UNIVERSE_N = len(codes)
@@ -341,7 +342,7 @@ def _universe_n(rows):
     if LAST_UNIVERSE_N:
         return LAST_UNIVERSE_N
     try:
-        cache = json.load(open(os.path.join(QUANT, "_txk_cache.json"), encoding="utf-8"))
+        cache = _txk.load()
         n = sum(1 for c in cache if len(cache[c]) >= MINI + FMAX + 5)
         del cache
         return n
@@ -559,7 +560,7 @@ def walkforward(rows, months=6, min_spread=5.0):
 
 def date_market():
     """日级市场状态（只用当日及之前的信息，实盘 scan 时可算）：全市场等权中位 20 日收益 + 广度(close>MA20 占比)。"""
-    cache = json.load(open(os.path.join(QUANT, "_txk_cache.json"), encoding="utf-8"))
+    cache = _txk.load()
     codes = list(cache.keys())
     byd = {}
     for c in codes:

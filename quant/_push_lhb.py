@@ -185,6 +185,7 @@ FILES = [
     "quant/_rev_gate_page.py",        # 反转池证据页生成器（许可返回值的语义反义修正）
     "quant/_data_integrity_audit.py", # ★ 上述审计结论证据页生成器 → web/docs/data_integrity_audit.html
     "quant/_longk.py",                # ★ 长K单一加载层（mtime 感知进程内缓存 + 缺文件不静默回退）
+    "quant/_txk.py",                  # ★ 日K主缓存单一加载层（同 _longk：缓存 + 陈旧 fail-safe + WB_TXK_LOG）
     # ↓ 原漏网：不在 FILES = 线上不存在 = 结论不可复现（2026-10-05 补）
     "quant/daily_all.py",             # 13 步主入口（它不在自己链路里，故由 _coverage_check 的 C2 单列）
     "quant/_apply_theme.py",          # 主题注入层（丢注入层会让页面没样式，务必在册）

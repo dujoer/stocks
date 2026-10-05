@@ -14,6 +14,7 @@
 「可兑现胜率」= 该退出规则下盈利交易占比。目标：A 档（域内前 X%）严格样本外 >60%。
 """
 from __future__ import annotations
+import _txk
 import os, sys, json, math, datetime, argparse, statistics
 from collections import defaultdict
 
@@ -98,7 +99,7 @@ def build_panel(step=STEP):
     域 = `_txk_cache.json` 全部 A 股正股（排北交所/转债/ETF），剔除 ST/退、K线不足、
     20 日均额 < AMT_MIN、现价 < PRICE_MIN。不做趋势/深跌等前置剪枝（那是排序器的事）。
     """
-    cache = json.load(open(CACHE, encoding="utf-8"))
+    cache = _txk.load()
     NM = {}
     try:
         NM = json.load(open(os.path.join(QUANT, "_stock_names.json"), encoding="utf-8"))
@@ -301,7 +302,7 @@ def build_fo_index(rows, hold=MAXFWD):
     need = defaultdict(set)
     for r in rows:
         need[r["code"]].add(r["date"])
-    cache = json.load(open(CACHE, encoding="utf-8"))
+    cache = _txk.load()
     idx = {}
     miss = 0
     for code, ds in need.items():

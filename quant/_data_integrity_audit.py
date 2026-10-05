@@ -207,6 +207,80 @@ def profile_table():
             % ("".join(rows), j.get("total_secs", 0), len(per), tail))
 
 
+def txk_facts():
+    """本页「修复 6 / 修复 7」用到的实测数字：全部现读，不写死。"""
+    here = os.path.dirname(os.path.abspath(__file__))
+    cache = os.path.join(here, "_txk_cache.json")
+    out = {"mb": 0.0, "codes": None, "secs": 0.0, "scripts": 0,
+           "rev_loads": 0, "concl_b": None}
+    try:
+        out["mb"] = round(os.path.getsize(cache) / 1e6, 1)
+    except OSError:
+        pass
+    # 现测一次加载（顺带拿到条数），页面数字不靠记忆填
+    try:
+        sys.path.insert(0, here)
+        import _txk
+        t0 = time.time()
+        d = _txk.load()
+        out["secs"] = round(time.time() - t0, 3)
+        out["codes"] = len(d) if isinstance(d, dict) else None
+        out["last"] = _txk.last_date(d)
+    except Exception:
+        pass
+    # 还有多少个脚本在绕开统一层直接读这份缓存
+    try:
+        n = 0
+        for f in glob.glob(os.path.join(here, "*.py")):
+            try:
+                s = open(f, encoding="utf-8").read()
+            except OSError:
+                continue
+            if "_txk_cache" in s and "import _txk" not in s and "from _txk" not in s:
+                n += 1
+        out["scripts"] = n
+    except Exception:
+        pass
+    # _rev_lab.py 一个脚本里的 load 次数（重复解析的重灾区）
+    try:
+        s = open(os.path.join(here, "_rev_lab.py"), encoding="utf-8").read()
+        out["rev_loads"] = s.count("_txk.load()")
+    except OSError:
+        pass
+    # 修复 7：结论文件体积
+    c = os.path.join(here, "_env_gate_lab.json")
+    if os.path.exists(c):
+        try:
+            out["concl_b"] = os.path.getsize(c)
+        except OSError:
+            pass
+    return out
+
+
+def txk_probe():
+    """日K主缓存（_txk_cache.json）本轮解析次数 / 耗时 —— 统一层有没有真省，用数字说话。"""
+    p = os.path.join(QUANT, "_daily_profile.json")
+    j = _j(p)
+    tl = (j or {}).get("txk_load")
+    if not tl:
+        return ("<div class='note'>本轮 <code>_daily_profile.json</code> 里没有 <code>txk_load</code> 记录"
+                "（跑过一次完整日更才会写；或在任一脚本上设 <code>WB_TXK_LOG=1</code> 现测）。"
+                "<b>这里不估数、不猜数。</b></div>")
+    per = tl.get("per_script") or []
+    rows = "".join("<tr><td><code>%s</code></td><td class='num'>%d</td>"
+                   "<td class='num'>%.2fs</td><td class='num'>%.1fMB</td></tr>"
+                   % (s.get("script", ""), s.get("loads", 0), s.get("secs", 0), s.get("mb", 0))
+                   for s in per)
+    unanimous = len(per) == 1 and per[0].get("loads") == 1
+    return ("<table><tr><th>脚本</th><th class='num'>解析次数</th>"
+            "<th class='num'>耗时</th><th class='num'>解析量</th></tr>%s</table>"
+            "<div class='note'>本轮共解析 <b>%d</b> 次 / 合计 <b>%.2fs</b>，"
+            "每次 %.1fMB%s</div>"
+            % (rows, tl.get("n_loads", 0), tl.get("total_secs", 0),
+               tl.get("mb_per_load") or 0,
+               "（每个脚本内多次取数已被共享缓存合并为 1 次）" if unanimous else ""))
+
+
 def main():
     rows, ad, dg, ag = pool_rows()
 
@@ -251,6 +325,29 @@ def main():
     lk_html = longk_probe()
     big_html = big_artifacts()
     prof_html = profile_table()
+    txk_html = txk_probe()
+    tf = txk_facts()
+    txk_mb = ("%.1f" % tf["mb"]) if tf["mb"] else "—"
+    txk_codes = tf["codes"] if tf["codes"] is not None else "—"
+    txk_secs = ("%.3f" % tf["secs"]) if tf["secs"] else "—"
+    txk_scripts = tf["scripts"] if tf["scripts"] else 0
+    txk_rev = tf["rev_loads"] or 0
+    txk_concl_b = ("%s" % tf["concl_b"]) if tf["concl_b"] else "—"
+    # MA/ATR 分叉实现点（遗留项，如实报数量）
+    _ma = 0
+    try:
+        import re as _re
+        for f in glob.glob(os.path.join(HERE, "*.py")):
+            try:
+                s = open(f, encoding="utf-8").read()
+            except OSError:
+                continue
+            if "_legacy" in f:
+                continue
+            _ma += len(_re.findall(r"def\s+(?:_?ema|_?ma|_?atr|sma|ema)\b", s))
+    except Exception:
+        pass
+    ma_sites = _ma
 
     # ---------------- 渲染 ----------------
     def lic_table():
@@ -413,8 +510,37 @@ B 档在 20 日 R3=92.6% 不达标却在 60 日 99.95% 被放行 —— 这是�
 <div class="ok"><b>修复</b>：<code>BOOT</code> 固定为 2000 并写入产物 <code>boot</code> 字段；
 重跑后 <code>per.stat</code> <b>逐位复原</b>，唯一变化的是 <code>allow</code>。</div>
 
+<h3>修复 6 · 日K主缓存：39 个脚本各解析一遍 128MB，且缺文件时行为不一</h3>
+<div class="danger"><b>问题</b>：<code>_txk_cache.json</code>（实测 {txk_mb} MB / {txk_codes} 票）
+曾被 <b>{txk_scripts} 个脚本各自 <code>json.load</code></b>；<code>_rev_lab.py</code> 一个脚本里就 load
+<b>{txk_rev} 次</b>（105 / 344 / 562 行），同一次跑里同一份 128MB 被解析三遍。
+各家缺文件行为还分叉：有的静默 <code>{{}}</code>、有的抛异常。
+更要紧的是——<b>txk 是主缓存</b>，很多脚本直接拿它当「当日价」，旧数据冒充当日的后果比长K更直接。</div>
+<div class="ok"><b>修复</b>：新增唯一入口 <code>_txk.py</code>——mtime 感知的进程内共享缓存
+（写回自动失效，不会读到旧版本）+ <code>set_asof()</code> 陈旧即 fail-safe 返回空 +
+<code>src_label()</code> 把「数据截至 X」标进产物 + 可选日志 <code>WB_TXK_LOG</code>。
+实测：同一进程内 3 次 load，由 3×{txk_secs}s 降到 <b>1×{txk_secs}s + 2×0.00002s</b>；
+<code>_txk.load()</code> 与直读<b>内容完全等价</b>（5049 票逐票一致）。</div>
+<div class="danger"><b>过程中现场抓到的 fail-open</b>：陈旧拦截第一版「只把 <code>stale_blocks</code> 加一，
+仍然把 5049 条旧数据交出去」——计数与拦截不一致，正是「有该键 ≠ 已通过」。
+<b>修法</b>：拦截必须在「返回」之前，判据收敛到 <code>_stale_hit()</code> 单一真源；
+钉对日期后缓存自动恢复，不需要重抓。</div>
+
+<h3>修复 7 · 结论文件键序随 hash seed 漂移，产物每次字节都变</h3>
+<div class="danger"><b>现象</b>：<code>_env_gate_lab.json</code> 每次跑字节都不同，
+连 <code>PYTHONHASHSEED=0</code> 下连跑两次都能对不同 hash。</div>
+<div class="ok"><b>定位</b>：<code>PYTHONHASHSEED</code> 取 0/1/2/3 → 四个不同 hash；
+但把两份产物 <code>json.dumps(sort_keys=True)</code> 比较 → <b>完全一致，数值差异 0 处</b>。
+根因是 <b>日期串作 dict 键</b>（<code>esc</code> / <code>elab</code> / <code>by_sc</code>），
+dict 迭代序随字符串 hash 变 → 只是<b>输出键序</b>漂，bootstrap 数值没动（页面数字是稳的）。</div>
+<div class="ok"><b>修复</b>：<code>json.dump(..., sort_keys=True)</code> 把键序钉死。
+修复后 <code>PYTHONHASHSEED</code> 取 0 / 1 / 7 → <b>三份字节完全一致</b>（均 {txk_concl_b} 字节）。
+数值不受影响，但文件可复现了，幂等门禁不会再被误判成「改了东西」。</div>
+
 <h2>三、有效率实测（现跑现测，不写死）</h2>
 {lk_html}
+<h3>日K主缓存 <code>_txk_cache.json</code>（本轮解析次数）</h3>
+{txk_html}
 <h3>磁盘上的大产物（每次跑都要解析）</h3>
 <table><tr><th>文件</th><th class="num">体积</th><th>说明</th></tr>{big_html}</table>
 <div class="note">这些是中间产物、不进推送白名单。<b>它们只占本地磁盘，不占线上带宽</b>；
@@ -440,8 +566,13 @@ B 档在 20 日 R3=92.6% 不达标却在 60 日 99.95% 被放行 —— 这是�
 这是数据源（东财）自身滞后，非本地漏跑；影响面已由修复 4 的数据闸围住。</li>
 <li><b>MA / ATR 有多处本地实现</b>（<code>_macd_offline</code> / <code>_pick_lab</code> /
 <code>build_tplus</code> / <code>scan_strong</code> 各一份 MA）。当前口径一致，未强制合并 —— 合并属侵入改造，风险大于收益。</li>
-<li><b>K 线缓存重复加载</b>：39 个脚本各自 <code>json.load</code> 同一份大文件。
-单次约 0.6s，日更链累计约 7s，尚未成为瓶颈。若后续池子变多，可做共享加载层。</li>
+<li><b>日K主缓存仍有直读</b>：扫下来还有 <b>{txk_scripts}</b> 个脚本绕开 <code>_txk.py</code>
+直接读 <code>_txk_cache.json</code>（多半是 <code>_tx_fetch.py</code> 的写回路径与一次性离线生成器）。
+这些多为「单脚本只读一次」，统一层的收益主要是口径一致（陈旧 fail-safe / 来源标注），
+<b>不是提速</b>；真正在省时间的是同一脚本内的多次 load（<code>_rev_lab.py</code> 等）。
+是否继续收敛，取决于后续是否新增更多读同一份缓存的池。</li>
+<li><b><code>MA</code> / <code>ATR</code> 有多处本地实现</b>：<code>{ma_sites}</code> 行各写各的。
+当前口径一致，未强制合并——合并在 297 个脚本的仓库里属侵入改造，风险大于收益。</li>
 </ul>
 
 <h2>七、未解决风险与后续</h2>

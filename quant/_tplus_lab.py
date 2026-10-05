@@ -40,6 +40,7 @@
       python quant/_tplus_lab.py --rebuild  # 强制重建面板（约 2~4 分钟）
 """
 from __future__ import annotations
+import _txk
 import os, sys, json, math, argparse, statistics
 from collections import deque, defaultdict
 
@@ -341,7 +342,7 @@ def _summ(rs):
 # ==================== 面板构建 ====================
 def build_panel(step=STEP):
     """全市场可做T面板：域 = `_txk_cache.json` 全部正股，过了硬门槛才入面板。"""
-    cache = json.load(open(CACHE, encoding="utf-8"))
+    cache = _txk.load()
     NM = _names()
     SH = _shares_map()
     codes = [c for c in cache if len(cache[c]) >= MINI + FMAX + 5]

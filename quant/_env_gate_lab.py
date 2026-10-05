@@ -23,6 +23,7 @@
   R3 双条件：edge>0 **且** 随机分位 ≤5%（bootstrap 中 edge>0 的比例 ≥95%）。
 """
 from __future__ import annotations
+import _txk
 import os, sys, json, math, random, statistics, argparse, datetime
 from collections import defaultdict
 
@@ -105,7 +106,7 @@ def build(step_dates=5, cache=None, nm=None):
     cache / nm 可由外部传入（敏感性分析要跑多组步长，避免重复加载几百 MB 的缓存）。
     """
     if cache is None:
-        cache = json.load(open(os.path.join(QUANT, "_txk_cache.json"), encoding="utf-8"))
+        cache = _txk.load()
     if nm is None:
         nm = {}
         try:
@@ -586,8 +587,12 @@ def main(argv=None):
            "date_hi": max({r["date"] for r in rows}) if rows else None,
            "gate": "strong_only"}
     res["audit_mode"] = AUDIT_MODE
+    # ★ sort_keys=True：结论里有「日期串作键」的 dict（esc/elab/by_sc 等），
+    #   dict 迭代序随 PYTHONHASHSEED 变 → 不加排序每次跑出来的字节都不一样
+    #   （实测：数值完全一致，但文件 hash 每次都漂，幂等门禁会被误判成「改了」）。
+    #   数值不受影响，只把键序钉死，让产物可复现。
     json.dump(res, open(CONCL_JSON, "w", encoding="utf-8"),
-              ensure_ascii=False, indent=1, default=str)
+              ensure_ascii=False, indent=1, sort_keys=True, default=str)
     if _cli.no_html:
         print("[env] --no-html：跳过页面渲染")
         return res

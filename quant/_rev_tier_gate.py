@@ -42,6 +42,7 @@
 用法：python quant/_rev_tier_gate.py [--limit N] [--step N]
 """
 from __future__ import annotations
+import _txk
 import os, sys, json, math, random, statistics, argparse
 from collections import defaultdict
 
@@ -109,7 +110,7 @@ def hard_flag(C, H, i):
 
 # ---------------- 面板 ----------------
 def build_panel(limit=0, step=STEP, verbose=True):
-    cache = json.load(open(CACHE, encoding="utf-8"))
+    cache = _txk.load()
     nm_path = os.path.join(QUANT, "_stock_names.json")
     NM = {}
     if os.path.exists(nm_path):

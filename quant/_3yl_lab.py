@@ -35,6 +35,7 @@
 用法：python3 quant/_3yl_lab.py [--quick]
 """
 from __future__ import annotations
+import _txk
 import os, sys, json, math, argparse, datetime, statistics
 from collections import defaultdict
 
@@ -57,7 +58,7 @@ GRID_HOLD = [3, 5, 10]
 
 # ---------------------------------------------------------------- 数据装载
 def load_data():
-    raw = json.load(open(CACHE, encoding="utf-8"))
+    raw = _txk.load()
     names = json.load(open(NAMES, encoding="utf-8"))
     sw2 = json.load(open(SW2, encoding="utf-8"))
     mkt = {}

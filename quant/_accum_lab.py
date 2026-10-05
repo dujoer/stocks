@@ -23,6 +23,7 @@
   python _accum_lab.py            # 复用 kline 缓存，跑最近20交易日，写 lab.html + accum_result.json
   python _accum_lab.py --days 20
 """
+import _txk
 import os, sys, json, glob, math, argparse, collections, datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -43,7 +44,7 @@ MIN_DAILY = 1        # 至少触发 1 个日频信号（block/exec/lhb/margin）
 # 1. 数据加载
 # ============================================================
 def load_kline():
-    c = json.load(open(CACHE, encoding="utf-8"))
+    c = _txk.load()
     # code -> (dates[], last[], high[], low[], amt[], open[])  ；bar keys: date,open,last,high,low,volume
     # ★ open 为「跳空修正」审计追加的第 6 位；旧代码用 K[code][:4] 解包，不受影响。
     K = {}
@@ -436,7 +437,7 @@ def main():
         print(f"[口径] 旧模式（含截断样本）：入场日 {lastN[0]} ~ {lastN[-1]}")
     # 建代码名表
     names = {}
-    c = json.load(open(CACHE, encoding="utf-8"))
+    c = _txk.load()
     for code, bars in c.items():
         if bars:
             names[code] = bars[-1].get("name", "") or code
