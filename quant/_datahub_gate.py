@@ -16,6 +16,8 @@
    否则页面会误以为覆盖全市场 5207 只。
 ⑤ **无编造数据**：底座不得出现「用旧日期冒充当日」——
    即 manifest 的 date 必须等于各维度的实际数据日。
+⑥ **★K 线新鲜度**（2026-10-05 加）：缓存里末根 K 线 < 数据日 的票占比 > 2% → 失败。
+   少量（停牌/退市）只 WARN。这一条拦的是「旧价当当日价算指标」的静默通道。
 
 用法
 ----
@@ -24,10 +26,11 @@
 退出码：0 通过 / 1 有问题（可直接进 CI）
 """
 from __future__ import annotations
-import os, sys, json, glob, argparse
+import os, sys, json, glob, argparse, re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+ROOT = os.path.dirname(HERE)
 
 import _datahub as DH
 
@@ -116,6 +119,81 @@ def main():
             problems.append("manifest 解析失败")
     else:
         warns.append("manifest.json 不存在")
+
+    # ⑥ ★ K 线新鲜度：末根 K 线 < 数据日 的票不能用（旧价当当日价）
+    #    2026-10-05 加。历史坑：`_tx_fetch.fetch_kline` 命中缓存只看条数、不看末根日期，
+    #    缓存里 8 只票（含 1 只可转债）末根停在 09-11~09-29，会被下游当作当日价算指标。
+    mfx = locals().get("mf") or {}
+    kf = mfx.get("kline_freshness") or {}
+    try:
+        import _tx_fetch as _T
+        total = len(_T._load() or {})
+    except Exception:
+        total = 0
+    stale_n = kf.get("stale_n")
+    if stale_n is None:
+        # manifest 是旧版（无该字段）→ 自算一次，避免「无该键」被当成「已通过」
+        try:
+            import _tx_fetch as _T
+            _T.set_asof(date)
+            stale_n = len(_T.stale_codes())
+            kf = {"asof": date, "stale_n": stale_n,
+                  "stale_sample": [c for c, _ in _T.stale_codes()[:20]]}
+        except Exception:
+            stale_n = -1
+    print("\n[检查] K 线新鲜度（末根 < %s）" % date)
+    if stale_n < 0:
+        warns.append("K 线新鲜度无法自检（_tx_fetch 不可用）")
+        print("   ? 无法自检")
+    else:
+        ratio = (stale_n / total * 100.0) if total else 0.0
+        print("   %d/%d 只陈旧（%.2f%%）%s" % (stale_n, total, ratio,
+              ("：" + "、".join(kf.get("stale_sample") or [])) if stale_n else ""))
+        if kf.get("nonstock_n"):
+            print("   注：缓存含非股票代码 %d 个：%s"
+                  % (kf["nonstock_n"], "、".join(kf.get("nonstock_sample") or [])))
+        # 少量陈旧 = 停牌/退市，属正常 → WARN；大面积陈旧 = 底座腐化 → FAIL
+        if ratio > 2.0:
+            problems.append("K 线大面积陈旧：%d/%d（%.2f%%）> 2%% —— 底座当日价不可用"
+                            % (stale_n, total, ratio))
+        elif stale_n:
+            warns.append("K 线陈旧 %d 只（多为停牌，已由 _tx_fetch 补拉失败保留）：%s"
+                         % (stale_n, "、".join(kf.get("stale_sample") or [])))
+
+    # ⑦ ★ 各池产出日一致性（2026-10-05 加）
+    #    底座日已是 {date}，但各池页面可能是更早一期——「无合格标的空仓」属正常不出页，
+    #    可若是**忘了跑**或**静默失败**，页面就会停在旧日期而没人发现。
+    #    这里只报事实（落后几日），不下 FAIL，交给人判断是空仓还是漏跑。
+    print("\n[检查] 各池产出日 vs 底座日 %s" % date)
+    _ro = os.path.join(ROOT, "web")
+    pools = [("主升精选", "selected", "combined_"), ("底部反转", "reversal", "watchlist_"),
+             ("增仓精选", "accumulation", "combined_"), ("三连阴", "three_yin", "sanyin_"),
+             ("做T池", "tplus", "tplus-"), ("高胜率", "picks", "highwin_")]
+    lagged = []
+    for cn, sub, pre in pools:
+        try:
+            fs = [f for f in os.listdir(os.path.join(_ro, sub))
+                  if f.startswith(pre) and f.endswith(".html")]
+        except OSError:
+            fs = []
+        ds = []
+        for f in fs:
+            m = re.search(r"(\d{4})-?(\d{2})-?(\d{2})", f)
+            if m:
+                ds.append("%s-%s-%s" % (m.group(1), m.group(2), m.group(3)))
+        if not ds:
+            print("   %-8s 无当期页（可能空仓未出票）" % cn)
+            continue
+        latest = max(ds)
+        if latest != date:
+            lagged.append((cn, latest))
+            print("   %-8s 最新 %s （落后 %s）" % (cn, latest, date))
+        else:
+            print("   %-8s 最新 %s ✓" % (cn, latest))
+    if lagged:
+        warns.append("各池产出日与底座不一致：%s —— 需人工确认是「无合格标的空仓」"
+                     "还是漏跑（空仓不出页属正常）"
+                     % "、".join("%s(%s)" % (c, d) for c, d in lagged))
 
     # ---- 结论 ----
     print("")
