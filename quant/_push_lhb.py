@@ -155,6 +155,12 @@ FILES = [
     "quant/_pullback_probe.py",      # 强势行业回调买点检验（结论：9 定义全负，不出票）
     "quant/_strategy_gate.py",       # ★策略结论门禁（R1等量/R2真选股层/R3判定双条件）
     "quant/_event_nextday_probe.py",  # ★「提前拿消息→次日必涨」实测（结论：剔封板后超额 −0.78pp）
+    # ★ 证据页本体也要登记（2026-10-05 补）：只登记「生成器」的话，
+    #   页面内容改了不会上线（生成器只在被跑时才重写页面）。
+    "web/docs/news_nextday_evidence.html",
+    "web/docs/dip_buy_evidence.html",
+    "web/docs/exit_assumption_evidence.html",
+    "web/docs/selected_attrib_evidence.html",
     "quant/gen_news_nextday_page.py",  # 上述结论证据页生成器 → web/docs/news_nextday_evidence.html
     "quant/_dip_probe.py",            # ★「高上涨率 + 低吸」实测（结论：低吸池化净期望全面劣于追高）
     "quant/gen_dip_page.py",          # 上述结论证据页生成器 → web/docs/dip_buy_evidence.html
