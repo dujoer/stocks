@@ -563,14 +563,21 @@ dict 迭代序随字符串 hash 变 → 只是<b>输出键序</b>漂，bootstrap
 <ul>
 <li><b>融资融券数据源滞后</b>：底座体检显示融资融券只到 2026-08-19（滞后 42 天）。
 这是数据源（东财）自身滞后，非本地漏跑；影响面已由修复 4 的数据闸围住。</li>
-<li><b>MA / ATR 有多处本地实现</b>（<code>_macd_offline</code> / <code>_pick_lab</code> /
-<code>build_tplus</code> / <code>scan_strong</code> 各一份 MA）。当前口径一致，未强制合并 —— 合并属侵入改造，风险大于收益。</li>
 <li><b>日K主缓存直读已收敛</b>：本轮扫下来绕过统一层直接读 <code>_txk_cache.json</code> 的脚本
 剩 <b>{txk_scripts}</b> 个 / <b>{txk_points}</b> 处（写路径 <code>_tx_fetch.py</code> 等按白名单豁免）。
 这道判断已接进门禁的 <b>C3</b> 项 —— 以后新增直读会被当场拦下，不再靠人工 grep
 （上一轮手工改了 11 个调用点，仍漏掉日更底座 <code>_datahub.py</code>，就是这个原因）。</li>
 <li><b><code>MA</code> / <code>ATR</code> 有多处本地实现</b>：<code>{ma_sites}</code> 行各写各的。
 当前口径一致，未强制合并——合并在 297 个脚本的仓库里属侵入改造，风险大于收益。</li>
+<li><b>推送白名单漏网（门禁 C2 抓出）</b>：日更链路里 <b>13 个生成器脚本</b>没进
+<code>_push_lhb.py</code> 的 <code>FILES</code> —— 它们的<b>页面在册、脚本不在册</b>，
+线上能翻到这些数字，却看不到数字是怎么算出来的（结论不可复算）。
+已全部登记进白名单并推送上线（其中 <code>build_picks</code> / <code>gen_tplus</code> /
+<code>build_tplus</code> 远端还留着旧版，本次一并覆盖为当前版）。
+这道检查原先<b>是假绿</b>：解析 <code>daily_all.STEPS</code> 时命令行尾部带着 <code>--date</code>
+参数，<code>endswith('.py')</code> 全部落空，只解析了 8 条、又恰好都在册，于是「恒 0」。
+改成在整条命令行里抽文件名后解析出 37 条，漏网项当场现形——
+<b>自检规则自己也会被验真，「某个检查项恒 0」必须先怀疑解析落空。</b></li>
 </ul>
 
 <h2>七、未解决风险与后续</h2>
