@@ -70,9 +70,21 @@ def is_limit_up(close, prev, lp):
     return px is not None and close >= px * ZT_TOL
 
 
+def down_price(prev, lp=None):
+    """跌停价：前收 ×(1−幅度)，四舍五入到分（与 `limit_price` 对称）。"""
+    if lp is None:
+        return None
+    return round(prev * (1 - lp), 2)
+
+
 def is_limit_down(close, prev, lp):
-    """收盘封跌停？"""
-    px = limit_price(prev, lp)
+    """收盘封跌停？
+
+    ⚠ 2026-10-06 修：原实现把 `limit_price`（**涨停价**）当跌停基准用，
+      于是 `close <= 涨停价×1.0005` 几乎恒真 —— 实测「前收 10.00、收盘 9.80」
+      会被判成跌停。当前无调用点（属潜在错判），一并修正并补自测钉住。
+    """
+    px = down_price(prev, lp)
     return px is not None and close <= px * DNT_TOL
 
 
@@ -80,6 +92,25 @@ def is_touched(high, prev, lp):
     """盘中触及涨停（含封住与否）= 炸板的判定对象。"""
     px = limit_price(prev, lp)
     return px is not None and high >= px * ZT_TOL
+
+
+def is_sealed_down(high, prev, lp):
+    """**封死跌停**：全天最高价也没离开跌停价 → 当日**卖不掉**。
+
+    ⚠ 与 `is_limit_down` 的区别是实盘意义所在：收盘跌停但盘中打开过，是能卖出去的；
+    只有一字/全天钉在跌停板上才真卖不掉。做「退出可兑现」必须用这一个。
+    """
+    px = down_price(prev, lp)
+    return px is not None and high <= px * DNT_TOL
+
+
+def is_sealed_up(low, prev, lp):
+    """**一字封涨停**：全天最低价也没离开涨停价 → 当日**买不进**。
+
+    同样地，`is_limit_up` 只看收盘，封住但盘中打开过是能买到的。
+    """
+    px = limit_price(prev, lp)
+    return px is not None and low >= px * ZT_TOL
 
 
 def amount_of(code, close, volume):
@@ -109,8 +140,8 @@ def scan_one(code, bars):
         if prev is None:
             prev = c
             continue
-        lpx = round(prev * (1 + lp), 2)
-        dnx = round(prev * (1 - lp), 2)
+        lpx = limit_price(prev, lp)
+        dnx = down_price(prev, lp)
         closed = c >= lpx * ZT_TOL
         touched = h >= lpx * ZT_TOL
         down = c <= dnx * DNT_TOL
@@ -314,6 +345,15 @@ def selftest(deep=True):
     r2 = list(scan_one("sh600000", [bars[0], {"date": "20260102", "last": 9.52, "high": 9.52,
                                               "low": 9.52, "volume": 0}]))[0]
     chk("收盘 9.52 判涨停", r2["closed"] is True)
+
+    print("— ②b 跌停侧：价格基准与封死判定（2026-10-06 修 is_limit_down 基准错）—")
+    chk("跌停价 10.00 → 9.00", down_price(10.0, 0.10) == 9.00)
+    chk("收盘 9.80 不判跌停（原实现会误判 True）", is_limit_down(9.80, 10.00, 0.10) is False)
+    chk("收盘 9.00 判跌停", is_limit_down(9.00, 10.00, 0.10) is True)
+    chk("封死跌停：high=9.00 卖不掉", is_sealed_down(9.00, 10.00, 0.10) is True)
+    chk("跌停但盘中打开：high=9.60 卖得掉", is_sealed_down(9.60, 10.00, 0.10) is False)
+    chk("一字涨停：low=11.00 买不进", is_sealed_up(11.00, 10.00, 0.10) is True)
+    chk("涨停但盘中打开：low=10.20 买得到", is_sealed_up(10.20, 10.00, 0.10) is False)
 
     print("— ③ 连板累计 —")
     # 20cm 票连续 5 天一字涨停：10 → 12 → 14.4 → 17.28 → 20.74 → 24.53

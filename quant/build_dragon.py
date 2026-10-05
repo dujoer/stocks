@@ -528,12 +528,27 @@ def render_odds(ctx):
     if wf.get("note"):
         parts.append("<b>③ 样本外（walk-forward）</b>：%s" % wf["note"])
     if parts:
-        o.append("<div class='card'><b>它靠什么站住（三道自检，缺一不可）</b><ul>")
+        o.append("<div class='card'><b>它靠什么站住（前三道自检，缺一不可）</b><ul>")
         for p in parts:
             o.append("<li>%s</li>" % p)
         o.append("</ul></div>")
     else:
         o.append("<div class='warn'><b>三道自检都没有足够证据</b> —— 按红线不给结论。</div>")
+
+    # ★ 前三道验的是「历史上是不是真的」；第④道验的是「能不能真的做出来」——
+    #   两件事，别看到这一节过就以为能用了。
+    _ex = (od.get("exec") or {})
+    if _ex and not _ex.get("err"):
+        if _ex.get("pass") is False:
+            o.append("<div class='warn'><b>但这三条只说明「历史上真的发生过」，"
+                     "不说明「能赚到」</b>：第④道「退出可兑现」已补做，"
+                     "<b>结果是没过</b> —— 换成买得到、卖得掉的打法，胜率 %s 反而低于"
+                     "同口径基线 %s（<b>%+.1fpp</b>）。详见<b>第六节</b>。</div>"
+                     % ("%.1f%%" % (_ex["rule_open1"]["win"] * 100) if _ex.get("rule_open1") else "—",
+                        "%.1f%%" % (_ex["base_rule_open1"]["win"] * 100) if _ex.get("base_rule_open1") else "—",
+                        _ex.get("edge_pp") or 0))
+        else:
+            o.append("<div class='warn'>第④道「退出可兑现」已补做，见<b>第六节</b>。</div>")
 
     # ---- 均值 vs 中位（防止被少数大涨骗了）----
     o.append("<div class='warn'><b>看胜率的同时必须看「中位」和「最差」</b>："
@@ -597,8 +612,9 @@ def render_cand(ctx):
         return "".join(o)
     o.append("<div class='warn'><b>这不是推荐，是观察名单。</b>"
              "它只说明「今天确实出现了这个历史胜率最高的形态」；"
-             "名单里的票<b>没有经过出票闸</b>（无未来函数 / walk-forward / 随机对照 / 退出可兑现 四道），"
-             "本页也不给买卖点位。看名单是为了「盯盘时知道该看谁」，不是「该买谁」。</div>")
+             "而且这个形态<b>四道自检只过了三道</b> —— 第④道「退出可兑现」已补做、"
+             "<b>结果不通过</b>（见第六节），所以它<b>连「历史统计规律」都还没升级成「能用」</b>。"
+             "本页不给买卖点位。看名单是为了「盯盘时知道该看谁」，不是「该买谁」。</div>")
     o.append("<table><tr><th>代码</th><th>名称</th><th class='num'>连板</th>"
              "<th class='num'>收盘</th><th class='num'>换手率</th>"
              "<th class='num'>自身历史样本</th><th class='num'>自身历史胜率</th></tr>")
@@ -618,7 +634,8 @@ def render_cand(ctx):
         o.append("<div class='note'><b>关于名单里的 %d 只「自身历史样本为 0」</b>："
                  "意思是它在样本期里<b>第一次</b>走到这个板数 —— 没有自己的历史胜率可查，"
                  "<b>这不代表它更安全或更危险</b>，只代表我们不知道。"
-                 "真要用，先按下面第六节的规则小仓位试，别一上来就上重仓。</div>" % len(no_hist))
+                 "再叠加第六节第④道不过这件事：<b>目前不建议照第六节的规则去做</b>，"
+                 "那份名单的作用仅限于「知道今天是谁触发了这个条件」。</div>" % len(no_hist))
     return "".join(o)
 
 
@@ -627,10 +644,93 @@ RISK_PER_TRADE = 0.015      # 单笔风险预算（占本金）—— 用来从�
 
 def render_plan(ctx):
     o = ["<h2>六、配套的操作方案（规则层，不是指令）</h2>"]
-    b = (ctx.get("odds") or {}).get("best_cur") or (ctx.get("odds") or {}).get("best")
+    od = ctx.get("odds") or {}
+    b = od.get("best_cur") or od.get("best")
+    ex = od.get("exec") or {}
     if not b:
         o.append("<div class='warn'>没有达标形态，<b>方案不成立</b> —— 按红线，不出方案也不凑数。</div>")
         return "".join(o)
+
+    # ---- 第④道「退出可兑现」：本轮补做。结果直接决定这套方案能不能执行。----
+    def _w(s):
+        return "—" if not s else "%.1f%%" % (s["win"] * 100)
+
+    def _m(s):
+        return "—" if not s else "%+.2f%%" % (s["mean"] * 100)
+
+    def _md(s):
+        return "—" if not s else "%+.2f%%" % (s["med"] * 100)
+
+    if ex.get("err"):
+        o.append("<div class='warn'><b>第④道读不到</b>（%s）—— 按 fail-safe，"
+                 "这种时候不判「通过」，也不判「不通过」，而是<b>不给结论</b>。"
+                 "下面的方案因此只是纸面推导。</div>" % ex["err"][:80])
+    elif ex:
+        o.append("<h3>先说结论：第④道「退出可兑现」补做了，结果是<b>不通过</b></h3>")
+        o.append("<div class='warn'>这一节最该看的就是下面这张表。<b>同一个形态、同一批样本</b>，"
+                 "只把「买在哪、怎么卖」换成真实成交约束，胜率就从 <b>%s</b> 掉到 <b>%s</b>，"
+                 "而且<b>低于同口径的基线</b>（%s）<b>%+.1fpp</b> —— 也就是说，"
+                 "换成能真的做出来的打法，这个形态<b>没有超额</b>。</div>"
+                 % (_w(ex.get("page")), _w(ex.get("rule_open1")),
+                    _w(ex.get("base_rule_open1")), ex.get("edge_pp") or 0))
+        o.append("<table><tr><th>口径</th><th class='num'>样本</th><th class='num'>胜率</th>"
+                 "<th class='num'>中位</th><th>说明</th></tr>")
+        rows = [
+            ("① 页面口径（第四节那个数）", ex.get("page"), False,
+             "信号日<b>收盘价</b>买入、持有 5 日收盘卖出。建立在一个<b>大概率买不到</b>的价上"),
+            ("② 信号日收盘买入 + 规则退出", ex.get("rule_close"), False,
+             "入场照旧，出场换成 −5% 止损 / 满 5 日 / 转段，含跳空与跌停顺延"),
+            ("③ <b>次日开盘买入 + 规则退出</b>", ex.get("rule_open1"), True,
+             "<b>最接近真实</b>的一档：看到收盘封板，只能次日开盘去接"),
+            ("④ 同口径基线", ex.get("base_rule_open1"), False,
+             "冰点期<b>全部涨停票</b>、用<b>完全相同的可实现口径</b>算（公平对照）"),
+            ("⑤ 诊断：③ 去掉 −5% 止损", ex.get("diag_nostop"), False,
+             "⚠ <b>仅供归因</b>，看止损吃掉了多少；<b>不得据此改规则</b>"),
+        ]
+        for name, s, hi, note in rows:
+            o.append("<tr%s><td>%s</td><td class='num'>%s</td><td class='num'>%s</td>"
+                     "<td class='num'>%s</td><td>%s</td></tr>"
+                     % (' style="background:#fff9f2"' if hi else "", name,
+                        "—" if not s else s["n"], _w(s), _md(s), note))
+        o.append("</table>")
+        a, c, d2 = ex.get("page"), ex.get("rule_close"), ex.get("rule_open1")
+        if a and c and d2:
+            o.append("<div class='card'><b>两处乐观假设各值多少钱（拿数字说，不靠感觉）</b><ul>"
+                     "<li><b>出场规则</b>吃掉 <b>%.1fpp</b>：%s → %s。"
+                     "−5%% 这条止损线对四板票来说<b>太近了</b>，基本是日内噪音就会打掉 —— "
+                     "样本里 <b>%d/%d</b> 笔是「止损」出场，中位收益正好停在 −5.00%%。</li>"
+                     "<li><b>入场假设</b>再吃掉 <b>%.1fpp</b>：%s → %s。"
+                     "封板价买不到，只能次日开盘接；另有 <b>%d 个</b>样本（<b>%.1f%%</b>）"
+                     "次日直接<b>一字封板、根本买不进</b>，被剔除。</li>"
+                     "<li>两处合计 <b>%.1fpp</b>：%s → %s。"
+                     "这就是「纸面胜率」和「真能拿到的胜率」之间的距离。</li>"
+                     "</ul></div>"
+                     % ((a["win"] - c["win"]) * 100, _w(a), _w(c),
+                        (ex.get("reasons") or {}).get("rule_open1:止损", 0), d2["n"],
+                        (c["win"] - d2["win"]) * 100, _w(c), _w(d2),
+                        ex.get("n_unexec") or 0, (ex.get("unexec_rate") or 0) * 100,
+                        (a["win"] - d2["win"]) * 100, _w(a), _w(d2)))
+        if ex.get("diag_nostop") and ex.get("base_rule_open1"):
+            o.append("<div class='warn'><b>关于第 ⑤ 行，先把话说死</b>：去掉止损后是 %s，"
+                     "看着比第 ③ 行好很多 —— 但那是<b>在同一份数据上挑口径</b>，"
+                     "正是红线里「不许挑最好看的那个窗口」要拦的事，"
+                     "而且它的对照基线也得用同样口径重算才算数。<b>本页不据此修改方案。</b>"
+                     "真要改（比如放宽止损），必须重新走一遍 walk-forward 和随机对照。</div>"
+                     % _w(ex.get("diag_nostop")))
+        o.append("<div class='note'><b>第④道的判据（写出来，方便被打脸）</b>："
+                 "拿<b>最保守口径（③）</b>的胜率，去比<b>同口径基线（④）</b>。"
+                 "高于基线 = 过；不高于 = 不过。此处 %s vs %s → <b>%s</b>。"
+                 "<br>另有两点诚实交代：本节模拟的是<b>全仓一次性了结</b>，"
+                 "下面方案里「跌破 5%% 先减半」是分批口径，<b>未单独模拟</b>；"
+                 "持有期按<b>该票自己的交易日</b>数，停牌会拉长自然日跨度。</div>"
+                 % (_w(ex.get("rule_open1")), _w(ex.get("base_rule_open1")),
+                    "通过" if ex.get("pass") else
+                    ("不通过" if ex.get("pass") is False else "不可判")))
+        if ex.get("pass"):
+            o.append("<div class='card'><b>第④道通过</b> —— 但仍要配合仓位纪律，"
+                     "且它依然只是<b>研究结论</b>，不构成买卖指令。</div>")
+
+    o.append("<h3>以下是纸面推导（第④道通过之前，只当记录看）</h3>")
     # ★ 仓位与止损：全部用「历史最差」反推，不拍脑袋给数；数字一律用纯文本，
     #   别把 -26.7% 显示成红色的 +26.7%（那看起来像赚了 26.7%）。
     def _p(v):
@@ -640,7 +740,7 @@ def render_plan(ctx):
     pos5 = RISK_PER_TRADE / worst5 * 100
     pos1 = RISK_PER_TRADE / worst1 * 100
     bestK = "5" if b["5"]["mean"] >= b["1"]["mean"] else "1"
-    crows = {r["run"]: r for r in ((ctx.get("odds") or {}).get("cur_rows") or [])}
+    crows = {r["run"]: r for r in (od.get("cur_rows") or [])}
     w_first = _win(crows.get("首板"), "1")
     w_second = _win(crows.get("二板"), "1")
     o.append("<div class='card'><b>这条方案是这么推出来的</b>"
@@ -658,7 +758,8 @@ def render_plan(ctx):
              "（换成 K=1 口径，最差 %s → 单票 ≤ %.1f%%）。<b>取更小的那个</b>。</li>"
              "<li><b>退出</b>：跌破买入价 <b>%d%%</b>（由 K=1 最差的一半反推）减半，继续跌破再走；"
              "或持有满 %s 个交易日时间止损；或情绪阶段转<b>退潮 / 高潮</b>时了结 —— "
-             "三选先到者。⚠ 这条线是<b>从历史极值推的保守线</b>，不是优化出来的最优解。</li>"
+             "三选先到者。⚠ 这条线是<b>从历史极值推的保守线</b>，不是优化出来的最优解；"
+             "<b>第④道实测下来，正是这条线把胜率吃掉的</b>。</li>"
              "<li><b>明确不做</b>：冰点期去做<b>首板 / 二板</b>（K=1 胜率 %s / %s，"
              "基本就是扔硬币，超额接近 0）。</li>"
              "</ul></div>"
@@ -668,15 +769,20 @@ def render_plan(ctx):
                 _p(b["1"]["worst"]), min(pos1, 30.0),
                 int(abs(b["1"]["worst"]) * 100 / 2.0), bestK,
                 w_first, w_second))
-    o.append("<div class='warn'><b>这条方案还过不了出票闸，先别当真</b>："
-             "它现在只是<b>研究结论</b>。要接进出票，还得补四道 —— "
-             "① 无未来函数（本页已满足）；② walk-forward（本页已做，见第四节③）；"
-             "③ 随机对照（已做，见第四节①）；④ <b>退出可兑现</b>（<b>还没做</b>："
-             "上面的退出价是静态假设，滑点/一字/停牌都没算，"
-             "这一道不过，它就不是一条能执行的规则）。</div>")
-    o.append("<div class='note'>退出假设还有两处乐观：忽略<b>日内路径</b>（只按收盘价算）" +
-             "、忽略<b>跳空</b>（一字板 / 低开走不出来）。这两处会让上面的退出线<b>偏乐观</b>。"
-             "本项目的移动止盈只在一处实现（<code>_exit_sim.py</code>），要验证请走它，别在别处重算一套。</div>")
+    if ex and ex.get("pass") is False:
+        o.append("<div class='warn'><b>结论：这一节的东西现在不能执行</b> —— "
+                 "四道自检里 ①②③ 已过（无未来函数 / walk-forward / 随机对照），"
+                 "第 ④ 道<b>补做后不通过</b>。按红线，<b>四道不全过就不出票</b>。"
+                 "第四节「胜率最高的形态」作为<b>历史统计规律</b>仍然成立（那是真的），"
+                 "但<b>「按上面这套规则去做能赚钱」这个推论不成立</b>："
+                 "换成买得到、卖得掉的打法，它的胜率反而<b>低于</b>同阶段随便买涨停票。</div>")
+    else:
+        o.append("<div class='warn'><b>这条方案还过不了出票闸，先别当真</b>："
+                 "它现在只是<b>研究结论</b>。四道里前三道已满足，第 ④ 道「退出可兑现」"
+                 "见本节开头。</div>")
+    o.append("<div class='note'>模拟口径与 `_exit_sim.py`（本项目移动止盈的唯一实现）保持同一套假设："
+             "<b>跳空按开盘价成交</b>、<b>跌停封死卖不掉要顺延</b>、<b>一字板买不进要剔除</b>。"
+             "要验证退出假设请走它，别在别处重算一套。</div>")
     return "".join(o)
 
 
@@ -758,8 +864,9 @@ def render_risk():
             "不构成任何买卖建议。龙头战法波动极大，连板梯队本身就在告诉你风险："
             "六成以上的二板走不到三板。<ul>"
             "<li>第五节给的是<b>「这个形态今天出现了」的观察名单</b>，"
-            "不是个股推荐、不给买卖点位。它<b>没经过出票闸</b>，"
-            "要变成可执行还差「退出可兑现」那一道（见第六节）。</li>"
+            "不是个股推荐、不给买卖点位。<b>四道自检只过了三道</b> —— "
+            "第④道「退出可兑现」已补做、<b>不通过</b>（见第六节），"
+            "所以它<b>目前连「可执行的规则」都不是</b>。</li>"
             "<li>所有分位只用<b>截至当日</b>的滚动窗口，不含未来数据；这是能做到的事，"
             "但历史统计 ≠ 预测。</li>"
             "<li>数据读到哪天就写到哪天。若显示「无法自检」，就是真没读到，不用估计值补。</li>"

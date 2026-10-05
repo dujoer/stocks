@@ -462,6 +462,188 @@ def candidates(ds, sig, closes, runs, best, quotes, stages):
     return out
 
 
+# ------------------------------------------------------------------ 退出可兑现（第④道）
+# ★ 前三道（无未来函数 / walk-forward / 随机对照）验的是「这个形态历史上是不是真的」；
+#   这一道验的是完全不同的一件事：「**按真实成交约束，第六节那套规则能不能真的做出来**」。
+#   上一轮页面只做了前三道，所以明写「过不了出票闸」—— 这一节就是来补第④道的。
+#
+# 两个必须显式处理的高估（口径与 `_exit_sim.py` 一致，不另立一份）：
+#   ① **入场**：信号日收盘是涨停封板，真实打板要排队、大概率排不上。
+#      保守口径改为 **T+1 开盘价**成交；T+1 一字封板的样本判「**不可执行**」**剔除并计数**，
+#      不假装买到了（这一条最伤：最强的票恰恰买不进）。
+#   ② **出场**：止损被击穿时若当日**跌停封死**，真实是**卖不掉**的 → 顺延到下一交易日开盘；
+#      跳空低开按**开盘价**成交，不做「按止损线成交」的乐观假设。
+#   ⚠ 本节模拟的是**全仓一次性了结**；第六节的「跌破 5% 先减半」是分批口径，**未单独模拟**。
+EXEC_STOP = 0.05            # 跌破买入价 5%（页面第六节）
+EXEC_HOLD = 5               # 满 5 个交易日时间止损
+EXEC_DEFER = 5              # 跌停卖不掉时最多顺延几个交易日
+
+
+def _bar_at(bars, date):
+    """在**该票自己的**K 线序列里二分找日期下标（-1 = 没有这根）。"""
+    lo, hi = 0, len(bars) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if bars[mid]["date"] == date:
+            return mid
+        if bars[mid]["date"] < date:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return -1
+
+
+def _sim_rule(bars, i0, p0, code, stages, hold=EXEC_HOLD, stop=EXEC_STOP):
+    """从 bars[i0] 入场价 p0 开始，按规则跑到出场。
+
+    返回 (收益率, 出场原因, 持有天数) 或 None（前向数据不够）。
+    出场原因：止损 / 转段 / 到期 / 顺延（跌停卖不掉，顺延到下一日开盘）。
+    `stop<=0` 表示**不设止损**（仅供归因诊断，见 realizable 的 diag 说明）。
+    """
+    n = len(bars)
+    pending = False
+    stop_px = (p0 * (1 - stop)) if stop and stop > 0 else None
+    for t in range(1, hold + 1 + EXEC_DEFER):
+        i = i0 + t
+        if i >= n:
+            return None
+        b = bars[i]
+        o = float(b.get("open") or b["last"])
+        h = float(b.get("high") or b["last"])
+        c = float(b["last"])
+        prev = float(bars[i - 1]["last"])
+        # 封死跌停 = 全天最高价也没离开跌停价（判据走真源，容差与价格基准都不自写）
+        sealed_dn = M.is_sealed_down(h, prev, M.limit_pct(code))
+
+        if pending:                              # 前面触发了但卖不掉：今天开盘走
+            if sealed_dn:
+                continue
+            return (o / p0 - 1.0, "顺延", t)
+        if t > hold:
+            break
+
+        kind = None
+        if stop_px is not None and float(b.get("low") or c) <= stop_px * 1.0001:
+            kind = "止损"
+        elif stages.get(b["date"]) in ("退潮", "高潮"):
+            kind = "转段"
+        elif t == hold:
+            kind = "到期"
+        if kind is None:
+            continue
+        if sealed_dn:                            # 触发日卖不掉 → 顺延
+            pending = True
+            continue
+        # 止损：跳空低开只能按开盘价成交（更差）；转段/到期：当日收盘
+        fill = (o if o <= stop_px else stop_px) if kind == "止损" else c
+        return (fill / p0 - 1.0, kind, t)
+    return None
+
+
+def _scan_one(cache, stages, d, code, hold):
+    """取某票某日的「页面口径」与「可实现口径」两套结果。返回 dict 或 None。"""
+    bars = cache.get(code)
+    if not bars:
+        return None
+    i0 = _bar_at(bars, d)
+    if i0 < 0 or i0 + hold >= len(bars):
+        return None
+    c0 = float(bars[i0]["last"])
+    if not c0:
+        return None
+    out = dict(page=(float(bars[i0 + hold]["last"]) / c0 - 1.0, "到期", hold))
+    r = _sim_rule(bars, i0, c0, code, stages, hold)          # 信号日收盘入场
+    out["rule_close"] = r
+    # 次日开盘入场：一字封板 = 买不进（剔除并计数）
+    b1 = bars[i0 + 1]
+    o1 = float(b1.get("open") or b1["last"])
+    # 一字封板 = 全天最低价也没离开涨停价 → 根本买不进（判据走真源）
+    if M.is_sealed_up(float(b1.get("low") or o1), c0, M.limit_pct(code)):
+        out["unexec"] = True
+        out["rule_open1"] = None
+        out["diag_nostop"] = None
+    else:
+        out["unexec"] = False
+        out["rule_open1"] = _sim_rule(bars, i0 + 1, o1, code, stages, hold)
+        # 诊断：同一入场、**去掉 −5% 止损**，只留「满 5 日 / 转段」。
+        # ⚠ 用途仅限归因（看止损吃掉多少），**不得据此改规则** —— 见 realizable 注释。
+        out["diag_nostop"] = _sim_rule(bars, i0 + 1, o1, code, stages, hold, stop=0)
+    return out
+
+
+def _agg(rows, field):
+    """把某一口径的收益率汇总成胜率/均值/最差；样本不足返回 None。"""
+    xs = [r[field][0] for r in rows if r.get(field)]
+    if len(xs) < MIN_N:
+        return None
+    s = _stat(xs)
+    s["n"] = len(xs)
+    return s
+
+
+def realizable(cache, sig, stages, stage, run_name, hold=EXEC_HOLD):
+    """第④道「退出可兑现」：对某个形态跑真实成交约束，并与同阶段基线同口径对照。
+
+    基线 = 同一情绪阶段**全部涨停票**（不分连板），用**完全相同的可实现口径**算 ——
+    否则拿「可实现口径的形态胜率」去比「静态口径的阶段基线」就成了换口径占便宜。
+
+    ⚠ `diag_nostop`（去掉 −5% 止损的同一个入场）**只作归因**，用来看止损贡献了多少。
+      **严禁**看到它数字好就回去把止损删掉 —— 那是在同一份数据上挑口径，
+      正是红线里的「挑最好看的那个窗口」。要改规则必须重走 walk-forward + 随机对照。
+    """
+    def pick(stage_only, run_only):
+        out = []
+        for d, lst in sorted(sig.items()):
+            if stages.get(d) != stage_only:
+                continue
+            for code, _c, run in lst:
+                if run_only is not None and run_bucket(run) != run_only:
+                    continue
+                one = _scan_one(cache, stages, d, code, hold)
+                if one:
+                    out.append(one)
+        return out
+
+    tgt = pick(stage, run_name)
+    base = pick(stage, None)
+    n_unx = sum(1 for r in tgt if r["unexec"])
+    reasons = collections.Counter()
+    for r in tgt:
+        for f in ("rule_close", "rule_open1"):
+            if r.get(f):
+                reasons["%s:%s" % (f, r[f][1])] += 1
+
+    d = dict(
+        hold=hold, stop=EXEC_STOP, defer=EXEC_DEFER,
+        stage=stage, run=run_name,
+        n_sample=len(tgt), n_unexec=n_unx,
+        unexec_rate=(n_unx / len(tgt)) if tgt else None,
+        page=_agg(tgt, "page"),
+        rule_close=_agg(tgt, "rule_close"),
+        rule_open1=_agg(tgt, "rule_open1"),
+        diag_nostop=_agg(tgt, "diag_nostop"),
+        base_page=_agg(base, "page"),
+        base_rule_open1=_agg(base, "rule_open1"),
+        base_n=len(base),
+        reasons=dict(reasons),
+    )
+    # 判据：最保守口径下（次日开盘入场 + 真实出场）胜率是否仍**高于同口径基线**。
+    #   过不了就如实写「过不了」，绝不用宽松口径把它放行。
+    r1, b1 = d["rule_open1"], d["base_rule_open1"]
+    if r1 and b1:
+        d["edge_pp"] = (r1["win"] - b1["win"]) * 100
+        d["pass"] = bool(r1["win"] > b1["win"])
+    else:
+        d["edge_pp"] = None
+        d["pass"] = None            # 样本不足 → 不可判，不返回 True 也不返回 False 冒充
+    # 与页面口径差多少（说明「乐观假设值多少钱」）
+    if d["page"] and r1:
+        d["optimism_pp"] = (d["page"]["win"] - r1["win"]) * 100
+    else:
+        d["optimism_pp"] = None
+    return d
+
+
 # ------------------------------------------------------------------ 自测
 def selftest():
     ok = [0, 0]
@@ -496,6 +678,44 @@ def selftest():
     r2 = random.Random(SEED + 1)
     b = [r2.random() for _ in range(5)]
     chk("随机对照可复现", a == b)
+
+    print("— ⑤ 退出可兑现：跳空 / 跌停卖不掉 / 一字买不进 —")
+    def mk(date, o, c, h=None, l=None):
+        return dict(date=date, open=o, last=c,
+                    high=h if h is not None else max(o, c),
+                    low=l if l is not None else min(o, c))
+    st = {}
+    # ① 止损：买入 10.00，第 1 日盘中砸到 9.40（跌破 9.50）→ 按止损线 9.50 成交 = -5%
+    bars = [mk("20260101", 10.0, 10.0), mk("20260102", 9.9, 9.6, h=9.95, l=9.40)]
+    got = _sim_rule(bars, 0, 10.0, "sh600000", st)
+    chk("止损按止损线成交 = -5%", got and abs(got[0] + 0.05) < 1e-6 and got[1] == "止损",
+        "%s" % (got,))
+    # ② 跳空低开：第 1 日直接 9.30 开盘（已在 9.50 之下）→ 只能按开盘价 9.30 = -7%
+    bars = [mk("20260101", 10.0, 10.0), mk("20260102", 9.30, 9.20, h=9.35, l=9.10)]
+    got = _sim_rule(bars, 0, 10.0, "sh600000", st)
+    chk("跳空低开按开盘价（不是止损线）", got and abs(got[0] + 0.07) < 1e-6, "%s" % (got,))
+    # ③ 跌停封死卖不掉 → 顺延到次日开盘（昨日收 10.00 → 跌停价 9.00）
+    bars = [mk("20260101", 10.0, 10.0),
+            mk("20260102", 9.00, 9.00, h=9.00, l=9.00),      # 一字跌停，整日封死 → 卖不掉
+            mk("20260103", 8.60, 8.70, h=8.90, l=8.50)]      # 顺延：开盘 8.60 成交
+    got = _sim_rule(bars, 0, 10.0, "sh600000", st)
+    chk("跌停封死不成交，顺延到次日开盘", got and got[1] == "顺延"
+        and abs(got[0] - (8.60 / 10.0 - 1)) < 1e-6, "%s" % (got,))
+    # ③b 只是「跌到跌停但没封死」（最高价离开了跌停价）→ 当日就该按止损线成交
+    bars = [mk("20260101", 10.0, 10.0),
+            mk("20260102", 9.60, 9.05, h=9.60, l=9.00)]
+    got = _sim_rule(bars, 0, 10.0, "sh600000", st)
+    chk("没封死的跌停当日照常成交", got and got[1] == "止损", "%s" % (got,))
+    # ④ 转段出场：第 2 日收盘出场（不能提前一日，也不能拖到到期）
+    st2 = {"20260103": "退潮"}
+    bars = [mk("20260101", 10.0, 10.0), mk("20260102", 10.0, 10.2),
+            mk("20260103", 10.2, 10.6)]
+    got = _sim_rule(bars, 0, 10.0, "sh600000", st2)
+    chk("阶段转退潮当日收盘出货", got and got[1] == "转段" and abs(got[0] - 0.06) < 1e-9,
+        "%s" % (got,))
+    # ⑤ 前向不够 → None（不拿最后可得价糊弄）
+    chk("前向不足返回 None", _sim_rule([mk("20260101", 10.0, 10.0)], 0, 10.0,
+                                       "sh600000", st) is None)
 
     print("\n自测：%d/%d 通过" % (ok[0], ok[1]))
     return ok[0] == ok[1]
@@ -573,6 +793,18 @@ def main():
     res["cand"] = candidates(ds, sig, closes, runs, bc, quotes, res["stages"]) if bc else []
     res["quotes_src"] = qsrc
     res["gen"] = "quant/_dragon_odds.py"
+
+    # ★ 第④道「退出可兑现」：对同一个形态跑真实成交约束。
+    #   算不出来就写 err，**绝不退化成「默认通过」**。
+    if bc:
+        try:
+            res["exec"] = realizable(cache, sig, res["stages"], bc["stage"], bc["run"])
+        except Exception as e:
+            res["exec"] = dict(err=str(e)[:120])
+            print("[odds] 退出可兑现核验失败：%s" % str(e)[:80])
+    else:
+        res["exec"] = None
+
     res.pop("stages", None)          # 250 项的中间表，不进产物
 
     res = norm_keys(res)        # 落盘前统一把 int 键规范成 str
@@ -597,6 +829,19 @@ def main():
     print("        walk-forward：%s" % (wf.get("note") or ("前半 %s / 后半 %s" %
                                                          (wf.get("first", {}).get("cell", "-"),
                                                           wf.get("second", {}).get("cell", "-")))))
+    ex = res.get("exec") or {}
+    if ex.get("err"):
+        print("        退出可兑现：读不到（%s）→ 第④道不通过" % ex["err"][:50])
+    elif ex:
+        def _p(x):
+            return ("%.1f%%" % (x["win"] * 100)) if x else "样本不足"
+        print("        退出可兑现（第④道）：页面口径 %s ｜ 收盘入场+规则退出 %s ｜ "
+              "次日开盘入场+规则退出 %s"
+              % (_p(ex.get("page")), _p(ex.get("rule_close")), _p(ex.get("rule_open1"))))
+        print("            同口径基线 %s｜一字封板买不进 %d/%d 个样本（%.1f%%）｜第④道 %s"
+              % (_p(ex.get("base_rule_open1")), ex.get("n_unexec") or 0, ex.get("n_sample") or 0,
+                 (ex.get("unexec_rate") or 0) * 100,
+                 "通过" if ex.get("pass") else ("不通过" if ex.get("pass") is False else "不可判")))
     print("[odds] 落盘 %s" % path)
     return 0
 
