@@ -541,6 +541,13 @@ FETCHERS = {
 # ============================================================
 def run(date, only=None, offline=True, force=False, flow_limit=0, flow_win=250):
     prev = load_hub(date)
+    # ★ 先钉住当期数据日：让本进程内所有 `_tx_fetch.fetch_kline` 都做新鲜度校验
+    #   （末根 < date 视为陈旧 → 自动补拉），避免旧价当当日价。
+    try:
+        import _tx_fetch as _T
+        _T.set_asof(date)
+    except Exception as _e:
+        print("[底座] 新鲜度基准设置失败（不影响抓取）：%s" % _e)
     # ⚠ 语义严格区分：
     #   --only X  → **增量补抓**（--force 也只重抓 X，其余维度保留）
     #   --force   → 全量重抓（无 --only 时才清空）
@@ -590,6 +597,23 @@ def run(date, only=None, offline=True, force=False, flow_limit=0, flow_win=250):
     D = lambda k: hub["dims"].get(k) or {}          # noqa: E731
     ok_dims = [d for d in DIM_ORDER if D(d).get("ok")]
     bad_dims = [d for d in DIM_ORDER if not D(d).get("ok")]
+    # ★ K 线新鲜度自检：末根 K 线 < 数据日 的票不能用（旧价当当日价）。
+    #   日更链所有池共享同一份 _txk_cache，这里集中体检一次，门禁据此拦。
+    kfresh = {"asof": date, "stale_n": 0, "stale_sample": [],
+              "nonstock_n": 0, "nonstock_sample": []}
+    try:
+        import _tx_fetch as _T
+        _T.set_asof(date)
+        _st = _T.stale_codes()
+        _ns = sorted(k for k in (_T._load() or {}) if not _T.is_stock(k))
+        kfresh = {"asof": date, "stale_n": len(_st),
+                  "stale_sample": [c for c, _d in _st[:20]],
+                  "nonstock_n": len(_ns), "nonstock_sample": _ns[:20]}
+        print("[新鲜度] K 线末根 < %s 的票 %d 只%s；非股票代码 %d 个"
+              % (date, len(_st), ("（%s）" % "、".join(c for c, _ in _st[:8])) if _st else "",
+                 len(_ns)))
+    except Exception as _e:
+        print("[新鲜度] 自检跳过：%s" % _e)
     mf = {
         "date": date, "built_at": hub["built_at"],
         "ok_dims": ok_dims, "bad_dims": bad_dims,
@@ -601,6 +625,7 @@ def run(date, only=None, offline=True, force=False, flow_limit=0, flow_win=250):
         "scopes": {d: D(d).get("scope", "") for d in DIM_ORDER},
         "counts": {d: D(d).get("n") for d in DIM_ORDER
                    if isinstance(D(d).get("n"), int)},
+        "kline_freshness": kfresh,
     }
     json.dump(mf, open(manifest_path(), "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
