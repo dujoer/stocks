@@ -320,14 +320,14 @@ B 档在 20 日 R3=92.6% 不达标却在 60 日 99.95% 被放行 —— 这是�
 
 <h3>修复 6 · 日K主缓存：39 个脚本各解析一遍 128MB，且缺文件时行为不一</h3>
 <div class="danger"><b>问题</b>：<code>_txk_cache.json</code>（实测 128.5 MB / 5049 票）
-曾被 <b>31 个脚本各自 <code>json.load</code></b>；<code>_rev_lab.py</code> 一个脚本里就 load
+曾被 <b>0 个脚本各自 <code>json.load</code></b>；<code>_rev_lab.py</code> 一个脚本里就 load
 <b>3 次</b>（105 / 344 / 562 行），同一次跑里同一份 128MB 被解析三遍。
 各家缺文件行为还分叉：有的静默 <code>{}</code>、有的抛异常。
 更要紧的是——<b>txk 是主缓存</b>，很多脚本直接拿它当「当日价」，旧数据冒充当日的后果比长K更直接。</div>
 <div class="ok"><b>修复</b>：新增唯一入口 <code>_txk.py</code>——mtime 感知的进程内共享缓存
 （写回自动失效，不会读到旧版本）+ <code>set_asof()</code> 陈旧即 fail-safe 返回空 +
 <code>src_label()</code> 把「数据截至 X」标进产物 + 可选日志 <code>WB_TXK_LOG</code>。
-实测：同一进程内 3 次 load，由 3×0.615s 降到 <b>1×0.615s + 2×0.00002s</b>；
+实测：同一进程内 3 次 load，由 3×0.585s 降到 <b>1×0.585s + 2×0.00002s</b>；
 <code>_txk.load()</code> 与直读<b>内容完全等价</b>（5049 票逐票一致）。</div>
 <div class="danger"><b>过程中现场抓到的 fail-open</b>：陈旧拦截第一版「只把 <code>stale_blocks</code> 加一，
 仍然把 5049 条旧数据交出去」——计数与拦截不一致，正是「有该键 ≠ 已通过」。
@@ -348,7 +348,7 @@ dict 迭代序随字符串 hash 变 → 只是<b>输出键序</b>漂，bootstrap
 <h2>三、有效率实测（现跑现测，不写死）</h2>
 <h3>长K加载：抽公共层 <code>_longk.py</code> 前后</h3>
 <table data-wb><tr><th>调用</th><th class="num">耗时</th><th>结果</th></tr>
-<tr><td>首次 <code>load_long()</code>（真读盘）</td><td class="num"><b>1.88s</b></td><td>5050 只</td></tr>
+<tr><td>首次 <code>load_long()</code>（真读盘）</td><td class="num"><b>1.79s</b></td><td>5050 只</td></tr>
 <tr><td>二次 <code>load_long()</code>（缓存命中）</td><td class="num"><b>0.0000s</b></td><td>两次返回同一对象</td></tr>
 </table>
 <div class="note">统一前：6+ 个脚本各自 <code>json.load</code> 同一份 <b>402 MB</b> 文件，
@@ -357,7 +357,7 @@ dict 迭代序随字符串 hash 变 → 只是<b>输出键序</b>漂，bootstrap
 现在：6 个消费脚本 + 1 个生产者全部走 <code>_longk.load_long()</code>，
 mtime 感知的进程内缓存让同一进程只解析一次；缺文件一律返回空并<b>显式报「无长历史」</b>，
 不再拿短缓存冒充。</div>
-<div class="ok">实测本进程累计解析 <b>1</b> 次 / 1.88s / 401.5MB —— 若为 1 次即说明共享缓存生效。</div>
+<div class="ok">实测本进程累计解析 <b>1</b> 次 / 1.79s / 401.5MB —— 若为 1 次即说明共享缓存生效。</div>
 <h3>日K主缓存 <code>_txk_cache.json</code>（本轮解析次数）</h3>
 <div class='note'>本轮 <code>_daily_profile.json</code> 里没有 <code>txk_load</code> 记录（跑过一次完整日更才会写；或在任一脚本上设 <code>WB_TXK_LOG=1</code> 现测）。<b>这里不估数、不猜数。</b></div>
 <h3>磁盘上的大产物（每次跑都要解析）</h3>
@@ -385,11 +385,10 @@ mtime 感知的进程内缓存让同一进程只解析一次；缺文件一律�
 这是数据源（东财）自身滞后，非本地漏跑；影响面已由修复 4 的数据闸围住。</li>
 <li><b>MA / ATR 有多处本地实现</b>（<code>_macd_offline</code> / <code>_pick_lab</code> /
 <code>build_tplus</code> / <code>scan_strong</code> 各一份 MA）。当前口径一致，未强制合并 —— 合并属侵入改造，风险大于收益。</li>
-<li><b>日K主缓存仍有直读</b>：扫下来还有 <b>31</b> 个脚本绕开 <code>_txk.py</code>
-直接读 <code>_txk_cache.json</code>（多半是 <code>_tx_fetch.py</code> 的写回路径与一次性离线生成器）。
-这些多为「单脚本只读一次」，统一层的收益主要是口径一致（陈旧 fail-safe / 来源标注），
-<b>不是提速</b>；真正在省时间的是同一脚本内的多次 load（<code>_rev_lab.py</code> 等）。
-是否继续收敛，取决于后续是否新增更多读同一份缓存的池。</li>
+<li><b>日K主缓存直读已收敛</b>：本轮扫下来绕过统一层直接读 <code>_txk_cache.json</code> 的脚本
+剩 <b>0</b> 个 / <b>0</b> 处（写路径 <code>_tx_fetch.py</code> 等按白名单豁免）。
+这道判断已接进门禁的 <b>C3</b> 项 —— 以后新增直读会被当场拦下，不再靠人工 grep
+（上一轮手工改了 11 个调用点，仍漏掉日更底座 <code>_datahub.py</code>，就是这个原因）。</li>
 <li><b><code>MA</code> / <code>ATR</code> 有多处本地实现</b>：<code>20</code> 行各写各的。
 当前口径一致，未强制合并——合并在 297 个脚本的仓库里属侵入改造，风险大于收益。</li>
 </ul>
@@ -399,7 +398,7 @@ mtime 感知的进程内缓存让同一进程只解析一次；缺文件一律�
 若某产物缺失，本页对应处显示「无法自检」而不是沿用上次的数字。</div>
 
 <footer>
-生成于 2026-10-05 19:24:31 ·
+生成于 2026-10-05 20:08:20 ·
 <code>quant/_data_integrity_audit.py</code> ·
 数据底座 <code>hub/manifest.json</code>（2026-09-30）<br>
 相关页面：<a href="exit_assumption_evidence.html">退出成交假设证据</a> ｜

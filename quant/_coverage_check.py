@@ -5,6 +5,7 @@
   A. 未登记页面（registry 漏登记）
   B. 每日族的日期缺口（相对交易日集合，自动剔除周末）
   C. 每日族是否更新到目标日（stale）
+  C3. 绕过统一层直读大缓存 _txk_cache.json 的脚本（口径分叉 / 陈旧无法拦截）
   D. 孤儿页（无任何页面静态链接指向它）
   E. 导航入口页存在性
 
@@ -40,7 +41,9 @@ except Exception:
 ROOT = R.repo_root()
 WEB = R.web_root()
 
-
+#: 允许直读大缓存的脚本。语义分两类：
+#:  - 写路径（抓取/回写缓存本身，它必须独占文件句柄）
+#:  - 纯统计/清单文件（只是把文件名当字符串列出来，并不 json.load）
 def norm_date(s: str) -> str:
     s = str(s).replace('-', '').replace('/', '')
     return s if re.fullmatch(r'\d{8}', s) else ''
@@ -255,6 +258,25 @@ def main():
     if shadow:
         structural.append('C2: %d 个日更脚本未进 _push_lhb.FILES（线上不存在，结论不可复现）'
                           % len(shadow))
+
+    # C3 ★ 大缓存直读自检：凡是 json.load 打开 _txk_cache.json（含经 CACHE/TXK 常量
+    #    间接引用）却没 import _txk 的脚本，一律报「绕过统一层」。
+    #    上一轮手工改了 11 个调用点仍漏掉 _datahub.py —— 人工 grep 不可靠，改成门禁。
+    try:
+        # 判据走 _txk.scan_txk_readers()（单一真源），别在这边另写一套文本匹配：
+        # 两处口径分叉 = 门禁报的和审计页写的对不上。
+        import _txk as _T
+        raw_readers = _T.scan_txk_readers(os.path.dirname(_PUSH_PROBE) or '.')
+    except Exception as _e:                        # 读不到 = 无法自检
+        print('\n[C3] 大缓存直读自检【无法自检】：%s' % str(_e)[:60])
+        structural.append('C3: 无法自检——扫描大缓存直读失败，统一层漏网不得放行')
+        raw_readers = []
+    print('\n[C3] 绕过统一层直读大缓存 _txk_cache.json 的脚本：%d' % len(raw_readers))
+    for c, n, ln in raw_readers[:40]:
+        print('    ! %-32s %d 处  行%s' % (c, n, ln))
+    if raw_readers:
+        structural.append('C3: %d 个脚本直读 _txk_cache.json 未走统一层 _txk.py'
+                          '（陈旧无法拦截、口径分叉）' % len(raw_readers))
 
     # D
     inbound = build_inbound(pages)

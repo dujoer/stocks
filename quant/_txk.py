@@ -38,6 +38,8 @@
 
 from __future__ import annotations
 import os
+import io
+import glob
 import json
 import time
 import sys
@@ -140,9 +142,12 @@ def load(here=None, allow_stale=False):
     base = here or HERE
     path = os.path.join(base, "_txk_cache.json")
     if not os.path.exists(path):
-        if _cache is None:
-            _cache, _cache_sig = {}, None
-        return _cache
+        # ★ 缺文件 = 读不到数据 —— 抛出去，别在库层悄悄变成空数据。
+        # 原来各调用点裸 `json.load(open(...))` 缺文件就是 FileNotFoundError
+        # （脚本当场崩，问题一眼可见）；若这里返回 {}，下游会拿「空缓存」算出一份
+        # 看似正常的空结论 —— 是 fail-open，比崩溃危险得多。
+        # 需要降级的调用点（如 _datahub 取名兜底）自己 try/except 即可。
+        raise FileNotFoundError(path)
 
     try:
         mt = os.path.getmtime(path)
@@ -214,6 +219,69 @@ def bar_of(code, date):
         if isinstance(b, dict) and b.get("date") == date:
             return b
     return None
+
+
+#: 允许直读大缓存的脚本。语义分两类：
+#:  - 写路径（抓取/回写缓存本身，它必须独占文件句柄）
+#:  - 纯统计/清单文件（只是把文件名当字符串列出来，并不 json.load 内容）
+#: ★ 门禁 _coverage_check 的 [C3] 与审计页都调 scan_txk_readers()，判据只有这一处。
+TXK_READ_ALLOW = (
+    "_txk.py",                       # 统一层自身
+    "_data_integrity_audit.py",      # 审计页统计「谁读了它」，读的是文件名不是内容
+    "_page_registry.py",             # need 文案里出现文件名
+    "_push_lhb.py",                  # FILES 白名单里的字符串
+    "_push_incremental.py",
+    "_tx_fetch.py",                  # ★ 写路径：抓取并回写缓存
+    "_txk_refresh.py",               # ★ 写路径：重建缓存
+    "_append_txk_day.py",            # ★ 写路径：追加单日
+    "_append_txk_0923.py",           # ★ 写路径：历史补写
+    "_datahub_api.py",               # 在线服务口，自己管连接与新鲜度校验
+)
+
+
+def scan_txk_readers(quant_dir=None, skip=None):
+    """扫出「直读 _txk_cache.json 却没走统一层」的脚本 → [(name, 处数, [行号])]。
+
+    用轻量数据流追踪而非文本匹配：`p = …_txk_cache.json` 之后 `json.load(open(p))`
+    是真直读，但同一个 `p` 随后被改成 `macd_scan_*.json` 就不是了。只做文本匹配
+    会两头错（漏检局部别名 + 误报改道后的 load）。
+    """
+    import re
+    base = quant_dir or HERE
+    skip = set(skip or ()) | {os.path.basename(__file__)}   # 自身别扫
+    out = []
+    for path in sorted(glob.glob(os.path.join(base, "*.py"))):
+        name = os.path.basename(path)
+        if name in skip or name in TXK_READ_ALLOW or name.startswith("_legacy"):
+            continue
+        try:
+            lines = io.open(path, encoding="utf-8").read().split("\n")
+        except OSError:
+            continue
+        if re.search(r"^import _txk\b", "\n".join(lines), re.M):
+            continue                                   # 已接统一层
+        state, hits, _ASSIGN = {}, [], re.compile(r"^\s*(\w+)\s*=")
+        for i, L in enumerate(lines, 1):
+            m = _ASSIGN.match(L)
+            if not m:
+                continue
+            if "_txk_cache" in L:
+                state[m.group(1)] = True               # 此刻该变量指向大缓存
+            else:
+                state[m.group(1)] = False              # 被别的赋值覆盖
+            if "json.load" not in L:
+                continue
+            if "_txk_cache" in L:                      # 字面量内嵌
+                hits.append(i)
+                continue
+            for v in re.findall(r"json\.load\(\s*open\(\s*(\w+)", L):
+                if state.get(v):
+                    hits.append(i)
+                    break
+        hits = [h for j, h in enumerate(hits) if j == 0 or h - hits[j - 1] > 1]
+        if hits:
+            out.append((name, len(hits), hits))
+    return out
 
 
 if __name__ == "__main__":

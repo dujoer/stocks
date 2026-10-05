@@ -43,6 +43,7 @@ edge>0 且 R3≥95% 且跨步长同号且 step3 R3≥95%，**读不到一律不�
 用法：python quant/_hw_tier_gate.py [--limit N] [--step N] [--no-html] [--sens]
 """
 from __future__ import annotations
+import _txk
 import os, sys, json, math, argparse
 from collections import defaultdict
 
@@ -177,7 +178,7 @@ def avail_score(C, H, i, dif, dea, bar):
 
 # ---------------- 面板 ----------------
 def build_panel(limit=0, step=STEP, verbose=True):
-    cache = json.load(open(CACHE, encoding="utf-8"))
+    cache = _txk.load()
     nm_path = os.path.join(QUANT, "_stock_names.json")
     NM = {}
     if os.path.exists(nm_path):
@@ -436,14 +437,14 @@ _CACHE = None
 
 
 def _load_cache():
-    """_txk_cache.json 体积大，按需加载一次并缓存。"""
+    """_txk_cache.json 体积大，按需加载一次并缓存。
+
+    ★ 缓存交给统一层 _txk.py 做（进程内共享 + 陈旧 fail-safe），这里不再自己
+      json.load 大文件 —— 之前是一份 128MB 两份缓存，且自己读盘拦不住陈旧数据。
+    """
     global _CACHE
     if _CACHE is None:
-        p = os.path.join(QUANT, "_txk_cache.json")
-        try:
-            _CACHE = json.load(open(p, encoding="utf-8")) or {}
-        except Exception:
-            _CACHE = {}
+        _CACHE = _txk.load() or {}
     return _CACHE
 
 

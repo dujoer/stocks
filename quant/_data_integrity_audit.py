@@ -228,17 +228,15 @@ def txk_facts():
         out["last"] = _txk.last_date(d)
     except Exception:
         pass
-    # 还有多少个脚本在绕开统一层直接读这份缓存
+    # 还有多少个脚本在绕开统一层直接读这份缓存。
+    # ★ 判据走 _txk.scan_txk_readers()（与门禁 C3 同一真源）——
+    #   原来这里是「文本里含 _txk_cache 且没 import _txk」，会把「已接入但
+    #   文案里提到文件名」的文件也算成绕开，和门禁的数字对不上。
     try:
-        n = 0
-        for f in glob.glob(os.path.join(here, "*.py")):
-            try:
-                s = open(f, encoding="utf-8").read()
-            except OSError:
-                continue
-            if "_txk_cache" in s and "import _txk" not in s and "from _txk" not in s:
-                n += 1
-        out["scripts"] = n
+        rows = _txk.scan_txk_readers(here)
+        out["scripts"] = len(rows)
+        out["points"] = sum(r[1] for r in rows)
+        out["detail"] = [{"file": r[0], "n": r[1], "lines": r[2]} for r in rows]
     except Exception:
         pass
     # _rev_lab.py 一个脚本里的 load 次数（重复解析的重灾区）
@@ -330,7 +328,8 @@ def main():
     txk_mb = ("%.1f" % tf["mb"]) if tf["mb"] else "—"
     txk_codes = tf["codes"] if tf["codes"] is not None else "—"
     txk_secs = ("%.3f" % tf["secs"]) if tf["secs"] else "—"
-    txk_scripts = tf["scripts"] if tf["scripts"] else 0
+    txk_scripts = tf["scripts"] if tf.get("scripts") is not None else 0
+    txk_points = tf["points"] if tf.get("points") is not None else 0
     txk_rev = tf["rev_loads"] or 0
     txk_concl_b = ("%s" % tf["concl_b"]) if tf["concl_b"] else "—"
     # MA/ATR 分叉实现点（遗留项，如实报数量）
@@ -566,11 +565,10 @@ dict 迭代序随字符串 hash 变 → 只是<b>输出键序</b>漂，bootstrap
 这是数据源（东财）自身滞后，非本地漏跑；影响面已由修复 4 的数据闸围住。</li>
 <li><b>MA / ATR 有多处本地实现</b>（<code>_macd_offline</code> / <code>_pick_lab</code> /
 <code>build_tplus</code> / <code>scan_strong</code> 各一份 MA）。当前口径一致，未强制合并 —— 合并属侵入改造，风险大于收益。</li>
-<li><b>日K主缓存仍有直读</b>：扫下来还有 <b>{txk_scripts}</b> 个脚本绕开 <code>_txk.py</code>
-直接读 <code>_txk_cache.json</code>（多半是 <code>_tx_fetch.py</code> 的写回路径与一次性离线生成器）。
-这些多为「单脚本只读一次」，统一层的收益主要是口径一致（陈旧 fail-safe / 来源标注），
-<b>不是提速</b>；真正在省时间的是同一脚本内的多次 load（<code>_rev_lab.py</code> 等）。
-是否继续收敛，取决于后续是否新增更多读同一份缓存的池。</li>
+<li><b>日K主缓存直读已收敛</b>：本轮扫下来绕过统一层直接读 <code>_txk_cache.json</code> 的脚本
+剩 <b>{txk_scripts}</b> 个 / <b>{txk_points}</b> 处（写路径 <code>_tx_fetch.py</code> 等按白名单豁免）。
+这道判断已接进门禁的 <b>C3</b> 项 —— 以后新增直读会被当场拦下，不再靠人工 grep
+（上一轮手工改了 11 个调用点，仍漏掉日更底座 <code>_datahub.py</code>，就是这个原因）。</li>
 <li><b><code>MA</code> / <code>ATR</code> 有多处本地实现</b>：<code>{ma_sites}</code> 行各写各的。
 当前口径一致，未强制合并——合并在 297 个脚本的仓库里属侵入改造，风险大于收益。</li>
 </ul>

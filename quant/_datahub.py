@@ -47,6 +47,7 @@ from __future__ import annotations
 import os, sys, json, time, argparse, datetime, traceback
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import _longk
+import _txk
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -113,7 +114,7 @@ def _stock_pool():
             names = {}
     if not names:
         try:
-            k = json.load(open(os.path.join(HERE, "_txk_cache.json"), encoding="utf-8"))
+            k = _txk.load()          # 统一层：共享缓存 + 陈旧即 fail-safe，不再直读 128MB
             names = {c: (v[-1].get("name") or c) if v else c for c, v in k.items()}
         except Exception:
             pass
