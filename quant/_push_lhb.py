@@ -138,6 +138,9 @@ FILES = [
     "quant/rev_pool.py",             # 反转观察池（谷底锚定写盘 + watchlist 渲染）
     "quant/gen_watchlist.py",        # 反转观察页（web/reversal/index.html）
     "quant/build_psychology.py",     # 情绪雷达页（web/psychology/*.html）
+    "quant/build_dragon.py",         # ★ 龙道诀情绪周期择时台生成器（走统一层 _txk）
+    "web/dragon/index.html",         # ★ 龙道诀页面本体（生成器改了、页面没登记＝内容不上线）
+    "quant/dragon/cycle_20260930.json",  # ★ 周期快照（门户卡片读它；新一期需在此追加，FILES 不支持通配）
     "quant/_pick_model.json",        # 冻结模型 + 样本外证据摘要
     "quant/_pick_lab_result.json",   # 实验室完整结果（供审计/复现）
     "quant/fetch_rev_flow.py",       # 反转池主力资金流（MCP 优先 · 新浪离线兜底）

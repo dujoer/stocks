@@ -27,28 +27,7 @@ import os
 # 统一导航哨兵：selfcontained_nav 注入此注释，便于后续工具识别已统一处理。
 NAV_SENTINEL = "<!-- UNIFIED_NAV -->"
 
-# (标签, 相对 web/ 根的规范路径) —— 扁平全清单，供 _coverage_check 导航存在性校验。
-# 单一来源：由下方 MODULES 展开生成，二者保持同步。
-SECTIONS = [
-    ("每日总览", "market/index.html"),
-    ("板块强度", "sector/index.html"),
-    ("龙虎榜", "lhb/lhb.html"),
-    ("游资看板", "market/hotmoney.html"),
-    ("高管增减持", "exec/index.html"),
-    ("大宗交易", "block/index.html"),
-    ("群体心理", "psychology/index.html"),
-    ("行业最强", "shareholder/2026-q2-industry-elite.html"),
-    ("牛人追踪", "shareholder/tracker.html"),
-    ("个股调研", "research/index.html"),
-    ("个股研判", "diagnosis/index.html"),
-    ("底部反转", "reversal/index.html"),
-    ("主升精选", "selected/index.html"),
-    ("增仓精选", "accumulation/index.html"),
-    ("做T池", "tplus/index.html"),
-    ("量化策略", "quant_strategy/index.html"),
-    ("三连阴", "three_yin/index.html"),
-    ("数据中心", "db/index.html"),
-]
+# (标签, 相对 web/ 根的规范路径) 的扁平全清单，见文件末 SECTIONS（由 MODULES 展开）。
 
 # 大模块分组（导航按模块展示，叶子链接路径与 SECTIONS 完全一致；高亮按路径精确匹配）。
 # 重组依据：大盘与情绪（看大势/情绪）→ 板块与资金（看钱往哪去）→ 牛人与股东（看谁在持仓）
@@ -57,6 +36,7 @@ MODULES = [
     ("大盘与情绪", [
         ("每日总览", "market/index.html"),
         ("群体心理", "psychology/index.html"),
+        ("龙道诀", "dragon/index.html"),
     ]),
     ("板块与资金", [
         ("板块强度", "sector/index.html"),
@@ -83,6 +63,12 @@ MODULES = [
         ("数据中心", "db/index.html"),
     ]),
 ]
+
+# (标签, 相对 web/ 根的规范路径) —— 扁平全清单，供 _coverage_check 做导航入口存在性校验。
+# ★ 由上方 MODULES 展开（此前是手抄一份：加一个新导航项要改两处，漏一处就等于没加，
+#   而存在性校验只看这里，于是「导航里有、校验看不见」这种错位会静默存在）。
+#   定义在 MODULES 之后 —— 别挪到前面去，会 NameError。
+SECTIONS = [(t, p) for _g, secs in MODULES for t, p in secs]
 
 
 def _rel(link_web_path: str, from_web_dir: str) -> str:

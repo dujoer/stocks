@@ -104,6 +104,12 @@ FAMILIES = [
          freq='daily', dated=True, start='20260817', date_re=r'(\d{8})',
          need='market_overview + limitup + board_hot + sector 当日快照'),
 
+    dict(key='dragon', label='龙道诀 · 情绪周期择时台',
+         patterns=['dragon/index.html'],
+         entry='dragon/index.html', script='build_dragon.py', freq='daily',
+         dated=False, start=None, date_re=None,
+         need='_txk_cache.json（日K）+ sector_concept/industry 快照'),
+
     dict(key='psychology_entry', label='群体心理索引页',
          patterns=['psychology/index.html'],
          entry='psychology/index.html', script='market-trend/_build_*.py',

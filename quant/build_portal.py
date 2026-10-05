@@ -74,6 +74,18 @@ qstrat_d, qstrat_f = latest(r"^strategy_(\d{8})\.html$", os.path.join(WEB, "quan
 sanyin_d, sanyin_f = latest(r"^sanyin_(\d{8})\.html$", os.path.join(WEB, "three_yin"))
 exec_d, exec_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "exec_chg"))
 blk_d, blk_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "block_chg"))
+# 龙道诀周期：读 quant/dragon/cycle_{DS}.json（DS 无横线，见 build_dragon 的注释）
+dragon_d, dragon_f = latest(r"^cycle_(\d{8})\.json$", os.path.join(QUANT, "dragon"))
+dragon_stat, dragon_cls, dragon_txt = "", "stale", "无数据"
+try:
+    _dj = json.load(open(os.path.join(QUANT, "dragon", dragon_f), encoding="utf-8"))
+    _n = _dj.get("now") or {}
+    dragon_stat = ("阶段 <b>%s</b> ｜ 涨停 %d 家 ｜ 炸板率 %.1f%% ｜ 最高 %d 板"
+                   % (_n.get("stage", "—"), _n.get("zt", 0),
+                      (_n.get("rate") or 0) * 100, _n.get("hi", 0)))
+    dragon_txt, dragon_cls = freshness(dragon_d)
+except Exception:
+    dragon_stat, dragon_txt, dragon_cls = "", "无数据", "stale"
 # 每日总览（大盘看板）：取 market_overview 最新快照日期
 mkt_d, mkt_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(QUANT, "market_overview"))
 
@@ -514,6 +526,7 @@ qstrat_txt, qstrat_cls = freshness(qstrat_d) if qstrat_d else ("—", "stale")
 STAT["qstrat"] = stat_quant_strategy()
 sanyin_txt, sanyin_cls = freshness(sanyin_d) if sanyin_d else ("—", "stale")
 STAT["sanyin"] = stat_three_yin()
+STAT["dragon"] = dragon_stat      # 龙道诀：阶段 + 涨停/炸板率/最高板（读 cycle_{DS}.json）
 
 def fmt(d):
     return d.strftime("%Y-%m-%d") if d else "—"
@@ -558,6 +571,14 @@ ZONES = [
                 "func": "情绪周期 / 认知偏差热力 / 风险分层，每日单篇 + 跨日趋势索引 + 六维雷达图。",
                 "rel": "→ 龙虎榜（情绪外化为异动） → 板块强度（情绪外化为资金方向）。",
                 "stat": STAT["psy"], "date": fmt(psy_d), "fresh": badge(psy_cls, psy_txt),
+            },
+            {
+                "ic": "🐲", "t": "龙道诀 · 情绪周期择时台", "href": "web/dragon/index.html",
+                "func": "把《龙道诀》九句口诀落到真数据：涨停家数 / 炸板率 / 连板高度的滚动分位 → "
+                        "冰点 / 回暖 / 高潮 / 退潮四阶段，对应「此刻该做什么、不该做什么」。",
+                "rel": "→ 群体心理（定性印证） → 板块强度（赚钱效应落在哪个题材）。",
+                "stat": STAT["dragon"], "date": fmt(dragon_d),
+                "fresh": badge(dragon_cls, dragon_txt),
             },
         ],
     },

@@ -208,6 +208,20 @@ def src_label(allow_stale=False):
     return "_txk_cache(截至 %s)" % (ld or "未知")
 
 
+def limit_pct(code):
+    """该代码的涨停幅度（20cm 创业板/科创板、30cm 北交所、其余 10cm）。
+
+    ⚠ 此口径原先在 `_gen_market_overview_offline.py` / `_gen_limitup_offline.py`
+    各写一份 —— 改一处就会分叉（涨停家数直接错位）。此处提为统一层唯一定义，
+    新脚本一律引它；那两处老脚本暂未改（避免回归），收敛情况记在审计页遗留项。
+    """
+    if code.startswith("sz30") or code.startswith("sh688"):
+        return 0.20
+    if code.startswith("bj") or code[2:4] in ("83", "87", "92"):
+        return 0.30
+    return 0.10
+
+
 def bar_of(code, date):
     """取某票某日的 bar；没有就 None。绝大多数脚本真正用到的只是这一条。"""
     data = _cache if _cache is not None else load()
