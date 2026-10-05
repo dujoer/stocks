@@ -184,6 +184,17 @@ FILES = [
     "quant/_rev_gate_page.py",        # 反转池证据页生成器（许可返回值的语义反义修正）
     "quant/_data_integrity_audit.py", # ★ 上述审计结论证据页生成器 → web/docs/data_integrity_audit.html
     "quant/_longk.py",                # ★ 长K单一加载层（mtime 感知进程内缓存 + 缺文件不静默回退）
+    # ↓ 原漏网：不在 FILES = 线上不存在 = 结论不可复现（2026-10-05 补）
+    "quant/daily_all.py",             # 13 步主入口（它不在自己链路里，故由 _coverage_check 的 C2 单列）
+    "quant/_apply_theme.py",          # 主题注入层（丢注入层会让页面没样式，务必在册）
+    "quant/backtest_picks.py",        # step7 回测
+    "quant/_selected_lab.py",         # 主升精选选股模型（主推池的依据）
+    "quant/_rev_lab.py",              # 底部反转面板
+    "quant/_rev_tier_gate.py",        # 反转分档门禁
+    "quant/_hw_tier_gate.py",         # 高胜率分档门禁
+    "quant/_hw_gate_page.py",         # 高胜率证据页
+    "quant/_tplus_env_gate.py",       # 做T池环境门控
+    "quant/_macd_offline.py",         # MACD 离线口径
 ]
 
 # 自动纳入「带日期/版块」的页面与数据源，保证每一页都带统一导航、且数据可复现。

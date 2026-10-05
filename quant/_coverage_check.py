@@ -21,6 +21,22 @@ import os, re, sys, json, io, glob, argparse, datetime as dt
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import _page_registry as R
 
+#: 对外推送的白名单。取这里而不是硬编码，保证「什么会被推到远端」只有一处定义。
+_PUSH_PROBE = os.path.join(os.path.dirname(os.path.abspath(__file__)), '_push_lhb.py')
+PUSH_FILES = []
+try:
+    import importlib.util as _il
+    _s2 = _il.spec_from_file_location('_pl2', _PUSH_PROBE)
+    _m2 = _il.module_from_spec(_s2)
+    _sv2 = sys.stdout; sys.stdout = io.StringIO()
+    try:
+        _s2.loader.exec_module(_m2)
+        PUSH_FILES = list(getattr(_m2, 'FILES', []))
+    finally:
+        sys.stdout = _sv2
+except Exception:
+    PUSH_FILES = []      # 读不到就按空集处理，C2 会报「无法自检」而不是放行
+
 ROOT = R.repo_root()
 WEB = R.web_root()
 
@@ -206,6 +222,39 @@ def main():
             flag = '按需/低频（不判缺口）'
         print('    %-12s %-5d %-9s %-6s %s'
               % (key, len(ps), latest, len(missing) if td else '-', flag or 'OK'))
+
+    # C2 ★ 推送白名单漏网：日更链路脚本若不在 _push_lhb.FILES，
+    #    就永远不会推到远端 —— 线上看到的统计其生成器根本不存在（结论不可复现）。
+    pushed = set(os.path.basename(p) for p in PUSH_FILES if p.startswith('quant/'))
+    chain = set()
+    try:
+        import re as _re, importlib.util as _il, io as _io
+        _s = _il.spec_from_file_location(
+            '_da', os.path.join(os.path.dirname(_PUSH_PROBE), 'daily_all.py'))
+        _m = _il.module_from_spec(_s)
+        _sv = sys.stdout; sys.stdout = _io.StringIO()
+        try:
+            _s.loader.exec_module(_m)
+        finally:
+            sys.stdout = _sv
+        for _row in _m.STEPS:
+            for _part in _re.split(r'\s*&&\s*|\s*;\s*', _row[3].format(D='YYYY-MM-DD', DS='YYYYMMDD')):
+                _p = _part.strip()
+                if _p.endswith('.py'):
+                    chain.add(_p.split()[0])
+        chain.add('daily_all.py')                  # 主入口不在自己链路里，单列
+        chain.discard('_push_incremental.py')      # 推送工具自身不必在册
+    except Exception as _e:                        # ★ 读不到 = 无法自检，绝不能当成「全在册」
+        print('\n[C2] 日更链路白名单自检【无法自检】：解析 daily_all 失败 %s' % str(_e)[:60])
+        structural.append('C2: 无法自检——解析 daily_all 失败，日更白名单漏网不得放行')
+        chain = set()
+    shadow = sorted(c for c in chain if c not in pushed)
+    print('\n[C2] 日更链路脚本未在推送白名单（线上不存在）：%d' % len(shadow))
+    for c in shadow[:40]:
+        print('    ! quant/%s' % c)
+    if shadow:
+        structural.append('C2: %d 个日更脚本未进 _push_lhb.FILES（线上不存在，结论不可复现）'
+                          % len(shadow))
 
     # D
     inbound = build_inbound(pages)

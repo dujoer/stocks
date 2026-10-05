@@ -64,19 +64,8 @@ def tip_t(key):
 
 
 def nav(cur="backtest"):
-    items = [
-        ("总门户", "../../index.html"), ("龙虎榜", "../lhb/lhb.html"),
-        ("板块强度", "../sector/index.html"), ("高管增减持", "../exec/index.html"),
-        ("大宗交易", "../block/index.html"), ("群体心理", "../psychology/index.html"),
-        ("牛人追踪", "../shareholder/tracker.html"), ("数据中心", "../db/index.html"),
-        ("信号池", "index.html"), ("回测", "backtest.html"),
-        ("做T池", "../tplus/index.html"), ("版块总览", "../sections/index.html"),
-    ]
-    out = []
-    for n, h in items:
-        cls = " class='cur'" if n == "回测" else ""
-        out.append(f"<a href='{h}'{cls}>{n}</a>")
-    return "<div class='topnav'>" + "".join(out) + "</div>"
+    from _nav import topnav
+    return topnav(current_web_dir="picks", home="../../index.html")
 
 
 def aggregate(history):
@@ -290,8 +279,15 @@ footer {{ margin-top:38px; padding-top:16px; border-top:1px solid #e6e9ee; font-
 <tbody>{det_html}</tbody></table></div>
 
 <div class='note'><b>为什么必须回测：</b>信号池是规则化模型，改权重、加维度后如果不看实际结果，很容易陷入"看着合理但持续亏钱"的循环。
-建议累计 <b>20 个交易日</b> 后，按本页分档胜率重新校准权重——尤其关注：A 档是否显著优于 C 档（若否，说明档位阈值失效）、
-机构轨 T+5 是否优于 T+1（若否，说明"波段"定位站不住）。</div>
+本页的作用是<b>暴露问题</b>——例如「A 档是否显著优于 C 档」（若否＝档位阈值失效）、
+「机构轨 T+5 是否优于 T+1」（若否＝波段定位站不住）。但它<b>只负责报警，不负责定权重</b>，原因见下方。</div>
+
+<div class='note' style='border-left:4px solid #b8893b'><b>⚠️ 但不要照本页的分档胜率去调权重 —— 样本太小。</b>
+本页现在只有 7 期、约 278 个样本，且全部落在同一波行情里；绝对胜率 = 选股能力 + 行情 beta，
+普涨时"随便买都赢"，照它调参就是样本内过拟合（B 档 36% 与 D 档 83% 的反向本身就是证据）。
+正确做法是拿 <b>13 个月、13,630 个样本点</b>做无前视检验 →
+<a href='lab.html' style='color:#b8893b;text-decoration:none;font-weight:600'>因子功效样本外实验室 picks/lab.html →</a>
+（含五道独立检验对照与完整局限声明）。</div>
 
 <footer>累计 {len(history)} 期 · 候选 {total_picks} 只 · 已结算样本 {scored // max(1, len(HOR))} 只次<br>
 数据源：westock-mcp · 本页由 <code>quant/backtest_picks.py</code> 每日自动生成 · 仅供参考，不构成投资建议。</footer>
