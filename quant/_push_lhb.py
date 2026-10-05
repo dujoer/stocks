@@ -137,6 +137,8 @@ FILES = [
     "quant/build_macd_extra.py",     # MACD 附加维度（供 macd_build 合并）
     "quant/rev_pool.py",             # 反转观察池（谷底锚定写盘 + watchlist 渲染）
     "quant/gen_watchlist.py",        # 反转观察页（web/reversal/index.html）
+    "quant/_mkt_emo.py",             # ★ 市场情绪指标唯一真源（涨停/炸板/连板/涨跌家数），龙道诀+大盘概览+连板周报共用
+    "quant/_fetch_macd_raw.py",      # MACD 三段原始数据（pool/tech/flow）落盘，daily_all 第⑩ 步先跑它
     "quant/build_psychology.py",     # 情绪雷达页（web/psychology/*.html）
     "quant/build_dragon.py",         # ★ 龙道诀情绪周期择时台生成器（走统一层 _txk）
     "web/dragon/index.html",         # ★ 龙道诀页面本体（生成器改了、页面没登记＝内容不上线）

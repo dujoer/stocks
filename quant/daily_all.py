@@ -102,7 +102,7 @@ STEPS = [
      ["rev_pool.py run {D}", "fetch_rev_flow.py --date {D} --src sina",
       "fetch_rev_enrich.py --date {D} --render", "gen_watchlist.py {D}"]),
     (10, "manual", "MACD + 高胜率（须先实落三段原始数据）",
-     "macd_build.py {DS} --raw; build_macd_extra.py --date {D}; gen_macd.py {DS}; "
+     "_fetch_macd_raw.py {DS} && macd_build.py {DS} --raw; build_macd_extra.py --date {D}; gen_macd.py {DS}; "
      "build_highwin.py --date {D}; gen_highwin.py --date {D}",
      ["macd_raw_pool_{DS}.json", "macd_raw_tech_{DS}.json", "macd_raw_flow_{DS}.json"]),
     (11, "auto", "增仓精选",

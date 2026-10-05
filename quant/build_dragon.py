@@ -58,29 +58,17 @@ def build_series(cache):
     炸板     = touched 且 未 closed
     streak  = 连板天数（连续收盘涨停，断即归零）
     """
-    import _txk
+    # ★ 2026-10-06：封板/炸板/连板判定收口到统一真源 `_mkt_emo`（原来这里自写一份），
+    #   与「群体心理/大盘概览」用同一口径，页面之间不再出现两套涨停家数。
+    import _mkt_emo as M
     day = collections.defaultdict(list)
     ret = collections.defaultdict(list)     # date -> [日涨跌幅]
     for code, bars in cache.items():
         if len(bars) < 3:
             continue
-        lp = _txk.limit_pct(code)
-        prev = None
-        run = 0
-        for b in bars:
-            d8 = b["date"]
-            c = float(b["last"])
-            h = float(b["high"])
-            if prev is None:
-                prev = c
-                continue
-            lpx = round(prev * (1 + lp), 2)
-            closed = c >= lpx * 0.9995
-            touched = h >= lpx * 0.9995
-            run = (run + 1) if closed else 0
-            day[d8].append((code, closed, touched, run))
-            ret[d8].append((c - prev) / prev if prev else 0.0)
-            prev = c
+        for r in M.scan_one(code, bars):
+            day[r["date"]].append((code, r["closed"], r["touched"], r["run"]))
+            ret[r["date"]].append(r["chg"])
 
     # 只保留「绝大多数票都有数据」的日子 —— 少一天会让家数突然缩水，看着像暴跌
     dates = sorted(x for x, v in day.items() if len(v) > 3000)
@@ -124,37 +112,10 @@ def build_series(cache):
     return out
 
 
-def rolling_pctile(vals, i, win=WIN):
-    """vals[i] 在 vals[i-win+1 .. i] 里的百分位（0~100）。
-
-    ★ 只看过去、不看未来 —— 这是本页不引入未来函数的地基。
-    数据不足则返回 None（调用方显示「样本不足」而不是编一个值）。
-    """
-    lo = max(0, i - win + 1)
-    w = vals[lo:i + 1]
-    if len(w) < 10:
-        return None
-    x = vals[i]
-    below = sum(1 for v in w if v < x)
-    equal = sum(1 for v in w if v == x)
-    return (below + equal / 2.0) / len(w) * 100.0
-
-
-def stage_of(zt_p, hi_p, rate_p):
-    """情绪四阶段判定。规则写死在这儿、原样印到页面上，便于复核。
-
-    判定顺序有讲究：**先判退潮**（退潮要优先给「别出手」的信号），再判高潮/回暖，
-    其余落冰点 —— 有兜底，不会出现「判不出来」的空档。
-    """
-    if zt_p is None or hi_p is None or rate_p is None:
-        return "样本不足", "滚动窗口不足，无法判断当前阶段"
-    if rate_p >= 70 and zt_p < 50:
-        return "退潮", "炸板率处高位（%.0f%%）且涨停家数不在高位（%.0f%%）" % (rate_p, zt_p)
-    if zt_p >= 75 and hi_p >= 70 and rate_p <= 40:
-        return "高潮", "涨停家数 %.0f%%、连板高度 %.0f%% 双双处高位，且炸板率偏低 %.0f%%" % (zt_p, hi_p, rate_p)
-    if zt_p >= 40 and (hi_p >= 50 or zt_p >= 60):
-        return "回暖", "涨停家数回到中位以上（%.0f%%），连板高度 %.0f%%" % (zt_p, hi_p)
-    return "冰点", "涨停家数 %.0f%% 偏低（不满足回暖/高潮/退潮任一条件）" % zt_p
+# ★ 2026-10-06：滚动分位与「情绪四阶段判定」收口到统一真源 `_mkt_emo`
+#   （原来这两个函数只存在本页，别的池要用只能再抄一遍；门控实验统一引这里）。
+#   分位定义与阶段阈值改一处即全站生效，页面上的判定说明仍原样印出来。
+from _mkt_emo import rolling_pctile, stage_of
 
 
 STAGE_ACTION = {

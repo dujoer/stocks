@@ -296,6 +296,63 @@ def main():
                           '（401MB 每次重解析、缺文件时会拿日K短缓存冒充长历史）'
                           % len(long_readers))
 
+    # C4 ★ 情绪指标统一真源自测（2026-10-06 加）
+    #   涨停/炸板/连板/涨跌家数 与「滚动分位 + 情绪四阶段」现在只有 `_mkt_emo` 一份实现，
+    #   页面上印的数字全由它产出。判据坏了会直接体现在行情数字上，所以这里跑它自证。
+    try:
+        import _mkt_emo as _M
+        _ok4 = _M.selftest(deep=False)
+        print('\n[C4] 情绪真源自测（涨停/炸板/连板/分位/四阶段）：%s'
+              % ('PASS' if _ok4 else 'FAIL'))
+        if not _ok4:
+            structural.append('C4: _mkt_emo 自测未通过（封板口径或四阶段判定被改坏，'
+                              '页面数字已不可信）')
+    except Exception as _e4:
+        print('\n[C4] 情绪真源自测【无法自检】：%s' % str(_e4)[:60])
+        structural.append('C4: 无法自检——_mkt_emo 加载失败，情绪口径未受约束')
+
+    # C5 ★ 跨页指标一致性（2026-10-06 加）
+    #   「当日涨停家数」过去在大盘概览（_gen_market_overview_offline）与龙道诀
+    #   （build_dragon）各算一套 —— 封板口径不同、数字可能对不上，页面之间自相矛盾。
+    #   两边现在都来自 `_mkt_emo`。这条门禁把「跨页同数」变成硬约束：
+    #   谁再抄一份判定，这里立刻红；读不到就明说读不到，不猜。
+    # ⚠ market_overview 的命名**两种混用**：历史 20260921.json（无横线）、新产出 2026-09-30.json（带横线）。
+    #   只看文件名排序会错位（'-' 码点小于数字）→ 统一「抽数字取后 8 位」当日期键。
+    def _dskey(_p):
+        _n = re.sub(r'\D', '', os.path.basename(_p))
+        return _n[-8:] if len(_n) >= 8 else ''
+    _mo_map, _cyc_map = {}, {}
+    for _p in glob.glob(os.path.join(ROOT, 'quant', 'market_overview', '*.json')):
+        _mo_map[_dskey(_p)] = _p
+    for _p in glob.glob(os.path.join(ROOT, 'quant', 'dragon', 'cycle_*.json')):
+        _cyc_map[_dskey(_p)] = _p
+    _c5_hit = False
+    for _ds in sorted(set(_mo_map) & set(_cyc_map), reverse=True)[:3]:
+        try:
+            _mo_d = json.load(open(_mo_map[_ds], encoding='utf-8'))
+            _mo_row = next(e['row'] for e in _mo_d.get('data', [])
+                           if e.get('listCode') == 'market_statis_updown')
+            _cyc_zt = json.load(open(_cyc_map[_ds], encoding='utf-8')).get('now', {}).get('zt')
+        except Exception as _e5:
+            print('\n[C5] 跨页比对解析失败（按无法比对处理）：%s' % str(_e5)[:60])
+            continue
+        _c5_hit = True
+        _mo_zt = _mo_row.get('CNT_REACH_UPLIMIT')
+        print('\n[C5] 跨页涨停家数一致性（%s）：大盘概览 %s / 龙道诀 %s → %s'
+              % (_ds, _mo_zt, _cyc_zt, '一致' if _mo_zt == _cyc_zt else '★不一致'))
+        if _mo_zt != _cyc_zt:
+            structural.append('C5: 两个页面对同一天的涨停家数给出 %s / %s（口径分叉，'
+                              '情绪指标应当只有 _mkt_emo 一份实现）' % (_mo_zt, _cyc_zt))
+    if _mo_row is not None and _cyc_zt is not None:
+        _mo_zt = _mo_row.get('CNT_REACH_UPLIMIT')
+        print('\n[C5] 跨页涨停家数一致性：大盘概览 %s / 龙道诀 %s → %s'
+              % (_mo_zt, _cyc_zt, '一致' if _mo_zt == _cyc_zt else '★不一致'))
+        if _mo_zt != _cyc_zt:
+            structural.append('C5: 两个页面对同一天的涨停家数给出 %s / %s（口径分叉，'
+                              '情绪指标应当只有 _mkt_emo 一份实现）' % (_mo_zt, _cyc_zt))
+    else:
+        print('\n[C5] 跨页涨停家数一致性：无可比对期（读不到两边产物），未受约束')
+
     # D
     inbound = build_inbound(pages)
     orphans = sorted(r for r, c in inbound.items()
