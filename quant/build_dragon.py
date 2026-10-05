@@ -176,6 +176,25 @@ def latest_sector(kind="concept", asof=None):
     return rows, os.path.basename(pick).replace(".json", "")
 
 
+def latest_odds(asof=None):
+    """读「阶段胜率实验室」产出 `quant/dragon/odds_{DS}.json`。
+
+    没读到就返回 None —— 页面那一段会显示「无法自检」，
+    **绝不拿旧数据冒充当天、也绝不自己编一组胜率出来**。
+    """
+    pick = None
+    for f in sorted(glob.glob(os.path.join(HERE, "dragon", "odds_*.json"))):
+        stem = _digits(os.path.basename(f).replace("odds_", "").replace(".json", ""))
+        if stem.isdigit() and (asof is None or stem <= _digits(asof)):
+            pick = f
+    if not pick:
+        return None
+    try:
+        return json.load(open(pick, encoding="utf-8"))
+    except Exception:
+        return None
+
+
 def top_rows(rows, key="changePct", n=8):
     def _v(r):
         try:
@@ -273,13 +292,18 @@ def render(ctx):
         A(render_stage(ctx))
         A(render_verses(ctx))
         A(render_calib(ctx))
+        A(render_odds(ctx))      # 四：胜率最高的形态（真源 _dragon_odds）
+        A(render_cand(ctx))      # 五：今天的观察名单
+        A(render_plan(ctx))      # 六：配套操作方案（规则层）
         A(render_hot(ctx))
         A(render_uses(ctx))
 
     A(render_risk())
     A("<footer>%s ｜ 生成脚本 <code>quant/build_dragon.py</code> ｜ "
-      "本页只做情绪周期定位与规则提示，<b>不含个股买卖建议</b>；"
-      "个股清单请查「群体心理」与「连板周报」。</footer>"
+      "胜率统计真源 <code>quant/_dragon_odds.py</code>（产出 "
+      "<code>quant/dragon/odds_{DS}.json</code>）｜ "
+      "本页定位是<b>情绪周期定位 + 规则提示</b>；"
+      "第五节只给形态触发后的<b>观察名单</b>，不是推荐、不含买卖点位。</footer>"
       % dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
     A("</div></body></html>")
     return "\n".join(parts)
@@ -423,9 +447,242 @@ def render_calib(ctx):
     return "".join(o)
 
 
+# ------------------------------------------------ 新增：胜率最高的形态 / 名单 / 方案
+ODDS_KS = ("1", "3", "5")
+
+
+def _win(r, k):
+    s = (r or {}).get(k)
+    return ("%.1f%%" % (s["win"] * 100)) if s else "—"
+
+
+def render_odds(ctx):
+    od = ctx.get("odds") or {}
+    o = []
+    b = od.get("best_cur") or od.get("best")
+    cur = od.get("cur_stage", ctx.get("now", {}).get("stage", "—"))
+    o.append("<h2>四、胜率最高的形态（这一节的全部数字都是现算的）</h2>")
+    if not b:
+        o.append("<div class='warn'><b>无法自检</b>：没有达标形态 —— "
+                 "所有候选形态在「三个持有期都优于对照」这两道上没有全过。"
+                 "按红线：<b>宁可不给结论，也不放宽阈值凑数字</b>。此处保留空缺。</div>")
+        return "".join(o)
+    is_cur = bool(od.get("cand_for", {}).get("is_cur_stage")) or \
+        (b["stage"] == cur)
+    o.append("<div class='note'>形态 = <b>「%s期 · %s」</b>，意思是："
+                 "市场情绪判定为<b>%s</b>、当天收盘封涨停、<b>连板数正好是 %s</b>"
+                 "（四板＝当日是这只票连起来的第 4 个涨停）时，"
+             "以当日收盘价买入、往后持有 K 天的胜率。%s</div>"
+             % (b["stage"], b["run"], b["stage"], b["run"],
+                "这就是<b>当前阶段</b>（今天判定为%s）的最优形态。"
+                % cur if is_cur else "（注：这是<b>全样本</b>最优，不是当前阶段最优。）"))
+
+    # ---- 主指标 ----
+    o.append("<div class='grid'>")
+    o.append(kpi("样本 / 横跨天数", "%d 个 / %d 天" % (b["1"]["n"], b["days"]),
+                 "样本下限 %d、至少跨 %d 天" % (od.get("min_n", 30), od.get("min_days", 5))))
+    o.append(kpi("K=1 日胜率", _win(b, "1"), "均值 %s / 最差 %s"
+                 % (_pc(b["1"]["mean"]), _pc(b["1"]["worst"]))))
+    o.append(kpi("K=3 日胜率", _win(b, "3"), "均值 %s / 最差 %s"
+                 % (_pc(b["3"]["mean"]), _pc(b["3"]["worst"]))))
+    o.append(kpi("K=5 日胜率", _win(b, "5"), "均值 %s / 最差 %s"
+                 % (_pc(b["5"]["mean"]), _pc(b["5"]["worst"]))))
+    o.append("</div>")
+
+    # ---- 当前阶段各形态对比（原因的可核部分就在这张表里）----
+    rows = od.get("cur_rows") or []
+    if rows:
+        o.append("<h3>为什么是这一档（先看表，这是最硬的证据）</h3>")
+        o.append("<table><tr><th>形态</th><th class='num'>样本/天数</th>"
+                 "<th class='num'>K=1 胜率</th><th class='num'>K=3 胜率</th>"
+                 "<th class='num'>K=5 胜率</th><th>达标</th></tr>")
+        for r in sorted(rows, key=lambda x: -((x.get("1") or {}).get("win") or -9)):
+            hl = ' style="background:#fff9f2"' if (r["run"] == b["run"] and r["stage"] == b["stage"]) else ""
+            mark = "<b>← 最优</b>" if (r["run"] == b["run"] and r["stage"] == b["stage"]) else ""
+            o.append("<tr%s><td><b>%s</b>%s</td><td class='num'>%d / %d</td>"
+                     "<td class='num'>%s</td><td class='num'>%s</td><td class='num'>%s</td>"
+                     "<td><span class='tag %s'>%s</span>%s</td></tr>"
+                     % (hl, r["run"], "", r["1"]["n"], r["days"], _win(r, "1"), _win(r, "3"),
+                        _win(r, "5"), "ok" if r["enough"] else "no",
+                        "达标" if r["enough"] else "样本不足", mark))
+        o.append("</table>")
+        o.append("<div class='note'><b>表里的规律（可核，不是解释是数据）</b>"
+                 "<ul><li>同一阶段里，连板<b>越高</b>、K=1 胜率<b>越高</b>：%s</li>"
+                 "<li>越低位的票越接近「扔硬币」：%s</li></ul></div>"
+                 % (_stage_order_note(rows, b), _stage_base_note(rows, b)))
+
+    # ---- 三道自检 ----
+    parts = []
+    if b.get("rand"):
+        parts.append("<b>① 随机对照</b>：同一天、同等数量，从<b>全市场任意股票</b>里"
+                     "随机抽 %d 次，K=1 胜率的 95 分位是 <b>%.1f%%</b>（中位数 %.1f%%）；"
+                     "这一形态是 <b>%.1f%%</b> —— %s（固定种子，可复现）"
+                     % (b["rand"]["1"]["tries"], b["rand"]["1"]["p95"] * 100,
+                        b["rand"]["1"]["p50"] * 100, b["rand"]["1"]["real"] * 100,
+                        "过了" if b["rand"]["1"]["win_p95"] else "没过"))
+    if b.get("lift_n"):
+        parts.append("<b>② 同阶段对照</b>：同一个情绪阶段里，全部涨停票的 K=1 胜率是 <b>%.1f%%</b>，"
+                     "这一形态是 <b>%.1f%%</b>，超额 <b>%+.1fpp</b> —— 说明不是「阶段本身在托底」。"
+                     % (b["base"]["1"]["win"] * 100, b["1"]["win"] * 100, b["lift"]["1"] * 100))
+    wf = od.get("wf") or {}
+    if wf.get("note"):
+        parts.append("<b>③ 样本外（walk-forward）</b>：%s" % wf["note"])
+    if parts:
+        o.append("<div class='card'><b>它靠什么站住（三道自检，缺一不可）</b><ul>")
+        for p in parts:
+            o.append("<li>%s</li>" % p)
+        o.append("</ul></div>")
+    else:
+        o.append("<div class='warn'><b>三道自检都没有足够证据</b> —— 按红线不给结论。</div>")
+
+    # ---- 均值 vs 中位（防止被少数大涨骗了）----
+    o.append("<div class='warn'><b>看胜率的同时必须看「中位」和「最差」</b>："
+             "K=5 均值 <b>%s</b> 但中位只有 <b>%s</b>、最好 <b>%s</b>、最差 <b>%s</b>。"
+             "<br>意思是：多数时候赚的就是这点<b>中位收益</b>，真正把均值拉高的那批（最好那只 %s）"
+             "<b>不是常态</b> —— 拿均值当预期收益会高估自己。最差那一列才是仓位管理的依据。</div>"
+             % (_pc(b["5"]["mean"]), _pc(b["5"]["med"]), _pc(b["5"]["best"]),
+                _pc(b["5"]["worst"]), _pc(b["5"]["best"])))
+
+    # ---- 归因：分「可核」与「不可核」，不硬凑 ----
+    o.append("<h3>归因</h3>")
+    if b.get("rand") and b.get("lift"):
+        o.append("<div class='card'><b class='up'>可核的部分</b>（数据直接给出的）："
+                 "<ul><li>该形态 K=1 胜率 <b>%s</b>，比同阶段全部涨停票（<b>%s</b>）高 "
+                 "%+.1fpp，比同天全市场随机抽票的 95 分位（<b>%s</b>）高 %+.1fpp。</li>"
+                 "<li>样本 %d 个、横跨 %d 个交易日 —— 不是撞在单日上的偶然。</li>"
+                 "<li>三个持有期（%s）都优于各自对照，不是只在某一个持有期上亮眼。</li></ul></div>"
+                 % (_win(b, "1"), "%.1f%%" % (b["base"]["1"]["win"] * 100), b["lift"]["1"] * 100,
+                    "%.1f%%" % (b["rand"]["1"]["p95"] * 100),
+                    (b["1"]["win"] - b["rand"]["1"]["p95"]) * 100,
+                    b["1"]["n"], b["days"], " / ".join(ODDS_KS)))
+    else:
+        o.append("<div class='warn'>对照数据不完整，归因只保留可核的那三条（见上表）。</div>")
+    o.append("<div class='note'><b class='down'>不可核的部分（如实标注，不编）</b>："
+             "它为什么涨、题材是不是真的、游资在不在里面、明天会不会直接一字开 —— "
+             "这些<b>本地数据衡量不了</b>。日K 只能告诉你<b>「过去这个形态后续大概率涨」</b>，"
+             "不能告诉你<b>「这次为什么涨」</b>。任何把行情归因到某条消息、某个概念的说法，"
+             "都请自己核，本页不代劳。</div>")
+    return "".join(o)
+
+
+def _stage_order_note(rows, best):
+    """表里「连板越高、胜率越高」的规律，用真实数字说出来。"""
+    hi = [r for r in rows if r["enough"] and r.get("1")]
+    if len(hi) < 2:
+        return "样本不足以排顺序。"
+    hi.sort(key=lambda x: (not x["enough"], -x["1"]["win"]))
+    top, low = hi[0], hi[-1]
+    return "达标形态里 %s 的 K=1 胜率最高（%.1f%%），最低的是 %s（%.1f%%），差 %.1fpp" % (
+        top["run"], top["1"]["win"] * 100, low["run"], low["1"]["win"] * 100,
+        (top["1"]["win"] - low["1"]["win"]) * 100)
+
+
+def _stage_base_note(rows, best):
+    """低位票相对「扔硬币」的位置。"""
+    low = [r for r in rows if r["enough"] and r.get("1") and r["run"] in ("首板", "二板")]
+    if not low:
+        return "——"
+    return "; ".join("%s 胜率 %s" % (r["run"], _win(r, "1")) for r in low)
+
+
+def render_cand(ctx):
+    o = ["<h2>五、今天符合这个形态的观察名单</h2>"]
+    cand = (ctx.get("odds") or {}).get("cand") or []
+    for_ = (ctx.get("odds") or {}).get("cand_for") or {}
+    if not cand:
+        o.append("<div class='warn'>今天（数据日 %s）<b>没有</b>出现符合「%s / %s」的标的。"
+                 "这份名单是<b>条件满足才生成</b>的 —— 空就是空，"
+                 "本页不会拿别阶段的票来充数、也不会给一个「最像的」凑数。</div>"
+                 % (ctx["asof"], for_.get("stage", "—"), for_.get("run", "—")))
+        return "".join(o)
+    o.append("<div class='warn'><b>这不是推荐，是观察名单。</b>"
+             "它只说明「今天确实出现了这个历史胜率最高的形态」；"
+             "名单里的票<b>没有经过出票闸</b>（无未来函数 / walk-forward / 随机对照 / 退出可兑现 四道），"
+             "本页也不给买卖点位。看名单是为了「盯盘时知道该看谁」，不是「该买谁」。</div>")
+    o.append("<table><tr><th>代码</th><th>名称</th><th class='num'>连板</th>"
+             "<th class='num'>收盘</th><th class='num'>换手率</th>"
+             "<th class='num'>自身历史样本</th><th class='num'>自身历史胜率</th></tr>")
+    for c in cand:
+        own = c.get("own_n") or 0
+        mark = ("<span class='tag no'>首次出现</span>" if own == 0 else
+                ("<span class='tag mid'>%d 次</span>" % own if own < 5 else "<span class='tag ok'>%d 次</span>" % own))
+        ow = ("%.0f%%" % (c["own_win"] * 100)) if c.get("own_win") is not None else "—"
+        o.append("<tr><td><code>%s</code></td><td><b>%s</b></td><td class='num'>%d 板</td>"
+                 "<td class='num'>%.2f</td><td class='num'>%s</td><td>%s</td><td class='num'>%s</td></tr>"
+                 % (c["code"], c["name"], c["run"], c["close"],
+                    ("%.2f%%" % c["turnover"]) if c.get("turnover") is not None else "—",
+                    mark, ow))
+    o.append("</table>")
+    no_hist = [c for c in cand if not (c.get("own_n") or 0)]
+    if no_hist:
+        o.append("<div class='note'><b>关于名单里的 %d 只「自身历史样本为 0」</b>："
+                 "意思是它在样本期里<b>第一次</b>走到这个板数 —— 没有自己的历史胜率可查，"
+                 "<b>这不代表它更安全或更危险</b>，只代表我们不知道。"
+                 "真要用，先按下面第六节的规则小仓位试，别一上来就上重仓。</div>" % len(no_hist))
+    return "".join(o)
+
+
+RISK_PER_TRADE = 0.015      # 单笔风险预算（占本金）—— 用来从「历史最差」反推仓位上限
+
+
+def render_plan(ctx):
+    o = ["<h2>六、配套的操作方案（规则层，不是指令）</h2>"]
+    b = (ctx.get("odds") or {}).get("best_cur") or (ctx.get("odds") or {}).get("best")
+    if not b:
+        o.append("<div class='warn'>没有达标形态，<b>方案不成立</b> —— 按红线，不出方案也不凑数。</div>")
+        return "".join(o)
+    # ★ 仓位与止损：全部用「历史最差」反推，不拍脑袋给数；数字一律用纯文本，
+    #   别把 -26.7% 显示成红色的 +26.7%（那看起来像赚了 26.7%）。
+    def _p(v):
+        return "—" if v is None else "%+.2f%%" % (v * 100)
+
+    worst5, worst1 = abs(b["5"]["worst"]) or 0.267, abs(b["1"]["worst"]) or 0.102
+    pos5 = RISK_PER_TRADE / worst5 * 100
+    pos1 = RISK_PER_TRADE / worst1 * 100
+    bestK = "5" if b["5"]["mean"] >= b["1"]["mean"] else "1"
+    crows = {r["run"]: r for r in ((ctx.get("odds") or {}).get("cur_rows") or [])}
+    w_first = _win(crows.get("首板"), "1")
+    w_second = _win(crows.get("二板"), "1")
+    o.append("<div class='card'><b>这条方案是这么推出来的</b>"
+             "<ul>"
+             "<li><b>触发</b>：情绪阶段判定 = <b>%s</b>，且当日收盘封涨停、连板数 = <b>%s</b>。"
+             "两条同时满足才进名单。</li>"
+             "<li><b>买入假设</b>：以<b>当日收盘价</b>成交。⚠ 这是简化假设 —— "
+             "真实打板要排队，可能封不上、也可能高开走，<b>实际成交价高于收盘价</b>；"
+             "本页所有胜率都建立在「能成交且成交在收盘价」上，这一条<b>没有单独验证</b>。</li>"
+             "<li><b>持有期</b>：K=%s（这个形态在该口径上均值 %s、胜率 %s）。"
+             "K=1 胜率更高（%s）但 <b>均值只有 %s</b>，属于快进快出；"
+             "两种口径差别很大，别混着用。</li>"
+             "<li><b>仓位上限（由历史最坏情况反推，不是拍的）</b>：本形态 K=5 的最差是 "
+             "<b>%s</b>。按单笔亏损不超过本金 <b>%.1f%%</b> 的纪律，单票仓位 ≤ <b>%.1f%%</b>"
+             "（换成 K=1 口径，最差 %s → 单票 ≤ %.1f%%）。<b>取更小的那个</b>。</li>"
+             "<li><b>退出</b>：跌破买入价 <b>%d%%</b>（由 K=1 最差的一半反推）减半，继续跌破再走；"
+             "或持有满 %s 个交易日时间止损；或情绪阶段转<b>退潮 / 高潮</b>时了结 —— "
+             "三选先到者。⚠ 这条线是<b>从历史极值推的保守线</b>，不是优化出来的最优解。</li>"
+             "<li><b>明确不做</b>：冰点期去做<b>首板 / 二板</b>（K=1 胜率 %s / %s，"
+             "基本就是扔硬币，超额接近 0）。</li>"
+             "</ul></div>"
+             % (b["stage"], b["run"], bestK, _p(b[bestK]["mean"]), _win(b, bestK),
+                _win(b, "1"), _p(b["1"]["mean"]),
+                _p(b["5"]["worst"]), RISK_PER_TRADE * 100, min(pos5, 15.0),
+                _p(b["1"]["worst"]), min(pos1, 30.0),
+                int(abs(b["1"]["worst"]) * 100 / 2.0), bestK,
+                w_first, w_second))
+    o.append("<div class='warn'><b>这条方案还过不了出票闸，先别当真</b>："
+             "它现在只是<b>研究结论</b>。要接进出票，还得补四道 —— "
+             "① 无未来函数（本页已满足）；② walk-forward（本页已做，见第四节③）；"
+             "③ 随机对照（已做，见第四节①）；④ <b>退出可兑现</b>（<b>还没做</b>："
+             "上面的退出价是静态假设，滑点/一字/停牌都没算，"
+             "这一道不过，它就不是一条能执行的规则）。</div>")
+    o.append("<div class='note'>退出假设还有两处乐观：忽略<b>日内路径</b>（只按收盘价算）" +
+             "、忽略<b>跳空</b>（一字板 / 低开走不出来）。这两处会让上面的退出线<b>偏乐观</b>。"
+             "本项目的移动止盈只在一处实现（<code>_exit_sim.py</code>），要验证请走它，别在别处重算一套。</div>")
+    return "".join(o)
+
+
 def render_hot(ctx):
     h = ctx.get("hot")
-    o = ["<h2>四、当前热点板块（资金与广度）</h2>"]
+    o = ["<h2>七、当前热点板块（资金与广度）</h2>"]
     if not h or (not h.get("concept") and not h.get("industry")):
         o.append("<div class='warn'>无法自检：没读到板块热度快照（<code>quant/sector_*.json</code>）。"
                  "此处保留空缺。</div>")
@@ -485,7 +742,7 @@ USES = [
 
 
 def render_uses(ctx):
-    o = ["<h2>五、这套东西还能用来分析什么</h2>"]
+    o = ["<h2>八、这套东西还能用来分析什么</h2>"]
     o.append("<table><tr><th>能用在哪</th><th>解决什么问题</th><th>当前状态</th></tr>")
     for name, what, state, cls in USES:
         tag = {"ok": "可核", "mid": "待验证", "no": "不可核"}[cls]
@@ -496,12 +753,13 @@ def render_uses(ctx):
 
 
 def render_risk():
-    return ("<h2>六、使用边界</h2>"
+    return ("<h2>九、使用边界</h2>"
             "<div class='warn'><b>风险提示</b>：本页是<b>方法论科普 + 情绪周期定位</b>，"
             "不构成任何买卖建议。龙头战法波动极大，连板梯队本身就在告诉你风险："
             "六成以上的二板走不到三板。<ul>"
-            "<li>本页<b>不输出个股清单</b>，也不给买卖点位 —— 个股方向请查「群体心理 / 连板周报」"
-            "，个股研判走「个股研判」页。</li>"
+            "<li>第五节给的是<b>「这个形态今天出现了」的观察名单</b>，"
+            "不是个股推荐、不给买卖点位。它<b>没经过出票闸</b>，"
+            "要变成可执行还差「退出可兑现」那一道（见第六节）。</li>"
             "<li>所有分位只用<b>截至当日</b>的滚动窗口，不含未来数据；这是能做到的事，"
             "但历史统计 ≠ 预测。</li>"
             "<li>数据读到哪天就写到哪天。若显示「无法自检」，就是真没读到，不用估计值补。</li>"
@@ -590,6 +848,10 @@ def main():
                             rate_avg=sum(r["rate"] for r in series) / len(series),
                             zt_med=zt_all[len(zt_all) // 2], zt_min=zt_all[0], zt_max=zt_all[-1],
                             fwd=fwd_rows)
+
+        # ---- 阶段胜率实验室（真源 _dragon_odds 的产出）----
+        # ⚠ 没读到就给 None：页面那一节会显示「无法自检」，不会自己编一组胜率。
+        ctx["odds"] = latest_odds(ctx["asof"])
 
         # ---- 板块热点 ----
         hot = {}

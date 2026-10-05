@@ -67,6 +67,10 @@ FILES = [
     "quant/_link_check.py",
     "quant/_push_lhb.py",
     "quant/_fix_archive_nav.py",
+    # —— 情绪真源 + 龙道诀胜率实验室（2026-10-06）——
+    "quant/_mkt_emo.py",
+    "quant/_dragon_odds.py",
+    "quant/dragon/odds_2026-09-30.json",
     # —— 龙虎榜 + 游资 + 当日快照 ——
     "quant/build_lhb_enriched.py",
     "quant/build_sw1_mapping.py",
