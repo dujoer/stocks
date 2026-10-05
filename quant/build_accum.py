@@ -43,8 +43,11 @@ SIG_ORDER = ["pe", "sun", "person", "fund", "block", "exec", "lhb", "m1", "m3", 
 I_KEYS = ("pe", "sun", "person", "fund")
 M_KEYS = ("m1", "m3", "m5")
 
-# 分档出票许可：由 quant/_accum_tier_gate.py 的显著性检验产出，
-# 只有「逐日平衡 edge > 0 且 bootstrap 通过率(R3，三种子最小值) ≥ 95%」的档才算出票。
+# 分档出票许可：由 quant/_accum_tier_gate.py 产出（单一真源 `_gate_common.tier_license_windows`）。
+# 判据：生产窗口(20日) edge>0 ＋ 全部窗口 R3≥95% ＋ 全部窗口绝对收益 R3≥95%
+#       ＋ 留一法全正 ＋ 前/后半同为正。
+# 历史坑：原实现按 max(WINDOWS)=60 单窗口判 `edge>0 且 er3_min≥95%`，B 档在 20 日
+#         er3_min=0.926 不达标却在 60 日 0.9995 放行 —— 窗口挑优；且漏掉绝对收益/留一/前后半。
 # 「候选改法」一类是在同一批样本里挑出来的变体，永不参与判定（挑赢家本身就是过拟合）。
 EVIDENCE = os.path.join(HERE, "_accum_tier_gate.json")
 RULE2TIER = {"S 档（现行生产）": "S",
@@ -53,26 +56,30 @@ RULE2TIER = {"S 档（现行生产）": "S",
 
 
 def tier_evidence():
-    """读分档显著性证据；读不出任何东西时返回 {}（调用方按「不出票」处理，fail-safe）。"""
+    """读分档显著性证据；读不出任何东西时返回 {}（调用方按「不出票」处理，fail-safe）。
+
+    ★ 判据只认 `_accum_tier_gate.json` 的 `allow_detail`（由门禁脚本用统一口径写入）。
+      读不到该键（旧版证据文件）时**一律判不出票** —— 宁可空仓，也不退回旧宽松判据，
+      否则「旧文件 + 新判据」会静默产出两套结论。
+    """
     try:
         d = json.load(open(EVIDENCE, encoding="utf-8"))
     except Exception:
         return {}
+    lic = d.get("allow_detail") or {}
+    if not lic:
+        return {}
     per = d.get("per") or {}
-    # json.dump 会把 int 键写成 str，两边都要兜住
     pk = d.get("primary")
     st = (per.get(str(pk)) or per.get(pk) or {}).get("stat") or {}
-    if not st and per:                      # 再兜一层：拿最大的那个窗口
-        try:
-            st = per[sorted(per.keys(), key=lambda x: int(x))[-1]].get("stat") or {}
-        except Exception:
-            st = {}
     out = {}
     for name, tier in RULE2TIER.items():
-        s = st.get(name)
-        if not s:
+        ld = lic.get(name)
+        if ld is None:
             continue
-        out[tier] = {"ok": bool(s.get("edge", 0) > 0 and (s.get("er3_min") or 0) >= 0.95),
+        s = st.get(name) or {}
+        out[tier] = {"ok": bool(ld.get("ok")),
+                     "why": ld.get("why", ""),
                      "edge": s.get("edge", 0.0), "r3": s.get("er3_min", 0.0),
                      "wr": s.get("wr", 0.0), "days": s.get("days", 0), "n": s.get("n", 0)}
     return out
