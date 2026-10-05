@@ -45,6 +45,8 @@
 """
 from __future__ import annotations
 import os, sys, json, time, argparse, datetime, traceback
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import _longk
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -319,13 +321,9 @@ def _verify_snapshot_date(date, got, sample=400):
     抽查若干只，比对「快照 last」与「{date} 日K 收盘」，要求完全一致。
     不一致的比例超阈值 → 判失败，不允许当当日数据用。
     """
-    lk_p = os.path.join(HERE, "_long_kline.json")
-    if not os.path.exists(lk_p):
+    lk = _longk.load_long()
+    if not lk:
         return None, "无 _long_kline.json，无法校验快照日期"
-    try:
-        lk = json.load(open(lk_p, encoding="utf-8"))
-    except Exception as e:
-        return None, "读取日K失败：%s" % str(e)[:60]
     keys = [c for c in list(got)[:sample] if c in lk and lk[c]]
     if not keys:
         return None, "无交集样本可校验"
@@ -510,12 +508,9 @@ def dim_sector(date, ctx, offline=True):
 def dim_kline(date, ctx, offline=True):
     """长历史底座的最新一根是否已到位（不联网，只做一致性检查）。"""
     out = {"src": "", "ok": False, "reason": "", "n": 0, "last": ""}
-    p = os.path.join(HERE, "_long_kline.json")
-    if not os.path.exists(p):
-        p = os.path.join(HERE, "_txk_cache.json")
-        out["src"] = "_txk_cache"
-    else:
-        out["src"] = "_long_kline"
+    # 缺长K 时如实标「缺失」，不再静默换短缓存冒充（标了短缓存就等于换了口径）
+    out["src"] = _longk.src_label()
+    p = _longk.LONG if out["src"] == "_long_kline" else _longk.SHORT
     try:
         k = json.load(open(p, encoding="utf-8"))
         n = len(k)

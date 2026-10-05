@@ -49,6 +49,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 import _datahub as DH
+import _longk
 
 CUM_WIN = 5       # 累计窗口（交易日）— 先验固定
 N_BUCKET = 5      # 分档数 — 先验固定
@@ -87,10 +88,9 @@ def load_seq(date):
 
 
 def kline_map():
-    p = os.path.join(HERE, "_long_kline.json")
-    if not os.path.exists(p):
-        p = os.path.join(HERE, "_txk_cache.json")
-    return json.load(open(p, encoding="utf-8"))
+    # 统一走 _longk：缺长K 时返回 {}（调用方显式报「无长历史」），
+    # 不再静默换 250 根短缓存冒充「约 780 根」的长历史
+    return _longk.load_long()
 
 
 def main():

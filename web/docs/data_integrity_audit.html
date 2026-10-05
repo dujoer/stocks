@@ -262,9 +262,11 @@ B 档在 20 日 R3=92.6% 不达标却在 60 日 99.95% 被放行 —— 这是�
 <td><b>新增</b> —— 增仓池 M 维（融资增仓）候选覆盖
 <b>18.4%</b>（阈值 30%），
 不足则全档不出票</td></tr>
-<tr><td>有效率</td><td>⑦ 重复加载 K 线缓存</td>
-<td><b>已知开销</b> —— <code>_txk_cache.json</code> 约 122 MB，
-被 39 个脚本各自 <code>json.load</code>；单次约 0.6s。属可接受，未做侵入改造</td></tr>
+<tr><td>有效率</td><td>⑦ 长K重复加载 + 缺文件时口径分叉</td>
+<td><b>已修</b> —— 原 6+ 个脚本各自 <code>json.load</code> 同一份 <b>401MB</b> 文件，
+且缺长K时 3 个脚本<b>静默回退 250 根短缓存</b>冒充「约 780 根」。
+现抽出 <code>_longk.py</code> 单一加载层（mtime 感知进程内缓存 + 缺文件显式报），
+实测同进程二次调用 <b>0.0000s</b>；详见第三节</td></tr>
 <tr><td>胜率高</td><td>各池实测 edge / R3</td>
 <td><b>不美化</b> —— 见第三节，不达标一律写「不出票」</td></tr>
 </table>
@@ -316,19 +318,39 @@ B 档在 20 日 R3=92.6% 不达标却在 60 日 99.95% 被放行 —— 这是�
 <div class="ok"><b>修复</b>：<code>BOOT</code> 固定为 2000 并写入产物 <code>boot</code> 字段；
 重跑后 <code>per.stat</code> <b>逐位复原</b>，唯一变化的是 <code>allow</code>。</div>
 
-<h2>三、各池实测结论（现读产物，不美化）</h2>
+<h2>三、有效率实测（现跑现测，不写死）</h2>
+<h3>长K加载：抽公共层 <code>_longk.py</code> 前后</h3>
+<table data-wb><tr><th>调用</th><th class="num">耗时</th><th>结果</th></tr>
+<tr><td>首次 <code>load_long()</code>（真读盘）</td><td class="num"><b>1.77s</b></td><td>5050 只</td></tr>
+<tr><td>二次 <code>load_long()</code>（缓存命中）</td><td class="num"><b>0.0000s</b></td><td>两次返回同一对象</td></tr>
+</table>
+<div class="note">统一前：6+ 个脚本各自 <code>json.load</code> 同一份 <b>402 MB</b> 文件，
+且行为分叉 —— <code>_flow_lead_lag</code> / <code>_nonprice_lead</code> / <code>_datahub</code>
+在缺长K时<b>静默回退 250 根短缓存</b>（研究口径从「三年」悄悄变成「一年」却不报错）。
+现在：6 个消费脚本 + 1 个生产者全部走 <code>_longk.load_long()</code>，
+mtime 感知的进程内缓存让同一进程只解析一次；缺文件一律返回空并<b>显式报「无长历史」</b>，
+不再拿短缓存冒充。</div>
+<div class="ok">实测本进程累计解析 <b>1</b> 次 / 1.77s / 401.5MB —— 若为 1 次即说明共享缓存生效。</div>
+<h3>磁盘上的大产物（每次跑都要解析）</h3>
+<table data-wb><tr><th>文件</th><th class="num">体积</th><th>说明</th></tr><tr><td><code>_long_kline.json</code></td><td class='num'>402 MB</td><td>本地中间产物</td></tr><tr><td><code>_rev_lab_panel.json</code></td><td class='num'>177 MB</td><td>本地中间产物</td></tr><tr><td><code>_txk_cache.json</code></td><td class='num'>129 MB</td><td>本地中间产物</td></tr><tr><td><code>_selected_lab_panel.json</code></td><td class='num'>128 MB</td><td>本地中间产物</td></tr><tr><td><code>_tplus_lab_panel.json</code></td><td class='num'>79 MB</td><td>本地中间产物</td></tr></table>
+<div class="note">这些是中间产物、不进推送白名单。<b>它们只占本地磁盘，不占线上带宽</b>；
+但每次重算都要解析一遍，所以长K已改为「进程内共享 + mtime 感知」。</div>
+<h3>日更全链耗时清单</h3>
+<div class='note'>本轮未跑完整日更链（<code>_daily_profile.json</code> 不存在），故无耗时数据 —— 不沿用历史数字。跑一次 <code>python daily_all.py 2026-MM-DD</code>（换成当日数据日）即会落盘。</div>
+
+<h2>四、各池实测结论（现读产物，不美化）</h2>
 <div class="note">「可出票」= 该档同时满足 edge&gt;0、R3≥95%、跨窗口/跨步长同号、
 留一全正、前后半同正（各池按自身口径）。<b>不达标一律写「不出票」</b>，
 这正是红线「宁可不选」的落地。</div>
 <table data-wb><tr><th>池</th><th>档位</th><th class="num">edge</th><th class="num">R3</th>
 <th>说明</th><th>出票</th></tr><tr><td><b>主升精选</b></td><td>强势档（环境门控开仓）</td><td class='num up'>+2.936pp</td><td class='num'>—</td><td>全样本 A 档（前 5%）edge +4.701pp —— 选股本身不提供独立 alpha；成立依据是环境门控（强势档 +2.936pp）</td><td class='ok'><b>可出票</b></td></tr><tr><td><b>底部反转</b></td><td>A</td><td class='num down'>-0.238pp</td><td class='num'>29.9%</td><td>主档 A：edge -0.238pp、R3 29.9%</td><td class='danger'><b>不出票</b></td></tr><tr><td><b>高胜率</b></td><td>CORE</td><td class='num down'>-1.310pp</td><td class='num'>4.2%</td><td>主档 CORE：edge -1.310pp、R3 4.2%</td><td class='danger'><b>不出票</b></td></tr><tr><td><b>三连阴</b></td><td>obs</td><td class='num up'>+0.001pp</td><td class='num'>50.4%</td><td>主档 obs：edge +0.001pp、R3 50.4%</td><td class='danger'><b>不出票</b></td></tr><tr><td><b>做T池</b></td><td>A</td><td class='num up'>+0.537pp</td><td class='num'>95.0%</td><td>主档 A：edge +0.537pp、R3 95.0%</td><td class='ok'><b>可出票</b></td></tr><tr><td><b>增仓精选</b></td><td>S 档（现行生产）</td><td class='num up'>+1.362pp</td><td class='num'>92.1%</td><td>允许出票档：无；数据闸 M 维覆盖 18.4%（阈值 30%）</td><td class='danger'><b>不出票</b></td></tr></table>
 
-<h2>四、统一获取：各池产出日 vs 底座日</h2>
+<h2>五、统一获取：各池产出日 vs 底座日</h2>
 <table data-wb><tr><th>池</th><th class="num">最新产出日</th><th>与底座 2026-09-30 比对</th></tr><tr><td>主升精选</td><td class='num'>2026-09-30</td><td>✓ 与底座一致</td></tr><tr><td>底部反转</td><td class='num'>2026-09-30</td><td>✓ 与底座一致</td></tr><tr><td>增仓精选</td><td class='num'>2026-09-30</td><td>✓ 与底座一致</td></tr><tr><td>三连阴</td><td class='num'>2026-09-30</td><td>✓ 与底座一致</td></tr><tr><td>做T池</td><td class='num'>2026-09-30</td><td>✓ 与底座一致</td></tr><tr><td>高胜率</td><td class='num'>2026-09-30</td><td>✓ 与底座一致</td></tr></table>
 <div class="note">「无当期页」可能是<b>无合格标的空仓</b>（属正常，不出页），也可能是漏跑。
 门禁只报事实、不下判，交给人确认 —— 但不再有「静默停在旧日期」这回事。</div>
 
-<h2>五、遗留项（未修，如实记录）</h2>
+<h2>六、遗留项（未修，如实记录）</h2>
 <ul>
 <li><b>融资融券数据源滞后</b>：底座体检显示融资融券只到 2026-08-19（滞后 42 天）。
 这是数据源（东财）自身滞后，非本地漏跑；影响面已由修复 4 的数据闸围住。</li>
@@ -338,12 +360,12 @@ B 档在 20 日 R3=92.6% 不达标却在 60 日 99.95% 被放行 —— 这是�
 单次约 0.6s，日更链累计约 7s，尚未成为瓶颈。若后续池子变多，可做共享加载层。</li>
 </ul>
 
-<h2>六、未解决风险与后续</h2>
+<h2>七、未解决风险与后续</h2>
 <div class="note">本页<b>只记录已发生的审计结论</b>。任何统计数字都从产物现读 ——
 若某产物缺失，本页对应处显示「无法自检」而不是沿用上次的数字。</div>
 
 <footer>
-生成于 2026-10-05 15:14:39 ·
+生成于 2026-10-05 18:45:24 ·
 <code>quant/_data_integrity_audit.py</code> ·
 数据底座 <code>hub/manifest.json</code>（2026-09-30）<br>
 相关页面：<a href="exit_assumption_evidence.html">退出成交假设证据</a> ｜

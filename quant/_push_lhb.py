@@ -183,6 +183,7 @@ FILES = [
     "quant/_accum_tier_gate.py",      # ★ 增仓池分档门禁（判据统一 + 数据有效性闸 + 窗口固定 2000）
     "quant/_rev_gate_page.py",        # 反转池证据页生成器（许可返回值的语义反义修正）
     "quant/_data_integrity_audit.py", # ★ 上述审计结论证据页生成器 → web/docs/data_integrity_audit.html
+    "quant/_longk.py",                # ★ 长K单一加载层（mtime 感知进程内缓存 + 缺文件不静默回退）
 ]
 
 # 自动纳入「带日期/版块」的页面与数据源，保证每一页都带统一导航、且数据可复现。

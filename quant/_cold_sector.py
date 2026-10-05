@@ -53,6 +53,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 import _tx_fetch as _TX
+import _longk
 
 T_TX = _TX.TX_KLINE
 UA_TX = _TX.UA
@@ -82,12 +83,9 @@ FACTORS = [
 # 1. 数据
 # ============================================================
 def load_long():
-    if not os.path.exists(LONG):
-        return {}
-    try:
-        return json.load(open(LONG, encoding="utf-8"))
-    except Exception:
-        return {}
+    # 统一走 _longk（单一加载层：mtime 缓存 + 缺文件显式报，不静默回退短缓存）
+    # _pullback_probe / _cold_oos / build_cold_sector 都 import 本函数，一并受益
+    return _longk.load_long()
 
 
 def load_industry_map():

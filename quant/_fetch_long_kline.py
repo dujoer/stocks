@@ -35,6 +35,7 @@ import os, sys, json, time, argparse, random
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import _tx_fetch as T
+import _longk
 
 LONG_CACHE = os.path.join(HERE, "_long_kline.json")
 FAILED = os.path.join(HERE, "_long_failed.json")
@@ -45,12 +46,9 @@ UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
 
 
 def load_long():
-    if os.path.exists(LONG_CACHE):
-        try:
-            return json.load(open(LONG_CACHE, encoding="utf-8"))
-        except Exception:
-            return {}
-    return {}
+    # 本文件是长K的生产者（写入方），但**读取**统一走 _longk，
+    # 与 6 个消费脚本共用同一份 mtime 缓存，避免同一进程重复解析 401MB
+    return _longk.load_long()
 
 
 def save_long(d):

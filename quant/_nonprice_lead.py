@@ -48,6 +48,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 import _datahub as DH
+import _longk
 
 CUM_WIN = 5
 N_BUCKET = 5
@@ -67,10 +68,8 @@ MOM_DIMS = [("mom5", "T前5日涨幅"), ("mom20", "T前20日涨幅")]
 
 
 def load_kl():
-    p = os.path.join(HERE, "_long_kline.json")
-    if not os.path.exists(p):
-        p = os.path.join(HERE, "_txk_cache.json")
-    return json.load(open(p, encoding="utf-8"))
+    # 统一走 _longk：缺长K 时返回 {}，不再拿 250 根短缓存冒充长历史
+    return _longk.load_long()
 
 
 def main():

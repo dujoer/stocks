@@ -46,6 +46,8 @@ import os, sys, json, argparse, collections, statistics
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+import _longk
+sys.path.insert(0, HERE)
 import _gate_common as G
 
 LONG = os.path.join(HERE, "_long_kline.json")
@@ -65,10 +67,8 @@ MIN_AMT20 = 3.0e7                       # 20日均额 ≥3000万（可交易域�
 
 
 def load_long():
-    if not os.path.exists(LONG):
-        return {}
-    with open(LONG, encoding="utf-8") as f:
-        return json.load(f)
+    # 统一走 _longk（单一加载层：mtime 缓存 + 缺文件显式报，不静默回退短缓存）
+    return _longk.load_long()
 
 
 def prep(bars, unit=100.0):

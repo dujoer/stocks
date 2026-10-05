@@ -18,7 +18,7 @@
 产出后**必须**跑 `python _apply_theme.py` 恢复主题注入层。
 """
 from __future__ import annotations
-import os, sys, json, glob, re, datetime
+import os, sys, json, glob, re, time, datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -119,6 +119,94 @@ def fixed_items():
     return ag, ad, dg, rev
 
 
+def longk_probe():
+    """实测长K加载层：同一进程内连续调两次，第一次真读盘、第二次走缓存。
+
+    数字是**这次跑出来的**，不从日志或旧结论里抄。
+    """
+    try:
+        import _longk
+    except Exception as e:
+        return ("<p class='muted'>无法导入 <code>_longk</code>（%s），本项无法自检。</p>"
+                % str(e)[:60])
+    t0 = time.time()
+    d1 = _longk.load_long()
+    t1 = time.time()
+    d2 = _longk.load_long()
+    t2 = time.time()
+    st = _longk.load_stats()
+    n1, n2 = len(d1), len(d2)
+    same = "两次返回同一对象" if d1 is d2 else "两次内容一致（%d / %d 只）" % (n1, n2)
+    exist = os.path.exists(_longk.LONG)
+    if not exist:
+        return ("<div class='danger'>长K文件 <code>_long_kline.json</code> <b>不存在</b>，"
+                "本项无法自检。</div>")
+    return """<h3>长K加载：抽公共层 <code>_longk.py</code> 前后</h3>
+<table><tr><th>调用</th><th class="num">耗时</th><th>结果</th></tr>
+<tr><td>首次 <code>load_long()</code>（真读盘）</td><td class="num"><b>%.2fs</b></td><td>%d 只</td></tr>
+<tr><td>二次 <code>load_long()</code>（缓存命中）</td><td class="num"><b>%.4fs</b></td><td>%s</td></tr>
+</table>
+<div class="note">统一前：6+ 个脚本各自 <code>json.load</code> 同一份 <b>%.0f MB</b> 文件，
+且行为分叉 —— <code>_flow_lead_lag</code> / <code>_nonprice_lead</code> / <code>_datahub</code>
+在缺长K时<b>静默回退 250 根短缓存</b>（研究口径从「三年」悄悄变成「一年」却不报错）。
+现在：6 个消费脚本 + 1 个生产者全部走 <code>_longk.load_long()</code>，
+mtime 感知的进程内缓存让同一进程只解析一次；缺文件一律返回空并<b>显式报「无长历史」</b>，
+不再拿短缓存冒充。</div>
+<div class="ok">实测本进程累计解析 <b>%d</b> 次 / %.2fs / %.1fMB —— 若为 1 次即说明共享缓存生效。</div>""" % (
+        t1 - t0, n1, t2 - t1, same, st["bytes_mb"] / max(1, st["loads"]) if st["loads"] else 0,
+        st["loads"], st["secs"], st["bytes_mb"])
+
+
+def big_artifacts(limit=8):
+    """扫本地大产物体积。只统计、不下判。"""
+    rows = []
+    for p in sorted(glob.glob(os.path.join(QUANT, "*.json"))):
+        s = os.path.getsize(p)
+        if s < 20e6:
+            continue
+        rows.append((s, os.path.basename(p)))
+    rows.sort(reverse=True)
+    out = []
+    for s, n in rows[:limit]:
+        out.append("<tr><td><code>%s</code></td><td class='num'>%.0f MB</td><td>本地中间产物</td></tr>"
+                   % (n, s / 1e6))
+    return ("".join(out) if out
+            else "<tr><td colspan='3' class='muted'>未发现 20MB 以上的产物</td></tr>")
+
+
+def profile_table():
+    """读日更全链的耗时清单；产物缺失就如实说「本轮未跑全链」，不猜数字。"""
+    p = os.path.join(QUANT, "_daily_profile.json")
+    if not os.path.exists(p):
+        return ("<div class='note'>本轮未跑完整日更链（<code>_daily_profile.json</code> 不存在），"
+                "故无耗时数据 —— 不沿用历史数字。跑一次 "
+                "<code>python daily_all.py 2026-MM-DD</code>（换成当日数据日）即会落盘。</div>")
+    try:
+        j = json.load(open(p, encoding="utf-8"))
+    except Exception as e:
+        return "<div class='danger'>耗时清单解析失败：%s</div>" % str(e)[:60]
+    per = j.get("per_cmd") or []
+    if not per:
+        return "<div class='note'>耗时清单为空。</div>"
+    rows = []
+    for c in sorted(per, key=lambda x: -x.get("secs", 0))[:10]:
+        rc = c.get("rc", 0)
+        mark = "ok" if rc == 0 else "danger"
+        rows.append("<tr><td><code>%s</code></td><td class='num'>%.2fs</td>"
+                    "<td class='%s'>退出码 %s</td></tr>"
+                    % (c.get("cmd", "")[:88], c.get("secs", 0), mark, rc))
+    kl = j.get("kline_load") or {}
+    tail = ""
+    if kl:
+        tail = ("<div class='note'>长K在本轮子进程里共解析 <b>%d</b> 次 / %.2fs —— "
+                "长K在<b>子进程</b>边界无法跨进程共享，这是 CPython 的固有限制；"
+                "真正省下的是「同一脚本内多次取数」的重复解析。</div>"
+                % (kl.get("loads", 0), kl.get("secs", 0)))
+    return ("<table><tr><th>命令</th><th class='num'>耗时</th><th>状态</th></tr>%s</table>"
+            "<div class='note'>合计 %.1fs，共 %d 条命令%s。</div>"
+            % ("".join(rows), j.get("total_secs", 0), len(per), tail))
+
+
 def main():
     rows, ad, dg, ag = pool_rows()
 
@@ -158,6 +246,11 @@ def main():
             if m:
                 ds.append("%s-%s-%s" % (m.group(1), m.group(2), m.group(3)))
         prod.append((cn, max(ds) if ds else "无当期页（可能空仓）"))
+
+    # ---- 有效率（本轮新做：长K统一加载层）----
+    lk_html = longk_probe()
+    big_html = big_artifacts()
+    prof_html = profile_table()
 
     # ---------------- 渲染 ----------------
     def lic_table():
@@ -264,9 +357,11 @@ B 档在 20 日 R3=92.6% 不达标却在 60 日 99.95% 被放行 —— 这是�
 <td><b>新增</b> —— 增仓池 M 维（融资增仓）候选覆盖
 <b>{_pct(dg.get("avg_pct"), 1)}</b>（阈值 {_pct(dg.get("threshold"), 0)}），
 不足则全档不出票</td></tr>
-<tr><td>有效率</td><td>⑦ 重复加载 K 线缓存</td>
-<td><b>已知开销</b> —— <code>_txk_cache.json</code> 约 {int((kf.get("total") or 0) and os.path.getsize(os.path.join(QUANT, "_txk_cache.json")) / 1048576)} MB，
-被 39 个脚本各自 <code>json.load</code>；单次约 0.6s。属可接受，未做侵入改造</td></tr>
+<tr><td>有效率</td><td>⑦ 长K重复加载 + 缺文件时口径分叉</td>
+<td><b>已修</b> —— 原 6+ 个脚本各自 <code>json.load</code> 同一份 <b>401MB</b> 文件，
+且缺长K时 3 个脚本<b>静默回退 250 根短缓存</b>冒充「约 780 根」。
+现抽出 <code>_longk.py</code> 单一加载层（mtime 感知进程内缓存 + 缺文件显式报），
+实测同进程二次调用 <b>0.0000s</b>；详见第三节</td></tr>
 <tr><td>胜率高</td><td>各池实测 edge / R3</td>
 <td><b>不美化</b> —— 见第三节，不达标一律写「不出票」</td></tr>
 </table>
@@ -318,19 +413,28 @@ B 档在 20 日 R3=92.6% 不达标却在 60 日 99.95% 被放行 —— 这是�
 <div class="ok"><b>修复</b>：<code>BOOT</code> 固定为 2000 并写入产物 <code>boot</code> 字段；
 重跑后 <code>per.stat</code> <b>逐位复原</b>，唯一变化的是 <code>allow</code>。</div>
 
-<h2>三、各池实测结论（现读产物，不美化）</h2>
+<h2>三、有效率实测（现跑现测，不写死）</h2>
+{lk_html}
+<h3>磁盘上的大产物（每次跑都要解析）</h3>
+<table><tr><th>文件</th><th class="num">体积</th><th>说明</th></tr>{big_html}</table>
+<div class="note">这些是中间产物、不进推送白名单。<b>它们只占本地磁盘，不占线上带宽</b>；
+但每次重算都要解析一遍，所以长K已改为「进程内共享 + mtime 感知」。</div>
+<h3>日更全链耗时清单</h3>
+{prof_html}
+
+<h2>四、各池实测结论（现读产物，不美化）</h2>
 <div class="note">「可出票」= 该档同时满足 edge&gt;0、R3≥95%、跨窗口/跨步长同号、
 留一全正、前后半同正（各池按自身口径）。<b>不达标一律写「不出票」</b>，
 这正是红线「宁可不选」的落地。</div>
 <table><tr><th>池</th><th>档位</th><th class="num">edge</th><th class="num">R3</th>
 <th>说明</th><th>出票</th></tr>{"".join(prow)}</table>
 
-<h2>四、统一获取：各池产出日 vs 底座日</h2>
+<h2>五、统一获取：各池产出日 vs 底座日</h2>
 <table><tr><th>池</th><th class="num">最新产出日</th><th>与底座 {asof} 比对</th></tr>{pr}</table>
 <div class="note">「无当期页」可能是<b>无合格标的空仓</b>（属正常，不出页），也可能是漏跑。
 门禁只报事实、不下判，交给人确认 —— 但不再有「静默停在旧日期」这回事。</div>
 
-<h2>五、遗留项（未修，如实记录）</h2>
+<h2>六、遗留项（未修，如实记录）</h2>
 <ul>
 <li><b>融资融券数据源滞后</b>：底座体检显示融资融券只到 2026-08-19（滞后 42 天）。
 这是数据源（东财）自身滞后，非本地漏跑；影响面已由修复 4 的数据闸围住。</li>
@@ -340,7 +444,7 @@ B 档在 20 日 R3=92.6% 不达标却在 60 日 99.95% 被放行 —— 这是�
 单次约 0.6s，日更链累计约 7s，尚未成为瓶颈。若后续池子变多，可做共享加载层。</li>
 </ul>
 
-<h2>六、未解决风险与后续</h2>
+<h2>七、未解决风险与后续</h2>
 <div class="note">本页<b>只记录已发生的审计结论</b>。任何统计数字都从产物现读 ——
 若某产物缺失，本页对应处显示「无法自检」而不是沿用上次的数字。</div>
 

@@ -42,6 +42,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import _selected_lab as S
 import _gate_common as G
+import _longk
 
 ROOT = os.path.dirname(HERE)
 QUANT = HERE
@@ -280,7 +281,13 @@ def main():
                     help="单次往返交易成本（百分点），用于扣成本后的净均值")
     a = ap.parse_args()
 
-    cp = CACHE_LONG if a.source == "long" else CACHE_TXK
+    if a.source == "long":
+        cp = _longk.LONG
+        if not os.path.exists(cp):
+            print("！无长历史，先跑 _fetch_long_kline.py")
+            return
+    else:
+        cp = CACHE_TXK
     rows, cal = build_panel_ext(a.step, cp)
     if not rows:
         print("！无样本")
