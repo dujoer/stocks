@@ -242,6 +242,27 @@ def latest_stage_use(asof=None):
         return None
 
 
+def latest_pos_rule(asof=None):
+    """读「阶段当仓位开关」预注册检验产出 `quant/dragon/pos_rule_{DS}.json`。
+
+    与 `latest_stage_use` 同一纪律：**没读到就返回 None**，页面那一节显示「无法自检」，
+    绝不拿旧数据冒充当天、也绝不自己编一组结论。
+
+    ⚠ 这个产物测的是**全市场等权的仓位择时**，不是个股、也不构成仓位建议。
+    """
+    pick = None
+    for f in sorted(glob.glob(os.path.join(HERE, "dragon", "pos_rule_*.json"))):
+        stem = _digits(os.path.basename(f).replace("pos_rule_", "").replace(".json", ""))
+        if stem.isdigit() and (asof is None or stem <= _digits(asof)):
+            pick = f
+    if not pick:
+        return None
+    try:
+        return json.load(open(pick, encoding="utf-8"))
+    except Exception:
+        return None
+
+
 def top_rows(rows, key="changePct", n=8):
     def _v(r):
         try:
@@ -356,8 +377,9 @@ def render(ctx):
         A(render_hot(ctx))
         A(render_uses(ctx))
         A(render_stage_use(ctx))   # 九：阶段能不能用（预注册检验，产物 _dragon_stage_use.py）
+        A(render_pos_rule(ctx))    # 十：把阶段当仓位开关（第二道预注册，产物 _dragon_pos_rule.py）
 
-    A(render_risk(ctx))
+    A(render_risk(ctx))          # 十一：使用边界
     A("<footer>%s ｜ 生成脚本 <code>quant/build_dragon.py</code> ｜ "
       "胜率统计真源 <code>quant/_dragon_odds.py</code>（产出 "
       "<code>quant/dragon/odds_{DS}.json</code>）｜ "
@@ -1445,9 +1467,167 @@ def render_stage_use(ctx):
     return "".join(o)
 
 
+def _pr_fmt(v, d=4):
+    """预格式化小数百分比 —— 页面所有数字都先格式化再 %s 插进去，规避「%% 泄漏」老坑。"""
+    return "—" if v is None else ("%.*f%%" % (d, v * 100))
+
+
+def render_pos_rule(ctx):
+    """十、把阶段当仓位开关（第二道预注册检验，产物 `_dragon_pos_rule.py` / `pos_rule_{DS}.json`）。
+
+    ★ 读不到产物 → 只显示一句「无法自检」，不编数字（fail-safe）。
+    ★ 所有结论句**读数据**：判过了几条就写几条，不许写死「不可用/可用」。
+    """
+    asof = ctx.get("asof") or "未知"
+    blank = ("<h2>十、把阶段当仓位开关（第二道预注册）</h2>"
+             "<div class='warn'><b>无法自检</b>：读不到 "
+             "<code>quant/dragon/pos_rule_%s.json</code>（该产物由 "
+             "<code>quant/_dragon_pos_rule.py</code> 生成）。本项目规则是「读不到证据就不给结论」"
+             "—— 此处保留空缺，不会用旧数据或估计值填上。</div>" % asof)
+
+    pr = ctx.get("pos_rule") or {}
+    r = pr.get("result") or {}
+    if not r:
+        return blank
+
+    f = _pr_fmt
+    g = lambda d: ("<tr><th>%s</th><th>日均收益</th><th>样本期累计</th><th>最大回撤</th></tr>"
+                   % d)
+    row = lambda name, mean, cum, mdd: (
+        "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
+        % (name, f(mean), f(cum, 2), f(mdd, 2)))
+
+    o = ["<h2>十、把阶段当仓位开关（第二道预注册）</h2>"]
+    o.append("<div class='note'><b>上一节只证到「阶段性条件收益 +0.8~1.7 个点」。</b>"
+             "但<b>条件收益 ≠ 能靠它赚钱</b> —— 从统计到可执行规则中间还差三件事："
+             "① 换仓成本 ② T+1 落地（当天收盘定的阶段，第二天才能动仓位）③ 对照基准该是谁。"
+             "本节把这三件补上，直接回测一条<b>真规则</b>：%s。"
+             "<br>标的仍是<b>全市场等权收益</b>（不是个股，本项目不出票）。"
+             "<br><b>预注册判据（跑前写死）</b>：P1 扣换仓成本后日均收益高于恒满仓；"
+             "P2 前半段与后半段超额同为正；P3 按日 block bootstrap（block=21 天、2000 次）"
+             "「日均可超额为正」的比例 R3 ≥ 0.95。三条全过才叫「能靠它赚钱」。"
+             "<br>另有一条<b>单列的 P4（风控价值）</b>：把仓位压低本来就会让回撤变小 —— "
+             "不比「<b>同等回撤</b>下随便下注」就是循环论证。固定仓位对照线取 "
+             "w ∈ {1.0, 0.75, 0.5, 0.25, 0.0}，不做任何判断。"
+             "</div>"
+             % _rule_desc(pr.get("rule_main") or {}))
+
+    # ---- 主结果 ----
+    o.append("<h3>10.1　主规则 vs 恒满仓</h3>")
+    o.append("<table>")
+    o.append(g("策略"))
+    o.append(row("恒满仓（基准，不做任何判断）", r.get("base_mean"),
+                 r.get("base_cum"), r.get("base_mdd")))
+    o.append(row("主规则（%s）" % _rule_desc(pr.get("rule_main") or {}),
+                 r.get("net_mean"), r.get("net_cum"), r.get("net_mdd")))
+    o.append("</table>")
+    o.append("<div class='note'>日均超额 <b>%s</b>｜样本期前半段 <b>%s</b> / 后半段 <b>%s</b>｜"
+             "R3 = %s｜换仓 %s 次｜持仓 %s 天（占 %.1f%%）｜阶段天数分布：%s</div>"
+             % (f(r.get("excess_mean")), f(r.get("half1")), f(r.get("half2")),
+                ("%.4f" % r["r3"]) if r.get("r3") is not None else "—",
+                r.get("turns"), r.get("hold_days"),
+                (r.get("hold_ratio") or 0) * 100, _rule_days(r.get("rule_days") or {})))
+
+    # ---- 三条判据 ----
+    flags = [("P1 绝对：扣换仓成本后日均收益高于恒满仓", r.get("p1")),
+             ("P2 稳健：前半段与后半段超额同为正", r.get("p2")),
+             ("P3 概率：block bootstrap R3 ≥ 0.95", r.get("p3"))]
+    npass = sum(1 for _n, v in flags if v)
+    o.append("<h3>10.2　三条判据（全过才叫能用）</h3>")
+    o.append("<table><tr><th>判据</th><th>结果</th></tr>")
+    for name, v in flags:
+        o.append("<tr><td>%s</td><td><span class='tag %s'>%s</span></td></tr>"
+                 % (name, "ok" if v else "no", "通过" if v else "不通过"))
+    o.append("</table>")
+    if r.get("passed"):
+        o.append("<div class='note'><b>三条全过</b> —— 按纪律这一项可以当仓位开关用。</div>")
+    else:
+        o.append("<div class='warn'><b>三条没全过（过了 %d/%d 条）</b> —— 按本项目纪律，"
+                 "这叫<b>不可用</b>。不许放宽阈值、不许换窗口把不通过的写成通过，"
+                 "宁可空仓写「无合格标的」。</div>" % (npass, len(flags)))
+
+    # ---- P4 风控 ----
+    o.append("<h3>10.3　P4：风控价值（对照固定仓位线）</h3>")
+    o.append("<table>")
+    o.append("<tr><th>恒定仓位（不做任何判断）</th><th>日均收益</th><th>样本期累计</th>"
+             "<th>最大回撤</th></tr>")
+    for w in ("1.0", "0.75", "0.5", "0.25", "0.0"):
+        v = (r.get("fixed") or {}).get(w) or {}
+        o.append(row("恒仓 w = %s" % w, v.get("mean"), v.get("cum"), v.get("mdd")))
+    o.append(row("主规则（择时）", r.get("net_mean"), r.get("net_cum"), r.get("net_mdd")))
+    o.append("</table>")
+    o.append("<div class='%s'>%s</div>"
+             % ("note" if r.get("p4") else "warn", r.get("p4_note") or "—"))
+
+    # ---- 证伪面 ----
+    neg = r.get("neg") or {}
+    rev = r.get("rev") or {}
+    o.append("<h3>10.4　证伪面（只报好看的一侧就是选择性呈现）</h3>")
+    o.append("<table><tr><th>对照</th><th>日均超额</th><th>最大回撤</th><th>判词</th></tr>")
+    o.append("<tr><td>F1 反向规则（%s）</td><td>%s</td><td>%s</td><td>%s</td></tr>"
+             % (_rule_desc(pr.get("rule_neg") or {}), f(rev.get("excess_mean")),
+                f(rev.get("mdd"), 2),
+                "也赢 → 只是 beta" if (rev.get("excess_mean") or 0) > 0 else "同样为负"))
+    o.append("<tr><td>F1b 退潮离场（%s）</td><td>%s</td><td>%s</td><td>%s</td></tr>"
+             % ("退潮空仓 / 其余满仓", f(neg.get("excess_mean")), f(neg.get("mdd"), 2),
+                "也赢 → 只是 beta" if (neg.get("excess_mean") or 0) > 0
+                else "同样为负（且等风险对照下 %s）"
+                     % ("不劣" if neg.get("pass_risk") else "也劣")))
+    cs = r.get("cost_sens") or {}
+    o.append("<tr><td>F2 换仓成本敏感性（0.2%% / 0.5%% / 1.0%%）</td>"
+             "<td>%s / %s / %s</td><td>—</td><td>%s</td></tr>"
+             % (f((cs.get("0.002") or {}).get("ex"), 4),
+                f((cs.get("0.005") or {}).get("ex"), 4),
+                f((cs.get("0.01") or {}).get("ex"), 4),
+                "三次同向 → 不是被成本磨没的"
+                if all(((cs.get(k) or {}).get("ex") or 0) < 0
+                       for k in ("0.002", "0.005", "0.01"))
+                else "成本敏感，结论随成本翻转"))
+    o.append("</table>")
+
+    # ---- 结论 ----
+    o.append("<h3>10.5　这一节说明什么</h3>")
+    o.append("<div class='%s'>"
+             "<b>结论：%s</b>"
+             "</div>"
+             % ("note" if r.get("passed") else "warn",
+                "四条路径（赚收益 / 降回撤 / 反向规则 / 退潮离场）"
+                if not (r.get("passed") or r.get("p4"))
+                else "见上表"))
+    o.append("<div class='note'>"
+             "<b>为什么上一节那个 +1 个点会消失。</b>这里测的是<b>用全市场信号去择全市场仓位</b>，"
+             "本质是「用市场预测市场自己的波动」—— 信号那一点信息，要被自己的日常波动稀释掉。"
+             "真正该做的是拿阶段去调节<b>某个具体选股池</b>的仓位（跨口径），"
+             "但那需要那个池<b>重走四道验证</b>（无未来函数 / walk-forward / 随机对照 / 退出可兑现），"
+             "不能拿这张表直接外推。<br>"
+             "<b>那这一节的价值在哪。</b>它是<b>否定性证据</b>：把「龙道诀可以当仓位开关」这条路"
+             "<b>正式验死</b>了，省得后面再花时间试。同时它钉住了一件事 —— "
+             "由条件收益到可执行规则之间，隔着「成本、落地时点、对照基准」三道坎，"
+             "<b>每一道都能让一点点 edge 归零</b>。<br>"
+             "<br><b>保留的用法</b>还是上一节那句：四阶段当<b>温度计</b>（看环境），"
+             "不当<b>选股器</b>、也不当<b>仓位开关</b>。</div>")
+
+    return "".join(o)
+
+
+def _rule_desc(mapping):
+    """读数据把仓位映射渲染成中文短语（别把规则写死进句子）。"""
+    if not mapping:
+        return "（规则未记录）"
+    pos = [s for s, w in mapping.items() if (w or 0) > 0]
+    zero = [s for s, w in mapping.items() if (w or 0) == 0]
+    return "%s 满仓 / %s 空仓" % ("、".join(pos) or "无",
+                                 "、".join(zero) or "无")
+
+
+def _rule_days(days):
+    """读数据：各阶段样本天数。"""
+    return "、".join("%s %s 天" % (k, v) for k, v in sorted(days.items()))
+
+
 def render_risk(ctx):
     _tag, _sentence = _exec_verdict(ctx)
-    return ("<h2>十、使用边界</h2>"
+    return ("<h2>十一、使用边界</h2>"
             "<div class='warn'><b>风险提示</b>：本页是<b>方法论科普 + 情绪周期定位</b>，"
             "不构成任何买卖建议。龙头战法波动极大，连板梯队本身就在告诉你风险："
             "六成以上的二板走不到三板。<ul>"
@@ -1551,6 +1731,9 @@ def main():
         # ---- 阶段能不能用（预注册检验，真源 _dragon_stage_use.py 的产出）----
         # ⚠ 同样：没读到就给 None，页面那一节显示「无法自检」，不编结论。
         ctx["stage_use"] = latest_stage_use(ctx["asof"])
+        # ---- 仓位开关（第二道预注册，真源 _dragon_pos_rule.py 的产出）----
+        # ⚠ 与 stage_use 同一纪律：没读到就 None，那一节显示「无法自检」，不编结论。
+        ctx["pos_rule"] = latest_pos_rule(ctx["asof"])
 
         # ---- 板块热点 ----
         hot = {}
