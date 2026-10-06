@@ -221,6 +221,27 @@ def latest_odds(asof=None):
         return None
 
 
+def latest_stage_use(asof=None):
+    """读「阶段能不能用」预注册检验产出 `quant/dragon/stage_use_{DS}.json`。
+
+    与 `latest_odds` 同一纪律：**没读到就返回 None**，页面那一节显示「无法自检」，
+    绝不拿旧数据冒充当天、也绝不自己编一组结论。
+
+    ⚠ 这个产物测的是**全市场等权收益**，不是任何个股 —— 页面上不能拿它当「选股信号」。
+    """
+    pick = None
+    for f in sorted(glob.glob(os.path.join(HERE, "dragon", "stage_use_*.json"))):
+        stem = _digits(os.path.basename(f).replace("stage_use_", "").replace(".json", ""))
+        if stem.isdigit() and (asof is None or stem <= _digits(asof)):
+            pick = f
+    if not pick:
+        return None
+    try:
+        return json.load(open(pick, encoding="utf-8"))
+    except Exception:
+        return None
+
+
 def top_rows(rows, key="changePct", n=8):
     def _v(r):
         try:
@@ -334,6 +355,7 @@ def render(ctx):
         A(render_plan(ctx))      # 六：配套操作方案（规则层）
         A(render_hot(ctx))
         A(render_uses(ctx))
+        A(render_stage_use(ctx))   # 九：阶段能不能用（预注册检验，产物 _dragon_stage_use.py）
 
     A(render_risk(ctx))
     A("<footer>%s ｜ 生成脚本 <code>quant/build_dragon.py</code> ｜ "
@@ -1286,9 +1308,146 @@ def render_uses(ctx):
     return "".join(o)
 
 
+USE_CLS = {"可用（仓位/开仓）": "ok", "赢基线但没赢动量": "mid", "不可用": "no"}
+
+
+def _use_pass_stages(su):
+    """读数据：哪些阶段在**全部**前向窗口都通过预注册判据（结论句用，不写死）。"""
+    holds = su.get("holds") or {}
+    ok_sets = []
+    for key in sorted(holds, key=lambda x: int(x)):
+        cells = (holds[key].get("cells") or {})
+        ok_sets.append({st for st, c in cells.items()
+                        if (c or {}).get("verdict") == "可用（仓位/开仓）"})
+    if not ok_sets:
+        return []
+    common = set(ok_sets[0])
+    for s in ok_sets[1:]:
+        common &= s
+    return sorted(common, key=lambda s: ("高潮", "回暖", "冰点", "退潮").index(s))
+
+
+def _use_neg_stages(su):
+    """读数据：哪些阶段在**全部**窗口的「同涨幅分位档 edge」都为负（即「该收手」的实证）。
+
+    ★ 结论句必须读数据 —— 上一轮就栽在「把某阶段写死进结论句，数据一变动就自相矛盾」。
+    """
+    holds = su.get("holds") or {}
+    neg_sets = []
+    for key in sorted(holds, key=lambda x: int(x)):
+        cells = (holds[key].get("cells") or {})
+        neg_sets.append({st for st, c in cells.items()
+                         if (c or {}).get("edge_matched") is not None
+                         and c["edge_matched"] < 0})
+    if not neg_sets:
+        return []
+    common = set(neg_sets[0])
+    for s in neg_sets[1:]:
+        common &= s
+    return sorted(common, key=lambda s: ("高潮", "回暖", "冰点", "退潮").index(s))
+
+
+def render_stage_use(ctx):
+    """九、阶段能不能用 —— 预注册检验（产物 `_dragon_stage_use.py` / `stage_use_{DS}.json`）。
+
+    ★ 读不到产物：**整节只显示一句「无法自检」**，不编数字（fail-safe）。
+    """
+    su = ctx.get("stage_use")
+    if not su:
+        return ("<h2>九、阶段能不能用（预注册检验）</h2>"
+                "<div class='warn'><b>无法自检</b>：读不到 "
+                "<code>quant/dragon/stage_use_{DS}.json</code>（该产物由 "
+                "<code>quant/_dragon_stage_use.py</code> 生成）。"
+                "本项目规则是「读不到证据就不给结论」—— 此处保留空缺，不会用旧数据或估计值填上。"
+                "</div>".format(ctx.get("asof") or "未知"))
+
+    holds = su.get("holds") or {}
+    keylist = sorted(holds, key=lambda x: int(x))
+    stage_order = su.get("stages") or ["退潮", "高潮", "回暖", "冰点"]
+    ok_all = _use_pass_stages(su)
+
+    o = ["<h2>九、阶段能不能用（预注册检验）</h2>"]
+    o.append("<div class='note'><b>先说测的是什么。</b>前面第四节测的是"
+             "「<b>打板持仓</b>」在这些阶段里能不能赚 —— 结果 24 格里扣成本净正 <b>0</b> 格。"
+             "但那<em>推不出</em>「阶段有没有择时价值」。本节换一条路测："
+             "阶段能不能<b>提前告诉你接下来市场会怎样</b>，标的换成<b>全市场等权收益</b>"
+             "（<em>不是任何个股</em>，本项目不出票不推个股）。"
+             "<b>预注册判据（跑之前写死，不再挑好看的）</b>："
+             "① 相对 —— 阶段均 &gt; 全样本均；② 绝对 —— 扣 %.2f%% 单次往返成本后仍 &gt; 0；"
+             "③ 稳健 —— 前半段与后半段<b>同号</b>；外加第四道<b>对照</b>："
+             "与「<b>当日涨幅分位相同</b>的日子」比（剥离短期动量 —— "
+             "否则「高潮＝市场本来就在涨」会被算成龙道诀的功劳）。"
+             "四条全过才叫<b>可用</b>。</div>"
+             % ((su.get("cost") or 0.002) * 100))
+
+    o.append("<div class='note'>判据是<b>跑之前</b>定的；最后那道「同涨幅分位档」对照是"
+             "<em>看到前三道结果之后才加的</em>，只会让结论更保守，不会更好看。"
+             "样本 %s ~ %s，共 %s 个交易日；bootstrap 按日整块重抽 %s 次（固定值，保证可复现）。</div>"
+             % (su.get("sample_first") or "—", su.get("sample_last") or "—",
+                su.get("sample_days") or 0, su.get("boot") or 0))
+
+    for key in keylist:
+        blk = holds[key] or {}
+        if "cells" not in blk:
+            continue
+        o.append("<h3>前向 %s 个交易日（全样本均值 %s，样本 %d）</h3>"
+                 % (key, _pc(blk.get("baseline")), blk.get("n") or 0))
+        o.append("<table><tr><th>阶段</th><th class='num'>样本</th>"
+                 "<th class='num'>后续 %s 日均值</th><th class='num'>edge（对全样本）</th>"
+                 "<th class='num'>edge（对同涨幅分位档）</th><th class='num'>R3</th>"
+                 "<th class='num'>前半 / 后半</th><th>结论</th></tr>" % key)
+        for st in stage_order:
+            c = (blk.get("cells") or {}).get(st) or {}
+            if not c:
+                o.append("<tr><td>%s</td><td colspan='7' class='muted'>无数据</td></tr>" % st)
+                continue
+            if c.get("verdict") == "样本不足":
+                o.append("<tr><td><b>%s</b></td><td class='num'>%s</td>"
+                         "<td colspan='5' class='muted'>样本不足（&lt;%d）</td>"
+                         "<td><span class='tag mid'>样本不足</span></td></tr>"
+                         % (st, c.get("n") or 0, c.get("n") or 0))
+                continue
+            em = c.get("edge_matched")
+            r3 = c.get("r3")
+            o.append(
+                "<tr><td><b>%s</b></td><td class='num'>%d</td><td class='num'>%s</td>"
+                "<td class='num'>%s</td><td class='num'>%s</td><td class='num'>%s</td>"
+                "<td class='num'>%s / %s</td><td><span class='tag %s'>%s</span></td></tr>"
+                % (st, c.get("n") or 0, _pc(c.get("mean")), _pc(c.get("edge")),
+                   _pc(em), ("%.3f" % r3) if r3 is not None else "—",
+                   _pc(c.get("half1")), _pc(c.get("half2")),
+                   USE_CLS.get(c.get("verdict"), "mid"), c.get("verdict")))
+        o.append("</table>")
+
+    neg_all = _use_neg_stages(su)
+    if ok_all:
+        tail = ("反向的 <b>%s</b> 在三个窗口 edge 全为负，是「<b>该收手</b>」的实证依据。"
+                % "、".join(neg_all)) if neg_all else \
+               ("其余阶段<b>跨窗口不一致</b> —— 有的只在单窗口看着可用，那不算证据。")
+        o.append("<div class='warn'><b>能用的落点（只有这些）。</b>"
+                 "<b>%s</b> 在 5 / 10 / 20 三个窗口<b>全部</b>通过四条判据 —— "
+                 "这是本页唯一跨窗口一致的信号，可以当<b>环境状态</b>来读："
+                 "进入这个阶段时，短期市场环境是偏顺的（<b>仓位倾向</b>，不是选股）。"
+                 "%s"
+                 "<br>⚠ <b>但边界必须说清</b>：本节测的是<b>全市场等权</b>，"
+                 "拿它去加仓某个选股池是<b>跨口径外推</b>；真要接进实盘，"
+                 "得对那个池<b>重走四道验证</b>（无未来函数 / walk-forward / 随机对照 / 退出可兑现），"
+                 "不能拿这张表直接上。</div>" % ("、".join(ok_all), tail))
+    else:
+        o.append("<div class='warn'><b>能用的落点：无。</b>"
+                 "没有一个阶段在全部窗口同时通过四条判据 —— "
+                 "这个温度计只能<b>描述状态</b>，不能当仓位/开仓信号。</div>")
+
+    o.append("<div class='note'>★ <b>为什么不矛盾</b>：第四节「打板 24 格净正 0」与本节"
+             "（高潮→全市场等权后续有正增量）说的是<b>两件事</b> —— "
+             "前者是<b>个股口径</b>（涨停票买不进、买得到也贵），后者是<b>指数口径</b>。"
+             "赚钱效应强 ≠ 你能从涨停票上赚到钱。</div>")
+    return "".join(o)
+
+
 def render_risk(ctx):
     _tag, _sentence = _exec_verdict(ctx)
-    return ("<h2>九、使用边界</h2>"
+    return ("<h2>十、使用边界</h2>"
             "<div class='warn'><b>风险提示</b>：本页是<b>方法论科普 + 情绪周期定位</b>，"
             "不构成任何买卖建议。龙头战法波动极大，连板梯队本身就在告诉你风险："
             "六成以上的二板走不到三板。<ul>"
@@ -1389,6 +1548,9 @@ def main():
         # ---- 阶段胜率实验室（真源 _dragon_odds 的产出）----
         # ⚠ 没读到就给 None：页面那一节会显示「无法自检」，不会自己编一组胜率。
         ctx["odds"] = latest_odds(ctx["asof"])
+        # ---- 阶段能不能用（预注册检验，真源 _dragon_stage_use.py 的产出）----
+        # ⚠ 同样：没读到就给 None，页面那一节显示「无法自检」，不编结论。
+        ctx["stage_use"] = latest_stage_use(ctx["asof"])
 
         # ---- 板块热点 ----
         hot = {}

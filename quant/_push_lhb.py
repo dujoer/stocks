@@ -71,6 +71,8 @@ FILES = [
     "quant/_mkt_emo.py",
     "quant/_dragon_odds.py",
     "quant/dragon/odds_2026-09-30.json",
+    "quant/_dragon_stage_use.py",   # ★ 四阶段「能不能用」预注册检验（全市场等权口径，不出票）
+    "quant/dragon/stage_use_20260930.json",  # 上述检验产物（页面第九节读它）
     # —— 龙虎榜 + 游资 + 当日快照 ——
     "quant/build_lhb_enriched.py",
     "quant/build_sw1_mapping.py",
