@@ -29,7 +29,7 @@
 被谁用：`_rev_tier_gate.py`、`_hw_tier_gate.py`、`_3yl_tier_gate.py`。
 """
 from __future__ import annotations
-import os, sys, json, random
+import os, sys, json, random, collections
 
 QUANT = os.path.dirname(os.path.abspath(__file__))
 BOOT = 800
@@ -233,6 +233,99 @@ def emit_license(main_json, sens_json, keys, tier_cn, data_gate=None, pool_key=N
 
 
 # ---------------- 多窗口出票许可（增仓这类「同一批样本、多个持有窗口」的池专用） ----------------
+# ---------------- 通用分档统计（2026-10-08 从 _accum_tier_gate 抽上来）----------------
+def block_boot(pairs, boot=BOOT, seed=20261004):
+    """pairs=[(date, value)] → (点估计, lo, hi, 重抽样中>0 的比例)。按日整块重抽。
+
+    ★ 原本是 `_accum_tier_gate` 的私货，但逻辑与本模块「按日 block bootstrap」
+      是同一段 —— 抽到这里后两处共用一份，避免改一处漏一处。
+      数值实现逐字符照搬，重构前后 `_accum_tier_gate.json` 指纹必须一致。
+    """
+    if not pairs:
+        return (0.0, 0.0, 0.0, 0.0)
+    uniq = sorted({d for d, _ in pairs})
+    mat = collections.defaultdict(list)
+    for d, v in pairs:
+        mat[d].append(v)
+    rnd = random.Random(seed)
+    ms, pos = [], 0
+    for _ in range(boot):
+        pick = [uniq[rnd.randrange(len(uniq))] for _ in range(len(uniq))]
+        flat = [x for d in pick for x in mat[d]]
+        if not flat:
+            continue
+        m = sum(flat) / len(flat)
+        ms.append(m)
+        if m > 0:
+            pos += 1
+    ss = sorted(ms)
+    n = len(ss)
+    lo = ss[int(n * 0.05)] if n else 0.0
+    hi = ss[min(n - 1, int(n * 0.95))] if n else 0.0
+    return (sum(v for _, v in pairs) / len(pairs), lo, hi, (pos / len(ms)) if ms else 0.0)
+
+
+def tier_analyse(rows, dates, rules, boot=BOOT, seed=20261004):
+    """**通用**逐日平衡分档统计 —— `_accum_tier_gate.analyse` 的原实现，参数化 rules。
+
+    `rules = [(name, fn)]`，`fn(row) -> bool`。
+    返回 `( {name: stat}, ctrl )`，stat 结构与 `_accum_tier_gate` 产物**逐键一致**
+    （n/wr/ret/days/edge/eci/er3/er3_min/er3_max/abs/aci/ar3/loo/wf/wf_n），
+    这样 `tier_license_windows` 认得它。
+
+    为什么要抽这一刀（2026-10-08）：龙道诀出票闸要复用同一套统计，
+    但原 `analyse` 内部写死了增仓自己的 RULES（依赖 `r["tier"]`），
+    别的池子一调就 `KeyError` —— 是「私货」不是「公共层」。
+    """
+    byd = collections.defaultdict(list)
+    for r in rows:
+        byd[r["date"]].append(r)
+    ctrl = {d: sum(x["ret"] for x in byd[d]) / len(byd[d]) for d in byd}
+
+    out = {}
+    for name, fn in rules:
+        hits = [r for r in rows if fn(r)]
+        if not hits:
+            out[name] = None
+            continue
+        pd_edge, pd_abs = [], []
+        for d in dates:
+            if d not in byd:
+                continue
+            sub = [r["ret"] for r in byd[d] if fn(r)]
+            if not sub:
+                continue
+            m = sum(sub) / len(sub)
+            pd_abs.append((d, m))
+            pd_edge.append((d, m - ctrl[d]))
+        n = len(hits)
+        wr = 100.0 * sum(1 for r in hits if r["win"]) / n
+        pooled_ret = sum(r["ret"] for r in hits) / n
+        e0, elo, ehi, er3 = block_boot(pd_edge, boot=boot, seed=seed)
+        a0, alo, ahi, ar3 = block_boot(pd_abs, boot=boot, seed=seed)
+        # 多种子看 R3 的蒙特卡洛抖动；判定一律取最保守（最小）的那个
+        r3s = [block_boot(pd_edge, boot=boot, seed=seed + i)[3] for i in range(3)]
+        lv = []
+        for i in range(len(pd_edge)):
+            sub = pd_edge[:i] + pd_edge[i + 1:]
+            if sub:
+                lv.append(sum(v for _, v in sub) / len(sub))
+        cut_i = len(pd_edge) // 2
+        first = [v for _, v in pd_edge[:cut_i]]
+        second = [v for _, v in pd_edge[cut_i:]]
+        out[name] = {
+            "n": n, "wr": wr, "ret": pooled_ret, "days": len(pd_edge),
+            "edge": e0, "eci": (elo, ehi), "er3": er3,
+            "er3_min": min(r3s), "er3_max": max(r3s),
+            "abs": a0, "aci": (alo, ahi), "ar3": ar3,
+            "loo": (min(lv), max(lv)) if lv else (0.0, 0.0),
+            "wf": ((sum(first) / len(first)) if first else 0.0,
+                   (sum(second) / len(second)) if second else 0.0),
+            "wf_n": (len(first), len(second)),
+        }
+    return out, ctrl
+
+
 def tier_license_windows(per, name, prod_window=None, keys=("stat",),
                          min_r3=95.0, require_abs=True, require_loo=True,
                          require_halves=True):

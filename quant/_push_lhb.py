@@ -75,6 +75,8 @@ FILES = [
     "quant/dragon/stage_use_20260930.json",  # 上述检验产物（页面第九节读它）
     "quant/_dragon_pos_rule.py",      # ★ 四阶段「当仓位开关」第二道预注册检验（全市场等权口径，不出票）
     "quant/dragon/pos_rule_20260930.json",  # 上述检验产物（页面第十节读它）
+    "quant/_dragon_tier_gate.py",           # ★ 龙道诀出票闸（走唯一出票闸 _gate_common.tier_license_windows）
+    "quant/dragon/dragon_tier_gate.json",   # 出票闸产物（页面第十一节读它；固定名，非按日期）
     # —— 龙虎榜 + 游资 + 当日快照 ——
     "quant/build_lhb_enriched.py",
     "quant/build_sw1_mapping.py",

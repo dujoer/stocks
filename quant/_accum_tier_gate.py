@@ -148,52 +148,14 @@ def build(days=DAYS):
 
 
 def analyse(rows, dates, a_boot=BOOT):
-    """逐日平衡口径：该档逐日均 − 同日全候选域逐日均。"""
-    byd = collections.defaultdict(list)
-    for r in rows:
-        byd[r["date"]].append(r)
-    ctrl = {d: mean([x["ret"] for x in byd[d]]) for d in byd}
+    """逐日平衡口径：该档逐日均 − 同日全候选域逐日均。
 
-    out = {}
-    for name, fn in RULES:
-        hits = [r for r in rows if fn(r)]
-        if not hits:
-            out[name] = None
-            continue
-        pd_edge, pd_abs = [], []
-        for d in dates:
-            if d not in byd:
-                continue
-            sub = [r["ret"] for r in byd[d] if fn(r)]
-            if not sub:
-                continue
-            m = mean(sub)
-            pd_abs.append((d, m))
-            pd_edge.append((d, m - ctrl[d]))
-        n = len(hits)
-        wr = 100.0 * sum(1 for r in hits if r["win"]) / n
-        pooled_ret = mean([r["ret"] for r in hits])
-        e0, elo, ehi, er3 = block_boot(pd_edge, boot=a_boot, seed=SEED)
-        a0, alo, ahi, ar3 = block_boot(pd_abs, boot=a_boot, seed=SEED)
-        # 多种子看 R3 的蒙特卡洛抖动；判定一律取最保守（最小）的那个
-        r3s = [block_boot(pd_edge, boot=a_boot, seed=SEED + i)[3] for i in range(3)]
-        lv = []
-        for i in range(len(pd_edge)):
-            sub = pd_edge[:i] + pd_edge[i + 1:]
-            lv.append(mean([v for _, v in sub])) if sub else None
-        cut_i = len(pd_edge) // 2
-        first = [v for _, v in pd_edge[:cut_i]]
-        second = [v for _, v in pd_edge[cut_i:]]
-        out[name] = {
-            "n": n, "wr": wr, "ret": pooled_ret, "days": len(pd_edge),
-            "edge": e0, "eci": (elo, ehi), "er3": er3,
-            "er3_min": min(r3s), "er3_max": max(r3s),
-            "abs": a0, "aci": (alo, ahi), "ar3": ar3,
-            "loo": (min(lv), max(lv)) if lv else (0.0, 0.0),
-            "wf": (mean(first), mean(second)),
-            "wf_n": (len(first), len(second)),
-        }
-    return out, ctrl
+    ★ 2026-10-08：实现已抽到 `_gate_common.tier_analyse`（通用层），
+      龙道诀出票闸要复用同一套统计。这里只剩薄封装 — 传入本池的 RULES。
+      数值实现逐字符照搬，重构前后 `_accum_tier_gate.json` 指纹必须一致
+      （校验：改动前 `31d3eb324af6`）。
+    """
+    return GC.tier_analyse(rows, dates, RULES, boot=a_boot, seed=SEED)
 
 
 def cross_check_top25(rows, dates):

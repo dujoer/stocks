@@ -110,7 +110,11 @@ STEPS = [
 
 def load_scan(date_arg=None):
     if date_arg:
-        p = os.path.join(QUANT, f"watchlist_scan_{date_arg}.json")
+        # ★ 日期格式坑（第三次踩，2026-10-08）：链路从 daily_all 传进来的是带横线的
+        #   `2026-09-30`，而 rev_pool.py 落盘用的是无横线的 `20260930`（`dc_of`）。
+        #   两边不一致时这里的 exists 直接 False → gen_watchlist 退出码 1。
+        #   本脚本自带 compact_date() 却没用，补上。
+        p = os.path.join(QUANT, f"watchlist_scan_{compact_date(date_arg)}.json")
         if not os.path.exists(p):
             raise SystemExit(f"未找到扫描数据：{p}")
         return p, date_arg

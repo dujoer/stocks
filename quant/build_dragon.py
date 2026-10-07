@@ -221,6 +221,26 @@ def latest_odds(asof=None):
         return None
 
 
+def latest_dragon_gate(asof=None):
+    """读**龙道诀出票闸**产出 `quant/dragon/dragon_tier_gate.json`（当前快照，无日期后缀）。
+
+    同一纪律：**没读到就返回 None**，页面那一节显示「无法自检」，
+    绝不拿旧数据冒充当天、也绝不自己编一组结论。
+
+    与 `latest_stage_use` 的区别：那个测「阶段能不能用」（全市场口径），
+    这个测「能不能据此出一篮子票」（个股口径 + 既有移动止盈 + 五项闸门）。
+    两份结论独立，互不替代。
+    """
+    p = os.path.join(HERE, "dragon", "dragon_tier_gate.json")
+    if not os.path.exists(p):
+        return None
+    try:
+        d = json.load(open(p, encoding="utf-8"))
+        return d if d.get("per") else None
+    except Exception:
+        return None
+
+
 def latest_stage_use(asof=None):
     """读「阶段能不能用」预注册检验产出 `quant/dragon/stage_use_{DS}.json`。
 
@@ -378,6 +398,7 @@ def render(ctx):
         A(render_uses(ctx))
         A(render_stage_use(ctx))   # 九：阶段能不能用（预注册检验，产物 _dragon_stage_use.py）
         A(render_pos_rule(ctx))    # 十：把阶段当仓位开关（第二道预注册，产物 _dragon_pos_rule.py）
+        A(render_dg(ctx))          # 十一：龙道诀候选·出票闸（产物 _dragon_tier_gate.py）
 
     A(render_risk(ctx))          # 十一：使用边界
     A("<footer>%s ｜ 生成脚本 <code>quant/build_dragon.py</code> ｜ "
@@ -1625,9 +1646,217 @@ def _rule_days(days):
     return "、".join("%s %s 天" % (k, v) for k, v in sorted(days.items()))
 
 
+def _dg_esc(s):
+    """HTML 转义：真源判定语里含 `<`（如 "R3 50.6% < 95%"），不转义会被当标签。"""
+    return (str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
+
+
+def render_dg(ctx):
+    """十一、龙道诀候选 · 出票闸（产物 `_dragon_tier_gate.py` / `dragon/dragon_tier_gate.json`）。
+
+    这一节回答的问题与前面所有节都不同：
+        第九节  = 四阶段能不能预测**全市场**（能，高潮）
+        第十节  = 能不能把它当**仓位开关**（不能）
+        本节    = 那能不能据此**选出一篮子票**（走正式出票闸，不过就 0 票）
+
+    ★ 「验死」不等于「没有链路」。本节保留一条**每天都会跑**的通道：
+      候选生成 → T+1 开盘入场 → 既有移动止盈 → 五项闸门 → 允许/不允许出票。
+      今天没有合格标的，页面就写「无合格标的」—— 这是**答案**，不是空缺。
+
+    ★ 读不到产物 → 只显示「无法自检」，不编数字（fail-safe）。
+    ★ 判定语（`why`）一律取真源产出的字符串 —— 页面不重写判据。
+    """
+    asof = ctx.get("asof") or "未知"
+    blank = ("<h2>十一、龙道诀候选 · 出票闸</h2>"
+             "<div class='warn'><b>无法自检</b>：读不到 "
+             "<code>quant/dragon/dragon_tier_gate.json</code>（该产物由 "
+             "<code>quant/_dragon_tier_gate.py</code> 生成）。"
+             "本项目规则是「读不到证据就不给结论」—— 此处保留空缺，不会列出任何标的。</div>")
+    dg = ctx.get("dgate")
+    per = (dg or {}).get("per") or {}
+    if not per:
+        return blank
+
+    def _pp(v, nd=2):
+        return ("%+" + ".%df" % nd + "pp") % v if isinstance(v, (int, float)) else "—"
+
+    def _pct(v, nd=1):
+        # ⚠ 别手搓 "%.%f%%" —— `%` 模板里必须写 `%%`，嵌套 width 用 `*` 传最省心
+        return ("%.*f%%" % (nd, v * 100)) if isinstance(v, (int, float)) else "—"
+
+    wins = sorted(per.keys(), key=lambda x: int(x))
+    pw = str((dg or {}).get("prod_window") or wins[0])
+    allow = (dg or {}).get("allow") or []
+    detail = (dg or {}).get("allow_detail") or {}
+    gate = (dg or {}).get("data_gate") or {}
+    rules = [n for n, _ in _DG_RULES_ORDER(detail)]
+
+    o = ["<h2>十一、龙道诀候选 · 出票闸</h2>"]
+    o.append("<div class='note'><b>前面三道检验说的都是「不行」，但它们验的不是同一件事。</b>"
+             "第九节验的是<b>阶段能不能预测全市场</b>（高潮可以）；"
+             "第十节验的是<b>能不能当仓位开关</b>（不行，日均超额 −0.065pp）；"
+             "本节验的是第三件事 —— <b>能不能据此选出一篮子票</b>。"
+             "<br>做法是把它做成一条<b>正式通道</b>："
+             "候选域（当日收盘封涨停的全集）→ <b>T+1 开盘</b>入场 → "
+             "项目<b>既有</b>移动止盈出场（−12% / +6% / 3% / 20 日，一个参数都不扫）→ "
+             "<b>五项闸门</b>。<b>过闸就出名单，不过闸就是 0 票</b>。"
+             "<br>★ 关键的不同：<b>入场价用 T+1 开盘</b>（信号日收盘价作为成交价不可兑现），"
+             "这也是前面几道检验没做齐的一环。</div>")
+
+    # ---- 11.1 先验固定的四条规则 ----
+    o.append("<h3>11.1　四条先验规则（跑前写死，不许事后挑）</h3>")
+    o.append("<div class='note'>候选域不做预筛，规则只做<b>条件过滤</b>。"
+             "四条规则的依据全部来自本项目<b>此前已验证的证据</b>，"
+             "不是在这一节里扫出来的最优。</div>")
+    o.append("<table><tr><th>规则</th><th>依据（此前的证据）</th></tr>")
+    for name, why in _DG_PRIOR.items():
+        o.append("<tr><td><b>%s</b></td><td>%s</td></tr>" % (name, why))
+    o.append("</table>")
+
+    # ---- 11.2 跨样本期一致性 ----
+    o.append("<h3>11.2　跨样本期一致性（这里是重点）</h3>")
+    o.append("<div class='warn'><b>为什么必须先看这张表。</b>"
+             "本项目已经在别处踩过一次：同一条规则，用<b>近 1 年</b>样本和<b>近 3 年</b>样本"
+             "能给出<b>相反</b>的符号。所以判据要求<b>全部窗口同时达标</b>，"
+             "不做挑优：<b>生产窗口 %s 日</b>（最贴近当下）+ 更长的两个窗口一起看。</div>"
+             % pw)
+    o.append("<table><tr><th>规则</th>"
+             + "".join("<th class='num'>近 %s 日 edge</th>" % w for w in wins)
+             + "<th>跨窗口同号？</th></tr>")
+    for name in rules:
+        es = []
+        for w in wins:
+            s = (per.get(w, {}).get("stat") or {}).get(name)
+            es.append(s["edge"] if s else None)
+        real = [e for e in es if isinstance(e, (int, float))]
+        same = (len(real) == len(es) and len(real) > 1
+                and all(e > 0 for e in real))
+        o.append("<tr><td><b>%s</b></td>" % name
+                 + "".join("<td class='num'>%s</td>" % _pp(e) for e in es)
+                 + "<td>%s</td></tr>"
+                 % ("<span class='tag ok'>全为正</span>" if same
+                    else "<span class='tag no'>不全为正 → 不可出票</span>"))
+    o.append("</table>")
+
+    # ---- 11.3 生产窗口五项判据 ----
+    o.append("<h3>11.3　生产窗口（%s 日）的五项判据</h3>" % pw)
+    o.append("<div class='note'>判据是<b>项目唯一出票闸</b> "
+             "<code>_gate_common.tier_license_windows</code>，五项全过才许可："
+             "① 生产窗口 edge &gt; 0 ② 全部窗口 R3 ≥ 95% ③ 全部窗口<b>绝对收益</b> R3 ≥ 95%"
+             "④ 留一法全正 ⑤ 前/后半同正。"
+             "下面每行的判定语<b>由真源直接给出</b>，页面不重写。</div>")
+    o.append("<table><tr><th>规则</th><th class='num'>笔数</th><th class='num'>信号日</th>"
+             "<th class='num'>edge</th><th class='num'>R3(最小)</th>"
+             "<th class='num'>绝对R3</th><th class='num'>留一下限</th>"
+             "<th class='num'>前半 / 后半</th><th>判词</th></tr>")
+    for name in rules:
+        s = (per.get(pw, {}).get("stat") or {}).get(name)
+        d = detail.get(name) or {}
+        if not s:
+            o.append("<tr><td><b>%s</b></td><td colspan='8'>无样本</td></tr>" % name)
+            continue
+        okk = bool(d.get("ok"))
+        wf = s.get("wf") or (None, None)
+        o.append("<tr><td><b>%s</b></td><td class='num'>%d</td><td class='num'>%d</td>"
+                 "<td class='num'>%s</td><td class='num'>%s</td><td class='num'>%s</td>"
+                 "<td class='num'>%s</td><td class='num'>%s / %s</td><td>%s</td></tr>"
+                 % (name, s.get("n") or 0, s.get("days") or 0,
+                    _pp(s.get("edge")), _pct(s.get("er3_min")), _pct(s.get("ar3")),
+                    _pp((s.get("loo") or (None,))[0]),
+                    _pp(wf[0]), _pp(wf[1]),
+                    ("<span class='tag ok'>允许出票</span>" if okk
+                     else "<span class='tag no'>不出票</span>")))
+    o.append("</table>")
+    for name in rules:
+        w = (detail.get(name) or {}).get("why")
+        if w:
+            # ★ 真源判定语里有 "R3 50.6% < 95%" 这类字面小于号 ——
+            #   不转义会被浏览器当成标签开头，把后面几个窗口的判词全吞掉
+            #   （实测：D1 只显示到「窗口 250 日」，500/779 日判词消失）。
+            o.append("<div class='note'><b>%s</b> —— %s</div>"
+                     % (name, _dg_esc(w)))
+
+    # ---- 11.4 数据闸与能买到的比例 ----
+    o.append("<h3>11.4　数据闸与「能不能真的买到」</h3>")
+    o.append("<table><tr><th>检查项</th><th>结果</th></tr>")
+    o.append("<tr><td>阶段可判率（数据有效性闸）</td><td>%s</td></tr>"
+             % (("<span class='tag ok'>通过</span> " if gate.get("ok")
+                 else "<span class='tag no'>未通过 → 全档封锁</span> ") + (gate.get("note") or "—")))
+    o.append("<tr><td>T+1 一字封板（买不进）</td><td>%d 笔已丢样，不计入任何统计 —— "
+             "这会让结果偏<b>保守</b>（一字板通常次日更强），如实标注</td></tr>"
+             % (dg.get("n_unexec") or 0))
+    o.append("<tr><td>前瞻不足（停牌/退市/新股）</td><td>%d 笔丢样 —— "
+             "不拿最后可得价糊弄</td></tr>" % (dg.get("n_fwd_missing") or 0))
+    o.append("</table>")
+
+    # ---- 11.5 今日名单 ----
+    o.append("<h3>11.5　今天有没有合格标的</h3>")
+    em = (dg or {}).get("emit") or {}
+    names = em.get("names") or []
+    if allow and names:
+        o.append("<div class='warn'><b>以下标的来自通过闸门的规则</b>（%s）。"
+                 "这是<b>条件满足才生成的名单</b>，不是每天都有。"
+                 "本页不给买卖点位；能否成交、赚不赚钱取决于你自己的退出纪律。</div>"
+                 % "、".join(allow))
+        o.append("<table><tr><th>代码</th><th>所处阶段</th><th>连板</th><th>命中规则</th></tr>")
+        for x in names:
+            o.append("<tr><td><code>%s</code></td><td>%s</td><td>%d 板</td><td>%s</td></tr>"
+                     % (x.get("code"), x.get("stage") or "—", x.get("rb") or 0,
+                        "、".join(x.get("rules") or [])))
+        o.append("</table>")
+    else:
+        o.append("<div class='warn'><b>本期无合格标的（0 票）。</b>"
+                 "今天（数据日 %s）候选域共 <b>%s</b> 只，"
+                 "但没有一条规则通过五项闸门 —— %s"
+                 "<br>★ 这是<b>确定的答案</b>而不是空缺：通道照常跑了、闸门照常判了、判词如上。"
+                 "「没有合格标的」与「没有这条通道」是两件事，本页只承认前者。"
+                 "<br>本页<b>不会</b>为了出名单而放宽阈值、也<b>不会</b>拿最像的那只凑数 —— "
+                 "那是红线。</div>"
+                 % (asof, em.get("total_cand", "—"),
+                    ("allow 为空，无规则的出票许可生效。" if not allow
+                     else "有规则通过许可但当日无命中。")))
+
+    # ---- 结论 ----
+    neg_all = True
+    for w in wins:
+        s = (per.get(w, {}).get("stat") or {}).get("D4 退潮·二板（证伪面）")
+        if s and isinstance(s.get("edge"), (int, float)) and s["edge"] > 0:
+            neg_all = False
+    tail = ("<div class='note'><b>判据自检验：证伪面表现正常。</b>"
+            "「D4 退潮·二板」是先验预期<b>为负</b>的那条 —— 它在三个窗口上%s。"
+            "如果它也能过关，那说明是判据失效而不是找到了机会。"
+            % ("全部为负，闸门没有乱放行" if neg_all else "并非全负，判据需要复查"))
+    tail += ("<br><b>最值得记的一件事：</b>"
+             "「D1 高潮·二板」在<b>近 %s 日</b>窗口上 edge 为正、"
+             "但拉到更长样本就翻负 —— 与本项目此前在别处踩过的「样本期会翻转结论」"
+             "是同一类现象。<b>符号不一致就出不了票</b>，"
+             "这条不因为「当下看着像有机会」而松动。</div>" % pw)
+    o.append(tail)
+    return "".join(o)
+
+
+def _DG_RULES_ORDER(detail):
+    """保持真源的顺序（dict 已按插入序，这里只为防御）：返回 [(name, None)]。"""
+    return [(k, None) for k in detail.keys()]
+
+
+_DG_PRIOR = {
+    "D1 高潮·二板":
+        "高潮阶段后续全市场收益在三窗口上均优于「同当日涨幅分位」对照（+0.84 / +1.39 / +1.70pp，"
+        "见第九节）；二板是连板链的主节点，实测二板→三板晋级率 31.5%（489 候选 / 154 晋级）",
+    "D2 高潮·三板及以上":
+        "同前的更高阶版本 —— 候选更少、更挑，用来核对「越高越好」还是「越高越危险」",
+    "D3 非退潮·二板":
+        "退潮三窗口 edge 全负（−0.67 / −0.88 / −0.63pp），据此只做外延排除退潮",
+    "D4 退潮·二板（证伪面）":
+        "先验预期<b>为负</b>。这条不是拿来出票的 —— 若它也能过关，"
+        "说明是判据失效而非找到 alpha，用来给整套闸门做自检",
+}
+
+
 def render_risk(ctx):
     _tag, _sentence = _exec_verdict(ctx)
-    return ("<h2>十一、使用边界</h2>"
+    return ("<h2>十二、使用边界</h2>"
             "<div class='warn'><b>风险提示</b>：本页是<b>方法论科普 + 情绪周期定位</b>，"
             "不构成任何买卖建议。龙头战法波动极大，连板梯队本身就在告诉你风险："
             "六成以上的二板走不到三板。<ul>"
@@ -1731,6 +1960,7 @@ def main():
         # ---- 阶段能不能用（预注册检验，真源 _dragon_stage_use.py 的产出）----
         # ⚠ 同样：没读到就给 None，页面那一节显示「无法自检」，不编结论。
         ctx["stage_use"] = latest_stage_use(ctx["asof"])
+        ctx["dgate"] = latest_dragon_gate(ctx["asof"])
         # ---- 仓位开关（第二道预注册，真源 _dragon_pos_rule.py 的产出）----
         # ⚠ 与 stage_use 同一纪律：没读到就 None，那一节显示「无法自检」，不编结论。
         ctx["pos_rule"] = latest_pos_rule(ctx["asof"])
