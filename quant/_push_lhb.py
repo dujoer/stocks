@@ -95,6 +95,9 @@ FILES = [
     "quant/build_sector_index.py",
     # —— 大宗交易 ——
     "quant/gen_block.py",
+    # ★ 2026-10-09 新增：③④ 两步的**可执行**东财降级取数（此前只写在文档里、没有脚本，
+    #   实际 MCP 一断这两块就永久停在旧数据日）。与 gen_*/build_* 同源同口径，须一并上线。
+    "quant/_fetch_block_exec_em.py",
     "quant/build_block.py",
     "quant/build_block_stocks.py",
     # —— 个股调研 / 行业最强榜 ——

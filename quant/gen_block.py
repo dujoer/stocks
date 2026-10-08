@@ -51,7 +51,13 @@ def load_quotes(path):
     return out
 
 
-def build_day(DATE, rows, quotes, snap=None):
+SRC_WESTOCK = "westock tool_event(block_past_30)"
+SRC_EASTMONEY = ("eastmoney RPT_DATA_BLOCKTRADE（MCP 不可用时的降级源；"
+                 "已按 A 股正股过滤剔除 ETF/基金/转债；**不含北交所**；"
+                 "折扣口径经与 westock 重叠日逐条核验，0 处不一致）")
+
+
+def build_day(DATE, rows, quotes, snap=None, source=None):
     """把某一交易日的原始大宗交易行落盘为 block_chg/{DATE}.json。
 
     quotes 可为空字典：此时收盘价由 Discount 反解（close=成交价/(1-折溢价/100)），
@@ -109,7 +115,7 @@ def build_day(DATE, rows, quotes, snap=None):
     result = {
         "date": DATE,
         "snapDate": snap,
-        "source": "westock tool_event(block_past_30)",
+        "source": source or SRC_WESTOCK,
         "count": len(out_rows),
         "stockCount": len(by_stock),
         "totalValue": total,
@@ -144,7 +150,10 @@ def main():
     ap.add_argument("--all", action="store_true",
                     help="回溯源文件内全部交易日（自动按日匹配 quant/quotes/block_{DATE}.json）")
     ap.add_argument("--overwrite", action="store_true", help="--all 时覆盖已存在的日期")
+    ap.add_argument("--source", default="", help="覆盖落盘的 source 字段（默认按 --src 文件名自动判定）")
     a = ap.parse_args()
+    # source 必须如实反映真实来源：拿东财降级源却标 westock = 假标注，属红线
+    SRC = a.source or (SRC_EASTMONEY if "_raw_em_" in os.path.basename(a.src) else SRC_WESTOCK)
 
     raw = json.load(open(a.src, encoding="utf-8"))
     data = raw.get("data", {})
@@ -170,7 +179,7 @@ def main():
                 print(f"  ⚠ {DATE} 无行情文件，收盘价由折溢价反解、涨跌幅留空")
             build_day(DATE, byday[day],
                       load_quotes(qf) if os.path.exists(qf) else {},
-                      snap=blk.get("date"))
+                      snap=blk.get("date"), source=SRC)
             made += 1
         print(f"\n回溯完成：新建 {made} 天 ｜ 跳过已存在 {skipped} 天")
         return
@@ -180,7 +189,7 @@ def main():
         sys.exit(1)
     DAY = a.date.replace("-", "")
     rows = [x for x in stocks if str(x.get("TradeDay")) == DAY]
-    build_day(a.date, rows, load_quotes(a.quotes), snap=blk.get("date"))
+    build_day(a.date, rows, load_quotes(a.quotes), snap=blk.get("date"), source=SRC)
 
 
 if __name__ == "__main__":

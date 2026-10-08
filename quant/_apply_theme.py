@@ -168,7 +168,170 @@ def add_sort_filter(s: str) -> str:
     return s
 
 
-def normalize_nav(s: str, rel_dir: str, prefix: str = "", home: str | None = None) -> str:
+# ---------- 数据时间戳条（真实数据更新时间的唯一呈现处） ----------
+# 设计取舍：**不显示「渲染时间」**。渲染时间=每次跑 _apply_theme 的当下，
+# 全站 385 页会因此每轮都变字节 → 每次推送白传几十 MB（历史上踩过）。
+# 只显示「页面自己写在正文里的数据日」，它由生成器写出、稳定、可核对；
+# 页面没写数据日的就如实显示「未标注」，不替它编一个。
+_HUB_DATES = None
+
+
+def hub_dates():
+    """可用交易日集合（取自统一底座 hub/ 的日切片文件名），升序。"""
+    global _HUB_DATES
+    if _HUB_DATES is None:
+        ds = []
+        for p in glob.glob(os.path.join(ROOT, "quant", "hub", "2*")):
+            m = re.match(r"^(20\d{2})(\d{2})(\d{2})\.json$", os.path.basename(p))
+            if m:
+                ds.append("%s-%s-%s" % m.groups())
+        _HUB_DATES = sorted(set(ds))
+    return _HUB_DATES
+
+
+# 关键词必须紧跟日期，避免把正文里无关的日期（如「上一期 2026-09-30」）当数据日。
+_STAMP_KW = (r"(?:数据基准|数据日期|数据口径|行情口径|数据截至|数据更新|数据日|统计截至|"
+             r"最近更新|更新日期|最新交易日|最新一期|最新数据日|最新一日|当前|统计日|快照日|"
+             r"截至|口径)")
+_STAMP_DATE_RE = re.compile(
+    _STAMP_KW + r"\s*[:：]?\s*<?[^0-9]{0,24}?(20\d{2})[-/年.](\d{1,2})[-/月.](\d{1,2})")
+_FNAME_DATE_RE = re.compile(r"(20\d{2})[-_]?(\d{2})[-_]?(\d{2})")
+# 方法与证据页：这些页面没有「每日数据基准」的概念，别跟日更页一个待遇
+_METHOD_PAGE_RE = re.compile(
+    r"(?:^|/)[^/]*(?:lab|method|backtest|trend|gate|sens|history|audit|evidence)\.html$", re.I)
+
+
+def page_data_date(s: str):
+    """从页面正文（<body> 后前 24000 字符）提取它自己声明的数据日。找不到返回 None。"""
+    i = s.find("<body")
+    if i < 0:
+        return None
+    seg = s[i:i + 24000]
+    # 先剥标签：生成器大量写成「数据日期 <b>2026-10-08</b>」，不剥会漏匹配
+    txt = re.sub(r"<script\b.*?</script>", " ", seg, flags=re.S | re.I)
+    txt = re.sub(r"<[^>]+>", " ", txt)
+    txt = re.sub(r"\s+", " ", txt)
+    m = _STAMP_DATE_RE.search(txt)
+    if not m:
+        return None
+    y, mo, d = m.groups()
+    try:
+        return "%04d-%02d-%02d" % (int(y), int(mo), int(d))
+    except Exception:
+        return None
+
+
+_FREQ_MAP = None
+
+
+def page_freq(rel_web: str):
+    """该页面所属页面族的更新频率（_page_registry 是唯一权威来源）。
+    只有 daily 族的页面「没跟上最新数据日」才值得红字报警；
+    研究/证据/方法页（on_demand / ad_hoc）的数据基准天然停在生成那天。"""
+    global _FREQ_MAP
+    if _FREQ_MAP is None:
+        import fnmatch as _fn
+        m = []
+        try:
+            sys.path.insert(0, os.path.join(ROOT, "quant"))
+            import _page_registry as R
+            for f in R.FAMILIES:
+                for p in (f.get("patterns") or []):
+                    m.append((p, f.get("freq") or "ad_hoc"))
+        except Exception:
+            m = []
+        _FREQ_MAP = m
+    import fnmatch as _fn
+    for pat, fq in _FREQ_MAP:
+        if _fn.fnmatch(rel_web, pat):
+            return fq
+    return None
+
+
+def _stamp_html(path: str, s: str, home: str) -> str:
+    """生成数据时间戳条 + 返回入口。"""
+    dates = hub_dates()
+    newest = dates[-1] if dates else None
+    rel = os.path.relpath(path, ROOT).replace(os.sep, "/")
+    is_portal = rel == "index.html"
+    rel_web = "../index.html" if is_portal else rel[len("web/"):]
+    fq = page_freq(rel_web)
+
+    if is_portal:
+        # 门户是总览页，自身的「数据日」没有意义 → 直接报全站最新
+        cur, note = newest, "<span class='s-l'>全站最新数据日</span>"
+        unknown = False
+    else:
+        cur = page_data_date(s)
+        note = "<span class='s-l'>本页数据基准</span>"
+        unknown = cur is None
+
+    fn = _FNAME_DATE_RE.search(os.path.basename(path))
+    fn_date = None
+    if fn and not is_portal:
+        try:
+            fn_date = "%04d-%02d-%02d" % (int(fn.group(1)), int(fn.group(2)), int(fn.group(3)))
+        except Exception:
+            fn_date = None
+
+    if fn_date and not is_portal:
+        # ★ 归档判定只认「文件名里的日期」：归档页命名就是 `xxx_YYYYMMDD.html`，
+        #   而正文里第一个日期常是别的口径（如 block_2026-08-06 页里写着 09-04 的区间），
+        #   早前拿「正文日 == 文件名日」做判据 → 一大批归档页被误报成「落后」。
+        mid = ("<b class='s-d'>%s</b>"
+               "<span class='s-hist'>· 历史归档页（内容即该日快照，不随最新数据日更新）</span>"
+               % fn_date)
+    elif unknown:
+        # 方法与证据页（lab / method / backtest / *_gate / trend / history 等）
+        # 本来就没有「每日数据口径」，标红会变成噪声；其余页面没写数据日是真缺口。
+        if _METHOD_PAGE_RE.search(rel_web or ""):
+            mid = ("<b class='s-d unknown'>方法与证据页</b>"
+                   "<span class='s-src'>（样本外检验/方法说明，无每日数据口径；"
+                   "口径日期见正文）</span>")
+        elif fq and fq != "daily":
+            mid = ("<b class='s-d unknown'>未标注</b>"
+                   "<span class='s-src'>（该族为 %s 更新，非每日口径）</span>" % fq)
+        else:
+            mid = ("<b class='s-d unknown'>未标注</b>"
+                   "<span class='s-warn'>⚠ 该页正文没写数据日 —— 无法核对是否已更新</span>")
+    else:
+        mid = "<b class='s-d'>%s</b>" % cur
+        if is_portal:
+            mid += "<span class='s-src'>（仅代表全站最新；各板块新鲜度见下方卡片）</span>"
+        elif newest and cur == newest:
+            mid += "<span class='s-ok'>· 当日</span>"
+        elif newest and cur < newest:
+            # 不报「落后 N 个交易日」：hub 只沉淀近期切片，用它数交易日本身不准，
+            # 报一个错的天数比不报更糟。只陈述「落后于全站最新」这个可核对的事实。
+            if fq == "daily" and not _METHOD_PAGE_RE.search(rel_web or ""):
+                mid += ("<span class='s-warn'>⚠ 落后全站最新 %s（该页属每日更新族，"
+                        "未随最新数据日刷新）</span>" % newest)
+            else:
+                mid += ("<span class='s-src'>· 该族非每日更新（研究/证据/方法页），"
+                        "基准为该页最近一次生成日；全站最新 %s</span>" % newest)
+        elif newest and cur > newest:
+            mid += "<span class='s-src'>· 晚于底座最新（%s）</span>" % newest
+
+    # href 用真链接兜底：从哪来回哪，无历史时跳门户
+    return ("<!--WB_STAMP--><div class='wb-stamp'>%s%s"
+            "<a class='wb-back' href='%s'>← 返回</a></div><!--/WB_STAMP-->"
+            % (note, mid, home))
+
+
+def inject_fab(s: str, home: str) -> str:
+    """右下角浮动：回门户 + 回顶部（回顶部按滚动位置显隐，见 _app.js）。"""
+    s = re.sub(r"<!--WB_FAB-->.*?<!--/WB_FAB-->", "", s, flags=re.S)
+    fab = ("<!--WB_FAB--><div class='wb-fab'>"
+           "<a class='wb-top' href='#' title='回到顶部' aria-label='回到顶部'>↑</a>"
+           "<a class='wb-home' href='%s' title='返回门户首页' aria-label='返回门户首页'>⌂</a>"
+           "</div><!--/WB_FAB-->" % home)
+    if ENDBODY_RE.search(s):
+        return ENDBODY_RE.sub(lambda m: fab + "</body>", s, count=1)
+    return s + fab
+
+
+def normalize_nav(s: str, rel_dir: str, prefix: str = "", home: str | None = None,
+                  path: str | None = None) -> str:
     """把页面导航统一替换为当前 _nav.topnav()（14 项全清单 + 首页，单一来源）。
     rel_dir: 相对 web/ 的子目录（"." 表示 web 根扁平页）。
     prefix:  给规范路径加前缀（仓库根 index.html 用 web/）。
@@ -185,11 +348,16 @@ def normalize_nav(s: str, rel_dir: str, prefix: str = "", home: str | None = Non
 
     # 1) 清掉旧的内联金色药丸导航
     s = _SELF_NAV_RE.sub("", s)
-    # 2) 清掉已有的 UNIFIED_NAV 哨兵（避免空行堆积）
+    # 2) 清掉已有的 UNIFIED_NAV 哨兵（避免空行堆积）+ 旧时间戳条
     s = re.sub(r"<!--\s*UNIFIED_NAV\s*-->\n?", "", s)
+    s = re.sub(r"<!--WB_STAMP-->.*?<!--/WB_STAMP-->", "", s, flags=re.S)
     # 3) 清掉已有 topnav（含嵌套分组）+ 历史遗留的半截 navgrp / 首页残片
     s = strip_topnav(s)
     s = strip_nav_fragments(s)
+    # 3b) 时间戳条紧随导航：数据日取自**替换导航之前**的页面正文（导航本身无日期）
+    if path:
+        stamp = _stamp_html(path, s, home)
+        new_nav = new_nav + "\n" + stamp
     body_m = re.search(r"<body\b[^>]*>", s, re.I)
     if body_m:
         pos = body_m.end()
@@ -243,12 +411,16 @@ def process(path: str) -> bool:
     rel = os.path.relpath(path, ROOT).replace(os.sep, "/")
     if rel == "index.html":
         # 仓库根门户：导航路径需加 web/ 前缀，首页指向自身
-        s = normalize_nav(s, "", prefix="web/", home="index.html")
+        s = normalize_nav(s, "", prefix="web/", home="index.html", path=path)
+        s = inject_fab(s, "index.html")
     elif rel.startswith("web/"):
         rel_dir = os.path.relpath(os.path.dirname(path), WEB).replace(os.sep, "/")
         if rel_dir == ".":
             rel_dir = ""
-        s = normalize_nav(s, rel_dir)
+        # 返回/回门户的路径按页面深度算（web/a/b.html 与 web/a/index.html 都是 2 层）
+        home = "../" * rel.count("/") + "index.html"
+        s = normalize_nav(s, rel_dir, home=home, path=path)
+        s = inject_fab(s, home)
 
     s = linkify_stocks(s)[0]
 

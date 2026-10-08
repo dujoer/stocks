@@ -52,6 +52,11 @@ def find_latest_src():
     return None
 
 
+SRC_WESTOCK = "westock tool_event(manager_sharechg)"
+SRC_EASTMONEY = ("eastmoney RPT_EXECUTIVE_HOLD_DETAILS（MCP 不可用时的降级源；"
+                 "变动日口径，与原 tool_event 一致）")
+
+
 def to_f(v, default=0.0):
     try:
         return float(v)
@@ -149,6 +154,9 @@ def main():
     out = {
         "date": DATE,                 # 采集日
         "snapDate": snap_date,        # 接口快照日
+        # 来源如实标注（东财降级源 ≠ westock；标错就是假标注）
+        "source": (SRC_EASTMONEY if "_raw_em_" in os.path.basename(src)
+                   else SRC_WESTOCK),
         "totalStocks": total,
         "count": len(recs),
         "buyCount": len(buy),

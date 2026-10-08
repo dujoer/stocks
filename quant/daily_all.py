@@ -136,10 +136,20 @@ STEPS = [
 
 # MANUAL 步骤的取数指引（agent/用户照着做，做完再跑本脚本）
 MANUAL_HOWTO = {
-    3:  "MCP data_event? → tool_event(manager_sharechg, limit=700) 落 quant/exec_chg/{D}.json"
-        "（降级期经东财 RPT_EXECUTIVE_HOLD_DETAILS 回补）",
-    4:  "MCP block_past_30(limit=3000) 落 quant/block_chg/{D}.json"
-        "（降级期经东财 RPT_DATA_BLOCKTRADE，pageSize=5000）",
+    # ★ 2026-10-09 补：这两步此前只说「降级期经东财回补」，但**没有可执行的降级脚本**，
+    #   实际结果是 MCP 不通时这两块永久停在旧数据日（实测停在 09-30，页面读作「落后」）。
+    #   现补 quant/_fetch_block_exec_em.py（东财数据中心接口，一条命令落 tool_event 同构格式）。
+    3:  "① 优先：MCP tool_event(manager_sharechg, limit=700) 落 quant/exec_chg/_raw_tool_{D}.json → "
+        "python quant/gen_exec.py --date {D} → python quant/build_exec.py --date {D}\n"
+        "     ② MCP 不可用时（降级，一条命令取数）：python quant/_fetch_block_exec_em.py --date {D} --only exec\n"
+        "        → python quant/gen_exec.py --date {D} --src quant/exec_chg/_raw_em_{D}.json "
+        "--quotes quant/quotes/exec_{D}.json → python quant/build_exec.py --date {D}",
+    4:  "① 优先：MCP block_past_30(limit=3000) 落 quant/block_chg/_raw_tool_{D}.json → "
+        "python quant/gen_block.py --date {D} --src … → python quant/build_block.py --date {D}\n"
+        "     ② MCP 不可用时（降级，一条命令取数）：python quant/_fetch_block_exec_em.py --date {D} --only block\n"
+        "        → python quant/gen_block.py --date {D} --src quant/block_chg/_raw_em_{D}.json "
+        "--quotes quant/quotes/block_{D}.json → python quant/build_block.py --date {D}\n"
+        "     ⚠ 降级源不含北交所，且已剔 ETF/基金/转债；source 字段会如实标注降级源，勿手工改成 westock",
     5:  "MCP industry(ranking, limit=300) + concept(limit=1000) 落盘后 → "
         "run_daily_sector.py --date {D} --industry <绝对路径> --concept <绝对路径>",
     10: "MCP tool_filter(preset=main_inflow, min_inflow=0.3, market=hs, limit=200) 落 "
