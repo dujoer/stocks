@@ -141,6 +141,12 @@ TIPS = {
     "方法论": "本页采用顶级机构常用的四类方法：网格交易、均值回归、底仓+卫星仓、波动率套利，均服务于『在震荡区间反复降低持仓成本』。",
     "RSI": "14 日相对强弱指标。做T标的宜处于 35~70 的健康区间；<30 超卖(可低吸)、>75 超买(宜高抛)。",
     "波动稳定": "近 20 日振幅的变异系数（标准差/均值）。越低说明波动越规律、越可预期，做T节奏越好把握。",
+    "箱体位置图": "把「箱体价格」和「现价位置」放在一格里读：横条是箱体本身，左端=下沿 L、右端=上沿 U，指针=现价；底色三段对应低吸区(0~20%·绿)/中枢(20~80%·灰)/高抛区(80~100%·红)，与涨红跌绿一致。**上下沿不是对未来的价格预测**，而是过去 90 个交易日里被反复验证过的边界（≥2 次触碰上沿 + ≥2 次触碰下沿 + ≥1 轮完整往返才算成立），锁定后数值不再天天改。",
+    "箱体下沿": "箱体下沿价格 L（锚定值）。跌到这里意味着回到区间底部；有效跌破（连续 2 个交易日收盘低于 L×0.98）会触发箱体换版，届时本列价格会同步更新。",
+    "箱体上沿": "箱体上沿价格 U（锚定值）。涨到这里意味着触到区间顶部；有效突破同样触发换版。",
+    "距下沿": "现价跌到箱体下沿还需要下跌的百分比 =（现价 − 下沿）÷ 现价。数字越大，说明离下方边界越远（回旋余地越大）。",
+    "距上沿": "现价涨到箱体上沿还需要上涨的百分比 =（上沿 − 现价）÷ 现价。数字越大，说明到顶部区还有多少空间。",
+    "位置状态": "按箱内位置的读数：贴上沿(≥90) = 已在区间顶部，再往上就是突破而非做T语境；接近上沿(67~90)；中枢(33~67) = 上不上、下不下，做T性价比最低的一段；接近下沿(10~33)；贴下沿(<10) = 已在区间底部。",
 }
 
 
@@ -222,9 +228,78 @@ details.ref-fold[open]>summary{margin-bottom:12px;}
 .sig{font-size:12.5px;color:#4b5563;margin-top:6px;}
 .tip{cursor:help;border-bottom:1px dotted #c3cad3;}
 .kv.tipbox:hover{background:#fdf8ef;}
+/* ---- 箱内位置条：把「现价落在箱体哪个位置」画出来（纯 CSS，无 JS 依赖）----
+   轨道底色三段（0~20% 低吸区绿 / 20~80% 中枢灰 / 80~100% 高抛区红），与 A 股「涨红跌绿」一致。
+   指针位置 = 现价在 [下沿,上沿] 的百分位，已在服务端算好写进 style，页面不再重算。 */
+.bxbar{position:relative;display:inline-block;width:118px;height:13px;vertical-align:middle;
+  border:1px solid #c8d0d8;border-radius:7px;overflow:hidden;
+  background:linear-gradient(90deg,#d8ecdf 0 20%,#e7ebef 20% 80%,#f7dcdb 80% 100%);}
+.bxpin{position:absolute;top:-1px;bottom:-1px;width:3px;margin-left:-1.5px;background:#1b1e22;
+  box-shadow:0 0 0 1px rgba(255,255,255,.95);border-radius:2px;}
+.bxtk{position:absolute;top:0;bottom:0;width:1px;background:rgba(0,0,0,.14);}
+.bxn{display:inline-block;margin-left:7px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;}
+.bxwrap{white-space:nowrap;}
+.bxsum{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 12px;}
+.bxsum div{flex:1 1 150px;background:#fafbfc;border:1px solid #eef0f2;border-radius:9px;padding:9px 12px;}
+.bxsum b{display:block;font-size:19px;line-height:1.25;}
+.bxsum span{font-size:12px;color:var(--sub);}
 footer{text-align:center;color:#9aa3ad;font-size:12px;margin-top:24px;}
 @media(max-width:760px){.cards{grid-template-columns:1fr;}.wrap{padding:18px 12px 44px;}table{font-size:12px;}}
 """
+
+
+def pos_state(pos, px=None, lo=None, hi=None):
+    """箱内位置 → (读数, 颜色类)。读数是描述性的，不含操作指令。
+
+    必须区分「贴在边界附近」与「已经在箱体外面」：百分位被 clamp 到 0 或 100 时，
+    两者看起来一样，但含义完全不同 —— 后者说明行情已经走出去，箱体面临换版。
+    """
+    p = clamp(pos or 0, 0, 100)
+    if px and lo and hi and hi > lo:
+        if px > hi:
+            return "已在上沿之上", "up"
+        if px < lo:
+            return "已在下沿之下", "down"
+    if p >= 90:
+        return "贴上沿", "up"
+    if p >= 67:
+        return "接近上沿", "up"
+    if p > 33:
+        return "中枢", "muted"
+    if p > 10:
+        return "接近下沿", "down"
+    return "贴下沿", "down"
+
+
+def box_bar(m, show_num=True):
+    """箱内位置条：轨道 = 箱体 [L,U]，指针 = 现价所在百分位。
+
+    两种退化情形都如实标出来，不画一根看起来正常的假条：
+      · None / 极小箱体 → 返回「—」；
+      · 现价已在箱体之外 → 指针压在最边上并加越界箭头（↗/↘，含超出百分比）。
+    """
+    lo, hi = m.get("box_low") or 0, m.get("box_high") or 0
+    px = m.get("price") or 0
+    if not (hi and lo and hi > lo > 0 and px):
+        return "<span class='dim'>—</span>"
+    pos = clamp(m.get("pos") or 50, 0, 100)
+    pin = 1.5 + 97.0 * pos / 100.0
+    over = ""
+    if px > hi:
+        pin = 98.5
+        over = "<span class='up' style='font-size:11px;font-weight:700'>↗%.1f%%</span>" % (
+            (px - hi) / hi * 100)
+    elif px < lo:
+        pin = 1.5
+        over = "<span class='down' style='font-size:11px;font-weight:700'>↘%.1f%%</span>" % (
+            (lo - px) / lo * 100)
+    ttl = esc("现价 %.2f 落在箱体 %.2f ~ %.2f 的 %.0f%% 位置" % (px, lo, hi, pos))
+    num = "<span class='bxn'>%.0f%%</span>" % pos if show_num else ""
+    return ("<span class='bxwrap'><span class='bxbar' title='%s'>"
+            "<span class='bxtk' style='left:20%%'></span>"
+            "<span class='bxtk' style='left:80%%'></span>"
+            "<span class='bxpin' style='left:%.2f%%'></span>"
+            "</span>%s%s</span>") % (ttl, pin, num, over)
 
 
 def nav(cur="tplus"):
@@ -1111,7 +1186,7 @@ def build(date):
             f"<td data-l='箱体 下沿~上沿' data-v='{m['box_low']}'>{fnum(m['box_low'])} ~ {fnum(m['box_high'])}</td>"
             f"<td data-l='锁定状态' class='dim' style='font-size:12px'>{esc(lock)}</td>"
             f"<td data-l='箱高%' data-v='{m['box_h']}'><b style='color:#b8892b'>{fnum(m['box_h'],1)}%</b></td>"
-            f"<td data-l='箱位%' data-v='{m['pos']}'>{fnum(m['pos'],0)}"
+            f"<td data-l='箱位%' data-v='{m['pos']}'>{box_bar(m)}"
             f"<span class='{area_cls}' style='font-size:11px'><br>{area}</span></td>"
             f"<td data-l='往返/验证' data-v='{b.get('rounds') or 0}'>{esc(rt)}</td>"
             f"<td data-l='现价' data-v='{m['price']}'>{fnum(m['price'])}"
@@ -1125,6 +1200,103 @@ def build(date):
             f"</tr>")
 
     table_html = "".join(row_html(r) for r in top)
+
+    # ---------- 箱体位置观测：把每只票的「预计箱体」与「现价位置」摊在一张表里 ----------
+    # 只回答一个客观问题：**现价落在这只票已经跑出来的箱体的哪个位置**。
+    # 上下沿是 `_tbox` 的**锚定值**（过去 90 日里被反复触碰验证过的边界），不是对未来价格的预测。
+    def _bpos(r):
+        return clamp(r["m"].get("pos") or 0, 0, 100)
+
+    def _escaped(r):
+        m = r["m"]
+        return bool(m["box_low"] and m["box_high"] and m["price"]
+                    and (m["price"] > m["box_high"] or m["price"] < m["box_low"]))
+
+    # 默认排序：仍在箱体内的排前面（按位置由低到高），已在箱体外的排后面 ——
+    # 做T关心的是「区间还在不在」，越界的票保留展示但不当作有效区间读。
+    box_list = sorted(rows, key=lambda r: (_escaped(r), _bpos(r), -r["score"], r["code"]))
+    n_lo = sum(1 for r in rows if not _escaped(r) and _bpos(r) < 33)
+    n_mid = sum(1 for r in rows if 33 <= _bpos(r) <= 67)
+    n_hi = sum(1 for r in rows if not _escaped(r) and _bpos(r) > 67)
+
+    n_out = sum(1 for r in rows if _escaped(r))
+    n_edge = sum(1 for r in rows
+                 if (not _escaped(r)) and (_bpos(r) >= 90 or _bpos(r) < 10))
+    _bhs = [_bpos(r) for r in rows]
+    bh_med = sorted(_bhs)[len(_bhs) // 2] if _bhs else 0
+
+    def brow(r):
+        m = r["m"]; b = m.get("box") or {}
+        cx = "up" if (m["chg"] or 0) >= 0 else "down"
+        lo, hi, px = m["box_low"], m["box_high"], m["price"]
+        dlo = (px - lo) / px * 100 if px else 0
+        dhi = (hi - px) / px * 100 if px else 0
+        stt, scls = pos_state(m["pos"], px, lo, hi)
+        lock = (f"第{b.get('ver') or 1}版 · 已锁{b.get('age') or 0}日"
+                f"<span class='dim'><br>{esc(b.get('since') or '—')} 起</span>" if b else "—")
+        rt = f"{b.get('rounds') or 0}轮·上{b.get('touch_h') or 0}下{b.get('touch_l') or 0}"
+        return (
+            f"<tr>"
+            f"<td data-l='名称'>{esc(m['name'])}"
+            f"{X.badge_html(hist_pool, m['code'], today, m['code'] in new_set)}</td>"
+            f"<td data-l='代码 · 行业' class='muted'>{esc(m['code'])}"
+            f"<span class='dim'><br>{esc(m['industry'] or '—')}</span></td>"
+            f"<td data-l='现价' data-v='{px}'>{fnum(px)}"
+            f"<span class='{cx}' style='font-size:11px'><br>{pct(m['chg'])}</span></td>"
+            f"<td data-l='箱体下沿' data-v='{lo}' class='down'><b>{fnum(lo)}</b></td>"
+            f"<td data-l='箱体上沿' data-v='{hi}' class='up'><b>{fnum(hi)}</b></td>"
+            f"<td data-l='箱内位置' data-v='{m['pos']}'>{box_bar(m)}</td>"
+            f"<td data-l='位置状态' class='{scls}'>{stt}</td>"
+            f"<td data-l='距下沿' data-v='{dlo}' class='down' style='white-space:nowrap'>{fnum(dlo,1)}%</td>"
+            f"<td data-l='距上沿' data-v='{dhi}' class='up' style='white-space:nowrap'>{fnum(dhi,1)}%</td>"
+            f"<td data-l='箱高%' data-v='{m['box_h']}' style='white-space:nowrap'>{fnum(m['box_h'],1)}%</td>"
+            f"<td data-l='锁定状态' class='dim' style='font-size:12px;white-space:nowrap'>{lock}</td>"
+            f"<td data-l='往返/验证' data-v='{b.get('rounds') or 0}' style='white-space:nowrap'>{esc(rt)}</td>"
+            f"<td data-l='档位'><span class='badge b{r['grade']}'>{r['grade']}</span></td>"
+            f"</tr>")
+
+    bhead = ("<thead><tr>"
+             + th("nm", "s", "名称") + th("cd", "s", "代码 · 行业")
+             + th("px", "n", "现价(T日收盘)", "现价")
+             + th("lo", "n", "箱体下沿 L", "箱体下沿")
+             + th("hi", "n", "箱体上沿 U", "箱体上沿")
+             + th("pp", "n", "箱内位置", "箱体位置图")
+             + th("st", "s", "位置状态", "位置状态")
+             + th("dl", "n", "距下沿", "距下沿")
+             + th("du", "n", "距上沿", "距上沿")
+             + th("bh", "n", "箱高%", "箱体涨幅")
+             + th("lk", "s", "锁定状态", "箱体锁定")
+             + th("rt", "n", "往返/验证", "往返")
+             + th("gd", "s", "档位")
+             + "</tr></thead>")
+    btable = ("".join(brow(r) for r in box_list)
+              or "<tr><td colspan='13' class='dim'>今日池内无通过箱体闸门的标的</td></tr>")
+    box_html = f"""<div class='section'><h2>箱体位置观测（{len(box_list)} 只 · 预计箱体与现价位置）</h2>
+<div class='note'><b>这张表只回答一个问题：</b><b>现价落在这只票已经跑出来的箱体里的哪个位置。</b><br>
+<b>怎么读：</b>横条 = 箱体本身，<b>左端是下沿 L、右端是上沿 U，黑色竖线是现价</b>；
+底色三段对应<span class='down'>低吸区(0~20%)</span> / 中枢(20~80%) / <span class='up'>高抛区(80~100%)</span>，与涨红跌绿一致。
+旁边的「距下沿 / 距上沿」是<b>价格距离</b>：再跌多少 % 到底、再涨多少 % 到顶；
+<b>出现负数</b>就说明现价<b>已经越过那条边界</b>（同时会标 ↗/↘ 并给出超出幅度）。<br>
+<b>⚠ 上下沿不是对未来的价格预测。</b>它们是过去 90 个交易日里<b>被反复验证过</b>的边界
+（上沿被触碰 ≥2 次 + 下沿被触碰 ≥2 次 + 至少完成 1 轮完整往返，才算成立），
+由 <code>_tbox</code> 锚定后<b>锁死</b>：数值天天不变，只有真走出区间才换版并更新「确立日」——
+这正是「锁定状态」列要交代的。<b>箱体只能说明过去在哪个区间里来回，不能说明将来不会破。</b><br>
+{'<b style="color:#b8332a">本期出票许可未通过 → 本表仅作位置观测，<u>不构成任何操作依据</u>。</b>' if not emit_ok else '<b>本期已通过出票许可</b>，操作依据仍以上方榜单为准，本表只补位置信息。'}
+</div>
+<div class='bxsum'>
+  <div><b class='down'>{n_lo}</b><span>箱内 · 箱底区（位置 &lt;33%）</span></div>
+  <div><b class='muted'>{n_mid}</b><span>箱内 · 中枢区（33%~67%）</span></div>
+  <div><b class='up'>{n_hi}</b><span>箱内 · 箱顶区（位置 &gt;67%）</span></div>
+  <div><b>{n_edge}</b><span>贴边但未越界（&lt;10% 或 ≥90%）</span></div>
+  <div><b>{n_out}</b><span>现价已在箱体外（↗/↘）</span></div>
+  <div><b>{fnum(bh_med,0)}%</b><span>全池箱位中位数</span></div>
+</div>
+<div class='note dim'>默认排序 = <b>仍在箱内的排前面（位置由低到高），已走出区间的排到最后</b>；点表头可改排序。<br>
+越界 ≠ 箱体失效：<code>_tbox</code> 要求<b>连续 2 个交易日收盘越界 2% 以上</b>才换版，
+所以偶有一天走出区间是正常的 —— 表里如实标 ↗/↘ 并给出超出幅度，等后续成交来验证，
+既不假装没发生，也不提前改数。</div>
+<div class='tbl-wrap'><table class='sortable rt'>{bhead}<tbody>{btable}</tbody></table></div></div>
+"""
     # A/B 档卡片按主导类型分成两组，组内各自给对应操作方式
     g_cards = [r for r in abc if r["ptype"] == "网格型"]
     s_cards = [r for r in abc if r["ptype"] == "波段型"]
@@ -1164,7 +1336,9 @@ def build(date):
                 f"<td>{mtxt}</td>"
                 f"<td data-v='{m['amp20']}'>{fnum(m['amp20'],1)}</td>"
                 f"<td data-v='{m['turn']}'>{fnum(m['turn'],1)}</td>"
-                f"<td data-v='{m['pos']}'>{fnum(m['pos'],0)}</td>"
+                f"<td data-v='{m['box_low']}' style='white-space:nowrap'>"
+                f"<span class='down'>{fnum(m['box_low'])}</span>~<span class='up'>{fnum(m['box_high'])}</span></td>"
+                f"<td data-v='{m['pos']}'>{box_bar(m)}</td>"
                 f"<td><span class='badge {gcls}'>{r['sg']}</span></td>"
                 f"<td>{r['score']}</td>"
                 f"<td class='dim' style='white-space:normal'>{adv}</td></tr>")
@@ -1300,6 +1474,7 @@ def build(date):
 {wf_html}
 <div class='tbl-wrap'><table class='sortable rt'>{thead}<tbody>{table_html or "<tr><td colspan='13' class='dim'>今日无符合条件标的 —— 空仓等待</td></tr>"}</tbody></table></div></div>
 
+{box_html}
 <details class='section ref-fold'><summary><h2>强势股分析（{len(strong_rows)} 只）</h2><span class='fold-tip'>参考视角 · 点击展开</span></summary>
 <div class='note'><b>口径：</b>从做T池中筛出<b>相对强度跑赢大盘</b>的标的（20 日超额 ≥5pp 或均线多头排列）。
 <b>「强势」= 20 日涨幅 − 上证 20 日涨幅</b>（pp）；当前基准（上证 {date}）20 日 {('%+.2f%%' % (bench20 or 0))}。<br>
@@ -1318,9 +1493,10 @@ def build(date):
 <th data-k='hi' data-t='n' class='tip' title='现价距 52 周最高价的百分比（负数=距高点还有空间）。-3%~-30% 表示强势但未过热；接近 0 表示贴着历史高点。'>距52周高</th>
 <th data-k='ma' data-t='s' class='tip' title='MA5&gt;MA10&gt;MA20&gt;MA60 为多头排列；仅站上 MA20 表示短期转强、中期未确认。'>均线</th>
 <th data-k='amp' data-t='n'>振幅%</th><th data-k='turn' data-t='n'>换手%</th>
-<th data-k='pos' data-t='n' class='tip' title='现价在近 20 日箱体内的位置。回踩买点通常在 20%~40%。'>箱位</th>
+<th data-k='bx' data-t='n' class='tip' title='该股已锚定箱体的下沿与上沿价格。左右两端分别对应下面「箱位」进度条的两端。'>箱体 下沿~上沿</th>
+<th data-k='pos' data-t='n' class='tip' title='现价在箱体内的位置：0=贴下沿、100=贴上沿。'>箱位</th>
 <th data-k='sg' data-t='s'>分档</th><th data-k='score' data-t='n'>做T分</th><th data-k='adv' data-t='s'>操作建议</th>
-</tr></thead><tbody>{strong_html or "<tr><td colspan='13' class='dim'>今日池内无强势标的</td></tr>"}</tbody></table></div></details>
+</tr></thead><tbody>{strong_html or "<tr><td colspan='14' class='dim'>今日池内无强势标的</td></tr>"}</tbody></table></div></details>
 
 <details class='section ref-fold'><summary><h2>龙虎榜视角（{len(lhb_rows)} 只）</h2><span class='fold-tip'>参考视角 · 点击展开</span></summary>
 <div class='note'><b>口径：</b>做T池中近 10 个交易日<b>上过龙虎榜</b>的标的，按累计净买额排序。上榜 = 资金关注度与分歧同时放大，
