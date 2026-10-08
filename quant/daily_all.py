@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-"""每日全链编排器 —— 一条命令跑完 13 步（SOP 落地执行版）。
+"""每日全链编排器 —— 一条命令跑完 15 步（SOP 落地执行版）。
 
 为什么需要它：`build_portal.py` 里的 `update_steps` 是**给人看的清单**，
-`daily_update.py` 只串了 2 步（龙虎榜 + 门户），其余 11 步全靠人记、手动敲 ——
+`daily_update.py` 只串了 2 步（龙虎榜 + 门户），其余 13 步全靠人记、手动敲 ——
 这是每日更新最容易漏步骤、进而「旧数据冒充当日」的根源。
 
 本脚本把 SOP 拆成两类：
@@ -116,11 +116,18 @@ STEPS = [
      ["_dragon_odds.py --date {D}", "_dragon_stage_use.py --date {D}",
       "_dragon_pos_rule.py --date {D}", "_dragon_tier_gate.py --date {D} --emit",
       "build_dragon.py --date {D}"]),
-    (13, "auto", "数据库 + 门户 + 板块 + 主题收尾",
+    # ★ 2026-10-09 补登记：这三个模块此前**从未进过日更链路**（build_quant_strategy /
+    #   build_cross_section / build_3yl 全靠手工跑，页面停在 09-30 那一次）。
+    #   三者都只读本地日K + hub 底座，不联网，单次合计 <5s，放在收尾前安全。
+    (13, "auto", "量化策略板 + 全市场横截面 + 三连阴观察池",
+     "build_quant_strategy.py {D}; build_cross_section.py --date {D}; build_3yl.py {D}",
+     ["build_quant_strategy.py {D}", "build_cross_section.py --date {D}",
+      "build_3yl.py {D}"]),
+    (14, "auto", "数据库 + 门户 + 板块 + 主题收尾",
      "db_update.py {D}; db_export.py; build_portal.py; build_sections.py; _apply_theme.py",
      ["db_update.py {D}", "db_export.py", "build_portal.py", "build_sections.py",
       "_apply_theme.py"]),
-    (14, "gate", "五道门禁（链接/JS/覆盖/策略/数据底座）",
+    (15, "gate", "五道门禁（链接/JS/覆盖/策略/数据底座）",
      "_link_check.py; _js_check.py --all; _coverage_check.py --until {D}; "
      "_strategy_gate.py; _datahub_gate.py --date {D}",
      ["_link_check.py", "_js_check.py --all", "_coverage_check.py --until {D}",
@@ -286,7 +293,7 @@ def main():
     ap.add_argument("date_pos", nargs="?", default=None, help="数据日期 YYYY-MM-DD（可省）")
     ap.add_argument("--date", dest="date", default=None)
     ap.add_argument("--from", dest="frm", type=int, default=1)
-    ap.add_argument("--to", dest="to", type=int, default=13)
+    ap.add_argument("--to", dest="to", type=int, default=15)
     ap.add_argument("--only", dest="only", choices=["auto", "manual", "gate"], default=None)
     ap.add_argument("--push", action="store_true", help="跑完推送（沙箱外执行）")
     ap.add_argument("--check", action="store_true", help="只体检，不执行")
@@ -295,7 +302,7 @@ def main():
     a = ap.parse_args()
 
     if a.list:
-        print("每日全链 13 步：")
+        print("每日全链 15 步：")
         for n, kind, title, cmd, _ in STEPS:
             print("  %-3s %-6s %s" % (n, kind.upper(), title))
             print("       %s" % cmd)
