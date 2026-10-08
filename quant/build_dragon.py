@@ -30,6 +30,7 @@ import datetime as dt
 import glob
 import json
 import os
+import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -306,7 +307,7 @@ CSS = """
   .masthead h1{font-size:2rem;font-weight:800;margin:6px 0 6px;line-height:1.15;}
   .masthead .sub{font-size:.92rem;color:#cfc6b6;max-width:700px;}
   .mast-meta{margin-top:12px;font-size:.78rem;color:#bdb4a4;display:flex;gap:14px;flex-wrap:wrap;}
-  h2{font-size:1.3rem;margin:38px 0 12px;padding-left:11px;border-left:5px solid #b8332a;}
+  h2{font-size:1.3rem;margin:38px 0 12px;padding-left:11px;border-left:5px solid var(--gold);}
   h3{font-size:1.02rem;margin:22px 0 8px;color:#3a3026;}
   p{margin:8px 0;}
   .card{background:var(--card);border:1px solid var(--line);border-radius:14px;
@@ -335,8 +336,52 @@ CSS = """
   ul{margin:8px 0 8px 20px;} li{margin:5px 0;}
   footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);
     font-size:.8rem;color:var(--muted);}
+  /* ---- 与全站注入层对齐的修正 ----
+     _apply_theme 把统一主题插在 head 收尾之前，位置在本页样式之后，
+     所以同选择器一律是注入层胜。这里**不能用同名选择器**改，
+     要用更高特异性（前缀 .wrap / body）才能生效：
+       ① body .wrap —— 注入层 .wrap{padding:24px 22px 56px} 会把深色 masthead 从页顶推开 24px；
+       ② .wrap table —— 表格铺在灰底上时，注入层的 thead th 背景色 var(--bg) 与页面底色同色，
+          表头等于看不见。给表格一块白底卡片，表头灰底色才显出来；
+       ③ .wrap thead th —— 把表头压深一点并与数据行拉开层次。
+     ⚠ 这段注释里**不许出现 head 收尾标签的字面量**：_apply_theme 是用它定位插入点的，
+     注释里写一次就会被当成插入点，半段样式会漏成页面正文（2026-10-08 踩过）。 */
+  body .wrap{padding:0 18px 70px;}
+  .wrap table{background:var(--card);border:1px solid var(--line);border-radius:8px;}
+  .wrap thead th{background:#f1f3f4;color:#3a3026;font-weight:700;
+    border-bottom:2px solid var(--line);}
+  .wrap tbody td{border-bottom:1px solid var(--line);}
+  /* 搜索框是行内 input，紧跟在「<b>冰点期</b>」这类行内标题后会挤在同一行。
+     强制块级独占一行，标题与输入框各占一行。 */
+  .wrap .wb-search{display:block;}
   a{color:#1f4e79;}
 """
+
+# 表格结构化：全站的表头样式与「点表头排序 / 搜索筛选」都建立在 <thead> 上
+#   · _theme.css 用 `thead th{...}` 选择器 → 没有 thead，表头就没有灰底/加粗/分隔线；
+#   · _app.js 第一句就是 `tbl.querySelector("thead")`，拿到 null 直接 return
+#     → 既不加搜索框，也不接管排序（本页历史上 25 张表全部如此）。
+# 本页此前是 `<table data-wb><tr><th>…` 的裸写法，这里统一补 thead/tbody。
+# 幂等：已有 <thead> 的表原样返回；无嵌套表（本页实测最大嵌套深度 1），
+# 所以用非贪婪 `.*?</table>` 配对是安全的。
+_TBL_RE = re.compile(r"<table\b[^>]*>.*?</table>", re.S)
+_TR_RE = re.compile(r"<tr\b[^>]*>.*?</tr>", re.S)
+
+
+def theadize(html):
+    def _one(m):
+        seg = m.group(0)
+        if "<thead" in seg.lower():
+            return seg
+        trs = _TR_RE.findall(seg)
+        if not trs:
+            return seg
+        cut = seg.index(">") + 1          # 保留 <table ...> 上的属性（data-wb 等）
+        out = seg[:cut] + "<thead>" + trs[0] + "</thead>"
+        if len(trs) > 1:
+            out += "<tbody>" + "".join(trs[1:]) + "</tbody>"
+        return out + "</table>"
+    return _TBL_RE.sub(_one, html)
 
 
 def kpi(label, val, sub):
@@ -421,7 +466,10 @@ def render_stage(ctx):
     o.append("<div><div class='lab muted' style='font-size:.78rem'>判定结果</div>"
              "<div class='stage' style='color:%s'>%s</div></div>" % (color, st))
     o.append("<div style='flex:1;min-width:260px'><b>依据</b>：%s</div></div>" % s["why"])
-    o.append("</div>")
+    # ⚠ 这里**不能**再补一个 </div>：上一行已经把 .card 收掉了。
+    # 多写一个会让 .wrap 在这一节就闭合 —— 后面所有内容（24 张表 + 说明块）
+    # 全部掉到 .wrap 之外，全站注入层的 .wrap 宽度/内边距/表格样式随之失效。
+    # （2026-10-08 的「页面格式不对」就是这个多余标签引起的；main() 里有配平自检兜底。）
 
     o.append("<div class='grid'>")
     o.append(kpi("涨停家数（收盘封住）", s["zt"], "60 日滚动分位 %.0f%%" % (s["zt_p"] or 0)))
@@ -1994,9 +2042,28 @@ def main():
 
     os.makedirs(OUT_DIR, exist_ok=True)
     html = render(ctx)
+    # 补 thead/tbody —— 不补的话注入层的表头样式与「排序/搜索」全不生效（见 theadize 注释）
+    html = theadize(html)
+    n_tbl = len(re.findall(r"<table\b", html))
+    n_head = len(re.findall(r"<thead>", html))
+    if n_head != n_tbl:
+        print("[dragon] ⚠ 表格结构自检不通过：%d 张表 / %d 个 thead（预期相等）"
+              % (n_tbl, n_head))
+    # 注入层靠 `</head>` 字面量定位插入点；页面（含自带 CSS 注释）里出现一次以上
+    # 就会插错位置，把样式漏成正文。这里先自证只有一个。
+    n_endhead = html.count("</head>")
+    if n_endhead != 1:
+        print("[dragon] ⚠ head 收尾标签出现 %d 次（预期 1）—— 注入层会插错位置，"
+              "检查页面自带文本里是否混进了该字面量" % n_endhead)
+    # div 配平自检：多一个 </div> 会让 .wrap 提前闭合，后面的内容整段掉出容器
+    # （宽度/内边距/表格样式全失效），而且浏览器不报错、肉眼只看到「格式不对」。
+    n_do = len(re.findall(r"<div\b", html))
+    n_dc = html.count("</div>")
+    if n_do != n_dc:
+        print("[dragon] ⚠ div 不配平：开 %d / 闭 %d —— .wrap 会在中途闭合" % (n_do, n_dc))
     with open(OUT, "w", encoding="utf-8") as f:
         f.write(html)
-    print("[dragon] %s（%d 字节）" % (OUT, len(html)))
+    print("[dragon] %s（%d 字节｜表 %d 张 / thead %d 个）" % (OUT, len(html), n_tbl, n_head))
     if ctx.get("err"):
         print("[dragon] ⚠ 降级出页：%s" % ctx["err"])
     else:
