@@ -1,26 +1,26 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>底部反转选股 · 板块</title><style>:root{--bg:#fbfbfd;--card:#fff;--text:#1d1d1f;--muted:#6e6e73;--line:#e5e5e7;
-  --up:#ff3b30;--dn:#34c759;--blue:#0071e3;--gold:#1a73e8;--orange:#ff9500;--purple:#af52de;}
+<title>底部反转观察池 · v6 阶段底部锚定 · 2026-10-08</title><style>
+:root{--bg:#fbfbfd;--card:#fff;--text:#1d1d1f;--muted:#6e6e73;--line:#e5e5e7;
+ --up:#ff3b30;--dn:#34c759;--blue:#0071e3;--gold:#1a73e8;--orange:#ff9500;--purple:#af52de;}
 *{box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
-  background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:0}
-.wrap{max-width:880px;margin:0 auto;padding:28px 18px 56px}
+ background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:0}
+.wrap{max-width:1000px;margin:0 auto;padding:28px 18px 56px}
 h1{font-size:23px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
-h2{font-size:18px;font-weight:600;margin:28px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--blue)}
+h2{font-size:18px;font-weight:600;margin:26px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--blue)}
 .sub{color:var(--muted);font-size:13px;margin-bottom:8px}
 .card{background:var(--card);border-radius:16px;padding:16px 20px;margin:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .box{border-left:4px solid var(--blue);background:#f0f7ff;padding:14px 18px;border-radius:0 12px 12px 0;margin:14px 0}
 .box.gold{border-color:var(--gold);background:#fffaf0}
-.box.warn{border-color:var(--up);background:#fdf1f0}
-.box.red{border-color:var(--dn);background:#f0faf3}
+.box.green{border-color:var(--dn);background:#f0faf3}
 /* 表格：**不再横向滚动** —— 宽屏自适应换行；窄屏整行堆成卡片（列名由 td 的 data-l 提供） */
 .tbl-wrap{max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:4px;background:#fff;}
 table{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:auto;}
 th,td{padding:7px 5px;border-bottom:1px solid var(--line);text-align:right;
       white-space:normal;word-break:break-word;vertical-align:middle;}
 th:first-child,td:first-child{text-align:left;}
-th{color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa;white-space:nowrap;}
+th{white-space:nowrap;color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa;}
 @media(max-width:1040px){
   table.rt thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
   table.rt tr{display:block;border-bottom:2px solid var(--line);padding:8px 0;}
@@ -37,16 +37,14 @@ a{color:inherit}
 .tag.A{background:#e6f7ec;color:#1a7a45}
 .tag.B{background:#fff3e0;color:#e65100}
 .tag.C{background:#fdecea;color:#c0392b}
-.tag.new{background:#e8f0fe;color:#1967d2;margin-left:3px}
-.case{font-size:13px;margin:8px 0;padding:10px 14px;background:#fafafa;border-radius:10px;border-left:3px solid var(--purple)}
-.case .h{font-weight:600;margin-bottom:3px}
-.note{font-size:12px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
-.arch{font-size:13px;margin:4px 0}
-.arch a{color:var(--blue);text-decoration:none}
-.arch a:hover{text-decoration:underline}
-.step{font-size:13.5px;margin:8px 0;padding:10px 14px;background:#fafafa;border-radius:10px;border-left:3px solid var(--purple)}
+.case{font-size:13px;margin:10px 0;padding:12px 16px;background:#fafafa;border-radius:10px;border-left:3px solid var(--purple)}
+.case .h{font-weight:600;margin-bottom:4px}
+.kv{font-size:12.5px;color:var(--muted)}
+.bp{background:#f7f9fc;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:8px 0;font-size:13px}
+.bp b{color:var(--blue)}
+a.emlk{color:inherit;text-decoration:none;border-bottom:1px dashed rgba(128,128,128,.42)}
+a.emlk:hover{color:var(--blue);border-bottom-color:var(--blue)}
 .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
-ul{margin:8px 0;padding-left:20px}li{margin:4px 0}
 
 .xh-badge{display:inline-block;font-size:10.5px;font-weight:700;color:#137333;background:#e6f4ea;
   border:1px solid #b7e1c3;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
@@ -263,115 +261,58 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <body>
 <div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a><a href='../dragon/index.html'>龙道诀</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../diagnosis/index.html'>个股研判</a><a href='index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a><a href='../three_yin/index.html'>三连阴</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
 <div class="wrap">
-<h1>底部反转选股 · 板块</h1>
-<div class="sub">数据基准：2026-10-08 收盘｜ 每日随数据更新重扫 ｜ <b>v6</b>：阶段底部锚定 ＋ 回升启动确认 ＋ 本轮回撤目标</div>
+<h1>底部反转观察池 · v6（阶段底部锚定 ＋ 回升启动确认）</h1>
+<div class="sub">数据基准 2026-10-08 收盘｜ 全市场深跌域入域 <b>4630</b> 只 → 旧硬门槛 <b>4180</b> 只
+→ <b>阶段底部 ＋ 启动证据 ≥2 条</b> <b>395</b> 只 → ∩ 组合分前 10% = <b>本页精选 0 只</b></div>
+<div class='box red'><b>环境参考 · 防守</b>（指数环境 破位）｜ 全市场等权中位20日 -3.9% ｜ 广度(站上MA20占比) 30% ｜ 市场状态 弱势 ｜ <b>建议仓位系数 0.4×</b><br>广度低、反转信号易失效：只做 A 档且降至四成仓，或空仓等广度回升<br><span style='color:var(--muted)'>⚠️ 该系数只用于控制<b>总暴露（β）</b>，实测环境状态与选股 alpha 的关系在训练半与测试半<b>方向相反</b>——不要当成「环境好就重仓」的 alpha 依据。</span></div>
+<div class="box gold"><b>一句话：</b>v6 不再用「距 52 周高回撤 ≥18%」当底部——那只代表<b>跌得多</b>，
+可以是下跌中继，也可能已经反弹一大截。现在先识别<b>本轮下跌段的谷底</b>，要求它<b>站住了</b>
+（≥4 个交易日不再创新低、位置仍在谷底 +15% 以内、本轮跌幅 ≥30%），
+再要求已经出现<b>回升启动证据 ≥2 条</b>。<b>谷底与平台上沿一旦确立就锁死</b>，不随行情天天改。</div>
 
-<div class="box gold">
-<b>核心：</b>v6 不再拿「距 52 周高回撤 ≥18%」当底部——那只说明<b>跌得多</b>，
-可以是下跌中途，也可以是已经反弹一大截之后。现在先识别<b>本轮下跌段的谷底</b>，要求它
-<b>站住了</b>（≥4 个交易日不再创新低、现价仍在谷底 +15% 以内、本轮跌幅 ≥30%），
-再要求已经出现<b>回升启动证据 ≥2 条</b>；
-目标位也改成<b>本轮下跌段的斐波那契回撤</b>（0.382 / 0.618），而不是过去那个按 52 周高算出来、
-几乎不可兑现的天价。<br>
-本期：入域 <b>4630</b> 只 → 旧硬门槛 <b>4180</b> 只 → 阶段底部 ＋ 启动证据 <b>395</b> 只 →
-∩ 组合分前 10% = <b>精选 0 只</b>。<br>
-<b style="color:#b00020">谷底与平台上沿一旦确立就锁死</b>（写入本地锚定文件）：
-只有「跌破谷底 3% / 距谷底 +30% 以上 / 锁定超 60 个交易日」才重新检测并升版本 —— 不会天天变。
+<div class='box green'><b>走前验证（每日实算，非写死数字）：</b>抽样 700 只、信号只用 T 日及之前信息，收益用 T+1 起真实走势 + 统一退出规则（−12% 硬止损 / +6% 激活移动止盈 / 回撤 3% / 满 20 日）结算，特意把贡献拆成四组：<table class='rt' data-wb><thead><tr><th>分组</th><th>样本</th><th>可兑现胜率</th><th>均值收益</th><th>平均最大不利偏移</th></tr></thead><tbody><tr><td data-l='分组'>① 深跌域全体（v5 旧口径）</td><td class='num' data-l='样本'>13212</td><td class='num' data-l='胜率'>59.0%</td><td class='num' data-l='均收益'>-0.81%</td><td class='num' data-l='MAE'>-7.44%</td></tr><tr><td data-l='分组'>② ① + 阶段底部区（只看位置）</td><td class='num' data-l='样本'>3781</td><td class='num' data-l='胜率'>62.3%</td><td class='num' data-l='均收益'>-0.30%</td><td class='num' data-l='MAE'>-6.63%</td></tr><tr><td data-l='分组'>③ ① + 启动证据≥2 条（不看位置）</td><td class='num' data-l='样本'>6127</td><td class='num' data-l='胜率'>64.1%</td><td class='num' data-l='均收益'>+0.03%</td><td class='num' data-l='MAE'>-6.90%</td></tr><tr><td data-l='分组'><b>④ 本页实际采用：位置 ＋ 证据同时成立</b></td><td class='num' data-l='样本'>2202</td><td class='num' data-l='胜率'><b>64.9%</b></td><td class='num' data-l='均收益'><b>+0.15%</b></td><td class='num' data-l='MAE'>-6.35%</td></tr></tbody></table><span style='color:var(--muted)'>读法：<b>把 ② 与 ① 对比、③ 与 ① 对比</b>，就能看出哪个条件在真正提供边际。本日实测差值：<b>位置约束单独 +3.2pp、启动证据单独 +5.0pp、二者同时 +5.9pp</b>（对照①）。<br>必须诚实说明：<b>位置约束在不同的抽样/半区里忽正忽负</b>——大样本走前消融相对各自半区基线是 −2.5pp / −0.8pp（略负），本日重算是 +3.2pp，所以它<b>不该被当成胜率来源</b>，只是中性偏弱的条款；真正稳定提供边际的是「已经出现回升启动证据」。位置约束的价值在<b>尾部风险</b>：平均最大不利偏移由 -7.44% 收窄到 -6.63%（④ 为 -6.35%）—— 它换来的是「不追高、不接飞刀」，而不是更高的胜率。<br>⭐<b>诚实更正（2026-10-04）</b>：上表 ④ 是<b>闸门全开</b>那一层（阶段底部＋启动证据、<b>不看组合分</b>，共 2202 条），它<b>不是本页真正出票的那批</b>——出票还要 ∩ 组合分前 10%，本日只有 0 只；且 ④ 相对①是<b>子集对母集</b>的绝对胜率差（0.2:1），违反等量对照、也没有任何显著性区间。按 <a href='tier_gate.html'>分档出票核验</a> 重算（对照＝同日全市场域、逐日平衡 ＋ bootstrap），现行 A 档拿不出正超额 → <b>本期不出票，此表仅留痕、不作买入依据</b>。</span></div><div class='box'><span style='color:var(--muted)'>⚠ <b>口径提醒</b>：上表用全项目统一的「移动止盈」结算，该口径含两处人为假设（同一根 K 线的日内路径假设为「先冲高后回落」；跳空时仍按止损线价成交）。换成<b>可实现口径</b>后，同一批票的绝对胜率由 61.8% 变为 <b>60.1%（-1.7pp）</b>。逐档实测见 <a href='tier_gate.html'>分档出票核验</a> 第九节，口径定义见 <a href='../docs/exit_assumption_evidence.html'>成交假设审计</a>。</span></div>
+
+<div class="box red" style="border-color:#b00020"><b>⚠️ 这张表怎么用（必读）：</b>
+<li type="square"><b>看「阶段」列</b>：底部区 = 仍在谷底附近横着；启动 = 已突破平台上沿但尚未走远。</li>
+<li type="square"><b>看「谷底 / 锁定」列</b>：<b>谷底价即为结构止损的基准</b>，后面跟着「已锁定 N 日 · 第 v 版」——
+只有当价格<b>跌破谷底 3%</b>、<b>距谷底 +30% 以上</b>或<b>锁定超 60 个交易日</b>时才会重算并升版本。</li>
+<li type="square"><b>目标位改按本轮下跌段回撤</b>：T1 = 谷底 + 本轮跌幅×0.382、T2 = ×0.618，比过去按「52 周高回撤」算的天价目标近得多、可兑现；
+中间会先撞上<b>「平台上沿」</b>（谷底之后形成的前高），那是最近的真实阻力，到不了 T1 就先减一半。</li>
+<li type="square"><b>止损分两层</b>：跌破<b>谷底结构位</b>先减半，跌到 <b>−15%</b> 全出；<b>+8%~+10% 先止盈一半</b>。
+单笔试仓 3–5%。退出纪律 &gt; 入场筛选——这是本项目唯一跨期稳定的改进。</li>
 </div>
 
-<div class="box" style="border-left:4px solid #b8332a;background:#fdf3f2">
-<b>诚实披露 · 弱势期纪律（用之前必读）：</b><br>
-① 反转池「组合分前 10%」相对胜率约 <b>62–65%</b>（健康区间），但样本外存在明确<b>期间依赖</b>：
-half_oos 切分下训练半相对胜率 <b>−2.97pp</b>、测试半 <b>+16.35pp</b> —— 信号强度随市场环境大幅摆动，<b>不能假定稳定可兑现</b>。<br>
-② 因此<b>环境只控仓位（β），不改排序</b>：全市场广度 &lt;35%（弱势）时仓位系数降到 0.4×，
-并建议直接<b>空仓等待</b>，不靠选股对抗系统性下行；广度 35~55% 中性 0.7×；≥55% 进攻 1.0×。<br>
-③ <b>退出纪律 &gt; 入场筛选</b>：严格止损（谷底×0.97）+ 移动止盈，是本项目唯一在两段样本外都稳定的改进。<br>
-④ 本池<b>不宣称能靠环境提高 α</b> —— 它只解决「什么时候该收手」，不解决「选哪只一定涨」。
-</div>
+<div class='box red' style='border-color:#b00020'><b>⚠️ 本期不出票（宁可不选）。</b>按 <a href='tier_gate.html'>分档出票核验</a> 重算：现行出票条件（旧硬门槛 ＋ 阶段底部＋启动证据≥2 条 ＋ 组合分前 10%）相对<b>同日全市场域</b>的逐日平衡超额为负且不显著（主步长 edge -0.238pp ≤ 0；R3 29.9% < 95% 门槛；step3 edge -0.025pp ≤ 0）。本页那张「走前验证」表打的是 ④ 组 2202 条（闸门全开、不看组合分），<b>不是你真正会买的那批票</b>，也不是「相对随便买」的口径 —— 那个对比是<b>子集对母集</b>的绝对胜率差（对照样本是策略样本的约 6 倍，违反等量对照），也没有任何显著性区间。名单照列仅供观察，<b>不作买入依据</b>。</div>
+<h2>一、本期名单 · 不出票（仅观察，不作买入依据）（0 只 · 属域内组合分前 10%）</h2>
+<div class='note'><b>同一批深跌股里，本期有 3785 只被底部闸门挡下：</b><ul><li>已距谷底反弹 &gt;15 —— <b>2609</b> 只</li><li>回升启动证据仅 0 条 —— <b>846</b> 只</li><li>回升启动证据仅 1 条 —— <b>344</b> 只</li><li>本轮跌幅不足 30 —— <b>231</b> 只</li><li>仍在创新低 —— <b>203</b> 只</li></ul>被挡下的<b>不进任何列表</b>（不是降级、不作参考），这也是本池从 4180 只收敛到 0 只的全部原因。</div>
+<div class="card"><div class="tbl-wrap"><table class="sortable rt"><thead><tr><th data-k='name' data-t='s'>名称 · 代码</th><th data-k='qs' data-t='n'>组合分</th><th data-k='stage' data-t='s'>阶段</th><th data-k='trough' data-t='n'>谷底 / 锁定</th><th data-k='fall' data-t='n'>本轮跌幅</th><th data-k='rise' data-t='n'>距谷底</th><th data-k='lift' data-t='n'>启动证据</th><th data-k='close' data-t='n'>现价</th><th data-k='buy' data-t='n'>买区</th><th data-k='stop' data-t='n'>止损</th><th data-k='ph' data-t='n'>平台上沿</th><th data-k='t1' data-t='n'>回升目标 T1/T2</th><th data-k='rr' data-t='n'>RR</th></tr></thead><tbody><tr><td class='dim' colspan='13'>今日无标的同时满足「阶段底部 + 启动证据 + 高分位」——空仓等待也是纪律。</td></tr></tbody></table></div>
+<div class="note">排序默认按<b>组合分</b>降序（可点表头改列）。
+<b>组合分</b>=9 个先验固定因子在<b>当日全市场深跌域内</b>的横截面分位（0~100，越高越像底），只在同日内可比、不可跨日。
+<b>本轮跌幅</b>=自最近一个显著高点 → 谷底的跌幅；<b>距谷底</b>=现价相对谷底的涨幅（超过 15% 就不在底部区了）。
+<b>启动证据</b>=站上 MA10 / MA10 上翘 / MACD 金叉或底背离 / 量能放大 / 破平台上沿 / 20 日主力净流入，命中条数（悬停看明细）。
+<b>RR</b>=风险回报比 =(T1−买区上沿)/(买区上沿−止损)。资金口径：未取到（请跑 quant/fetch_rev_flow.py 补数）。名称可点击直达东方财富。</div></div>
 
-<h2>方法论（v6 · 阶段底部锚定 ＋ 启动确认）</h2>
-<div class="card"><div class='step'><b>步骤 1 · 域（全市场深跌域）</b><br>A 股正股全量（剔 ST/退 与 20 日均成交额 &lt;3000 万），硬门槛 = 距 52 周高回撤 ≥18% 且未跌破 MA60×0.75。<b>不再使用</b>「净利同比&gt;50 &amp; 0&lt;PE&lt;50 &amp; 总市值&lt;100亿」的条件选股种子——那个域只有 220 只、每日过门槛约 150 只，横截面分位的噪声太大。</div><div class='step'><b>步骤 2 · 打分（先验固定因子集）</b><br>9 个因子<b>等权横截面分位</b>：距 20/60 日低点、距 52 周低点、量能枯竭、ATR 占比、20 日箱体宽度、距 MA60、均线斜率、市值对数。方向由经济逻辑给定（越靠近低点 / 越缩量 / 越低波动 / 箱体越窄 / 均线越未修复 / 市值越小 → 越好），<b>不筛因子、不按回测调权重</b>——只有先验固定才能让全期都是干净的样本外。</div><div class='step'><b>步骤 3 · 阶段底部（v6 新增 · 位置必须站住）</b><br>先识别<b>本轮下跌段</b>（最近一个显著高点 → 谷底），再要求：① <b>已止跌</b>：谷底形成 ≥4 个交易日且期间不再创新低；② <b>仍在底部区</b>：现价距谷底 ≤15%；③ <b>跌得透</b>：本轮跌幅 ≥30%。谷底与平台上沿<b>锚定写盘</b>（quant/rev/bottom_state.json），只有「破底 3% / 远离 +30% / 锁定超 60 日」才重算并升版本 —— 价位不会天天改。</div><div class='step'><b>步骤 4 · 回升启动证据（v6 新增 · 必须已经在回升）</b><br>在底部区内统计命中几条纯技术证据（全市场可得、不含主力资金）：站上 MA10 / MA10 上翘 / MACD 金叉或底背离 / 量能放大 / 突破平台上沿，<b>≥2 条</b>才算「即将回升」。走前消融里这是唯一<b>两半同向且为正</b>的条件（前半 +2.0pp / 后半 +6.4pp）。</div><div class='step'><b>步骤 5 · 目标位（v6 改：本轮回撤，不是 52 周高）</b><br><b>T1 = 谷底 + 本轮跌幅×0.382，T2 = ×0.618</b>。旧口径按「52 周高回撤 0.382/0.618」算出来的目标位常常在半年高点附近，几乎不可兑现；新目标以本轮下跌段为尺度，并给出最近的真实阻力<b>「平台上沿」</b>（到了那里就该减，不一定要等 T1）。</div><div class='step'><b>步骤 6 · 档位与环境（只控 β）</b><br>排序仍按域内组合分取前 10%（A 档），<b>最终展示 = 通过新闸门 ∩ A 档</b>；环境按全市场广度给<b>仓位系数</b>（&lt;35% 防守 0.4× / 35~55% 中性 0.7× / ≥55% 进攻 1.0×），该系数<b>不改变排序</b>：环境状态与选股 α 的关系实测在训练半/测试半方向相反。</div><div class='step'><b>步骤 7 · 退出纪律（唯一跨期稳定的改进）</b><br>买区 = 缩量回踩 MA10/MA20 <b>不追高</b>；止损 = <b>跌破谷底 3%</b>（底部结构失效）先减半，跌到 −15% 全出；<b>+8%~+10% 先止盈一半</b>；单笔试仓 3–5%。<b>退出纪律 &gt; 入场筛选</b>——这是本项目唯一在两半样本外都稳定的改进。</div>
-<div class="note"><a href="method.html" style="color:var(--blue);text-decoration:none;font-weight:600">→ 完整方法论 Playbook</a>
-｜ <a href="lab.html" style="color:var(--blue);text-decoration:none;font-weight:600">→ 特征功效实验室（哪些因子真的有效）</a>
-｜ <a href="backtest.html" style="color:var(--blue);text-decoration:none;font-weight:600">→ 退出规则回测</a></div>
-</div>
+<h2>二、最靠前的细节（0 只）</h2>
+<div class="case">今日无标的。</div>
 
-<h2>最新精选（2026-10-08 · 0 只）</h2>
-<div class="card">
-<div class="note" style="border:none;padding:0;margin:0 0 8px">
-本表<b>只展示通过全部闸门且属域内组合分前 10% 的标的</b>，参考票不列表。
-其中相对上一期<b>新进 0</b> 只（名称后带 <span class="tag new">新</span>）/ 连续在榜 0 只。
-名称后徽标 = 跨池历史入选日期（悬停看全部）。<b>各列可点击表头排序；窄屏自动堆成卡片，不需要左右拖动。</b></div>
-<div class="tbl-wrap"><table class="sortable rt">
-<thead><tr><th data-k="name" data-t="s">名称 · 代码</th><th data-k="qs" data-t="n">组合分</th>
-<th data-k="stage" data-t="s">阶段</th><th data-k="trough" data-t="n">谷底 · 锁定</th>
-<th data-k="fall" data-t="n">本轮跌幅</th><th data-k="rise" data-t="n">距谷底</th>
-<th data-k="lift" data-t="n">启动证据</th><th data-k="close" data-t="n">现价</th>
-<th data-k="buy" data-t="n">买区</th><th data-k="stop" data-t="n">止损</th>
-<th data-k="t1" data-t="n">回升目标 T1</th><th data-k="rr" data-t="n">RR</th>
-<th data-k="m20" data-t="n">20日主力(亿)</th></tr></thead>
-<tbody></tbody></table></div>
-<div class="note"><a href="watchlist_20261008.html" style="color:var(--blue);text-decoration:none;font-weight:600">→ 查看 2026-10-08 完整详情页（含走前验证与被取消原因）</a> ·
-<a href="lab.html" style="color:var(--blue);text-decoration:none;font-weight:600">样本外证据实验室</a></div>
+<h2>三、方法论 v6 与局限（诚实版）</h2>
+<div class="card"><div class="kv">
+① <b>改了什么</b>：域与打分仍是 v5 的「全市场深跌域 + 先验固定因子集横截面分位」（9 因子等权、不筛不调权），
+v6 新增的是<b>入场前的两道 verified 闸门</b>：阶段底部区、回升启动证据。<br>
+② <b>为什么这两条能进</b>：走前消融（<code>quant/_rbot_ablate.py</code>，信号只用当日及之前信息、收益用 T+1~T+20 真实走势、
+统一退出规则结算）显示，相对各自半区基线，<b>启动证据≥2 条</b> 前半 +2.0pp / 后半 +6.4pp，
+<b>本轮跌幅≥30%</b> +1.3pp / +2.4pp，二者叠加后最强组合 +2.3pp / +8.3pp —— 两半同向才被采用。<br>
+③ <b>被证伪、因此没采用的两条先验</b>：<b>「谷底触碰 ≥2 天」</b>（两半 −0.7pp / −1.0pp）与
+<b>「只贴着谷底 ≤15%」单独使用</b>（两半 −2.5pp / −0.8pp）——位置约束本身<b>不产生</b>胜率，
+它必须与「已经在回升」的证据同时成立才有价值。这两条仍展示在页面上，但<b>不作门槛</b>。<br>
+④ <b>锚定</b>：谷底/平台上沿写进 <code>quant/rev/bottom_state.json</code>，数值锁死；
+只对「破底 −3% / 远离 +30% / 超期 60 日」重算。这样今天看到的价位，明天不会因为一根 K 线就换掉。<br>
+⑤ <b>局限</b>：走前样本约 8 个月、20 日窗口重叠（样本非独立，pp 差须按日期聚类理解）；
+胜率与单笔均值是一对权衡（宽止损+早止盈胜率高但单笔薄），<b>不要只看胜率</b>；
+即便两半同向，仍需警惕：同一套因子的 alpha 高度依赖期间（v5 训练半 −3.0pp / 测试半 +16.4pp），找不到可提前识别失效期的信号。<br>
+⑥ <b>红线</b>：主力净额只作<b>弱辅助</b>；<b>退出纪律 &gt; 入场筛选</b>；本页是量化筛选，非个股推荐。</div></div>
 
-<div class="note" style="border-top:1px dashed var(--line)">数据口径：<b>名称 / 流通市值</b>来自腾讯行情快照；<b>20 日主力净流入</b>来自 —（单位：亿元，红=净流入 / 绿=净流出）。
-主力净额只作<b>弱辅助</b>，且<b>不计入「启动证据」门槛</b>（全市场并非每只都有值，避免因数据有无导致入选偏差）。
-<b>所有股票名称可点击</b>，直达东方财富个股行情。</div>
-</div>
-
-<h2>这张表怎么用（操作路径）</h2>
-<div class="card">
-<div class="step"><b>第 1 步 · 先看「阶段」</b><br>
-<b>底部区</b> = 已经止跌、仍在谷底附近横着；<b>启动</b> = 已突破谷底之后的平台上沿，但还没走远。
-只要出现「下跌中 / 已脱离」就不会进这张表（前者还在创新低，后者已经涨超谷底 15%）。</div>
-<div class="step"><b>第 2 步 · 认牢「谷底」这个数</b><br>
-谷底价是<b>结构止损的基准</b>，锚定后不再天天改：后面写着「已锁 N 日 · 第 v 版」。
-跌破谷底 3% 意味着底部结构失效 → 无条件减仓，不做「再等等」。</div>
-<div class="step"><b>第 3 步 · 先看「平台上沿」，再看 T1 / T2</b><br>
-T1 = 谷底 + 本轮跌幅 × 0.382，T2 = ×0.618 —— 按<b>本轮下跌段</b>算，比按 52 周高算的目标近得多。
-但股价会先撞上<b>「平台上沿」</b>（谷底之后形成的前高，见详情页），那是最近的真实阻力，<b>到不了 T1 就先减一半</b>。</div>
-<div class="step"><b>第 4 步 · 退出纪律（唯一跨期稳定的部分）</b><br>
-买入等回踩，<b>不追高</b>。止损分两层：跌破<b>谷底结构位</b>先减半，跌到 <b>−15% 全出</b>；
-<b>+8%~+10% 先止盈一半</b>；单笔试仓 3–5%。实验室把止损/目标两半对照后，
-宽止损 + 早止盈是<b>两半同向</b>的最优组合（−15% / +8% → 训练半 54.7% / 测试半 55.8%），
-而最紧的 −6% 止损只有 41.3% / 36.3%（因为前 10% 的平均最大不利偏移已达 −7.7%，贴身止损必被扫）。</div>
-</div>
-
-<div class="box red" style="border-color:#b00020"><b>⚠️ 诚实标注（必读）：</b>
-位置约束<b>本身几乎是胜率中性甚至略负的</b>——单独要求「贴着谷底」并不提高前向收益
-（大样本走前消融相对各自半区基线 −2.5pp / −0.8pp）。它换来的是<b>尾部风险下降</b>（平均最大不利偏移收窄），
-也就是「不追高、不接飞刀」。真正稳定提供边际的是<b>「已经出现回升启动证据」</b>（同一消融 +2.0pp / +6.4pp）。
-所以这套规则是<b>风险控制 ＋ 证据确认</b>的组合，不是「越跌越买」的反向交易系统。</div>
-
-<div class="box warn"><b>仓位与红线：</b>
-单笔试仓 <b>3%（可至 5%）</b>，按 −15% 硬止损折算 = 单笔最大亏损约 <b>总资金 0.45%~0.75%</b>。
-总暴露乘当日<b>仓位系数</b>（广度 &lt;35% → 0.4× / 35~55% → 0.7× / ≥55% → 1.0×），
-该系数<b>只控 β、不改排序</b>。反转策略靠「多次小亏换一次大赚」，<b>退出纪律 &gt; 入场筛选</b>。
-本页所有价位都是量化区间，非买卖建议。</div>
-
-<h2>方法验证案例</h2>
-<div class="card"><div class='arch'>· <a href='dajin_yangxian_20260911.html'>大金重工 · 3 倍量阳线解读</a></div>
-<div class='arch'>· <a href='songfa-603268-20260911.html'>松发股份（603268）独立分析</a></div>
-<div class='arch'>· <a href='songfa_model_candidates_20260911.html'>松发模型 · 选股候选池</a></div>
-<div class='arch'>· <a href='songfa_verify_20260911.html'>候选真实性复核 + 胜率评估</a></div></div>
-
-<h2>历史观察池归档</h2>
-<div class="card"><div class='arch'>· <a href='watchlist_20261008.html'>2026-10-08 观察池</a></div>
-<div class='arch'>· <a href='watchlist_20260930.html'>2026-09-30 观察池</a></div>
-<div class='arch'>· <a href='watchlist_20260929.html'>2026-09-29 观察池</a></div>
-<div class='arch'>· <a href='watchlist_20260928.html'>2026-09-28 观察池</a></div>
-<div class='arch'>· <a href='watchlist_20260924.html'>2026-09-24 观察池</a></div>
-<div class='arch'>· <a href='watchlist_20260923.html'>2026-09-23 观察池</a></div>
-<div class='arch'>· <a href='watchlist_20260922.html'>2026-09-22 观察池</a></div>
-<div class='arch'>· <a href='watchlist_20260921.html'>2026-09-21 观察池</a></div>
-<div class='arch'>· <a href='watchlist_20260918.html'>2026-09-18 观察池</a></div>
-<div class='arch'>· <a href='watchlist_20260917.html'>2026-09-17 观察池</a></div>
-<div class='arch'>· <a href='watchlist_20260916.html'>2026-09-16 观察池</a></div>
-<div class='arch'>· <a href='watchlist_20260915.html'>2026-09-15 观察池</a></div>
-<div class='arch'>· <a href='watchlist_20260914.html'>2026-09-14 观察池</a></div>
-<div class='arch'>· <a href='watchlist_20260911.html'>2026-09-11 观察池</a></div></div>
-
-<div class="foot">本版块为基于离线前复权日K（腾讯）与样本外实证的量化筛选与方法论，非个股推荐、非买卖建议。决策责任在账户本人。</div>
+<div class="foot">本页为基于离线日K的量化筛选与方法论，非个股推荐、非买卖建议。决策责任在账户本人。数据基准 2026-10-08。</div>
 </div><script>
 (function(){
   function cellVal(tr, idx, type){

@@ -249,6 +249,9 @@ _AUTO_PATTERNS = [
     "quant/board_hot/2026-*.json",
     "quant/limitup/2026-*.json",
     "quant/market_overview/2026-*.json",
+    # ★ 2026-10-08 补：这两族此前是**按日期逐条**登记的（漏一期线上就断）——改通配一劳永逸。
+    "quant/hub/*.json",            # 统一数据底座（8 维度汇总 + manifest）
+    "quant/dragon/*.json",         # 龙道诀：周期快照 / 四道检验 / 出票闸
     "quant/exec_chg/2026-*.json",
     "quant/lhb_detail/*.json",
     # 板块强度

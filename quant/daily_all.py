@@ -107,11 +107,20 @@ STEPS = [
      ["macd_raw_pool_{DS}.json", "macd_raw_tech_{DS}.json", "macd_raw_flow_{DS}.json"]),
     (11, "auto", "增仓精选",
      "build_accum.py {D}", "build_accum.py {D}"),
-    (12, "auto", "数据库 + 门户 + 板块 + 主题收尾",
+    # ★ 2026-10-08 补登记：龙道诀全模块此前**从未进过日更链路**（页面停在手工跑的那天）。
+    #   顺序有讲究：先出证据产物（odds/stage_use/pos_rule/tier_gate），最后 build_dragon 才渲染页面。
+    (12, "auto", "龙道诀（情绪周期 · 四道检验 · 出票闸 · 页面）",
+     "_dragon_odds.py --date {D}; _dragon_stage_use.py --date {D}; "
+     "_dragon_pos_rule.py --date {D}; _dragon_tier_gate.py --date {D} --emit; "
+     "build_dragon.py --date {D}",
+     ["_dragon_odds.py --date {D}", "_dragon_stage_use.py --date {D}",
+      "_dragon_pos_rule.py --date {D}", "_dragon_tier_gate.py --date {D} --emit",
+      "build_dragon.py --date {D}"]),
+    (13, "auto", "数据库 + 门户 + 板块 + 主题收尾",
      "db_update.py {D}; db_export.py; build_portal.py; build_sections.py; _apply_theme.py",
      ["db_update.py {D}", "db_export.py", "build_portal.py", "build_sections.py",
       "_apply_theme.py"]),
-    (13, "gate", "五道门禁（链接/JS/覆盖/策略/数据底座）",
+    (14, "gate", "五道门禁（链接/JS/覆盖/策略/数据底座）",
      "_link_check.py; _js_check.py --all; _coverage_check.py --until {D}; "
      "_strategy_gate.py; _datahub_gate.py --date {D}",
      ["_link_check.py", "_js_check.py --all", "_coverage_check.py --until {D}",

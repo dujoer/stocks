@@ -1,0 +1,81 @@
+{
+ "date": "2026-10-08",
+ "built_at": "2026-10-08 22:08:44",
+ "ok_dims": [
+  "quotes",
+  "flow",
+  "margin",
+  "lhb",
+  "sector",
+  "kline"
+ ],
+ "bad_dims": [
+  "block",
+  "exec"
+ ],
+ "coverage": "6/8",
+ "reasons": {
+  "block": "当日 block_chg 缺失",
+  "exec": "当日 exec_chg 缺失"
+ },
+ "sources": {
+  "quotes": "腾讯qt",
+  "flow": "新浪MoneyFlow",
+  "margin": "margin_em缓存",
+  "lhb": "lhb缓存",
+  "block": "",
+  "exec": "",
+  "sector": "sector缓存",
+  "kline": "_long_kline"
+ },
+ "scopes": {
+  "quotes": "全市场（腾讯快照 5207/5207）",
+  "flow": "全市场（新浪 5207/5207）；另存逐日序列 flowseq_20261008.json",
+  "margin": "",
+  "lhb": "",
+  "block": "",
+  "exec": "",
+  "sector": "",
+  "kline": ""
+ },
+ "counts": {
+  "quotes": 5207,
+  "flow": 5207,
+  "margin": 805,
+  "lhb": 291,
+  "block": 0,
+  "exec": 0,
+  "kline": 5050
+ },
+ "kline_freshness": {
+  "asof": "2026-10-08",
+  "stale_n": 17,
+  "stale_sample": [
+   "sh600293",
+   "sh601059",
+   "sh601198",
+   "sh603183",
+   "sz000008",
+   "sz000009",
+   "sz000582",
+   "sz000668",
+   "sz002388",
+   "sz002813",
+   "sz002860",
+   "sz123112",
+   "sz123283",
+   "sz300082",
+   "sz300096",
+   "sz300290",
+   "sz300773"
+  ],
+  "nonstock_n": 5,
+  "nonstock_sample": [
+   "sh111024",
+   "sh113710",
+   "sz123112",
+   "sz123283",
+   "sz123285"
+  ]
+ }
+}
