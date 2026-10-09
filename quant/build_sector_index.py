@@ -76,6 +76,14 @@ th.sort.sorted { color:#b8893b; }
 th.sort.sorted[data-asc="1"]::after { content:" \\25B2"; font-size:10px; }
 th.sort.sorted[data-asc="0"]::after { content:" \\25BC"; font-size:10px; }
 th.sort:not(.sorted)::after { content:" \\2195"; font-size:10px; color:#c2c9d1; }
+.gapbox { border-left-color:#d9a441; }
+.gapbox h2 { border-left-color:#d9a441; }
+.gapbox p { font-size:13px; color:#41474f; line-height:1.9; margin:0; }
+.gapbox ul { margin:8px 0 6px; padding-left:20px; font-size:13px; color:#41474f; line-height:1.95; }
+.gapbox li b { color:#b8332a; }
+.gapbox .muted { color:#8a929c; font-size:12px; margin-top:8px; }
+.tag-src { display:inline-block; font-size:10.5px; padding:1px 6px; border-radius:9px;
+  background:#fdf3e3; color:#a9761f; border:1px solid #efdfc0; margin-left:5px; white-space:nowrap; }
 """
 
 SORT_JS = """function sortTable(id, th){
@@ -140,6 +148,49 @@ def build_html(trend):
         latest_strength = latest_upratio = 0
         latest = {"date": "—", "totalDarkY": 0}
 
+    # ── 数据完整性说明：把「静默缺口」显式化（同源不可回补，一律如实列出）──────
+    # 交易日历取单一真源 _coverage_check.trade_days_from_data（同一份 web/data 日K 日期列），
+    # 读不到就退化为「不显示」—— 宁可不显示，也不用另一套口径编一个缺口数出来。
+    all_dates = sorted({t["date"] for t in trend_sorted})
+    missing_days = []
+    if all_dates:
+        try:
+            import _coverage_check as _cv
+            # ★ 传参必须是无横线 DS：trade_days_from_data 内部用 norm_date 后的 8 位串比较，
+            #   传带横线的日期会被静默过滤成空集（踩过一次）
+            _lo = all_dates[0].replace("-", "")
+            _hi = all_dates[-1].replace("-", "")
+            _have = {d.replace("-", "") for d in all_dates}
+            _td = _cv.trade_days_from_data(_lo, _hi)
+            missing_days = sorted("%s-%s-%s" % (d[:4], d[4:6], d[6:8])
+                                  for d in _td if d not in _have)
+        except Exception as e:
+            print("[warn] 交易日历不可用，完整性说明跳过: %s" % str(e)[:70])
+    src_days = [t for t in trend_sorted if (t.get("src") or "westock") != "westock"]
+    gap_html = ""
+    if missing_days or src_days:
+        items = []
+        for d in missing_days:
+            items.append(
+                f"<li><b>{d}</b>：当日未落快照（该交易日漏拉）。westock 快照接口 date 参数无效 → "
+                f"<b>同源不可回溯</b>；改用其它源补期会引入不同板块划分与资金口径，须<b>单独标注</b>后方可用于衔接。</li>")
+        for t in src_days:
+            items.append(
+                f"<li><b>{t['date']}</b><span class='tag-src'>东财口径补期</span>：该期强度口径与其余期不同"
+                f"（东财「主力净流入 ÷ 成交额」 vs 本族「(主力净流入 − 散户净流入) ÷ 成交额」），"
+                f"仅供衔接参考，<b>不并入趋势线统计</b>。</li>")
+        gap_html = (
+            "<div class='section gapbox'>\n"
+            "  <h2>数据完整性说明</h2>\n"
+            "  <p>本族为 <b>前瞻累积</b>：westock 板块快照接口的 date 参数无效，只能按「当日盘后实拉」逐日固化，"
+            "<b>漏跑一天即永久断档</b>。与其它数据源混用会引入不同的板块划分与不同的资金口径，"
+            "因此不给缺口静默补数 —— 一律在下方如实列出。</p>\n"
+            "  <ul>" + "".join(items) + "</ul>\n"
+            f"  <p class='muted'>交易日区间 {all_dates[0]} ~ {all_dates[-1]}：实到 <b>{len(all_dates)}</b> 期 / "
+            f"应有 <b>{len(all_dates) + len(missing_days)}</b> 期"
+            + (f"，<b>缺 {len(missing_days)} 期</b>" if missing_days else "，无缺口") + "。</p>\n"
+            "</div>\n")
+
     # 表格行: 日期 / 板块数 / 暗盘净额 / 均强 / 涨占比 / 抢 / 建 / 洗 / 出
     rows_html = []
     for t in trend_sorted:
@@ -148,10 +199,12 @@ def build_html(trend):
         dark = t["totalDarkY"]
         dark_sign = "+" if dark >= 0 else ""
         dark_cls = "up" if dark >= 0 else "down"
+        bsrc = ("<span class='tag-src'>东财口径</span>"
+                if (t.get("src") or "westock") != "westock" else "")
         rows_html.append(
             "<tr>"
             f"<td data-val='{d}'><a href='sector-strength-{compact}.html' "
-            f"style='color:#1f4e79;text-decoration:none;font-weight:700'>{d}</a></td>"
+            f"style='color:#1f4e79;text-decoration:none;font-weight:700'>{d}</a>{bsrc}</td>"
             f"<td class='num' data-val='{t['sectorCount']}'>{t['sectorCount']}</td>"
             f"<td class='num' data-val='{dark:.2f}'>{dark_sign}{dark:.1f}亿</td>"
             f"<td class='num' data-val='{t['avgStrength']:.3f}'>{t['avgStrength']:.3f}</td>"
@@ -196,11 +249,12 @@ def build_html(trend):
         f"    <div class='idx'><div class='k'>主力出货板块（累计）</div><div class='v down'>{chu_sum}</div></div>\n"
         f"    <div class='idx'><div class='k'>最新一日均强</div><div class='v'>{latest_strength:.3f}</div></div>\n"
         f"    <div class='idx'><div class='k'>最新一日上涨占比</div><div class='v'>{latest_upratio:.1f}%</div></div>\n"
-        f"    <div class='idx'><a href='trend.html'><div class='k'>趋势看板（日/周/月）</div><div class='v gold'>{'查看 →'}</div></a></div>\n"
+        f"    <div class='idx'><a href='sector-strength-trend.html'><div class='k'>趋势看板（日/周/月）</div><div class='v gold'>{'查看 →'}</div></a></div>\n"
         # 冷门行业榜：两年未主升的「已发生事实」，仅陈述不作买卖依据（2026-10-03 新增）
         f"    <div class='idx'><a href='../cold_sector/index.html'><div class='k'>冷门行业榜（两年未主升）</div><div class='v gold'>{'仅事实 →'}</div></a></div>\n"
         "  </div>\n"
         "</div>\n"
+        + gap_html +
         "<div class='section'>\n"
         "  <h2>每日板块强度归档（按日期倒序）</h2>\n"
         "  <table id='arch'>\n"

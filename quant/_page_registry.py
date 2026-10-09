@@ -355,6 +355,7 @@ ORPHAN_WHITELIST_SUBSTR = (
     'selected/',
     'quant_strategy/',
     'three_yin/',
+    'sector/trend.html',     # 旧名跳转桩（已迁移到 sector-strength-trend.html，见 build_sector_trend）
 )
 
 

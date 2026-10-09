@@ -95,6 +95,13 @@ FILES = [
     # —— 板块强度子系统 ——
     "quant/gen_sector_raw.py",
     "quant/run_daily_sector.py",
+    # ★ 2026-10-09 补：板块子系统的两个**核心生成器**此前漏登记（run_daily_sector 内部调它们，
+    #   所以 C2 那道「daily_all 直呼脚本 vs 白名单」的自检查不到）——
+    #   collect_sector=合成统一记录；build_sector_daily=日固化 + 趋势汇总。缺了线上无法复算。
+    "quant/collect_sector.py",
+    "quant/build_sector_daily.py",
+    # ★ 2026-10-09 新增：板块强度**换源补期**（westock 快照不可回溯的历史缺口，走东财口径）
+    "quant/_fetch_sector_em.py",
     "quant/build_sector_strength.py",
     "quant/build_sector_trend.py",
     "quant/build_sector_index.py",

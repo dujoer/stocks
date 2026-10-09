@@ -24,9 +24,19 @@ WEB = os.path.normpath(os.path.join(ROOT, "..", "web"))
 WEB_SECTOR = os.path.join(WEB, "sector")
 
 
+#: 非 westock 口径的期（换源补期，如东财）——**不并入任何趋势线**，只在页面脚注声明。
+SKIPPED_SRC_DAYS = []
+
+
 def load_sectors(daily_dir):
-    """扫描 sector_daily/*.json, 构建 板块名 -> {k:类型, p:[[date,pct,darkY,strength,behavior,leader],...]}"""
+    """扫描 sector_daily/*.json, 构建 板块名 -> {k:类型, p:[[date,pct,darkY,strength,behavior,leader],...]}
+
+    ★ 只收 westock 口径的期：换源补期（src != westock）与其余期的强度**不是同一指标**，
+      混进同一条线就是「好看但不成立」。这类期单独在脚注声明，不进图。
+    """
+    global SKIPPED_SRC_DAYS
     sec = {}
+    SKIPPED_SRC_DAYS = []
     files = sorted(glob.glob(os.path.join(daily_dir, "*.json")))
     for f in files:
         try:
@@ -35,6 +45,9 @@ def load_sectors(daily_dir):
             continue
         date = d.get("date")
         if not date:
+            continue
+        if (d.get("src") or "westock") != "westock":
+            SKIPPED_SRC_DAYS.append({"date": date, "src": d.get("src"), "note": d.get("metric_note") or ""})
             continue
         for r in d.get("records", []):
             n = r.get("name")
@@ -75,6 +88,16 @@ def build_html(trend, sectors):
     NAV = selfcontained_nav("", home="../index.html")
     sectors_json = json.dumps(sectors, ensure_ascii=False)
     existing_json = json.dumps(existing_day_pages(), ensure_ascii=False)
+    # 换源补期（非 westock 口径）只在脚注声明，不进任何趋势线
+    _sk = [x for x in SKIPPED_SRC_DAYS if x.get("date")]
+    src_note = ""
+    if _sk:
+        _li = "".join(
+            f"<li><b>{x['date']}</b><span class='src-tag'>换源补期·{x.get('src') or '—'}</span>"
+            f"该期强度口径与其余期不同，<b>已排除在全部趋势线之外</b>，仅作衔接参考，不可据此判趋势。</li>"
+            for x in _sk)
+        src_note = ("<div class='srcnote'><b>口径一致性声明</b>：本页所有折线只取 westock 快照口径的交易日；"
+                    "下列期为换源补期，已单独排除：<ul>" + _li + "</ul></div>")
     html = """<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -91,6 +114,12 @@ body{margin:0;background:linear-gradient(180deg,#f5f6f8,#eef0f3);color:var(--txt
   font-size:13px;padding:22px 26px 80px}
 h1{font-size:21px;margin:0 0 4px;letter-spacing:.5px;line-height:1.3}
 .sub{color:var(--mut);font-size:12px;margin-bottom:18px;line-height:1.5}
+.srcnote{margin:0 0 16px;padding:10px 14px;border-left:4px solid #d9a441;border-radius:8px;
+  background:rgba(217,164,65,.09);color:#5a6068;font-size:12px;line-height:1.75}
+.srcnote ul{margin:6px 0 0;padding-left:18px}
+.srcnote b{color:#b8332a}
+.src-tag{display:inline-block;font-size:10.5px;padding:1px 6px;border-radius:9px;margin:0 5px;
+  background:rgba(217,164,65,.18);color:#a9761f;border:1px solid rgba(217,164,65,.45)}
 .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--panel2);
   border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:16px}
 .bar label{color:var(--mut);font-size:12px;margin-right:4px}
@@ -173,6 +202,7 @@ table tr:hover td{background:#f0f2f5}
 """ + NAV + """
 <h1>A股板块强度 · <span style="color:var(--gold)">趋势看板</span></h1>
 <div class="sub">每日盘后真实板块快照累积而成 ｜ 全市场聚合 + 单板块下钻 + 多板块对比 ｜ 数据随交易日自动变长（westock 最新快照）</div>
+""" + src_note + """
 
 <!-- (A) 全市场聚合 -->
 <div class="bar">
@@ -656,6 +686,21 @@ def main():
     os.makedirs(os.path.dirname(out), exist_ok=True)
     open(out, "w", encoding="utf-8").write(build_html(trend, sectors))
     print(f"[ok] 趋势看板 -> {out} ({len(trend)} 交易日 | {len(sectors)} 板块可下钻)")
+
+    # ★ 旧名 trend.html 必须跟着更新：历史上入口页曾链到它，后来输出名改成
+    #   sector-strength-trend.html 却漏改链接 → 用户点到的是一份**永远停更**的旧页。
+    #   这里统一写一个跳转桩，保证任何旧链接都不会指到陈旧内容（跳转桩本身无数据，不会说谎）。
+    legacy = os.path.join(WEB_SECTOR, "trend.html")
+    if os.path.normpath(legacy) != os.path.normpath(out):
+        open(legacy, "w", encoding="utf-8").write(
+            "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"utf-8\">\n"
+            "<meta http-equiv=\"refresh\" content=\"0; url=sector-strength-trend.html\">\n"
+            "<link rel=\"canonical\" href=\"sector-strength-trend.html\">\n"
+            "<title>板块强度 · 趋势看板（已迁移）</title>\n</head>\n<body>\n"
+            "<p style=\"font:14px/1.9 -apple-system,'PingFang SC',sans-serif;padding:28px\">"
+            "本页已迁移到 <a href=\"sector-strength-trend.html\">sector-strength-trend.html</a>，"
+            "正在跳转……</p>\n</body>\n</html>\n")
+        print(f"[ok] 旧名跳转桩 -> {legacy}")
 
 
 if __name__ == "__main__":

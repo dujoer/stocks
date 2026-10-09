@@ -26,6 +26,8 @@ APP_BLOCK = "<!--WB_APP--><script id='wb-app'>\n" + APP + "\n</script><!--/WB_AP
 POLLUT = re.compile(r"\s*data-page-node-id=\"[^\"]*\"")
 # 排除卡片式/排名卡式细节表（class 可能带引号），避免给个股卡片表加搜索框
 SKIP_CLASS = re.compile(r"class\s*=\s*['\"][^'\"]*\b(?:card|gtable)\b", re.I)
+#: 纯跳转桩（meta refresh 重定向页）—— 无正文，不注入主题
+REDIRECT_RX = re.compile(r"""<meta[^>]+http-equiv\s*=\s*['"]?refresh""", re.I)
 ENDHEAD_RE = re.compile(r"</head>", re.I)
 ENDBODY_RE = re.compile(r"</body>", re.I)
 TOPNAV_OPEN_RE = re.compile(r"<div class=['\"]topnav['\"]>")
@@ -439,6 +441,10 @@ def main():
     done = 0
     for f in files:
         s = open(f, encoding="utf-8", errors="ignore").read()
+        # ★ 纯跳转桩（<meta http-equiv="refresh">）不注入主题：它没有正文可主题化，
+        #   注入一次就白白把 ~23KB 主题塞进去（且每次跳转都要多下载一次）。
+        if REDIRECT_RX.search(s):
+            continue
         has = ("id='wb-theme'" in s) or ('id="wb-theme"' in s)
         missing = (not has) or ("data-page-node-id" in s)
         if a.dry:

@@ -54,6 +54,14 @@ th.sort.sorted { color:#1a73e8; }
 th.sort.sorted[data-asc="1"]::after { content:" \25B2"; font-size:10px; }
 th.sort.sorted[data-asc="0"]::after { content:" \25BC"; font-size:10px; }
 th.sort:not(.sorted)::after { content:" \2195"; font-size:10px; color:#c2c9d1; }
+.gapbox { border-left-color:#d9a441; }
+.gapbox h2 { border-left-color:#d9a441; }
+.gapbox p { font-size:13px; color:#41474f; line-height:1.9; margin:0; }
+.gapbox ul { margin:8px 0 6px; padding-left:20px; font-size:13px; color:#41474f; line-height:1.95; }
+.gapbox li b { color:#b8332a; }
+.gapbox .muted { color:#8a929c; font-size:12px; margin-top:8px; }
+.tag-src { display:inline-block; font-size:10.5px; padding:1px 6px; border-radius:9px;
+  background:#fdf3e3; color:#a9761f; border:1px solid #efdfc0; margin-left:5px; white-space:nowrap; }
 </style>
 <!--WB_THEME--><style id='wb-theme'>
 /* ============================================================
@@ -333,9 +341,15 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
     <div class='idx'><div class='k'>主力出货板块（累计）</div><div class='v down'>10679</div></div>
     <div class='idx'><div class='k'>最新一日均强</div><div class='v'>-0.405</div></div>
     <div class='idx'><div class='k'>最新一日上涨占比</div><div class='v'>71.8%</div></div>
-    <div class='idx'><a href='trend.html'><div class='k'>趋势看板（日/周/月）</div><div class='v gold'>查看 →</div></a></div>
+    <div class='idx'><a href='sector-strength-trend.html'><div class='k'>趋势看板（日/周/月）</div><div class='v gold'>查看 →</div></a></div>
     <div class='idx'><a href='../cold_sector/index.html'><div class='k'>冷门行业榜（两年未主升）</div><div class='v gold'>仅事实 →</div></a></div>
   </div>
+</div>
+<div class='section gapbox'>
+  <h2>数据完整性说明</h2>
+  <p>本族为 <b>前瞻累积</b>：westock 板块快照接口的 date 参数无效，只能按「当日盘后实拉」逐日固化，<b>漏跑一天即永久断档</b>。与其它数据源混用会引入不同的板块划分与不同的资金口径，因此不给缺口静默补数 —— 一律在下方如实列出。</p>
+  <ul><li><b>2026-09-01</b>：当日未落快照（该交易日漏拉）。westock 快照接口 date 参数无效 → <b>同源不可回溯</b>；改用其它源补期会引入不同板块划分与资金口径，须<b>单独标注</b>后方可用于衔接。</li></ul>
+  <p class='muted'>交易日区间 2026-08-27 ~ 2026-10-09：实到 <b>24</b> 期 / 应有 <b>25</b> 期，<b>缺 1 期</b>。</p>
 </div>
 <div class='section'>
   <h2>每日板块强度归档（按日期倒序）</h2>
