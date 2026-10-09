@@ -30,7 +30,8 @@
     python _fetch_long_kline.py --check                # 只查覆盖，不抓
 """
 from __future__ import annotations
-import os, sys, json, time, argparse, random
+import os, sys, json, time, argparse, random, datetime
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -138,6 +139,10 @@ def main():
                     help="达标根数。★默认 480≈2 年（用户 2026-10-02 确认「2 年没主升过也行」）")
     ap.add_argument("--check", action="store_true", help="只查覆盖不抓")
     ap.add_argument("--merge", action="store_true", help="同时把已有 252 根短缓存并入")
+    ap.add_argument("--asof", default=None,
+                    help="★只补「末根日期 < ASOF」的标的（默认今日）。"
+                         "解决旧判据「根数达标就跳过」→ 永远补不进最新交易日")
+    ap.add_argument("--workers", type=int, default=12, help="并发数（原串行版在「全票需补」时不可用）")
     a = ap.parse_args()
 
     codes = code_list()
@@ -180,32 +185,56 @@ def main():
         except Exception:
             failed = {}
 
-    todo = [c for c in codes if len(long_d.get(c, [])) < a.minbars]
-    print("[待抓] %d 只（已有达标 %d 只）" % (len(todo), len(codes) - len(todo)))
+    ASOF = a.asof or datetime.date.today().strftime("%Y-%m-%d")
+
+    def _needs(c):
+        """需补 = 根数不足 或 **末根日期 < ASOF**。
+
+        ★ 不能只看根数：达标票（≥480 根）的末根会一直停在补数那一天，
+          永远不进 todo → 「补齐脚本补不动最新交易日」。
+        """
+        b = long_d.get(c, [])
+        if len(b) < a.minbars:
+            return True
+        return str(b[-1].get("date", "")) < ASOF
+
+    todo = [c for c in codes if _needs(c)]
+    n_stale = sum(1 for c in codes
+                  if len(long_d.get(c, [])) >= a.minbars and _needs(c))
+    print("[待抓] %d 只（其中已达标但末根< %s 的 %d 只）" % (len(todo), ASOF, n_stale))
 
     ok = 0
     fail = 0
+    done = 0
     t0 = time.time()
-    SLEEP = 0.35          # ★节流：不限流时也能拿满 480 根
-    for i, c in enumerate(todo, 1):
-        bars = fetch_one(c, a.n)
-        if len(bars) >= a.minbars:
-            long_d[c] = bars
-            failed.pop(c, None)
-            ok += 1
-        else:
-            # 抓到的根数不足（限流 / 新股 / 长期停牌）：不写入当历史，避免污染底座
-            failed[c] = len(bars)
-            fail += 1
-        time.sleep(SLEEP)
-        if i % 50 == 0:
-            save_long(long_d)
-            json.dump(failed, open(FAILED, "w", encoding="utf-8"), ensure_ascii=False)
-            el = time.time() - t0
-            rate = i / el if el else 0
-            left = (len(todo) - i) / rate if rate else 0
-            print("  %d/%d  成功 %d  失败 %d  %.1f票/分  剩余约 %.1f 分"
-                  % (i, len(todo), ok, fail, rate * 60, left / 60))
+    # ★ 2026-10-09 改并发：原串行「每只 sleep 0.35 + 请求」在**全部票都需补**
+    #   的场景下要跑 40 分钟以上（旧判据只补极少数缺根票，才显得够快）。
+    #   fetch_one 内已含失败退避与根数校验，这里按并发调度。
+    with ThreadPoolExecutor(max_workers=a.workers) as ex:
+        futs = {ex.submit(fetch_one, c, a.n): c for c in todo}
+        for f in as_completed(futs):
+            c = futs[f]
+            try:
+                bars = f.result()
+            except Exception:
+                bars = []
+            if len(bars) >= a.minbars:
+                long_d[c] = bars
+                failed.pop(c, None)
+                ok += 1
+            else:
+                # 抓到的根数不足（限流 / 新股 / 长期停牌）：不写入当历史，避免污染底座
+                failed[c] = len(bars)
+                fail += 1
+            done += 1
+            if done % 400 == 0:      # 401MB 落盘 ~1-2s，太密会拖慢
+                save_long(long_d)
+                json.dump(failed, open(FAILED, "w", encoding="utf-8"), ensure_ascii=False)
+                el = time.time() - t0
+                rate = done / el if el else 0
+                left = (len(todo) - done) / rate if rate else 0
+                print("  %d/%d  成功 %d  失败 %d  %.0f票/分  剩余约 %.1f 分"
+                      % (done, len(todo), ok, fail, rate * 60, left / 60), flush=True)
     save_long(long_d)
     json.dump(failed, open(FAILED, "w", encoding="utf-8"), ensure_ascii=False)
 

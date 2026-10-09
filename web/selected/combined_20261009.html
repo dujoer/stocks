@@ -1,0 +1,616 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>主升精选 · 趋势+资金双确认高确定性池 · 2026-10-09</title><style>
+:root{--bg:#fbfbfd;--card:#fff;--text:#1d1d1f;--muted:#6e6e73;--line:#e5e5e7;
+ --up:#ff3b30;--dn:#34c759;--blue:#0071e3;--gold:#1a73e8;--orange:#ff9500;--purple:#af52de;}
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+ background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:0}
+.wrap{max-width:1040px;margin:0 auto;padding:28px 18px 56px}
+h1{font-size:23px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+h2{font-size:18px;font-weight:600;margin:26px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--blue)}
+.sub{color:var(--muted);font-size:13px;margin-bottom:8px}
+.card{background:var(--card);border-radius:16px;padding:16px 20px;margin:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.box{border-left:4px solid var(--blue);background:#f0f7ff;padding:14px 18px;border-radius:0 12px 12px 0;margin:14px 0}
+.box.gold{border-color:var(--gold);background:#fffaf0}
+.box.green{border-color:var(--dn);background:#f0faf3}
+.box.red{border-color:var(--up);background:#fff5f4}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa;white-space:nowrap}
+.num{font-variant-numeric:tabular-nums}
+.up{color:var(--up)}.dn{color:var(--dn)}.am{color:var(--blue)}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;margin:1px 2px}
+.tag.A{background:#e6f7ec;color:#1a7a45}
+.tag.B{background:#fff3e0;color:#e65100}
+.case{font-size:13px;margin:10px 0;padding:12px 16px;background:#fafafa;border-radius:10px;border-left:3px solid var(--purple)}
+.case .h{font-weight:600;margin-bottom:4px}
+.kv{font-size:12.5px;color:var(--muted)}
+.bp{background:#f7f9fc;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:8px 0;font-size:13px}
+.bp b{color:var(--blue)}
+/* 箱体位置条：止损(0%) → 买区 → T1 → T2(100%)，指针=现价 */
+.bxrow{display:flex;align-items:center;gap:10px;margin:6px 0 2px}
+.bxtrack{position:relative;flex:1;min-width:180px;height:14px;background:#eee;border-radius:7px;overflow:visible}
+.bxzone{position:absolute;top:0;height:100%;background:#cfe3ff;border-radius:7px 0 0 7px}
+.bxzone.hold{background:#fff3d6;border-radius:0}
+.bxtick{position:absolute;top:-3px;width:2px;height:20px;background:var(--gold)}
+.bxneedle{position:absolute;top:-5px;width:0;height:0;margin-left:-5px;
+ border-left:5px solid transparent;border-right:5px solid transparent;border-top:9px solid var(--up);z-index:2}
+.bxlegend{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-top:3px;min-width:180px;flex:1}
+.bxtag{font-size:12px;font-weight:700;white-space:nowrap}
+.bxtag.buy{color:var(--up)}  /* 买区内：可买（红=进攻） */
+.bxtag.hold{color:var(--blue)}
+.bxtag.tp{color:var(--gold)}
+.bxtag.stop{color:var(--dn)} /* 破止损：离场（绿=防守） */
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
+
+.xh-badge{display:inline-block;font-size:10.5px;font-weight:700;color:#137333;background:#e6f4ea;
+  border:1px solid #b7e1c3;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
+.xh-new{display:inline-block;font-size:10.5px;font-weight:700;color:#1a73e8;background:#e8f0fe;
+  border:1px solid #c6dafc;border-radius:8px;padding:1px 6px;margin-left:4px;cursor:help}
+.xh-tag{display:inline-block;font-size:10.5px;padding:1px 6px;border-radius:8px;margin:1px 2px;white-space:nowrap}
+.xh-tag.g{background:#e6f4ea;color:#137333}
+.xh-tag.y{background:#fef7e0;color:#8a6d00}
+.xh-tag.t{background:#e3f2f1;color:#0b6b63}
+.xh-tag.r{background:#f0e9fb;color:#5b3fa8}
+.xh-col{white-space:normal;min-width:150px;max-width:215px}
+.xh-dim{color:#9aa0a6}
+.xh-cmp{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.xh-cmp div{flex:1;min-width:130px;border-radius:10px;padding:10px 14px;background:#f1f3f4}
+.xh-cmp b{display:block;font-size:19px}
+.xh-cmp span{font-size:12px;color:#5f6368}
+.xh-cmp .cnew b{color:#1a73e8}.xh-cmp .ccont b{color:#137333}.xh-cmp .cout b{color:#a8071a}
+.xh-sort{cursor:pointer;user-select:none}
+.xh-sort:hover{color:#1a73e8}
+.xh-sort.xh-asc:after{content:" \25b4";color:#1a73e8}
+.xh-sort.xh-desc:after{content:" \25be";color:#1a73e8}
+</style><!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 数据时间戳条（真实数据日 + 返回入口） ----------
+   由 _apply_theme.py 按「页面自身写的数据日」与「全站最新数据日」比对后注入，
+   不是渲染时间、不是硬编码 —— 页面没写数据日就如实显示「未标注」，
+   落后全站就红字报警。这样「页面有没有更新」看页头一眼就知道。 */
+.wb-stamp{
+  display:flex !important; flex-wrap:wrap !important; align-items:center !important;
+  gap:6px 10px !important;
+  max-width:1440px !important; margin:-14px auto 18px !important;
+  padding:8px 14px !important;
+  background:var(--surface) !important; border:1px solid var(--line) !important;
+  border-left:4px solid var(--accent) !important; border-radius:8px !important;
+  font-size:12.5px !important; color:var(--muted) !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.08) !important;
+}
+.wb-stamp .s-l{ color:var(--muted) !important; }
+.wb-stamp .s-d{
+  color:var(--ink) !important; font-weight:700 !important;
+  font-variant-numeric:tabular-nums !important;
+}
+.wb-stamp .s-d.unknown{ color:#80868b !important; font-weight:600 !important; }
+.wb-stamp .s-ok{ color:var(--green) !important; }
+.wb-stamp .s-warn{ color:var(--red) !important; font-weight:600 !important; }
+.wb-stamp .s-hist{ color:var(--muted) !important; }
+.wb-stamp .s-src{ color:#80868b !important; }
+.wb-stamp a.wb-back{
+  margin-left:auto !important; white-space:nowrap !important;
+  display:inline-block !important; padding:3px 13px !important;
+  border:1px solid var(--line) !important; border-radius:16px !important;
+  color:var(--accent-ink) !important; background:var(--accent-soft) !important;
+  font-weight:600 !important; text-decoration:none !important;
+}
+.wb-stamp a.wb-back:hover{ background:var(--accent) !important; color:#fff !important; text-decoration:none !important; }
+
+/* ---------- 右下角浮动「回门户 / 回顶部」 ---------- */
+.wb-fab{
+  position:fixed; right:16px; bottom:18px; z-index:60;
+  display:flex; flex-direction:column; gap:8px;
+}
+.wb-fab a{
+  width:42px; height:42px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--surface); color:var(--ink);
+  border:1px solid var(--line); box-shadow:0 2px 6px rgba(60,64,67,.18);
+  font-size:17px; text-decoration:none; line-height:1;
+}
+.wb-fab a:hover{ background:var(--accent); color:#fff; border-color:var(--accent); text-decoration:none; }
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  /* ★ 窄屏必须让每个模块块各占一整行：
+     原来 .navgrp{flex-shrink:0} + 内部链接 white-space:nowrap，
+     整组宽度压不下去 → 导航溢出容器被裁掉，「主升精选 / 量化策略 / 三连阴」等
+     右侧入口在手机上根本看不见（看着像「没有导航」）。 */
+  .navgrp{ padding:5px 6px 5px 5px !important; width:100% !important; flex-shrink:1 !important; min-width:0 !important; }
+  /* 链接本身也要能收缩：全局 .topnav a{flex-shrink:0} 会让一行内最后一项
+     顶出容器被裁（手机上「高管增减持」就只剩「高管增减」）→ 窄屏放开收缩，
+     min-content 宽度仍是完整文字，不会被截断。 */
+  .topnav a{ flex-shrink:1 !important; }
+  .topnav a.home{ margin-left:0 !important; }
+  .wb-stamp{ margin:-8px auto 14px !important; font-size:12px !important; }
+  .wb-stamp a.wb-back{ margin-left:0 !important; }
+  .wb-fab{ right:10px; bottom:12px; }
+  .wb-fab a{ width:38px; height:38px; font-size:15px; }
+}
+
+</style><!--/WB_THEME--></head>
+<body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a><a href='../dragon/index.html'>龙道诀</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../diagnosis/index.html'>个股研判</a><a href='../reversal/index.html'>底部反转</a><a href='index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a><a href='../three_yin/index.html'>三连阴</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<!--WB_STAMP--><div class='wb-stamp'><span class='s-l'>本页数据基准</span><b class='s-d'>2026-10-09</b><span class='s-hist'>· 历史归档页（内容即该日快照，不随最新数据日更新）</span><a class='wb-back' href='../../index.html'>← 返回</a></div><!--/WB_STAMP-->
+<div class="wrap">
+<h1>主升精选 · 趋势 + 资金 双确认（全市场严格筛选）</h1>
+<div class="sub">数据基准 2026-10-09 收盘｜ <b>全市场域</b>：A 股正股，剔 ST/退 与 20 日均成交额 &lt;3000 万、现价 &lt;2 元
+｜ 先验固定因子集（趋势+资金 9 因子）横截面分位 → A 档前 5%（共 <b>0</b> 只）</div>
+
+<div class="box gold"><b>主升精选是什么（v2）：</b>从<b>全市场正股</b>出发（不再依赖任何现有模型库），
+用「趋势已转多 + 资金真进场」双确认的<b>先验固定因子集</b>（方向由经济逻辑给定、等权、不筛不调权）
+做横截面分位排序，取域内前 5% 为 A 档。比 v1（消费 MACD 池+精选池）更严格、域更干净。
+⚠ 样本外可兑现胜率<b>依赖退出回测的成交假设</b>：乐观口径下约 67.4%，
+可实现口径（保守日内 + 跳空成交）下降至约 60.3%，
+测试半 <b>58.4%</b> —— 详见下方口径修正框。</div>
+
+<div class='box red'><b>大盘环境门控：破位</b>（综合分 2.1）｜ 主升精选二值门控：<b>非强势档 → 空仓，本期不出手</b><br>本页在「破位」档，<b>本期空仓</b>：生产 ENV_RULE 给该档的折数系数是 0.0；该折数没有样本外依据（「打折继续持有」不成立）。空仓的依据强度<b>按档不同</b>：该档的绝对收益<b>符号随采样步长翻转</b>（换一组采样日期就变号），样本外证据<b>判「不可判」</b> —— 此处空仓是「宁可不选」的<b>纪律</b>，<b>不是</b>数据证明该档该空仓。宁可空仓，不乱选。<br>依据见 <a href='env_gate.html' style='color:var(--blue)'>环境门控样本外证据 env_gate.html</a> ／ <a href='env_gate_sens.html' style='color:var(--blue)'>样本量敏感性检验</a>。（做T池沿用同一张 ENV_RULE 表，已单独验证为「不可判」、保持原值，做T侧不随本页改动）</div>
+
+<div class="box green"><b>样本外证据（详见 <a href="lab.html" style="color:var(--blue)">lab.html</a>）：</b>
+A 档（域内前 5%）严格样本外可兑现胜率 <b>67.4%</b>（基线 62.7%），训练半 68.7% / 测试半 65.5% —— ⚠ 此为 <b>乐观成交口径</b>；改按可实现口径后为 <b>60.3%</b>（见下个红框）。
+① <b>先验固定集 vs 自动筛因子</b>：严格样本外（前 60% 学 → 后 40% 测）先验集胜率（乐观口径）
+<b>65.5%</b>、自动筛仅 <b>59.1%</b> —— 「挑因子」这个动作本身就是过拟合，
+先验集才是干净样本外；
+② <b>截断曲线</b>：前 5% 全样本胜率（乐观口径）<b>65.5%</b> 量级，
+训练半与测试半同向（反转池为反向）；
+③ <b>退出规则</b>（移动止盈 −12% / +6%激活 / 3%回撤 / 满 20 日）网格最优组合的胜率是<b>样本内挑出来的</b>，
+不可作为样本外成绩；且其数值对成交假设高度敏感（见下方口径修正框）。
+本页选股/退出能力<b>以 lab.html 与口径审计证据页为准</b>。</div>
+
+<div class='box red' style='border-color:#b00020'><b>⚠️ 口径修正（退出回测的成交假设，必读）：</b>上方胜率来自<b>乐观口径</b>（把同根 K 线当作「先冲高、后回落」）且<b>忽略跳空</b>（开盘已破止损线时仍按止损线价成交）。同一批样本、同一组参数，改按<b>可实现口径</b>（先用截至昨日的止盈线判断当日是否跌破 + 跳空以开盘价成交）重算：A 档可兑现胜率 <b>67.4% → 60.3%</b>，测试半 <b>65.8% → 58.4%</b>（<b>已低于 60%</b>，原「两半均 &gt;60%」的表述不成立）；单笔净均值 <b>+0.681% → +0.437%</b>。旧口径在全样本上被<b>精确复现</b>（62.7%，与冻结模型记录一致），说明差异<b>只来自成交假设</b>，不是换了一批票或换了一段时间。完整四假设对照见 <a href='../docs/exit_assumption_evidence.html' style='color:var(--blue)'>退出回测口径审计证据页</a>。本页结论以该页为准。</div>
+
+<div class="box red" style="border-color:#b00020"><b>⚠️ 退出纪律（唯一跨期稳定的改进，必读）：</b>
+主升浪用<b>移动止盈</b>：未盈利前 −12% 硬止损；浮盈 ≥+6% 后止损上移为「持仓最高价 ×0.97」跟踪；满 20 日强平。
+实验室实测最紧的 −6% 止损两半胜率仅 41%（因前 10% 平均不利偏移已达 −7.7%，贴身止损必被扫）。
+正确用法：<b>破结构位（近 20 日基底）先减半，跌到 −15% 全出；+8%~+10% 先止盈一半</b>。
+胜率与单笔均值是一对权衡，<b>不要只看胜率</b>。</div>
+
+<h2>一、主升精选 A 档（0 只 · 按主升分降序，展开前 40）</h2>
+本期<b>不出手</b>：市场处于「破位」档，按二值门控（<b>强势开仓、其余空仓</b>）主升精选本期空仓等待 —— 这是结论，不是筛选不到票；环境回到强势档后列表会自动恢复。样本外证据见 <a href='env_gate.html' style='color:var(--blue)'>env_gate.html</a>。
+
+<h2>二、合并总表（0 只）</h2>
+<div class="card"><div style="overflow-x:auto"><table>
+<thead><tr><th>代码</th><th>名称</th><th>现价</th><th>主升分</th><th>排名</th><th>买区</th><th>止损</th><th>目标T1/T2</th><th>箱体位置</th><th>关键因子</th></tr></thead>
+<tbody></tbody></table></div>
+<div class="note" style="color:var(--muted);font-size:12px">主升分 = 先验固定因子在<b>当日全市场域内</b>的横截面分位（0~100，越高越好），只在同日内可比、不可跨日比较。
+A = 域内前 5%。<b>箱体位置</b> = 现价在「止损位(0%) → 买区 → T1 → T2(100%)」箱体中的百分比：
+<b>买区内·可买</b>（0~买区上沿，最佳介入区）→ <b>持有·待涨</b>（等 T1）→ <b>已到T1/T2</b>（按纪律止盈一半/兑现）→ <b>已破止损</b>（离场，等待重新进买区）。
+买卖点为量化参考区间，须结合大盘环境与退出纪律执行。
+逐票完整因子见上方卡片；名称可直接点击跳转东方财富个股页。</div></div>
+
+<h2>三、方法论 v2 与局限</h2>
+<div class="card"><div class="kv">
+① <b>v2 改了什么（域）</b>：v1 消费「MACD 池 + 精选池」两个现有模型库（域小、且含各自筛选偏差）；
+v2 改为<b>全市场正股域</b>（剔 ST/退 + 流动性 + 低价），域更干净、横截面分位噪声更低。<br>
+② <b>v2 改了什么（因子）</b>：用<b>先验固定因子集</b>——趋势（近20/60日动量、站上MA60、MA20斜率、均线多头、接近近20日高）
++ 资金（上涨放量占比、量能放大、回调缩量），方向由经济逻辑给定、等权、不筛因子、不按回测调权重。
+严格样本外（前 60% 学 → 后 40% 测）先验集胜率（乐观成交口径）<b>65.5%</b>
+vs 自动筛 <b>59.1%</b>；⚠ 该胜率对成交假设敏感，可实现口径下见上方口径修正框。<br>
+③ <b>截断</b>：A 档 = 域内前 5%（更严格，确保胜率 &gt;60%）；绝对名次随域大小漂移，仅参考。<br>
+④ <b>局限</b>：前向 20 日窗口重叠 → 样本非独立；样本约 10 个月，换年份是否成立无法验证；
+主力资金用「上涨放量占比」价量代理（离线源只给最新日真实主力净流入，历史序列不可得），选股日可叠加真实主力净流入作加分；
+绝对胜率含 beta，结论以相对口径为主。</div></div>
+
+<div class="foot">本页为基于离线日K的量化筛选与方法论，非个股推荐、非买卖建议。决策责任在账户本人。数据基准 2026-10-09。</div>
+</div><script>
+(function(){
+  function cellVal(tr, idx, type){
+    var td = tr.cells[idx];
+    if(!td) return type==='n' ? -Infinity : '';
+    var raw = td.getAttribute('data-v');
+    var txt = (raw!==null? raw : td.textContent).trim();
+    if(type==='n'){
+      var v = parseFloat(txt.replace(/[,%\u00b7\u4e07\u4ebf+]/g,''));
+      return isNaN(v) ? -Infinity : v;
+    }
+    return txt;
+  }
+  document.querySelectorAll('table.sortable').forEach(function(tb){
+    var ths = tb.querySelectorAll('thead th[data-k]');
+    ths.forEach(function(th, ci){
+      th.classList.add('xh-sort');
+      th.addEventListener('click', function(){
+        var tbody = tb.tBodies[0];
+        if(!tbody) return;
+        var arr = Array.prototype.slice.call(tbody.rows);
+        var type = th.getAttribute('data-t') || 'n';
+        var cur = th.getAttribute('data-dir');
+        var dir = (cur === 'asc') ? 'desc' : 'asc';
+        ths.forEach(function(o){ o.removeAttribute('data-dir'); o.classList.remove('xh-asc','xh-desc'); });
+        th.setAttribute('data-dir', dir);
+        th.classList.add(dir==='asc' ? 'xh-asc' : 'xh-desc');
+        arr.sort(function(a,b){
+          var va = cellVal(a, ci, type), vb = cellVal(b, ci, type);
+          if(va < vb) return dir==='asc' ? -1 : 1;
+          if(va > vb) return dir==='asc' ? 1 : -1;
+          return 0;
+        });
+        arr.forEach(function(tr){ tbody.appendChild(tr); });
+      });
+    });
+  });
+})();
+</script>
+<!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* ④ 返回 / 回顶：页头「← 返回」优先走浏览器历史（从哪来退回哪），
+     无历史（直接打开链接/新标签）则用 href 兜底跳门户首页 —— 不用 javascript: 伪协议，
+     保证 href 始终是个真链接（断链门禁与无 JS 环境都成立）。
+     右下角浮动按钮：回顶在滚动 400px 后淡入，回门户常驻。 */
+  try {
+    document.querySelectorAll("a.wb-back").forEach(function (a) {
+      a.addEventListener("click", function (ev) {
+        try {
+          if (window.history && window.history.length > 1 && document.referrer) {
+            ev.preventDefault();
+            window.history.back();
+          }
+        } catch (e) {}
+      });
+    });
+    var top = document.querySelector(".wb-fab a.wb-top");
+    if (top) {
+      top.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        try { window.scrollTo({ top: 0, behavior: "smooth" }); }
+        catch (e) { window.scrollTo(0, 0); }
+      });
+      var sync = function () {
+        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        top.style.display = y > 400 ? "flex" : "none";
+      };
+      window.addEventListener("scroll", sync, { passive: true });
+      sync();
+    }
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--><!--WB_FAB--><div class='wb-fab'><a class='wb-top' href='#' title='回到顶部' aria-label='回到顶部'>↑</a><a class='wb-home' href='../../index.html' title='返回门户首页' aria-label='返回门户首页'>⌂</a></div><!--/WB_FAB--></body></html>

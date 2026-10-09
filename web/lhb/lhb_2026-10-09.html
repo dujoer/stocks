@@ -1,0 +1,3822 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>龙虎榜分析</title>
+<style>* { box-sizing: border-box; }
+body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:#f5f6f8; color:#23262b; min-height:100vh; }
+.wrap { max-width:1040px; margin:0 auto; padding:40px 20px 60px; }
+.topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
+  border-bottom:1px solid rgba(0,0,0,.08); }
+.topnav a { color:#1a73e8; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(26,115,232,.35); transition:.2s; }
+.topnav a:hover { background:rgba(26,115,232,.10); }
+header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#1a73e8,#b8332a,#6b5b95);
+  -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
+header p { margin:4px 0; color:#8a929c; font-size:13px; line-height:1.6; }
+.meta { margin:14px 0 24px; font-size:12px; color:#6b7280; line-height:1.7; }
+.meta b { color:#1a73e8; }
+.section { background:#ffffff;
+  border:1px solid rgba(0,0,0,.08); border-radius:20px; padding:18px 20px; margin:0 0 22px;
+  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); }
+.section h2 { font-size:17px; margin:0 0 14px; color:#1c2430; display:flex; align-items:center; gap:8px; }
+.section h2:before { content:""; width:4px; height:16px; background:#1a73e8; border-radius:3px; }
+.idxrow { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px; }
+.idx { flex:1; min-width:200px; background:linear-gradient(135deg,rgba(184,51,42,.08),rgba(184,51,42,.03));
+  border:1px solid rgba(184,51,42,.20); border-radius:14px; padding:13px 10px; text-align:center;
+  box-shadow:0 1px 3px rgba(184,51,42,.06); }
+.idx .k { font-size:11px; color:#6b7280; letter-spacing:.3px; }
+.idx .v { font-size:22px; font-weight:800; color:#1c2430; margin:5px 0 2px; }
+.idx .c { font-size:13px; font-weight:700; }
+.idx .hl { font-size:10px; color:#8a929c; margin-top:4px; }
+.bar { display:flex; height:34px; border-radius:8px; overflow:hidden; margin:10px 0; font-size:12px;
+  color:#ffffff; text-align:center; line-height:34px; box-shadow:0 2px 6px rgba(0,0,0,.12); }
+.chiprow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+.chip { background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06); border-radius:12px;
+  padding:10px 6px; text-align:center; min-width:74px; backdrop-filter:blur(6px); box-shadow:0 1px 3px rgba(20,30,50,.04); }
+.chip .ck { font-size:10px; color:#8a929c; }
+.chip .cv { font-size:16px; font-weight:800; margin-top:3px; }
+.tag { display:inline-block; border-radius:20px; padding:3px 11px; font-size:12px; margin:3px 4px 3px 0;
+  background:#eef2f8; color:#33414f; }
+.tag.hot { background:#fdeceb; color:#d8392b; }
+.tag.cold { background:#e9f6ef; color:#1a9e5a; }
+.pill { display:inline-block; background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06);
+  border-radius:20px; padding:4px 11px; font-size:12px; color:#3a4048; margin:3px 4px 3px 0; cursor:help; }
+.pill b { color:#1a73e8; font-weight:700; }
+table { width:100%; border-collapse:collapse; font-size:13px; background:rgba(0,0,0,.03);
+  border:1px solid rgba(0,0,0,.05); border-radius:12px; overflow:hidden; margin:10px 0; }
+th,td { padding:8px 10px; text-align:left; border-bottom:1px solid rgba(0,0,0,.04); }
+th { background:rgba(20,30,50,.06); color:#3a4048; font-weight:600; font-size:12px; }
+td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+.up { color:#b8332a; } .down { color:#1a9e5a; }
+.note { color:#8a929c; font-size:12px; margin-top:8px; line-height:1.6; }
+.amberbox { font-size:13px; color:#1a73e8; background:linear-gradient(135deg,rgba(26,115,232,.10),rgba(26,115,232,.04));
+  border:1px solid rgba(26,115,232,.18); border-radius:12px; padding:12px 16px; margin:12px 0; line-height:1.6; }
+.ladder { margin:6px 0; padding:8px 10px; background:rgba(0,0,0,.03); border:1px solid rgba(0,0,0,.08);
+  border-radius:8px; font-size:13px; }
+.ladder .badge { display:inline-block; border-radius:6px; padding:1px 8px; margin-right:8px; font-weight:700; font-size:12px; }
+.ladder .b5 { background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.35); color:#b8332a; }
+.ladder .b6 { background:rgba(184,51,42,.16); border:1px solid rgba(184,51,42,.55); color:#b8332a; }
+.ladder .b5 { background:rgba(184,51,42,.12); border:1px solid rgba(184,51,42,.42); color:#b8332a; }
+.ladder .b4 { background:rgba(184,51,42,.08); border:1px solid rgba(184,51,42,.30); color:#b8332a; }
+.ladder .b3 { background:rgba(26,115,232,.14); border:1px solid rgba(26,115,232,.40); color:#d8bd8a; }
+.ladder .b2 { background:rgba(26,115,232,.14); border:1px solid rgba(26,115,232,.40); color:#d8bd8a; }
+.ladder .b1 { background:rgba(90,107,128,.12); border:1px solid rgba(90,107,128,.35); color:#a7b4c9; }
+.namechip { display:inline-block; color:#3a4048; margin:2px 6px 2px 0; font-size:13px; }
+.empty { color:#8a929c; text-align:center; padding:38px 0; font-size:14px; line-height:1.8; }
+.empty b { color:#1a73e8; }
+footer { margin-top:40px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08);
+  font-size:12px; color:#8a929c; line-height:1.8; }
+a.inlink { color:#1a73e8; text-decoration:none; border:1px solid rgba(201,166,107,.5);
+  border-radius:10px; padding:6px 14px; font-size:13px; font-weight:700; display:inline-block; margin:4px 6px 4px 0; }
+a.inlink:hover { background:rgba(201,166,107,.16); }
+.wrap.landing { max-width:880px; text-align:center; }
+.landing header h1 { font-size:34px; }
+.landing header p { margin:6px 0; color:#8a929c; font-size:14px; }
+.date { margin:18px 0 30px; font-size:13px; color:#1a73e8; letter-spacing:.5px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; text-align:left; }
+.card { display:block; text-decoration:none; color:#23262b; background:#ffffff;
+  border:1px solid rgba(0,0,0,.08); border-radius:18px; padding:20px 18px;
+  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); transition:.2s; }
+.card:hover { border-color:rgba(26,115,232,.50); transform:translateY(-2px); background:linear-gradient(135deg,rgba(26,115,232,.08),rgba(255,255,255,.03)); }
+.card .ic { font-size:26px; }
+.card .t { font-size:17px; font-weight:700; margin:10px 0 6px; color:#1c2430; }
+.card .d { font-size:12.5px; color:#8a929c; line-height:1.6; }
+.hist { margin-top:30px; font-size:12.5px; color:#6b7280; }
+.hist a { color:#1a73e8; text-decoration:none; border:1px solid rgba(201,166,107,.4); border-radius:10px; padding:5px 12px; display:inline-block; margin:4px; }
+.foot { margin-top:42px; font-size:12px; color:#8a929c; line-height:1.8; }
+.lhb { table-layout:fixed; }
+.lhb th, .lhb td { font-size:12.5px; vertical-align:top; }
+.lhb td.reason { color:#6b7280; width:150px; font-size:11.5px; line-height:1.4; }
+.lhb td.sec { font-size:12px; white-space:nowrap; }
+.hm { text-align:center; }
+.hm-high { color:#f2a65a; font-weight:800; }
+.hm-mid { color:#1a73e8; font-weight:700; }
+.hm-low { color:#8a93a3; }
+.hmtags { margin-top:3px; }
+.hmtag { display:inline-block; background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.30); color:#b8332a; border-radius:10px; padding:1px 7px; font-size:10.5px; margin:2px 2px 0 0; }
+.toggle { color:#1a73e8; cursor:pointer; font-size:12px; user-select:none; }
+.toggle:hover { text-decoration:underline; }
+.seats { display:flex; gap:24px; flex-wrap:wrap; padding:6px 4px; }
+.seats .buys, .seats .sells { flex:1; min-width:260px; }
+.seat-h { font-weight:700; margin-bottom:6px; font-size:13px; }
+.seat-h.up { color:#b8332a; } .seat-h.down { color:#1a9e5a; }
+.seats ul { list-style:none; margin:0; padding:0; }
+.seats li { display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px dashed rgba(0,0,0,.04); font-size:12px; }
+.seats li .nm { flex:1; color:#3a4048; }
+.seats li .amt { font-variant-numeric:tabular-nums; font-weight:700; }
+tr.detail td { background:rgba(0,0,0,.03); }
+</style>
+<!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 数据时间戳条（真实数据日 + 返回入口） ----------
+   由 _apply_theme.py 按「页面自身写的数据日」与「全站最新数据日」比对后注入，
+   不是渲染时间、不是硬编码 —— 页面没写数据日就如实显示「未标注」，
+   落后全站就红字报警。这样「页面有没有更新」看页头一眼就知道。 */
+.wb-stamp{
+  display:flex !important; flex-wrap:wrap !important; align-items:center !important;
+  gap:6px 10px !important;
+  max-width:1440px !important; margin:-14px auto 18px !important;
+  padding:8px 14px !important;
+  background:var(--surface) !important; border:1px solid var(--line) !important;
+  border-left:4px solid var(--accent) !important; border-radius:8px !important;
+  font-size:12.5px !important; color:var(--muted) !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.08) !important;
+}
+.wb-stamp .s-l{ color:var(--muted) !important; }
+.wb-stamp .s-d{
+  color:var(--ink) !important; font-weight:700 !important;
+  font-variant-numeric:tabular-nums !important;
+}
+.wb-stamp .s-d.unknown{ color:#80868b !important; font-weight:600 !important; }
+.wb-stamp .s-ok{ color:var(--green) !important; }
+.wb-stamp .s-warn{ color:var(--red) !important; font-weight:600 !important; }
+.wb-stamp .s-hist{ color:var(--muted) !important; }
+.wb-stamp .s-src{ color:#80868b !important; }
+.wb-stamp a.wb-back{
+  margin-left:auto !important; white-space:nowrap !important;
+  display:inline-block !important; padding:3px 13px !important;
+  border:1px solid var(--line) !important; border-radius:16px !important;
+  color:var(--accent-ink) !important; background:var(--accent-soft) !important;
+  font-weight:600 !important; text-decoration:none !important;
+}
+.wb-stamp a.wb-back:hover{ background:var(--accent) !important; color:#fff !important; text-decoration:none !important; }
+
+/* ---------- 右下角浮动「回门户 / 回顶部」 ---------- */
+.wb-fab{
+  position:fixed; right:16px; bottom:18px; z-index:60;
+  display:flex; flex-direction:column; gap:8px;
+}
+.wb-fab a{
+  width:42px; height:42px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--surface); color:var(--ink);
+  border:1px solid var(--line); box-shadow:0 2px 6px rgba(60,64,67,.18);
+  font-size:17px; text-decoration:none; line-height:1;
+}
+.wb-fab a:hover{ background:var(--accent); color:#fff; border-color:var(--accent); text-decoration:none; }
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  /* ★ 窄屏必须让每个模块块各占一整行：
+     原来 .navgrp{flex-shrink:0} + 内部链接 white-space:nowrap，
+     整组宽度压不下去 → 导航溢出容器被裁掉，「主升精选 / 量化策略 / 三连阴」等
+     右侧入口在手机上根本看不见（看着像「没有导航」）。 */
+  .navgrp{ padding:5px 6px 5px 5px !important; width:100% !important; flex-shrink:1 !important; min-width:0 !important; }
+  /* 链接本身也要能收缩：全局 .topnav a{flex-shrink:0} 会让一行内最后一项
+     顶出容器被裁（手机上「高管增减持」就只剩「高管增减」）→ 窄屏放开收缩，
+     min-content 宽度仍是完整文字，不会被截断。 */
+  .topnav a{ flex-shrink:1 !important; }
+  .topnav a.home{ margin-left:0 !important; }
+  .wb-stamp{ margin:-8px auto 14px !important; font-size:12px !important; }
+  .wb-stamp a.wb-back{ margin-left:0 !important; }
+  .wb-fab{ right:10px; bottom:12px; }
+  .wb-fab a{ width:38px; height:38px; font-size:15px; }
+}
+
+</style><!--/WB_THEME--></head>
+<body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a><a href='../dragon/index.html'>龙道诀</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../diagnosis/index.html'>个股研判</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a><a href='../three_yin/index.html'>三连阴</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a></div><a href='../../index.html' class='home'>首页</a></div>
+<!--WB_STAMP--><div class='wb-stamp'><span class='s-l'>本页数据基准</span><b class='s-d'>2026-10-09</b><span class='s-hist'>· 历史归档页（内容即该日快照，不随最新数据日更新）</span><a class='wb-back' href='../../index.html'>← 返回</a></div><!--/WB_STAMP-->
+<div class='wrap'>
+
+<header>
+<h1>🐉 龙虎榜分析</h1>
+<p>个股板块(一级/二级) · 涨跌幅 · 游资介入度 · 席位明细 — 2026-10-09</p>
+</header>
+<div class='meta'>数据来源：westock-mcp data_lhb（全榜 / 机构榜 / 共振 / 席位胜率）+ data_sector（申万一/二级涨跌幅）。一级涨跌幅为成分二级均值（2026-10-09 实时）。</div>
+<div class='chiprow'>
+<a class='inlink' href='lhb_2026-10-08.html'>← 前一日（2026-10-08）</a>
+<span class='pill'>当前 2026-10-09</span>
+<a class='inlink' href='../../index.html'>返回总门户 →</a>
+</div>
+<div class='section'>
+<h2>🐉 龙虎榜全榜 65 只（按净买入额排序）</h2>
+<div class='note'>每行可点击展开查看买方/卖方席位 Top5 与游资标签。板块为申万一级 / 二级（名称+当日涨跌幅）；游资介入度按带标签席位数量分高/中/低，游资净买合计仅统计带标签席位。净买入额单位：亿元。</div>
+<table class='lhb' data-wb>
+<thead>
+<tr>
+<th>排名</th>
+<th>名称</th>
+<th class='num'>涨幅%</th>
+<th class='num'>净买入(亿)</th>
+<th>上榜原因</th>
+<th>一级行业</th>
+<th>二级行业</th>
+<th>游资介入度</th>
+<th>席位</th>
+</tr>
+</thead>
+<tbody>
+<tr class='r' onclick="toggle('dsz300821')" style='cursor:pointer'>
+<td class='num'>1</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300821.html" target="_blank" rel="noopener noreferrer">东岳硅材</a></b> <span class='note'>sz300821</span>
+</td>
+<td class='num up'>+20.01%</td>
+<td class='num up'>1.88</td>
+<td class='reason'>—</td>
+<td class='sec'>基础化工 <span class='down'>-1.43%</span>
+</td>
+<td class='sec'>化学制品 <span class='down'>-1.66%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz300821' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz000420')" style='cursor:pointer'>
+<td class='num'>2</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz000420.html" target="_blank" rel="noopener noreferrer">吉林化纤</a></b> <span class='note'>sz000420</span>
+</td>
+<td class='num up'>+10.12%</td>
+<td class='num up'>1.78</td>
+<td class='reason'>—</td>
+<td class='sec'>基础化工 <span class='down'>-1.43%</span>
+</td>
+<td class='sec'>化学纤维 <span class='down'>-1.46%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz000420' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz300369')" style='cursor:pointer'>
+<td class='num'>3</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300369.html" target="_blank" rel="noopener noreferrer">绿盟科技</a></b> <span class='note'>sz300369</span>
+</td>
+<td class='num up'>+20.02%</td>
+<td class='num up'>1.68</td>
+<td class='reason'>—</td>
+<td class='sec'>计算机 <span class='down'>-1.46%</span>
+</td>
+<td class='sec'>软件开发 <span class='down'>-2.17%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz300369' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002733')" style='cursor:pointer'>
+<td class='num'>4</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002733.html" target="_blank" rel="noopener noreferrer">雄韬股份</a></b> <span class='note'>sz002733</span>
+</td>
+<td class='num up'>+10.01%</td>
+<td class='num up'>1.57</td>
+<td class='reason'>—</td>
+<td class='sec'>电力设备 <span class='down'>-1.57%</span>
+</td>
+<td class='sec'>电池 <span class='down'>-2.54%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002733' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz300364')" style='cursor:pointer'>
+<td class='num'>5</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300364.html" target="_blank" rel="noopener noreferrer">中文在线</a></b> <span class='note'>sz300364</span>
+</td>
+<td class='num up'>+20.01%</td>
+<td class='num up'>1.43</td>
+<td class='reason'>—</td>
+<td class='sec'>传媒 <span class='down'>-2.19%</span>
+</td>
+<td class='sec'>出版 <span class='down'>-2.80%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz300364' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002242')" style='cursor:pointer'>
+<td class='num'>6</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002242.html" target="_blank" rel="noopener noreferrer">九阳股份</a></b> <span class='note'>sz002242</span>
+</td>
+<td class='num up'>+10.04%</td>
+<td class='num up'>1.37</td>
+<td class='reason'>—</td>
+<td class='sec'>家用电器 <span class='down'>-0.84%</span>
+</td>
+<td class='sec'>小家电 <span class='down'>-2.54%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002242' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz300981')" style='cursor:pointer'>
+<td class='num'>7</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300981.html" target="_blank" rel="noopener noreferrer">中红医疗</a></b> <span class='note'>sz300981</span>
+</td>
+<td class='num up'>+19.98%</td>
+<td class='num up'>1.26</td>
+<td class='reason'>—</td>
+<td class='sec'>医药生物 <span class='down'>-1.01%</span>
+</td>
+<td class='sec'>医疗器械 <span class='down'>-1.27%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz300981' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002212')" style='cursor:pointer'>
+<td class='num'>8</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002212.html" target="_blank" rel="noopener noreferrer">天融信</a></b> <span class='note'>sz002212</span>
+</td>
+<td class='num up'>+10.04%</td>
+<td class='num up'>1.21</td>
+<td class='reason'>—</td>
+<td class='sec'>计算机 <span class='down'>-1.46%</span>
+</td>
+<td class='sec'>软件开发 <span class='down'>-2.17%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002212' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002636')" style='cursor:pointer'>
+<td class='num'>9</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002636.html" target="_blank" rel="noopener noreferrer">金安国纪</a></b> <span class='note'>sz002636</span>
+</td>
+<td class='num down'>-10.00%</td>
+<td class='num up'>1.13</td>
+<td class='reason'>—</td>
+<td class='sec'>电子 <span class='down'>-1.39%</span>
+</td>
+<td class='sec'>元件 <span class='down'>-1.74%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002636' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh601929')" style='cursor:pointer'>
+<td class='num'>10</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh601929.html" target="_blank" rel="noopener noreferrer">吉视传媒</a></b> <span class='note'>sh601929</span>
+</td>
+<td class='num up'>+10.13%</td>
+<td class='num up'>1.06</td>
+<td class='reason'>—</td>
+<td class='sec'>传媒 <span class='down'>-2.19%</span>
+</td>
+<td class='sec'>电视广播Ⅱ <span class='down'>-2.06%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh601929' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600354')" style='cursor:pointer'>
+<td class='num'>11</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600354.html" target="_blank" rel="noopener noreferrer">敦煌种业</a></b> <span class='note'>sh600354</span>
+</td>
+<td class='num up'>+10.02%</td>
+<td class='num up'>0.88</td>
+<td class='reason'>—</td>
+<td class='sec'>农林牧渔 <span class='down'>-2.71%</span>
+</td>
+<td class='sec'>种植业 <span class='down'>-5.93%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600354' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603232')" style='cursor:pointer'>
+<td class='num'>12</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603232.html" target="_blank" rel="noopener noreferrer">格尔软件</a></b> <span class='note'>sh603232</span>
+</td>
+<td class='num up'>+9.97%</td>
+<td class='num up'>0.81</td>
+<td class='reason'>—</td>
+<td class='sec'>计算机 <span class='down'>-1.46%</span>
+</td>
+<td class='sec'>软件开发 <span class='down'>-2.17%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603232' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603757')" style='cursor:pointer'>
+<td class='num'>13</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603757.html" target="_blank" rel="noopener noreferrer">大元泵</a>业</b> <span class='note'>sh603757</span>
+</td>
+<td class='num up'>+4.55%</td>
+<td class='num up'>0.76</td>
+<td class='reason'>—</td>
+<td class='sec'>机械设备 <span class='down'>-1.35%</span>
+</td>
+<td class='sec'>通用设备 <span class='down'>-0.69%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603757' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz300189')" style='cursor:pointer'>
+<td class='num'>14</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300189.html" target="_blank" rel="noopener noreferrer">神农种业</a></b> <span class='note'>sz300189</span>
+</td>
+<td class='num up'>+10.40%</td>
+<td class='num up'>0.72</td>
+<td class='reason'>—</td>
+<td class='sec'>农林牧渔 <span class='down'>-2.71%</span>
+</td>
+<td class='sec'>种植业 <span class='down'>-5.93%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz300189' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz301689')" style='cursor:pointer'>
+<td class='num'>15</td>
+<td>
+<b>电科思仪</b> <span class='note'>sz301689</span>
+</td>
+<td class='num down'>-1.65%</td>
+<td class='num up'>0.71</td>
+<td class='reason'>—</td>
+<td class='sec'>—</td>
+<td class='sec'>—</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz301689' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600400')" style='cursor:pointer'>
+<td class='num'>16</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600400.html" target="_blank" rel="noopener noreferrer">红豆股份</a></b> <span class='note'>sh600400</span>
+</td>
+<td class='num up'>+9.94%</td>
+<td class='num up'>0.69</td>
+<td class='reason'>—</td>
+<td class='sec'>纺织服饰 <span class='down'>-0.73%</span>
+</td>
+<td class='sec'>服装家纺 <span class='up'>+0.38%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600400' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600127')" style='cursor:pointer'>
+<td class='num'>17</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600127.html" target="_blank" rel="noopener noreferrer">金健米业</a></b> <span class='note'>sh600127</span>
+</td>
+<td class='num up'>+10.00%</td>
+<td class='num up'>0.60</td>
+<td class='reason'>—</td>
+<td class='sec'>农林牧渔 <span class='down'>-2.71%</span>
+</td>
+<td class='sec'>农产品加工 <span class='down'>-3.16%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600127' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002317')" style='cursor:pointer'>
+<td class='num'>18</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002317.html" target="_blank" rel="noopener noreferrer">众生药业</a></b> <span class='note'>sz002317</span>
+</td>
+<td class='num up'>+10.01%</td>
+<td class='num up'>0.58</td>
+<td class='reason'>—</td>
+<td class='sec'>医药生物 <span class='down'>-1.01%</span>
+</td>
+<td class='sec'>中药Ⅱ <span class='down'>-1.31%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002317' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh688152')" style='cursor:pointer'>
+<td class='num'>19</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh688152.html" target="_blank" rel="noopener noreferrer">麒麟信安</a></b> <span class='note'>sh688152</span>
+</td>
+<td class='num up'>+19.99%</td>
+<td class='num up'>0.51</td>
+<td class='reason'>—</td>
+<td class='sec'>计算机 <span class='down'>-1.46%</span>
+</td>
+<td class='sec'>软件开发 <span class='down'>-2.17%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh688152' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600812')" style='cursor:pointer'>
+<td class='num'>20</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600812.html" target="_blank" rel="noopener noreferrer">华北制药</a></b> <span class='note'>sh600812</span>
+</td>
+<td class='num up'>+10.04%</td>
+<td class='num up'>0.42</td>
+<td class='reason'>—</td>
+<td class='sec'>医药生物 <span class='down'>-1.01%</span>
+</td>
+<td class='sec'>化学制药 <span class='down'>-1.04%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600812' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002805')" style='cursor:pointer'>
+<td class='num'>21</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002805.html" target="_blank" rel="noopener noreferrer">丰元股份</a></b> <span class='note'>sz002805</span>
+</td>
+<td class='num up'>+10.02%</td>
+<td class='num up'>0.40</td>
+<td class='reason'>—</td>
+<td class='sec'>电力设备 <span class='down'>-1.57%</span>
+</td>
+<td class='sec'>电池 <span class='down'>-2.54%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002805' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002487')" style='cursor:pointer'>
+<td class='num'>22</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002487.html" target="_blank" rel="noopener noreferrer">大金重工</a></b> <span class='note'>sz002487</span>
+</td>
+<td class='num down'>-10.00%</td>
+<td class='num up'>0.36</td>
+<td class='reason'>—</td>
+<td class='sec'>电力设备 <span class='down'>-1.57%</span>
+</td>
+<td class='sec'>风电设备 <span class='down'>-1.63%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002487' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603928')" style='cursor:pointer'>
+<td class='num'>23</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603928.html" target="_blank" rel="noopener noreferrer">兴业股份</a></b> <span class='note'>sh603928</span>
+</td>
+<td class='num down'>-4.80%</td>
+<td class='num up'>0.26</td>
+<td class='reason'>—</td>
+<td class='sec'>基础化工 <span class='down'>-1.43%</span>
+</td>
+<td class='sec'>塑料 <span class='down'>-0.66%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603928' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603096')" style='cursor:pointer'>
+<td class='num'>24</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603096.html" target="_blank" rel="noopener noreferrer">新经典</a></b> <span class='note'>sh603096</span>
+</td>
+<td class='num up'>+10.03%</td>
+<td class='num up'>0.23</td>
+<td class='reason'>—</td>
+<td class='sec'>传媒 <span class='down'>-2.19%</span>
+</td>
+<td class='sec'>出版 <span class='down'>-2.80%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603096' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002316')" style='cursor:pointer'>
+<td class='num'>25</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002316.html" target="_blank" rel="noopener noreferrer">亚联发展</a></b> <span class='note'>sz002316</span>
+</td>
+<td class='num down'>-2.61%</td>
+<td class='num up'>0.18</td>
+<td class='reason'>—</td>
+<td class='sec'>综合 <span class='down'>-1.70%</span>
+</td>
+<td class='sec'>综合Ⅱ <span class='down'>-1.70%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002316' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603949')" style='cursor:pointer'>
+<td class='num'>26</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603949.html" target="_blank" rel="noopener noreferrer">雪龙集团</a></b> <span class='note'>sh603949</span>
+</td>
+<td class='num down'>-5.79%</td>
+<td class='num up'>0.16</td>
+<td class='reason'>—</td>
+<td class='sec'>汽车 <span class='down'>-1.60%</span>
+</td>
+<td class='sec'>汽车零部件 <span class='down'>-0.54%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603949' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603101')" style='cursor:pointer'>
+<td class='num'>27</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603101.html" target="_blank" rel="noopener noreferrer">汇嘉时代</a></b> <span class='note'>sh603101</span>
+</td>
+<td class='num up'>+10.06%</td>
+<td class='num up'>0.09</td>
+<td class='reason'>—</td>
+<td class='sec'>商贸零售 <span class='down'>-0.98%</span>
+</td>
+<td class='sec'>一般零售 <span class='down'>-1.35%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603101' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600408')" style='cursor:pointer'>
+<td class='num'>28</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600408.html" target="_blank" rel="noopener noreferrer">安泰集团</a></b> <span class='note'>sh600408</span>
+</td>
+<td class='num up'>+9.88%</td>
+<td class='num up'>0.09</td>
+<td class='reason'>—</td>
+<td class='sec'>煤炭 <span class='down'>-3.04%</span>
+</td>
+<td class='sec'>焦炭Ⅱ <span class='down'>-3.71%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600408' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002927')" style='cursor:pointer'>
+<td class='num'>29</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002927.html" target="_blank" rel="noopener noreferrer">泰永长征</a></b> <span class='note'>sz002927</span>
+</td>
+<td class='num down'>-10.00%</td>
+<td class='num up'>0.05</td>
+<td class='reason'>—</td>
+<td class='sec'>电力设备 <span class='down'>-1.57%</span>
+</td>
+<td class='sec'>电网设备 <span class='down'>-0.45%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002927' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603248')" style='cursor:pointer'>
+<td class='num'>30</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603248.html" target="_blank" rel="noopener noreferrer">锡华科技</a></b> <span class='note'>sh603248</span>
+</td>
+<td class='num down'>-3.73%</td>
+<td class='num down'>-0.01</td>
+<td class='reason'>—</td>
+<td class='sec'>电力设备 <span class='down'>-1.57%</span>
+</td>
+<td class='sec'>风电设备 <span class='down'>-1.63%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603248' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz301139')" style='cursor:pointer'>
+<td class='num'>31</td>
+<td>
+<b>元道退</b> <span class='note'>sz301139</span>
+</td>
+<td class='num down'>-5.32%</td>
+<td class='num down'>-0.02</td>
+<td class='reason'>—</td>
+<td class='sec'>通信 <span class='down'>-1.48%</span>
+</td>
+<td class='sec'>—</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz301139' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600865')" style='cursor:pointer'>
+<td class='num'>32</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600865.html" target="_blank" rel="noopener noreferrer">百大集团</a></b> <span class='note'>sh600865</span>
+</td>
+<td class='num up'>+10.04%</td>
+<td class='num down'>-0.05</td>
+<td class='reason'>—</td>
+<td class='sec'>商贸零售 <span class='down'>-0.98%</span>
+</td>
+<td class='sec'>一般零售 <span class='down'>-1.35%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600865' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh601091')" style='cursor:pointer'>
+<td class='num'>33</td>
+<td>
+<b>沈鼓集团</b> <span class='note'>sh601091</span>
+</td>
+<td class='num down'>-4.83%</td>
+<td class='num down'>-0.06</td>
+<td class='reason'>—</td>
+<td class='sec'>—</td>
+<td class='sec'>—</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh601091' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz301513')" style='cursor:pointer'>
+<td class='num'>34</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz301513.html" target="_blank" rel="noopener noreferrer">尚水智能</a></b> <span class='note'>sz301513</span>
+</td>
+<td class='num up'>+6.02%</td>
+<td class='num down'>-0.07</td>
+<td class='reason'>—</td>
+<td class='sec'>电力设备 <span class='down'>-1.57%</span>
+</td>
+<td class='sec'>电池 <span class='down'>-2.54%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz301513' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002058')" style='cursor:pointer'>
+<td class='num'>35</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002058.html" target="_blank" rel="noopener noreferrer">紫竹高科</a></b> <span class='note'>sz002058</span>
+</td>
+<td class='num up'>+9.99%</td>
+<td class='num down'>-0.07</td>
+<td class='reason'>—</td>
+<td class='sec'>电力设备 <span class='down'>-1.57%</span>
+</td>
+<td class='sec'>电池 <span class='down'>-2.54%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002058' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603073')" style='cursor:pointer'>
+<td class='num'>36</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603073.html" target="_blank" rel="noopener noreferrer">彩蝶实业</a></b> <span class='note'>sh603073</span>
+</td>
+<td class='num down'>-10.01%</td>
+<td class='num down'>-0.07</td>
+<td class='reason'>—</td>
+<td class='sec'>基础化工 <span class='down'>-1.43%</span>
+</td>
+<td class='sec'>化学纤维 <span class='down'>-1.46%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603073' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz001300')" style='cursor:pointer'>
+<td class='num'>37</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz001300.html" target="_blank" rel="noopener noreferrer">三柏硕</a></b> <span class='note'>sz001300</span>
+</td>
+<td class='num up'>+9.99%</td>
+<td class='num down'>-0.12</td>
+<td class='reason'>—</td>
+<td class='sec'>轻工制造 <span class='down'>-1.08%</span>
+</td>
+<td class='sec'>文娱用品 <span class='down'>-1.59%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz001300' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603400')" style='cursor:pointer'>
+<td class='num'>38</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603400.html" target="_blank" rel="noopener noreferrer">华之杰</a></b> <span class='note'>sh603400</span>
+</td>
+<td class='num down'>-10.00%</td>
+<td class='num down'>-0.17</td>
+<td class='reason'>—</td>
+<td class='sec'>机械设备 <span class='down'>-1.35%</span>
+</td>
+<td class='sec'>通用设备 <span class='down'>-0.69%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603400' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz000911')" style='cursor:pointer'>
+<td class='num'>39</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz000911.html" target="_blank" rel="noopener noreferrer">*ST广糖</a></b> <span class='note'>sz000911</span>
+</td>
+<td class='num up'>+7.26%</td>
+<td class='num down'>-0.18</td>
+<td class='reason'>—</td>
+<td class='sec'>农林牧渔 <span class='down'>-2.71%</span>
+</td>
+<td class='sec'>农产品加工 <span class='down'>-3.16%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz000911' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz300413')" style='cursor:pointer'>
+<td class='num'>40</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300413.html" target="_blank" rel="noopener noreferrer">芒果超媒</a></b> <span class='note'>sz300413</span>
+</td>
+<td class='num up'>+19.98%</td>
+<td class='num down'>-0.18</td>
+<td class='reason'>—</td>
+<td class='sec'>传媒 <span class='down'>-2.19%</span>
+</td>
+<td class='sec'>数字媒体 <span class='down'>-1.10%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz300413' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002531')" style='cursor:pointer'>
+<td class='num'>41</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002531.html" target="_blank" rel="noopener noreferrer">天顺风能</a></b> <span class='note'>sz002531</span>
+</td>
+<td class='num down'>-9.94%</td>
+<td class='num down'>-0.18</td>
+<td class='reason'>—</td>
+<td class='sec'>电力设备 <span class='down'>-1.57%</span>
+</td>
+<td class='sec'>风电设备 <span class='down'>-1.63%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002531' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz000678')" style='cursor:pointer'>
+<td class='num'>42</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz000678.html" target="_blank" rel="noopener noreferrer">襄阳轴承</a></b> <span class='note'>sz000678</span>
+</td>
+<td class='num up'>+3.10%</td>
+<td class='num down'>-0.18</td>
+<td class='reason'>—</td>
+<td class='sec'>汽车 <span class='down'>-1.60%</span>
+</td>
+<td class='sec'>汽车零部件 <span class='down'>-0.54%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz000678' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002172')" style='cursor:pointer'>
+<td class='num'>43</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002172.html" target="_blank" rel="noopener noreferrer">澳洋健康</a></b> <span class='note'>sz002172</span>
+</td>
+<td class='num up'>+4.42%</td>
+<td class='num down'>-0.19</td>
+<td class='reason'>—</td>
+<td class='sec'>医药生物 <span class='down'>-1.01%</span>
+</td>
+<td class='sec'>医疗服务 <span class='up'>+0.06%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002172' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz001336')" style='cursor:pointer'>
+<td class='num'>44</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz001336.html" target="_blank" rel="noopener noreferrer">楚环科技</a></b> <span class='note'>sz001336</span>
+</td>
+<td class='num up'>+10.02%</td>
+<td class='num down'>-0.21</td>
+<td class='reason'>—</td>
+<td class='sec'>环保 <span class='down'>-0.84%</span>
+</td>
+<td class='sec'>环保设备Ⅱ <span class='down'>-0.83%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz001336' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh605303')" style='cursor:pointer'>
+<td class='num'>45</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh605303.html" target="_blank" rel="noopener noreferrer">园林股份</a></b> <span class='note'>sh605303</span>
+</td>
+<td class='num up'>+2.16%</td>
+<td class='num down'>-0.21</td>
+<td class='reason'>—</td>
+<td class='sec'>建筑装饰 <span class='down'>-0.92%</span>
+</td>
+<td class='sec'>基础建设 <span class='down'>-0.96%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh605303' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh688806')" style='cursor:pointer'>
+<td class='num'>46</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh688806.html" target="_blank" rel="noopener noreferrer">泰诺麦博</a></b> <span class='note'>sh688806</span>
+</td>
+<td class='num up'>+11.75%</td>
+<td class='num down'>-0.23</td>
+<td class='reason'>—</td>
+<td class='sec'>医药生物 <span class='down'>-1.01%</span>
+</td>
+<td class='sec'>生物制品 <span class='down'>-1.18%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh688806' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh605366')" style='cursor:pointer'>
+<td class='num'>47</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh605366.html" target="_blank" rel="noopener noreferrer">宏柏新材</a></b> <span class='note'>sh605366</span>
+</td>
+<td class='num down'>-9.96%</td>
+<td class='num down'>-0.24</td>
+<td class='reason'>—</td>
+<td class='sec'>基础化工 <span class='down'>-1.43%</span>
+</td>
+<td class='sec'>化学制品 <span class='down'>-1.66%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh605366' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz301599')" style='cursor:pointer'>
+<td class='num'>48</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz301599.html" target="_blank" rel="noopener noreferrer">理奇智能</a></b> <span class='note'>sz301599</span>
+</td>
+<td class='num down'>-0.81%</td>
+<td class='num down'>-0.25</td>
+<td class='reason'>—</td>
+<td class='sec'>电力设备 <span class='down'>-1.57%</span>
+</td>
+<td class='sec'>电池 <span class='down'>-2.54%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz301599' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz001216')" style='cursor:pointer'>
+<td class='num'>49</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz001216.html" target="_blank" rel="noopener noreferrer">华瓷股份</a></b> <span class='note'>sz001216</span>
+</td>
+<td class='num down'>-3.44%</td>
+<td class='num down'>-0.27</td>
+<td class='reason'>—</td>
+<td class='sec'>轻工制造 <span class='down'>-1.08%</span>
+</td>
+<td class='sec'>家居用品 <span class='down'>-0.85%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz001216' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh688244')" style='cursor:pointer'>
+<td class='num'>50</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh688244.html" target="_blank" rel="noopener noreferrer">永信至诚</a></b> <span class='note'>sh688244</span>
+</td>
+<td class='num up'>+16.22%</td>
+<td class='num down'>-0.29</td>
+<td class='reason'>—</td>
+<td class='sec'>计算机 <span class='down'>-1.46%</span>
+</td>
+<td class='sec'>软件开发 <span class='down'>-2.17%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh688244' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603200')" style='cursor:pointer'>
+<td class='num'>51</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603200.html" target="_blank" rel="noopener noreferrer">上海洗霸</a></b> <span class='note'>sh603200</span>
+</td>
+<td class='num up'>+9.57%</td>
+<td class='num down'>-0.31</td>
+<td class='reason'>—</td>
+<td class='sec'>环保 <span class='down'>-0.84%</span>
+</td>
+<td class='sec'>环境治理 <span class='down'>-0.86%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603200' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz000011')" style='cursor:pointer'>
+<td class='num'>52</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz000011.html" target="_blank" rel="noopener noreferrer">深物业A</a></b> <span class='note'>sz000011</span>
+</td>
+<td class='num up'>+3.88%</td>
+<td class='num down'>-0.34</td>
+<td class='reason'>—</td>
+<td class='sec'>房地产 <span class='down'>-1.03%</span>
+</td>
+<td class='sec'>房地产开发 <span class='down'>-0.85%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz000011' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002702')" style='cursor:pointer'>
+<td class='num'>53</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002702.html" target="_blank" rel="noopener noreferrer">海欣食品</a></b> <span class='note'>sz002702</span>
+</td>
+<td class='num up'>+4.05%</td>
+<td class='num down'>-0.44</td>
+<td class='reason'>—</td>
+<td class='sec'>食品饮料 <span class='down'>-0.94%</span>
+</td>
+<td class='sec'>食品加工 <span class='down'>-1.40%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002702' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002962')" style='cursor:pointer'>
+<td class='num'>54</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002962.html" target="_blank" rel="noopener noreferrer">五方光电</a></b> <span class='note'>sz002962</span>
+</td>
+<td class='num down'>-10.01%</td>
+<td class='num down'>-0.44</td>
+<td class='reason'>—</td>
+<td class='sec'>电子 <span class='down'>-1.39%</span>
+</td>
+<td class='sec'>光学光电子 <span class='down'>-1.65%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002962' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002866')" style='cursor:pointer'>
+<td class='num'>55</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002866.html" target="_blank" rel="noopener noreferrer">传艺科技</a></b> <span class='note'>sz002866</span>
+</td>
+<td class='num down'>-1.45%</td>
+<td class='num down'>-0.51</td>
+<td class='reason'>—</td>
+<td class='sec'>电子 <span class='down'>-1.39%</span>
+</td>
+<td class='sec'>消费电子 <span class='down'>-0.18%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002866' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz301697')" style='cursor:pointer'>
+<td class='num'>56</td>
+<td>
+<b>贝特利</b> <span class='note'>sz301697</span>
+</td>
+<td class='num down'>-4.47%</td>
+<td class='num down'>-0.61</td>
+<td class='reason'>—</td>
+<td class='sec'>—</td>
+<td class='sec'>—</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz301697' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz001330')" style='cursor:pointer'>
+<td class='num'>57</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz001330.html" target="_blank" rel="noopener noreferrer">博纳影业</a></b> <span class='note'>sz001330</span>
+</td>
+<td class='num up'>+9.94%</td>
+<td class='num down'>-0.61</td>
+<td class='reason'>—</td>
+<td class='sec'>传媒 <span class='down'>-2.19%</span>
+</td>
+<td class='sec'>影视院线 <span class='down'>-3.10%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz001330' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh601118')" style='cursor:pointer'>
+<td class='num'>58</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh601118.html" target="_blank" rel="noopener noreferrer">海南橡胶</a></b> <span class='note'>sh601118</span>
+</td>
+<td class='num up'>+9.98%</td>
+<td class='num down'>-0.64</td>
+<td class='reason'>—</td>
+<td class='sec'>农林牧渔 <span class='down'>-2.71%</span>
+</td>
+<td class='sec'>种植业 <span class='down'>-5.93%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh601118' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600363')" style='cursor:pointer'>
+<td class='num'>59</td>
+<td>
+<b>ST联光</b> <span class='note'>sh600363</span>
+</td>
+<td class='num down'>-6.56%</td>
+<td class='num down'>-0.72</td>
+<td class='reason'>—</td>
+<td class='sec'>电子 <span class='down'>-1.39%</span>
+</td>
+<td class='sec'>—</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600363' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603823')" style='cursor:pointer'>
+<td class='num'>60</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603823.html" target="_blank" rel="noopener noreferrer">百合花</a></b> <span class='note'>sh603823</span>
+</td>
+<td class='num down'>-10.00%</td>
+<td class='num down'>-0.93</td>
+<td class='reason'>—</td>
+<td class='sec'>基础化工 <span class='down'>-1.43%</span>
+</td>
+<td class='sec'>化学制品 <span class='down'>-1.66%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603823' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600663')" style='cursor:pointer'>
+<td class='num'>61</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600663.html" target="_blank" rel="noopener noreferrer">陆家嘴</a></b> <span class='note'>sh600663</span>
+</td>
+<td class='num down'>-8.72%</td>
+<td class='num down'>-0.98</td>
+<td class='reason'>—</td>
+<td class='sec'>房地产 <span class='down'>-1.03%</span>
+</td>
+<td class='sec'>房地产开发 <span class='down'>-0.85%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600663' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsz002285')" style='cursor:pointer'>
+<td class='num'>62</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002285.html" target="_blank" rel="noopener noreferrer">世联行</a></b> <span class='note'>sz002285</span>
+</td>
+<td class='num up'>+1.87%</td>
+<td class='num down'>-1.01</td>
+<td class='reason'>—</td>
+<td class='sec'>房地产 <span class='down'>-1.03%</span>
+</td>
+<td class='sec'>房地产服务 <span class='down'>-1.21%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsz002285' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600825')" style='cursor:pointer'>
+<td class='num'>63</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600825.html" target="_blank" rel="noopener noreferrer">新华传媒</a></b> <span class='note'>sh600825</span>
+</td>
+<td class='num up'>+10.01%</td>
+<td class='num down'>-1.12</td>
+<td class='reason'>—</td>
+<td class='sec'>传媒 <span class='down'>-2.19%</span>
+</td>
+<td class='sec'>出版 <span class='down'>-2.80%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600825' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh600722')" style='cursor:pointer'>
+<td class='num'>64</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600722.html" target="_blank" rel="noopener noreferrer">金牛化工</a></b> <span class='note'>sh600722</span>
+</td>
+<td class='num up'>+4.26%</td>
+<td class='num down'>-1.21</td>
+<td class='reason'>—</td>
+<td class='sec'>基础化工 <span class='down'>-1.43%</span>
+</td>
+<td class='sec'>化学原料 <span class='down'>-2.08%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh600722' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+<tr class='r' onclick="toggle('dsh603002')" style='cursor:pointer'>
+<td class='num'>65</td>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603002.html" target="_blank" rel="noopener noreferrer">宏昌电子</a></b> <span class='note'>sh603002</span>
+</td>
+<td class='num down'>-5.40%</td>
+<td class='num down'>-2.76</td>
+<td class='reason'>—</td>
+<td class='sec'>电子 <span class='down'>-1.39%</span>
+</td>
+<td class='sec'>电子化学品Ⅱ <span class='down'>-1.83%</span>
+</td>
+<td class='hm hm-low'>低<div class='hmtags'>
+<span class='note'>—</span>
+</div>
+</td>
+<td>
+<span class='toggle'>▸ 席位</span>
+</td>
+</tr>
+<tr id='dsh603002' class='detail' style='display:none'>
+<td colspan='9'>
+<div class='seats'>
+<div class='buys'>
+<div class='seat-h up'>买方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+<div class='sells'>
+<div class='seat-h down'>卖方席位 Top5</div>
+<ul>
+<li class='note'>—</li>
+</ul>
+</div>
+</div>
+<div class='note'>游资净买合计：<b class=''>0.00亿</b>（仅统计带游资标签席位；共 0 个标签席位）</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class='section'>
+<h2>🏛️ 机构专用榜 TOP20（按净买额）</h2>
+<div class='note'>机构专用席位净买入口径；净买额为净流入（买入−卖出）。共 38 只个股上榜机构榜。</div>
+<table data-wb>
+<tr>
+<th>名称</th>
+<th class='num'>上榜</th>
+<th class='num'>机构买入(亿)</th>
+<th class='num'>机构净买(亿)</th>
+<th class='num'>净买率%</th>
+<th class='num'>席位</th>
+<th class='num'>总买入(亿)</th>
+<th class='num'>排名</th>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300413.html" target="_blank" rel="noopener noreferrer">芒果超媒</a></b> <span class='note'>sz300413</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num'>-1.05</td>
+<td class='num up'>1.85</td>
+<td class='num up'>11.17</td>
+<td class='num'>5.0</td>
+<td class='num'>0.80</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600663.html" target="_blank" rel="noopener noreferrer">陆家嘴</a></b> <span class='note'>sh600663</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num'>-1.83</td>
+<td class='num up'>1.83</td>
+<td class='num up'>2.27</td>
+<td class='num'>5.0</td>
+<td class='num'>0.00</td>
+<td class='num'>2.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002317.html" target="_blank" rel="noopener noreferrer">众生药业</a></b> <span class='note'>sz002317</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num'>-0.59</td>
+<td class='num up'>1.72</td>
+<td class='num up'>6.43</td>
+<td class='num'>5.0</td>
+<td class='num'>1.13</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b>电科思仪</b> <span class='note'>sz301689</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num'>0.65</td>
+<td class='num up'>1.37</td>
+<td class='num up'>32.23</td>
+<td class='num'>5.0</td>
+<td class='num'>2.02</td>
+<td class='num'>11.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002702.html" target="_blank" rel="noopener noreferrer">海欣食品</a></b> <span class='note'>sz002702</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num'>-0.45</td>
+<td class='num up'>1.26</td>
+<td class='num up'>36.76</td>
+<td class='num'>5.0</td>
+<td class='num'>0.82</td>
+<td class='num'>2.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300981.html" target="_blank" rel="noopener noreferrer">中红医疗</a></b> <span class='note'>sz300981</span>
+</td>
+<td class='num'>3.0</td>
+<td class='num'>0.07</td>
+<td class='num up'>1.16</td>
+<td class='num up'>8.91</td>
+<td class='num'>5.0</td>
+<td class='num'>1.23</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300189.html" target="_blank" rel="noopener noreferrer">神农种业</a></b> <span class='note'>sz300189</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num'>0.14</td>
+<td class='num up'>1.08</td>
+<td class='num up'>34.05</td>
+<td class='num'>4.0</td>
+<td class='num'>1.22</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz001330.html" target="_blank" rel="noopener noreferrer">博纳影业</a></b> <span class='note'>sz001330</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num'>0.06</td>
+<td class='num up'>1.06</td>
+<td class='num up'>20.92</td>
+<td class='num'>5.0</td>
+<td class='num'>1.12</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b>贝特利</b> <span class='note'>sz301697</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num'>-0.02</td>
+<td class='num up'>0.94</td>
+<td class='num up'>46.49</td>
+<td class='num'>5.0</td>
+<td class='num'>0.92</td>
+<td class='num'>2.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300821.html" target="_blank" rel="noopener noreferrer">东岳硅材</a></b> <span class='note'>sz300821</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num'>0.84</td>
+<td class='num up'>0.84</td>
+<td class='num up'>12.56</td>
+<td class='num'>3.0</td>
+<td class='num'>1.68</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300364.html" target="_blank" rel="noopener noreferrer">中文在线</a></b> <span class='note'>sz300364</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num'>-0.27</td>
+<td class='num up'>0.82</td>
+<td class='num up'>12.58</td>
+<td class='num'>2.0</td>
+<td class='num'>0.55</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002285.html" target="_blank" rel="noopener noreferrer">世联行</a></b> <span class='note'>sz002285</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num'>-0.48</td>
+<td class='num up'>0.79</td>
+<td class='num up'>16.73</td>
+<td class='num'>2.0</td>
+<td class='num'>0.30</td>
+<td class='num'>2.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz000678.html" target="_blank" rel="noopener noreferrer">襄阳轴承</a></b> <span class='note'>sz000678</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num'>-0.39</td>
+<td class='num up'>0.77</td>
+<td class='num up'>26.56</td>
+<td class='num'>2.0</td>
+<td class='num'>0.38</td>
+<td class='num'>3.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz000011.html" target="_blank" rel="noopener noreferrer">深物业A</a></b> <span class='note'>sz000011</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num'>-0.01</td>
+<td class='num up'>0.66</td>
+<td class='num up'>21.58</td>
+<td class='num'>3.0</td>
+<td class='num'>0.64</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002487.html" target="_blank" rel="noopener noreferrer">大金重工</a></b> <span class='note'>sz002487</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num'>0.35</td>
+<td class='num up'>0.64</td>
+<td class='num up'>16.67</td>
+<td class='num'>2.0</td>
+<td class='num'>0.99</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz001336.html" target="_blank" rel="noopener noreferrer">楚环科技</a></b> <span class='note'>sz001336</span>
+</td>
+<td class='num'>3.0</td>
+<td class='num'>-0.50</td>
+<td class='num up'>0.61</td>
+<td class='num up'>24.13</td>
+<td class='num'>3.0</td>
+<td class='num'>0.11</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002962.html" target="_blank" rel="noopener noreferrer">五方光电</a></b> <span class='note'>sz002962</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num'>-0.32</td>
+<td class='num up'>0.59</td>
+<td class='num up'>10.47</td>
+<td class='num'>4.0</td>
+<td class='num'>0.27</td>
+<td class='num'>3.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002805.html" target="_blank" rel="noopener noreferrer">丰元股份</a></b> <span class='note'>sz002805</span>
+</td>
+<td class='num'>3.0</td>
+<td class='num'>0.28</td>
+<td class='num up'>0.54</td>
+<td class='num up'>11.36</td>
+<td class='num'>4.0</td>
+<td class='num'>0.82</td>
+<td class='num'>2.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002172.html" target="_blank" rel="noopener noreferrer">澳洋健康</a></b> <span class='note'>sz002172</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num'>-0.28</td>
+<td class='num up'>0.52</td>
+<td class='num up'>25.82</td>
+<td class='num'>3.0</td>
+<td class='num'>0.24</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300369.html" target="_blank" rel="noopener noreferrer">绿盟科技</a></b> <span class='note'>sz300369</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num'>0.52</td>
+<td class='num up'>0.51</td>
+<td class='num up'>13.07</td>
+<td class='num'>4.0</td>
+<td class='num'>1.03</td>
+<td class='num'>1.0</td>
+</tr>
+</table>
+</div>
+<div class='section'>
+<h2>🔗 机构 + 游资共振买入（26 只）</h2>
+<div class='note'>同时出现机构与活跃游资席位合力的个股；netAmt 为共振净流入，upRate 为当日涨幅，winNum 为龙虎榜上榜席位家数。</div>
+<table data-wb>
+<tr>
+<th>名称</th>
+<th class='num'>上榜天数</th>
+<th class='num'>共振净买(亿)</th>
+<th class='num'>当日涨幅%</th>
+<th class='num'>买入(亿)</th>
+<th class='num'>卖出(亿)</th>
+<th class='num'>席位家数</th>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002636.html" target="_blank" rel="noopener noreferrer">金安国纪</a></b> <span class='note'>sz002636</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>1.33</td>
+<td class='num down'>-10.00%</td>
+<td class='num'>1.36</td>
+<td class='num'>0.03</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600127.html" target="_blank" rel="noopener noreferrer">金健米业</a></b> <span class='note'>sh600127</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>1.15</td>
+<td class='num up'>+10.00%</td>
+<td class='num'>1.15</td>
+<td class='num'>0.00</td>
+<td class='num'>3.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002242.html" target="_blank" rel="noopener noreferrer">九阳股份</a></b> <span class='note'>sz002242</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>1.01</td>
+<td class='num up'>+10.04%</td>
+<td class='num'>1.03</td>
+<td class='num'>0.01</td>
+<td class='num'>2.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002212.html" target="_blank" rel="noopener noreferrer">天融信</a></b> <span class='note'>sz002212</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>0.84</td>
+<td class='num up'>+10.04%</td>
+<td class='num'>0.84</td>
+<td class='num'>0.00</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300364.html" target="_blank" rel="noopener noreferrer">中文在线</a></b> <span class='note'>sz300364</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>0.80</td>
+<td class='num up'>+20.01%</td>
+<td class='num'>0.80</td>
+<td class='num'>0.00</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002487.html" target="_blank" rel="noopener noreferrer">大金重工</a></b> <span class='note'>sz002487</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>0.67</td>
+<td class='num down'>-10.00%</td>
+<td class='num'>0.68</td>
+<td class='num'>0.01</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300821.html" target="_blank" rel="noopener noreferrer">东岳硅材</a></b> <span class='note'>sz300821</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>0.59</td>
+<td class='num up'>+20.01%</td>
+<td class='num'>0.61</td>
+<td class='num'>0.02</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300413.html" target="_blank" rel="noopener noreferrer">芒果超媒</a></b> <span class='note'>sz300413</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>0.48</td>
+<td class='num up'>+19.98%</td>
+<td class='num'>0.48</td>
+<td class='num'>0.00</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600812.html" target="_blank" rel="noopener noreferrer">华北制药</a></b> <span class='note'>sh600812</span>
+</td>
+<td class='num'>3.0</td>
+<td class='num up'>0.36</td>
+<td class='num up'>+10.04%</td>
+<td class='num'>0.36</td>
+<td class='num'>0.00</td>
+<td class='num'>2.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603757.html" target="_blank" rel="noopener noreferrer">大元泵</a>业</b> <span class='note'>sh603757</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>0.32</td>
+<td class='num up'>+4.55%</td>
+<td class='num'>0.32</td>
+<td class='num'>0.00</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600812.html" target="_blank" rel="noopener noreferrer">华北制药</a></b> <span class='note'>sh600812</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>0.31</td>
+<td class='num up'>+10.04%</td>
+<td class='num'>0.31</td>
+<td class='num'>0.00</td>
+<td class='num'>2.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002285.html" target="_blank" rel="noopener noreferrer">世联行</a></b> <span class='note'>sz002285</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>0.30</td>
+<td class='num up'>+1.87%</td>
+<td class='num'>0.30</td>
+<td class='num'>0.00</td>
+<td class='num'>2.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh605366.html" target="_blank" rel="noopener noreferrer">宏柏新材</a></b> <span class='note'>sh605366</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>0.26</td>
+<td class='num down'>-9.96%</td>
+<td class='num'>0.26</td>
+<td class='num'>0.00</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600825.html" target="_blank" rel="noopener noreferrer">新华传媒</a></b> <span class='note'>sh600825</span>
+</td>
+<td class='num'>3.0</td>
+<td class='num up'>0.24</td>
+<td class='num up'>+10.01%</td>
+<td class='num'>0.24</td>
+<td class='num'>0.00</td>
+<td class='num'>3.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300189.html" target="_blank" rel="noopener noreferrer">神农种业</a></b> <span class='note'>sz300189</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>0.24</td>
+<td class='num up'>+10.40%</td>
+<td class='num'>0.24</td>
+<td class='num'>0.00</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh601929.html" target="_blank" rel="noopener noreferrer">吉视传媒</a></b> <span class='note'>sh601929</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>0.20</td>
+<td class='num up'>+10.13%</td>
+<td class='num'>0.20</td>
+<td class='num'>0.00</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b>沈鼓集团</b> <span class='note'>sh601091</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>0.20</td>
+<td class='num down'>-4.83%</td>
+<td class='num'>0.20</td>
+<td class='num'>0.00</td>
+<td class='num'>6.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh600663.html" target="_blank" rel="noopener noreferrer">陆家嘴</a></b> <span class='note'>sh600663</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>0.18</td>
+<td class='num down'>-8.72%</td>
+<td class='num'>0.18</td>
+<td class='num'>0.00</td>
+<td class='num'>2.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz300981.html" target="_blank" rel="noopener noreferrer">中红医疗</a></b> <span class='note'>sz300981</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>0.18</td>
+<td class='num up'>+19.98%</td>
+<td class='num'>0.18</td>
+<td class='num'>0.00</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603949.html" target="_blank" rel="noopener noreferrer">雪龙集团</a></b> <span class='note'>sh603949</span>
+</td>
+<td class='num'>3.0</td>
+<td class='num up'>0.14</td>
+<td class='num down'>-5.79%</td>
+<td class='num'>0.14</td>
+<td class='num'>0.00</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz301513.html" target="_blank" rel="noopener noreferrer">尚水智能</a></b> <span class='note'>sz301513</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>0.10</td>
+<td class='num up'>+6.02%</td>
+<td class='num'>0.10</td>
+<td class='num'>0.00</td>
+<td class='num'>4.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh605303.html" target="_blank" rel="noopener noreferrer">园林股份</a></b> <span class='note'>sh605303</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>0.10</td>
+<td class='num up'>+2.16%</td>
+<td class='num'>0.10</td>
+<td class='num'>0.00</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh688244.html" target="_blank" rel="noopener noreferrer">永信至诚</a></b> <span class='note'>sh688244</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>0.09</td>
+<td class='num up'>+16.22%</td>
+<td class='num'>0.09</td>
+<td class='num'>0.00</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sh603073.html" target="_blank" rel="noopener noreferrer">彩蝶实业</a></b> <span class='note'>sh603073</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>0.07</td>
+<td class='num down'>-10.01%</td>
+<td class='num'>0.07</td>
+<td class='num'>0.00</td>
+<td class='num'>1.0</td>
+</tr>
+<tr>
+<td>
+<b>元道退</b> <span class='note'>sz301139</span>
+</td>
+<td class='num'>1.0</td>
+<td class='num up'>0.01</td>
+<td class='num down'>-5.32%</td>
+<td class='num'>0.01</td>
+<td class='num'>0.00</td>
+<td class='num'>3.0</td>
+</tr>
+<tr>
+<td>
+<b><a class="emlk" href="https://quote.eastmoney.com/sz002058.html" target="_blank" rel="noopener noreferrer">紫竹高科</a></b> <span class='note'>sz002058</span>
+</td>
+<td class='num'>3.0</td>
+<td class='num down'>-0.00</td>
+<td class='num up'>+9.99%</td>
+<td class='num'>0.25</td>
+<td class='num'>0.25</td>
+<td class='num'>1.0</td>
+</tr>
+</table>
+</div>
+<div class='section'>
+<h2>🎯 营业部席位胜率聚合 TOP20</h2>
+<table data-wb>
+<tr>
+<th>营业部席位</th>
+<th class='num'>胜率%</th>
+<th class='num'>净买额(亿)</th>
+<th>涉及个股</th>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司北京知春路证券营业部</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>52.8</td>
+<td class='num up'>1.14</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sh600127.html" target="_blank" rel="noopener noreferrer">金健米业</a>、<a class="emlk" href="https://quote.eastmoney.com/sz300821.html" target="_blank" rel="noopener noreferrer">东岳硅材</a>、元道退</td>
+</tr>
+<tr>
+<td>方正证券股份有限公司温州小南路证券营业部</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>50.0</td>
+<td class='num up'>0.98</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz002636.html" target="_blank" rel="noopener noreferrer">金安国纪</a></td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司常州健身路证券营业部</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>57.1</td>
+<td class='num up'>0.80</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz300364.html" target="_blank" rel="noopener noreferrer">中文在线</a></td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司上海杨浦区周家嘴路证券营业部</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>66.7</td>
+<td class='num up'>0.67</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz002487.html" target="_blank" rel="noopener noreferrer">大金重工</a></td>
+</tr>
+<tr>
+<td>中国银河证券股份有限公司庄河世纪大街证券营业部</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>57.1</td>
+<td class='num up'>0.66</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz002242.html" target="_blank" rel="noopener noreferrer">九阳股份</a></td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司上海松江区中山东路证券营业部</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>53.7</td>
+<td class='num up'>0.61</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz002212.html" target="_blank" rel="noopener noreferrer">天融信</a></td>
+</tr>
+<tr>
+<td>金融街证券股份有限公司上海浦东新区成山路证券营业部</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>50.0</td>
+<td class='num up'>0.60</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sh600127.html" target="_blank" rel="noopener noreferrer">金健米业</a></td>
+</tr>
+<tr>
+<td>中信建投证券股份有限公司福州东街证券营业部</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>53.8</td>
+<td class='num up'>0.53</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz002242.html" target="_blank" rel="noopener noreferrer">九阳股份</a>、<a class="emlk" href="https://quote.eastmoney.com/sz300981.html" target="_blank" rel="noopener noreferrer">中红医疗</a></td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司湛江万豪世家证券营业部</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>52.2</td>
+<td class='num up'>0.48</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz300413.html" target="_blank" rel="noopener noreferrer">芒果超媒</a></td>
+</tr>
+<tr>
+<td>东方财富证券股份有限公司长春人民大街证券营业部</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>50.0</td>
+<td class='num up'>0.36</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz002636.html" target="_blank" rel="noopener noreferrer">金安国纪</a></td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司成都龙腾东路证券营业部</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>51.3</td>
+<td class='num up'>0.33</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sh600812.html" target="_blank" rel="noopener noreferrer">华北制药</a>、<a class="emlk" href="https://quote.eastmoney.com/sh603949.html" target="_blank" rel="noopener noreferrer">雪龙集团</a></td>
+</tr>
+<tr>
+<td>兴业证券股份有限公司北京北三环中路证券营业部</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>66.7</td>
+<td class='num up'>0.32</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sh603757.html" target="_blank" rel="noopener noreferrer">大元泵</a>业</td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司昆明人民中路证券营业部</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>66.7</td>
+<td class='num up'>0.29</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz002058.html" target="_blank" rel="noopener noreferrer">紫竹高科</a>、<a class="emlk" href="https://quote.eastmoney.com/sz002285.html" target="_blank" rel="noopener noreferrer">世联行</a></td>
+</tr>
+<tr>
+<td>国盛证券股份有限公司南昌桃花路证券营业部</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>50.0</td>
+<td class='num up'>0.26</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sh605366.html" target="_blank" rel="noopener noreferrer">宏柏新材</a></td>
+</tr>
+<tr>
+<td>世纪证券有限责任公司深圳罗湖分公司</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>80.0</td>
+<td class='num up'>0.24</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sh600825.html" target="_blank" rel="noopener noreferrer">新华传媒</a></td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司上海分公司</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>56.4</td>
+<td class='num up'>0.24</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz300189.html" target="_blank" rel="noopener noreferrer">神农种业</a></td>
+</tr>
+<tr>
+<td>中信证券股份有限公司上海徐汇区漕溪北路证券营业部</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>52.3</td>
+<td class='num up'>0.23</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sz002212.html" target="_blank" rel="noopener noreferrer">天融信</a></td>
+</tr>
+<tr>
+<td>国泰海通证券股份有限公司成都天府大道证券营业部</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>51.5</td>
+<td class='num up'>0.20</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sh601929.html" target="_blank" rel="noopener noreferrer">吉视传媒</a></td>
+</tr>
+<tr>
+<td>申万宏源证券有限公司上海闵行区莘松路证券营业部</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>60.0</td>
+<td class='num up'>0.20</td>
+<td style='color:#6b7280;font-size:12px'>沈鼓集团</td>
+</tr>
+<tr>
+<td>中国中金财富证券有限公司深圳罗湖华润大厦证券营业部</td>
+<td class='num' style='color:#1a73e8;font-weight:700'>66.7</td>
+<td class='num up'>0.18</td>
+<td style='color:#6b7280;font-size:12px'><a class="emlk" href="https://quote.eastmoney.com/sh600663.html" target="_blank" rel="noopener noreferrer">陆家嘴</a></td>
+</tr>
+</table>
+</div>
+<div class='section'>
+<h2>🎯 净买入股票 · 次日表现回溯</h2>
+<div class='amberbox' style='color:#1c2430'>次日回测数据尚未生成（需待下一交易日收盘后）。运行 <code>python quant/gen_lhb_nextday_backtest.py --date 2026-10-09 --quotes &lt;次日行情落盘&gt;</code> 后重跑本生成器即可回填本区块。</div>
+</div>
+<div class='section'>
+<h2>📐 窗口收益（alpha vs 大盘）</h2>
+<div class='empty'>1·3·5·10 交易日窗口收益回测属量化专题，需历史复权数据支撑，本页未内置；该专题为早期远程分析页，本地未保留，后续可单独建设。</div>
+</div>
+<footer>⚠️ 盘后滞后资金痕迹，仅提示概率优势方向，不构成投资建议。</footer>
+<script>function toggle(id){var e=document.getElementById(id);if(e){e.style.display=(e.style.display==='none')?'table-row':'none';}}</script>
+</div>
+<!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* ④ 返回 / 回顶：页头「← 返回」优先走浏览器历史（从哪来退回哪），
+     无历史（直接打开链接/新标签）则用 href 兜底跳门户首页 —— 不用 javascript: 伪协议，
+     保证 href 始终是个真链接（断链门禁与无 JS 环境都成立）。
+     右下角浮动按钮：回顶在滚动 400px 后淡入，回门户常驻。 */
+  try {
+    document.querySelectorAll("a.wb-back").forEach(function (a) {
+      a.addEventListener("click", function (ev) {
+        try {
+          if (window.history && window.history.length > 1 && document.referrer) {
+            ev.preventDefault();
+            window.history.back();
+          }
+        } catch (e) {}
+      });
+    });
+    var top = document.querySelector(".wb-fab a.wb-top");
+    if (top) {
+      top.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        try { window.scrollTo({ top: 0, behavior: "smooth" }); }
+        catch (e) { window.scrollTo(0, 0); }
+      });
+      var sync = function () {
+        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        top.style.display = y > 400 ? "flex" : "none";
+      };
+      window.addEventListener("scroll", sync, { passive: true });
+      sync();
+    }
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--><!--WB_FAB--><div class='wb-fab'><a class='wb-top' href='#' title='回到顶部' aria-label='回到顶部'>↑</a><a class='wb-home' href='../../index.html' title='返回门户首页' aria-label='返回门户首页'>⌂</a></div><!--/WB_FAB--></body>
+</html>

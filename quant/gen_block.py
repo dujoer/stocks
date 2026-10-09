@@ -25,6 +25,31 @@ OUT_DIR = os.path.join(Q, "block_chg")
 INST_FLAG = "机构专用"  # 买方/卖方营业部含此字样即视为机构席位
 
 
+def find_src(date=""):
+    """自动探测当日原始落盘文件。
+
+    ★ 2026-10-09 加：`daily_all.STEPS` 第 ④ 步只写 `gen_block.py --date {D}`，
+      而 --src 原是 required → **MCP 不可用降级时这一步必然 argparse 报错**，
+      表现为「大宗交易永远停在旧数据日」。现按优先级探测：
+        westock tool_event 落盘 → 东财降级源落盘 → mtime 最新的 _raw_*。
+    """
+    ds = (date or "").replace("-", "")
+    names = []
+    if date:
+        names += ["_raw_tool_%s.json" % date, "_raw_tool_%s.json" % ds,
+                  "_raw_em_%s.json" % date, "_raw_em_%s.json" % ds]
+    for n in names:
+        p = os.path.join(OUT_DIR, n)
+        if os.path.exists(p):
+            return p
+    if os.path.isdir(OUT_DIR):
+        cands = [os.path.join(OUT_DIR, f) for f in os.listdir(OUT_DIR)
+                 if f.startswith("_raw_") and f.endswith(".json")]
+        if cands:
+            return max(cands, key=os.path.getmtime)
+    return None
+
+
 def load_quotes(path):
     """data_quote 落盘文件，支持两种格式：
        A) {code: {name, price, change_percent}, ...}
@@ -145,13 +170,28 @@ def build_day(DATE, rows, quotes, snap=None, source=None):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", default="", help="交易日 YYYY-MM-DD（--all 时忽略）")
-    ap.add_argument("--src", required=True, help="tool_event(block_past_30) 落盘 JSON")
+    ap.add_argument("--src", default=None,
+                    help="原始落盘 JSON（默认自动探测当日 _raw_tool/_raw_em）")
     ap.add_argument("--quotes", default="", help="data_quote 落盘 JSON（补涨跌幅/收盘价）")
     ap.add_argument("--all", action="store_true",
                     help="回溯源文件内全部交易日（自动按日匹配 quant/quotes/block_{DATE}.json）")
     ap.add_argument("--overwrite", action="store_true", help="--all 时覆盖已存在的日期")
     ap.add_argument("--source", default="", help="覆盖落盘的 source 字段（默认按 --src 文件名自动判定）")
     a = ap.parse_args()
+    if not a.src:
+        a.src = find_src(a.date)
+        if not a.src:
+            print("✗ 未找到原始落盘文件（--src 未给且自动探测失败）")
+            sys.exit(1)
+        print("[src] 自动探测 → %s" % os.path.basename(a.src))
+    if not a.quotes and a.date:
+        # ★ 2026-10-09 加：与 gen_exec 对齐的行情自动探测。缺这一步时
+        #   `daily_all` 第 ④ 步只会跑 `gen_block.py --date {D}`（不带 --quotes）
+        #   → 页面涨跌幅整列留空，实测「行情补齐 0/69」。
+        _qd = os.path.join(Q, "quotes", "block_%s.json" % a.date)
+        if os.path.exists(_qd):
+            a.quotes = _qd
+            print("[quotes] 自动探测 → %s" % os.path.basename(_qd))
     # source 必须如实反映真实来源：拿东财降级源却标 westock = 假标注，属红线
     SRC = a.source or (SRC_EASTMONEY if "_raw_em_" in os.path.basename(a.src) else SRC_WESTOCK)
 

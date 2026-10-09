@@ -32,8 +32,18 @@ def load(p):
         return json.load(f)
 
 
-def find_latest_src():
-    """在 tool-results 中找最新的 manager_sharechg 落盘文件。"""
+def find_latest_src(date=""):
+    """原始落盘文件：优先当日东财降级源，其次 MCP tool-results 里最新的一份。
+
+    ★ 2026-10-09 加 date 参数：`daily_all.STEPS` 第 ③ 步只写 `gen_exec.py --date {D}`，
+      原实现只去 TOOL_RESULTS 找 MCP 落盘 → MCP 不可用时必然报错退出，
+      高管增减持永远停在旧数据日。
+    """
+    if date:
+        for n in ("_raw_em_%s.json" % date, "_raw_tool_%s.json" % date):
+            p = os.path.join(Q, "exec_chg", n)
+            if os.path.exists(p):
+                return p
     if not os.path.isdir(TOOL_RESULTS):
         return None
     cands = [f for f in os.listdir(TOOL_RESULTS)
@@ -73,7 +83,7 @@ def main():
     args = ap.parse_args()
 
     DATE = args.date
-    src = args.src or find_latest_src()
+    src = args.src or find_latest_src(args.date)
     if not src or not os.path.exists(src):
         print("未找到原始落盘文件，请先用 tool_event(names=manager_sharechg) 拉取后重试，或用 --src 指定。")
         sys.exit(2)

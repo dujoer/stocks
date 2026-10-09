@@ -83,16 +83,22 @@ STEPS = [
     (4, "manual", "大宗交易（需 MCP block_past_30）",
      "gen_block.py --date {D} && build_block.py --date {D}",
      ["gen_block.py --date {D}", "build_block.py --date {D}"]),
+    # ★ 2026-10-09 修：原命令写的是占位符 `<f>`（照抄人工指引），实际执行必然退出码 1
+    #   —— 表现为「板块强度每天报失败」。现改为真实路径（cwd=quant）。
     (5, "manual", "★ 板块强度（不可回溯，漏跑永久断档）",
-     "run_daily_sector.py --date {D} --industry <f> --concept <f>",
-     ["sector/sector-strength-2*.json"]),
+     "run_daily_sector.py --date {D} --industry sector_industry_{DS}.json "
+     "--concept sector_concept_{DS}.json",
+     ["sector_industry_{DS}.json", "sector_concept_{DS}.json"]),
     (6, "auto", "群体心理风险雷达（读 ①~⑤ 产物）",
      "build_psychology.py --date {D}", "build_psychology.py --date {D}"),
-    (7, "auto", "精选池：生成 → 归档 → 构建 → 回测 → 稳健分选",
+    # ★ 2026-10-09 补：`build_selected.py`（主升精选=主推模块）此前**从未进过链路**，
+    #   线上 `web/selected/` 一直靠手工跑（10-08 之后停更 → coverage 报 selected 缺期）。
+    #   纯本地（读全市场日K + 冻结模型），1s 级，与精选池同族，并入本步。
+    (7, "auto", "精选池 + 主升精选：生成 → 归档 → 构建 → 回测 → 稳健分选",
      "gen_picks.py --date {D} --window 20 --top 40; build_picks.py --date {D}; "
-     "backtest_picks.py; scan_stable.py --date {D}",
+     "backtest_picks.py; scan_stable.py --date {D}; build_selected.py {D}",
      ["gen_picks.py --date {D} --window 20 --top 40", "build_picks.py --date {D}",
-      "backtest_picks.py", "scan_stable.py --date {D}"]),
+      "backtest_picks.py", "scan_stable.py --date {D}", "build_selected.py {D}"]),
     (8, "auto", "做T池：强势扫描 → 三源并集 → 引擎",
      "scan_strong.py --date {D} && gen_tplus.py --date {D} && build_tplus.py --date {D}",
      ["scan_strong.py --date {D}", "gen_tplus.py --date {D}", "build_tplus.py --date {D}"]),
@@ -150,8 +156,15 @@ MANUAL_HOWTO = {
         "        → python quant/gen_block.py --date {D} --src quant/block_chg/_raw_em_{D}.json "
         "--quotes quant/quotes/block_{D}.json → python quant/build_block.py --date {D}\n"
         "     ⚠ 降级源不含北交所，且已剔 ETF/基金/转债；source 字段会如实标注降级源，勿手工改成 westock",
-    5:  "MCP industry(ranking, limit=300) + concept(limit=1000) 落盘后 → "
-        "run_daily_sector.py --date {D} --industry <绝对路径> --concept <绝对路径>",
+    5:  "① 优先：MCP industry(ranking, limit=300) + concept(limit=1000) 落盘后 → "
+        "run_daily_sector.py --date {D} --industry <绝对路径> --concept <绝对路径>\n"
+        "     ② MCP 不可用时（westock CLI 与 MCP 同源同口径，一条命令落盘）：\n"
+        "        python quant/_westock_cli_fetch.py sector --date {D}  → 落 "
+        "quant/sector_industry_{DS}.json / sector_concept_{DS}.json（12 字段同构，leader.code 按名称反查）\n"
+        "        → python quant/run_daily_sector.py --date {D} "
+        "--industry quant/sector_industry_{DS}.json --concept quant/sector_concept_{DS}.json\n"
+        "     ③ 龙虎榜原始数据同理：python quant/_westock_cli_fetch.py lhb --date {D} → quant/lhb/{D}.json "
+        "（主榜+机构/活跃席位/高胜率买入/高胜率席位）",
     10: "MCP tool_filter(preset=main_inflow, min_inflow=0.3, market=hs, limit=200) 落 "
         "macd_raw_pool_{DS}.json → data_technical(25/批) 落 macd_raw_tech_{DS}.json → "
         "data_fund_flow(25/批) 落 macd_raw_flow_{DS}.json\n"

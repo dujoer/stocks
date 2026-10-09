@@ -44,7 +44,11 @@ TOKEN = _load_token()
 # 强制排除名单（路径含以下任一子串即跳过）—— 不对外展示个人持仓 / 选股
 # 2026-09-11：补充 web/research —— 个股调研页含个人持仓快照，按项目硬性边界一律不对外推送。
 EXCLUDE_FRAGMENTS = ("portfolio", "bottom-up", "portfolio_analysis", "_all_store", "web/research",
-                     "_mcp_cache")
+                     "_mcp_cache",
+                     # ★ 2026-10-09 补：资金流逐日序列（250 日 / 16MB）**明确不推送** ——
+                     #   它是本地研究用，不是页面数据源；`quant/hub/*.json` 通配会把
+                     #   它一起捞进来（实测每天白推 16.7MB）。
+                     "hub/flowseq_")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # commit message 前缀。历史坑：原实现把一段**写死的旧文案**贴在每个文件上
@@ -98,6 +102,13 @@ FILES = [
     # ★ 2026-10-09 新增：③④ 两步的**可执行**东财降级取数（此前只写在文档里、没有脚本，
     #   实际 MCP 一断这两块就永久停在旧数据日）。与 gen_*/build_* 同源同口径，须一并上线。
     "quant/_fetch_block_exec_em.py",
+    # ★ 2026-10-09 新增：sector/lhb 的 CLI 降级取数 + 大宗/增减持的当日行情补齐
+    #   （MCP 握手失败时这两项仍能推进；缺了它们线上数字无法复算）
+    "quant/_westock_cli_fetch.py",
+    "quant/_gen_pool_quotes.py",
+    # ★ 2026-10-09 补：主升精选（主推模块）生成器本体此前漏登记 —— 页面在册、
+    #   生成器不在册 → 线上数字无法复算（典型「只登记页面不登记生成器」）。
+    "quant/build_selected.py",
     "quant/build_block.py",
     "quant/build_block_stocks.py",
     # —— 个股调研 / 行业最强榜 ——
@@ -270,6 +281,7 @@ _AUTO_PATTERNS = [
     # 大宗交易
     "quant/block_chg/2026-*.json",
     "quant/quotes/block_2026-*.json",
+    "quant/quotes/exec_2026-*.json",
     # 龙虎榜富集 / 次日回测 / 要闻 / 申万映射
     "quant/lhb_enriched_*.json",
     "quant/lhb_nextday_backtest/2026-*.json",
