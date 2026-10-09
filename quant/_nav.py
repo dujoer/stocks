@@ -63,6 +63,7 @@ MODULES = [
     ("数据与工具", [
         ("数据中心", "db/index.html"),
         ("交割单复盘", "statement/index.html"),
+        ("退出规则回放", "statement/exit-replay.html"),
     ]),
 ]
 

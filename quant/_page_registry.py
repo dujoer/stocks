@@ -87,9 +87,10 @@ FAMILIES = [
          dated=False, start=None, date_re=None,
          need='sector_daily/*.json（读真实快照编排可视化，不生成统计数字）'),
 
-    dict(key='statement', label='实盘交割单复盘（脱敏公开版）',
-         patterns=['statement/index.html'],
-         entry='statement/index.html', script='build_statement_report.py --public',
+    dict(key='statement', label='实盘交割单复盘 / 退出规则回放（脱敏公开版）',
+         patterns=['statement/index.html', 'statement/exit-replay.html'],
+         entry='statement/index.html',
+         script='build_statement_report.py --public; build_exit_replay.py --public',
          freq='manual', dated=False, start=None, date_re=None,
          need='quant/_stmt_analysis.json（analyze_statement.py 手工导入交割单产出；'
               '脱敏版不进日更链，避免把真实金额写进公开站点）'),

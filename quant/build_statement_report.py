@@ -292,6 +292,7 @@ def main():
         return "".join(out)
 
     leg = d.get("legacy", {})
+    leg_pnl = leg.get("proceeds", 0.0) - leg.get("opening_value", 0.0)
     leg_html = ""
     if leg.get("n"):
         items = "".join(
@@ -365,6 +366,8 @@ def main():
     <div class='n'>{r['n']} 笔平仓（成本可考）</div></div>
   <div class='kpi'><div class='k'>浮动盈亏</div><div class='v {cls(un['pnl'])}'>{amt(un['pnl'], True)}</div>
     <div class='n'>{len(d['open_pos'])} 只在持</div></div>
+  <div class='kpi'><div class='k'>窗口前持仓变现</div><div class='v {cls(leg_pnl)}'>{amt(leg_pnl, True)}</div>
+    <div class='n'>{leg['qty']} 股，起始日市值口径</div></div>
   <div class='kpi'><div class='k'>股息 / 逆回购</div><div class='v up'>+{amt(d['cats']['dividend']['net']+d['cats']['repo']['net'])}</div>
     <div class='n'>股息 {amt(d['cats']['dividend']['net'])}，逆回购 {amt(d['cats']['repo']['net'])}</div></div>
 </div></div>
@@ -483,6 +486,10 @@ def main():
 <li>收盘价：本地日K缓存（腾讯前复权）。前复权历史价与当日成交均价存在正常日内偏差
    （中位数约 1.5%），不影响已实现盈亏（用真实成交价），仅对历史净值有轻微影响。</li>
 <li>未实现盈亏按 {m['end']} 收盘计，在持标的合计浮动 {amt(un['pnl'], True)}。</li>
+<li><b>窗口前持仓变现损益 {amt(leg_pnl, True)}</b>（回款 {amt(leg['proceeds'])} − 起始日市值
+   {amt(leg['opening_value'])}）：这批股票建仓成本不可考，但<b>起始日市值是明确基准</b>，
+   它与回款的差额就是本期真实损益 —— 它既不在「可考已实现」里（不能凭空算利润），
+   也不在「期末浮动」里（已卖光），必须单列，否则资金恒等式会漏掉这一项。</li>
 </ul>
 </div>
 

@@ -1,116 +1,49 @@
 <!DOCTYPE html>
-<html lang='zh-CN'>
-<head>
-<meta charset='UTF-8'>
+<html lang='zh-CN'><head><meta charset='UTF-8'>
 <meta name='viewport' content='width=device-width,initial-scale=1.0'>
-<title>状态报告</title>
-<style>* { box-sizing: border-box; }
+<title>退出规则回放 · 硬止损与移动止盈能否救回实盘</title>
+<style>
+* { box-sizing:border-box; }
 body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
-  background:#f5f6f8; color:#23262b; min-height:100vh; }
-.wrap { max-width:1040px; margin:0 auto; padding:40px 20px 60px; }
-.topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
-  border-bottom:1px solid rgba(0,0,0,.08); }
-.topnav a { color:#1a73e8; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
-  border:1px solid rgba(26,115,232,.35); transition:.2s; }
-.topnav a:hover { background:rgba(26,115,232,.10); }
-header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#1a73e8,#b8332a,#6b5b95);
-  -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
-header p { margin:4px 0; color:#8a929c; font-size:13px; line-height:1.6; }
-.meta { margin:14px 0 24px; font-size:12px; color:#6b7280; line-height:1.7; }
-.meta b { color:#1a73e8; }
-.section { background:#ffffff;
-  border:1px solid rgba(0,0,0,.08); border-radius:20px; padding:18px 20px; margin:0 0 22px;
-  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); }
-.section h2 { font-size:17px; margin:0 0 14px; color:#1c2430; display:flex; align-items:center; gap:8px; }
-.section h2:before { content:""; width:4px; height:16px; background:#1a73e8; border-radius:3px; }
-.idxrow { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px; }
-.idx { flex:1; min-width:200px; background:linear-gradient(135deg,rgba(184,51,42,.08),rgba(184,51,42,.03));
-  border:1px solid rgba(184,51,42,.20); border-radius:14px; padding:13px 10px; text-align:center;
-  box-shadow:0 1px 3px rgba(184,51,42,.06); }
-.idx .k { font-size:11px; color:#6b7280; letter-spacing:.3px; }
-.idx .v { font-size:22px; font-weight:800; color:#1c2430; margin:5px 0 2px; }
-.idx .c { font-size:13px; font-weight:700; }
-.idx .hl { font-size:10px; color:#8a929c; margin-top:4px; }
-.bar { display:flex; height:34px; border-radius:8px; overflow:hidden; margin:10px 0; font-size:12px;
-  color:#ffffff; text-align:center; line-height:34px; box-shadow:0 2px 6px rgba(0,0,0,.12); }
-.chiprow { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
-.chip { background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06); border-radius:12px;
-  padding:10px 6px; text-align:center; min-width:74px; backdrop-filter:blur(6px); box-shadow:0 1px 3px rgba(20,30,50,.04); }
-.chip .ck { font-size:10px; color:#8a929c; }
-.chip .cv { font-size:16px; font-weight:800; margin-top:3px; }
-.tag { display:inline-block; border-radius:20px; padding:3px 11px; font-size:12px; margin:3px 4px 3px 0;
-  background:#eef2f8; color:#33414f; }
-.tag.hot { background:#fdeceb; color:#d8392b; }
-.tag.cold { background:#e9f6ef; color:#1a9e5a; }
-.pill { display:inline-block; background:rgba(0,0,0,.05); border:1px solid rgba(0,0,0,.06);
-  border-radius:20px; padding:4px 11px; font-size:12px; color:#3a4048; margin:3px 4px 3px 0; cursor:help; }
-.pill b { color:#1a73e8; font-weight:700; }
-table { width:100%; border-collapse:collapse; font-size:13px; background:rgba(0,0,0,.03);
-  border:1px solid rgba(0,0,0,.05); border-radius:12px; overflow:hidden; margin:10px 0; }
-th,td { padding:8px 10px; text-align:left; border-bottom:1px solid rgba(0,0,0,.04); }
-th { background:rgba(20,30,50,.06); color:#3a4048; font-weight:600; font-size:12px; }
-td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
-.up { color:#b8332a; } .down { color:#1a9e5a; }
-.note { color:#8a929c; font-size:12px; margin-top:8px; line-height:1.6; }
-.amberbox { font-size:13px; color:#1a73e8; background:linear-gradient(135deg,rgba(26,115,232,.10),rgba(26,115,232,.04));
-  border:1px solid rgba(26,115,232,.18); border-radius:12px; padding:12px 16px; margin:12px 0; line-height:1.6; }
-.ladder { margin:6px 0; padding:8px 10px; background:rgba(0,0,0,.03); border:1px solid rgba(0,0,0,.08);
-  border-radius:8px; font-size:13px; }
-.ladder .badge { display:inline-block; border-radius:6px; padding:1px 8px; margin-right:8px; font-weight:700; font-size:12px; }
-.ladder .b5 { background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.35); color:#b8332a; }
-.ladder .b6 { background:rgba(184,51,42,.16); border:1px solid rgba(184,51,42,.55); color:#b8332a; }
-.ladder .b5 { background:rgba(184,51,42,.12); border:1px solid rgba(184,51,42,.42); color:#b8332a; }
-.ladder .b4 { background:rgba(184,51,42,.08); border:1px solid rgba(184,51,42,.30); color:#b8332a; }
-.ladder .b3 { background:rgba(26,115,232,.14); border:1px solid rgba(26,115,232,.40); color:#d8bd8a; }
-.ladder .b2 { background:rgba(26,115,232,.14); border:1px solid rgba(26,115,232,.40); color:#d8bd8a; }
-.ladder .b1 { background:rgba(90,107,128,.12); border:1px solid rgba(90,107,128,.35); color:#a7b4c9; }
-.namechip { display:inline-block; color:#3a4048; margin:2px 6px 2px 0; font-size:13px; }
-.empty { color:#8a929c; text-align:center; padding:38px 0; font-size:14px; line-height:1.8; }
-.empty b { color:#1a73e8; }
-footer { margin-top:40px; padding-top:16px; border-top:1px solid rgba(0,0,0,.08);
-  font-size:12px; color:#8a929c; line-height:1.8; }
-a.inlink { color:#1a73e8; text-decoration:none; border:1px solid rgba(201,166,107,.5);
-  border-radius:10px; padding:6px 14px; font-size:13px; font-weight:700; display:inline-block; margin:4px 6px 4px 0; }
-a.inlink:hover { background:rgba(201,166,107,.16); }
-.wrap.landing { max-width:880px; text-align:center; }
-.landing header h1 { font-size:34px; }
-.landing header p { margin:6px 0; color:#8a929c; font-size:14px; }
-.date { margin:18px 0 30px; font-size:13px; color:#1a73e8; letter-spacing:.5px; }
-.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; text-align:left; }
-.card { display:block; text-decoration:none; color:#23262b; background:#ffffff;
-  border:1px solid rgba(0,0,0,.08); border-radius:18px; padding:20px 18px;
-  box-shadow:0 1px 3px rgba(20,30,50,.05); backdrop-filter:blur(10px); transition:.2s; }
-.card:hover { border-color:rgba(26,115,232,.50); transform:translateY(-2px); background:linear-gradient(135deg,rgba(26,115,232,.08),rgba(255,255,255,.03)); }
-.card .ic { font-size:26px; }
-.card .t { font-size:17px; font-weight:700; margin:10px 0 6px; color:#1c2430; }
-.card .d { font-size:12.5px; color:#8a929c; line-height:1.6; }
-.hist { margin-top:30px; font-size:12.5px; color:#6b7280; }
-.hist a { color:#1a73e8; text-decoration:none; border:1px solid rgba(201,166,107,.4); border-radius:10px; padding:5px 12px; display:inline-block; margin:4px; }
-.foot { margin-top:42px; font-size:12px; color:#8a929c; line-height:1.8; }
-.lhb { table-layout:fixed; }
-.lhb th, .lhb td { font-size:12.5px; vertical-align:top; }
-.lhb td.reason { color:#6b7280; width:150px; font-size:11.5px; line-height:1.4; }
-.lhb td.sec { font-size:12px; white-space:nowrap; }
-.hm { text-align:center; }
-.hm-high { color:#f2a65a; font-weight:800; }
-.hm-mid { color:#1a73e8; font-weight:700; }
-.hm-low { color:#8a93a3; }
-.hm-na { color:#8a93a3; font-style:italic; opacity:.8; }
-.hmtags { margin-top:3px; }
-.hmtag { display:inline-block; background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.30); color:#b8332a; border-radius:10px; padding:1px 7px; font-size:10.5px; margin:2px 2px 0 0; }
-.toggle { color:#1a73e8; cursor:pointer; font-size:12px; user-select:none; }
-.toggle:hover { text-decoration:underline; }
-.seats { display:flex; gap:24px; flex-wrap:wrap; padding:6px 4px; }
-.seats .buys, .seats .sells { flex:1; min-width:260px; }
-.seat-h { font-weight:700; margin-bottom:6px; font-size:13px; }
-.seat-h.up { color:#b8332a; } .seat-h.down { color:#1a9e5a; }
-.seats ul { list-style:none; margin:0; padding:0; }
-.seats li { display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px dashed rgba(0,0,0,.04); font-size:12px; }
-.seats li .nm { flex:1; color:#3a4048; }
-.seats li .amt { font-variant-numeric:tabular-nums; font-weight:700; }
-tr.detail td { background:rgba(0,0,0,.03); }
-</style>
-<!--WB_THEME--><style id='wb-theme'>
+  background:#f5f6f8; color:#23262b; line-height:1.7; }
+.wrap { max-width:1120px; margin:0 auto; padding:32px 20px 70px; }
+header { border-bottom:2px solid #e3e7ec; padding-bottom:18px; margin-bottom:26px; }
+h1 { font-size:28px; margin:0 0 8px; font-weight:800; letter-spacing:.3px;
+  background:linear-gradient(90deg,#1a73e8,#b8332a,#6b5b95);
+  -webkit-background-clip:text; background-clip:text; color:transparent; }
+.sub { color:#7b8794; font-size:13px; margin:0; }
+h2 { font-size:19px; margin:34px 0 14px; padding-left:12px; border-left:5px solid #1a73e8; }
+h3 { font-size:15px; margin:20px 0 10px; color:#3b4453; }
+.card { background:#fff; border:1px solid rgba(0,0,0,.08); border-radius:18px;
+  padding:18px 20px; margin:0 0 18px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; }
+.kpi { background:#fafbfc; border:1px solid #eef1f4; border-radius:14px; padding:13px 15px; }
+.kpi .k { font-size:12px; color:#7b8794; }
+.kpi .v { font-size:22px; font-weight:800; margin-top:3px; }
+.kpi .n { font-size:11px; color:#9aa2ad; margin-top:2px; }
+.up { color:#b8332a; } .down { color:#1a9e5a; } .gold { color:#1a73e8; } .mute { color:#7b8794; }
+table { width:100%; border-collapse:collapse; font-size:13px; margin-top:6px; }
+th { text-align:left; padding:8px 10px; background:#f7f8fa; color:#5a6573; font-weight:700;
+  border-bottom:2px solid #e3e7ec; white-space:nowrap; }
+td { padding:7px 10px; border-bottom:1px solid #f0f2f5; }
+.num { text-align:right; font-variant-numeric:tabular-nums; }
+.verdict { border-left:5px solid #b8332a; background:#fff6f5; padding:16px 18px;
+  border-radius:14px; margin:0 0 18px; }
+.verdict h3 { margin:0 0 8px; color:#b8332a; font-size:16px; }
+.verdict p { margin:6px 0; font-size:14px; }
+ul.rec { margin:8px 0 0; padding-left:20px; }
+ul.rec li { margin:9px 0; font-size:14px; }
+ul.rec li b { color:#1a73e8; }
+.note { font-size:12.5px; color:#6b7280; background:#fafbfc; border:1px dashed #dfe3e8;
+  border-radius:12px; padding:12px 14px; margin:10px 0 0; }
+.tag { display:inline-block; font-size:11px; padding:1px 8px; border-radius:9px;
+  background:#fdf3e3; color:#a9761f; border:1px solid #efdfc0; margin-left:6px; }
+.tag.bad { background:#fdecea; color:#b8332a; border-color:#f5c6c2; }
+.tag.ok { background:#eaf7ef; color:#1a7a48; border-color:#c3e6d0; }
+.chart { width:100%; height:auto; display:block; }
+footer { margin-top:44px; padding-top:18px; border-top:1px solid #e3e7ec;
+  font-size:12px; color:#7b8794; }
+</style><!--WB_THEME--><style id='wb-theme'>
 /* ============================================================
    统一设计系统 (A股看板) — Google Material 风·朴素简洁
    由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
@@ -361,39 +294,111 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
   .wb-fab a{ width:38px; height:38px; font-size:15px; }
 }
 
-</style><!--/WB_THEME--></head>
-<body>
-<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a><a href='../dragon/index.html'>龙道诀</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../sector/heatmap.html'>板块热力图</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../diagnosis/index.html'>个股研判</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a><a href='../three_yin/index.html'>三连阴</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a><a href='../statement/index.html'>交割单复盘</a><a href='../statement/exit-replay.html'>退出规则回放</a></div><a href='../../index.html' class='home'>首页</a></div>
-<!--WB_STAMP--><div class='wb-stamp'><span class='s-l'>本页数据基准</span><b class='s-d'>2026-08-28</b><span class='s-hist'>· 历史归档页（内容即该日快照，不随最新数据日更新）</span><a class='wb-back' href='../../index.html'>← 返回</a></div><!--/WB_STAMP-->
+</style><!--/WB_THEME--></head><body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a><a href='../dragon/index.html'>龙道诀</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../sector/heatmap.html'>板块热力图</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../diagnosis/index.html'>个股研判</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a><a href='../three_yin/index.html'>三连阴</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a><a href='index.html'>交割单复盘</a><a href='exit-replay.html'>退出规则回放</a></div><a href='../../index.html' class='home'>首页</a></div>
+<!--WB_STAMP--><div class='wb-stamp'><span class='s-l'>本页数据基准</span><b class='s-d'>2026-10-09</b><span class='s-ok'>· 当日</span><a class='wb-back' href='../../index.html'>← 返回</a></div><!--/WB_STAMP-->
 <div class='wrap'>
-
 <header>
-<h1>📋 状态报告</h1>
-<p>2026-08-28 · 龙虎榜手动更新 + 全量数据刷新</p>
+  <h1>退出规则回放 · 硬止损能救回多少</h1>
+  <p class='sub'>用 319 个真实买入批次回放「硬止损 7% ＋ 峰值回撤
+  6% 移动止盈 ＋ 持有上限 20 日」｜ 数据基准 2026-10-09（日K）·
+  交割单末日 2026-10-08 ｜ 成交假设两档并列，<b>主结论取保守档</b>
+  ｜ <b>脱敏公开版</b></p>
 </header>
-<div class='section'>
-<h2>✅ 本轮完成情况</h2>
-<div class='amberbox' style='color:#1c2430'>1. <b>龙虎榜数据</b>：通过 westock-mcp data_lhb 拉取 2026-08-28 真实龙虎榜（机构榜 22 只、游资席位 86 个、机构+游资共振 24 只、席位胜率 37 条；龙虎榜全榜上榜 50 只）。已渲染 lhb.html（机构榜/共振/胜率）与 hotmoney.html（席位净买榜/胜率）。<br>2. <b>大盘/板块/连板刷新</b>：data_market_overview(2026-08-28)、data_hot(board)、tool_ranking(limitup_days) 全部更新为 2026-08-28（估值口径 2026-08-27）。<br>4. <b>推送</b>：本地已生成 6 个页面（含导航 index.html、龙虎榜归档页 lhb_2026-08-28.html），待经 GitHub 连接器推送至 dujoer/stocks 的 web/ 目录（main 分支，需仓库写权限）。注：早期 08-14 窗口收益/共振/Alpha 回测为远程分析页，本地未保留，本系统以龙虎榜机构榜、共振、席位胜率为核心。</div>
+<div class='note' style='border-color:#efdfc0;background:#fdf9f1'><b>脱敏公开版</b>：金额单位 <b>U = 平均单笔亏损额</b>，百分比以累计投入本金为分母；绝对金额与个股名称已隐去，结论与完整版一致。</div>
+
+<div class='verdict'>
+  <h3>结论：能减亏约 27%，但<b>不足以把负期望转正</b></h3>
+  <p>1. <b>止损确实有效，但只是一部分</b>：回放后总额从 -23.30% 改善到
+     -17.08%，减亏 <b>+6.23%</b>（+26.7%）。
+     机制是<b>截断亏损右尾</b>：盈亏比 0.72 → 0.86。</p>
+  <p>2. <b>但盈利因子仍只有 0.65（&lt;1）</b>，胜率反而从
+     44.8% 降到 42.9% —— 一部分原本扛回来的单被提前止损打断了。
+     <b>光加止损救不了一个负期望的策略</b>，这与复盘页建议⑦（先验证正期望再放大）一致。</p>
+  <p>3. <b>-7% 的硬止损在跳空面前不可靠</b>：最大单笔亏损从
+     -5.74 U 反而扩大到 -7.35 U —— 保守口径下若开盘已跌破触发价，
+     只能按开盘价成交，实际亏损远超 7%。</p>
+  <p>4. <b>规则只介入了 117/319 笔（37%）</b>，其余
+     202 笔既没跌破止损也没触及止盈 → 亏损并不全来自「不肯止损」，
+     改善的重心应在<b>入场与换手</b>（建议③⑤），而不是只盯着止损。</p>
 </div>
-<div class='section'>
-<h2>📁 产出文件</h2>
-<div class='chiprow'>
-<span class='pill'>index.html</span>
-<span class='pill'>daily_overview.html</span>
-<span class='pill'>lhb.html</span>
-<span class='pill'>hotmoney.html</span>
-<span class='pill'>lhb_2026-08-28.html</span>
-<span class='pill'>status_2026-08-28.html</span>
-</div>
-<div class='note'>数据落盘：quant/market_overview、board_hot、quotes、news.json、limitup、lhb（均为 2026-08-28）。生成脚本：quant/build_dashboards.py。</div>
-</div>
-<div class='section'>
-<h2>⚠️ 口径说明</h2>
-<div class='empty' style='text-align:left'>· 估值（PE 分位）接口最新快照为 2026-08-27，其余均为 2026-08-28。<br>· 窗口收益(alpha)回测未内置，链接至远程历史分析页。<br>· 所有资金数据为盘后公开龙虎榜，滞后且非未来收益承诺。</div>
-</div>
-<footer>由 A 股量化助理生成 · 仅供参考，不构成投资建议。</footer>
-</div>
-<!--WB_APP--><script id='wb-app'>
+
+<h2>一、实际 vs 回放（三口径并列）</h2>
+<div class='card'>
+<table data-wb><thead><tr><th>口径</th><th class='num'>总额</th><th class='num'>胜率</th>
+<th class='num'>盈亏比</th><th class='num'>盈利因子</th><th class='num'>盈/亏笔数</th>
+<th class='num'>最大单笔亏损</th></tr></thead>
+<tbody><tr><td><b>实际（原样）</b></td><td class='num down'>-23.30%</td><td class='num'>44.8%</td><td class='num'>0.72</td><td class='num'>0.58</td><td class='num'>143 / 176</td><td class='num down'>-5.74 U</td></tr><tr style='background:#fffdf7'><td><b>回放 · 保守（跳空按开盘）</b></td><td class='num down'>-17.08%</td><td class='num'>42.9%</td><td class='num'>0.86</td><td class='num'>0.65</td><td class='num'>137 / 182</td><td class='num down'>-7.35 U</td></tr><tr><td><b>回放 · 乐观（按触发价）</b></td><td class='num down'>-13.82%</td><td class='num'>43.6%</td><td class='num'>0.90</td><td class='num'>0.70</td><td class='num'>139 / 180</td><td class='num down'>-3.73 U</td></tr></tbody></table>
+<div class='note'>读法：<b>保守档</b>（跳空按开盘价成交）是主结论，<b>乐观档</b>（按触发价成交）
+只作上界参考 —— 两者的差就是「跳空滑点」的全部影响。盈利因子 = 总盈利 / 总亏损，
+<b>&lt;1 即长期必亏</b>；三档都没有把它推过 1。<br><span class='mute'>本页金额以 <b>U = 平均单笔亏损额</b> 为单位、百分比以累计投入本金为分母（脱敏公开版）。</span></div></div>
+
+<h2>二、规则触发分布</h2>
+<div class='card'><svg class='chart' viewBox='0 0 1060 210' xmlns='http://www.w3.org/2000/svg'><rect x='0' y='0' width='1060' height='210' fill='#fff'/><line x1='58' y1='176.0' x2='1046' y2='176.0' stroke='#d7dce2' stroke-width='1'/><text x='50' y='180.0' font-size='11' fill='#9aa2ad' text-anchor='end'>0</text><rect x='107.4' y='99.8' width='148.2' height='76.2' fill='#b8332a' rx='3' opacity='.88'/><text x='181.5' y='94.8' font-size='10.5' fill='#b8332a' text-anchor='middle'>95 笔</text><text x='181.5' y='200' font-size='11' fill='#7b8794' text-anchor='middle'>止损</text><rect x='354.4' y='159.2' width='148.2' height='16.8' fill='#b8332a' rx='3' opacity='.88'/><text x='428.5' y='154.2' font-size='10.5' fill='#b8332a' text-anchor='middle'>21 笔</text><text x='428.5' y='200' font-size='11' fill='#7b8794' text-anchor='middle'>移动止盈</text><rect x='601.4' y='175.2' width='148.2' height='0.8' fill='#b8332a' rx='3' opacity='.88'/><text x='675.5' y='170.2' font-size='10.5' fill='#b8332a' text-anchor='middle'>1 笔</text><text x='675.5' y='200' font-size='11' fill='#7b8794' text-anchor='middle'>超 20 日</text><rect x='848.4' y='14.0' width='148.2' height='162.0' fill='#b8332a' rx='3' opacity='.88'/><text x='922.5' y='9.0' font-size='10.5' fill='#b8332a' text-anchor='middle'>202 笔</text><text x='922.5' y='200' font-size='11' fill='#7b8794' text-anchor='middle'>未触发</text></svg>
+<div class='note'>止损触发 95 笔（最多）、移动止盈 21 笔、
+超 20 日 1 笔、<b>未触发 202 笔</b>。
+未触发占比 63% 说明：大部分交易在持有窗口内既没跌破
+-7%、也没有可观的峰值回撤 —— 它们的结果由<b>买入那一刻</b>决定，
+退出规则无从改善。</div></div>
+
+<h2>三、亏损最深的 5 个批次（止损到底做了什么）</h2>
+<div class='card'>
+<table data-wb><thead><tr><th>标的</th><th>买入日</th><th class='num'>买入价</th>
+<th class='num'>实际盈亏</th><th class='num'>回放盈亏</th><th>触发</th></tr></thead>
+<tbody><tr><td>标的 01</td><td class='mute'>20260819</td><td class='num'>97.70</td><td class='num down'>-5.74 U</td><td class='num down'>-1.42 U</td><td class='mute'>止损</td></tr><tr><td>标的 02</td><td class='mute'>20260710</td><td class='num'>81.30</td><td class='num down'>-4.75 U</td><td class='num down'>-1.47 U</td><td class='mute'>止损</td></tr><tr><td>标的 03</td><td class='mute'>20260710</td><td class='num'>18.20</td><td class='num down'>-4.13 U</td><td class='num down'>-0.99 U</td><td class='mute'>止损</td></tr><tr><td>标的 04</td><td class='mute'>20260723</td><td class='num'>42.00</td><td class='num down'>-3.49 U</td><td class='num down'>-1.52 U</td><td class='mute'>止损</td></tr><tr><td>标的 05</td><td class='mute'>20260923</td><td class='num'>12.32</td><td class='num down'>-3.40 U</td><td class='num down'>-1.34 U</td><td class='mute'>止损</td></tr></tbody></table>
+<div class='note'>这 5 笔是实际亏损最深的批次。可以看到止损把它们截在更早的位置，
+但<b>保守口径下成交价受跳空支配</b> —— 这正是最大单笔亏损反而扩大的原因。
+个股名称已脱敏。</div></div>
+
+<h2>四、止损档位敏感性（稳健性参考，<b>不是选参依据</b>）</h2>
+<div class='card'><svg class='chart' viewBox='0 0 1060 210' xmlns='http://www.w3.org/2000/svg'><rect x='0' y='0' width='1060' height='210' fill='#fff'/><line x1='58' y1='14.0' x2='1046' y2='14.0' stroke='#d7dce2' stroke-width='1'/><text x='50' y='18.0' font-size='11' fill='#9aa2ad' text-anchor='end'>0</text><rect x='123.9' y='14.0' width='197.6' height='161.2' fill='#1a9e5a' rx='3' opacity='.88'/><text x='222.7' y='188.2' font-size='10.5' fill='#1a9e5a' text-anchor='middle'>-18.77%</text><text x='222.7' y='200' font-size='11' fill='#7b8794' text-anchor='middle'>5%</text><rect x='453.2' y='14.0' width='197.6' height='143.2' fill='#1a9e5a' rx='3' opacity='.88'/><text x='552.0' y='170.2' font-size='10.5' fill='#1a9e5a' text-anchor='middle'>-16.67%</text><text x='552.0' y='200' font-size='11' fill='#7b8794' text-anchor='middle'>7%</text><rect x='782.5' y='14.0' width='197.6' height='162.0' fill='#1a9e5a' rx='3' opacity='.88'/><text x='881.3' y='189.0' font-size='10.5' fill='#1a9e5a' text-anchor='middle'>-18.86%</text><text x='881.3' y='200' font-size='11' fill='#7b8794' text-anchor='middle'>10%</text></svg>
+<div class='note'>把止损档位换成 -5% / -10% 重跑（其余不变，保守口径）：
+5% 档 -18.77%、7% 档 -16.67%、10% 档 -18.86%。
+三档都落在相近区间，<b>没有任何一档能把结果推向盈亏平衡</b>。
+⚠ 按项目红线（自动筛参数是主要噪声源），<b>这里不据此挑选档位</b>；
+-7% 是复盘建议里先验写死的值，本页只检验它、不拟合它。</div></div>
+
+<h2>五、口径与已知限制（可复核）</h2>
+<div class='card'>
+<ul style='font-size:13px;color:#41474f;margin:0;padding-left:20px'>
+<li><b>批次</b>：FIFO 配对，一笔买入被分次卖出时按 exit 段<b>拆成子批次</b>，
+各自持有到自己的实际卖出日。共 319 个批次。</li>
+<li><b>窗口前持仓（成本不可考）</b>：3 笔 / 3200 股
+（起始日前建仓）买入价未知 → <b>排除回放</b>，不计入改善。</li>
+<li><b>ETF / 基金</b>：9 个批次（588810 / 510360 / 159801 等）
+本地日K缓存不含 → <b>按实际结果计入基准</b>，规则对它们不产生改善（不虚报效果）。</li>
+<li><b>价格路径</b>：日K为前复权，与真实成交价存在复权因子差 → 用<b>收益率链式锚定</b>
+（P_t = 真实买入价 × 收盘比），high/low 同比缩放，避免除权导致误触发。
+锚定价与名义收盘的偏离：可比 310 个批次中
+101 个 &gt;2%（中位 1.12%，
+最大 41.949%）—— 多半来自分红送转，正是必须用收益率锚定的原因。</li>
+<li><b>T+1</b>：从买入日<b>下一个交易日</b>起才允许卖出。</li>
+<li><b>费用</b>：按实测费率（佣金 0.0176% ＋ 印花税 0.0490%
+＋ 杂费 0.0129% ＝ 卖出端 0.0795%），
+规则多出的卖出次数已计入费用。</li>
+<li><b>未模拟</b>：涨跌停无法成交、停牌、盘中触及但收盘拉回（本页按当日 high/low 触发，
+属<b>日内可成交</b>假设；若改为「收盘确认」会更保守）。</li>
+<li><b>不调参</b>：只测建议②原值；敏感性表仅作稳健性展示。</li>
+</ul></div>
+
+<h2>六、对复盘建议的修正</h2>
+<div class='card'>
+<ul class='rec'>
+<li><b>建议② 保留，但要降级预期。</b>硬止损能把亏损砍掉约 27%，
+   这是真金白银；但它<b>改变不了盈利因子 &lt;1 的事实</b>，别把它当成翻盘手段。</li>
+<li><b>止损位必须配合「可成交」的现实。</b>-7% 在跳空日会变成 -15% 甚至更多。
+   可选做法：对高波动标的放宽触发位，或改用「收盘价确认 + 次日开盘无条件走」——
+   两者都要在下一轮回放里检验，本页尚未测。</li>
+<li><b>优先级重排：③降换手 ＋ ⑤环境门控 &gt; ②止损。</b>因为
+   63% 的交易规则根本没介入 —— 少做、只在强势环境做，
+   比事后止损更接近病因。</li>
+<li><b>下一步可证伪检验</b>：把「入场」也纳入回放（只在板块强度前列 ＋ 大盘非弱势时允许开仓），
+   若回放后盈利因子仍 &lt;1，则应停止自主选股、改为指数化配置。</li>
+</ul></div>
+
+<footer>本页由 quant/replay_exit_rules.py 在真实交割单上回放生成，结论可复核、可证伪；
+<b>不构成投资建议</b>，市场有风险，投资需谨慎。</footer>
+</div><!--WB_APP--><script id='wb-app'>
 /* ============================================================
    通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
    功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
@@ -588,5 +593,4 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
   });
 })();
 
-</script><!--/WB_APP--><!--WB_FAB--><div class='wb-fab'><a class='wb-top' href='#' title='回到顶部' aria-label='回到顶部'>↑</a><a class='wb-home' href='../../index.html' title='返回门户首页' aria-label='返回门户首页'>⌂</a></div><!--/WB_FAB--></body>
-</html>
+</script><!--/WB_APP--><!--WB_FAB--><div class='wb-fab'><a class='wb-top' href='#' title='回到顶部' aria-label='回到顶部'>↑</a><a class='wb-home' href='../../index.html' title='返回门户首页' aria-label='返回门户首页'>⌂</a></div><!--/WB_FAB--></body></html>

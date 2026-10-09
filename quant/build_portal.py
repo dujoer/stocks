@@ -563,6 +563,40 @@ if os.path.exists(_STMT_JSON):
     except Exception:
         stmt_card = None
 
+# ---- 退出规则回放卡（脱敏公开版）----
+# ★ 与复盘卡同一套隐私分级：只描述 web/statement/exit-replay.html，
+#   原始回放结果 _stmt_exit_replay.json（含逐笔真实盈亏与标的名）不推送。
+exit_card = None
+_EXIT_JSON = os.path.join(QUANT, "_stmt_exit_replay.json")
+if os.path.exists(_EXIT_JSON):
+    try:
+        _ej = json.load(open(_EXIT_JSON, encoding="utf-8"))
+        _ea = _ej["stats"]["cons"]["actual"]
+        _ec = _ej["stats"]["cons"]["replay"]
+        _imp = _ec["total"] - _ea["total"]
+        _imp_pct = abs(100.0 * _imp / _ea["total"]) if _ea["total"] else 0
+        _tc = _ej["trig_cnt"]
+        _n_trig = sum(v for k, v in _tc.items() if k in ("止损", "止盈", "超时"))
+        exit_card = dict(
+            ic="🛑", t="退出规则回放（脱敏公开版）", href="web/statement/exit-replay.html",
+            func=("把复盘建议②（硬止损 -%.0f%% ＋ 峰值回撤 %.0f%% 移动止盈 ＋ %d 日上限）"
+                  "放到 <b>%d 个真实买入批次</b>上回放，与实际结果对照："
+                  "<b>减亏约 %.0f%%</b>，但盈利因子仅 %.2f → %.2f、<b>仍 &lt;1</b> —— "
+                  "证明光加止损救不了一个负期望的策略。成交假设两档并列"
+                  "（跳空按开盘价 / 按触发价），<b>不调参、不拟合</b>；"
+                  "规则只介入 %d/%d 笔，其余由买入那一刻决定。"
+                  % (_ej["meta"]["sl"] * 100, _ej["meta"]["tr"] * 100, _ej["meta"]["maxhold"],
+                     _ej["meta"]["n_lots"], _imp_pct,
+                     _ea["profit_factor"], _ec["profit_factor"],
+                     _n_trig, _ej["meta"]["n_lots"])),
+            rel="← 交割单复盘（诊断出病因）→ 本页检验「加止损」这个药方到底有多大用",
+            stat="%d 个批次 ｜ 触发分布 ｜ 已脱敏" % _ej["meta"]["n_lots"],
+            date=str(_sm.get("end", "—")) if stmt_card else "—",
+            fresh=badge("fresh", "导入"),
+        )
+    except Exception:
+        exit_card = None
+
 # ---- 增仓精选当日快照（门户卡片文案取真实数字，避免手写值与系统脱节）----
 _accst = {}
 if accum_d:
@@ -796,7 +830,7 @@ ZONES = [
                 "stat": "8 模块 ｜ 列式分片 ｜ 按月归档",
                 "date": TODAY.strftime("%Y-%m-%d"), "fresh": badge("fresh", "实时"),
             },
-        ] + ([stmt_card] if stmt_card else []) + [
+        ] + ([stmt_card] if stmt_card else []) + ([exit_card] if exit_card else []) + [
             {
                 "ic": "📘", "t": "每日更新 SOP（完整手册）", "href": "web/docs/DAILY_UPDATE_SOP.html",
                 "func": "数据口径、执行顺序、已知坑、校验清单的完整操作手册，按顺序执行不易漏项。",

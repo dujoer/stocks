@@ -52,7 +52,9 @@ EXCLUDE_FRAGMENTS = ("portfolio", "bottom-up", "portfolio_analysis", "_all_store
                      # ★★ 2026-10-09 补：实盘交割单属个人财务隐私，含真实本金/盈亏/持仓 ——
                      #   原始分析与完整版页面**永不推送**（站点只放脱敏版 web/statement/index.html）。
                      #   显式写进排除名单，防止日后有人登记白名单时误推。
-                     "_stmt_analysis", "analyze_statement", "deliverables")
+                     "_stmt_analysis", "analyze_statement", "deliverables",
+                     # 退出规则回放的原始结果（含逐笔真实盈亏与标的名）
+                     "_stmt_exit_replay")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # commit message 前缀。历史坑：原实现把一段**写死的旧文案**贴在每个文件上
@@ -111,6 +113,8 @@ FILES = [
     "quant/build_sector_index.py",
     "quant/build_sector_heatmap.py",   # 2026-10-09 新增：板块强度交互热力图（读 sector_daily）
     "quant/build_statement_report.py",  # 2026-10-09 新增：交割单复盘页（--public 产脱敏版，默认产本地完整版）
+    "quant/replay_exit_rules.py",       # 2026-10-10 新增：退出规则回放引擎（在真实交割单上检验止损/止盈建议）
+    "quant/build_exit_replay.py",       # 2026-10-10 新增：回放页（--public 产脱敏版，默认产本地完整版）
     # —— 大宗交易 ——
     "quant/gen_block.py",
     # ★ 2026-10-09 新增：③④ 两步的**可执行**东财降级取数（此前只写在文档里、没有脚本，
