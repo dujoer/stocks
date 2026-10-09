@@ -534,6 +534,35 @@ def fmt(d):
 def badge(cls, txt):
     return f"<span class='badge {cls}'>{txt}</span>"
 
+
+# ---- 实盘交割单复盘卡（脱敏公开版）----
+# ★ 站点是公开 Pages：卡片只描述脱敏版 web/statement/index.html，
+#   真实金额与持仓的完整版留在 deliverables/，不进 web/、不推送。
+#   源文件 _stmt_analysis.json 不存在时该卡自动不显示（不写死任何数字）。
+stmt_card = None
+_STMT_JSON = os.path.join(QUANT, "_stmt_analysis.json")
+if os.path.exists(_STMT_JSON):
+    try:
+        _sj = json.load(open(_STMT_JSON, encoding="utf-8"))
+        _sm = _sj["meta"]
+        _sc = _sj["costs"]
+        stmt_card = dict(
+            ic="📒", t="实盘交割单复盘（脱敏公开版）", href="web/statement/index.html",
+            func=("用 <b>%d 笔真实成交</b>（%s ~ %s，%d 个交易日、%d 只标的、%d 笔股票买卖）"
+                  "做机构级交易归因：移动加权平均成本法核算已实现盈亏、TWR 剔除入金影响、"
+                  "与沪深300 同期对照、月度盈亏、换手与费用拆解、个股归因、七条可执行建议。"
+                  "<b>公开版已脱敏</b>：绝对金额、资金规模、个股名称与代码全部隐去，"
+                  "只保留比率型结论（收益率 / 回撤 / 胜率 / 盈亏比 / 换手 / 净值曲线）。"
+                  % (_sm.get("n_trades", 0), _sm.get("start", "—"), _sm.get("end", "—"),
+                     _sm.get("n_days", 0), _sm.get("n_codes", 0),
+                     _sc.get("n_buy", 0) + _sc.get("n_sell", 0))),
+            rel="← 券商交割单导入 + 本地日K 收盘价 → 交易能力诊断（不是选股工具）",
+            stat="%d 笔成交 ｜ %d 交易日 ｜ 已脱敏" % (_sm.get("n_trades", 0), _sm.get("n_days", 0)),
+            date=str(_sm.get("end", "—")), fresh=badge("fresh", "导入"),
+        )
+    except Exception:
+        stmt_card = None
+
 # ---- 增仓精选当日快照（门户卡片文案取真实数字，避免手写值与系统脱节）----
 _accst = {}
 if accum_d:
@@ -767,6 +796,7 @@ ZONES = [
                 "stat": "8 模块 ｜ 列式分片 ｜ 按月归档",
                 "date": TODAY.strftime("%Y-%m-%d"), "fresh": badge("fresh", "实时"),
             },
+        ] + ([stmt_card] if stmt_card else []) + [
             {
                 "ic": "📘", "t": "每日更新 SOP（完整手册）", "href": "web/docs/DAILY_UPDATE_SOP.html",
                 "func": "数据口径、执行顺序、已知坑、校验清单的完整操作手册，按顺序执行不易漏项。",

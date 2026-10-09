@@ -48,7 +48,11 @@ EXCLUDE_FRAGMENTS = ("portfolio", "bottom-up", "portfolio_analysis", "_all_store
                      # ★ 2026-10-09 补：资金流逐日序列（250 日 / 16MB）**明确不推送** ——
                      #   它是本地研究用，不是页面数据源；`quant/hub/*.json` 通配会把
                      #   它一起捞进来（实测每天白推 16.7MB）。
-                     "hub/flowseq_")
+                     "hub/flowseq_",
+                     # ★★ 2026-10-09 补：实盘交割单属个人财务隐私，含真实本金/盈亏/持仓 ——
+                     #   原始分析与完整版页面**永不推送**（站点只放脱敏版 web/statement/index.html）。
+                     #   显式写进排除名单，防止日后有人登记白名单时误推。
+                     "_stmt_analysis", "analyze_statement", "deliverables")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # commit message 前缀。历史坑：原实现把一段**写死的旧文案**贴在每个文件上
@@ -106,6 +110,7 @@ FILES = [
     "quant/build_sector_trend.py",
     "quant/build_sector_index.py",
     "quant/build_sector_heatmap.py",   # 2026-10-09 新增：板块强度交互热力图（读 sector_daily）
+    "quant/build_statement_report.py",  # 2026-10-09 新增：交割单复盘页（--public 产脱敏版，默认产本地完整版）
     # —— 大宗交易 ——
     "quant/gen_block.py",
     # ★ 2026-10-09 新增：③④ 两步的**可执行**东财降级取数（此前只写在文档里、没有脚本，

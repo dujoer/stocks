@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang='zh-CN'><head><meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>实盘交割单复盘 · 2026-02-03 ~ 2026-10-08</title>
+<style>
+* { box-sizing:border-box; }
+body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:#f5f6f8; color:#23262b; line-height:1.7; }
+.wrap { max-width:1120px; margin:0 auto; padding:32px 20px 70px; }
+header { border-bottom:2px solid #e3e7ec; padding-bottom:18px; margin-bottom:26px; }
+h1 { font-size:29px; margin:0 0 8px; font-weight:800; letter-spacing:.3px;
+  background:linear-gradient(90deg,#1a73e8,#b8332a,#6b5b95);
+  -webkit-background-clip:text; background-clip:text; color:transparent; }
+.sub { color:#7b8794; font-size:13px; margin:0; }
+h2 { font-size:19px; margin:34px 0 14px; padding-left:12px; border-left:5px solid #1a73e8; }
+h3 { font-size:15px; margin:20px 0 10px; color:#3b4453; }
+.card { background:#fff; border:1px solid rgba(0,0,0,.08); border-radius:18px;
+  padding:18px 20px; margin:0 0 18px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; }
+.kpi { background:#fafbfc; border:1px solid #eef1f4; border-radius:14px; padding:13px 15px; }
+.kpi .k { font-size:12px; color:#7b8794; }
+.kpi .v { font-size:22px; font-weight:800; margin-top:3px; }
+.kpi .n { font-size:11px; color:#9aa2ad; margin-top:2px; }
+.up { color:#b8332a; } .down { color:#1a9e5a; } .gold { color:#1a73e8; } .mute { color:#7b8794; }
+table { width:100%; border-collapse:collapse; font-size:13px; margin-top:6px; }
+th { text-align:left; padding:8px 10px; background:#f7f8fa; color:#5a6573; font-weight:700;
+  border-bottom:2px solid #e3e7ec; white-space:nowrap; }
+td { padding:7px 10px; border-bottom:1px solid #f0f2f5; }
+.num { text-align:right; font-variant-numeric:tabular-nums; }
+.verdict { border-left:5px solid #b8332a; background:#fff6f5; padding:16px 18px;
+  border-radius:14px; margin:0 0 18px; }
+.verdict h3 { margin:0 0 8px; color:#b8332a; font-size:16px; }
+.verdict p { margin:6px 0; font-size:14px; }
+ul.rec { margin:8px 0 0; padding-left:20px; }
+ul.rec li { margin:9px 0; font-size:14px; }
+ul.rec li b { color:#1a73e8; }
+.tag { display:inline-block; font-size:11px; padding:1px 8px; border-radius:9px;
+  background:#fdf3e3; color:#a9761f; border:1px solid #efdfc0; margin-left:6px; }
+.tag.bad { background:#fdecea; color:#b8332a; border-color:#f5c6c2; }
+.tag.ok { background:#eaf7ef; color:#1a7a48; border-color:#c3e6d0; }
+.note { font-size:12.5px; color:#6b7280; background:#fafbfc; border:1px dashed #dfe3e8;
+  border-radius:12px; padding:12px 14px; margin:10px 0 0; }
+.chart { width:100%; height:auto; display:block; }
+.legend { font-size:12px; color:#7b8794; margin-top:6px; }
+.legend i { display:inline-block; width:22px; height:3px; vertical-align:middle; margin-right:5px; }
+footer { margin-top:44px; padding-top:18px; border-top:1px solid #e3e7ec;
+  font-size:12px; color:#7b8794; }
+</style><!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 数据时间戳条（真实数据日 + 返回入口） ----------
+   由 _apply_theme.py 按「页面自身写的数据日」与「全站最新数据日」比对后注入，
+   不是渲染时间、不是硬编码 —— 页面没写数据日就如实显示「未标注」，
+   落后全站就红字报警。这样「页面有没有更新」看页头一眼就知道。 */
+.wb-stamp{
+  display:flex !important; flex-wrap:wrap !important; align-items:center !important;
+  gap:6px 10px !important;
+  max-width:1440px !important; margin:-14px auto 18px !important;
+  padding:8px 14px !important;
+  background:var(--surface) !important; border:1px solid var(--line) !important;
+  border-left:4px solid var(--accent) !important; border-radius:8px !important;
+  font-size:12.5px !important; color:var(--muted) !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.08) !important;
+}
+.wb-stamp .s-l{ color:var(--muted) !important; }
+.wb-stamp .s-d{
+  color:var(--ink) !important; font-weight:700 !important;
+  font-variant-numeric:tabular-nums !important;
+}
+.wb-stamp .s-d.unknown{ color:#80868b !important; font-weight:600 !important; }
+.wb-stamp .s-ok{ color:var(--green) !important; }
+.wb-stamp .s-warn{ color:var(--red) !important; font-weight:600 !important; }
+.wb-stamp .s-hist{ color:var(--muted) !important; }
+.wb-stamp .s-src{ color:#80868b !important; }
+.wb-stamp a.wb-back{
+  margin-left:auto !important; white-space:nowrap !important;
+  display:inline-block !important; padding:3px 13px !important;
+  border:1px solid var(--line) !important; border-radius:16px !important;
+  color:var(--accent-ink) !important; background:var(--accent-soft) !important;
+  font-weight:600 !important; text-decoration:none !important;
+}
+.wb-stamp a.wb-back:hover{ background:var(--accent) !important; color:#fff !important; text-decoration:none !important; }
+
+/* ---------- 右下角浮动「回门户 / 回顶部」 ---------- */
+.wb-fab{
+  position:fixed; right:16px; bottom:18px; z-index:60;
+  display:flex; flex-direction:column; gap:8px;
+}
+.wb-fab a{
+  width:42px; height:42px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--surface); color:var(--ink);
+  border:1px solid var(--line); box-shadow:0 2px 6px rgba(60,64,67,.18);
+  font-size:17px; text-decoration:none; line-height:1;
+}
+.wb-fab a:hover{ background:var(--accent); color:#fff; border-color:var(--accent); text-decoration:none; }
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  /* ★ 窄屏必须让每个模块块各占一整行：
+     原来 .navgrp{flex-shrink:0} + 内部链接 white-space:nowrap，
+     整组宽度压不下去 → 导航溢出容器被裁掉，「主升精选 / 量化策略 / 三连阴」等
+     右侧入口在手机上根本看不见（看着像「没有导航」）。 */
+  .navgrp{ padding:5px 6px 5px 5px !important; width:100% !important; flex-shrink:1 !important; min-width:0 !important; }
+  /* 链接本身也要能收缩：全局 .topnav a{flex-shrink:0} 会让一行内最后一项
+     顶出容器被裁（手机上「高管增减持」就只剩「高管增减」）→ 窄屏放开收缩，
+     min-content 宽度仍是完整文字，不会被截断。 */
+  .topnav a{ flex-shrink:1 !important; }
+  .topnav a.home{ margin-left:0 !important; }
+  .wb-stamp{ margin:-8px auto 14px !important; font-size:12px !important; }
+  .wb-stamp a.wb-back{ margin-left:0 !important; }
+  .wb-fab{ right:10px; bottom:12px; }
+  .wb-fab a{ width:38px; height:38px; font-size:15px; }
+}
+
+</style><!--/WB_THEME--></head><body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a><a href='../dragon/index.html'>龙道诀</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../sector/heatmap.html'>板块热力图</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../diagnosis/index.html'>个股研判</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a><a href='../three_yin/index.html'>三连阴</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a><a href='index.html'>交割单复盘</a></div><a href='../../index.html' class='home'>首页</a></div>
+<!--WB_STAMP--><div class='wb-stamp'><span class='s-l'>本页数据基准</span><b class='s-d unknown'>未标注</b><span class='s-src'>（该族为 manual 更新，非每日口径）</span><a class='wb-back' href='../../index.html'>← 返回</a></div><!--/WB_STAMP-->
+<div class='wrap'>
+<header>
+  <h1>实盘交割单 · 机构级复盘</h1>
+  <p class='sub'>2026交割单.xls ｜ 2026-02-03 ~ 2026-10-08（161 个交易日，208 只标的，
+  573 笔股票成交）｜ 成本法：移动加权平均（券商口径）｜ 基准：沪深300
+  ｜ <b>脱敏公开版</b></p>
+</header>
+<div class='note' style='border-color:#efdfc0;background:#fdf9f1'><b>脱敏公开版</b>：本页由真实交割单核算，但已隐去全部绝对金额、资金规模与个股名称代码，仅保留比率型结论（收益率、回撤、胜率、盈亏比、换手、净值曲线与建议）。完整版（含明细）仅保存在本地。</div>
+
+<div class='verdict'>
+  <h3>核心结论：策略期望为负，且规模放大后加速亏损</h3>
+  <p>1. <b>盈亏比与胜率双重不达标</b>：胜率 46.7%、盈亏比 0.66
+     （平均盈利 0.66 U / 平均亏损 1.00 U）。
+     以这个盈亏比，你需要 <b>60.2%</b> 的胜率才能打平，而实际只有
+     <b>46.7%</b> —— 缺口 13.4 个百分点，
+     单笔期望 <b>-0.22 U</b>。</p>
+  <p>2. <b>大资金进场后失效</b>：前 5 个月小资金持续盈利，6 月追加一笔大额本金后
+     7 月单月亏损 -16.48%，
+     且之后再未修复。</p>
+  <p>3. <b>结果</b>：累计投入 已脱敏 → 期末权益 已脱敏，
+     净亏 <b class='down'>-22.86%（-22.86%）</b>；
+     时间加权 -30.62%，同期沪深300 -7.51%。</p>
+</div>
+
+<h2>一、账户总览</h2>
+<div class='card'><div class='grid'>
+  <div class='kpi'><div class='k'>累计投入本金</div><div class='v'>已脱敏</div>
+    <div class='n'>含期初现金+持仓，及 10 笔转入</div></div>
+  <div class='kpi'><div class='k'>期末权益</div><div class='v'>已脱敏</div>
+    <div class='n'>2026-10-08 收盘市值口径</div></div>
+  <div class='kpi'><div class='k'>期间净盈亏</div><div class='v down'>-22.86%</div>
+    <div class='n'>-22.86%（资金加权）</div></div>
+  <div class='kpi'><div class='k'>已实现盈亏</div><div class='v down'>-22.26%</div>
+    <div class='n'>261 笔平仓（成本可考）</div></div>
+  <div class='kpi'><div class='k'>浮动盈亏</div><div class='v down'>-1.34%</div>
+    <div class='n'>4 只在持</div></div>
+  <div class='kpi'><div class='k'>股息 / 逆回购</div><div class='v up'>++0.57%</div>
+    <div class='n'>股息 +0.53%，逆回购 +0.04%</div></div>
+</div></div>
+
+<h2>二、绩效归因（交易能力诊断）</h2>
+<div class='card'><div class='grid'>
+  <div class='kpi'><div class='k'>胜率</div><div class='v'>46.7%</div>
+    <div class='n'>122 盈 / 139 亏</div></div>
+  <div class='kpi'><div class='k'>盈亏平衡所需胜率</div><div class='v gold'>60.2%</div>
+    <div class='n'>按当前盈亏比 0.66 反推</div></div>
+  <div class='kpi'><div class='k'>盈亏比（平均盈/平均亏）</div><div class='v down'>0.66</div>
+    <div class='n'>0.66 U / 1.00 U</div></div>
+  <div class='kpi'><div class='k'>盈利因子（总盈/总亏）</div><div class='v down'>0.58</div>
+    <div class='n'>80.76 U / 139.00 U</div></div>
+  <div class='kpi'><div class='k'>单笔期望</div><div class='v down'>-0.22 U</div>
+    <div class='n'>每平仓一笔平均</div></div>
+  <div class='kpi'><div class='k'>最大单笔盈 / 亏</div>
+    <div class='v'><span class='up'>5.12 U</span> / <span class='down'>-8.24 U</span></div>
+    <div class='n'>最大亏损大于最大盈利</div></div>
+</div>
+<div class='note'>读法：胜率与盈亏比必须<b>联合</b>达标才算正期望。你赚的时候平均赚
+0.66 U，亏的时候平均亏 1.00 U —— <b>亏一次要赢
+1.5 次才补得回来</b>，而胜率还不到一半，
+长期必然失血。<br><span class='mute'>本页为<b>脱敏公开版</b>：金额单位 <b>U = 平均单笔亏损额</b>，百分比均以累计投入本金为分母；绝对金额、个股名称与代码已隐去，结论与完整版一致。</span></div></div>
+
+<h2>三、与基准对比（剔除入金影响）</h2>
+<div class='card'><div class='grid'><div class='kpi'><div class='k'>账户时间加权 TWR</div><div class='v down'>-30.62%</div><div class='n'>剔除入金影响，衡量交易本身</div></div><div class='kpi'><div class='k'>沪深300 同期</div><div class='v down'>-7.51%</div><div class='n'>2026-02-03 ~ 2026-10-08</div></div><div class='kpi'><div class='k'>超额（相对基准）</div><div class='v down'>-23.11%</div><div class='n'>跑输 23.1 个百分点</div></div><div class='kpi'><div class='k'>最大回撤</div><div class='v down'>26.09%</div><div class='n'>2026-10-08</div></div></div>
+<svg class='chart' viewBox='0 0 1060 330' xmlns='http://www.w3.org/2000/svg'><rect x='0' y='0' width='1060' height='330' fill='#fff'/><line x1='58' y1='300.0' x2='1046' y2='300.0' stroke='#eef1f4' stroke-width='1'/><text x='50' y='304.0' font-size='11' fill='#9aa2ad' text-anchor='end'>4</text><line x1='58' y1='228.5' x2='1046' y2='228.5' stroke='#eef1f4' stroke-width='1'/><text x='50' y='232.5' font-size='11' fill='#9aa2ad' text-anchor='end'>32</text><line x1='58' y1='157.0' x2='1046' y2='157.0' stroke='#eef1f4' stroke-width='1'/><text x='50' y='161.0' font-size='11' fill='#9aa2ad' text-anchor='end'>60</text><line x1='58' y1='85.5' x2='1046' y2='85.5' stroke='#eef1f4' stroke-width='1'/><text x='50' y='89.5' font-size='11' fill='#9aa2ad' text-anchor='end'>88</text><line x1='58' y1='14.0' x2='1046' y2='14.0' stroke='#eef1f4' stroke-width='1'/><text x='50' y='18.0' font-size='11' fill='#9aa2ad' text-anchor='end'>116</text><text x='58.0' y='322' font-size='11' fill='#9aa2ad' text-anchor='start'>02-03</text><text x='1046.0' y='322' font-size='11' fill='#9aa2ad' text-anchor='end'>10-08</text><path d='M58.0,55.6 L64.2,57.8 L70.3,62.1 L76.5,63.3 L82.7,58.6 L88.9,56.0 L95.0,55.8 L101.2,56.6 L107.4,61.5 L113.6,59.3 L119.8,60.2 L125.9,61.1 L132.1,58.8 L138.3,60.4 L144.4,60.0 L150.6,62.2 L156.8,60.3 L163.0,59.2 L169.2,60.8 L175.3,59.9 L181.5,60.3 L187.7,59.4 L193.8,62.3 L200.0,64.8 L206.2,69.7 L212.4,66.2 L218.6,66.7 L224.7,73.2 L230.9,79.8 L237.1,78.8 L243.2,72.8 L249.4,73.6 L255.6,73.1 L261.8,73.0 L267.9,72.3 L274.1,71.1 L280.3,71.0 L286.5,71.5 L292.6,70.8 L298.8,62.9 L305.0,63.9 L311.2,64.3 L317.4,63.8 L323.5,62.6 L329.7,63.6 L335.9,62.9 L342.1,62.5 L348.2,61.1 L354.4,62.9 L360.6,60.8 L366.8,60.8 L372.9,71.3 L379.1,72.8 L385.3,74.7 L391.4,74.6 L397.6,77.2 L403.8,74.7 L410.0,70.5 L416.1,69.9 L422.3,79.7 L428.5,78.3 L434.7,63.2 L440.9,63.7 L447.0,64.9 L453.2,66.1 L459.4,56.3 L465.6,80.2 L471.7,82.0 L477.9,77.9 L484.1,75.6 L490.2,81.1 L496.4,83.5 L502.6,82.1 L508.8,77.0 L515.0,78.3 L521.1,113.3 L527.3,113.7 L533.5,112.2 L539.6,114.3 L545.8,119.7 L552.0,130.9 L558.2,132.6 L564.4,132.1 L570.5,137.9 L576.7,214.4 L582.9,240.3 L589.0,234.6 L595.2,234.9 L601.4,232.7 L607.6,233.0 L613.8,232.9 L619.9,231.7 L626.1,233.7 L632.3,234.1 L638.5,233.1 L644.6,233.6 L650.8,235.6 L657.0,236.2 L663.1,236.4 L669.3,236.4 L675.5,236.4 L681.7,234.1 L687.9,235.9 L694.0,238.1 L700.2,235.9 L706.4,236.6 L712.5,237.4 L718.7,239.5 L724.9,241.4 L731.1,240.7 L737.2,245.1 L743.4,244.8 L749.6,249.0 L755.8,248.0 L762.0,249.1 L768.1,251.5 L774.3,248.6 L780.5,248.1 L786.6,248.3 L792.8,247.8 L799.0,245.1 L805.2,243.8 L811.4,245.8 L817.5,245.0 L823.7,245.5 L829.9,241.9 L836.0,242.0 L842.2,243.1 L848.4,242.4 L854.6,243.0 L860.8,246.5 L866.9,246.9 L873.1,247.3 L879.3,248.9 L885.5,249.1 L891.6,249.7 L897.8,248.4 L904.0,248.7 L910.1,248.8 L916.3,248.9 L922.5,249.2 L928.7,248.8 L934.9,248.9 L941.0,248.9 L947.2,249.0 L953.4,249.1 L959.5,249.4 L965.7,250.1 L971.9,250.2 L978.1,250.1 L984.2,249.4 L990.4,249.7 L996.6,249.1 L1002.8,249.0 L1009.0,248.9 L1015.1,249.5 L1021.3,249.3 L1027.5,250.0 L1033.7,250.5 L1039.8,279.8 L1046.0,280.3' fill='none' stroke='#1a73e8' stroke-width='2.2' stroke-linejoin='round'/><path d='M58.0,55.6 L64.2,53.5 L70.3,55.0 L76.5,56.5 L82.7,52.4 L88.9,52.1 L95.0,52.6 L101.2,52.3 L107.4,55.6 L113.6,53.0 L119.8,51.4 L125.9,51.9 L132.1,52.8 L138.3,51.8 L144.4,55.8 L150.6,58.7 L156.8,56.3 L163.0,55.6 L169.2,58.0 L175.3,54.8 L181.5,53.2 L187.7,54.1 L193.8,55.1 L200.0,54.9 L206.2,56.8 L212.4,55.7 L218.6,59.8 L224.7,60.7 L230.9,68.8 L237.1,65.7 L243.2,62.3 L249.4,65.6 L255.6,64.2 L261.8,64.8 L267.9,67.1 L274.1,62.9 L280.3,65.5 L286.5,67.6 L292.6,67.6 L298.8,59.1 L305.0,60.7 L311.2,56.9 L317.4,56.3 L323.5,53.3 L329.7,54.2 L335.9,51.4 L342.1,51.8 L348.2,50.2 L354.4,49.7 L360.6,48.0 L366.8,48.7 L372.9,49.6 L379.1,49.5 L385.3,50.2 L391.4,47.4 L397.6,47.5 L403.8,43.7 L410.0,42.4 L416.1,44.0 L422.3,39.6 L428.5,39.8 L434.7,37.1 L440.9,41.7 L447.0,44.7 L453.2,46.1 L459.4,45.0 L465.6,45.1 L471.7,48.8 L477.9,45.5 L484.1,41.3 L490.2,39.8 L496.4,42.0 L502.6,41.7 L508.8,42.9 L515.0,45.5 L521.1,41.7 L527.3,40.3 L533.5,42.2 L539.6,47.0 L545.8,52.6 L552.0,47.8 L558.2,50.7 L564.4,52.2 L570.5,49.2 L576.7,42.9 L582.9,43.3 L589.0,40.7 L595.2,40.2 L601.4,33.7 L607.6,41.4 L613.8,40.1 L619.9,35.9 L626.1,44.2 L632.3,41.0 L638.5,38.1 L644.6,39.2 L650.8,47.2 L657.0,45.6 L663.1,45.6 L669.3,48.3 L675.5,50.4 L681.7,43.7 L687.9,49.0 L694.0,53.6 L700.2,48.1 L706.4,48.6 L712.5,53.5 L718.7,62.7 L724.9,59.0 L731.1,51.2 L737.2,52.4 L743.4,51.9 L749.6,56.2 L755.8,53.3 L762.0,60.5 L768.1,58.8 L774.3,61.6 L780.5,59.5 L786.6,62.0 L792.8,58.8 L799.0,55.7 L805.2,56.1 L811.4,53.7 L817.5,53.3 L823.7,55.4 L829.9,53.9 L836.0,55.4 L842.2,55.3 L848.4,51.1 L854.6,52.0 L860.8,59.5 L866.9,59.3 L873.1,57.8 L879.3,60.9 L885.5,61.5 L891.6,59.4 L897.8,57.2 L904.0,58.4 L910.1,57.5 L916.3,58.2 L922.5,61.7 L928.7,61.5 L934.9,61.7 L941.0,60.2 L947.2,61.1 L953.4,60.4 L959.5,61.7 L965.7,63.8 L971.9,65.4 L978.1,67.1 L984.2,65.4 L990.4,66.5 L996.6,63.9 L1002.8,62.2 L1009.0,61.9 L1015.1,63.4 L1021.3,67.7 L1027.5,73.0 L1033.7,72.8 L1039.8,72.1 L1046.0,74.7' fill='none' stroke='#3b6fd1' stroke-width='2.2' stroke-linejoin='round' stroke-dasharray='5,4'/></svg>
+<div class='legend'><i style='background:#1a73e8'></i>账户时间加权净值（起点 100）
+<i style='background:#3b6fd1'></i>沪深300（起点 100，虚线）</div>
+<div class='note'>账户曲线已剔除各笔入金，因此与「总权益含入金」的绝对金额不同 ——
+这是衡量交易能力（而非资金规模）的正确口径。曲线在 6 月后与基准同步下行且跌幅更大，
+说明下行期<b>没有防守</b>。</div></div>
+
+<h2>四、月度已实现盈亏</h2>
+<div class='card'><svg class='chart' viewBox='0 0 1060 260' xmlns='http://www.w3.org/2000/svg'><rect x='0' y='0' width='1060' height='260' fill='#fff'/><line x1='58' y1='56.2' x2='1046' y2='56.2' stroke='#d7dce2' stroke-width='1'/><text x='50' y='60.2' font-size='11' fill='#9aa2ad' text-anchor='end'>0</text><rect x='78.9' y='14.0' width='68.1' height='42.2' fill='#b8332a' rx='3' opacity='.88'/><text x='112.9' y='9.0' font-size='10.5' fill='#b8332a' text-anchor='middle'>+4.10%</text><text x='112.9' y='250' font-size='11' fill='#7b8794' text-anchor='middle'>26-02</text><rect x='188.6' y='38.1' width='68.1' height='18.1' fill='#b8332a' rx='3' opacity='.88'/><text x='222.7' y='33.1' font-size='10.5' fill='#b8332a' text-anchor='middle'>+1.76%</text><text x='222.7' y='250' font-size='11' fill='#7b8794' text-anchor='middle'>26-03</text><rect x='298.4' y='41.7' width='68.1' height='14.5' fill='#b8332a' rx='3' opacity='.88'/><text x='332.4' y='36.7' font-size='10.5' fill='#b8332a' text-anchor='middle'>+1.41%</text><text x='332.4' y='250' font-size='11' fill='#7b8794' text-anchor='middle'>26-04</text><rect x='408.2' y='53.8' width='68.1' height='2.4' fill='#b8332a' rx='3' opacity='.88'/><text x='442.2' y='48.8' font-size='10.5' fill='#b8332a' text-anchor='middle'>+0.24%</text><text x='442.2' y='250' font-size='11' fill='#7b8794' text-anchor='middle'>26-05</text><rect x='518.0' y='38.8' width='68.1' height='17.4' fill='#b8332a' rx='3' opacity='.88'/><text x='552.0' y='33.8' font-size='10.5' fill='#b8332a' text-anchor='middle'>+1.69%</text><text x='552.0' y='250' font-size='11' fill='#7b8794' text-anchor='middle'>26-06</text><rect x='627.7' y='56.2' width='68.1' height='169.8' fill='#1a9e5a' rx='3' opacity='.88'/><text x='661.8' y='239.0' font-size='10.5' fill='#1a9e5a' text-anchor='middle'>-16.48%</text><text x='661.8' y='250' font-size='11' fill='#7b8794' text-anchor='middle'>26-07</text><rect x='737.5' y='56.2' width='68.1' height='42.1' fill='#1a9e5a' rx='3' opacity='.88'/><text x='771.6' y='111.3' font-size='10.5' fill='#1a9e5a' text-anchor='middle'>-4.09%</text><text x='771.6' y='250' font-size='11' fill='#7b8794' text-anchor='middle'>26-08</text><rect x='847.3' y='56.2' width='68.1' height='5.4' fill='#1a9e5a' rx='3' opacity='.88'/><text x='881.3' y='74.6' font-size='10.5' fill='#1a9e5a' text-anchor='middle'>-0.52%</text><text x='881.3' y='250' font-size='11' fill='#7b8794' text-anchor='middle'>26-09</text><rect x='957.1' y='56.2' width='68.1' height='33.9' fill='#1a9e5a' rx='3' opacity='.88'/><text x='991.1' y='103.1' font-size='10.5' fill='#1a9e5a' text-anchor='middle'>-3.29%</text><text x='991.1' y='250' font-size='11' fill='#7b8794' text-anchor='middle'>26-10</text></svg>
+<div class='note'>前 5 个月均盈利（2 月 ++4.10% 主要来自窗口前持仓了结），
+7 月单月 -16.48% 为最大失血月，
+此后连续 3 个月为负 —— <b>亏损没有被止住，是持续性的</b>。</div></div>
+
+<h2>五、成本与换手</h2>
+<div class='card'><div class='grid'>
+  <div class='kpi'><div class='k'>双边成交额</div><div class='v'>已脱敏</div>
+    <div class='n'>310 买 / 263 卖</div></div>
+  <div class='kpi'><div class='k'>总交易费用</div><div class='v down'>已脱敏</div>
+    <div class='n'>手续费+印花税+杂费</div></div>
+  <div class='kpi'><div class='k'>费用率</div><div class='v'>0.048%</div>
+    <div class='n'>佣金水平很低<span class='tag ok'>不是主要问题</span></div></div>
+  <div class='kpi'><div class='k'>年化双边换手率</div><div class='v gold'>81 倍</div>
+    <div class='n'>平均权益 已脱敏</div></div>
+  <div class='kpi'><div class='k'>日均成交笔数</div><div class='v'>3.6</div>
+    <div class='n'>共 208 只标的</div></div>
+  <div class='kpi'><div class='k'>平均持有天数</div><div class='v'>5.1 / 5.0</div>
+    <div class='n'>盈利单 / 亏损单</div></div>
+</div>
+<div class='note'>费用只占亏损的 6.9%，<b>不是亏损主因</b>；
+真正的问题是 <b>81 倍年化换手</b> 带来的高频决策 —— 换手越高，
+负期望被重复的次数越多（261 次平仓 × 期望 -0.22 U ≈
+-22.26%，与实际已实现 -22.26% 吻合）。</div></div>
+
+<h2>六、个股归因</h2>
+<div class='card'>
+<h3>亏损最多的 8 只</h3>
+<table data-wb><thead><tr><th>名称</th><th>代码</th><th class='num'>已实现</th><th class='num'>平仓笔数</th></tr></thead>
+<tbody><tr><td>标的 03</td><td class='mute'>已脱敏</td><td class='num down'>-5.75%</td><td class='num'>2</td></tr><tr><td>标的 04</td><td class='mute'>已脱敏</td><td class='num down'>-3.15%</td><td class='num'>1</td></tr><tr><td>标的 05</td><td class='mute'>已脱敏</td><td class='num down'>-2.32%</td><td class='num'>2</td></tr><tr><td>标的 06</td><td class='mute'>已脱敏</td><td class='num down'>-1.82%</td><td class='num'>1</td></tr><tr><td>标的 07</td><td class='mute'>已脱敏</td><td class='num down'>-1.58%</td><td class='num'>3</td></tr><tr><td>标的 08</td><td class='mute'>已脱敏</td><td class='num down'>-1.51%</td><td class='num'>2</td></tr><tr><td>标的 09</td><td class='mute'>已脱敏</td><td class='num down'>-1.24%</td><td class='num'>2</td></tr><tr><td>标的 10</td><td class='mute'>已脱敏</td><td class='num down'>-1.18%</td><td class='num'>1</td></tr></tbody></table>
+<h3>盈利最多的 8 只</h3>
+<table data-wb><thead><tr><th>名称</th><th>代码</th><th class='num'>已实现</th><th class='num'>平仓笔数</th></tr></thead>
+<tbody><tr><td>标的 01</td><td class='mute'>已脱敏</td><td class='num up'>+3.93%</td><td class='num'>1</td></tr><tr><td>标的 02</td><td class='mute'>已脱敏</td><td class='num up'>+3.05%</td><td class='num'>3</td></tr><tr><td>标的 11</td><td class='mute'>已脱敏</td><td class='num up'>+2.07%</td><td class='num'>3</td></tr><tr><td>标的 12</td><td class='mute'>已脱敏</td><td class='num up'>+1.96%</td><td class='num'>1</td></tr><tr><td>标的 13</td><td class='mute'>已脱敏</td><td class='num up'>+1.91%</td><td class='num'>1</td></tr><tr><td>标的 14</td><td class='mute'>已脱敏</td><td class='num up'>+1.40%</td><td class='num'>1</td></tr><tr><td>标的 15</td><td class='mute'>已脱敏</td><td class='num up'>+0.98%</td><td class='num'>2</td></tr><tr><td>标的 16</td><td class='mute'>已脱敏</td><td class='num up'>+0.87%</td><td class='num'>1</td></tr></tbody></table>
+<div class='note'>盈利只 102 只 / 亏损只 102 只 ——
+几乎五五开，说明<b>选股没有稳定优势</b>；而亏损端的金额远大于盈利端，问题出在
+<b>亏损没有被及时截断</b>。</div></div>
+
+<h2>七、结论与可执行建议</h2>
+<div class='card'>
+<ul class='rec'>
+<li><b>① 先止血，暂停扩大本金。</b>当前期望为负时，投入越多亏损越大
+   （6 月追加本金后 7 月即亏 +16.48%）。
+   在单笔期望转正之前，<b>不再追加资金</b>；已有的仓位按下面的规则处理。</li>
+<li><b>② 建立硬性止损，把盈亏比拉到 ≥1.5。</b>你现在平均亏 1.00 U、
+   平均赚 0.66 U。建议：单笔最大亏损不超过本金的 2%，
+   触及 <b>-7%</b> 无条件离场；盈利端用移动止盈（如回撤 6% 或跌破 20 日均线）让利润奔跑。
+   目标：平均盈利 ≥ 1.5 × 平均亏损。</li>
+<li><b>③ 把换手率降到 20 倍以内。</b>81 倍年化换手意味着平均每
+   0.28 个交易日就全仓换一遍。建议每月主动交易不超过
+   2-4 次，只在<b>高胜率形态 + 板块资金共振</b>时出手（可对接本项目的主升精选 /
+   环境门控：非强势环境直接空仓）。</li>
+<li><b>④ 收缩持仓分散度。</b>208 只标的等于没有研究深度。建议同时持仓
+   <b>≤5 只</b>、单票仓位 ≤20%，只做你能说清「为什么买、什么条件卖」的机会。</li>
+<li><b>⑤ 用「环境门控」替代全天候交易。</b>你的亏损集中在 7-8 月（市场下行段），
+   说明策略在弱势环境里没有防守。建议引入大盘环境判定：破位 / 弱势期
+   <b>强制空仓</b>，只做强势期 —— 这比优化选股更能立刻改善盈亏比。</li>
+<li><b>⑥ 每笔交易留痕并月度复盘。</b>记录买入理由、止损位、目标位；每月核对
+   「计划 vs 实际」。当前 261 笔平仓中，若剔除最差的 5 笔
+   （合计约 -12.29%），
+   结果会显著改善 —— 说明亏损高度集中在少数失控单上。</li>
+<li><b>⑦ 验证正期望后再放大。</b>先用模拟盘或 小资金跑满 30 笔以上，
+   要求：胜率 ≥50%、盈亏比 ≥1.5、盈利因子 &gt;1.2 且回撤 &lt;15%，
+   达标后再分批加仓。</li>
+</ul>
+<div class='note'><b>可证伪的检验点</b>：执行上述 ②+③+⑤ 后，若连续 30 笔平仓的
+「盈利因子仍 &lt;1.0」或「最大回撤 &gt;15%」，说明问题不在执行而在策略本身，
+应停止自主选股、改为指数化配置（沪深300ETF 定投）作为基准替代。</div>
+</div>
+
+<h2>八、数据口径与可信度</h2>
+<div class='card'>
+<ul style='font-size:13px;color:#41474f;margin:0;padding-left:20px'>
+<li>成本法：<b>移动加权平均</b>（A股券商通行口径），已实现盈亏 = 卖出净得 − 卖出部分成本。</li>
+<li>交易分类：股票交易 573 笔、国债逆回购 56 笔
+   （已脱敏，已按现金等价物计入净值）、新股申购配号
+   38 笔（0 成本，未中签或未扣款）。</li>
+<li>外部入金：交割单不含银证转账，用「现金余额 = 上期 + 发生金额」反推，共识别
+   10 笔（阈值 1,000 元，小额为利息/取整噪声）。</li>
+<li>净值曲线：期末权益 = 现金 + 持仓市值 + <b>逆回购在途本金</b>（漏算会造出假回撤）。</li>
+<li style="list-style:none;margin:8px 0"><div class='note'><b>窗口前持仓了结 2 笔（回款合计 +7.08%）</b>：这些股票在 2026-02-03 之前就已持有，交割单里没有建仓成本。若按「成本 0」处理，卖出款会被全额算成利润（虚增 +7.08%），因此本页把它们剥离，仅按起始日市值计入本金。<ul><li>2026-02-04 标的 01（已脱敏）卖出 1000 股，回款 +3.93% —— <b>成本不可考，不计入盈亏</b></li><li>2026-03-25 标的 02（已脱敏）卖出 1700 股，回款 +3.14% —— <b>成本不可考，不计入盈亏</b></li></ul></div></li>
+<li>收盘价：本地日K缓存（腾讯前复权）。前复权历史价与当日成交均价存在正常日内偏差
+   （中位数约 1.5%），不影响已实现盈亏（用真实成交价），仅对历史净值有轻微影响。</li>
+<li>未实现盈亏按 2026-10-08 收盘计，在持标的合计浮动 -1.34%。</li>
+</ul>
+</div>
+
+<footer>本页由量化分析引擎自动核算生成，数据来源为你提供的券商交割单 + 本地行情缓存。
+全部结论可复核、可证伪；<b>不构成投资建议</b>，市场有风险，投资需谨慎。</footer>
+</div><!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* ④ 返回 / 回顶：页头「← 返回」优先走浏览器历史（从哪来退回哪），
+     无历史（直接打开链接/新标签）则用 href 兜底跳门户首页 —— 不用 javascript: 伪协议，
+     保证 href 始终是个真链接（断链门禁与无 JS 环境都成立）。
+     右下角浮动按钮：回顶在滚动 400px 后淡入，回门户常驻。 */
+  try {
+    document.querySelectorAll("a.wb-back").forEach(function (a) {
+      a.addEventListener("click", function (ev) {
+        try {
+          if (window.history && window.history.length > 1 && document.referrer) {
+            ev.preventDefault();
+            window.history.back();
+          }
+        } catch (e) {}
+      });
+    });
+    var top = document.querySelector(".wb-fab a.wb-top");
+    if (top) {
+      top.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        try { window.scrollTo({ top: 0, behavior: "smooth" }); }
+        catch (e) { window.scrollTo(0, 0); }
+      });
+      var sync = function () {
+        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        top.style.display = y > 400 ? "flex" : "none";
+      };
+      window.addEventListener("scroll", sync, { passive: true });
+      sync();
+    }
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--><!--WB_FAB--><div class='wb-fab'><a class='wb-top' href='#' title='回到顶部' aria-label='回到顶部'>↑</a><a class='wb-home' href='../../index.html' title='返回门户首页' aria-label='返回门户首页'>⌂</a></div><!--/WB_FAB--></body></html>
