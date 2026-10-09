@@ -319,6 +319,34 @@ def _ret_color(v):
   return RED if v > 0 else (GRN if v < 0 else "#8a929c")
 
 
+def _margin_lag_note(asof):
+    """★ 动态计算 margin_em 数据末根与滞后天数（禁写死 —— 数据源已能更新到最新）。
+    文件内行按 DATE 降序（东财 sortColumns=DATE, sortTypes=-1）→ rows[0] 为最新。"""
+    import glob as _g
+    mx = ""
+    for f in _g.glob(os.path.join(HERE, "margin_em", "*.json")):
+        try:
+            rows = json.load(open(f, encoding="utf-8"))
+        except Exception:
+            continue
+        if rows:
+            d = str((rows[0] or {}).get("date") or "")[:10]
+            if d > mx:
+                mx = d
+    if not mx:
+        return ("<b style='color:#b4631f'>⚠ 融资融券维度：margin_em 无数据</b>，"
+                "「融资 1/3/5 日增仓」模块不可用。")
+    lag = ""
+    try:
+        from datetime import date as _dd
+        n = (_dd.fromisoformat(asof) - _dd.fromisoformat(mx)).days if asof else None
+        lag = ("（滞后 %d 天）" % n) if (n is not None and n > 0) else "（已到最新可得）"
+    except Exception:
+        pass
+    return ("<b style='color:#1a7a4a'>融资融券维度（东财日频 · T+1 公布）</b>：数据末根 <b>%s</b>%s。"
+            "「融资 1/3/5 日增仓」模块用的即该序列；T 日决策只用 DATE &lt; T 的行，防未来函数。" % (mx, lag))
+
+
 def _hub_note(date):
   """底座溯源：本次数据来自哪个源、覆盖多少、哪个维度滞后。
 
@@ -346,12 +374,10 @@ def _hub_note(date):
   return ("<div class='evi' style='margin-top:12px;background:#f2f7fd;"
           "border-color:#cfe0f5;color:#1a4e85'><b>数据溯源（统一数据底座）</b>："
           "本次数据日 <b>{D}</b>，底座覆盖 <b>{cov}</b>。<br>{rows}<br>"
-          "<b style='color:#9a5b1e'>⚠ 融资融券维度数据源客观滞后</b>："
-          "东财接口实测末根为 2026-08-19（滞后 42 天，接口参数已核对无误）。"
-          "因此本池的「融资 1/3/5 日增仓」模块用的是 8 月中旬的真实数据，"
-          "<b>不是 9 月末的</b> —— 该模块结论请按此理解。</div>"
+          "{mlag}</div>"
           .replace("{D}", date or "—").replace("{cov}", mf.get("coverage", "—"))
-          .replace("{rows}", "<br>".join(rows) or "—"))
+          .replace("{rows}", "<br>".join(rows) or "—")
+          .replace("{mlag}", _margin_lag_note(date)))
 
 
 def _ablate_block():

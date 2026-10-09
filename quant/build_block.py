@@ -342,13 +342,133 @@ def main():
     if DATE >= latest:
         with open(os.path.join(WEB_BLOCK, "index.html"), "w", encoding="utf-8") as f:
             f.write(html)
-        print(f"OK -> {dst_dated}（并更新最新版 web/block/index.html）")
+        # ★ block.html 曾被 _page_registry 登记为入口页却**无生成器**（停在旧数据）。
+        #   它与 index.html 同义，随最新一期同步写，保证登记成立、不再死页。
+        with open(os.path.join(WEB_BLOCK, "block.html"), "w", encoding="utf-8") as f:
+            f.write(html)
+        print(f"OK -> {dst_dated}（并更新最新版 web/block/index.html + block.html）")
     else:
         print(f"OK -> {dst_dated}（历史归档，未覆盖 web/block/index.html 最新={latest}）")
     print(f"    笔数 {d['count']}｜股票 {d['stockCount']}｜成交额 {yi(d['totalValue'])} 亿元")
 
-    # 每次构建都刷新归档索引，保证链接齐全
+    # 每次构建都刷新归档索引与个股档案，保证链接齐全
     build_index()
+    build_stocks()
+
+
+def build_stocks():
+    """个股档案页：汇总全部 block_chg/{DATE}.json，按个股累计大宗成交额排序。
+
+    ★ 该页被每日归档页大量链接（stocks.html#{code}），但此前**没有任何生成器**
+      → 页面一直停在手工跑的那一次（10-09 实测版本内容仍是旧数据），属「死页」。
+      本函数让它与数据同步刷新，并写「数据基准」供全站时间戳条读取。
+    """
+    files = sorted(glob.glob(os.path.join(OUT_DIR, "*.json")))
+    agg, all_d = {}, []
+    for fp in files:
+        bn = os.path.basename(fp)[:10]
+        if not re.match(r"^\d{4}-\d{2}-\d{2}$", bn):
+            continue
+        try:
+            j = json.load(open(fp, encoding="utf-8"))
+        except Exception:
+            continue
+        d0 = j.get("date")
+        if not d0:
+            continue
+        all_d.append(d0)
+        for r in (j.get("rows") or []):
+            c = r.get("code")
+            if not c:
+                continue
+            a = agg.setdefault(c, {"code": c, "name": r.get("name") or c, "n": 0,
+                                   "value": 0.0, "last": d0, "disc": 0.0, "dn": 0,
+                                   "ib": 0, "is": 0, "days": set()})
+            a["n"] += 1
+            a["value"] += float(r.get("value") or 0)
+            a["days"].add(d0)
+            if d0 > a["last"]:
+                a["last"] = d0
+            dv = r.get("discount")
+            if dv is not None:
+                a["disc"] += float(dv); a["dn"] += 1
+            if "机构" in str(r.get("buyer") or ""):
+                a["ib"] += 1
+            if "机构" in str(r.get("seller") or ""):
+                a["is"] += 1
+    if not agg:
+        print("  (个股档案：暂无 block_chg 数据，跳过)")
+        return
+
+    def _esc(s):
+        return (str(s).replace("&", "&amp;").replace("<", "&lt;")
+                .replace(">", "&gt;").replace("'", "&#39;"))
+
+    items = sorted(agg.values(), key=lambda x: -x["value"])
+    ds = sorted(set(all_d))
+    base_d = ds[-1] if ds else "—"
+    tr = []
+    for a in items:
+        if a["dn"]:
+            avg = a["disc"] / a["dn"]
+            dcls = "disc" if avg > 0 else ("prem" if avg < 0 else "")
+            dtxt = "%.2f%%" % avg
+        else:
+            dcls, dtxt = "", "—"
+        tr.append(
+            "<tr id='%s'><td data-val='%s'>%s</td><td class='num'>%s</td>"
+            "<td class='num'>%d</td><td class='num'>%d</td>"
+            "<td class='num gold'>%s</td><td class='num %s'>%s</td>"
+            "<td class='num'>%s</td><td class='num buy'>%d</td><td class='num'>%d</td></tr>"
+            % (_esc(a["code"]), _esc(a["name"]), _esc(a["name"]), _esc(a["code"]),
+               a["n"], len(a["days"]), yi(a["value"]), dcls, dtxt,
+               a["last"], a["ib"], a["is"]))
+    html = f"""<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>大宗交易 · 个股档案</title>
+<style>{CSS}</style>
+</head>
+<body>
+<div class='wrap'>
+<header>
+  <h1>大宗交易 · 个股档案</h1>
+  <div class='sub'>数据基准 {base_d}｜覆盖 {len(ds)} 个交易日 · {len(items)} 只个股（按累计成交额排序）</div>
+  <div class='datenav'><a href='index.html'>← 最新一期</a><a class='arch' href='archive.html'>归档总览</a><a href='../../index.html'>返回总门户</a></div>
+</header>
+<div class='section'>
+  <div class='note'>口径：同一只股票在各交易日的大宗交易<b>逐笔累加</b>；「折溢价均值」为正=折价、为负=溢价；机构买卖=买方/卖方名称含「机构」的笔数。点表头可排序。</div>
+  <table id='stk'>
+    <thead><tr>
+      <th class='sort' data-c='0'>名称</th>
+      <th class='num sort' data-c='1'>代码</th>
+      <th class='num sort' data-c='2'>笔数</th>
+      <th class='num sort' data-c='3'>涉及交易日</th>
+      <th class='num sort' data-c='4'>累计成交额(亿元)</th>
+      <th class='num sort' data-c='5'>折溢价均值</th>
+      <th class='sort' data-c='6'>最近交易日</th>
+      <th class='num sort' data-c='7'>机构买入笔</th>
+      <th class='num sort' data-c='8'>机构卖出笔</th>
+    </tr></thead>
+    <tbody>{''.join(tr)}</tbody>
+  </table>
+</div>
+<footer>
+数据来源：东方财富数据中心 <b>RPT_DATA_BLOCKTRADE</b>（盘后公开披露，与历史区间逐字段核验一致）。<br>
+本页面由 A股量化助理自动生成 · 仅供参考，<b>不构成投资建议</b> · 市场有风险，投资需谨慎。
+</footer>
+</div>
+<script>{JS}</script>
+</body>
+</html>
+"""
+    os.makedirs(WEB_BLOCK, exist_ok=True)
+    dst = os.path.join(WEB_BLOCK, "stocks.html")
+    with open(dst, "w", encoding="utf-8") as f:
+        f.write(html)
+    print(f"OK -> {dst}（{len(items)} 只 / {len(ds)} 期，数据基准 {base_d}）")
 
 
 def build_index():

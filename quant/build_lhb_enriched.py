@@ -76,13 +76,19 @@ def main():
 
     # 席位明细：按 {DATE}_batch*.json 全部合并；缺失则为空（降级：无游资/席位）
     detail = {}
+    HOT_OK = True   # 游资标签源是否可用（东财降级源无标签 → 不得把「无标签」显示为「低」）
     dfiles = sorted(glob.glob(os.path.join(Q, "lhb_detail", f"{date}_batch*.json"))
                     + glob.glob(os.path.join(Q, "lhb_detail", date, "*.json")))
     for fp in dfiles:
         rel = os.path.relpath(fp, Q)
-        detail.update(load(rel).get("data", {}))
-    print(f"席位明细文件: {len(dfiles)} 个, 覆盖 {len(detail)} 只"
-          + ("" if detail else "  → 降级：游资标签/席位将留空（行业列仍可用）"))
+        j = load(rel)
+        detail.update(j.get("data", {}))
+        if j.get("hotmoney_tag") is False:
+            HOT_OK = False
+    print("席位明细文件: %d 个, 覆盖 %d 只%s%s"
+          % (len(dfiles), len(detail),
+             "" if detail else "  → 降级：游资标签/席位将留空（行业列仍可用）",
+             "" if (detail and HOT_OK) else ("  → 游资标签源不可用：等级记「不可判」而非「低」" if detail else "")))
 
     code2sw1 = load("q2_full/_code2industry.json")
     name2sw2 = load("_name2sw2.json")
@@ -108,7 +114,7 @@ def main():
         hotmoney_seats = [s for s in all_seats if s["tag"]]
         hotmoney_net = round(sum(s["buy"] - s["sell"] for s in hotmoney_seats), 2)
         n_tag = len(tags)
-        level = "高" if n_tag >= 4 else ("中" if n_tag >= 1 else "低")
+        level = (("高" if n_tag >= 4 else ("中" if n_tag >= 1 else "低")) if HOT_OK else None)
 
         sw1 = code2sw1.get(code)
         sw1_chg = sw1_detail.get(sw1, {}).get("changePct") if sw1 else None
@@ -136,7 +142,8 @@ def main():
             "hotmoneyCount": n_tag,
         }
 
-    out = {"date": date, "count": len(enriched), "stocks": enriched}
+    out = {"date": date, "count": len(enriched), "stocks": enriched,
+           "hotmoney_src": "westock" if HOT_OK else "unavailable"}
     op = os.path.join(Q, f"lhb_enriched_{date}.json")
     json.dump(out, open(op, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 

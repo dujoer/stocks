@@ -220,7 +220,7 @@ def score_one(s):
         "pos52": (round(pos52, 1) if pos52 is not None else None),
         "turn": turn, "volr": volr, "rsi12": rsi12, "chg20": chg20, "chg60": chg60,
         "profit": profit, "conc90": conc90, "avgCost": float(ch.get("chipAvgCost") or 0),
-        "inst_net": round(inb / 1e8, 3), "hotmoney": (le or {}).get("hotmoneyLevel", ""),
+        "inst_net": round(inb / 1e8, 3), "hotmoney": ((le or {}).get("hotmoneyLevel") or ""),
         "exec_buy": em["buy"] if em else 0, "exec_sell": em["sell"] if em else 0,
         "block_inst": round(bl_inst_buy.get(code, 0) / 1e8, 3),
         "flags": flags, "veto": veto, "tier": tier,

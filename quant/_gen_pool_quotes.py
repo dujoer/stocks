@@ -154,14 +154,31 @@ def gen_picks(date):
 
 
 # ── ① 全市场快照（从统一底座导出） ──────────────────────────────────
+def _norm_quote(code, v):
+    """★ 口径归一：底座 quotes 走腾讯 qt（字段 last/11 项），历史快照走 MCP data_quote
+    （字段 price/36 项）。10-08 起这里只导出腾讯口径 → 读 `q['price']` 的脚本 KeyError。
+    统一在此补齐 price/code/symbol/market_name 等同义键，读端无需区分来源。"""
+    if not isinstance(v, dict):
+        return v
+    if "price" not in v and v.get("last") is not None:
+        v = dict(v)
+        v["price"] = v["last"]
+    v.setdefault("code", code)
+    v.setdefault("symbol", code)
+    pre = code[:2]
+    v.setdefault("market_name", {"sh": "上海", "sz": "深圳", "bj": "北交所"}.get(pre, ""))
+    return v
+
+
 def gen_market(date):
     hub = load(os.path.join(Q, "hub", "%s.json" % date.replace("-", "")))
     q = ((hub.get("dims") or {}).get("quotes") or {}).get("data") or {}
     if not q:
         print("  market 跳过：hub 无 quotes（先跑 _datahub.py）")
         return
+    q = {c: _norm_quote(c, v) for c, v in q.items()}
     dump({"ok": True, "data": q}, os.path.join(Q, "quotes", "%s.json" % date))
-    print("  market -> quotes/%s.json  %d 只" % (date, len(q)))
+    print("  market -> quotes/%s.json  %d 只（已补 price 同义键）" % (date, len(q)))
 
 
 def main():

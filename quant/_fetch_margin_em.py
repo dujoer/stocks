@@ -27,11 +27,13 @@ OUT = os.path.join(HERE, "margin_em")
 UA = {"User-Agent": "Mozilla/5.0", "Referer": "https://data.eastmoney.com/"}
 
 
-def event_codes(days=20):
-    """近 N 个交易日内触发过日频事件的唯一代码（与 _accum_lab 同源）。"""
+def event_codes(days=120):
+    """近 N 天内触发过日频事件的唯一代码（与 _accum_lab 同源）。
+    ★ 原默认 40 天窗口太窄：增仓池历史面板入场日可追溯到数月前，
+      窄窗只拉到最近事件票 → margin 覆盖不足（曾仅 18.4%）。默认放宽到 120 天。"""
     import datetime
     codes = set()
-    cut = (datetime.date.today() - datetime.timedelta(days=40)).isoformat()
+    cut = (datetime.date.today() - datetime.timedelta(days=days)).isoformat()
     # 注意：block/exec 落盘的 code 已带 sh/sz 前缀（如 sh600519）；lhb_detail 顶层 {ok, data:{code:...}}
     for f in glob.glob(os.path.join(HERE, "block_chg", "2026-*.json")) + \
              glob.glob(os.path.join(HERE, "block_chg", "2025-*.json")):
@@ -75,7 +77,7 @@ def event_codes(days=20):
     return sorted(codes)
 
 
-def fetch_one(code, pagesize=30, retries=2):
+def fetch_one(code, pagesize=120, retries=2):
     scode = code[2:]
     url = ("https://datacenter-web.eastmoney.com/api/data/v1/get?"
            + urllib.parse.urlencode({
@@ -113,6 +115,8 @@ def main():
     argv = sys.argv[1:]
     codes_in = []
     workers = 6
+    days = 120
+    pagesize = 120
     i = 0
     while i < len(argv):
         a = argv[i]
@@ -122,18 +126,24 @@ def main():
         elif a.startswith("--workers="):
             workers = int(a.split("=", 1)[1])
             i += 1
+        elif a.startswith("--days="):
+            days = int(a.split("=", 1)[1])
+            i += 1
+        elif a.startswith("--pagesize="):
+            pagesize = int(a.split("=", 1)[1])
+            i += 1
         elif a.startswith("--"):
             i += 1
         else:
             codes_in.append(a)
             i += 1
-    codes = codes_in if codes_in else event_codes()
+    codes = codes_in if codes_in else event_codes(days)
     os.makedirs(OUT, exist_ok=True)
-    print(f"[margin_em] 待抓取 {len(codes)} 只，workers={workers}")
+    print(f"[margin_em] 待抓取 {len(codes)} 只，workers={workers}，pagesize={pagesize}，事件窗={days}天")
     ok = fail = 0
     t0 = time.time()
     with ThreadPoolExecutor(max_workers=workers) as ex:
-        futs = {ex.submit(fetch_one, c): c for c in codes}
+        futs = {ex.submit(fetch_one, c, pagesize): c for c in codes}
         for i, fu in enumerate(as_completed(futs), 1):
             code, rows = fu.result()
             if rows is None:

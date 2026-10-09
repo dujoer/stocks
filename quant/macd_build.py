@@ -116,7 +116,8 @@ def build_from_raw(date_str):
             "rank": int(f.get("MainInflowRank", 0)),
         })
     cand.sort(key=lambda x: x["flow20d"], reverse=True)
-    return cand, {"pool_total": pool["data"]["totalStocks"], "tech_scanned": len(tech_d), "above_water": above_water}
+    return cand, {"pool_total": pool["data"]["totalStocks"], "tech_scanned": len(tech_d),
+                  "above_water": above_water, "pool_src": pool.get("src") or "westock_filter"}
 
 
 def load_extra(date_str):
@@ -202,17 +203,24 @@ def main():
 
     hit, extra_total = attach_extra(stocks, a.date)
 
+    off = (counts.get("pool_src") == "offline_txk_full")
     out = {
         # ★ data_date 必须由实际使用的数据日推导，绝不写死 —— 写死就是「旧数据冒充当日」
         "data_date": "%s-%s-%s" % (a.date[:4], a.date[4:6], a.date[6:8]),
         "generated": datetime.date.today().isoformat(),
+        "src": "offline_txk_full" if off else "westock",
         "method": "MACD 水上金叉 (DIF>0, DEA>0, MACD柱>0) + 20日主力净流入 > 0",
         "criteria": [
-            "tool_filter preset=main_inflow, min_inflow=0.3亿, market=hs, limit=200（全市场初筛 1488 只）",
-            "data_technical：MACD 水上金叉（DIF>0 且 DEA>0 且 MACD红柱>0）",
-            "data_fund_flow：MainNetFlow20D > 0（剔除当日热、20日撤的伪强势）",
+            ("初筛域：全市场正股 %d 只（★离线降级：本地腾讯日K，非 westock 主力净流入 top200；"
+             "与历史 top200 口径不可直接对比）" % counts["pool_total"]) if off
+            else "tool_filter preset=main_inflow, min_inflow=0.3亿, market=hs, limit=200（全市场初筛 1488 只）",
+            "MACD 水上金叉（DIF>0 且 DEA>0 且 MACD红柱>0）" + ("（本地日K 自算，口径同 data_technical）" if off else ""),
+            "20 日主力净流入 > 0（剔除当日热、20日撤的伪强势）" + ("（新浪 MoneyFlow 离线源）" if off else ""),
         ],
-        "pipeline_note": "每日重扫：westock tool_filter→data_technical→data_fund_flow，落 macd_raw_*.json，再 macd_build.py --raw。",
+        "pipeline_note": ("每日离线重扫：_gen_macd_pool_offline（本地日K初筛域）→ _gen_tech_offline（本地日K算 MACD）"
+                          "→ _gen_macd_flow_sina（新浪 20 日主力净流入）→ macd_build --raw。"
+                          if off else
+                          "每日重扫：westock tool_filter→data_technical→data_fund_flow，落 macd_raw_*.json，再 macd_build.py --raw。"),
         "extra_note": f"增强诊断列 {hit}/{len(stocks)} 只（源 macd_extra_{a.date}.json）：pos52/量比/换手/5D主力/归一化强度/60日涨幅/获利盘/集中度。**仅记录与显示，不参与筛选**；change 已按 data_quote 收盘口径校正。",
         "extra_covered": hit,
         "extra_available": extra_total,

@@ -155,6 +155,7 @@ a.inlink:hover { background:rgba(201,166,107,.16); }
 .hm-high { color:#f2a65a; font-weight:800; }
 .hm-mid { color:#b8893b; font-weight:700; }
 .hm-low { color:#8a93a3; }
+.hm-na { color:#8a93a3; font-style:italic; opacity:.8; }
 .hmtags { margin-top:3px; }
 .hmtag { display:inline-block; background:rgba(184,51,42,.10); border:1px solid rgba(184,51,42,.30); color:#b8332a; border-radius:10px; padding:1px 7px; font-size:10.5px; margin:2px 2px 0 0; }
 .toggle { color:#b8893b; cursor:pointer; font-size:12px; user-select:none; }
@@ -514,13 +515,14 @@ tot_mv = 0.0
 for s in held:
     q = quotes.get(s["market"].lower() + s["code"])
     if q:
-        price = q["price"]; chg = q["change_percent"]
+        price = q.get("price") or q.get("last") or s.get("price") or 0
+        chg = q.get("change_percent")
     else:
-        price = s.get("price"); chg = None
+        price = s.get("price") or 0; chg = None
     tot_mv += s["qty"] * price
 for s in held:
     q = quotes.get(s["market"].lower() + s["code"]) or {}
-    price = q.get("price") or s.get("cost") or 0
+    price = q.get("price") or q.get("last") or s.get("cost") or 0
     chg = q.get("change_percent")
     mv = s["qty"] * price
     cost = s["cost"]
@@ -733,7 +735,8 @@ def lhb_enriched_table(enr, sort_by="net"):
         sw1 = f"{d['sw1']}{ipo} <span class='{cls(d['sw1Chg'])}'>{pct(d['sw1Chg'])}</span>" if d["sw1"] else "—"
         sw2 = f"{d['sw2']}{ipo} <span class='{cls(d['sw2Chg'])}'>{pct(d['sw2Chg'])}</span>" if d["sw2"] else "—"
         lvl = d["hotmoneyLevel"]
-        lvlcls = {"高": "hm-high", "中": "hm-mid", "低": "hm-low"}.get(lvl, "hm-low")
+        lvl_txt = lvl if lvl else "不可判"
+        lvlcls = {"高": "hm-high", "中": "hm-mid", "低": "hm-low"}.get(lvl, "hm-na")
         tags = "".join(f"<span class='hmtag'>{t}</span>" for t in d["hotmoneyTags"]) or "<span class='note'>—</span>"
         reason = d["reason"] or "—"
         h += (f"<tr class='r' onclick=\"toggle('d{code}')\" style='cursor:pointer'>"
@@ -744,7 +747,7 @@ def lhb_enriched_table(enr, sort_by="net"):
               f"<td class='reason'>{reason}</td>"
               f"<td class='sec'>{sw1}</td>"
               f"<td class='sec'>{sw2}</td>"
-              f"<td class='hm {lvlcls}'>{lvl}<div class='hmtags'>{tags}</div></td>"
+              f"<td class='hm {lvlcls}'>{lvl_txt}<div class='hmtags'>{tags}</div></td>"
               f"<td><span class='toggle'>▸ 席位</span></td></tr>")
         buys = "".join(_seat_li(s, "buy") for s in d["buySeats"]) or "<li class='note'>—</li>"
         sells = "".join(_seat_li(s, "sell") for s in d["sellSeats"]) or "<li class='note'>—</li>"
@@ -752,8 +755,7 @@ def lhb_enriched_table(enr, sort_by="net"):
         h += (f"<tr id='d{code}' class='detail' style='display:none'><td colspan='9'>"
               f"<div class='seats'><div class='buys'><div class='seat-h up'>买方席位 Top5</div><ul>{buys}</ul></div>"
               f"<div class='sells'><div class='seat-h down'>卖方席位 Top5</div><ul>{sells}</ul></div></div>"
-              f"<div class='note'>游资净买合计：<b class='{netcls}'>{yi(d.get('hotmoneyNet'))}亿</b>"
-              f"（仅统计带游资标签席位；共 {d['hotmoneyCount']} 个标签席位）</div></td></tr>")
+              f"<div class='note'>{'游资净买合计：<b class=' + netcls + '>' + yi(d.get('hotmoneyNet')) + '亿</b>（仅统计带游资标签席位；共 ' + str(d['hotmoneyCount']) + ' 个标签席位）' if lvl else '游资标签源不可用——仅展示买卖席位明细，游资介入度不判定'}</div></td></tr>")
     h += "</tbody></table>"
     return h
 

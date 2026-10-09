@@ -107,12 +107,12 @@ STEPS = [
      "fetch_rev_enrich.py --date {D} --render; gen_watchlist.py {D}",
      ["rev_pool.py run {D}", "fetch_rev_flow.py --date {D} --src sina",
       "fetch_rev_enrich.py --date {D} --render", "gen_watchlist.py {D}"]),
-    (10, "manual", "MACD + 高胜率（须先实落三段原始数据）",
-     "_fetch_macd_raw.py {DS} && macd_build.py {DS} --raw; build_macd_extra.py --date {D}; gen_macd.py {DS}; "
-     "build_highwin.py --date {D}; gen_highwin.py --date {D}",
-     ["macd_raw_pool_{DS}.json", "macd_raw_tech_{DS}.json", "macd_raw_flow_{DS}.json"]),
-    (11, "auto", "增仓精选",
-     "build_accum.py {D}", "build_accum.py {D}"),
+    (10, "auto", "MACD + 高胜率（离线链：本地日K + 新浪资金流）",
+     "_gen_macd_offline_all.py --date {D}",
+     ["_gen_macd_offline_all.py --date {D}"]),
+    (11, "auto", "增仓精选（含融资融券日频更新）",
+     "_fetch_margin_em.py --workers=8; build_accum.py {D}",
+     ["_fetch_margin_em.py --workers=8", "build_accum.py {D}"]),
     # ★ 2026-10-08 补登记：龙道诀全模块此前**从未进过日更链路**（页面停在手工跑的那天）。
     #   顺序有讲究：先出证据产物（odds/stage_use/pos_rule/tier_gate），最后 build_dragon 才渲染页面。
     (12, "auto", "龙道诀（情绪周期 · 四道检验 · 出票闸 · 页面）",
@@ -165,10 +165,14 @@ MANUAL_HOWTO = {
         "--industry quant/sector_industry_{DS}.json --concept quant/sector_concept_{DS}.json\n"
         "     ③ 龙虎榜原始数据同理：python quant/_westock_cli_fetch.py lhb --date {D} → quant/lhb/{D}.json "
         "（主榜+机构/活跃席位/高胜率买入/高胜率席位）",
-    10: "MCP tool_filter(preset=main_inflow, min_inflow=0.3, market=hs, limit=200) 落 "
-        "macd_raw_pool_{DS}.json → data_technical(25/批) 落 macd_raw_tech_{DS}.json → "
-        "data_fund_flow(25/批) 落 macd_raw_flow_{DS}.json\n"
-        "      ★ 2026-10-04 修：这三段缺失时 macd_build.py 会直接报错退出（不再静默回退内嵌快照）",
+    10: "离线链一条命令：python quant/_gen_macd_offline_all.py --date {D}\n"
+        "     _gen_macd_pool_offline（本地腾讯日K → 全市场正股初筛域）"
+        " → _gen_tech_offline（本地日K 算 MACD/MA/RSI）"
+        " → _gen_macd_flow_sina（新浪 20 日主力净流入）"
+        " → _gen_hw_quote_offline（腾讯 qt 行情增强）"
+        " → macd_build {DS} --raw → gen_macd → build_highwin → gen_highwin\n"
+        "      ★ 2026-10-09：原依赖 westock MCP 三段原始数据，MCP 不通时 highwin/MACD 永久停更（曾停 09-23）。"
+        "改离线链后每日可跑；口径如实标注 src=offline_txk_full（初筛域为全市场，非主力净流入 top200）",
 }
 # MANUAL 段各自额外的依赖判定（判定「当日原始数据是否已落盘」）
 # 命名沿用各脚本自己的落盘约定：exec_chg/block_chg 用带横线日期，其余用紧凑 DS。
@@ -176,7 +180,6 @@ MANUAL_DEPS = {
     3:  ["exec_chg/{D}.json"],
     4:  ["block_chg/{D}.json"],
     5:  ["../web/sector/sector-strength-{DS}.html"],
-    10: ["macd_raw_pool_{DS}.json", "macd_raw_tech_{DS}.json", "macd_raw_flow_{DS}.json"],
 }
 
 

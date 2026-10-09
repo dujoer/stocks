@@ -83,6 +83,7 @@ FILES = [
     "quant/dragon/dragon_tier_gate.json",   # 出票闸产物（页面第十一节读它；固定名，非按日期）
     # —— 龙虎榜 + 游资 + 当日快照 ——
     "quant/build_lhb_enriched.py",
+    "quant/_fetch_lhb_detail_em.py",  # ★ 龙虎榜席位明细东财降级源（MCP data_lhb_detail 不通时重建 lhb_detail/*.json）
     "quant/build_sw1_mapping.py",
     "quant/_merge_lhb_subtabs.py",
     "quant/gen_lhb_nextday_backtest.py",
@@ -163,6 +164,12 @@ FILES = [
     "quant/gen_watchlist.py",        # 反转观察页（web/reversal/index.html）
     "quant/_mkt_emo.py",             # ★ 市场情绪指标唯一真源（涨停/炸板/连板/涨跌家数），龙道诀+大盘概览+连板周报共用
     "quant/_fetch_macd_raw.py",      # MACD 三段原始数据（pool/tech/flow）落盘，daily_all 第⑩ 步先跑它
+    # —— MACD/高胜率 离线降级链（2026-10-09）：MCP 三段不通时用全部真实源重建同口径 ——
+    "quant/_gen_macd_offline_all.py",   # ★ 离线一键链（pool→tech→flow→quote→macd_build→highwin）
+    "quant/_gen_macd_pool_offline.py",  # 本地腾讯日K → 全市场正股初筛域
+    "quant/_gen_tech_offline.py",       # 本地腾讯日K → MACD/MA/RSI（口径同 data_technical）
+    "quant/_gen_macd_flow_sina.py",     # 新浪 MoneyFlow → 20 日主力净流入
+    "quant/_gen_hw_quote_offline.py",   # 腾讯 qt → 高胜率行情增强
     "quant/build_psychology.py",     # 情绪雷达页（web/psychology/*.html）
     "quant/build_dragon.py",         # ★ 龙道诀情绪周期择时台生成器（走统一层 _txk）
     "web/dragon/index.html",         # ★ 龙道诀页面本体（生成器改了、页面没登记＝内容不上线）

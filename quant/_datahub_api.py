@@ -212,7 +212,11 @@ def verify(date):
                     continue
                 if not j:
                     continue
-                d0 = j[-1].get("date") or ""
+                # ★ 文件内可能升序或降序（东财 margin_em 按 DATE 降序，最新在首行）
+                #   → 取两端较大者，否则会把「最旧一行」当数据末根 → 误报滞后数百天。
+                a0 = (j[0] or {}).get("date") or ""
+                a1 = (j[-1] or {}).get("date") or ""
+                d0 = max(a0, a1)
                 if d0:
                     dates[d0] = dates.get(d0, 0) + 1
             if not n or not dates:
