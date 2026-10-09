@@ -129,10 +129,11 @@ STEPS = [
      "build_quant_strategy.py {D}; build_cross_section.py --date {D}; build_3yl.py {D}",
      ["build_quant_strategy.py {D}", "build_cross_section.py --date {D}",
       "build_3yl.py {D}"]),
-    (14, "auto", "数据库 + 门户 + 板块 + 主题收尾",
-     "db_update.py {D}; db_export.py; build_portal.py; build_sections.py; _apply_theme.py",
+    (14, "auto", "数据库 + 门户 + 板块 + 热力图 + 主题收尾",
+     "db_update.py {D}; db_export.py; build_portal.py; build_sections.py; "
+     "build_sector_heatmap.py; _apply_theme.py",
      ["db_update.py {D}", "db_export.py", "build_portal.py", "build_sections.py",
-      "_apply_theme.py"]),
+      "build_sector_heatmap.py", "_apply_theme.py"]),
     (15, "gate", "五道门禁（链接/JS/覆盖/策略/数据底座）",
      "_link_check.py; _js_check.py --all; _coverage_check.py --until {D}; "
      "_strategy_gate.py; _datahub_gate.py --date {D}",

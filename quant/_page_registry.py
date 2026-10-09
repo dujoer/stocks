@@ -81,6 +81,11 @@ FAMILIES = [
                    'sector/sector-strength-trend.html'],
          entry='sector/index.html', script='run_daily_sector.py', freq='daily',
          dated=False, start=None, date_re=None, need='同 sector'),
+    dict(key='sector_heatmap', label='板块强度热力图（交互）',
+         patterns=['sector/heatmap.html'],
+         entry='sector/index.html', script='build_sector_heatmap.py', freq='daily',
+         dated=False, start=None, date_re=None,
+         need='sector_daily/*.json（读真实快照编排可视化，不生成统计数字）'),
 
     dict(key='exec', label='高管增减持', patterns=['exec/*.html'],
          entry='exec/index.html', script='gen_exec.py;build_exec.py', freq='daily',

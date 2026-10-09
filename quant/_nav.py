@@ -40,6 +40,7 @@ MODULES = [
     ]),
     ("板块与资金", [
         ("板块强度", "sector/index.html"),
+        ("板块热力图", "sector/heatmap.html"),
         ("龙虎榜", "lhb/lhb.html"),
         ("游资看板", "market/hotmoney.html"),
         ("高管增减持", "exec/index.html"),

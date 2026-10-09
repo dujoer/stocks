@@ -105,6 +105,7 @@ FILES = [
     "quant/build_sector_strength.py",
     "quant/build_sector_trend.py",
     "quant/build_sector_index.py",
+    "quant/build_sector_heatmap.py",   # 2026-10-09 新增：板块强度交互热力图（读 sector_daily）
     # —— 大宗交易 ——
     "quant/gen_block.py",
     # ★ 2026-10-09 新增：③④ 两步的**可执行**东财降级取数（此前只写在文档里、没有脚本，

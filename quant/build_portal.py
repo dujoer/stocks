@@ -624,6 +624,13 @@ ZONES = [
                 "stat": "逐日累积 ｜ 暗盘资金 + 主力行为分布",
                 "date": fmt(sec_d), "fresh": badge(sec_cls, sec_txt),
             },
+            {
+                "ic": "🔥", "t": "板块强度 · 热力图", "href": "web/sector/heatmap.html",
+                "func": "交互式热力图：行=板块、列=交易日，单元格底色=板块强度（红强绿弱）。悬停看主力净流入 / 散户净流入 / 暗盘 / 行为 / 领涨；可按时间范围、行业·概念、强度排序、TOP60/全部切换。",
+                "rel": "← 板块强度（同源快照） → 多日趋势（同一数据的时序视角）。",
+                "stat": "928 板块 × 24 交易日",
+                "date": fmt(sec_d), "fresh": badge(sec_cls, sec_txt),
+            },
         ],
     },
     {
