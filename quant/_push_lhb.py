@@ -115,6 +115,10 @@ FILES = [
     "quant/build_statement_report.py",  # 2026-10-09 新增：交割单复盘页（--public 产脱敏版，默认产本地完整版）
     "quant/replay_exit_rules.py",       # 2026-10-10 新增：退出规则回放引擎（在真实交割单上检验止损/止盈建议）
     "quant/build_exit_replay.py",       # 2026-10-10 新增：回放页（--public 产脱敏版，默认产本地完整版）
+    "quant/_freq_robust.py",           # 2026-10-10 新增：跨采样频率稳健性（出票第五道闸，扩「跨步长」为多点扫描）
+    "quant/build_freq_robust_page.py", # 2026-10-10 新增：频率稳健性页（结论数字全部现读，不写死）
+    "quant/_freq_robust_3yl.json",     # 三连阴频率谱证据（无个股信息，可公开）
+    "quant/_freq_robust_rev.json",     # 底部反转频率谱证据
     # —— 大宗交易 ——
     "quant/gen_block.py",
     # ★ 2026-10-09 新增：③④ 两步的**可执行**东财降级取数（此前只写在文档里、没有脚本，

@@ -308,6 +308,14 @@ FAMILIES = [
         entry='accumulation/index.html', script='_accum_lab.py;build_accum.py', freq='daily',
         dated=True, start='20260918', date_re=r'(\d{8})',
         need='block_chg/{DATE}.json（大宗交易）+ exec_chg/{DATE}.json（高管增持）+ lhb_detail/{DATE}_batch*.json（席位异动）+ margin_em/{code}.json（东财融资融券日频全量序列 · T+1 口径）+ q2_full/_merged_shareholder.json（私募/阳光私募/个人/公募增持·季度维度）+ _txk_cache.json（前向回测与事后兑现回填）；每日另出 stat_{DS}.json 快照并累积 quant/accum/history.json（history.html 为归档/兑现页）'),
+    dict(key='freq_robust', label='跨采样频率稳健性（出票第五道闸）',
+         patterns=['quant_strategy/freq-robust.html'],
+         entry='quant_strategy/freq-robust.html',
+         script='_freq_robust.py --pool 3yl; _freq_robust.py --pool rev; build_freq_robust_page.py',
+         freq='manual', dated=False, start=None, date_re=None,
+         need='_freq_robust_{pool}.json（逐采样频率重建面板重算 edge/R3；样本外证据，'
+              '按需重跑，不进日更链 —— 频率扫描不随每日行情变化）'),
+
     dict(key='quant_strategy', label='量化策略板（综合选股 + 买卖点 · 短/中/长三周期）',
         patterns=['quant_strategy/strategy_*.html', 'quant_strategy/index.html',
                   'quant_strategy/method.html'],

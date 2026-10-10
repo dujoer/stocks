@@ -64,6 +64,7 @@ MODULES = [
         ("数据中心", "db/index.html"),
         ("交割单复盘", "statement/index.html"),
         ("退出规则回放", "statement/exit-replay.html"),
+        ("频率稳健性", "quant_strategy/freq-robust.html"),
     ]),
 ]
 
