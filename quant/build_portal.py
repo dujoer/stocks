@@ -1137,7 +1137,7 @@ footer {{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center
 <header class='top'>
   <h1>A股分析中心 · 总门户</h1>
   <div class='sub'>按功能区分五大模块：大盘与情绪 → 板块与资金 → 牛人与股东 → 选股与策略 → 数据与工具<br>共 {len(ZONES)} 个模块 · {_n_cards} 个页面入口，模块内卡片等宽排布、逐张标注数据新鲜度</div>
-  <div class='updated'>门户重建于 {TODAY.strftime('%Y-%m-%d')} · 每张卡片标注功能、关联页面、数据截至日期</div>
+  <div class='updated'>数据基准 {_LATEST} · 每张卡片标注功能、关联页面、数据截至日期</div>
 </header>
 
 {zones_html}

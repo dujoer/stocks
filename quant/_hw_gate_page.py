@@ -52,32 +52,45 @@ def _load(p):
 
 
 def data_gate():
-    """数据有效性闸：读冻结检查，底池是旧数据冒充当日 → 一律不出票。
+    """数据有效性闸：**当前**底池是旧快照冒充当日 → 一律不出票。
 
-    这一条**不依赖任何统计**：MACD 技术快照逐字节相同、且其 close 反查全部落在
-    2026-09-11，说明 09-28/29/30 的「当日」底池其实是一份 3 周前的快照。
-    拿它出票 = 拿过期信息下单，统计再对也没意义。
+    2026-10-13 修（原实现会拿假理由压真结论）：旧代码取 `fr[-1]`（最后一个冻结期）
+    报「自 X 起连续 N 期未重扫」，却**不看冻结链是否延伸到最新一期** ——
+    9 月的冻结链（09-18~09-30，旧管道故障）会让此后每一次出票都被压住，
+    而页面理由与事实相反（底池自 10-09 起每天重扫：10-09 n=708 / 10-12 n=628 /
+    10-13 n=282，均未冻结）。红线是「不许编数据」—— 压住出票可以，理由必须是真的。
+    新逻辑只认**最新一期**（本闸跑在当日 MACD 链之前，故「最新」= 上一生产期：
+    上一生产期冻结 ⇒ 当日候选只能来自旧快照）：
+      · 最新一期 frozen（与更早期逐字节相同、close 反查落在旧日）→ 不出票；
+      · 最新一期未冻结 → 底池在每日重扫，数据闸放行（统计闸独立 fail-safe）；
+      · 无 freeze 记录 → 不拦（读不到统计证据时 emit_license 本就不出票）。
     """
     j = _load(MAIN_JSON) or {}
-    fr = [r for r in (j.get("freeze") or []) if r.get("frozen")]
-    if not fr:
-        return {"ok": True, "why": ""}
-    last = fr[-1]
-    d = last.get("frozen_close_date")
-    hit, n = last.get("frozen_close_hit"), last.get("frozen_close_n")
-    # ★ 冻结链的起点是「最后一份没被标记为冻结」的那期（它是第一次被抓的那一份），
-    #   fr[0] 是它之后的第一期 —— 直接报 fr[0] 会把起点晚报一天。
     allr = sorted(j.get("freeze") or [], key=lambda x: x["file"])
-    fi = allr.index(fr[0])
-    origin = (allr[fi - 1] if fi > 0 else fr[0])
-    frm = origin.get("data_date") or origin.get("file")
-    days = len(fr) + 1          # 冻结起点那一期也算
-    why = ("MACD 底池自 %s 起连续 %d 期逐字节未重扫（dif/dea/close 全同），"
+    if not allr:
+        return {"ok": True, "why": ""}
+    latest = allr[-1]
+    if not latest.get("frozen"):
+        return {"ok": True, "why": "",
+                "note": "最新一期 %s 底池未冻结（n=%s，扫描 %s 只）—— 底池在每日重扫，数据闸放行"
+                        % (latest.get("data_date") or latest.get("file"),
+                           latest.get("n"), latest.get("tech_scanned")),
+                "latest_date": latest.get("data_date") or latest.get("file"),
+                "latest_n": latest.get("n"),
+                "latest_scanned": latest.get("tech_scanned")}
+    fr = [r for r in allr if r.get("frozen")]
+    first = fr[0]
+    d = latest.get("frozen_close_date")
+    hit, n = latest.get("frozen_close_hit"), latest.get("frozen_close_n")
+    why = ("MACD 底池最新一期 %s 逐字节未重扫（dif/dea/close 与更早期全同，冻结链最早见于 %s），"
            "其收盘价反查 %s/%s 只精确等于 %s —— 属旧快照冒充当日"
-           % (frm, days, hit, n, d or "更早日期"))
+           % (latest.get("data_date") or latest.get("file"),
+              first.get("data_date") or first.get("file"),
+              hit, n, d or "更早日期"))
     return {"ok": False, "why": why,
-            "frozen_from": frm,
-            "frozen_days": days, "close_date": d, "hit": hit, "n": n}
+            "frozen_from": latest.get("data_date") or latest.get("file"),
+            "frozen_days": len(fr), "close_date": d, "hit": hit, "n": n,
+            "frozen_earliest": first.get("data_date") or first.get("file")}
 
 
 def emit_license():
@@ -136,24 +149,38 @@ def render(res):
     if not dg.get("ok"):
         emerg = ("<div class='box red' style='border-color:#b00020'>"
                  "<b>⚠ 先说结论：高胜率候选池本期不出票（宁可不选）—— 底池是旧数据，不是策略问题</b><br>"
-                 "MACD 技术底池自 <b>%s</b> 起<b>连续 %s 期逐字节没有重扫</b>（dif / dea / close 全同）；"
+                 "MACD 技术底池最新一期 <b>%s</b> 与更早期<b>逐字节相同</b>（dif / dea / close 全同，冻结链最早见于 %s）；"
                  "把冻结快照里的收盘价拿去日K 反查，<b>%s / %s 只精确等于 %s</b>。<br>"
-                 "也就是说，这几期页面上标的「当期候选」用的是一份 <b>%s 的旧快照</b>冒充当日数据 —— "
+                 "也就是说，这一期页面上标的「当期候选」用的是一份 <b>%s 的旧快照</b>冒充当日数据 —— "
                  "直接违反「严禁用旧数据冒充当日」。<br>"
                  "因此<b>先修底池重扫，再谈胜率</b>；在数据修好之前，本池候选<b>不作任何买入依据</b>。"
                  "</div>"
-                 % (dg.get("frozen_from"), dg.get("frozen_days"),
+                 % (dg.get("frozen_from"), dg.get("frozen_earliest"),
                     dg.get("hit"), dg.get("n"), dg.get("close_date"), dg.get("close_date")))
     else:
-        emerg = ("<div class='box red' style='border-color:#b00020'>"
-                 "<b>⚠ 先说结论：CORE 档不可出票（宁可不选）</b><br>"
-                 "在可得维度（技术 25 + 位置 15 = 40 分）的口径下，CORE 档相对同日全市场的逐日平衡 edge "
-                 "<b>%s pp</b>，bootstrap 通过率 <b>%s%%</b>（门槛 95%%），留一法区间 <b>[%s, %s]</b> 全为负，"
-                 "前/后半也同向为负。<br>"
-                 "本页不给出「改个阈值就能用」的建议 —— <b>只记录已算出的事实</b>；证据页链接见文末。"
-                 "</div>"
-                 % (_f(core.get("edge")) + "pp", _p(core.get("r3")),
-                    _f(core.get("loo_min")), _f(core.get("loo_max")))) if core else ""
+        # ★ 2026-10-13 修：原实现无条件印「CORE 档不可出票」—— 万一哪天 CORE 真过了
+        #   全部出票闸，这句就是假话（「不可靠的负面断言」同样违反数据准确红线）。
+        #   改为跟随机器判定 lic/detail：过了就说过了（附数字），没过才说没过。
+        _core_det = d.get("CORE") or {}
+        if _core_det.get("ok"):
+            emerg = ("<div class='box' style='border-color:#0a7d42'>"
+                     "<b>✓ 先说结论：CORE 档通过全部出票闸（主步长 edge&gt;0、R3≥95%%、"
+                     "step3 同号且 R3≥95%%、留一全正、前后半同正）</b><br>"
+                     "edge <b>%s pp</b>，bootstrap 通过率 <b>%s%%</b>，留一法区间 <b>[%s, %s]</b>。<br>"
+                     "出票许可由 <code>_gate_common.emit_license</code> 机器判定，本页只转述证据，不做二次解释。"
+                     "</div>"
+                     % (_f(core.get("edge")) + "pp", _p(core.get("r3")),
+                        _f(core.get("loo_min")), _f(core.get("loo_max"))))
+        else:
+            emerg = ("<div class='box red' style='border-color:#b00020'>"
+                     "<b>⚠ 先说结论：CORE 档不可出票（宁可不选）</b><br>"
+                     "在可得维度（技术 25 + 位置 15 = 40 分）的口径下，CORE 档相对同日全市场的逐日平衡 edge "
+                     "<b>%s pp</b>，bootstrap 通过率 <b>%s%%</b>（门槛 95%%），留一法区间 <b>[%s, %s]</b> 全为负，"
+                     "前/后半也同向为负。<br>"
+                     "本页不给出「改个阈值就能用」的建议 —— <b>只记录已算出的事实</b>；证据页链接见文末。"
+                     "</div>"
+                     % (_f(core.get("edge")) + "pp", _p(core.get("r3")),
+                        _f(core.get("loo_min")), _f(core.get("loo_max")))) if core else ""
 
     # 生产底池冻结证据
     fr = res.get("freeze") or []
@@ -231,17 +258,27 @@ def render(res):
                    "<div class='box red'>本页<b>未做成交假设核验（无证据 JSON）</b>："
                    "旧实现的移动止盈含「日内路径 + 忽略跳空」两处乐观假设，上方胜率应视为<b>乐观口径、未证实</b>。</div>")
 
+    # ③ 数据有效性结论 —— 必须与 data_gate() 的当前判定一致（2026-10-13 修：
+    #    原实现无条件印「底池过期」，9 月冻结链修好后页面仍在说假话）。
+    if dg.get("ok"):
+        _b3 = ("③ <b>数据有效性（与统计无关的一道闸）</b>：底池最新一期 <b>%s</b> 未冻结"
+               "（候选 %s 只 / 技术扫描 %s 只），逐字节与更早期不同 —— 底池在每日重扫，"
+               "本条不压出票；9 月旧管道的冻结史如实保留在第六节，仅供追溯。"
+               % (dg.get("latest_date"), dg.get("latest_n"), dg.get("latest_scanned")))
+    else:
+        _b3 = ("③ <b>但有一件事不用统计就能定：底池的数据本身是过期的</b>——"
+               "最新一期 %s 与更早期逐字节相同（冻结链最早见于 %s），"
+               "收盘价反查 %s/%s 只等于 %s（见第六节）。"
+               "这是数据就绪问题，优先级高于一切策略优化。"
+               % (dg.get("frozen_from"), dg.get("frozen_earliest"),
+                  dg.get("hit"), dg.get("n"), dg.get("close_date")))
     banner = ("<b>本页是「高胜率候选池」的出票合法性核验</b>（逐日平衡 edge + 按日 block bootstrap + "
               "留一法 + 前/后半 + 跨步长）。<br>"
               "① 生产打分满分 100 分，其中<b>只有技术 25 + 位置 15 = 40 分在历史上可前推</b>；"
               "资金/筹码/板块/龙虎榜/高管大宗都来自当日盘后快照与事件源，回测时不存在 → <b>记 0 降级</b>。<br>"
-              "② 因此本页 CORE 档 =「可得子分前 10%%」，<b>不是</b>生产那批「全维 ≥68 的核心候选」；"
+              "② 因此本页 CORE 档 =「可得子分前 10%」，<b>不是</b>生产那批「全维 ≥68 的核心候选」；"
               "生产核心档是否真有超额，本页判 <b>不可判</b>（缺 60 分维度，无法复原）。<br>"
-              "③ <b>但有一件事不用统计就能定：底池的数据本身是过期的</b>——"
-              "自 %s 起连续 %s 期 MACD 快照逐字节相同、收盘价反查 %s/%s 只等于 %s（见第六节）。"
-              "这是数据就绪问题，优先级高于一切策略优化。")
-    banner = banner % (dg.get("frozen_from"), dg.get("frozen_days"),
-                       dg.get("hit"), dg.get("n"), dg.get("close_date"))
+              + _b3)
 
     html = """<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">

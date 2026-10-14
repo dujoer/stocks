@@ -4,7 +4,7 @@
 v2 相对 v1（2026-09-19 重构，消费 MACD 池 + 精选池两个现有模型库）：
   改为从**全市场 A 股正股**出发，用主升先验因子集（趋势 + 资金双确认，
   9 因子等权横截面分位）做严格筛选，A 档 = 域内前 5%（更严格），
-  严格样本外可兑现胜率稳定 >60%（证据见 lab.html）。
+  严格样本外可兑现胜率稳定 >60%（乐观成交口径；经口径审计，保守成交口径下已跌破 60%，见页内口径修正框）。
   不再依赖任何现有模型库（MACD 池 / 精选池），只依赖全市场日K 缓存 +
   实验室冻结的 _selected_model.json（因子 + 方向 + 截断比例 + 退出规则）。
 
@@ -186,6 +186,22 @@ def scan(date):
         r["tier"] = "A" if i < nA else "B"
         r["qrank"] = i + 1
     shown = rows[:nA]
+    # ★ V1 质量闸（quant/_selected_model.json entry_gate）：**不启用**（entry_gate=null）。
+    #   历程（均已留证，旧结论不删）：
+    #     2026-10-11 提出：由经济逻辑事先给定（dist_h20≤-1%，不追最尖），非照回测手调。
+    #     2026-10-11 一度判为「动量杀伤闸」而回退 —— ⚠ 该判定已于 2026-10-12 **作废**：
+    #       当时第五道闸面板**只装前 5% 的行**，对照＝「前 5% 内部另一半」，而 A / B_notV1
+    #       是同一封闭子集的互补划分，两者 edge **必然互为镜像**，所谓「A 全频负」是镜像假象。
+    #     2026-10-12 修正：面板装入当日域全部票（域内其余 REST 为对照），并新增 TOP5 档
+    #       （前 5% 整体＝现行生产口径）。结论：TOP5 在 legacy / realistic 双口径下均不可出票；
+    #       V1 **既未被证明有害、也未被证明有益**。按 fail-safe「无证据不上」维持不启用。
+    #   结论与证据见 web/quant_strategy/freq-robust.html 与 quant/_selected_model.json 的 v1_probe 段。
+    eg = model.get("entry_gate")
+    if eg and eg.get("field") and eg.get("op") == "<=":
+        _fld, _val = eg["field"], eg["val"]
+        _before = len(shown)
+        shown = [r for r in shown if (r.get("f") or {}).get(_fld, 0) <= _val]
+        print("[selected] 质量闸 %s<=%+.2f 过滤 %d→%d 只" % (_fld, _val, _before, len(shown)))
     for r in shown:
         r["bs"] = buy_sell(r["kasc"])
     print("[selected] 全市场域 %d 只入池（剔 ST/退 %d · 流动性 %d · K线不足 %d）｜ A 档前 %.0f%% = %d 只"
@@ -249,6 +265,10 @@ def _yi(v, digits=2):
 # 主升精选专用二值门控（样本外证据见 web/selected/env_gate.html）
 # 反推的相对仓位系数（强势=1）：强势 +1.00[0.61,1.42] ／ 震荡 -0.16 ／ 弱势 -0.46 ／ 破位 -0.05
 # → 只有「强势」档的系数显著为正，其余档点估计为负（=该空仓）。
+# ⚠ 口径警示：上述 +1.00pp / R3 99.9% 等为 **legacy 乐观退出口径**（见 env_gate.html 头条）。
+#   经跨采样频率稳健性严扫（7 步），保守成交假设下门控绝对 alpha 并不稳健
+#   （step5/step10 翻负，见 env_gate_freq_realistic.html）；门控的真实价值是
+#   「规避弱市」风险过滤器（弱势档全频率强负，两版成交都成立），而非「强势增收」。
 # 只用于主升精选；做T池共用 _idxkline.ENV_RULE，本页未验证做T场景，保持原值不动。
 GATE_ALLOW = ("强势",)
 
@@ -290,6 +310,12 @@ def render(shown, rows, model, date, env, gate=None, gate_lab=None):
                     f"<br>本页在「{gate_lab}」档，<b>本期空仓</b>：生产 ENV_RULE 给该档的折数系数是 {pos}；"
                     f"该折数没有样本外依据（「打折继续持有」不成立）。"
                     f"空仓的依据强度<b>按档不同</b>：{why_txt}。"
+                    f"⚠ <b>门控的真实价值是「规避弱市」风险过滤器</b>：跨 7 个采样频率的稳健性严扫显示，"
+                    f"门控在<b>弱势档绝对收益稳定为负（全频率、两版成交假设都支持空仓）</b>，"
+                    f"但<b>绝对 alpha 在保守成交假设下不稳健</b>（乐观口径 +2.443pp 的 alpha 在保守口径 step5/step10 翻负，"
+                    f"见 <a href='env_gate_freq.html' style='color:var(--blue)'>跨频率稳健性（乐观口径）</a>"
+                    f" ／ <a href='env_gate_freq_realistic.html' style='color:var(--blue)'>（保守口径）</a>）"
+                    f"—— 故门控是「弱市别亏」的纪律开关，<b>不是「强势增收」工具</b>。"
                     f"宁可空仓，不乱选。<br>依据见 "
                     f"<a href='env_gate.html' style='color:var(--blue)'>环境门控样本外证据 env_gate.html</a>"
                     f" ／ <a href='env_gate_sens.html' style='color:var(--blue)'>样本量敏感性检验</a>。"
@@ -371,9 +397,11 @@ def render(shown, rows, model, date, env, gate=None, gate_lab=None):
                 f"<div class='kv'>{fac}</div>{bp}</div>")
 
     a_cases = "".join(case_div(r) for r in shown[:40])
+    why = ""
     if not a_cases:
         why = ("本期<b>不出手</b>：市场处于「%s」档，按二值门控（<b>强势开仓、其余空仓</b>）"
-               "主升精选本期空仓等待 —— 这是结论，不是筛选不到票；环境回到强势档后列表会自动恢复。"
+               "主升精选本期空仓等待 —— 这是结论，不是筛选不到票；"
+               "全市场趋势居前的个股已列在下方<b>「趋势观察池」</b>中（非买入信号，仅供待选）。"
                "样本外证据见 <a href='env_gate.html' style='color:var(--blue)'>env_gate.html</a>。"
                % gate_lab if gate_lab else
                "本期全市场域无达标标的。确定性最高的组合稀缺，空仓等待也是纪律。")
@@ -413,17 +441,67 @@ def render(shown, rows, model, date, env, gate=None, gate_lab=None):
                      "（运行 <code>python quant/_exit_assumption_audit.py</code> 生成）。"
                      "在完成核验前，本页胜率应视为<b>乐观口径、未证实</b>。</div>")
 
+    # ★ 出手列表 vs 趋势观察池：门控只决定「是否出手」，不改变「是否可见」。
+    #   强势档：A 档正常列出（出手列表 + 合并总表）。
+    #   非强势档：出手列表显式空仓；同批趋势股降级为「观察池（非买入信号）」供盯票待选。
+    table_block = (f"<div class='card'><div style='overflow-x:auto'><table>\n"
+                   f"<thead><tr><th>代码</th><th>名称</th><th>现价</th><th>主升分</th><th>排名</th>"
+                   f"<th>买区</th><th>止损</th><th>目标T1/T2</th><th>箱体位置</th><th>关键因子</th></tr></thead>\n"
+                   f"<tbody>{table}</tbody></table></div>\n"
+                   f"<div class='note' style='color:var(--muted);font-size:12px'>主升分 = 先验固定因子在"
+                   f"<b>当日全市场域内</b>的横截面分位（0~100，越高越好），只在同日内可比、不可跨日比较。"
+                   f"A = 域内前 {pct*100:.0f}%。<b>箱体位置</b> = 现价在「止损位(0%) → 买区 → T1 → T2(100%)」"
+                   f"箱体中的百分比：<b>买区内·可买</b>（最佳介入区）→ <b>持有·待涨</b> → <b>已到T1/T2</b> → "
+                   f"<b>已破止损</b>（离场）。买卖点为量化参考区间。逐票完整因子见上方卡片。"
+                   f"</div></div>")
+
+    if gate:
+        sec1_head = (f"<h2>一、主升精选 A 档（出手列表 · {len(shown)} 只 · "
+                     f"按主升分降序，展开前 40）</h2>")
+        sec1_body = a_cases or why
+        sec2_head = f"<h2>二、合并总表（{len(shown)} 只）</h2>"
+        sec2_body = table_block
+        watch_block = ""
+    else:
+        sec1_head = "<h2>一、主升精选 A 档（出手列表）</h2>"
+        sec1_body = (f"<div class='box red'><b>本期不出手</b>：市场处于「{gate_lab}」档，"
+                     f"按二值门控（<b>强势开仓、其余空仓</b>）主升精选本期空仓等待。"
+                     f"全市场趋势居前的个股已列在下方<b>「趋势观察池」</b>中"
+                     f"（非买入信号，仅供待选）。样本外证据见 "
+                     f"<a href='env_gate.html' style='color:var(--blue)'>env_gate.html</a>。</div>")
+        watch_block = (
+            f"<h2>二、趋势观察池（非买入信号 · 仅供环境转强后待选）</h2>\n"
+            f"<div class='box gold'><b>⚠ 观察池 ≠ 出手列表：</b>本页处于「{gate_lab}」档，"
+            f"二值门控下<b>本期不出手</b>。下方 <b>{len(shown)}</b> 只只是<b>全市场趋势分位居前 "
+            f"{pct*100:.0f}% 的个股</b>（9 因子：趋势 + 资金双确认），"
+            f"按本系统样本外证据，<b>非强势档下它们整体不构成正期望</b>"
+            f"（弱势档 4 组采样步长绝对收益均为负；跨频率稳健性严扫（7 步）进一步显示，"
+            f"门控的<b>绝对 alpha 在保守成交假设下不成立</b>，门控真实价值是「规避弱市」而非「强势增收」），"
+            f"因此<b>仅作观察 / 待选</b>，"
+            f"<b>不构成本期买入信号</b>。只有当<b>大盘回到「强势」档</b>且个股重新进入买区，"
+            f"才转为出手候选。买卖点仍照常给出，便于你提前跟踪结构位与止损。</div>\n"
+            + (a_cases or
+               "（本市场域无达标个股——连观察池都空，说明全市场趋势共振度极低，更不应出手）")
+            + table_block)
+        sec2_head = ""
+        sec2_body = ""
+
     return f"""<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>主升精选 · 趋势+资金双确认高确定性池 · {date}</title><style>{STYLE}</style></head>
 <body><div class="wrap">
 <h1>主升精选 · 趋势 + 资金 双确认（全市场严格筛选）</h1>
 <div class="sub">数据基准 {date} 收盘｜ <b>全市场域</b>：A 股正股，剔 ST/退 与 20 日均成交额 &lt;3000 万、现价 &lt;2 元
-｜ 先验固定因子集（趋势+资金 9 因子）横截面分位 → A 档前 {pct*100:.0f}%（共 <b>{len(shown)}</b> 只）</div>
+｜ 先验固定因子集（趋势+资金 9 因子）横截面分位 → A 档前 {pct*100:.0f}%（共 <b>{len(shown)}</b> 只）｜ A 档＝域内前 {pct*100:.0f}% 整体（V1 质量闸不启用：非「有害」，而是「无稳健证据支持」）</div>
 
 <div class="box gold"><b>主升精选是什么（v2）：</b>从<b>全市场正股</b>出发（不再依赖任何现有模型库），
 用「趋势已转多 + 资金真进场」双确认的<b>先验固定因子集</b>（方向由经济逻辑给定、等权、不筛不调权）
-做横截面分位排序，取域内前 {pct*100:.0f}% 为 A 档。比 v1（消费 MACD 池+精选池）更严格、域更干净。
+做横截面分位排序，取域内前 {pct*100:.0f}% 为 A 档（<b>A 档＝前 5% 整体</b>）。<br>
+⚠ <b>2026-10-12 对照口径修正</b>：本页 V1 质量闸（距 20 日高 ≥1% 以下、不追最尖）曾被判为「动量杀伤闸」，
+该判定<b>已作废</b>——当时第五道闸面板只装前 5% 的行，对照＝「前 5% 内部另一半」，而 A 与 B_notV1 是同一封闭子集的
+互补划分，两者 edge <b>必然互为镜像</b>，「A 全频负」是镜像假象，不能据此称 V1 有害。
+修正为「对照＝当日域内全部票」并重跑第五道闸后：<b>V1 既未被证明有害、也未被证明有益</b>（见 verdict_current）。
+按「无证据不上」的 fail-safe 原则<b>维持不启用 V1</b>。比 v1（消费 MACD 池+精选池）更严格、域更干净。
 ⚠ 样本外可兑现胜率<b>依赖退出回测的成交假设</b>：乐观口径下约 {((old_aud or {}).get('top_wr') or 0):.1f}%，
 可实现口径（保守日内 + 跳空成交）下降至约 {((real_aud or {}).get('top_wr') or 0):.1f}%，
 测试半 <b>{(real_aud or {}).get('test_wr', 0):.1f}%</b> —— 详见下方口径修正框。</div>
@@ -449,18 +527,13 @@ def render(shown, rows, model, date, env, gate=None, gate_lab=None):
 正确用法：<b>破结构位（近 20 日基底）先减半，跌到 −15% 全出；+8%~+10% 先止盈一半</b>。
 胜率与单笔均值是一对权衡，<b>不要只看胜率</b>。</div>
 
-<h2>一、主升精选 A 档（{len(shown)} 只 · 按主升分降序，展开前 40）</h2>
-{a_cases or why}
+{sec1_head}
+{sec1_body}
 
-<h2>二、合并总表（{len(shown)} 只）</h2>
-<div class="card"><div style="overflow-x:auto"><table>
-<thead><tr><th>代码</th><th>名称</th><th>现价</th><th>主升分</th><th>排名</th><th>买区</th><th>止损</th><th>目标T1/T2</th><th>箱体位置</th><th>关键因子</th></tr></thead>
-<tbody>{table}</tbody></table></div>
-<div class="note" style="color:var(--muted);font-size:12px">主升分 = 先验固定因子在<b>当日全市场域内</b>的横截面分位（0~100，越高越好），只在同日内可比、不可跨日比较。
-A = 域内前 {pct*100:.0f}%。<b>箱体位置</b> = 现价在「止损位(0%) → 买区 → T1 → T2(100%)」箱体中的百分比：
-<b>买区内·可买</b>（0~买区上沿，最佳介入区）→ <b>持有·待涨</b>（等 T1）→ <b>已到T1/T2</b>（按纪律止盈一半/兑现）→ <b>已破止损</b>（离场，等待重新进买区）。
-买卖点为量化参考区间，须结合大盘环境与退出纪律执行。
-逐票完整因子见上方卡片；名称可直接点击跳转东方财富个股页。</div></div>
+{watch_block}
+
+{sec2_head}
+{sec2_body}
 
 <h2>三、方法论 v2 与局限</h2>
 <div class="card"><div class="kv">
@@ -468,6 +541,24 @@ A = 域内前 {pct*100:.0f}%。<b>箱体位置</b> = 现价在「止损位(0%) �
 v2 改为<b>全市场正股域</b>（剔 ST/退 + 流动性 + 低价），域更干净、横截面分位噪声更低。<br>
 ② <b>v2 改了什么（因子）</b>：用<b>先验固定因子集</b>——趋势（近20/60日动量、站上MA60、MA20斜率、均线多头、接近近20日高）
 + 资金（上涨放量占比、量能放大、回调缩量），方向由经济逻辑给定、等权、不筛因子、不按回测调权重。
+<b>V1 质量闸（不启用，2026-10-12 更正）</b>：A 档曾要求「距 20 日高 ≥1% 以下」（不追最尖处延伸的票），
+由经济逻辑事先给定、不照回测手调，属质量过滤。<br>
+· <b>曾经出现过的误判</b>：提纯实验（<a href='purity.html' style='color:var(--blue)'>purity.html</a>）
+仅看胜率（保守口径 60.3%→60.9%、两半稳≥60%）即下「V1 诚实赢家」结论，属<b>胜率≠edge 陷阱</b>。<br>
+· <b>2026-10-11 的结论已作废</b>：当时据第五道闸判 V1 为「动量杀伤闸」（legacy 全频 −2.732~−0.944pp、R3≈0）。
+❌ 该结论<b>建立在错误对照上</b>——面板只装前 5% 的行，A 与 B_notV1 是同一封闭子集的互补划分，
+edge <b>必然互为镜像</b>，测得的是「前 5% 里谁更好」而非相对市场的 alpha。<br>
+· <b>2026-10-12 修正对照后（对照＝当日域内全部票，REST 域 775,983 行）</b>：
+<b>TOP5＝前 5% 整体（现行生产口径）</b>legacy edge −0.185~+1.421pp、符号翻转 1 次@step10、R3 最低 48.0%；
+realistic 口径符号不一致、R3 最低 14.5% → <b>双口径均不可出票</b>。
+A 档（V1 通过）edge −0.720~+0.594pp、翻转 3 次、R3 最低 33.8%；B_notV1 虽 legacy 全正 +0.690~+3.347pp，
+但 realistic 出现负值（最小 −0.176pp）、R3 最低 42.6% → 同样不稳。
+（<a href='../quant_strategy/freq-robust.html' style='color:var(--blue)'>第五道闸报告</a>）<br>
+· <b>故 V1 既未被证明有害、也未被证明有益</b>；按「无证据不上」维持 <b>entry_gate=null 不启用</b>。
+此外全站 23 个可判定档<b>无一跨过 0.15pp 双边成本线</b>（见 <code>_cost_gate.py</code>）——
+统计稳健之外还须经济可执行。<br>
+<b>现行 A 档＝前 5% 整体</b>；主升精选成立依据仍是<b>环境门控 + 移动止盈退出纪律</b>，选股本身无稳健独立 alpha。
+选股本身在保守口径下仍<b>无稳健独立 alpha</b>，主升精选成立依据仍是<b>环境门控 + 退出纪律</b>。详见 <a href='../quant_strategy/freq-robust.html' style='color:var(--blue)'>freq-robust.html</a>。
 严格样本外（前 60% 学 → 后 40% 测）先验集胜率（乐观成交口径）<b>{ev.get('prior_test_wr') or 0:.1f}%</b>
 vs 自动筛 <b>59.1%</b>；⚠ 该胜率对成交假设敏感，可实现口径下见上方口径修正框。<br>
 ③ <b>截断</b>：A 档 = 域内前 {pct*100:.0f}%（更严格，确保胜率 &gt;60%）；绝对名次随域大小漂移，仅参考。<br>
@@ -484,16 +575,18 @@ def main(date):
     env = E.market_env(date)
     lab = (env or {}).get("label", "未知") if env else "未知"
     gate = lab in GATE_ALLOW
-    if not gate:
-        # 二值门控：非强势档不出手（只影响主升精选；做T池的 ENV_RULE 不动）
-        shown = []
+    # ★ 二值门控只管「出手」，不管「可见」：门控关闭时不再清空 shown，
+    #   改由 render 把趋势股降级为「观察池（非买入信号）」，满足弱市盯票需求，
+    #   同时严格不放松任何实际开仓纪律（pos_scale / 空仓结论均不变）。
     html = render(shown, rows, model, date, env, gate=gate, gate_lab=lab)
     dc = date.replace("-", "")
     open(os.path.join(OUTDIR, f"combined_{dc}.html"), "w", encoding="utf-8").write(html)
     open(os.path.join(OUTDIR, "index.html"), "w", encoding="utf-8").write(html)
     json.dump({"date": date, "n_universe": n, "nA": nA, "pct": model.get("pct", 0.05),
                "env": lab, "env_gate": "强势开仓/其余空仓" if gate else "空仓（非强势档）",
-               "gate_on": gate, "model": model.get("version")},
+               "gate_on": gate,
+               "watch_n": nA,  # 趋势观察池：非强势档下仍可见、仅供待选的趋势股数
+               "model": model.get("version")},
               open(os.path.join(OUTDIR, f"stat_{dc}.json"), "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
     print(f"[selected] 主升精选 v2：A 档 {len(shown)} 只（域内 {n}）｜ 环境 {lab} ｜ "

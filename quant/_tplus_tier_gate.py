@@ -41,8 +41,33 @@ A_PCT, B_PCT = 0.10, 0.25
 LABELS = {"A": "A 档（域内前 10%·可重点做T）",
           "B": "B 档（前 10~25%·适合做T）",
           "C": "C 档（其余·仅跟踪）"}
+# ★ 环境门控阈值（2026-10-12 新增）：做T 的经济内核是「反T」——弱市低吸高抛。
+#   修复 score_day 方向后实测：A 档在弱市才有正池化期望，且 edge 随阈值单调
+#   （越严格弱市越高：0%→+0.67pp / −1%→+0.74 / −3%→+0.99 / −5%→+1.43pp），
+#   中/强市均为负 —— 与「反T 只在回调市成立」的经济逻辑一致，不是挑最好看的点。
+#   取 −3%（上证近 20 日跌幅 >3% = 明确回调市），与 build_tplus 的弱环境判定同思路。
+#   env20 = 上证近 20 日涨幅(%)，只用 ≤ 当日 的数据，**无未来函数**。
+ENV_GATE = -3.0
 # 参与横截面分位的因子（先验固定，顺序即 PRIOR_CN 的顺序）
 FEATS = list(L.PRIOR)
+
+
+def env20_map():
+    """上证近 20 日涨幅(%) 按日期（只用 ≤ 当日 数据，无未来函数）。"""
+    idx = L.E.get_index("sh000001", 260)
+    ds = sorted(idx)
+    out = {}
+    for d in ds:
+        dd = [x for x in ds if x <= d]
+        if len(dd) >= 21:
+            out[d] = (idx[dd[-1]] / idx[dd[-21]] - 1) * 100
+    return out
+
+
+def is_weak(env20, gate=None):
+    """弱市判定：上证近 20 日涨幅 < gate（默认 ENV_GATE）。"""
+    g = ENV_GATE if gate is None else gate
+    return (env20 is not None) and (env20 < g)
 
 
 def load_panel(limit=None):
@@ -56,7 +81,11 @@ def load_panel(limit=None):
 def score_day(rs):
     """当日域内分位打分：每个因子转 [0,100] 分位后等权平均（并列取平均名次）。
 
-    与 `build_tplus.score` 同思路（域内横截面分位），但这里用 lab 的 8 因子先验集。
+    与 `build_tplus.assign_prior_scores` 同口径、同方向：先验集 9 因子全部是
+    「原始值越小越好」（箱体偏离理想、带宽低、均线粘合、波动规律、斜率平、支撑被反复验证、
+    流动性足），故分位用 **1 − 名次分位** 即「越低原始值 → 越高分」。
+    ★ 2026-10-12 修正：原实现漏了方向翻转（直接 r/mx，等于把最不适合做T 的票排成 A 档），
+      导致第五道闸对做T 给出假阴性；现已与已验证的生产口径对齐。
     """
     n = len(rs)
     out = [0.0] * n
@@ -78,8 +107,9 @@ def score_day(rs):
                 ranks[vals[k][1]] = avg
             i = j + 1
         mx = max(ranks) or 1.0
+        # 方向：原始值越小越好 → 1 − 名次分位（与生产页 assign_prior_scores 的 1−v 完全等价）
         for i2, r in enumerate(ranks):
-            out[i2] += (r / mx) * 100.0
+            out[i2] += (1 - r / mx) * 100.0
     for i in range(n):
         rs[i]["score"] = out[i] / len(FEATS)
     return rs
@@ -99,6 +129,7 @@ def build_rows(step, limit=None):
     for r in raw:
         byd[r["date"]].append(r)
     dates = sorted(byd)
+    _ENV = env20_map()
     rows = []
     for d in dates:
         rs = score_day(byd[d])
@@ -113,8 +144,11 @@ def build_rows(step, limit=None):
         for r in order:
             s = L._sim_default(r)
             sr = L._sim_realistic(r)      # 可实现口径（反T 遵守 T+1：当日买不可当日卖）
+            ev = _ENV.get(d)
             rows.append({
                 "code": r["code"], "date": d, "grade": grade[r["code"]],
+                # 环境（上证近20日涨幅%，无未来函数）→ 供环境门控（AW 档）与生产页共用
+                "env20": ev,
                 # 做T有两个维度：pnl = 每次期望(%)；round_ok = 完成一轮(0/1)
                 "pnl": float(s["ret"]), "win": bool(s["ret"] > 0),
                 "round_ok": bool(s["round_ok"]),
@@ -153,15 +187,25 @@ def main():
                        "wr": "每次为正的比例"},
            "tiers": []}
 
-    for g in ("A", "B", "C"):
-        sel = lambda r, gg=g: r["grade"] == gg
-        ctl = lambda r, gg=g: r["grade"] != gg        # 等量对照：同日非本档
+    for g in ("A", "B", "C", "AW"):
+        if g == "AW":
+            # 环境门控档：A 档 ∩ 弱市（反T 只在此态成立）
+            def _aw(r):
+                return (r["grade"] == "A") and (r.get("env20") is not None) \
+                    and (r["env20"] < ENV_GATE)
+            sel = _aw
+            ctl = lambda r: not _aw(r)
+            desc = "A 档 ∩ 弱市（上证20日<%+.0f%%·反T 只在此态成立）" % ENV_GATE
+        else:
+            sel = lambda r, gg=g: r["grade"] == gg
+            ctl = lambda r, gg=g: r["grade"] != gg        # 等量对照：同日非本档
+            desc = LABELS[g]
         st = GC.edge_stats(rows, sel, ctl, boot=BOOT, seed=SEED, name=g)
         if st.get("note"):
             print("[tplus] %-2s %s" % (g, st["note"]))
             res["tiers"].append(st)
             continue
-        st["desc"] = LABELS[g]
+        st["desc"] = desc
         st["halves"] = GC.halves(st["days"])
         # 母集对照（同日全域，含自己 → 稀释）
         vm = GC.edge_stats(rows, sel, lambda r: True, boot=BOOT, seed=SEED, name=g)
@@ -173,8 +217,9 @@ def main():
         rrows = [{**r, "pnl": 1.0 if r["round_ok"] else 0.0,
                   "win": bool(r["round_ok"])} for r in rows]
         rt = GC.edge_stats(rrows, sel, ctl, boot=BOOT, seed=SEED, name=g)
-        gsel = [r for r in rows if r["grade"] == g]
-        gctl = [r for r in rows if r["grade"] != g]
+        # ★ 用 sel/ctl 谓词取子集（AW 档不是 r["grade"]=="AW"，而是 A∩弱市）
+        gsel = [r for r in rows if sel(r)]
+        gctl = [r for r in rows if ctl(r)]
         st["round_abs"] = round(100.0 * sum(1 for r in gsel if r["round_ok"])
                                 / max(1, len(gsel)), 2)
         st["round_ctrl"] = round(100.0 * sum(1 for r in gctl if r["round_ok"])

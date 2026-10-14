@@ -1397,6 +1397,31 @@ def build(date):
          esc(env.get("advice") or ""),
          ("<br><span class='muted'>弱势附加条件：%s</span>" % esc(ENV_STRICT_NOTE))
          if ENV_STRICT_NOTE else "") + tdir_line
+    # ★ 统计数字一律从证据产物现读，禁止写死（红线：不许编数据）
+    # ⚠ build_tplus 没有 QUANT 常量（只有 ROOT），路径必须自己拼，不能照抄别的文件
+    _TG_JSON = {}
+    try:
+        _TG_PATH = os.path.join(ROOT, "quant", "_tplus_tier_gate.json")
+        _TG_JSON = json.load(open(_TG_PATH, encoding="utf-8"))
+    except Exception as _ex:
+        _TG_PATH = getattr(_ex, "_p", "?")
+        _TG_JSON = {}
+        print("[tplus] ⚠ 现读分档证据失败（统计数字将留空，不编造）：%s" % _ex)
+
+    def _tg_stat(g, k, default=None):
+        for t in (_TG_JSON.get("tiers") or []):
+            if t.get("tier") == g:
+                return t.get(k, default)
+        return default
+
+    def _f(x, fmt="%+.4f", dash="—"):
+        return (fmt % x) if isinstance(x, (int, float)) else dash
+
+    _A_EDGE, _A_R3 = _tg_stat("A", "edge"), _tg_stat("A", "r3")
+    _A_POOL, _A_HIT = _tg_stat("A", "pooled_all"), _tg_stat("A", "pooled_hitbuy")
+    _A_ROUND = _tg_stat("A", "round_abs")
+    _AW_EDGE, _AW_POOL = _tg_stat("AW", "edge"), _tg_stat("AW", "pooled_all")
+
     # ★ 出票许可横幅（读证据页判定，页面不自己算统计）
     if emit_ok:
         emit_banner = (
@@ -1408,13 +1433,23 @@ def build(date):
             "<b>⚠ 本期不出票（宁可不选）</b> —— 本页<b>主榜与操作手册已清空</b>，"
             "下列各表只作观察参考，<b>不构成任何操作依据</b>。<br>原因：<code>%s</code><br>"
             "<b>诚实更正：</b>本页原写「A 档 = 可重点做T」。核验发现<b>逐日平衡 edge 为正</b>"
-            "（R3 达标、留一全正、前后半同向，看起来是能出票的），但做T是区间操作、"
-            "<b>「没成交」也是一种结果</b> —— 按实际成交口径算，A 档「触买后」期望是<b>负的</b>，"
-            "而且<b>分数越高越难成交</b>（往返率 5.15%%，同域非 A 档 12.65%%）。<br>"
-            "两个口径方向相反，说明这条规则选出的是<b>「看着安静但难成交」</b>的票。"
-            "拿「每天都重选更优」的数字去支撑「实际做一笔能赚」是不成立的 → 本期不出票。"
+            "（看起来是能出票的），但做T是区间操作、<b>「没成交」也是一种结果</b> ——"
+            "按实际成交口径算，A 档「触买后」期望是<b>负的</b>。两个口径方向相反 →"
+            "拿「每天都重选更优」支撑「实际做一笔能赚」不成立。<br>"
+            "<b>2026-10-12 修正（打分方向 bug）：</b>核验脚本 <code>score_day</code> 曾漏掉方向翻转，"
+            "把<b>最不适合做T</b>的票排成了 A 档（先验 9 因子全部是「原始值越小越好」）；"
+            "已修复并与生产打分 <code>assign_prior_scores</code> 对齐。修正后 A 档："
+            "逐日 edge %s pp（R3 %s%%）／池化 %s%%／触买后 %s%%／往返率 %s%% ——"
+            "<b>逐日为正、池化仍负</b>，结论不变：不出票。<br>"
+            "<b>环境门控（弱市反T）已证伪：</b>A∩弱市 池化虽 %s%% 为正，但那是<b>市场状态效应</b>"
+            "（弱市当天所有票做T 都更好）—— 同日逐日平衡 edge 为 %s pp（<b>负</b>）、前后半符号翻转，"
+            "第五道闸 7 频率<b>翻转 4 次、R3 最低 4.9%%</b> → 不是 alpha。<br>"
+            "<b>结论：做T 无稳健可出票档位，维持空仓</b>。"
             "原结论与重算过程见页尾「分档出票核验」页（历史判定不删改）。</div>"
-            % esc(emit_why or "未读到出票许可证据"))
+            % (esc(emit_why or "未读到出票许可证据"),
+               _f(_A_EDGE, "%+.3f"), _f(_A_R3, "%.1f"),
+               _f(_A_POOL), _f(_A_HIT), _f(_A_ROUND, "%.2f"),
+               _f(_AW_POOL), _f(_AW_EDGE, "%+.3f")))
     # 环境门控折数系数的样本外结论（系数从 ENV_RULE 现读，不写死；结论本身见证据页）
     _rule = E.ENV_RULE
     _scales = " / ".join("%s %s" % (k, _rule[k]["pos_scale"])

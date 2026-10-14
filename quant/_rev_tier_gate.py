@@ -51,6 +51,7 @@ import _gate_common as GC
 import _selected_lab as S
 import _rbot as RB
 import _exit_sim as EXIT          # 成交假设审计（四口径单笔收益）
+import _rev_lab as RL             # 底部反转自身的先验因子集（生产口径）
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 QUANT = os.path.join(ROOT, "quant")
@@ -66,6 +67,14 @@ A_PCT, B_PCT = 0.10, 0.25     # 复刻 rev_pool.A_PCT / B_PCT
 LIFT_MIN = 2                  # 复刻 rev_pool.LIFT_MIN
 BOOT = 800
 SEED = 20261004
+
+# ★★ 打分必须用「底部反转自己的先验因子集」，不能用 S.PRIOR（主升精选的动量因子）。
+#   生产 `rev_pool.score_pool` / MODEL_FALLBACK 用的是 dist_lo20/dist_lo60/gap_lo52/
+#   vol_dry/atr_pct/range20/ma60_dev/slope/mv_log，且**全部 dir=-1**（越低越好）。
+#   而 `S.PRIOR`（_selected_lab）是 rel20/above_ma60/dist_h20/up_vol… 等动量趋势因子（+1），
+#   拿它给深跌票打分，选出的是「深跌票里趋势最强的」而非「最深最枯竭的」——2016 年
+#   第五道闸的 rev 证据（`_freq_robust_rev.json`）就是用错口径生成的，结论不成立。
+REV_PRIOR = {f: -1 for f in RL.PRIOR_SET}
 
 
 # ---------------- 工具（与 _selected_lab 同口径的复刻） ----------------
@@ -126,6 +135,7 @@ def build_panel(limit=0, step=STEP, verbose=True):
     if limit:
         codes = codes[:limit]
 
+    SH = RL._shares_map()          # 股本反推市值（mv_log 用，与 _rev_lab 同源同口径）
     rows = []
     skipped = defaultdict(int)
     for c in codes:
@@ -139,7 +149,16 @@ def build_panel(limit=0, step=STEP, verbose=True):
         O = [b["open"] for b in bars]
         V = [b["volume"] for b in bars]
         psC = _prefix(C)
+        psV = _prefix(V)
         n = len(bars)
+        # 全段最低价前缀序列（gap_lo52 用）。
+        # ★ 必须与 `hard_flag` 的 h52=max(H[:i+1]) 同构：二者都是**自上市以来的极值**，
+        #   不是滚动 52 周窗口 —— 用滚动窗会让 gap_lo52 与门槛 dist52 的口径打架。
+        pminL = []
+        ml = 1e18
+        for k in range(n):
+            ml = min(ml, L[k])
+            pminL.append(ml)
         vu = 1.0 if c.startswith("sh688") else 100.0
         for i in range(MINI, n - S.MAXFWD - 1, step):
             close = C[i]
@@ -159,6 +178,29 @@ def build_panel(limit=0, step=STEP, verbose=True):
             f = S.factors_at(C, H, L, O, V, psC, i, c)
             if f is None:
                 continue
+            # —— 底部反转自身先验因子（★ 生产 `rev_pool.score_pool` 口径，方向全 -1）——
+            #    与 _rev_lab.build_panel 的 f 段逐项等价（vol_dry=v20/v60、slope=MA20 五日斜率、
+            #    range20=20日振幅/收盘、gap_lo52 用全段最低）。结果放在 rf 里，
+            #    `assign` 只认 rf，不再误用主升动量因子。
+            _l52 = pminL[i]
+            _lo20 = min(L[i - 19:i + 1])
+            _lo60 = min(L[i - 59:i + 1])
+            _ma20p = _rollma(psC, i - 5, 20)
+            _v20 = (psV[i + 1] - psV[i + 1 - 20]) / 20
+            _v60 = (psV[i + 1] - psV[i + 1 - 60]) / 60
+            _a20 = RL._atr(H[:i + 1], L[:i + 1], C[:i + 1], 20, i)
+            _mv = (close * SH.get(c)) if SH.get(c) else None
+            rf = {
+                "dist_lo20": (close / _lo20 - 1) * 100 if _lo20 else None,
+                "dist_lo60": (close / _lo60 - 1) * 100 if _lo60 else None,
+                "gap_lo52": (close - _l52) / _l52 * 100 if _l52 else None,
+                "vol_dry": (_v20 / _v60) if _v60 else 1.0,
+                "atr_pct": (_a20 / close * 100) if _a20 else 0.0,
+                "range20": (max(H[i - 19:i + 1]) - min(L[i - 19:i + 1])) / close * 100,
+                "ma60_dev": ((close - ma60) / ma60 * 100) if ma60 else None,
+                "slope": ((ma20 - _ma20p) / _ma20p * 100) if (ma20 and _ma20p) else 0.0,
+                "mv_log": (math.log(_mv) if (_mv and _mv > 0) else None),
+            }
             hf = hard_flag(C, H, i)
             bot_ok, lift, why = False, 0, ""
             if hf:
@@ -187,7 +229,7 @@ def build_panel(limit=0, step=STEP, verbose=True):
             p4 = EXIT.four_pnl(fl, fh, fc, close, fO=fO)
             # 自检：四口径第 0 档必须等于旧口径 pnl（否则说明口径模块被改坏）
             assert abs(p4[0] - sim["pnl"]) < 1e-6, "四口径自检失败 %s %s" % (c, bars[i]["date"])
-            rows.append({"code": c, "date": bars[i]["date"], "f": f,
+            rows.append({"code": c, "date": bars[i]["date"], "f": f, "rf": rf,
                          "hard": bool(hf), "bot_ok": bot_ok, "lift": lift,
                          "why": why, "pnl": sim["pnl"], "win": bool(sim["win"]),
                          "mae": sim["mae"], "p4": [round(x, 4) for x in p4]})
@@ -217,9 +259,9 @@ def assign(rows, verbose=False):
                 r["qs"], r["tier"], r["qrank"] = None, "C", None
             continue
         rk = {}
-        for fac in S.PRIOR:
-            vals = sorted([(r["f"].get(fac), r["code"]) for r in rs
-                           if r["f"].get(fac) is not None])
+        for fac in REV_PRIOR:
+            vals = sorted([(r["rf"].get(fac), r["code"]) for r in rs
+                           if r["rf"].get(fac) is not None])
             if len(vals) < 6:
                 continue
             for pos, (v, c) in enumerate(vals):
@@ -227,13 +269,13 @@ def assign(rows, verbose=False):
         scored = []
         for r in rs:
             tot = cnt = 0.0
-            for fac in S.PRIOR:
+            for fac in REV_PRIOR:
                 v = rk.get(r["code"], {}).get(fac)
                 if v is None:
                     continue
-                tot += (v if S.PRIOR[fac] > 0 else 1 - v)
+                tot += (v if REV_PRIOR[fac] > 0 else 1 - v)
                 cnt += 1
-            if cnt >= max(2, len(S.PRIOR) // 2):
+            if cnt >= max(2, len(REV_PRIOR) // 2):
                 scored.append((tot / cnt, r))
         scored.sort(key=lambda x: (-x[0], x[1]["code"]))
         n = len(scored)

@@ -77,6 +77,22 @@ FILES = [
     "quant/_link_check.py",
     "quant/_push_lhb.py",
     "quant/_fix_archive_nav.py",
+    # —— 2026-10-12 补登记：大盘快照 / 各池行情生成器（此前在日更链路外，
+    #    却正是步骤 ②⑥⑧ 每次必崩的单一根因；不登记则线上看不到生成器，结论不可复现）——
+    "quant/_gen_market_overview_offline.py",
+    "quant/_gen_pool_quotes.py",
+    # —— 2026-10-13 补登记：全市场日K强制刷新（_txk_refresh）——
+    #    fetch_full_kline 只补缺失标的、跳过已缓存 → 已缓存票永远吃不到新交易日；
+    #    market_overview 直接读 _txk_cache.json，缓存不刷新就写「涨0跌0」空壳，
+    #    _datahub 新鲜度闸也判 FAIL。该脚本 10-13 起进 daily_all 第 1 步首位，必须登记。
+    "quant/_txk_refresh.py",
+    # —— 2026-10-13 补登记：长K（780 根 / 3.2 年）日更 ——
+    #    喂 _datahub 的 kline 维度与龙道诀胜率统计；判据「末根日期 < asof」不是根数。
+    #    不进链路则长K 永远比短K 慢一天，datahub 闸每天报双缓存涨停判定不一致。
+    "quant/_fetch_long_kline.py",
+    # —— 2026-10-12 补登记：「精中取精」观察候选页生成器（性质=观察候选·非可执行）——
+    "quant/build_selected_elite.py",
+    "quant/build_highwin_elite.py",
     # —— 情绪真源 + 龙道诀胜率实验室（2026-10-06）——
     "quant/_mkt_emo.py",
     "quant/_dragon_odds.py",
@@ -131,6 +147,7 @@ FILES = [
     # ★ 2026-10-09 补：主升精选（主推模块）生成器本体此前漏登记 —— 页面在册、
     #   生成器不在册 → 线上数字无法复算（典型「只登记页面不登记生成器」）。
     "quant/build_selected.py",
+    "quant/_env_gate_freq.py",    # ★ 主升精选环境门控跨频率稳健性严扫（对齐 _freq_robust 第五道闸）
     "quant/build_block.py",
     "quant/build_block_stocks.py",
     # —— 个股调研 / 行业最强榜 ——

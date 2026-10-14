@@ -72,8 +72,35 @@ def _has(*relpats):
 # ── 步骤表 ────────────────────────────────────────────────────────────
 # kind: auto（直接跑） / manual（须先实拉，脚本只检依赖） / gate（校验）
 STEPS = [
-    (1, "auto", "统一数据底座（8 维度汇总）",
-     "_datahub.py --date {D}", "_datahub.py --date {D}"),
+    # ★ 2026-10-12 修：大盘快照与各池行情此前**从未进过日更链路** ——
+    #   而这正是「步骤 ②⑥⑧ 每次必崩」的单一根因，且崩得完全没有报错线索：
+    #      · build_psychology   [fail] 缺少 quant/market_overview/{D}.json
+    #      · build_tplus        [build_tplus] 缺少 quant/tplus/quotes_{D}.json
+    #      · _datahub_gate      [FAIL] quotes/{D}.json、picks/quotes_{D}.json 缺失
+    #   按本站铁律「没进 daily_all = 不会更新，且没有任何报错」，补登记这两个生成器。
+    # ★ 2026-10-13 修（两个真问题，干净环境必爆）：
+    #   ① **全市场日K刷新必须排在第 1 步首位**。_gen_market_overview_offline.py 直接读
+    #      `_txk_cache.json`（不经过 hub），`scan_one_day(code, bars, TGT_D)` 对末根
+    #      < TGT_D 的票返回 None —— 缓存不刷新，market_overview 就写「涨0 跌0 涨停0」
+    #      空壳且退出码 0；同时 _datahub.py 的新鲜度自检（_T.stale_codes，asof=数据日）
+    #      会把 >2% 陈旧的缓存判 FAIL（10-13 实测 5051/5051 全陈旧 → 闸 FAIL）。
+    #      此前链路里**没有任何一步**做全市场日K刷新（fetch_full_kline 只补缺失标的、
+    #      跳过已缓存；MACD 离线链只补自己那一小池）—— 又是「没进 daily_all」。
+    #   ② **长K（780 根 / 3.2 年）同样必须日更**。它喂 _datahub 的 kline 维度与龙道诀
+    #      胜率统计（_dragon_odds 样本期），此前全靠手工补 → 长K 永远比短K 慢一天，
+    #      datahub 闸每天报「双缓存涨停判定不一致（短 67 / 长 0）」。
+    #      ⚠ 判据是「末根日期 < asof」不是根数（旧判据「根数达标就跳过」会让达标票
+    #      永远补不进最新交易日，一直停在补数那一天）—— 这正是 --asof 的存在理由。
+    #   ③ **_datahub.py 必须排在 _gen_pool_quotes.py 之前**：后者 market 段读
+    #      `hub/{DS}.json` 的 dims.quotes（_gen_pool_quotes.py:174-177），hub 不存在
+    #      就静默打印「market 跳过：hub 无 quotes」→ quotes/{D}.json 缺 market 段。
+    (1, "auto", "全市场日K/长K刷新 + 大盘概览 + 统一数据底座 + 各池行情",
+     "_txk_refresh.py --end {D}; _fetch_long_kline.py --n 780 --asof {D}; "
+     "_gen_market_overview_offline.py --date {D}; "
+     "_datahub.py --date {D}; _gen_pool_quotes.py --date {D}",
+     ["_txk_refresh.py --end {D}", "_fetch_long_kline.py --n 780 --asof {D}",
+      "_gen_market_overview_offline.py --date {D}", "_datahub.py --date {D}",
+      "_gen_pool_quotes.py --date {D}"]),
     (2, "auto", "龙虎榜主看板",
      "build_lhb_enriched.py --date {D} && build_dashboards.py --date {D}",
      ["build_lhb_enriched.py --date {D}", "build_dashboards.py --date {D}"]),
@@ -94,22 +121,40 @@ STEPS = [
     # ★ 2026-10-09 补：`build_selected.py`（主升精选=主推模块）此前**从未进过链路**，
     #   线上 `web/selected/` 一直靠手工跑（10-08 之后停更 → coverage 报 selected 缺期）。
     #   纯本地（读全市场日K + 冻结模型），1s 级，与精选池同族，并入本步。
-    (7, "auto", "精选池 + 主升精选：生成 → 归档 → 构建 → 回测 → 稳健分选",
-     "gen_picks.py --date {D} --window 20 --top 40; build_picks.py --date {D}; "
+    # ★ 2026-10-12 补：`build_picks.py` 需要 `picks/quotes_{D}.json`，而它只能由
+    #   `_gen_pool_quotes.py` 在 **gen_picks 产出 candidates 之后** 才能补出来 ——
+    #   所以这一步必须插在 gen_picks 与 build_picks 之间（幂等，重复跑无害 ~15s）。
+    (7, "auto", "精选池 + 主升精选：生成 → 补行情 → 归档 → 构建 → 回测 → 稳健分选",
+     "gen_picks.py --date {D} --window 20 --top 40; _gen_pool_quotes.py --date {D}; "
+     "build_picks.py --date {D}; "
      "backtest_picks.py; scan_stable.py --date {D}; build_selected.py {D}",
-     ["gen_picks.py --date {D} --window 20 --top 40", "build_picks.py --date {D}",
+     ["gen_picks.py --date {D} --window 20 --top 40", "_gen_pool_quotes.py --date {D}",
+      "build_picks.py --date {D}",
       "backtest_picks.py", "scan_stable.py --date {D}", "build_selected.py {D}"]),
-    (8, "auto", "做T池：强势扫描 → 三源并集 → 引擎",
-     "scan_strong.py --date {D} && gen_tplus.py --date {D} && build_tplus.py --date {D}",
-     ["scan_strong.py --date {D}", "gen_tplus.py --date {D}", "build_tplus.py --date {D}"]),
+    # ★ 2026-10-12 补：`build_tplus.py` 需要 `tplus/quotes_{D}.json` 与 `tplus/kline_{D}.json`，
+    #   二者同样来自 `_gen_pool_quotes.py`，且该脚本要读 `scan_strong` 产出的票池清单
+    #   —— 因此必须排在 scan_strong 之后、build_tplus 之前（幂等）。
+    (8, "auto", "做T池：强势扫描 → 补行情 → 三源并集 → 引擎",
+     "scan_strong.py --date {D}; _gen_pool_quotes.py --date {D}; "
+     "gen_tplus.py --date {D}; build_tplus.py --date {D}",
+     ["scan_strong.py --date {D}", "_gen_pool_quotes.py --date {D}",
+      "gen_tplus.py --date {D}", "build_tplus.py --date {D}"]),
     (9, "auto", "反转池（本地日K，无需联网）",
      "rev_pool.py run {D}; fetch_rev_flow.py --date {D} --src sina; "
      "fetch_rev_enrich.py --date {D} --render; gen_watchlist.py {D}",
      ["rev_pool.py run {D}", "fetch_rev_flow.py --date {D} --src sina",
       "fetch_rev_enrich.py --date {D} --render", "gen_watchlist.py {D}"]),
-    (10, "auto", "MACD + 高胜率（离线链：本地日K + 新浪资金流）",
+    # ★ 2026-10-13 修：`_hw_tier_gate.py`（高胜率出票合法性证据，gen_highwin.py:341 每天读它）
+    #   此前**从未进过日更链路** —— 证据 JSON 停在 10-08（面板止 09-30）、step3 派生停在 10-04，
+    #   而底池已被离线链重扫 →「过期证据冒充当日」（既能误拒、也可能误放行，方向可逆）。
+    #   _page_registry 的闸页面族早已声明这两条命令（script 字段），此处只是补接线。
+    #   冒烟测试（--limit 200 --sens）2s 通过；全量约 1 分钟。排在离线链**之前**：
+    #   ① 证据面板只用截至昨日的数据（无前视）；② gen_highwin 当天读到的即是新证据。
+    (10, "auto", "高胜率出票闸证据 + MACD + 高胜率（离线链：本地日K + 新浪资金流）",
+     "_hw_tier_gate.py; _hw_tier_gate.py --sens --step 3; "
      "_gen_macd_offline_all.py --date {D}",
-     ["_gen_macd_offline_all.py --date {D}"]),
+     ["_hw_tier_gate.py", "_hw_tier_gate.py --sens --step 3",
+      "_gen_macd_offline_all.py --date {D}"]),
     (11, "auto", "增仓精选（含融资融券日频更新）",
      "_fetch_margin_em.py --workers=8; build_accum.py {D}",
      ["_fetch_margin_em.py --workers=8", "build_accum.py {D}"]),
@@ -125,15 +170,23 @@ STEPS = [
     # ★ 2026-10-09 补登记：这三个模块此前**从未进过日更链路**（build_quant_strategy /
     #   build_cross_section / build_3yl 全靠手工跑，页面停在 09-30 那一次）。
     #   三者都只读本地日K + hub 底座，不联网，单次合计 <5s，放在收尾前安全。
-    (13, "auto", "量化策略板 + 全市场横截面 + 三连阴观察池",
-     "build_quant_strategy.py {D}; build_cross_section.py --date {D}; build_3yl.py {D}",
+    # ★ 2026-10-12 补登记：「精中取精」两页（build_selected_elite / build_highwin_elite）此前
+    #   完全在链路外，靠手工跑 → coverage 报「未登记页面」且停在旧数据日。
+    #   放在第 13 步（第 14 步注入导航之前），保证新产出的页面能拿到统一导航与主题。
+    (13, "auto", "量化策略板 + 全市场横截面 + 三连阴 + 精中取精（观察候选）",
+     "build_quant_strategy.py {D}; build_cross_section.py --date {D}; build_3yl.py {D}; "
+     "build_selected_elite.py {D}; build_highwin_elite.py {D}",
      ["build_quant_strategy.py {D}", "build_cross_section.py --date {D}",
-      "build_3yl.py {D}"]),
-    (14, "auto", "数据库 + 门户 + 板块 + 热力图 + 主题收尾",
+      "build_3yl.py {D}", "build_selected_elite.py {D}", "build_highwin_elite.py {D}"]),
+    # ★ 2026-10-13 修：孤儿页（无任何入链的归档页）此前靠手工跑 `_fix_orphans.py`，
+    #   而各索引页每天被自家生成器重建 → 插好的归档链接块**第二天就被冲掉**，
+    #   孤儿数从 0 反弹到 55（coverage 报 GAP、exit 1）。又是「没进 daily_all」。
+    #   _fix_orphans 幂等（先删旧块再插），必须排在**所有页面生成器与主题注入之后**。
+    (14, "auto", "数据库 + 门户 + 板块 + 热力图 + 主题收尾 + 孤儿页回链",
      "db_update.py {D}; db_export.py; build_portal.py; build_sections.py; "
-     "build_sector_heatmap.py; _apply_theme.py",
+     "build_sector_heatmap.py; _apply_theme.py; _fix_orphans.py",
      ["db_update.py {D}", "db_export.py", "build_portal.py", "build_sections.py",
-      "build_sector_heatmap.py", "_apply_theme.py"]),
+      "build_sector_heatmap.py", "_apply_theme.py", "_fix_orphans.py"]),
     (15, "gate", "五道门禁（链接/JS/覆盖/策略/数据底座）",
      "_link_check.py; _js_check.py --all; _coverage_check.py --until {D}; "
      "_strategy_gate.py; _datahub_gate.py --date {D}",

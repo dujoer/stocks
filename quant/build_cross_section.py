@@ -217,9 +217,14 @@ def render(d):
     cov_t = "".join(cov_tr(*c) for c in cov)
 
     # 归档入链**做进生成器**（含当期自己），否则 cross_YYYYMMDD.html 会成孤儿
+    # ★ 2026-10-13 修：原实现只 glob 已落盘快照，而当天文件在 main() 里
+    #   render() **之后**才写盘 → 「历史快照」块永远缺当天，当日页必成孤儿
+    #   （实测 cross_20261013.html 无任何入链，coverage 报 GAP）。
+    #   现把当期日期显式并入集合（glob 只是补历史，不是唯一来源）。
     import glob as _glob
-    snaps = sorted(os.path.basename(p)[6:-5]
-                   for p in _glob.glob(os.path.join(OUT_WEB, "cross_2*.html")))
+    snaps = sorted({d["date"].replace("-", "")} |
+                   {os.path.basename(p)[6:-5]
+                    for p in _glob.glob(os.path.join(OUT_WEB, "cross_2*.html"))})
     arch = ("<div class='section'><h2>历史快照</h2><div class='arch'>%s</div></div>"
             % "".join("<a href='cross_%s.html'>%s</a>" % (s, s) for s in snaps)) if snaps else ""
 

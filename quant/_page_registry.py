@@ -166,6 +166,16 @@ FAMILIES = [
               '其 close 反查 35/35 精确等于 2026-09-11 = 旧快照冒充当日 → 一律不出票。'
               'gen_highwin.py 读 emit_license()，读不到即 fail-safe 不出票'),
 
+    # ★ 2026-10-12 补登记「高胜率池·精中取精（观察候选）」。
+    #   必须排在下面的 `highwin` 族**之前**：两个族的 pattern 都覆盖 picks/highwin_*，
+    #   而 match_family 取「首个匹配」——放后面会被 highwin 先认领，本族被判「无页面」。
+    #   性质是**观察候选·非可执行**（CORE 档样本外 edge 全负、未过第五道闸与 0.15pp 成本闸）。
+    dict(key='picks_highwin_elite', label='高胜率池·精中取精（综合分最靠前 · 观察用 · 非可执行）',
+         patterns=['picks/highwin_elite_*.html'],
+         entry='picks/index.html', script='build_highwin_elite.py', freq='daily',
+         dated=True, start='20261009', date_re=r'(\d{8})',
+         need='picks/highwin_{DATE}.json（emit_ok/emit_why）+ _freq_robust_hw.json（CORE 档第五道闸）'
+              '+ _hw_tier_gate.json（底池冻结 / 退出成交假设）；三者均**现读不写死**'),
     dict(key='highwin', label='高胜率候选池（每日多因子扫描）',
          patterns=['picks/highwin_*.html'],
          entry='picks/index.html',
@@ -283,10 +293,19 @@ FAMILIES = [
          dated=False, start=None, date_re=None, need='同 macd（归档入口 + 方法论常驻页，已标注停更并跳转精选池）'),
 
     dict(key='selected', label='主升精选合并页（全市场域 · 趋势+资金双确认高确定性池）',
-         patterns=['selected/combined_*.html', 'selected/index.html', 'selected/lab.html'],
+         patterns=['selected/combined_*.html', 'selected/index.html', 'selected/lab.html', 'selected/purity.html'],
          entry='selected/index.html', script='build_selected.py', freq='daily',
          dated=True, start='20260918', date_re=r'(\d{8})',
          need='_txk_cache.json（全市场日K）+ _selected_lab.py（实验室冻结 _selected_model.json：9 因子等权横截面分位、A档前5%）+ _idxkline（环境门控）；不再依赖 macd_scan/picks 模型库'),
+    # ★ 2026-10-12 补登记：「精中取精」观察候选页（用户要求「量化策略列出的股票=整个判断逻辑中胜率最高的」）。
+    #   性质是**观察候选·非可执行**（相应档位样本外 edge 为负、未过第五道闸与 0.15pp 成本闸），
+    #   所以 dated=True 但只是「每日跟到最新数据日」，不代表可以出票。
+    dict(key='selected_elite', label='主升精选·精中取精（胜率候选 · 观察用 · 非可执行）',
+         patterns=['selected/elite_*.html'],
+         entry='selected/index.html', script='build_selected_elite.py', freq='daily',
+         dated=True, start='20261009', date_re=r'(\d{8})',
+         need='build_selected.scan 当日全市场域 + _selected_model.json（样本内胜率/样本外证据现读）；'
+              '只有在「A 档前 5%（样本内胜率最高档）」里再取主升分最靠前 ≈全市场前 1%'),
     dict(key='selected_envgate', label='主升精选·环境门控系数样本外验证（0.55/0.8 折值的证伪证据）',
          patterns=['selected/env_gate.html'],
          entry='selected/env_gate.html', script='_env_gate_lab.py', freq='once',
@@ -301,6 +320,20 @@ FAMILIES = [
               '★ 结论：强势档跨 4 组步长绝对收益全正（开仓有据）、弱势档全负（空仓有据），'
               '但震荡/破位档符号随采样翻转 → 判「不可判」，生产仍空仓但那是纪律不是数据结论；'
               '口径要点：反推系数必须用「策略层绝对收益」而非相对 edge，否则会得出相反错觉'),
+    dict(key='selected_envgate_freq', label='主升精选·环境门控跨采样频率稳健性（对齐 _freq_robust 第五道闸严判据）',
+         patterns=['selected/env_gate_freq.html'],
+         entry='selected/env_gate_freq.html', script='_env_gate_freq.py', freq='once',
+         dated=False, start=None, date_re=None,
+         need='step=1 密扫描派生 7 步网格 [1,2,3,5,8,10,20]；对强势开仓档逐频率算'
+              '绝对均收益 + 按日移动块 bootstrap R3（块长=覆盖前推窗口 FMAX 个信号日）+ 相对同日全票 edge；'
+              '三判据全满足才 PASS：7 步绝对收益全>0 且翻转0次 + 全步 R3≥95% + 全步相对 edge>0。'
+              'bootstrap 固定 2000 次 / seed=20261010（与 _freq_robust 一致）；结论数字现读 JSON 不写死'),
+    dict(key='selected_envgate_freq_real', label='主升精选·环境门控跨频率稳健性（可实现口径 · 严判据）',
+         patterns=['selected/env_gate_freq_realistic.html'],
+         entry='selected/env_gate_freq_realistic.html', script='_env_gate_freq.py', freq='once',
+         dated=False, start=None, date_re=None,
+         need='同 selected_envgate_freq，但成交假设改可行口径（保守日内路径 + 跳空按开盘价成交），'
+              '验证「强势开仓」alpha 不被乐观退出口径虚高；运行 python quant/_env_gate_freq.py --mode realistic'),
     dict(key='accumulation', label='增仓精选（7 维增持/增仓信号 + 1/3/5 日多空增仓 · 共识选股池）',
         patterns=['accumulation/combined_*.html', 'accumulation/index.html',
                   'accumulation/lab.html', 'accumulation/history.html',
@@ -311,10 +344,49 @@ FAMILIES = [
     dict(key='freq_robust', label='跨采样频率稳健性（出票第五道闸）',
          patterns=['quant_strategy/freq-robust.html'],
          entry='quant_strategy/freq-robust.html',
-         script='_freq_robust.py --pool 3yl; _freq_robust.py --pool rev; build_freq_robust_page.py',
+         script='_freq_robust.py --pool 3yl; _freq_robust.py --pool rev; '
+                '_freq_robust.py --pool hw; _freq_robust.py --pool tplus; '
+                '_freq_robust.py --pool accum; build_freq_robust_page.py',
          freq='manual', dated=False, start=None, date_re=None,
-         need='_freq_robust_{pool}.json（逐采样频率重建面板重算 edge/R3；样本外证据，'
-              '按需重跑，不进日更链 —— 频率扫描不随每日行情变化）'),
+         need='_freq_robust_{pool}.json（逐采样频率重建面板重算 edge/R3；五个池 3yl/rev/hw/tplus/accum 全扫，'
+              '证据齐全后跑 build_freq_robust_page.py 汇总；样本外证据，按需重跑，不进日更链 —— '
+              '频率扫描不随每日行情变化。★ 结论：五池可判定档位 0 通过；高胜率 CORE 与反转 A 为'
+              '「符号一致但稳定为负」的负贡献档，三连阴/反转B/做T各档符号随频率翻转 → 全站无池可出票。'
+              '做T 族走 family=tplus 自定义 build（_tplus_lab.build_panel(step) 全量重建，避免已稀疏面板二次抽稀自欺）；'
+              '增仓族走 family=accum 自定义 build（复用 _accum_tier_gate.build(days=全量) 一次产全行，'
+              '再按入场日 step 子集，tier 取自 RULES 的 S/A/B/C + M且I 候选档——排除「全候选域」对照基准以免 edge_stats 崩溃）'),
+    dict(key='rev_sector_watch', label='板块共振反转观察（底部反转优化方向 · 观察池）',
+         patterns=['quant_strategy/rev-sector-watch.html'],
+         entry='quant_strategy/rev-sector-watch.html',
+         script='_build_rev_sector_watch.py', freq='manual', dated=False, start=None, date_re=None,
+         need='底部反转 A 档经跨频率稳健性严扫 0 通过（稳定负贡献）；本页探索「板块共振」优化方向——'
+              '只把落在抢筹/建仓板块的反转候选列入观察（板块级，领涨股作风向标锚）。数据源 _rev_sector_state_20261009.json'
+              '（板块强度/行为/5·20日净流合并）+ _freq_robust_rev.json + _rev_tier_gate_step5.json。'
+              '★ 限制：个股→板块全量映射缺失（仅领涨股）、今日反转候选空（rev_enrich 未产出）、板块成员仅 2026-08 起'
+              ' → 当前只能做板块土壤观察，个股级筛选待成员映射+候选管线补上；非出票，不输出买卖结论'),
+    dict(key='accum_sector_watch', label='板块共振增仓观察（增仓精选优化方向 · 观察池）',
+         patterns=['quant_strategy/accum-sector-watch.html'],
+         entry='quant_strategy/accum-sector-watch.html',
+         script='_build_accum_sector_watch.py', freq='manual', dated=False, start=None, date_re=None,
+         need='增仓精选 _accum_tier_gate.json（三窗口 20/40/60 日显著性检验，boot=2000/seed 固定）显示：'
+              '数据闸已修复（margin_em 补全量 3629 只，M 维覆盖 18.4%→98.06%，zero_days 44/60→0/60）→ S 档正式可评估：'
+              '20 日 edge +0.96pp / R3 99.9%，但 40 日 R3 92.8%、60 日 R3 57.9%（跨窗口不稳健）、绝对收益 R3=0% → 仍 0 通过。'
+              '进一步接入 _freq_robust 第五道闸（family=accum，复用 build(days=全量) 按入场日 step 子集）：'
+              'S 档跨频翻转 3 次、A(M或I)/A(M且I) 各翻转 3 次 → 0 通过；唯一「符号不翻转」的档是 B 档（2信号观察仓，'
+              'edge [+0.129,+1.012]pp 全正、R3 最低 62.4%）——方向稳健但幅度/R3 不达标，是后续优化靶点。'
+              '本页探索「板块共振」优化方向（板块级，领涨股作风向标锚）；'
+              '数据源 _rev_sector_state_20261009.json（板块强度/行为/净流合并，与反转页同份）+ _accum_tier_gate.json + _freq_robust_accum.json。'
+              '★ 限制：个股→板块全量映射缺失、板块基准 10-09 未更新 → 非出票，不输出买卖结论'),
+    dict(key='accum_b_purity', label='增仓 B 档提纯实验（B 档变体跨频率严扫 · 探索页）',
+         patterns=['quant_strategy/accum-b-purity.html'],
+         entry='quant_strategy/accum-b-purity.html',
+         script='_accum_b_purity.py', freq='manual', dated=False, start=None, date_re=None,
+         need='B 档（恰 2 信号）跨频率严扫中 edge 符号稳健为正（翻转 0）但 R3 仅 62.4% 不过闸，'
+              '故做提纯实验：在 B 档内强制资金确认测 5 变体（B0基线/B1资金M或I/B2融资M/B3机构I/B4强合成）。'
+              '复用 _accum_tier_gate.build 全量 + _gate_common.tier_analyse/edge_stats（无未来函数）。'
+              '结论：无一变体过第五道闸；B2 融资确认最亮眼（40/60 日 edge +0.116pp、R3 98%，'
+              '但 20 日窗口 R3 33% 拖垮跨频率一致性）→ 增仓 edge 短 horizon 脆弱，提纯方向成立但不过阈，仍空仓。'
+              '数据源 _accum_b_purity.json（自产）。★ 探索页非生产规则，不输出买卖结论'),
 
     dict(key='quant_strategy', label='量化策略板（综合选股 + 买卖点 · 短/中/长三周期）',
         patterns=['quant_strategy/strategy_*.html', 'quant_strategy/index.html',
