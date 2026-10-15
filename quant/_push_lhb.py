@@ -90,6 +90,9 @@ FILES = [
     #    喂 _datahub 的 kline 维度与龙道诀胜率统计；判据「末根日期 < asof」不是根数。
     #    不进链路则长K 永远比短K 慢一天，datahub 闸每天报双缓存涨停判定不一致。
     "quant/_fetch_long_kline.py",
+    # —— 2026-10-15 补登记：manual 原始数据自动补齐脚本（westock CLI + 东财，不依赖 MCP）——
+    #    已接入 daily_all 第 1 步；不进白名单则 coverage 判 C2 结构性问题（线上缺失、结论不可复现）。
+    "quant/_fetch_manual.py",
     # —— 2026-10-12 补登记：「精中取精」观察候选页生成器（性质=观察候选·非可执行）——
     "quant/build_selected_elite.py",
     "quant/build_highwin_elite.py",

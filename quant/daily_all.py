@@ -5,10 +5,15 @@
 `daily_update.py` 只串了 2 步（龙虎榜 + 门户），其余 13 步全靠人记、手动敲 ——
 这是每日更新最容易漏步骤、进而「旧数据冒充当日」的根源。
 
-本脚本把 SOP 拆成两类：
-  * **AUTO**（本脚本自动跑，纯本地脚本、不需要 MCP 联网抓取）
-  * **MANUAL**（必须由 agent/用户经 westock MCP 实拉当日原始数据才能跑；
-    本脚本**只检测落盘是否就绪并跳过**，绝不拿旧数据凑 —— 这条是红线）
+本脚本把 SOP 拆成：
+  * **AUTO**（本脚本自动跑，含联网取数）
+  * **MANUAL**（历史上需经 westock MCP 实拉当日原始数据；但 westock MCP 长期 502
+    且 mcp.json 未配置，故已改为由第 1 步的 `_fetch_manual.py` 经 westock CLI + 东财
+    **自动补齐**，不再依赖 MCP。原 MANUAL 步（lhb/exec/block/sector）已转 AUTO。）
+
+★ 取数通道：westock MCP 已**旁路**（不依赖、不重试）。板块强度/龙虎榜主榜走 westock CLI
+  （与 MCP 同源同口径），大宗/高管/龙虎榜席位明细走东财数据中心接口。任一路源失败，
+  对应步会失败并停止推送（绝不拿旧数据凑）。
 
 用法：
     python quant/daily_all.py                      # 自动取最新数据日
@@ -94,27 +99,35 @@ STEPS = [
     #   ③ **_datahub.py 必须排在 _gen_pool_quotes.py 之前**：后者 market 段读
     #      `hub/{DS}.json` 的 dims.quotes（_gen_pool_quotes.py:174-177），hub 不存在
     #      就静默打印「market 跳过：hub 无 quotes」→ quotes/{D}.json 缺 market 段。
-    (1, "auto", "全市场日K/长K刷新 + 大盘概览 + 统一数据底座 + 各池行情",
+    # ★ 2026-10-15 修（根治 westock MCP 长期 502）：原本 ②③④⑤ 标为 MANUAL，只检依赖、
+    #   不在就跳过，等 agent 经 MCP 实拉 —— 而 MCP 根本没配置（mcp.json 无 westock），
+    #   导致每天手动降级补齐。现把 proven 的降级路径固化为主路径：第 1 步末尾接
+    #   `_fetch_manual.py`（走 westock CLI + 东财，不依赖 MCP），②~⑤ 改为 AUTO 自跑。
+    (1, "auto", "全市场日K/长K刷新 + 大盘概览 + 统一数据底座 + 各池行情 + 补齐 manual 原始数据",
      "_txk_refresh.py --end {D}; _fetch_long_kline.py --n 780 --asof {D}; "
      "_gen_market_overview_offline.py --date {D}; "
-     "_datahub.py --date {D}; _gen_pool_quotes.py --date {D}",
+     "_datahub.py --date {D}; _gen_pool_quotes.py --date {D} && "
+     "_fetch_manual.py --date {D}",
      ["_txk_refresh.py --end {D}", "_fetch_long_kline.py --n 780 --asof {D}",
       "_gen_market_overview_offline.py --date {D}", "_datahub.py --date {D}",
-      "_gen_pool_quotes.py --date {D}"]),
-    (2, "auto", "龙虎榜主看板",
+      "_gen_pool_quotes.py --date {D}", "_fetch_manual.py --date {D}"]),
+    (2, "auto", "龙虎榜主看板（读 _fetch_manual 落盘的 lhb 主榜 + 席位明细）",
      "build_lhb_enriched.py --date {D} && build_dashboards.py --date {D}",
      ["build_lhb_enriched.py --date {D}", "build_dashboards.py --date {D}"]),
-    (3, "manual", "高管增减持（需 MCP tool_event(manager_sharechg)）",
-     "gen_exec.py --date {D} && build_exec.py --date {D}",
-     ["gen_exec.py --date {D}", "build_exec.py --date {D}"]),
-    (4, "manual", "大宗交易（需 MCP block_past_30）",
-     "gen_block.py --date {D} && build_block.py --date {D}",
-     ["gen_block.py --date {D}", "build_block.py --date {D}"]),
+    (3, "auto", "高管增减持（东财降级源，_fetch_manual 已落盘 _raw_em_{D}.json）",
+     "gen_exec.py --date {D} --src exec_chg/_raw_em_{D}.json && build_exec.py --date {D}",
+     ["gen_exec.py --date {D} --src exec_chg/_raw_em_{D}.json", "build_exec.py --date {D}"]),
+    (4, "auto", "大宗交易（东财降级源，_fetch_manual 已落盘 _raw_em_{D}.json）",
+     "gen_block.py --date {D} --src block_chg/_raw_em_{D}.json && build_block.py --date {D}",
+     ["gen_block.py --date {D} --src block_chg/_raw_em_{D}.json", "build_block.py --date {D}"]),
     # ★ 2026-10-09 修：原命令写的是占位符 `<f>`（照抄人工指引），实际执行必然退出码 1
     #   —— 表现为「板块强度每天报失败」。现改为真实路径（cwd=quant）。
-    (5, "manual", "★ 板块强度（不可回溯，漏跑永久断档）",
-     "run_daily_sector.py --date {D} --industry sector_industry_{DS}.json "
-     "--concept sector_concept_{DS}.json",
+    # ★ 2026-10-15 修：run_daily_sector 的 --industry/--concept 经 collect_sector.py 子进程时
+    #   cwd 切到 quant/，相对路径会 FileNotFoundError → **必须绝对路径**（QUANT 固定值）。
+    (5, "auto", "★ 板块强度（不可回溯，漏跑永久断档；westock CLI 同源落盘）",
+     "run_daily_sector.py --date {D} "
+     "--industry /Users/jackal/Downloads/workbuddy/股票/quant/sector_industry_{DS}.json "
+     "--concept /Users/jackal/Downloads/workbuddy/股票/quant/sector_concept_{DS}.json",
      ["sector_industry_{DS}.json", "sector_concept_{DS}.json"]),
     (6, "auto", "群体心理风险雷达（读 ①~⑤ 产物）",
      "build_psychology.py --date {D}", "build_psychology.py --date {D}"),
@@ -187,10 +200,15 @@ STEPS = [
      "build_sector_heatmap.py; _apply_theme.py; _fix_orphans.py",
      ["db_update.py {D}", "db_export.py", "build_portal.py", "build_sections.py",
       "build_sector_heatmap.py", "_apply_theme.py", "_fix_orphans.py"]),
-    (15, "gate", "五道门禁（链接/JS/覆盖/策略/数据底座）",
+    # ★ 2026-10-15 修：manual 原始数据（lhb/block/exec/sector）由 _fetch_manual 在第 1 步落盘，
+    #   但第 1 步里的 _datahub.py 跑在取数之前 → hub 记录不到这些源。门禁前**必须重扫**底座，
+    #   否则 _datahub_gate 会因「lhb 等缺失」FAIL（此前只能手动补跑 _datahub.py 才过）。
+    (15, "gate", "刷新数据底座 + 五道门禁（链接/JS/覆盖/策略/数据底座）",
+     "_datahub.py --date {D}; "
      "_link_check.py; _js_check.py --all; _coverage_check.py --until {D}; "
      "_strategy_gate.py; _datahub_gate.py --date {D}",
-     ["_link_check.py", "_js_check.py --all", "_coverage_check.py --until {D}",
+     ["_datahub.py --date {D}",
+      "_link_check.py", "_js_check.py --all", "_coverage_check.py --until {D}",
       "_strategy_gate.py", "_datahub_gate.py --date {D}"]),
 ]
 
