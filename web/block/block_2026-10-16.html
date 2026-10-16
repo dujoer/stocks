@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>大宗交易 · 2026-10-16</title>
+<style>* { box-sizing: border-box; }
+body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:#f5f6f8; color:#23262b; min-height:100vh; }
+.wrap { max-width:1180px; margin:0 auto; padding:40px 20px 60px; }
+.topnav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; padding-bottom:14px;
+  border-bottom:1px solid rgba(0,0,0,.08); }
+.topnav a { color:#1a73e8; text-decoration:none; font-size:13px; padding:4px 12px; border-radius:20px;
+  border:1px solid rgba(26,115,232,.35); transition:.2s; }
+.topnav a:hover { background:rgba(26,115,232,.10); }
+header { display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+header h1 { font-size:30px; margin:0 0 6px; background:linear-gradient(90deg,#1a73e8,#b8332a,#6b5b95);
+  -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800; }
+header p { margin:4px 0; color:#8a929c; font-size:13px; line-height:1.6; }
+.datebadge { display:inline-block; font-size:22px; font-weight:800; color:#fff;
+  background:linear-gradient(135deg,#1a73e8,#b8332a); padding:10px 20px; border-radius:14px;
+  letter-spacing:.5px; box-shadow:0 6px 18px rgba(26,115,232,.25); white-space:nowrap; }
+.datebadge small { display:block; font-size:11px; font-weight:600; opacity:.85; letter-spacing:1px; }
+.meta { margin:14px 0 24px; font-size:12px; color:#6b7280; line-height:1.7; }
+.meta b { color:#1a73e8; }
+.section { background:#ffffff; border:1px solid rgba(0,0,0,.08); border-radius:20px;
+  padding:18px 20px; margin:0 0 22px; }
+.section h2 { font-size:19px; margin:0 0 14px; padding-left:12px; border-left:5px solid #1a73e8; }
+.idxrow { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; }
+.idx { background:#fafbfc; border:1px solid #eef1f4; border-radius:14px; padding:14px 16px; }
+.idx .k { font-size:12px; color:#7b8794; }
+.idx .v { font-size:24px; font-weight:800; margin-top:4px; color:#23262b; }
+.idx .v.buy { color:#b8332a; } .idx .v.sell { color:#1a9e5a; } .idx .v.gold { color:#1a73e8; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { text-align:left; padding:9px 10px; background:#f7f8fa; color:#5a6573; font-weight:700;
+  border-bottom:2px solid #e3e7ec; white-space:nowrap; }
+td { padding:9px 10px; border-bottom:1px solid #f0f2f5; }
+tr:hover td { background:#fcfbf8; }
+.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.up { color:#b8332a; font-weight:700; } .down { color:#1a9e5a; font-weight:700; } .flat { color:#8a929c; }
+.disc { color:#1a73e8; font-weight:600; } .prem { color:#6b5b95; font-weight:600; }
+.seat { font-size:12px; color:#6b7280; }
+.inst { display:inline-block; font-size:11px; padding:1px 7px; border-radius:10px;
+  background:#eef4fa; color:#1f4e79; margin-left:6px; white-space:nowrap; }
+.tabs { margin-bottom:12px; }
+.tab { display:inline-block; padding:5px 14px; margin-right:8px; border-radius:18px; cursor:pointer;
+  font-size:13px; border:1px solid rgba(26,115,232,.35); color:#1a73e8; background:#fff; }
+.tab.on { background:#1a73e8; color:#fff; }
+.empty { padding:26px; text-align:center; color:#8a929c; font-size:13px; }
+.datenav { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 18px; font-size:13px; align-items:center; }
+.datenav a { color:#1f4e79; text-decoration:none; padding:5px 13px; border-radius:18px;
+  background:#eef4fa; border:1px solid #dbe6f2; transition:.2s; }
+.slk { color:#1a73e8; text-decoration:none; }
+.slk:hover { text-decoration:underline; }
+.datenav a:hover { background:#dbe6f2; }
+.datenav .cur { background:#1a73e8 !important; color:#fff !important; border-color:#1a73e8 !important; }
+.datenav .arch { background:#fbf3e6; color:#1a73e8; border-color:#ecd9b8; }
+th.sort { cursor:pointer; user-select:none; position:relative; }
+th.sort:hover { background:#eef0f3; color:#3b4453; }
+th.sort.sorted { color:#1a73e8; }
+th.sort.sorted[data-asc="1"]::after { content:" \25B2"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after { content:" \25BC"; font-size:10px; }
+th.sort:not(.sorted)::after { content:" \2195"; font-size:10px; color:#c2c9d1; }
+footer { margin-top:40px; padding-top:18px; border-top:1px solid #e3e7ec;
+  font-size:12px; color:#7b8794; line-height:1.8; }
+</style>
+<!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 数据时间戳条（真实数据日 + 返回入口） ----------
+   由 _apply_theme.py 按「页面自身写的数据日」与「全站最新数据日」比对后注入，
+   不是渲染时间、不是硬编码 —— 页面没写数据日就如实显示「未标注」，
+   落后全站就红字报警。这样「页面有没有更新」看页头一眼就知道。 */
+.wb-stamp{
+  display:flex !important; flex-wrap:wrap !important; align-items:center !important;
+  gap:6px 10px !important;
+  max-width:1440px !important; margin:-14px auto 18px !important;
+  padding:8px 14px !important;
+  background:var(--surface) !important; border:1px solid var(--line) !important;
+  border-left:4px solid var(--accent) !important; border-radius:8px !important;
+  font-size:12.5px !important; color:var(--muted) !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.08) !important;
+}
+.wb-stamp .s-l{ color:var(--muted) !important; }
+.wb-stamp .s-d{
+  color:var(--ink) !important; font-weight:700 !important;
+  font-variant-numeric:tabular-nums !important;
+}
+.wb-stamp .s-d.unknown{ color:#80868b !important; font-weight:600 !important; }
+.wb-stamp .s-ok{ color:var(--green) !important; }
+.wb-stamp .s-warn{ color:var(--red) !important; font-weight:600 !important; }
+.wb-stamp .s-hist{ color:var(--muted) !important; }
+.wb-stamp .s-src{ color:#80868b !important; }
+.wb-stamp a.wb-back{
+  margin-left:auto !important; white-space:nowrap !important;
+  display:inline-block !important; padding:3px 13px !important;
+  border:1px solid var(--line) !important; border-radius:16px !important;
+  color:var(--accent-ink) !important; background:var(--accent-soft) !important;
+  font-weight:600 !important; text-decoration:none !important;
+}
+.wb-stamp a.wb-back:hover{ background:var(--accent) !important; color:#fff !important; text-decoration:none !important; }
+
+/* ---------- 右下角浮动「回门户 / 回顶部」 ---------- */
+.wb-fab{
+  position:fixed; right:16px; bottom:18px; z-index:60;
+  display:flex; flex-direction:column; gap:8px;
+}
+.wb-fab a{
+  width:42px; height:42px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--surface); color:var(--ink);
+  border:1px solid var(--line); box-shadow:0 2px 6px rgba(60,64,67,.18);
+  font-size:17px; text-decoration:none; line-height:1;
+}
+.wb-fab a:hover{ background:var(--accent); color:#fff; border-color:var(--accent); text-decoration:none; }
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  /* ★ 窄屏必须让每个模块块各占一整行：
+     原来 .navgrp{flex-shrink:0} + 内部链接 white-space:nowrap，
+     整组宽度压不下去 → 导航溢出容器被裁掉，「主升精选 / 量化策略 / 三连阴」等
+     右侧入口在手机上根本看不见（看着像「没有导航」）。 */
+  .navgrp{ padding:5px 6px 5px 5px !important; width:100% !important; flex-shrink:1 !important; min-width:0 !important; }
+  /* 链接本身也要能收缩：全局 .topnav a{flex-shrink:0} 会让一行内最后一项
+     顶出容器被裁（手机上「高管增减持」就只剩「高管增减」）→ 窄屏放开收缩，
+     min-content 宽度仍是完整文字，不会被截断。 */
+  .topnav a{ flex-shrink:1 !important; }
+  .topnav a.home{ margin-left:0 !important; }
+  .wb-stamp{ margin:-8px auto 14px !important; font-size:12px !important; }
+  .wb-stamp a.wb-back{ margin-left:0 !important; }
+  .wb-fab{ right:10px; bottom:12px; }
+  .wb-fab a{ width:38px; height:38px; font-size:15px; }
+}
+
+</style><!--/WB_THEME--></head>
+<body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a><a href='../dragon/index.html'>龙道诀</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../sector/heatmap.html'>板块热力图</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../diagnosis/index.html'>个股研判</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a><a href='../three_yin/index.html'>三连阴</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a><a href='../statement/index.html'>交割单复盘</a><a href='../statement/exit-replay.html'>退出规则回放</a><a href='../quant_strategy/freq-robust.html'>频率稳健性</a></div><a href='../../index.html' class='home'>首页</a></div>
+<!--WB_STAMP--><div class='wb-stamp'><span class='s-l'>本页数据基准</span><b class='s-d'>2026-10-16</b><span class='s-hist'>· 历史归档页（内容即该日快照，不随最新数据日更新）</span><a class='wb-back' href='../../index.html'>← 返回</a></div><!--/WB_STAMP-->
+<div class='wrap'>
+
+<div class='datenav'><a href='block_2026-10-15.html'>← 2026-10-15</a><a class='cur' href='block_2026-10-16.html'>2026-10-16</a><a class='arch' href='archive.html'>归档总览</a><a class='arch' href='stocks.html'>个股档案</a><a href='../../index.html'>返回总门户</a><span style='align-self:center;color:#8a929c'>共 72 期</span></div>
+<header>
+  <div>
+    <h1>大宗交易</h1>
+    <p>全市场大宗交易逐笔追踪：谁在折价出货、谁在溢价接盘、机构席位动向。</p>
+  </div>
+  <div class='datebadge'><small>交易日</small>2026-10-16</div>
+</header>
+
+<div class='meta'>
+交易日 <b>2026-10-16</b> ｜ 接口快照日 <b>2026-10-16</b><br>
+数据口径：东方财富 <b>RPT_DATA_BLOCKTRADE</b>（盘后公开披露大宗交易）按 <b>TRADE_DATE=2026-10-16</b> 筛选，
+共 <b>69</b> 笔、覆盖 <b>41</b> 只股票、合计 <b>45.4697</b> 亿元；
+「当日涨跌」为交易日行情快照（已补齐 <b>0/69</b> 笔）。
+折溢价为相对当日收盘价：<b>正=折价成交</b>，<b>负=溢价成交</b>。
+</div>
+
+<div class='section'>
+  <h2>概览</h2>
+  <div class='idxrow'><div class='idx'><div class='k'>成交笔数</div><div class='v gold'>69</div></div><div class='idx'><div class='k'>涉及股票</div><div class='v'>41</div></div><div class='idx'><div class='k'>合计成交额（亿元）</div><div class='v gold'>45.4697</div></div><div class='idx'><div class='k'>平均折溢价</div><div class='v'>+6.58%</div></div><div class='idx'><div class='k'>折价 / 溢价</div><div class='v'><span class='down'>40</span> / <span class='up'>1</span></div></div><div class='idx'><div class='k'>机构买入笔数</div><div class='v buy'>12</div></div></div>
+</div>
+
+<div class='section'>
+  <h2>个股聚合（按成交额）</h2>
+  <table id='bs'><thead><tr><th class='sort' data-c='0'>股票</th><th class='sort' data-c='1'>代码</th><th class='sort num' data-c='2'>笔数</th><th class='sort num' data-c='3'>成交额(万元)</th><th class='sort num' data-c='4'>平均折溢价</th><th class='sort num' data-c='5'>当日收盘价</th><th class='sort num' data-c='6'>当日涨跌</th></tr></thead><tbody><tr><td data-val='浦发银行'><a class="emlk" href="https://quote.eastmoney.com/sh600000.html" target="_blank" rel="noopener noreferrer">浦发银行</a></td><td class='num' data-val='sh600000'>sh600000</td><td class='num' data-val='1'>1</td><td class='num' data-val='337810.77'>337,810.8</td><td class='num disc' data-val='0.206'>+0.21%</td><td class='num' data-val='9.73'>9.73</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='陕西煤业'><a class="emlk" href="https://quote.eastmoney.com/sh601225.html" target="_blank" rel="noopener noreferrer">陕西煤业</a></td><td class='num' data-val='sh601225'>sh601225</td><td class='num' data-val='1'>1</td><td class='num' data-val='27790.56'>27,790.6</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='28.28'>28.28</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='长沙银行'><a class="emlk" href="https://quote.eastmoney.com/sh601577.html" target="_blank" rel="noopener noreferrer">长沙银行</a></td><td class='num' data-val='sh601577'>sh601577</td><td class='num' data-val='1'>1</td><td class='num' data-val='19086.57'>19,086.6</td><td class='num disc' data-val='0.731'>+0.73%</td><td class='num' data-val='9.58'>9.58</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='海亮股份'><a class="emlk" href="https://quote.eastmoney.com/sz002203.html" target="_blank" rel="noopener noreferrer">海亮股份</a></td><td class='num' data-val='sz002203'>sz002203</td><td class='num' data-val='2'>2</td><td class='num' data-val='6543.14'>6,543.1</td><td class='num disc' data-val='2.568'>+2.57%</td><td class='num' data-val='14.02'>14.02</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='药明康德'><a class="emlk" href="https://quote.eastmoney.com/sh603259.html" target="_blank" rel="noopener noreferrer">药明康德</a></td><td class='num' data-val='sh603259'>sh603259</td><td class='num' data-val='2'>2</td><td class='num' data-val='5769.11'>5,769.1</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='144.3'>144.30</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='丽尚国潮'><a class="emlk" href="https://quote.eastmoney.com/sh600738.html" target="_blank" rel="noopener noreferrer">丽尚国潮</a></td><td class='num' data-val='sh600738'>sh600738</td><td class='num' data-val='1'>1</td><td class='num' data-val='5595.0'>5,595.0</td><td class='num disc' data-val='9.685'>+9.69%</td><td class='num' data-val='4.13'>4.13</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='金一文化'><a class="emlk" href="https://quote.eastmoney.com/sz002721.html" target="_blank" rel="noopener noreferrer">金一文化</a></td><td class='num' data-val='sz002721'>sz002721</td><td class='num' data-val='3'>3</td><td class='num' data-val='5014.67'>5,014.7</td><td class='num disc' data-val='9.274'>+9.27%</td><td class='num' data-val='2.48'>2.48</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='矩阵股份'><a class="emlk" href="https://quote.eastmoney.com/sz301365.html" target="_blank" rel="noopener noreferrer">矩阵股份</a></td><td class='num' data-val='sz301365'>sz301365</td><td class='num' data-val='10'>10</td><td class='num' data-val='4656.0'>4,656.0</td><td class='num disc' data-val='20.383'>+20.38%</td><td class='num' data-val='29.24'>29.24</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='华宏科技'><a class="emlk" href="https://quote.eastmoney.com/sz002645.html" target="_blank" rel="noopener noreferrer">华宏科技</a></td><td class='num' data-val='sz002645'>sz002645</td><td class='num' data-val='2'>2</td><td class='num' data-val='4567.5'>4,567.5</td><td class='num disc' data-val='8.549'>+8.55%</td><td class='num' data-val='14.2699'>14.27</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='紫金矿业'><a class="emlk" href="https://quote.eastmoney.com/sh601899.html" target="_blank" rel="noopener noreferrer">紫金矿业</a></td><td class='num' data-val='sh601899'>sh601899</td><td class='num' data-val='3'>3</td><td class='num' data-val='3943.45'>3,943.4</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='29.92'>29.92</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='奥浦迈'><a class="emlk" href="https://quote.eastmoney.com/sh688293.html" target="_blank" rel="noopener noreferrer">奥浦迈</a></td><td class='num' data-val='sh688293'>sh688293</td><td class='num' data-val='6'>6</td><td class='num' data-val='3414.62'>3,414.6</td><td class='num disc' data-val='8.997'>+9.00%</td><td class='num' data-val='62.0199'>62.02</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='中山公用'><a class="emlk" href="https://quote.eastmoney.com/sz000685.html" target="_blank" rel="noopener noreferrer">中山公用</a></td><td class='num' data-val='sz000685'>sz000685</td><td class='num' data-val='1'>1</td><td class='num' data-val='2871.11'>2,871.1</td><td class='num disc' data-val='10.192'>+10.19%</td><td class='num' data-val='10.4'>10.40</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='云中马'><a class="emlk" href="https://quote.eastmoney.com/sh603130.html" target="_blank" rel="noopener noreferrer">云中马</a></td><td class='num' data-val='sh603130'>sh603130</td><td class='num' data-val='1'>1</td><td class='num' data-val='2698.75'>2,698.8</td><td class='num disc' data-val='10.209'>+10.21%</td><td class='num' data-val='35.3599'>35.36</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='中芯国际'><a class="emlk" href="https://quote.eastmoney.com/sh688981.html" target="_blank" rel="noopener noreferrer">中芯国际</a></td><td class='num' data-val='sh688981'>sh688981</td><td class='num' data-val='2'>2</td><td class='num' data-val='2430.98'>2,431.0</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='102.66'>102.66</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='剑桥科技'><a class="emlk" href="https://quote.eastmoney.com/sh603083.html" target="_blank" rel="noopener noreferrer">剑桥科技</a></td><td class='num' data-val='sh603083'>sh603083</td><td class='num' data-val='1'>1</td><td class='num' data-val='2022.12'>2,022.1</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='168.51'>168.51</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='兴业银锡'><a class="emlk" href="https://quote.eastmoney.com/sz000426.html" target="_blank" rel="noopener noreferrer">兴业银锡</a></td><td class='num' data-val='sz000426'>sz000426</td><td class='num' data-val='1'>1</td><td class='num' data-val='1980.82'>1,980.8</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='28.72'>28.72</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='中际旭创'><a class="emlk" href="https://quote.eastmoney.com/sz300308.html" target="_blank" rel="noopener noreferrer">中际旭创</a></td><td class='num' data-val='sz300308'>sz300308</td><td class='num' data-val='3'>3</td><td class='num' data-val='1976.5'>1,976.5</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='670.0'>670.00</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='国科微'><a class="emlk" href="https://quote.eastmoney.com/sz300672.html" target="_blank" rel="noopener noreferrer">国科微</a></td><td class='num' data-val='sz300672'>sz300672</td><td class='num' data-val='3'>3</td><td class='num' data-val='1789.48'>1,789.5</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='137.02'>137.02</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='泽润新能'><a class="emlk" href="https://quote.eastmoney.com/sz301636.html" target="_blank" rel="noopener noreferrer">泽润新能</a></td><td class='num' data-val='sz301636'>sz301636</td><td class='num' data-val='1'>1</td><td class='num' data-val='1530.0'>1,530.0</td><td class='num disc' data-val='22.018'>+22.02%</td><td class='num' data-val='39.2398'>39.24</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='江阴银行'><a class="emlk" href="https://quote.eastmoney.com/sz002807.html" target="_blank" rel="noopener noreferrer">江阴银行</a></td><td class='num' data-val='sz002807'>sz002807</td><td class='num' data-val='1'>1</td><td class='num' data-val='1260.0'>1,260.0</td><td class='num disc' data-val='12.195'>+12.20%</td><td class='num' data-val='4.1'>4.10</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='楚天龙'><a class="emlk" href="https://quote.eastmoney.com/sz003040.html" target="_blank" rel="noopener noreferrer">楚天龙</a></td><td class='num' data-val='sz003040'>sz003040</td><td class='num' data-val='3'>3</td><td class='num' data-val='1072.68'>1,072.7</td><td class='num disc' data-val='9.944'>+9.94%</td><td class='num' data-val='14.1801'>14.18</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='容大感光'><a class="emlk" href="https://quote.eastmoney.com/sz300576.html" target="_blank" rel="noopener noreferrer">容大感光</a></td><td class='num' data-val='sz300576'>sz300576</td><td class='num' data-val='1'>1</td><td class='num' data-val='1049.75'>1,049.8</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='23.5'>23.50</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='泰格医药'><a class="emlk" href="https://quote.eastmoney.com/sz300347.html" target="_blank" rel="noopener noreferrer">泰格医药</a></td><td class='num' data-val='sz300347'>sz300347</td><td class='num' data-val='1'>1</td><td class='num' data-val='999.55'>999.5</td><td class='num prem' data-val='-3.974'>-3.97%</td><td class='num' data-val='50.0702'>50.07</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='山外山'><a class="emlk" href="https://quote.eastmoney.com/sh688410.html" target="_blank" rel="noopener noreferrer">山外山</a></td><td class='num' data-val='sh688410'>sh688410</td><td class='num' data-val='1'>1</td><td class='num' data-val='894.54'>894.5</td><td class='num disc' data-val='1.461'>+1.46%</td><td class='num' data-val='8.9'>8.90</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='聚和材料'><a class="emlk" href="https://quote.eastmoney.com/sh688503.html" target="_blank" rel="noopener noreferrer">聚和材料</a></td><td class='num' data-val='sh688503'>sh688503</td><td class='num' data-val='1'>1</td><td class='num' data-val='749.66'>749.7</td><td class='num disc' data-val='19.692'>+19.69%</td><td class='num' data-val='54.5898'>54.59</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='宁德时代'><a class="emlk" href="https://quote.eastmoney.com/sz300750.html" target="_blank" rel="noopener noreferrer">宁德时代</a></td><td class='num' data-val='sz300750'>sz300750</td><td class='num' data-val='1'>1</td><td class='num' data-val='703.58'>703.6</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='277.0'>277.00</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='恒立液压'><a class="emlk" href="https://quote.eastmoney.com/sh601100.html" target="_blank" rel="noopener noreferrer">恒立液压</a></td><td class='num' data-val='sh601100'>sh601100</td><td class='num' data-val='1'>1</td><td class='num' data-val='703.17'>703.2</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='78.13'>78.13</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='超达装备'><a class="emlk" href="https://quote.eastmoney.com/sz301186.html" target="_blank" rel="noopener noreferrer">超达装备</a></td><td class='num' data-val='sz301186'>sz301186</td><td class='num' data-val='1'>1</td><td class='num' data-val='700.0'>700.0</td><td class='num disc' data-val='2.017'>+2.02%</td><td class='num' data-val='30.2399'>30.24</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='天和磁材'><a class="emlk" href="https://quote.eastmoney.com/sh603072.html" target="_blank" rel="noopener noreferrer">天和磁材</a></td><td class='num' data-val='sh603072'>sh603072</td><td class='num' data-val='1'>1</td><td class='num' data-val='515.14'>515.1</td><td class='num disc' data-val='10.843'>+10.84%</td><td class='num' data-val='28.1302'>28.13</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='国科军工'><a class="emlk" href="https://quote.eastmoney.com/sh688543.html" target="_blank" rel="noopener noreferrer">国科军工</a></td><td class='num' data-val='sh688543'>sh688543</td><td class='num' data-val='1'>1</td><td class='num' data-val='514.87'>514.9</td><td class='num disc' data-val='14.508'>+14.51%</td><td class='num' data-val='45.0101'>45.01</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='东山精密'><a class="emlk" href="https://quote.eastmoney.com/sz002384.html" target="_blank" rel="noopener noreferrer">东山精密</a></td><td class='num' data-val='sz002384'>sz002384</td><td class='num' data-val='1'>1</td><td class='num' data-val='490.68'>490.7</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='122.67'>122.67</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='通富微电'><a class="emlk" href="https://quote.eastmoney.com/sz002156.html" target="_blank" rel="noopener noreferrer">通富微电</a></td><td class='num' data-val='sz002156'>sz002156</td><td class='num' data-val='1'>1</td><td class='num' data-val='486.7'>486.7</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='48.67'>48.67</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='博苑新材'><a class="emlk" href="https://quote.eastmoney.com/sz301617.html" target="_blank" rel="noopener noreferrer">博苑新材</a></td><td class='num' data-val='sz301617'>sz301617</td><td class='num' data-val='1'>1</td><td class='num' data-val='473.9'>473.9</td><td class='num disc' data-val='3.009'>+3.01%</td><td class='num' data-val='48.8602'>48.86</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='温氏股份'><a class="emlk" href="https://quote.eastmoney.com/sz300498.html" target="_blank" rel="noopener noreferrer">温氏股份</a></td><td class='num' data-val='sz300498'>sz300498</td><td class='num' data-val='1'>1</td><td class='num' data-val='471.68'>471.7</td><td class='num disc' data-val='3.344'>+3.34%</td><td class='num' data-val='15.25'>15.25</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='五粮液'><a class="emlk" href="https://quote.eastmoney.com/sz000858.html" target="_blank" rel="noopener noreferrer">五粮液</a></td><td class='num' data-val='sz000858'>sz000858</td><td class='num' data-val='1'>1</td><td class='num' data-val='396.39'>396.4</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='72.07'>72.07</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='招商南油'><a class="emlk" href="https://quote.eastmoney.com/sh601975.html" target="_blank" rel="noopener noreferrer">招商南油</a></td><td class='num' data-val='sh601975'>sh601975</td><td class='num' data-val='1'>1</td><td class='num' data-val='393.9'>393.9</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='3.9'>3.90</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='中国电建'><a class="emlk" href="https://quote.eastmoney.com/sh601669.html" target="_blank" rel="noopener noreferrer">中国电建</a></td><td class='num' data-val='sh601669'>sh601669</td><td class='num' data-val='1'>1</td><td class='num' data-val='364.8'>364.8</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='4.56'>4.56</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='民生银行'><a class="emlk" href="https://quote.eastmoney.com/sh600016.html" target="_blank" rel="noopener noreferrer">民生银行</a></td><td class='num' data-val='sh600016'>sh600016</td><td class='num' data-val='1'>1</td><td class='num' data-val='350.0'>350.0</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='3.5'>3.50</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='中国平安'><a class="emlk" href="https://quote.eastmoney.com/sh601318.html" target="_blank" rel="noopener noreferrer">中国平安</a></td><td class='num' data-val='sh601318'>sh601318</td><td class='num' data-val='1'>1</td><td class='num' data-val='207.52'>207.5</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='51.88'>51.88</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='招商银行'><a class="emlk" href="https://quote.eastmoney.com/sh600036.html" target="_blank" rel="noopener noreferrer">招商银行</a></td><td class='num' data-val='sh600036'>sh600036</td><td class='num' data-val='1'>1</td><td class='num' data-val='203.76'>203.8</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='42.45'>42.45</td><td class='num flat' data-val='None'>—</td></tr><tr><td data-val='工商银行'><a class="emlk" href="https://quote.eastmoney.com/sh601398.html" target="_blank" rel="noopener noreferrer">工商银行</a></td><td class='num' data-val='sh601398'>sh601398</td><td class='num' data-val='1'>1</td><td class='num' data-val='203.52'>203.5</td><td class='num ' data-val='0.0'>+0.00%</td><td class='num' data-val='8.48'>8.48</td><td class='num flat' data-val='None'>—</td></tr></tbody></table><div class='empty' style='padding:8px;color:#9aa2ad'>提示：点击表头可排序</div>
+</div>
+
+<div class='section'>
+  <h2>逐笔明细（按成交额）</h2>
+  <div class='tabs'><span class='tab on' data-m='all'>全部 69</span><span class='tab' data-m='inst'>机构买入 12</span><span class='tab' data-m='prem'>溢价成交 1</span></div><table id='bt'><thead><tr><th class='sort' data-c='0'>股票</th><th class='sort' data-c='1'>代码</th><th class='sort num' data-c='2'>成交价</th><th class='sort num' data-c='3'>当日涨跌</th><th class='sort num' data-c='4'>成交额(万元)</th><th class='sort num' data-c='5'>折溢价</th><th class='sort num' data-c='6'>占比(%)</th><th class='sort' data-c='7'>买方营业部</th><th class='sort' data-c='8'>卖方营业部</th><th class='sort' data-c='9'>类型</th></tr></thead><tbody><tr data-inst='0' data-prem='0'><td data-val='浦发银行'><a class="emlk" href="https://quote.eastmoney.com/sh600000.html" target="_blank" rel="noopener noreferrer">浦发银行</a></td><td class='num' data-val='sh600000'>sh600000</td><td class='num' data-val='9.71'>9.71</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='3378107700'>337,810.8</td><td class='num disc' data-val='0.206'>+0.21%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='信达证券股份有限公司北京科丰桥证券营业部'>信达证券股份有限公司北京科丰桥证券营业部</td><td class='seat' data-val='信达证券股份有限公司资产管理事业部'>信达证券股份有限公司资产管理事业部</td><td data-val=''></td></tr><tr data-inst='1' data-prem='0'><td data-val='陕西煤业'><a class="emlk" href="https://quote.eastmoney.com/sh601225.html" target="_blank" rel="noopener noreferrer">陕西煤业</a></td><td class='num' data-val='sh601225'>sh601225</td><td class='num' data-val='28.28'>28.28</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='277905600'>27,790.6</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='长沙银行'><a class="emlk" href="https://quote.eastmoney.com/sh601577.html" target="_blank" rel="noopener noreferrer">长沙银行</a></td><td class='num' data-val='sh601577'>sh601577</td><td class='num' data-val='9.51'>9.51</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='190865700'>19,086.6</td><td class='num disc' data-val='0.731'>+0.73%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='中信证券股份有限公司长沙芙蓉中路证券营业部'>中信证券股份有限公司长沙芙蓉中路证券营业部</td><td class='seat' data-val='中信证券股份有限公司湖南分公司'>中信证券股份有限公司湖南分公司</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='海亮股份'><a class="emlk" href="https://quote.eastmoney.com/sz002203.html" target="_blank" rel="noopener noreferrer">海亮股份</a></td><td class='num' data-val='sz002203'>sz002203</td><td class='num' data-val='13.66'>13.66</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='61333400'>6,133.3</td><td class='num disc' data-val='2.568'>+2.57%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='申万宏源证券有限公司温州分公司'>申万宏源证券有限公司温州分公司</td><td class='seat' data-val='东方财富证券股份有限公司上海徐汇区云锦路证券营业部'>东方财富证券股份有限公司上海徐汇区云锦路证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='丽尚国潮'><a class="emlk" href="https://quote.eastmoney.com/sh600738.html" target="_blank" rel="noopener noreferrer">丽尚国潮</a></td><td class='num' data-val='sh600738'>sh600738</td><td class='num' data-val='3.73'>3.73</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='55950000'>5,595.0</td><td class='num disc' data-val='9.685'>+9.69%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='中信证券股份有限公司上海浦东新区东方路证券营业部'>中信证券股份有限公司上海浦东新区东方路证券营业部</td><td class='seat' data-val='财通证券股份有限公司杭州体育场路证券营业部'>财通证券股份有限公司杭州体育场路证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='药明康德'><a class="emlk" href="https://quote.eastmoney.com/sh603259.html" target="_blank" rel="noopener noreferrer">药明康德</a></td><td class='num' data-val='sh603259'>sh603259</td><td class='num' data-val='144.3'>144.3</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='54891700'>5,489.2</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='中国国际金融股份有限公司上海分公司'>中国国际金融股份有限公司上海分公司</td><td class='seat' data-val='瑞银证券有限责任公司上海花园石桥路证券营业部'>瑞银证券有限责任公司上海花园石桥路证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='中山公用'><a class="emlk" href="https://quote.eastmoney.com/sz000685.html" target="_blank" rel="noopener noreferrer">中山公用</a></td><td class='num' data-val='sz000685'>sz000685</td><td class='num' data-val='9.34'>9.34</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='28711100'>2,871.1</td><td class='num disc' data-val='10.192'>+10.19%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='国泰海通证券股份有限公司广州琶洲证券营业部'>国泰海通证券股份有限公司广州琶洲证券营业部</td><td class='seat' data-val='国泰海通证券股份有限公司广州琶洲证券营业部'>国泰海通证券股份有限公司广州琶洲证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='云中马'><a class="emlk" href="https://quote.eastmoney.com/sh603130.html" target="_blank" rel="noopener noreferrer">云中马</a></td><td class='num' data-val='sh603130'>sh603130</td><td class='num' data-val='31.75'>31.75</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='26987500'>2,698.8</td><td class='num disc' data-val='10.209'>+10.21%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='兴业证券股份有限公司温岭万昌中路证券营业部'>兴业证券股份有限公司温岭万昌中路证券营业部</td><td class='seat' data-val='中国银河证券股份有限公司杭州建国北路证券营业部'>中国银河证券股份有限公司杭州建国北路证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='华宏科技'><a class="emlk" href="https://quote.eastmoney.com/sz002645.html" target="_blank" rel="noopener noreferrer">华宏科技</a></td><td class='num' data-val='sz002645'>sz002645</td><td class='num' data-val='13.05'>13.05</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='26100000'>2,610.0</td><td class='num disc' data-val='8.549'>+8.55%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='申万宏源证券有限公司上海金山区蒙山路证券营业部'>申万宏源证券有限公司上海金山区蒙山路证券营业部</td><td class='seat' data-val='国联民生证券股份有限公司江阴周庄西大街证券营业部'>国联民生证券股份有限公司江阴周庄西大街证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='金一文化'><a class="emlk" href="https://quote.eastmoney.com/sz002721.html" target="_blank" rel="noopener noreferrer">金一文化</a></td><td class='num' data-val='sz002721'>sz002721</td><td class='num' data-val='2.25'>2.25</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='22500000'>2,250.0</td><td class='num disc' data-val='9.274'>+9.27%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='中国中金财富证券有限公司威海青岛北路证券营业部'>中国中金财富证券有限公司威海青岛北路证券营业部</td><td class='seat' data-val='国泰海通证券股份有限公司威海青岛北路证券营业部'>国泰海通证券股份有限公司威海青岛北路证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='金一文化'><a class="emlk" href="https://quote.eastmoney.com/sz002721.html" target="_blank" rel="noopener noreferrer">金一文化</a></td><td class='num' data-val='sz002721'>sz002721</td><td class='num' data-val='2.25'>2.25</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='22500000'>2,250.0</td><td class='num disc' data-val='9.274'>+9.27%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='中国中金财富证券有限公司威海青岛北路证券营业部'>中国中金财富证券有限公司威海青岛北路证券营业部</td><td class='seat' data-val='国泰海通证券股份有限公司威海青岛北路证券营业部'>国泰海通证券股份有限公司威海青岛北路证券营业部</td><td data-val=''></td></tr><tr data-inst='1' data-prem='0'><td data-val='剑桥科技'><a class="emlk" href="https://quote.eastmoney.com/sh603083.html" target="_blank" rel="noopener noreferrer">剑桥科技</a></td><td class='num' data-val='sh603083'>sh603083</td><td class='num' data-val='168.51'>168.51</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='20221200'>2,022.1</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='兴业银锡'><a class="emlk" href="https://quote.eastmoney.com/sz000426.html" target="_blank" rel="noopener noreferrer">兴业银锡</a></td><td class='num' data-val='sz000426'>sz000426</td><td class='num' data-val='28.72'>28.72</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='19808200'>1,980.8</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='国泰海通证券股份有限公司深圳深南大道京基一百证券营业部'>国泰海通证券股份有限公司深圳深南大道京基一百证券营业部</td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='华宏科技'><a class="emlk" href="https://quote.eastmoney.com/sz002645.html" target="_blank" rel="noopener noreferrer">华宏科技</a></td><td class='num' data-val='sz002645'>sz002645</td><td class='num' data-val='13.05'>13.05</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='19575000'>1,957.5</td><td class='num disc' data-val='8.549'>+8.55%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='国泰海通证券股份有限公司上海徐汇区云绣路证券营业部'>国泰海通证券股份有限公司上海徐汇区云绣路证券营业部</td><td class='seat' data-val='国联民生证券股份有限公司江阴周庄西大街证券营业部'>国联民生证券股份有限公司江阴周庄西大街证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='紫金矿业'><a class="emlk" href="https://quote.eastmoney.com/sh601899.html" target="_blank" rel="noopener noreferrer">紫金矿业</a></td><td class='num' data-val='sh601899'>sh601899</td><td class='num' data-val='29.92'>29.92</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='18879500'>1,888.0</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='广发证券股份有限公司慈溪浒山路证券营业部'>广发证券股份有限公司慈溪浒山路证券营业部</td><td class='seat' data-val='中国国际金融股份有限公司北京建国门外大街证券营业部'>中国国际金融股份有限公司北京建国门外大街证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='泽润新能'><a class="emlk" href="https://quote.eastmoney.com/sz301636.html" target="_blank" rel="noopener noreferrer">泽润新能</a></td><td class='num' data-val='sz301636'>sz301636</td><td class='num' data-val='30.6'>30.6</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='15300000'>1,530.0</td><td class='num disc' data-val='22.018'>+22.02%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='开源证券股份有限公司深圳第一分公司'>开源证券股份有限公司深圳第一分公司</td><td class='seat' data-val='开源证券股份有限公司深圳第一分公司'>开源证券股份有限公司深圳第一分公司</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='江阴银行'><a class="emlk" href="https://quote.eastmoney.com/sz002807.html" target="_blank" rel="noopener noreferrer">江阴银行</a></td><td class='num' data-val='sz002807'>sz002807</td><td class='num' data-val='3.6'>3.6</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='12600000'>1,260.0</td><td class='num disc' data-val='12.195'>+12.20%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='南京证券股份有限公司江阴人民中路证券营业部'>南京证券股份有限公司江阴人民中路证券营业部</td><td class='seat' data-val='南京证券股份有限公司江阴人民中路证券营业部'>南京证券股份有限公司江阴人民中路证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='中芯国际'><a class="emlk" href="https://quote.eastmoney.com/sh688981.html" target="_blank" rel="noopener noreferrer">中芯国际</a></td><td class='num' data-val='sh688981'>sh688981</td><td class='num' data-val='102.66'>102.66</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='12154900'>1,215.5</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='平安证券股份有限公司深圳金田路证券营业部'>平安证券股份有限公司深圳金田路证券营业部</td><td class='seat' data-val='中国国际金融股份有限公司北京建国门外大街证券营业部'>中国国际金融股份有限公司北京建国门外大街证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='中芯国际'><a class="emlk" href="https://quote.eastmoney.com/sh688981.html" target="_blank" rel="noopener noreferrer">中芯国际</a></td><td class='num' data-val='sh688981'>sh688981</td><td class='num' data-val='102.66'>102.66</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='12154900'>1,215.5</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='平安证券股份有限公司深圳金田路证券营业部'>平安证券股份有限公司深圳金田路证券营业部</td><td class='seat' data-val='中国国际金融股份有限公司北京建国门外大街证券营业部'>中国国际金融股份有限公司北京建国门外大街证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='中际旭创'><a class="emlk" href="https://quote.eastmoney.com/sz300308.html" target="_blank" rel="noopener noreferrer">中际旭创</a></td><td class='num' data-val='sz300308'>sz300308</td><td class='num' data-val='670'>670</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='12060000'>1,206.0</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='中信证券股份有限公司上海分公司'>中信证券股份有限公司上海分公司</td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='容大感光'><a class="emlk" href="https://quote.eastmoney.com/sz300576.html" target="_blank" rel="noopener noreferrer">容大感光</a></td><td class='num' data-val='sz300576'>sz300576</td><td class='num' data-val='23.5'>23.5</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='10497500'>1,049.8</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='金元证券股份有限公司深圳海德三道证券营业部'>金元证券股份有限公司深圳海德三道证券营业部</td><td class='seat' data-val='金元证券股份有限公司深圳海德三道证券营业部'>金元证券股份有限公司深圳海德三道证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='紫金矿业'><a class="emlk" href="https://quote.eastmoney.com/sh601899.html" target="_blank" rel="noopener noreferrer">紫金矿业</a></td><td class='num' data-val='sh601899'>sh601899</td><td class='num' data-val='29.92'>29.92</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='10472000'>1,047.2</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='兴业证券股份有限公司上海锦康路证券营业部'>兴业证券股份有限公司上海锦康路证券营业部</td><td class='seat' data-val='中国国际金融股份有限公司北京建国门外大街证券营业部'>中国国际金融股份有限公司北京建国门外大街证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='奥浦迈'><a class="emlk" href="https://quote.eastmoney.com/sh688293.html" target="_blank" rel="noopener noreferrer">奥浦迈</a></td><td class='num' data-val='sh688293'>sh688293</td><td class='num' data-val='56.44'>56.44</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='10159200'>1,015.9</td><td class='num disc' data-val='8.997'>+9.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='浙商证券股份有限公司绍兴分公司'>浙商证券股份有限公司绍兴分公司</td><td class='seat' data-val='中国国际金融股份有限公司北京建国门外大街证券营业部'>中国国际金融股份有限公司北京建国门外大街证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='紫金矿业'><a class="emlk" href="https://quote.eastmoney.com/sh601899.html" target="_blank" rel="noopener noreferrer">紫金矿业</a></td><td class='num' data-val='sh601899'>sh601899</td><td class='num' data-val='29.92'>29.92</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='10083000'>1,008.3</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='平安证券股份有限公司深圳金田路证券营业部'>平安证券股份有限公司深圳金田路证券营业部</td><td class='seat' data-val='中国国际金融股份有限公司北京建国门外大街证券营业部'>中国国际金融股份有限公司北京建国门外大街证券营业部</td><td data-val=''></td></tr><tr data-inst='1' data-prem='1'><td data-val='泰格医药'><a class="emlk" href="https://quote.eastmoney.com/sz300347.html" target="_blank" rel="noopener noreferrer">泰格医药</a></td><td class='num' data-val='sz300347'>sz300347</td><td class='num' data-val='52.06'>52.06</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='9995500'>999.5</td><td class='num prem' data-val='-3.974'>-3.97%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td class='seat' data-val='广发证券股份有限公司佛山灯湖东路证券营业部'>广发证券股份有限公司佛山灯湖东路证券营业部</td><td data-val=''></td></tr><tr data-inst='1' data-prem='0'><td data-val='国科微'><a class="emlk" href="https://quote.eastmoney.com/sz300672.html" target="_blank" rel="noopener noreferrer">国科微</a></td><td class='num' data-val='sz300672'>sz300672</td><td class='num' data-val='137.02'>137.02</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='9673600'>967.4</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='山外山'><a class="emlk" href="https://quote.eastmoney.com/sh688410.html" target="_blank" rel="noopener noreferrer">山外山</a></td><td class='num' data-val='sh688410'>sh688410</td><td class='num' data-val='8.77'>8.77</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='8945400'>894.5</td><td class='num disc' data-val='1.461'>+1.46%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='华泰证券股份有限公司天津河东金茂广场证券营业部'>华泰证券股份有限公司天津河东金茂广场证券营业部</td><td class='seat' data-val='招商证券股份有限公司长沙芙蓉中路证券营业部'>招商证券股份有限公司长沙芙蓉中路证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='聚和材料'><a class="emlk" href="https://quote.eastmoney.com/sh688503.html" target="_blank" rel="noopener noreferrer">聚和材料</a></td><td class='num' data-val='sh688503'>sh688503</td><td class='num' data-val='43.84'>43.84</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='7496600'>749.7</td><td class='num disc' data-val='19.692'>+19.69%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='广发证券股份有限公司上海盈港东路证券营业部'>广发证券股份有限公司上海盈港东路证券营业部</td><td class='seat' data-val='广发证券股份有限公司上海盈港东路证券营业部'>广发证券股份有限公司上海盈港东路证券营业部</td><td data-val=''></td></tr><tr data-inst='1' data-prem='0'><td data-val='宁德时代'><a class="emlk" href="https://quote.eastmoney.com/sz300750.html" target="_blank" rel="noopener noreferrer">宁德时代</a></td><td class='num' data-val='sz300750'>sz300750</td><td class='num' data-val='277'>277</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='7035800'>703.6</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='恒立液压'><a class="emlk" href="https://quote.eastmoney.com/sh601100.html" target="_blank" rel="noopener noreferrer">恒立液压</a></td><td class='num' data-val='sh601100'>sh601100</td><td class='num' data-val='78.13'>78.13</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='7031700'>703.2</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='平安证券股份有限公司深圳金田路证券营业部'>平安证券股份有限公司深圳金田路证券营业部</td><td class='seat' data-val='中国国际金融股份有限公司北京建国门外大街证券营业部'>中国国际金融股份有限公司北京建国门外大街证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='超达装备'><a class="emlk" href="https://quote.eastmoney.com/sz301186.html" target="_blank" rel="noopener noreferrer">超达装备</a></td><td class='num' data-val='sz301186'>sz301186</td><td class='num' data-val='29.63'>29.63</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='7000000'>700.0</td><td class='num disc' data-val='2.017'>+2.02%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='中泰证券股份有限公司珠海情侣中路证券营业部'>中泰证券股份有限公司珠海情侣中路证券营业部</td><td class='seat' data-val='国投证券股份有限公司济南经十路证券营业部'>国投证券股份有限公司济南经十路证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='矩阵股份'><a class="emlk" href="https://quote.eastmoney.com/sz301365.html" target="_blank" rel="noopener noreferrer">矩阵股份</a></td><td class='num' data-val='sz301365'>sz301365</td><td class='num' data-val='23.28'>23.28</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='6984000'>698.4</td><td class='num disc' data-val='20.383'>+20.38%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='浙商证券股份有限公司青田涌潮街证券营业部'>浙商证券股份有限公司青田涌潮街证券营业部</td><td class='seat' data-val='长江证券股份有限公司深圳分公司'>长江证券股份有限公司深圳分公司</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='矩阵股份'><a class="emlk" href="https://quote.eastmoney.com/sz301365.html" target="_blank" rel="noopener noreferrer">矩阵股份</a></td><td class='num' data-val='sz301365'>sz301365</td><td class='num' data-val='23.28'>23.28</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='5820000'>582.0</td><td class='num disc' data-val='20.383'>+20.38%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='中信建投证券股份有限公司杭州庆春路证券营业部'>中信建投证券股份有限公司杭州庆春路证券营业部</td><td class='seat' data-val='长江证券股份有限公司深圳分公司'>长江证券股份有限公司深圳分公司</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='矩阵股份'><a class="emlk" href="https://quote.eastmoney.com/sz301365.html" target="_blank" rel="noopener noreferrer">矩阵股份</a></td><td class='num' data-val='sz301365'>sz301365</td><td class='num' data-val='23.28'>23.28</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='5820000'>582.0</td><td class='num disc' data-val='20.383'>+20.38%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='中国银河证券股份有限公司金华八一南街证券营业部'>中国银河证券股份有限公司金华八一南街证券营业部</td><td class='seat' data-val='长江证券股份有限公司深圳分公司'>长江证券股份有限公司深圳分公司</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='奥浦迈'><a class="emlk" href="https://quote.eastmoney.com/sh688293.html" target="_blank" rel="noopener noreferrer">奥浦迈</a></td><td class='num' data-val='sh688293'>sh688293</td><td class='num' data-val='56.44'>56.44</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='5644000'>564.4</td><td class='num disc' data-val='8.997'>+9.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='国泰海通证券股份有限公司深圳红荔西路证券营业部'>国泰海通证券股份有限公司深圳红荔西路证券营业部</td><td class='seat' data-val='中国国际金融股份有限公司北京建国门外大街证券营业部'>中国国际金融股份有限公司北京建国门外大街证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='奥浦迈'><a class="emlk" href="https://quote.eastmoney.com/sh688293.html" target="_blank" rel="noopener noreferrer">奥浦迈</a></td><td class='num' data-val='sh688293'>sh688293</td><td class='num' data-val='56.44'>56.44</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='5644000'>564.4</td><td class='num disc' data-val='8.997'>+9.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='华泰证券股份有限公司南京庐山路证券营业部'>华泰证券股份有限公司南京庐山路证券营业部</td><td class='seat' data-val='中国国际金融股份有限公司北京建国门外大街证券营业部'>中国国际金融股份有限公司北京建国门外大街证券营业部</td><td data-val=''></td></tr><tr data-inst='1' data-prem='0'><td data-val='楚天龙'><a class="emlk" href="https://quote.eastmoney.com/sz003040.html" target="_blank" rel="noopener noreferrer">楚天龙</a></td><td class='num' data-val='sz003040'>sz003040</td><td class='num' data-val='12.77'>12.77</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='5363400'>536.3</td><td class='num disc' data-val='9.944'>+9.94%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td class='seat' data-val='国泰海通证券股份有限公司上海浦东新区陆家嘴东路证券营业部'>国泰海通证券股份有限公司上海浦东新区陆家嘴东路证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='天和磁材'><a class="emlk" href="https://quote.eastmoney.com/sh603072.html" target="_blank" rel="noopener noreferrer">天和磁材</a></td><td class='num' data-val='sh603072'>sh603072</td><td class='num' data-val='25.08'>25.08</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='5151400'>515.1</td><td class='num disc' data-val='10.843'>+10.84%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='华泰证券股份有限公司上海静安区广中西路证券营业部'>华泰证券股份有限公司上海静安区广中西路证券营业部</td><td class='seat' data-val='粤开证券股份有限公司南通分公司'>粤开证券股份有限公司南通分公司</td><td data-val=''></td></tr><tr data-inst='1' data-prem='0'><td data-val='国科军工'><a class="emlk" href="https://quote.eastmoney.com/sh688543.html" target="_blank" rel="noopener noreferrer">国科军工</a></td><td class='num' data-val='sh688543'>sh688543</td><td class='num' data-val='38.48'>38.48</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='5148700'>514.9</td><td class='num disc' data-val='14.508'>+14.51%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td class='seat' data-val='中邮证券有限责任公司上海分公司'>中邮证券有限责任公司上海分公司</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='金一文化'><a class="emlk" href="https://quote.eastmoney.com/sz002721.html" target="_blank" rel="noopener noreferrer">金一文化</a></td><td class='num' data-val='sz002721'>sz002721</td><td class='num' data-val='2.25'>2.25</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='5146700'>514.7</td><td class='num disc' data-val='9.274'>+9.27%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='中国中金财富证券有限公司威海青岛北路证券营业部'>中国中金财富证券有限公司威海青岛北路证券营业部</td><td class='seat' data-val='国泰海通证券股份有限公司威海青岛北路证券营业部'>国泰海通证券股份有限公司威海青岛北路证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='奥浦迈'><a class="emlk" href="https://quote.eastmoney.com/sh688293.html" target="_blank" rel="noopener noreferrer">奥浦迈</a></td><td class='num' data-val='sh688293'>sh688293</td><td class='num' data-val='56.44'>56.44</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='5079600'>508.0</td><td class='num disc' data-val='8.997'>+9.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='浙商证券股份有限公司上海长乐路证券营业部'>浙商证券股份有限公司上海长乐路证券营业部</td><td class='seat' data-val='中国国际金融股份有限公司北京建国门外大街证券营业部'>中国国际金融股份有限公司北京建国门外大街证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='东山精密'><a class="emlk" href="https://quote.eastmoney.com/sz002384.html" target="_blank" rel="noopener noreferrer">东山精密</a></td><td class='num' data-val='sz002384'>sz002384</td><td class='num' data-val='122.67'>122.67</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='4906800'>490.7</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='中信证券股份有限公司上海分公司'>中信证券股份有限公司上海分公司</td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='通富微电'><a class="emlk" href="https://quote.eastmoney.com/sz002156.html" target="_blank" rel="noopener noreferrer">通富微电</a></td><td class='num' data-val='sz002156'>sz002156</td><td class='num' data-val='48.67'>48.67</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='4867000'>486.7</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='中信证券股份有限公司上海分公司'>中信证券股份有限公司上海分公司</td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='博苑新材'><a class="emlk" href="https://quote.eastmoney.com/sz301617.html" target="_blank" rel="noopener noreferrer">博苑新材</a></td><td class='num' data-val='sz301617'>sz301617</td><td class='num' data-val='47.39'>47.39</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='4739000'>473.9</td><td class='num disc' data-val='3.009'>+3.01%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='中信建投证券股份有限公司北京东城分公司'>中信建投证券股份有限公司北京东城分公司</td><td class='seat' data-val='中国银河证券股份有限公司北京金融街证券营业部'>中国银河证券股份有限公司北京金融街证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='温氏股份'><a class="emlk" href="https://quote.eastmoney.com/sz300498.html" target="_blank" rel="noopener noreferrer">温氏股份</a></td><td class='num' data-val='sz300498'>sz300498</td><td class='num' data-val='14.74'>14.74</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='4716800'>471.7</td><td class='num disc' data-val='3.344'>+3.34%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='广发证券股份有限公司云浮新兴新洲大道证券营业部'>广发证券股份有限公司云浮新兴新洲大道证券营业部</td><td class='seat' data-val='广发证券股份有限公司云浮新兴新洲大道证券营业部'>广发证券股份有限公司云浮新兴新洲大道证券营业部</td><td data-val=''></td></tr><tr data-inst='1' data-prem='0'><td data-val='中际旭创'><a class="emlk" href="https://quote.eastmoney.com/sz300308.html" target="_blank" rel="noopener noreferrer">中际旭创</a></td><td class='num' data-val='sz300308'>sz300308</td><td class='num' data-val='670'>670</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='4690000'>469.0</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='矩阵股份'><a class="emlk" href="https://quote.eastmoney.com/sz301365.html" target="_blank" rel="noopener noreferrer">矩阵股份</a></td><td class='num' data-val='sz301365'>sz301365</td><td class='num' data-val='23.28'>23.28</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='4656000'>465.6</td><td class='num disc' data-val='20.383'>+20.38%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='中信证券股份有限公司上海浦东新区东方路证券营业部'>中信证券股份有限公司上海浦东新区东方路证券营业部</td><td class='seat' data-val='长江证券股份有限公司深圳分公司'>长江证券股份有限公司深圳分公司</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='矩阵股份'><a class="emlk" href="https://quote.eastmoney.com/sz301365.html" target="_blank" rel="noopener noreferrer">矩阵股份</a></td><td class='num' data-val='sz301365'>sz301365</td><td class='num' data-val='23.28'>23.28</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='4656000'>465.6</td><td class='num disc' data-val='20.383'>+20.38%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='国泰海通证券股份有限公司深圳红荔西路证券营业部'>国泰海通证券股份有限公司深圳红荔西路证券营业部</td><td class='seat' data-val='长江证券股份有限公司深圳分公司'>长江证券股份有限公司深圳分公司</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='矩阵股份'><a class="emlk" href="https://quote.eastmoney.com/sz301365.html" target="_blank" rel="noopener noreferrer">矩阵股份</a></td><td class='num' data-val='sz301365'>sz301365</td><td class='num' data-val='23.28'>23.28</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='4656000'>465.6</td><td class='num disc' data-val='20.383'>+20.38%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='招商证券股份有限公司西安北大街证券营业部'>招商证券股份有限公司西安北大街证券营业部</td><td class='seat' data-val='长江证券股份有限公司深圳分公司'>长江证券股份有限公司深圳分公司</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='矩阵股份'><a class="emlk" href="https://quote.eastmoney.com/sz301365.html" target="_blank" rel="noopener noreferrer">矩阵股份</a></td><td class='num' data-val='sz301365'>sz301365</td><td class='num' data-val='23.28'>23.28</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='4656000'>465.6</td><td class='num disc' data-val='20.383'>+20.38%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='申万宏源西部证券有限公司乌鲁木齐北京路证券营业部'>申万宏源西部证券有限公司乌鲁木齐北京路证券营业部</td><td class='seat' data-val='长江证券股份有限公司深圳分公司'>长江证券股份有限公司深圳分公司</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='奥浦迈'><a class="emlk" href="https://quote.eastmoney.com/sh688293.html" target="_blank" rel="noopener noreferrer">奥浦迈</a></td><td class='num' data-val='sh688293'>sh688293</td><td class='num' data-val='56.44'>56.44</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='4515200'>451.5</td><td class='num disc' data-val='8.997'>+9.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='浙商证券股份有限公司浦江和平南路证券营业部'>浙商证券股份有限公司浦江和平南路证券营业部</td><td class='seat' data-val='中国国际金融股份有限公司北京建国门外大街证券营业部'>中国国际金融股份有限公司北京建国门外大街证券营业部</td><td data-val=''></td></tr><tr data-inst='1' data-prem='0'><td data-val='国科微'><a class="emlk" href="https://quote.eastmoney.com/sz300672.html" target="_blank" rel="noopener noreferrer">国科微</a></td><td class='num' data-val='sz300672'>sz300672</td><td class='num' data-val='137.02'>137.02</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='4110600'>411.1</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td data-val=''></td></tr><tr data-inst='1' data-prem='0'><td data-val='国科微'><a class="emlk" href="https://quote.eastmoney.com/sz300672.html" target="_blank" rel="noopener noreferrer">国科微</a></td><td class='num' data-val='sz300672'>sz300672</td><td class='num' data-val='137.02'>137.02</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='4110600'>411.1</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='海亮股份'><a class="emlk" href="https://quote.eastmoney.com/sz002203.html" target="_blank" rel="noopener noreferrer">海亮股份</a></td><td class='num' data-val='sz002203'>sz002203</td><td class='num' data-val='13.66'>13.66</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='4098000'>409.8</td><td class='num disc' data-val='2.568'>+2.57%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='申万宏源证券有限公司温州分公司'>申万宏源证券有限公司温州分公司</td><td class='seat' data-val='中国银河证券股份有限公司北京中关村大街证券营业部'>中国银河证券股份有限公司北京中关村大街证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='五粮液'><a class="emlk" href="https://quote.eastmoney.com/sz000858.html" target="_blank" rel="noopener noreferrer">五粮液</a></td><td class='num' data-val='sz000858'>sz000858</td><td class='num' data-val='72.07'>72.07</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='3963900'>396.4</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='中信证券股份有限公司上海分公司'>中信证券股份有限公司上海分公司</td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='招商南油'><a class="emlk" href="https://quote.eastmoney.com/sh601975.html" target="_blank" rel="noopener noreferrer">招商南油</a></td><td class='num' data-val='sh601975'>sh601975</td><td class='num' data-val='3.9'>3.9</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='3939000'>393.9</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='广发证券股份有限公司广州康王中路证券营业部'>广发证券股份有限公司广州康王中路证券营业部</td><td class='seat' data-val='中国国际金融股份有限公司北京建国门外大街证券营业部'>中国国际金融股份有限公司北京建国门外大街证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='中国电建'><a class="emlk" href="https://quote.eastmoney.com/sh601669.html" target="_blank" rel="noopener noreferrer">中国电建</a></td><td class='num' data-val='sh601669'>sh601669</td><td class='num' data-val='4.56'>4.56</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='3648000'>364.8</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='兴业证券股份有限公司上海世博馆路证券营业部'>兴业证券股份有限公司上海世博馆路证券营业部</td><td class='seat' data-val='中国国际金融股份有限公司北京建国门外大街证券营业部'>中国国际金融股份有限公司北京建国门外大街证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='民生银行'><a class="emlk" href="https://quote.eastmoney.com/sh600016.html" target="_blank" rel="noopener noreferrer">民生银行</a></td><td class='num' data-val='sh600016'>sh600016</td><td class='num' data-val='3.5'>3.5</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='3500000'>350.0</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='平安证券股份有限公司深圳金田路证券营业部'>平安证券股份有限公司深圳金田路证券营业部</td><td class='seat' data-val='中国国际金融股份有限公司北京建国门外大街证券营业部'>中国国际金融股份有限公司北京建国门外大街证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='矩阵股份'><a class="emlk" href="https://quote.eastmoney.com/sz301365.html" target="_blank" rel="noopener noreferrer">矩阵股份</a></td><td class='num' data-val='sz301365'>sz301365</td><td class='num' data-val='23.28'>23.28</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='3492000'>349.2</td><td class='num disc' data-val='20.383'>+20.38%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='浙商证券股份有限公司浦江和平南路证券营业部'>浙商证券股份有限公司浦江和平南路证券营业部</td><td class='seat' data-val='长江证券股份有限公司深圳分公司'>长江证券股份有限公司深圳分公司</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='矩阵股份'><a class="emlk" href="https://quote.eastmoney.com/sz301365.html" target="_blank" rel="noopener noreferrer">矩阵股份</a></td><td class='num' data-val='sz301365'>sz301365</td><td class='num' data-val='23.28'>23.28</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='3492000'>349.2</td><td class='num disc' data-val='20.383'>+20.38%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='广发证券股份有限公司沧州解放路证券营业部'>广发证券股份有限公司沧州解放路证券营业部</td><td class='seat' data-val='长江证券股份有限公司深圳分公司'>长江证券股份有限公司深圳分公司</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='奥浦迈'><a class="emlk" href="https://quote.eastmoney.com/sh688293.html" target="_blank" rel="noopener noreferrer">奥浦迈</a></td><td class='num' data-val='sh688293'>sh688293</td><td class='num' data-val='56.44'>56.44</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='3104200'>310.4</td><td class='num disc' data-val='8.997'>+9.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='中信证券股份有限公司总部(非营业场所)'>中信证券股份有限公司总部(非营业场所)</td><td class='seat' data-val='中国国际金融股份有限公司北京建国门外大街证券营业部'>中国国际金融股份有限公司北京建国门外大街证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='楚天龙'><a class="emlk" href="https://quote.eastmoney.com/sz003040.html" target="_blank" rel="noopener noreferrer">楚天龙</a></td><td class='num' data-val='sz003040'>sz003040</td><td class='num' data-val='12.77'>12.77</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='3064800'>306.5</td><td class='num disc' data-val='9.944'>+9.94%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='华泰证券股份有限公司北京分公司'>华泰证券股份有限公司北京分公司</td><td class='seat' data-val='国泰海通证券股份有限公司上海浦东新区陆家嘴东路证券营业部'>国泰海通证券股份有限公司上海浦东新区陆家嘴东路证券营业部</td><td data-val=''></td></tr><tr data-inst='1' data-prem='0'><td data-val='中际旭创'><a class="emlk" href="https://quote.eastmoney.com/sz300308.html" target="_blank" rel="noopener noreferrer">中际旭创</a></td><td class='num' data-val='sz300308'>sz300308</td><td class='num' data-val='670'>670</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='3015000'>301.5</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='药明康德'><a class="emlk" href="https://quote.eastmoney.com/sh603259.html" target="_blank" rel="noopener noreferrer">药明康德</a></td><td class='num' data-val='sh603259'>sh603259</td><td class='num' data-val='144.3'>144.3</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='2799400'>279.9</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='广发证券股份有限公司慈溪浒山路证券营业部'>广发证券股份有限公司慈溪浒山路证券营业部</td><td class='seat' data-val='中国国际金融股份有限公司北京建国门外大街证券营业部'>中国国际金融股份有限公司北京建国门外大街证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='矩阵股份'><a class="emlk" href="https://quote.eastmoney.com/sz301365.html" target="_blank" rel="noopener noreferrer">矩阵股份</a></td><td class='num' data-val='sz301365'>sz301365</td><td class='num' data-val='23.28'>23.28</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='2328000'>232.8</td><td class='num disc' data-val='20.383'>+20.38%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='中信证券股份有限公司南京双龙大道证券营业部'>中信证券股份有限公司南京双龙大道证券营业部</td><td class='seat' data-val='长江证券股份有限公司深圳分公司'>长江证券股份有限公司深圳分公司</td><td data-val=''></td></tr><tr data-inst='1' data-prem='0'><td data-val='楚天龙'><a class="emlk" href="https://quote.eastmoney.com/sz003040.html" target="_blank" rel="noopener noreferrer">楚天龙</a></td><td class='num' data-val='sz003040'>sz003040</td><td class='num' data-val='12.77'>12.77</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='2298600'>229.9</td><td class='num disc' data-val='9.944'>+9.94%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='机构专用'>机构专用<span class='inst'>机构</span></td><td class='seat' data-val='国泰海通证券股份有限公司上海浦东新区陆家嘴东路证券营业部'>国泰海通证券股份有限公司上海浦东新区陆家嘴东路证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='中国平安'><a class="emlk" href="https://quote.eastmoney.com/sh601318.html" target="_blank" rel="noopener noreferrer">中国平安</a></td><td class='num' data-val='sh601318'>sh601318</td><td class='num' data-val='51.88'>51.88</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='2075200'>207.5</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='广发证券股份有限公司天津环湖中路证券营业部'>广发证券股份有限公司天津环湖中路证券营业部</td><td class='seat' data-val='中国国际金融股份有限公司北京建国门外大街证券营业部'>中国国际金融股份有限公司北京建国门外大街证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='招商银行'><a class="emlk" href="https://quote.eastmoney.com/sh600036.html" target="_blank" rel="noopener noreferrer">招商银行</a></td><td class='num' data-val='sh600036'>sh600036</td><td class='num' data-val='42.45'>42.45</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='2037600'>203.8</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='广发证券股份有限公司天津环湖中路证券营业部'>广发证券股份有限公司天津环湖中路证券营业部</td><td class='seat' data-val='中国国际金融股份有限公司北京建国门外大街证券营业部'>中国国际金融股份有限公司北京建国门外大街证券营业部</td><td data-val=''></td></tr><tr data-inst='0' data-prem='0'><td data-val='工商银行'><a class="emlk" href="https://quote.eastmoney.com/sh601398.html" target="_blank" rel="noopener noreferrer">工商银行</a></td><td class='num' data-val='sh601398'>sh601398</td><td class='num' data-val='8.48'>8.48</td><td class='num flat' data-val='None'>—</td><td class='num' data-val='2035200'>203.5</td><td class='num ' data-val='-0.0'>-0.00%</td><td class='num' data-val='None'>None</td><td class='seat' data-val='广发证券股份有限公司天津环湖中路证券营业部'>广发证券股份有限公司天津环湖中路证券营业部</td><td class='seat' data-val='中国国际金融股份有限公司北京建国门外大街证券营业部'>中国国际金融股份有限公司北京建国门外大街证券营业部</td><td data-val=''></td></tr></tbody></table><div class='empty' style='padding:8px;color:#9aa2ad'>提示：点击表头可排序；上方标签可筛选</div>
+</div>
+
+<footer>
+数据来源：东方财富数据中心 <b>RPT_DATA_BLOCKTRADE</b>（盘后公开披露，与历史区间逐字段核验一致）。<br>
+本页面由 A股量化助理自动生成 · 仅供参考，<b>不构成投资建议</b> · 市场有风险，投资需谨慎。
+</footer>
+</div>
+<script>
+var curMode='all';
+function applyFilter(){
+  var rows=document.querySelectorAll('#bt tbody tr');
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i], show=true;
+    if(curMode==='inst') show=r.getAttribute('data-inst')==='1';
+    else if(curMode==='prem') show=r.getAttribute('data-prem')==='1';
+    r.style.display=show?'':'none';
+  }
+  var tabs=document.querySelectorAll('.tab');
+  for(var j=0;j<tabs.length;j++) tabs[j].className='tab'+(tabs[j].getAttribute('data-m')===curMode?' on':'');
+}
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click',function(){ curMode=t.getAttribute('data-m'); applyFilter(); });
+});
+function sortTable(id, th){
+  var table=document.getElementById(id);
+  var tbody=table.tBodies[0];
+  var rows=Array.prototype.slice.call(tbody.rows);
+  var idx=parseInt(th.getAttribute('data-c'),10);
+  var asc=th.getAttribute('data-asc')!=='1';
+  rows.sort(function(a,b){
+    var x=a.cells[idx].getAttribute('data-val');
+    var y=b.cells[idx].getAttribute('data-val');
+    var nx=parseFloat(x), ny=parseFloat(y);
+    if(!isNaN(nx)&&!isNaN(ny)){ return asc?nx-ny:ny-nx; }
+    x=(x==null?'':x); y=(y==null?'':y);
+    return asc?(x<y?-1:(x>y?1:0)):(x<y?1:(x>y?-1:0));
+  });
+  for(var i=0;i<rows.length;i++) tbody.appendChild(rows[i]);
+  var ths=table.querySelectorAll('th.sort');
+  for(var k=0;k<ths.length;k++){ ths[k].removeAttribute('data-asc'); ths[k].classList.remove('sorted'); }
+  th.setAttribute('data-asc', asc?'1':'0');
+  th.classList.add('sorted');
+  if(id==='bt') applyFilter();
+}
+document.querySelectorAll('th.sort').forEach(function(t){
+  t.addEventListener('click',function(){ sortTable(t.parentNode.parentNode.parentNode.id, t); });
+});
+</script>
+<!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* ④ 返回 / 回顶：页头「← 返回」优先走浏览器历史（从哪来退回哪），
+     无历史（直接打开链接/新标签）则用 href 兜底跳门户首页 —— 不用 javascript: 伪协议，
+     保证 href 始终是个真链接（断链门禁与无 JS 环境都成立）。
+     右下角浮动按钮：回顶在滚动 400px 后淡入，回门户常驻。 */
+  try {
+    document.querySelectorAll("a.wb-back").forEach(function (a) {
+      a.addEventListener("click", function (ev) {
+        try {
+          if (window.history && window.history.length > 1 && document.referrer) {
+            ev.preventDefault();
+            window.history.back();
+          }
+        } catch (e) {}
+      });
+    });
+    var top = document.querySelector(".wb-fab a.wb-top");
+    if (top) {
+      top.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        try { window.scrollTo({ top: 0, behavior: "smooth" }); }
+        catch (e) { window.scrollTo(0, 0); }
+      });
+      var sync = function () {
+        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        top.style.display = y > 400 ? "flex" : "none";
+      };
+      window.addEventListener("scroll", sync, { passive: true });
+      sync();
+    }
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--><!--WB_FAB--><div class='wb-fab'><a class='wb-top' href='#' title='回到顶部' aria-label='回到顶部'>↑</a><a class='wb-home' href='../../index.html' title='返回门户首页' aria-label='返回门户首页'>⌂</a></div><!--/WB_FAB--></body>
+</html>

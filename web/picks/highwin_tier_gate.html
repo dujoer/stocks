@@ -253,42 +253,42 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 
 </style><!--/WB_THEME--></head><body>
 <div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a><a href='../dragon/index.html'>龙道诀</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../sector/heatmap.html'>板块热力图</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../diagnosis/index.html'>个股研判</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a><a href='../three_yin/index.html'>三连阴</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a><a href='../statement/index.html'>交割单复盘</a><a href='../statement/exit-replay.html'>退出规则回放</a><a href='../quant_strategy/freq-robust.html'>频率稳健性</a></div><a href='../../index.html' class='home'>首页</a></div>
-<!--WB_STAMP--><div class='wb-stamp'><span class='s-l'>本页数据基准</span><b class='s-d'>2026-10-15</b><span class='s-ok'>· 当日</span><a class='wb-back' href='../../index.html'>← 返回</a></div><!--/WB_STAMP-->
+<!--WB_STAMP--><div class='wb-stamp'><span class='s-l'>本页数据基准</span><b class='s-d'>2026-10-15</b><span class='s-src'>· 该族非每日更新（研究/证据/方法页），基准为该页最近一次生成日；全站最新 2026-10-16</span><a class='wb-back' href='../../index.html'>← 返回</a></div><!--/WB_STAMP-->
 <div class="wrap">
 <h1>高胜率候选池 · 分档出票核验</h1>
 <div class="card"><b>本页是「高胜率候选池」的出票合法性核验</b>（逐日平衡 edge + 按日 block bootstrap + 留一法 + 前/后半 + 跨步长）。<br>① 生产打分满分 100 分，其中<b>只有技术 25 + 位置 15 = 40 分在历史上可前推</b>；资金/筹码/板块/龙虎榜/高管大宗都来自当日盘后快照与事件源，回测时不存在 → <b>记 0 降级</b>。<br>② 因此本页 CORE 档 =「可得子分前 10%」，<b>不是</b>生产那批「全维 ≥68 的核心候选」；生产核心档是否真有超额，本页判 <b>不可判</b>（缺 60 分维度，无法复原）。<br>③ <b>数据有效性（与统计无关的一道闸）</b>：底池最新一期 <b>2026-10-15</b> 未冻结（候选 390 只 / 技术扫描 4977 只），逐字节与更早期不同 —— 底池在每日重扫，本条不压出票；9 月旧管道的冻结史如实保留在第六节，仅供追溯。</div>
-<div class='box red' style='border-color:#b00020'><b>⚠ 先说结论：CORE 档不可出票（宁可不选）</b><br>在可得维度（技术 25 + 位置 15 = 40 分）的口径下，CORE 档相对同日全市场的逐日平衡 edge <b>+0.028pp pp</b>，bootstrap 通过率 <b>49.90%</b>（门槛 95%），留一法区间 <b>[—, —]</b> 全为负，前/后半也同向为负。<br>本页不给出「改个阈值就能用」的建议 —— <b>只记录已算出的事实</b>；证据页链接见文末。</div>
+<div class='box red' style='border-color:#b00020'><b>⚠ 先说结论：CORE 档不可出票（宁可不选）</b><br>在可得维度（技术 25 + 位置 15 = 40 分）的口径下，CORE 档相对同日全市场的逐日平衡 edge <b>-0.741pp pp</b>，bootstrap 通过率 <b>16.60%</b>（门槛 95%），留一法区间 <b>[—, —]</b> 全为负，前/后半也同向为负。<br>本页不给出「改个阈值就能用」的建议 —— <b>只记录已算出的事实</b>；证据页链接见文末。</div>
 <h2>一、逐档结果（对照 = 同日全市场域，逐日平衡 edge）</h2>
 <table data-wb><thead><tr><th>档</th><th>笔数</th><th>绝对收益</th><th>胜率</th>
-<th>edge</th><th>R3</th><th>留一法区间</th></tr></thead><tbody><tr><td><b>CORE 档（可得子分前 10%，近似核心候选）</b></td><td class='num'>1802</td><td class='num'>-1.06</td><td class='num'>59.48%</td><td class='num up'>+0.028pp</td><td class='num dn'>49.90%</td><td class='kv'>[-0.240, +0.242]</td></tr>
-<tr><td><b>MID 档（可得子分 10~30%）</b></td><td class='num'>3614</td><td class='num'>-0.17</td><td class='num'>62.66%</td><td class='num up'>+0.366pp</td><td class='num dn'>63.60%</td><td class='kv'>[+0.112, +0.598]</td></tr>
-<tr><td><b>TAIL 档（可得子分 30% 以后）</b></td><td class='num'>10145</td><td class='num'>-0.66</td><td class='num'>58.40%</td><td class='num dn'>-0.262pp</td><td class='num dn'>33.90%</td><td class='kv'>[-0.399, -0.060]</td></tr>
-<tr><td><b>BASE 底池（当日 MACD 水上红柱全体）</b></td><td class='num'>18060</td><td class='num'>-0.42</td><td class='num'>59.44%</td><td class='num dn'>-0.090pp</td><td class='num dn'>42.40%</td><td class='kv'>[-0.212, +0.104]</td></tr>
-<tr><td><b>ALL 全市场域（随便买 · 绝对对照）</b></td><td class='num'>99064</td><td class='num'>0.24</td><td class='num'>63.43%</td><td class='num dn'>+0.000pp</td><td class='num dn'>0.00%</td><td class='kv'>[+0.000, +0.000]</td></tr></tbody></table>
+<th>edge</th><th>R3</th><th>留一法区间</th></tr></thead><tbody><tr><td><b>CORE 档（可得子分前 10%，近似核心候选）</b></td><td class='num'>1817</td><td class='num'>-1.61</td><td class='num'>56.83%</td><td class='num dn'>-0.741pp</td><td class='num dn'>16.60%</td><td class='kv'>[-1.016, -0.513]</td></tr>
+<tr><td><b>MID 档（可得子分 10~30%）</b></td><td class='num'>3649</td><td class='num'>0.09</td><td class='num'>60.89%</td><td class='num up'>+0.494pp</td><td class='num dn'>72.00%</td><td class='kv'>[+0.249, +0.736]</td></tr>
+<tr><td><b>TAIL 档（可得子分 30% 以后）</b></td><td class='num'>10107</td><td class='num'>-0.97</td><td class='num'>58.42%</td><td class='num dn'>-0.668pp</td><td class='num dn'>11.40%</td><td class='kv'>[-0.830, -0.530]</td></tr>
+<tr><td><b>BASE 底池（当日 MACD 水上红柱全体）</b></td><td class='num'>18229</td><td class='num'>-0.78</td><td class='num'>58.02%</td><td class='num dn'>-0.411pp</td><td class='num dn'>19.80%</td><td class='kv'>[-0.565, -0.293]</td></tr>
+<tr><td><b>ALL 全市场域（随便买 · 绝对对照）</b></td><td class='num'>99073</td><td class='num'>0.24</td><td class='num'>63.90%</td><td class='num dn'>+0.000pp</td><td class='num dn'>0.00%</td><td class='kv'>[+0.000, +0.000]</td></tr></tbody></table>
 <div class="kv">edge = 该档逐日均值 − 同日全市场逐日均值（逐日平衡，不是把大池子摊平比绝对值）。
 R3 = bootstrap 中 edge>0 的比例（按日整块重抽 800 次，门槛 95%）。</div>
 
 <h2>二、把「底池效应」和「打分增量」拆开</h2>
 <table data-wb><thead><tr><th>档</th><th>edge（相对底池母集）</th><th>R3</th><th>留一法区间</th></tr></thead>
-<tbody><tr><td><b>CORE 档（可得子分前 10%，近似核心候选）</b></td><td class='num dn'>-0.264pp</td><td class='num dn'>34.00%</td><td class='kv'>[-0.506, -0.029]</td></tr>
-<tr><td><b>MID 档（可得子分 10~30%）</b></td><td class='num up'>+0.309pp</td><td class='num dn'>69.60%</td><td class='kv'>[+0.113, +0.461]</td></tr>
-<tr><td><b>TAIL 档（可得子分 30% 以后）</b></td><td class='num dn'>-0.124pp</td><td class='num dn'>37.40%</td><td class='kv'>[-0.267, +0.044]</td></tr>
+<tbody><tr><td><b>CORE 档（可得子分前 10%，近似核心候选）</b></td><td class='num dn'>-1.008pp</td><td class='num dn'>5.90%</td><td class='kv'>[-1.226, -0.773]</td></tr>
+<tr><td><b>MID 档（可得子分 10~30%）</b></td><td class='num up'>+0.991pp</td><td class='num up'>95.40%</td><td class='kv'>[+0.813, +1.197]</td></tr>
+<tr><td><b>TAIL 档（可得子分 30% 以后）</b></td><td class='num dn'>-0.253pp</td><td class='num dn'>17.80%</td><td class='kv'>[-0.337, -0.138]</td></tr>
 <tr><td><b>BASE 底池（当日 MACD 水上红柱全体）</b></td><td class='num dn'>—</td><td class='num dn'>—</td><td class='kv'>[—, —]</td></tr>
 <tr><td><b>ALL 全市场域（随便买 · 绝对对照）</b></td><td class='num dn'>—</td><td class='num dn'>—</td><td class='kv'>[—, —]</td></tr></tbody></table>
 <div class="kv">底池 = MACD 水上红柱（天然偏强的一批票）。相对<b>底池母集</b>的 edge 才是<b>打分本身</b>的增量；
 相对全市场的 edge 里还掺着「底池是不是本身就强」这一块。BASE 一行同时给出它相对「非底池」的 edge。</div>
 
 <h2>三、前 / 后半稳定性</h2>
-<table data-wb><thead><tr><th>档</th><th>前半 / 后半 edge</th></tr></thead><tbody><tr><td><b>CORE 档（可得子分前 10%，近似核心候选）</b></td><td class='kv'>前半 +0.252pp（27 日中 18 日为正） ｜ 后半 -0.195pp（27 日中 13 日为正）</td></tr>
-<tr><td><b>MID 档（可得子分 10~30%）</b></td><td class='kv'>前半 +2.762pp（43 日中 33 日为正） ｜ 后半 -2.029pp（43 日中 15 日为正）</td></tr>
-<tr><td><b>TAIL 档（可得子分 30% 以后）</b></td><td class='kv'>前半 +1.710pp（47 日中 35 日为正） ｜ 后半 -2.194pp（48 日中 18 日为正）</td></tr>
-<tr><td><b>BASE 底池（当日 MACD 水上红柱全体）</b></td><td class='kv'>前半 +2.390pp（50 日中 41 日为正） ｜ 后半 -2.570pp（50 日中 16 日为正）</td></tr>
-<tr><td><b>ALL 全市场域（随便买 · 绝对对照）</b></td><td class='kv'>前半 +0.000pp（57 日中 0 日为正） ｜ 后半 +0.000pp（58 日中 0 日为正）</td></tr></tbody></table>
+<table data-wb><thead><tr><th>档</th><th>前半 / 后半 edge</th></tr></thead><tbody><tr><td><b>CORE 档（可得子分前 10%，近似核心候选）</b></td><td class='kv'>前半 +0.120pp（27 日中 15 日为正） ｜ 后半 -1.570pp（28 日中 9 日为正）</td></tr>
+<tr><td><b>MID 档（可得子分 10~30%）</b></td><td class='kv'>前半 +2.227pp（39 日中 30 日为正） ｜ 后半 -1.239pp（39 日中 18 日为正）</td></tr>
+<tr><td><b>TAIL 档（可得子分 30% 以后）</b></td><td class='kv'>前半 +1.674pp（46 日中 29 日为正） ｜ 后半 -2.960pp（47 日中 13 日为正）</td></tr>
+<tr><td><b>BASE 底池（当日 MACD 水上红柱全体）</b></td><td class='kv'>前半 +2.059pp（48 日中 34 日为正） ｜ 后半 -2.881pp（48 日中 12 日为正）</td></tr>
+<tr><td><b>ALL 全市场域（随便买 · 绝对对照）</b></td><td class='kv'>前半 +0.000pp（58 日中 0 日为正） ｜ 后半 +0.000pp（58 日中 0 日为正）</td></tr></tbody></table>
 <div class="kv">单段行情容易把结论锁在一个市场状态里；只有两半同向才算稳。</div>
 
 <h2>四、跨步长敏感性（主口径 step5 vs 派生 step3）</h2>
 <table data-wb><thead><tr><th>档</th><th>step3 edge</th><th>step3 R3</th><th>与主口径符号</th></tr></thead>
-<tbody><tr><td><b>CORE 档（可得子分前 10%，近似核心候选）</b></td><td class='num dn'>-0.764pp</td><td class='num dn'>9.20%</td><td class='kv'>翻号</td></tr>
+<tbody><tr><td><b>CORE 档（可得子分前 10%，近似核心候选）</b></td><td class='num dn'>-0.764pp</td><td class='num dn'>9.20%</td><td class='kv'>同号</td></tr>
 <tr><td><b>MID 档（可得子分 10~30%）</b></td><td class='num dn'>-0.315pp</td><td class='num dn'>30.60%</td><td class='kv'>翻号</td></tr>
 <tr><td><b>TAIL 档（可得子分 30% 以后）</b></td><td class='num dn'>-0.368pp</td><td class='num dn'>16.20%</td><td class='kv'>同号</td></tr>
 <tr><td><b>BASE 底池（当日 MACD 水上红柱全体）</b></td><td class='num dn'>-0.117pp</td><td class='num dn'>35.20%</td><td class='kv'>同号</td></tr>
@@ -336,16 +336,16 @@ R3 = bootstrap 中 edge>0 的比例（按日整块重抽 800 次，门槛 95%）
 <b>这一节不依赖任何回测口径，是纯数据事实</b>，所以它对「本期能不能出票」有否决权。</div>
 
 <h2>七、出票许可（机器判定，读不到就 fail-safe）</h2>
-<table data-wb><thead><tr><th>档</th><th>可出票？</th><th>依据</th></tr></thead><tbody><tr><td>CORE 档（可得子分前 10%，近似核心候选）</td><td class='dn'>不出票</td><td class='kv'>R3 49.9% < 95% 门槛；步长敏感性翻转（step3 -0.764pp）</td></tr><tr><td>MID 档（可得子分 10~30%）</td><td class='dn'>不出票</td><td class='kv'>R3 63.6% < 95% 门槛；步长敏感性翻转（step3 -0.315pp）</td></tr><tr><td>TAIL 档（可得子分 30% 以后）</td><td class='dn'>不出票</td><td class='kv'>主步长 edge -0.262pp ≤ 0；R3 33.9% < 95% 门槛；step3 edge -0.368pp ≤ 0</td></tr></tbody></table>
+<table data-wb><thead><tr><th>档</th><th>可出票？</th><th>依据</th></tr></thead><tbody><tr><td>CORE 档（可得子分前 10%，近似核心候选）</td><td class='dn'>不出票</td><td class='kv'>主步长 edge -0.741pp ≤ 0；R3 16.6% < 95% 门槛；step3 edge -0.764pp ≤ 0</td></tr><tr><td>MID 档（可得子分 10~30%）</td><td class='dn'>不出票</td><td class='kv'>R3 72.0% < 95% 门槛；步长敏感性翻转（step3 -0.315pp）</td></tr><tr><td>TAIL 档（可得子分 30% 以后）</td><td class='dn'>不出票</td><td class='kv'>主步长 edge -0.668pp ≤ 0；R3 11.4% < 95% 门槛；step3 edge -0.368pp ≤ 0</td></tr></tbody></table>
 <div class="kv">`gen_highwin.py` 只读本页证据；CORE/MID/TAIL 任一档不达标即标注<b>不出票（宁可不选）</b>。
 只满足主步长就放行，属放宽阈值凑数，与项目红线冲突，故不写这条规则。<br>
 另有一道<b>数据有效性闸</b>（与统计无关）：底池快照是旧数据时，即使 edge 为正也压住出票 ——
 底注：edge 衡量的是「这套打分在历史上选得比随便买好多少」，底池过期时这个数字连适用对象都没有。</div>
 
-<h2>八、退出回测的成交假设（同一批票，只改成交假设）</h2><div class='box red'><b>本页所有胜率/均值都用「移动止盈」口径结算，而这个口径本身依赖两处人为假设：</b><br>① <b>日内路径</b>：旧实现假设同一根 K 线「先冲高（上移止盈线）→ 再回落（触发卖出）」→ 系统性乐观；<br>② <b>跳空</b>：开盘已跌破止损线时，旧实现仍按「止损线价」成交，真实只能按<b>开盘价</b>成交（更差）。<br>只把这两处换成可兑现版本，CORE 档的绝对胜率就是 <b>54.22% → 48.61%（-5.61pp）</b> —— 本池原本就判「不出票」，修正后亏损面进一步扩大。<br>⇒ 页面上的绝对胜率请以「可实现口径」为准。</div><table data-wb><thead><tr><th>档</th><th>笔数</th><th>旧口径胜率</th><th>旧口径均值</th><th>可实现胜率</th><th>可实现均值</th><th>Δ胜率</th><th>Δ均值</th></tr></thead><tbody><tr><td><b>CORE 档（可得子分前 10%，近似核心候选）</b></td><td class='num'>1802</td><td class='num'>54.22%</td><td class='num'>-2.028%</td><td class='num'><b>48.61%</b></td><td class='num'><b>-2.370%</b></td><td class='num dn'>-5.61pp</td><td class='num dn'>-0.342pp</td></tr>
-<tr><td><b>MID 档（可得子分 10~30%）</b></td><td class='num'>3614</td><td class='num'>56.42%</td><td class='num'>-1.553%</td><td class='num'><b>51.85%</b></td><td class='num'><b>-1.653%</b></td><td class='num dn'>-4.57pp</td><td class='num dn'>-0.100pp</td></tr>
-<tr><td><b>BASE 底池（当日 MACD 水上红柱全体）</b></td><td class='num'>18060</td><td class='num'>59.27%</td><td class='num'>-1.031%</td><td class='num'><b>53.55%</b></td><td class='num'><b>-1.238%</b></td><td class='num dn'>-5.72pp</td><td class='num dn'>-0.207pp</td></tr>
-<tr><td><b>ALL 全市场域（随便买 · 绝对对照）</b></td><td class='num'>99064</td><td class='num'>58.79%</td><td class='num'>-0.846%</td><td class='num'><b>55.89%</b></td><td class='num'><b>-0.702%</b></td><td class='num dn'>-2.90pp</td><td class='num up'>+0.144pp</td></tr></tbody></table><div class='kv'>口径定义与全项目统一实现见 <a href='../docs/exit_assumption_evidence.html'>退出成交假设证据页</a>（<code>quant/_exit_sim.py</code> 为唯一实现）。</div>
+<h2>八、退出回测的成交假设（同一批票，只改成交假设）</h2><div class='box red'><b>本页所有胜率/均值都用「移动止盈」口径结算，而这个口径本身依赖两处人为假设：</b><br>① <b>日内路径</b>：旧实现假设同一根 K 线「先冲高（上移止盈线）→ 再回落（触发卖出）」→ 系统性乐观；<br>② <b>跳空</b>：开盘已跌破止损线时，旧实现仍按「止损线价」成交，真实只能按<b>开盘价</b>成交（更差）。<br>只把这两处换成可兑现版本，CORE 档的绝对胜率就是 <b>54.49% → 49.64%（-4.85pp）</b> —— 本池原本就判「不出票」，修正后亏损面进一步扩大。<br>⇒ 页面上的绝对胜率请以「可实现口径」为准。</div><table data-wb><thead><tr><th>档</th><th>笔数</th><th>旧口径胜率</th><th>旧口径均值</th><th>可实现胜率</th><th>可实现均值</th><th>Δ胜率</th><th>Δ均值</th></tr></thead><tbody><tr><td><b>CORE 档（可得子分前 10%，近似核心候选）</b></td><td class='num'>1817</td><td class='num'>54.49%</td><td class='num'>-1.970%</td><td class='num'><b>49.64%</b></td><td class='num'><b>-2.089%</b></td><td class='num dn'>-4.85pp</td><td class='num dn'>-0.119pp</td></tr>
+<tr><td><b>MID 档（可得子分 10~30%）</b></td><td class='num'>3649</td><td class='num'>54.86%</td><td class='num'>-1.949%</td><td class='num'><b>49.19%</b></td><td class='num'><b>-2.084%</b></td><td class='num dn'>-5.67pp</td><td class='num dn'>-0.135pp</td></tr>
+<tr><td><b>BASE 底池（当日 MACD 水上红柱全体）</b></td><td class='num'>18229</td><td class='num'>57.66%</td><td class='num'>-1.363%</td><td class='num'><b>51.68%</b></td><td class='num'><b>-1.567%</b></td><td class='num dn'>-5.98pp</td><td class='num dn'>-0.204pp</td></tr>
+<tr><td><b>ALL 全市场域（随便买 · 绝对对照）</b></td><td class='num'>99073</td><td class='num'>58.59%</td><td class='num'>-0.862%</td><td class='num'><b>55.72%</b></td><td class='num'><b>-0.726%</b></td><td class='num dn'>-2.87pp</td><td class='num up'>+0.136pp</td></tr></tbody></table><div class='kv'>口径定义与全项目统一实现见 <a href='../docs/exit_assumption_evidence.html'>退出成交假设证据页</a>（<code>quant/_exit_sim.py</code> 为唯一实现）。</div>
 
 <h2>九、局限与口径声明</h2>
 <div class="card"><ul>
@@ -355,7 +355,7 @@ R3 = bootstrap 中 edge>0 的比例（按日整块重抽 800 次，门槛 95%）
 <li>退出生效参数沿用全项目统一口径：−12% 硬止损 / +6% 激活移动止盈 / 回撤 3% 跟踪 / 满 20 日强平；
     买入价 = 信号日收盘（与生产「次日开盘」略有出入，属放宽，只会让结论偏保守）。</li>
 <li>本页<b>只判定现有规则有没有超额，不做规则改良</b>：负 edge 也不代表「反向做」能赚钱，只是不该拿它出票。</li>
-<li>CORE 档样本 54 个信号日 / 1802 笔 —— 样本偏小，正是本页判「不可出票」而不是判「有效」的原因。</li>
+<li>CORE 档样本 55 个信号日 / 1817 笔 —— 样本偏小，正是本页判「不可出票」而不是判「有效」的原因。</li>
 </ul></div>
 <div class="note"><a href="index.html">← 返回自选/候选池首页</a> ｜ <a href="highwin_20261015.html">高胜率候选池当期页面</a></div>
 </div><!--WB_APP--><script id='wb-app'>
