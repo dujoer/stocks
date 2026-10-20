@@ -110,11 +110,33 @@ ratio_dn = round(green/total*100, 2) if total else 0
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/120.0 Safari/537.36")
 
+# ★ 2026-10-20 修：指数日K 直连主机优先。
+#   统一层 `T.fetch_kline` 走代理 `proxy.finance.qq.com`，该代理对指数代码返回 HTTP 501
+#   （股票正常）。直连 `web.ifzq.gtimg.cn` 对三指数均可用（250 根 / 末根=交易日）。
+#   故指数取数直连优先，失败再回退代理 / 统一层缓存，绝不因单源失败而缺指数。
+IDX_HOSTS = [
+    "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get",
+    "https://proxy.finance.qq.com/ifzqgtimg/appstock/app/fqkline/get",
+]
+
 def fetch_index_bars(code, n=250):
-    """★ 2026-10-06：指数日K 改走统一层 `_tx_fetch.fetch_kline`（同一个腾讯 fqkline 接口、
-    同样带新鲜度校验），不再自己 urllib 直连 —— 全项目的行情取数只剩一条路。
-    取不到返回 []，调用方按 warn 跳过（不拿别处数据凑）。
-    """
+    """指数日K：直连主机优先，失败回退代理 / 统一层。取不到返回 []。"""
+    for host in IDX_HOSTS:
+        try:
+            url = "%s?param=%s,day,,,%d,qfq" % (host, code, n)
+            req = urllib.request.Request(url, headers={
+                "User-Agent": UA, "Referer": "https://gu.qq.com/", "Connection": "close"})
+            with urllib.request.urlopen(req, timeout=20) as r:
+                j = json.loads(r.read().decode("utf-8"))
+            d = ((j.get("data") or {}).get(code) or {})
+            ks = d.get("qfqday") or d.get("day") or []
+            if ks:
+                return [{"date": it[0], "open": float(it[1]), "last": float(it[2]),
+                         "high": float(it[3]), "low": float(it[4]),
+                         "volume": float(it[5])} for it in ks]
+        except Exception:
+            continue
+    # 最后回退到统一层（含缓存）
     ks = T.fetch_kline(code, n=n) or []
     return [{"date": it["date"], "open": float(it["open"]), "last": float(it["last"]),
              "high": float(it["high"]), "low": float(it["low"]),
@@ -132,6 +154,9 @@ for code, name in [("sh000001", "上证指数"), ("sz399001", "深证成指"), (
 szzs = idx.get("sh000001", {})
 close_szzs = szzs.get("close")
 chg_szzs = szzs.get("chg")
+if chg_szzs is None:
+    # ★ 2026-10-20：指数取数失败时（如源 501）不编造，技术分置中性、状态标记缺失
+    print("[warn] 上证指数涨跌幅缺失，技术分置中性、状态标记缺失（不编造）")
 # 技术（上证）
 closes = szzs.get("closes", [])
 import statistics
@@ -189,12 +214,12 @@ def clamp(x, a=0, b=5): return max(a, min(b, x))
 sentiment = clamp(round(ratio_up/20, 1))            # 涨股比
 stock_width = clamp(round(2 + (up_lim-2)/10, 1))    # 涨停数
 sector_width = clamp(round(2 + (ratio_up-50)/20, 1))
-technical = clamp(round(3 + (chg_szzs)/2, 1))
+technical = clamp(round(3 + (chg_szzs)/2, 1)) if chg_szzs is not None else 3.0
 summary = {
     "SENTIMENT_SCORE": sentiment, "SENTIMENT_STATUS": "涨股比%.0f%%" % ratio_up,
     "STOCK_WIDTH_SCORE": stock_width, "STOCK_WIDTH_STATUS": "涨停%d只" % up_lim,
     "SECTOR_WIDTH_SCORE": sector_width, "SECTOR_WIDTH_STATUS": "涨股比%.0f%%" % ratio_up,
-    "TECHNICAL_SCORE": technical, "TECHNICAL_STATUS": "上证%.2f%%" % chg_szzs,
+    "TECHNICAL_SCORE": technical, "TECHNICAL_STATUS": ("上证%.2f%%" % chg_szzs) if chg_szzs is not None else "上证数据缺失",
     "TREND_SHORT_DIRECTION_SCORE": 3, "TREND_SHORT_STRENGTH_SCORE": 3,
     "TREND_LONG_DIRECTION_SCORE": 3, "TREND_LONG_STRENGTH_SCORE": 3,
     "VOLUME_ENERGE_SCORE": 3, "VOLUME_ENERGE_STATUS": "成交%.2f万亿" % (money_yi/1e4),
@@ -214,7 +239,7 @@ entries = [
         "RATIO_DOWNLIMIT": round(dn_lim/total*100, 2) if total else 0,
         "code": "", "name": ""}},
     {"listCode": "market_statis_daily_trade", "row": {
-        "CLOSE_PRICE_SZZS": close_szzs, "CHANGE_PCT_SZZS": round(chg_szzs, 2),
+        "CLOSE_PRICE_SZZS": close_szzs, "CHANGE_PCT_SZZS": round(chg_szzs, 2) if chg_szzs is not None else None,
         "OPEN_PRICE_SZZS": _oh_szzs[0], "HIGH_PRICE_SZZS": _oh_szzs[1], "LOW_PRICE_SZZS": _oh_szzs[2],
         "CLOSE_PRICE_SZCZ": idx.get("sz399001", {}).get("close"),
         "CHANGE_PCT_SZCZ": round(idx.get("sz399001", {}).get("chg", 0), 2),
@@ -244,5 +269,6 @@ entries = [
 out = {"ok": True, "data": entries, "source": "offline·txk(%s真实日K)" % TGT_D}
 dst = os.path.join(Q, "market_overview", "%s.json" % TGT_D)
 json.dump(out, open(dst, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-print("market_overview/%s.json 写入：涨%d 跌%d 平%d｜涨停%d 跌停%d｜上证%.2f%%｜成交%.2f万亿"
-      % (TGT_D, red, green, zero, up_lim, dn_lim, chg_szzs, money_yi/1e4))
+print("market_overview/%s.json 写入：涨%d 跌%d 平%d｜涨停%d 跌停%d｜上证%s｜成交%.2f万亿"
+      % (TGT_D, red, green, zero, up_lim, dn_lim,
+         ("%.2f%%" % chg_szzs) if chg_szzs is not None else "数据缺失", money_yi/1e4))

@@ -1,0 +1,532 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>主升精选 · 精中取精（胜率候选·观察用）· 2026-10-20</title>
+<style>
+:root{--bg:#fbfbfd;--card:#fff;--text:#1d1d1f;--muted:#6e6e73;--line:#e5e5e7;
+ --up:#ff3b30;--dn:#34c759;--blue:#0071e3;--gold:#1a73e8;--orange:#ff9500;}
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+ background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:0}
+.wrap{max-width:1060px;margin:0 auto;padding:28px 18px 56px}
+h1{font-size:23px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+h2{font-size:18px;font-weight:600;margin:26px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--blue)}
+.sub{color:var(--muted);font-size:13px;margin-bottom:8px}
+.card{background:var(--card);border-radius:16px;padding:16px 20px;margin:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.box{border-left:4px solid var(--blue);background:#f0f7ff;padding:14px 18px;border-radius:0 12px 12px 0;margin:14px 0}
+.box.red{border-color:var(--up);background:#fff5f4}
+.box.gold{border-color:var(--gold);background:#fffaf0}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa;white-space:nowrap}
+.num{font-variant-numeric:tabular-nums}
+.up{color:var(--up)}.dn{color:var(--dn)}.am{color:var(--blue)}
+.case{font-size:13px;margin:10px 0;padding:12px 16px;background:#fafafa;border-radius:10px;border-left:3px solid var(--gold)}
+.case .h{font-weight:600;margin-bottom:4px}
+.kv{font-size:12.5px;color:var(--muted)}
+.bp{background:#f7f9fc;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:8px 0;font-size:13px}
+.bp b{color:var(--blue)}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;margin:1px 2px}
+.tag.ob{background:#fff3e0;color:#e65100}
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}
+</style><!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 数据时间戳条（真实数据日 + 返回入口） ----------
+   由 _apply_theme.py 按「页面自身写的数据日」与「全站最新数据日」比对后注入，
+   不是渲染时间、不是硬编码 —— 页面没写数据日就如实显示「未标注」，
+   落后全站就红字报警。这样「页面有没有更新」看页头一眼就知道。 */
+.wb-stamp{
+  display:flex !important; flex-wrap:wrap !important; align-items:center !important;
+  gap:6px 10px !important;
+  max-width:1440px !important; margin:-14px auto 18px !important;
+  padding:8px 14px !important;
+  background:var(--surface) !important; border:1px solid var(--line) !important;
+  border-left:4px solid var(--accent) !important; border-radius:8px !important;
+  font-size:12.5px !important; color:var(--muted) !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.08) !important;
+}
+.wb-stamp .s-l{ color:var(--muted) !important; }
+.wb-stamp .s-d{
+  color:var(--ink) !important; font-weight:700 !important;
+  font-variant-numeric:tabular-nums !important;
+}
+.wb-stamp .s-d.unknown{ color:#80868b !important; font-weight:600 !important; }
+.wb-stamp .s-ok{ color:var(--green) !important; }
+.wb-stamp .s-warn{ color:var(--red) !important; font-weight:600 !important; }
+.wb-stamp .s-hist{ color:var(--muted) !important; }
+.wb-stamp .s-src{ color:#80868b !important; }
+.wb-stamp a.wb-back{
+  margin-left:auto !important; white-space:nowrap !important;
+  display:inline-block !important; padding:3px 13px !important;
+  border:1px solid var(--line) !important; border-radius:16px !important;
+  color:var(--accent-ink) !important; background:var(--accent-soft) !important;
+  font-weight:600 !important; text-decoration:none !important;
+}
+.wb-stamp a.wb-back:hover{ background:var(--accent) !important; color:#fff !important; text-decoration:none !important; }
+
+/* ---------- 右下角浮动「回门户 / 回顶部」 ---------- */
+.wb-fab{
+  position:fixed; right:16px; bottom:18px; z-index:60;
+  display:flex; flex-direction:column; gap:8px;
+}
+.wb-fab a{
+  width:42px; height:42px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--surface); color:var(--ink);
+  border:1px solid var(--line); box-shadow:0 2px 6px rgba(60,64,67,.18);
+  font-size:17px; text-decoration:none; line-height:1;
+}
+.wb-fab a:hover{ background:var(--accent); color:#fff; border-color:var(--accent); text-decoration:none; }
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  /* ★ 窄屏必须让每个模块块各占一整行：
+     原来 .navgrp{flex-shrink:0} + 内部链接 white-space:nowrap，
+     整组宽度压不下去 → 导航溢出容器被裁掉，「主升精选 / 量化策略 / 三连阴」等
+     右侧入口在手机上根本看不见（看着像「没有导航」）。 */
+  .navgrp{ padding:5px 6px 5px 5px !important; width:100% !important; flex-shrink:1 !important; min-width:0 !important; }
+  /* 链接本身也要能收缩：全局 .topnav a{flex-shrink:0} 会让一行内最后一项
+     顶出容器被裁（手机上「高管增减持」就只剩「高管增减」）→ 窄屏放开收缩，
+     min-content 宽度仍是完整文字，不会被截断。 */
+  .topnav a{ flex-shrink:1 !important; }
+  .topnav a.home{ margin-left:0 !important; }
+  .wb-stamp{ margin:-8px auto 14px !important; font-size:12px !important; }
+  .wb-stamp a.wb-back{ margin-left:0 !important; }
+  .wb-fab{ right:10px; bottom:12px; }
+  .wb-fab a{ width:38px; height:38px; font-size:15px; }
+}
+
+</style><!--/WB_THEME--></head><body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a><a href='../dragon/index.html'>龙道诀</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../sector/heatmap.html'>板块热力图</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../diagnosis/index.html'>个股研判</a><a href='../reversal/index.html'>底部反转</a><a href='index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a><a href='../three_yin/index.html'>三连阴</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a><a href='../statement/index.html'>交割单复盘</a><a href='../statement/exit-replay.html'>退出规则回放</a><a href='../quant_strategy/freq-robust.html'>频率稳健性</a></div><a href='../../index.html' class='home'>首页</a></div>
+<!--WB_STAMP--><div class='wb-stamp'><span class='s-l'>本页数据基准</span><b class='s-d'>2026-10-20</b><span class='s-hist'>· 历史归档页（内容即该日快照，不随最新数据日更新）</span><a class='wb-back' href='../../index.html'>← 返回</a></div><!--/WB_STAMP-->
+<div class="wrap">
+<h1>主升精选 · 精中取精（胜率候选 · 观察用）</h1>
+<div class="sub">数据基准 2026-10-20 收盘｜ 全市场域（剔 ST/退 + 20日均额≥3000万 + 现价≥2元）
+｜ 在「主升分前 5%（样本内胜率最高档）」中再取主升分最靠前 <b>46</b> 只（≈全市场前 1%）</div>
+
+<div class="box red"><b>⚠️ 红线声明（必读）：本页是「观察候选」，不是「出票」。</b><br>
+本页列出的票是判断逻辑里<b>胜率代理最靠前</b>的一撮，但它们<b>未过样本外稳健性闸</b>：
+该档（主升分前 5%）样本外 edge 在 7 个采样频率下<b>全为负或符号翻转</b>
+（legacy -0.18~+1.42pp、翻转 1 次@step10、R3 最低 48.0%）；
+全站 23 个可判定档<b>无一跨过 0.15pp 双边成本线</b>（见 <code>quant/_cost_gate.py</code>）。
+<b>胜率最高 ≠ 可赚钱</b>（胜率≠edge，项目反复踩的坑）。按「无证据不上 / 宁可不选」维持 fail-safe：
+本页<b>不给出票结论</b>，仅供你盯票、等环境转强后待选。</div>
+
+<div class="box gold"><b>档内胜率的真实数字（追到 quant/_selected_model.json → evidence，非写死）：</b><br>
+① 样本内全样本（前 5% 档）胜率 <b>67.4%</b>（乐观成交口径）；<br>
+② 严格样本外测试半（前 60% 学 → 后 40% 测）先验集胜率 <b>65.5%</b>，基线 62.7%；<br>
+③ ⚠️ 上述胜率依赖退出回测成交假设：改按<b>可实现口径</b>（保守日内 + 跳空成交）后胜率降至约 <b>60%</b>
+（见 <code>quant/_exit_assumption_audit.json</code>）。<br>
+关键：即便胜率 60%+，因<b>单次盈利薄、亏损深</b>，样本外 edge 仍为负 —— 所以「胜率高」不能当「能赚钱」。</div>
+
+<div class="box"><b>第五道闸 / 成本闸证据位置（自证，不重述结论）：</b><br>
+· 跨采样频率稳健性：<code>quant/_freq_robust_selected.json</code>（TOP5 档 ok=false）；<br>
+· 经济可执行线：<code>quant/_cost_gate.py</code>（全站 23 档 0 可执行）；<br>
+· 口径修正：<code>quant/_exit_assumption_audit.json</code>。<br>
+本页只做「精中取精」呈现，不改变任何闸的判定。</div>
+
+<h2>一、精中取精 · 观察候选（主升分最靠前 46 只 · 胜率代理最靠前）</h2>
+<div class="card"><div style="overflow-x:auto"><table data-wb>
+<thead><tr><th>代码</th><th>名称</th><th>现价</th><th>主升分</th><th>全市场排名</th>
+<th>买区</th><th>止损</th><th>目标T1/T2</th><th>关键因子</th><th>性质</th></tr></thead>
+<tbody><tr><td><a href="https://quote.eastmoney.com/sh603236.html" target="_blank" rel="noopener noreferrer">603236</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh603236.html" target="_blank" rel="noopener noreferrer">移远通信</a></td><td class='num'>76.11</td><td class='num' style='font-weight:700'>88.4</td><td class='num'>1</td><td class='num'>69.79~72.63</td><td class='num'>60.81（RR 0.71）</td><td class='num'>81.06 / 84.92</td><td class='kv'>近20日动量 +21.4%｜近60日 +59.0%｜站上MA60 +25.9%｜MA20斜率 +18.9%｜均线多头 +15.9%｜接近近20日高 -1.4%｜上涨放量 35%｜量能放大 1.93｜回调缩量 1.09</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sz002164.html" target="_blank" rel="noopener noreferrer">002164</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sz002164.html" target="_blank" rel="noopener noreferrer">宁波东力</a></td><td class='num'>16.16</td><td class='num' style='font-weight:700'>87.8</td><td class='num'>2</td><td class='num'>12.3~12.81</td><td class='num'>9.77（RR 1.37）</td><td class='num'>16.97 / 17.78</td><td class='kv'>近20日动量 +56.1%｜近60日 +60.3%｜站上MA60 +39.7%｜MA20斜率 +15.0%｜均线多头 +23.7%｜接近近20日高 +0.0%｜上涨放量 50%｜量能放大 3.18｜回调缩量 1.89</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sz301529.html" target="_blank" rel="noopener noreferrer">301529</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sz301529.html" target="_blank" rel="noopener noreferrer">福赛科技</a></td><td class='num'>144.25</td><td class='num' style='font-weight:700'>87.8</td><td class='num'>3</td><td class='num'>126.2~131.35</td><td class='num'>104.76（RR 1.0）</td><td class='num'>158.03 / 165.55</td><td class='kv'>近20日动量 +23.6%｜近60日 +78.7%｜站上MA60 +32.7%｜MA20斜率 +14.0%｜均线多头 +15.9%｜接近近20日高 -4.2%｜上涨放量 35%｜量能放大 1.40｜回调缩量 0.98</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh605258.html" target="_blank" rel="noopener noreferrer">605258</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh605258.html" target="_blank" rel="noopener noreferrer">协和电子</a></td><td class='num'>46.06</td><td class='num' style='font-weight:700'>87.7</td><td class='num'>4</td><td class='num'>39.43~41.04</td><td class='num'>33.56（RR 1.14）</td><td class='num'>49.55 / 51.91</td><td class='kv'>近20日动量 +31.4%｜近60日 +107.6%｜站上MA60 +44.6%｜MA20斜率 +33.9%｜均线多头 +33.0%｜接近近20日高 -2.4%｜上涨放量 50%｜量能放大 2.94｜回调缩量 1.89</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sz301550.html" target="_blank" rel="noopener noreferrer">301550</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sz301550.html" target="_blank" rel="noopener noreferrer">斯菱智驱</a></td><td class='num'>112.78</td><td class='num' style='font-weight:700'>87.6</td><td class='num'>5</td><td class='num'>93.89~97.72</td><td class='num'>80.83（RR 1.47）</td><td class='num'>122.62 / 128.46</td><td class='kv'>近20日动量 +25.3%｜近60日 +58.8%｜站上MA60 +29.7%｜MA20斜率 +8.3%｜均线多头 +12.3%｜接近近20日高 -3.4%｜上涨放量 40%｜量能放大 1.88｜回调缩量 1.06</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sz001211.html" target="_blank" rel="noopener noreferrer">001211</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sz001211.html" target="_blank" rel="noopener noreferrer">双枪科技</a></td><td class='num'>29.75</td><td class='num' style='font-weight:700'>87.4</td><td class='num'>6</td><td class='num'>26.17~27.24</td><td class='num'>21.46（RR 0.79）</td><td class='num'>31.8 / 33.32</td><td class='kv'>近20日动量 +28.5%｜近60日 +47.4%｜站上MA60 +25.6%｜MA20斜率 +12.4%｜均线多头 +18.5%｜接近近20日高 -1.8%｜上涨放量 50%｜量能放大 2.61｜回调缩量 1.44</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sz002724.html" target="_blank" rel="noopener noreferrer">002724</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sz002724.html" target="_blank" rel="noopener noreferrer">海洋王</a></td><td class='num'>9.26</td><td class='num' style='font-weight:700'>87.4</td><td class='num'>7</td><td class='num'>7.14~7.44</td><td class='num'>6.21（RR 1.86）</td><td class='num'>9.72 / 10.19</td><td class='kv'>近20日动量 +36.8%｜近60日 +92.9%｜站上MA60 +42.8%｜MA20斜率 +8.5%｜均线多头 +21.9%｜接近近20日高 +0.0%｜上涨放量 40%｜量能放大 2.29｜回调缩量 1.41</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sz002811.html" target="_blank" rel="noopener noreferrer">002811</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sz002811.html" target="_blank" rel="noopener noreferrer">郑中设计</a></td><td class='num'>21.96</td><td class='num' style='font-weight:700'>87.2</td><td class='num'>8</td><td class='num'>17.28~17.98</td><td class='num'>13.13（RR 1.13）</td><td class='num'>23.45 / 24.56</td><td class='kv'>近20日动量 +61.2%｜近60日 +136.8%｜站上MA60 +60.4%｜MA20斜率 +30.1%｜均线多头 +52.1%｜接近近20日高 -1.7%｜上涨放量 35%｜量能放大 1.78｜回调缩量 1.40</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh603276.html" target="_blank" rel="noopener noreferrer">603276</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh603276.html" target="_blank" rel="noopener noreferrer">恒兴新材</a></td><td class='num'>20.2</td><td class='num' style='font-weight:700'>87.2</td><td class='num'>9</td><td class='num'>17.83~18.56</td><td class='num'>15.62（RR 1.03）</td><td class='num'>21.58 / 22.61</td><td class='kv'>近20日动量 +22.6%｜近60日 +49.1%｜站上MA60 +23.1%｜MA20斜率 +12.6%｜均线多头 +17.3%｜接近近20日高 -1.7%｜上涨放量 50%｜量能放大 3.00｜回调缩量 1.55</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh603386.html" target="_blank" rel="noopener noreferrer">603386</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh603386.html" target="_blank" rel="noopener noreferrer">骏亚科技</a></td><td class='num'>21.71</td><td class='num' style='font-weight:700'>87.2</td><td class='num'>10</td><td class='num'>17.98~18.71</td><td class='num'>14.47（RR 1.08）</td><td class='num'>23.31 / 24.42</td><td class='kv'>近20日动量 +25.9%｜近60日 +94.4%｜站上MA60 +44.7%｜MA20斜率 +27.4%｜均线多头 +31.7%｜接近近20日高 -2.2%｜上涨放量 50%｜量能放大 1.82｜回调缩量 1.75</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh688696.html" target="_blank" rel="noopener noreferrer">688696</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh688696.html" target="_blank" rel="noopener noreferrer">极米科技</a></td><td class='num'>92.4</td><td class='num' style='font-weight:700'>87.2</td><td class='num'>11</td><td class='num'>83.16~86.55</td><td class='num'>75.83（RR 1.06）</td><td class='num'>97.93 / 102.6</td><td class='kv'>近20日动量 +7.1%｜近60日 +47.3%｜站上MA60 +20.6%｜MA20斜率 +8.5%｜均线多头 +13.9%｜接近近20日高 -0.9%｜上涨放量 35%｜量能放大 1.63｜回调缩量 1.03</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sz003029.html" target="_blank" rel="noopener noreferrer">003029</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sz003029.html" target="_blank" rel="noopener noreferrer">吉大正元</a></td><td class='num'>26.61</td><td class='num' style='font-weight:700'>87.1</td><td class='num'>12</td><td class='num'>18.53~19.29</td><td class='num'>15.84（RR 2.51）</td><td class='num'>27.94 / 29.27</td><td class='kv'>近20日动量 +45.5%｜近60日 +75.3%｜站上MA60 +51.6%｜MA20斜率 +10.0%｜均线多头 +26.4%｜接近近20日高 +0.0%｜上涨放量 35%｜量能放大 6.12｜回调缩量 1.61</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh603755.html" target="_blank" rel="noopener noreferrer">603755</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh603755.html" target="_blank" rel="noopener noreferrer">日辰股份</a></td><td class='num'>30.09</td><td class='num' style='font-weight:700'>87.0</td><td class='num'>13</td><td class='num'>25.06~26.09</td><td class='num'>22.76（RR 1.69）</td><td class='num'>31.72 / 33.23</td><td class='kv'>近20日动量 +20.3%｜近60日 +41.7%｜站上MA60 +26.2%｜MA20斜率 +6.3%｜均线多头 +15.1%｜接近近20日高 -0.4%｜上涨放量 45%｜量能放大 2.95｜回调缩量 1.37</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sz002242.html" target="_blank" rel="noopener noreferrer">002242</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sz002242.html" target="_blank" rel="noopener noreferrer">九阳股份</a></td><td class='num'>20.56</td><td class='num' style='font-weight:700'>86.6</td><td class='num'>14</td><td class='num'>13.0~13.53</td><td class='num'>8.79（RR 1.7）</td><td class='num'>21.59 / 22.62</td><td class='kv'>近20日动量 +119.2%｜近60日 +146.8%｜站上MA60 +99.9%｜MA20斜率 +52.9%｜均线多头 +79.0%｜接近近20日高 +0.0%｜上涨放量 30%｜量能放大 4.35｜回调缩量 2.26</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sz300839.html" target="_blank" rel="noopener noreferrer">300839</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sz300839.html" target="_blank" rel="noopener noreferrer">博汇股份</a></td><td class='num'>14.36</td><td class='num' style='font-weight:700'>86.6</td><td class='num'>15</td><td class='num'>12.6~13.12</td><td class='num'>10.99（RR 0.97）</td><td class='num'>15.18 / 15.91</td><td class='kv'>近20日动量 +15.2%｜近60日 +37.7%｜站上MA60 +20.1%｜MA20斜率 +2.4%｜均线多头 +10.7%｜接近近20日高 -0.7%｜上涨放量 20%｜量能放大 1.85｜回调缩量 0.83</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sz300911.html" target="_blank" rel="noopener noreferrer">300911</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sz300911.html" target="_blank" rel="noopener noreferrer">亿田智能</a></td><td class='num'>33.4</td><td class='num' style='font-weight:700'>86.6</td><td class='num'>16</td><td class='num'>30.27~31.5</td><td class='num'>22.62（RR 0.82）</td><td class='num'>38.82 / 40.67</td><td class='kv'>近20日动量 +17.4%｜近60日 +74.9%｜站上MA60 +28.3%｜MA20斜率 +16.5%｜均线多头 +13.9%｜接近近20日高 -9.7%｜上涨放量 35%｜量能放大 1.31｜回调缩量 0.86</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh603956.html" target="_blank" rel="noopener noreferrer">603956</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh603956.html" target="_blank" rel="noopener noreferrer">威派格</a></td><td class='num'>8.07</td><td class='num' style='font-weight:700'>86.6</td><td class='num'>17</td><td class='num'>7.08~7.37</td><td class='num'>6.11（RR 0.98）</td><td class='num'>8.61 / 9.02</td><td class='kv'>近20日动量 +23.6%｜近60日 +54.3%｜站上MA60 +20.1%｜MA20斜率 +14.6%｜均线多头 +15.7%｜接近近20日高 -1.6%｜上涨放量 30%｜量能放大 1.20｜回调缩量 1.07</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sz301608.html" target="_blank" rel="noopener noreferrer">301608</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sz301608.html" target="_blank" rel="noopener noreferrer">博实结</a></td><td class='num'>57.37</td><td class='num' style='font-weight:700'>86.5</td><td class='num'>18</td><td class='num'>50.02~52.06</td><td class='num'>39.93（RR 0.83）</td><td class='num'>62.16 / 65.12</td><td class='kv'>近20日动量 +38.4%｜近60日 +36.7%｜站上MA60 +22.4%｜MA20斜率 +14.5%｜均线多头 +14.1%｜接近近20日高 -3.1%｜上涨放量 60%｜量能放大 2.79｜回调缩量 1.63</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh603818.html" target="_blank" rel="noopener noreferrer">603818</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh603818.html" target="_blank" rel="noopener noreferrer">曲美家居</a></td><td class='num'>4.69</td><td class='num' style='font-weight:700'>86.5</td><td class='num'>19</td><td class='num'>4.02~4.19</td><td class='num'>3.4（RR 1.15）</td><td class='num'>5.09 / 5.33</td><td class='kv'>近20日动量 +29.2%｜近60日 +58.4%｜站上MA60 +25.2%｜MA20斜率 +8.9%｜均线多头 +19.1%｜接近近20日高 -3.3%｜上涨放量 50%｜量能放大 1.66｜回调缩量 1.31</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sz301286.html" target="_blank" rel="noopener noreferrer">301286</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sz301286.html" target="_blank" rel="noopener noreferrer">侨源股份</a></td><td class='num'>52.19</td><td class='num' style='font-weight:700'>86.4</td><td class='num'>20</td><td class='num'>45.59~47.45</td><td class='num'>40.84（RR 1.2）</td><td class='num'>55.37 / 58.0</td><td class='kv'>近20日动量 +21.2%｜近60日 +39.9%｜站上MA60 +19.8%｜MA20斜率 +3.7%｜均线多头 +10.4%｜接近近20日高 -1.0%｜上涨放量 35%｜量能放大 2.11｜回调缩量 1.08</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh688228.html" target="_blank" rel="noopener noreferrer">688228</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh688228.html" target="_blank" rel="noopener noreferrer">开普云</a></td><td class='num'>94.42</td><td class='num' style='font-weight:700'>86.4</td><td class='num'>21</td><td class='num'>83.05~86.44</td><td class='num'>71.83（RR 0.97）</td><td class='num'>100.59 / 105.38</td><td class='kv'>近20日动量 +24.9%｜近60日 +52.7%｜站上MA60 +21.5%｜MA20斜率 +7.1%｜均线多头 +13.5%｜接近近20日高 -1.4%｜上涨放量 15%｜量能放大 1.26｜回调缩量 0.84</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh688018.html" target="_blank" rel="noopener noreferrer">688018</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh688018.html" target="_blank" rel="noopener noreferrer">乐鑫科技</a></td><td class='num'>140.72</td><td class='num' style='font-weight:700'>86.3</td><td class='num'>22</td><td class='num'>113.87~118.51</td><td class='num'>98.48（RR 1.55）</td><td class='num'>149.54 / 156.66</td><td class='kv'>近20日动量 +36.9%｜近60日 +37.7%｜站上MA60 +25.7%｜MA20斜率 +3.4%｜均线多头 +11.4%｜接近近20日高 -1.2%｜上涨放量 35%｜量能放大 3.00｜回调缩量 1.19</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sz301119.html" target="_blank" rel="noopener noreferrer">301119</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sz301119.html" target="_blank" rel="noopener noreferrer">正强股份</a></td><td class='num'>34.23</td><td class='num' style='font-weight:700'>86.2</td><td class='num'>23</td><td class='num'>28.06~29.21</td><td class='num'>22.73（RR 1.38）</td><td class='num'>38.12 / 39.93</td><td class='kv'>近20日动量 +41.0%｜近60日 +89.0%｜站上MA60 +39.7%｜MA20斜率 +16.6%｜均线多头 +29.4%｜接近近20日高 -5.7%｜上涨放量 40%｜量能放大 2.85｜回调缩量 1.36</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh688078.html" target="_blank" rel="noopener noreferrer">688078</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh688078.html" target="_blank" rel="noopener noreferrer">龙软科技</a></td><td class='num'>30.69</td><td class='num' style='font-weight:700'>86.2</td><td class='num'>24</td><td class='num'>28.9~30.07</td><td class='num'>24.92（RR 0.68）</td><td class='num'>33.58 / 35.18</td><td class='kv'>近20日动量 +15.9%｜近60日 +42.0%｜站上MA60 +20.0%｜MA20斜率 +17.6%｜均线多头 +14.5%｜接近近20日高 -4.0%｜上涨放量 50%｜量能放大 1.47｜回调缩量 1.24</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh688360.html" target="_blank" rel="noopener noreferrer">688360</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh688360.html" target="_blank" rel="noopener noreferrer">德马科技</a></td><td class='num'>18.31</td><td class='num' style='font-weight:700'>85.8</td><td class='num'>25</td><td class='num'>15.47~16.1</td><td class='num'>13.4（RR 1.31）</td><td class='num'>19.64 / 20.57</td><td class='kv'>近20日动量 +31.0%｜近60日 +32.7%｜站上MA60 +19.9%｜MA20斜率 +4.7%｜均线多头 +5.7%｜接近近20日高 -2.1%｜上涨放量 40%｜量能放大 4.60｜回调缩量 1.23</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh600316.html" target="_blank" rel="noopener noreferrer">600316</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh600316.html" target="_blank" rel="noopener noreferrer">洪都航空</a></td><td class='num'>37.46</td><td class='num' style='font-weight:700'>85.7</td><td class='num'>26</td><td class='num'>33.09~34.44</td><td class='num'>29.18（RR 1.16）</td><td class='num'>40.54 / 42.47</td><td class='kv'>近20日动量 +14.6%｜近60日 +41.4%｜站上MA60 +23.3%｜MA20斜率 +9.1%｜均线多头 +20.7%｜接近近20日高 -3.0%｜上涨放量 30%｜量能放大 1.44｜回调缩量 1.07</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh601595.html" target="_blank" rel="noopener noreferrer">601595</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh601595.html" target="_blank" rel="noopener noreferrer">上海电影</a></td><td class='num'>28.6</td><td class='num' style='font-weight:700'>85.7</td><td class='num'>27</td><td class='num'>24.55~25.55</td><td class='num'>21.63（RR 1.54）</td><td class='num'>31.61 / 33.11</td><td class='kv'>近20日动量 +22.4%｜近60日 +62.3%｜站上MA60 +40.2%｜MA20斜率 +33.6%｜均线多头 +38.7%｜接近近20日高 -5.0%｜上涨放量 35%｜量能放大 1.24｜回调缩量 1.20</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh603578.html" target="_blank" rel="noopener noreferrer">603578</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh603578.html" target="_blank" rel="noopener noreferrer">三星新材</a></td><td class='num'>15.18</td><td class='num' style='font-weight:700'>85.7</td><td class='num'>28</td><td class='num'>13.86~14.43</td><td class='num'>12.52（RR 0.86）</td><td class='num'>16.07 / 16.83</td><td class='kv'>近20日动量 +9.8%｜近60日 +38.8%｜站上MA60 +16.4%｜MA20斜率 +6.7%｜均线多头 +10.9%｜接近近20日高 -0.8%｜上涨放量 35%｜量能放大 2.45｜回调缩量 1.24</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh605058.html" target="_blank" rel="noopener noreferrer">605058</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh605058.html" target="_blank" rel="noopener noreferrer">澳弘电子</a></td><td class='num'>70.74</td><td class='num' style='font-weight:700'>85.7</td><td class='num'>29</td><td class='num'>55.34~57.6</td><td class='num'>35.21（RR 1.0）</td><td class='num'>79.99 / 83.8</td><td class='kv'>近20日动量 +93.1%｜近60日 +212.3%｜站上MA60 +92.9%｜MA20斜率 +98.4%｜均线多头 +87.4%｜接近近20日高 -7.1%｜上涨放量 75%｜量能放大 2.94｜回调缩量 2.35</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh603636.html" target="_blank" rel="noopener noreferrer">603636</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh603636.html" target="_blank" rel="noopener noreferrer">南威软件</a></td><td class='num'>8.89</td><td class='num' style='font-weight:700'>85.5</td><td class='num'>30</td><td class='num'>7.46~7.76</td><td class='num'>6.32（RR 1.09）</td><td class='num'>9.33 / 9.78</td><td class='kv'>近20日动量 +30.5%｜近60日 +45.5%｜站上MA60 +24.5%｜MA20斜率 +8.9%｜均线多头 +11.6%｜接近近20日高 +0.0%｜上涨放量 30%｜量能放大 3.30｜回调缩量 1.77</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh688517.html" target="_blank" rel="noopener noreferrer">688517</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh688517.html" target="_blank" rel="noopener noreferrer">金冠电气</a></td><td class='num'>21.85</td><td class='num' style='font-weight:700'>85.5</td><td class='num'>31</td><td class='num'>17.78~18.51</td><td class='num'>14.55（RR 1.36）</td><td class='num'>23.89 / 25.03</td><td class='kv'>近20日动量 +39.3%｜近60日 +49.6%｜站上MA60 +32.6%｜MA20斜率 +14.0%｜均线多头 +24.7%｜接近近20日高 -4.0%｜上涨放量 35%｜量能放大 2.19｜回调缩量 1.78</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sz301378.html" target="_blank" rel="noopener noreferrer">301378</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sz301378.html" target="_blank" rel="noopener noreferrer">通达海</a></td><td class='num'>27.65</td><td class='num' style='font-weight:700'>85.4</td><td class='num'>32</td><td class='num'>24.76~25.78</td><td class='num'>21.84（RR 0.89）</td><td class='num'>29.28 / 30.68</td><td class='kv'>近20日动量 +17.1%｜近60日 +25.9%｜站上MA60 +11.0%｜MA20斜率 +1.5%｜均线多头 +5.0%｜接近近20日高 -0.9%｜上涨放量 30%｜量能放大 2.28｜回调缩量 0.92</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh601857.html" target="_blank" rel="noopener noreferrer">601857</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh601857.html" target="_blank" rel="noopener noreferrer">中国石油</a></td><td class='num'>12.85</td><td class='num' style='font-weight:700'>85.4</td><td class='num'>33</td><td class='num'>11.28~11.74</td><td class='num'>10.11（RR 1.07）</td><td class='num'>13.5 / 14.15</td><td class='kv'>近20日动量 +19.2%｜近60日 +19.5%｜站上MA60 +16.7%｜MA20斜率 +5.4%｜均线多头 +15.2%｜接近近20日高 -0.1%｜上涨放量 45%｜量能放大 0.96｜回调缩量 0.99</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh603939.html" target="_blank" rel="noopener noreferrer">603939</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh603939.html" target="_blank" rel="noopener noreferrer">益丰药房</a></td><td class='num'>25.78</td><td class='num' style='font-weight:700'>85.4</td><td class='num'>34</td><td class='num'>23.05~24.0</td><td class='num'>20.99（RR 1.17）</td><td class='num'>27.5 / 28.81</td><td class='kv'>近20日动量 +15.3%｜近60日 +21.4%｜站上MA60 +12.2%｜MA20斜率 +2.9%｜均线多头 +11.0%｜接近近20日高 -1.6%｜上涨放量 45%｜量能放大 1.16｜回调缩量 0.98</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sz301487.html" target="_blank" rel="noopener noreferrer">301487</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sz301487.html" target="_blank" rel="noopener noreferrer">盟固利</a></td><td class='num'>19.24</td><td class='num' style='font-weight:700'>85.3</td><td class='num'>35</td><td class='num'>16.54~17.21</td><td class='num'>14.4（RR 1.26）</td><td class='num'>20.76 / 21.75</td><td class='kv'>近20日动量 +25.0%｜近60日 +32.9%｜站上MA60 +18.1%｜MA20斜率 +5.6%｜均线多头 +12.6%｜接近近20日高 -2.7%｜上涨放量 50%｜量能放大 2.66｜回调缩量 1.61</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sz300473.html" target="_blank" rel="noopener noreferrer">300473</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sz300473.html" target="_blank" rel="noopener noreferrer">德尔股份</a></td><td class='num'>36.61</td><td class='num' style='font-weight:700'>85.1</td><td class='num'>36</td><td class='num'>34.04~35.43</td><td class='num'>27.0（RR 0.61）</td><td class='num'>40.61 / 42.55</td><td class='kv'>近20日动量 +27.6%｜近60日 +72.9%｜站上MA60 +33.4%｜MA20斜率 +34.0%｜均线多头 +29.1%｜接近近20日高 -5.4%｜上涨放量 40%｜量能放大 1.35｜回调缩量 1.45</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh600435.html" target="_blank" rel="noopener noreferrer">600435</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh600435.html" target="_blank" rel="noopener noreferrer">北方导航</a></td><td class='num'>12.82</td><td class='num' style='font-weight:700'>85.1</td><td class='num'>37</td><td class='num'>11.21~11.66</td><td class='num'>10.36（RR 1.58）</td><td class='num'>13.73 / 14.39</td><td class='kv'>近20日动量 +12.5%｜近60日 +30.0%｜站上MA60 +16.1%｜MA20斜率 +2.8%｜均线多头 +9.2%｜接近近20日高 -2.0%｜上涨放量 25%｜量能放大 2.28｜回调缩量 0.95</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sz003006.html" target="_blank" rel="noopener noreferrer">003006</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sz003006.html" target="_blank" rel="noopener noreferrer">百亚股份</a></td><td class='num'>23.16</td><td class='num' style='font-weight:700'>85.0</td><td class='num'>38</td><td class='num'>21.89~23.4</td><td class='num'>16.98（RR 0.44）</td><td class='num'>26.23 / 27.48</td><td class='kv'>近20日动量 +20.6%｜近60日 +70.4%｜站上MA60 +36.2%｜MA20斜率 +49.2%｜均线多头 +38.1%｜接近近20日高 -7.3%｜上涨放量 60%｜量能放大 2.47｜回调缩量 2.13</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh603955.html" target="_blank" rel="noopener noreferrer">603955</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh603955.html" target="_blank" rel="noopener noreferrer">大千生态</a></td><td class='num'>25.1</td><td class='num' style='font-weight:700'>85.0</td><td class='num'>39</td><td class='num'>23.45~24.41</td><td class='num'>20.63（RR 0.9）</td><td class='num'>27.83 / 29.15</td><td class='kv'>近20日动量 +16.6%｜近60日 +39.1%｜站上MA60 +17.7%｜MA20斜率 +15.8%｜均线多头 +10.0%｜接近近20日高 -5.3%｜上涨放量 30%｜量能放大 1.38｜回调缩量 1.05</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sz300226.html" target="_blank" rel="noopener noreferrer">300226</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sz300226.html" target="_blank" rel="noopener noreferrer">上海钢联</a></td><td class='num'>18.39</td><td class='num' style='font-weight:700'>84.9</td><td class='num'>40</td><td class='num'>16.8~17.49</td><td class='num'>15.49（RR 0.93）</td><td class='num'>19.35 / 20.27</td><td class='kv'>近20日动量 +12.7%｜近60日 +20.7%｜站上MA60 +10.8%｜MA20斜率 +3.4%｜均线多头 +5.9%｜接近近20日高 -0.2%｜上涨放量 40%｜量能放大 2.12｜回调缩量 1.07</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh601328.html" target="_blank" rel="noopener noreferrer">601328</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh601328.html" target="_blank" rel="noopener noreferrer">交通银行</a></td><td class='num'>8.23</td><td class='num' style='font-weight:700'>84.8</td><td class='num'>41</td><td class='num'>7.62~7.93</td><td class='num'>7.16（RR 1.03）</td><td class='num'>8.72 / 9.13</td><td class='kv'>近20日动量 +8.0%｜近60日 +17.1%｜站上MA60 +12.0%｜MA20斜率 +7.0%｜均线多头 +10.8%｜接近近20日高 -0.8%｜上涨放量 50%｜量能放大 1.22｜回调缩量 1.06</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh688499.html" target="_blank" rel="noopener noreferrer">688499</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh688499.html" target="_blank" rel="noopener noreferrer">利元亨</a></td><td class='num'>44.75</td><td class='num' style='font-weight:700'>84.7</td><td class='num'>42</td><td class='num'>38.86~40.45</td><td class='num'>30.55（RR 0.98）</td><td class='num'>50.15 / 52.54</td><td class='kv'>近20日动量 +42.2%｜近60日 +37.4%｜站上MA60 +23.6%｜MA20斜率 +17.3%｜均线多头 +16.7%｜接近近20日高 -6.3%｜上涨放量 60%｜量能放大 2.06｜回调缩量 1.82</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh600560.html" target="_blank" rel="noopener noreferrer">600560</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh600560.html" target="_blank" rel="noopener noreferrer">金自天正</a></td><td class='num'>13.48</td><td class='num' style='font-weight:700'>84.6</td><td class='num'>43</td><td class='num'>11.52~11.99</td><td class='num'>10.34（RR 1.35）</td><td class='num'>14.23 / 14.91</td><td class='kv'>近20日动量 +21.1%｜近60日 +33.6%｜站上MA60 +19.3%｜MA20斜率 +3.5%｜均线多头 +13.7%｜接近近20日高 -0.5%｜上涨放量 35%｜量能放大 3.93｜回调缩量 1.76</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh603883.html" target="_blank" rel="noopener noreferrer">603883</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh603883.html" target="_blank" rel="noopener noreferrer">老百姓</a></td><td class='num'>14.67</td><td class='num' style='font-weight:700'>84.6</td><td class='num'>44</td><td class='num'>13.19~13.73</td><td class='num'>12.16（RR 1.27）</td><td class='num'>15.73 / 16.48</td><td class='kv'>近20日动量 +13.3%｜近60日 +21.3%｜站上MA60 +13.3%｜MA20斜率 +4.1%｜均线多头 +12.0%｜接近近20日高 -2.1%｜上涨放量 30%｜量能放大 1.09｜回调缩量 0.94</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sh688199.html" target="_blank" rel="noopener noreferrer">688199</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sh688199.html" target="_blank" rel="noopener noreferrer">久日新材</a></td><td class='num'>26.81</td><td class='num' style='font-weight:700'>84.6</td><td class='num'>45</td><td class='num'>25.24~26.27</td><td class='num'>22.39（RR 0.75）</td><td class='num'>29.2 / 30.59</td><td class='kv'>近20日动量 +15.1%｜近60日 +39.4%｜站上MA60 +13.5%｜MA20斜率 +10.0%｜均线多头 +12.9%｜接近近20日高 -3.6%｜上涨放量 45%｜量能放大 1.08｜回调缩量 1.20</td><td><span class='tag ob'>观察</span></td></tr><tr><td><a href="https://quote.eastmoney.com/sz301356.html" target="_blank" rel="noopener noreferrer">301356</a></td><td><a class="emlk" href="https://quote.eastmoney.com/sz301356.html" target="_blank" rel="noopener noreferrer">天振股份</a></td><td class='num'>22.8</td><td class='num' style='font-weight:700'>84.5</td><td class='num'>46</td><td class='num'>19.87~20.68</td><td class='num'>17.47（RR 1.14）</td><td class='num'>24.32 / 25.48</td><td class='kv'>近20日动量 +21.9%｜近60日 +47.7%｜站上MA60 +17.2%｜MA20斜率 +1.5%｜均线多头 +10.0%｜接近近20日高 -1.6%｜上涨放量 35%｜量能放大 1.79｜回调缩量 1.19</td><td><span class='tag ob'>观察</span></td></tr></tbody></table></div>
+<div class="sub">主升分 = 先验固定因子在<b>当日全市场域内</b>的横截面分位（0~100，越高=越像主升形态=历史胜率代理越靠前），只在同日内可比。
+买卖点为量化参考区间。<b>所有标的均为观察候选，非买入信号。</b></div></div>
+
+<h2>二、逐票明细（前 40 只）</h2>
+<div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh603236.html" target="_blank" rel="noopener noreferrer">603236</a> <a class="emlk" href="https://quote.eastmoney.com/sh603236.html" target="_blank" rel="noopener noreferrer">移远通信</a> —— 主升分 88.4/100（全市场第 1 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +21.4%｜近60日 +59.0%｜站上MA60 +25.9%｜MA20斜率 +18.9%｜均线多头 +15.9%｜接近近20日高 -1.4%｜上涨放量 35%｜量能放大 1.93｜回调缩量 1.09</div><div class='bp'>买区 69.79~72.63｜结构位止损 60.81（RR 0.71）｜目标 T1/T2 81.06 / 84.92｜箱体 63.5%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sz002164.html" target="_blank" rel="noopener noreferrer">002164</a> <a class="emlk" href="https://quote.eastmoney.com/sz002164.html" target="_blank" rel="noopener noreferrer">宁波东力</a> —— 主升分 87.8/100（全市场第 2 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +56.1%｜近60日 +60.3%｜站上MA60 +39.7%｜MA20斜率 +15.0%｜均线多头 +23.7%｜接近近20日高 +0.0%｜上涨放量 50%｜量能放大 3.18｜回调缩量 1.89</div><div class='bp'>买区 12.3~12.81｜结构位止损 9.77（RR 1.37）｜目标 T1/T2 16.97 / 17.78｜箱体 79.8%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sz301529.html" target="_blank" rel="noopener noreferrer">301529</a> <a class="emlk" href="https://quote.eastmoney.com/sz301529.html" target="_blank" rel="noopener noreferrer">福赛科技</a> —— 主升分 87.8/100（全市场第 3 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +23.6%｜近60日 +78.7%｜站上MA60 +32.7%｜MA20斜率 +14.0%｜均线多头 +15.9%｜接近近20日高 -4.2%｜上涨放量 35%｜量能放大 1.40｜回调缩量 0.98</div><div class='bp'>买区 126.2~131.35｜结构位止损 104.76（RR 1.0）｜目标 T1/T2 158.03 / 165.55｜箱体 65.0%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh605258.html" target="_blank" rel="noopener noreferrer">605258</a> <a class="emlk" href="https://quote.eastmoney.com/sh605258.html" target="_blank" rel="noopener noreferrer">协和电子</a> —— 主升分 87.7/100（全市场第 4 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +31.4%｜近60日 +107.6%｜站上MA60 +44.6%｜MA20斜率 +33.9%｜均线多头 +33.0%｜接近近20日高 -2.4%｜上涨放量 50%｜量能放大 2.94｜回调缩量 1.89</div><div class='bp'>买区 39.43~41.04｜结构位止损 33.56（RR 1.14）｜目标 T1/T2 49.55 / 51.91｜箱体 68.1%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sz301550.html" target="_blank" rel="noopener noreferrer">301550</a> <a class="emlk" href="https://quote.eastmoney.com/sz301550.html" target="_blank" rel="noopener noreferrer">斯菱智驱</a> —— 主升分 87.6/100（全市场第 5 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +25.3%｜近60日 +58.8%｜站上MA60 +29.7%｜MA20斜率 +8.3%｜均线多头 +12.3%｜接近近20日高 -3.4%｜上涨放量 40%｜量能放大 1.88｜回调缩量 1.06</div><div class='bp'>买区 93.89~97.72｜结构位止损 80.83（RR 1.47）｜目标 T1/T2 122.62 / 128.46｜箱体 67.1%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sz001211.html" target="_blank" rel="noopener noreferrer">001211</a> <a class="emlk" href="https://quote.eastmoney.com/sz001211.html" target="_blank" rel="noopener noreferrer">双枪科技</a> —— 主升分 87.4/100（全市场第 6 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +28.5%｜近60日 +47.4%｜站上MA60 +25.6%｜MA20斜率 +12.4%｜均线多头 +18.5%｜接近近20日高 -1.8%｜上涨放量 50%｜量能放大 2.61｜回调缩量 1.44</div><div class='bp'>买区 26.17~27.24｜结构位止损 21.46（RR 0.79）｜目标 T1/T2 31.8 / 33.32｜箱体 69.9%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sz002724.html" target="_blank" rel="noopener noreferrer">002724</a> <a class="emlk" href="https://quote.eastmoney.com/sz002724.html" target="_blank" rel="noopener noreferrer">海洋王</a> —— 主升分 87.4/100（全市场第 7 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +36.8%｜近60日 +92.9%｜站上MA60 +42.8%｜MA20斜率 +8.5%｜均线多头 +21.9%｜接近近20日高 +0.0%｜上涨放量 40%｜量能放大 2.29｜回调缩量 1.41</div><div class='bp'>买区 7.14~7.44｜结构位止损 6.21（RR 1.86）｜目标 T1/T2 9.72 / 10.19｜箱体 76.6%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sz002811.html" target="_blank" rel="noopener noreferrer">002811</a> <a class="emlk" href="https://quote.eastmoney.com/sz002811.html" target="_blank" rel="noopener noreferrer">郑中设计</a> —— 主升分 87.2/100（全市场第 8 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +61.2%｜近60日 +136.8%｜站上MA60 +60.4%｜MA20斜率 +30.1%｜均线多头 +52.1%｜接近近20日高 -1.7%｜上涨放量 35%｜量能放大 1.78｜回调缩量 1.40</div><div class='bp'>买区 17.28~17.98｜结构位止损 13.13（RR 1.13）｜目标 T1/T2 23.45 / 24.56｜箱体 77.3%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh603276.html" target="_blank" rel="noopener noreferrer">603276</a> <a class="emlk" href="https://quote.eastmoney.com/sh603276.html" target="_blank" rel="noopener noreferrer">恒兴新材</a> —— 主升分 87.2/100（全市场第 9 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +22.6%｜近60日 +49.1%｜站上MA60 +23.1%｜MA20斜率 +12.6%｜均线多头 +17.3%｜接近近20日高 -1.7%｜上涨放量 50%｜量能放大 3.00｜回调缩量 1.55</div><div class='bp'>买区 17.83~18.56｜结构位止损 15.62（RR 1.03）｜目标 T1/T2 21.58 / 22.61｜箱体 65.5%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh603386.html" target="_blank" rel="noopener noreferrer">603386</a> <a class="emlk" href="https://quote.eastmoney.com/sh603386.html" target="_blank" rel="noopener noreferrer">骏亚科技</a> —— 主升分 87.2/100（全市场第 10 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +25.9%｜近60日 +94.4%｜站上MA60 +44.7%｜MA20斜率 +27.4%｜均线多头 +31.7%｜接近近20日高 -2.2%｜上涨放量 50%｜量能放大 1.82｜回调缩量 1.75</div><div class='bp'>买区 17.98~18.71｜结构位止损 14.47（RR 1.08）｜目标 T1/T2 23.31 / 24.42｜箱体 72.8%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh688696.html" target="_blank" rel="noopener noreferrer">688696</a> <a class="emlk" href="https://quote.eastmoney.com/sh688696.html" target="_blank" rel="noopener noreferrer">极米科技</a> —— 主升分 87.2/100（全市场第 11 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +7.1%｜近60日 +47.3%｜站上MA60 +20.6%｜MA20斜率 +8.5%｜均线多头 +13.9%｜接近近20日高 -0.9%｜上涨放量 35%｜量能放大 1.63｜回调缩量 1.03</div><div class='bp'>买区 83.16~86.55｜结构位止损 75.83（RR 1.06）｜目标 T1/T2 97.93 / 102.6｜箱体 61.9%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sz003029.html" target="_blank" rel="noopener noreferrer">003029</a> <a class="emlk" href="https://quote.eastmoney.com/sz003029.html" target="_blank" rel="noopener noreferrer">吉大正元</a> —— 主升分 87.1/100（全市场第 12 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +45.5%｜近60日 +75.3%｜站上MA60 +51.6%｜MA20斜率 +10.0%｜均线多头 +26.4%｜接近近20日高 +0.0%｜上涨放量 35%｜量能放大 6.12｜回调缩量 1.61</div><div class='bp'>买区 18.53~19.29｜结构位止损 15.84（RR 2.51）｜目标 T1/T2 27.94 / 29.27｜箱体 80.2%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh603755.html" target="_blank" rel="noopener noreferrer">603755</a> <a class="emlk" href="https://quote.eastmoney.com/sh603755.html" target="_blank" rel="noopener noreferrer">日辰股份</a> —— 主升分 87.0/100（全市场第 13 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +20.3%｜近60日 +41.7%｜站上MA60 +26.2%｜MA20斜率 +6.3%｜均线多头 +15.1%｜接近近20日高 -0.4%｜上涨放量 45%｜量能放大 2.95｜回调缩量 1.37</div><div class='bp'>买区 25.06~26.09｜结构位止损 22.76（RR 1.69）｜目标 T1/T2 31.72 / 33.23｜箱体 70.0%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sz002242.html" target="_blank" rel="noopener noreferrer">002242</a> <a class="emlk" href="https://quote.eastmoney.com/sz002242.html" target="_blank" rel="noopener noreferrer">九阳股份</a> —— 主升分 86.6/100（全市场第 14 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +119.2%｜近60日 +146.8%｜站上MA60 +99.9%｜MA20斜率 +52.9%｜均线多头 +79.0%｜接近近20日高 +0.0%｜上涨放量 30%｜量能放大 4.35｜回调缩量 2.26</div><div class='bp'>买区 13.0~13.53｜结构位止损 8.79（RR 1.7）｜目标 T1/T2 21.59 / 22.62｜箱体 85.1%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sz300839.html" target="_blank" rel="noopener noreferrer">300839</a> <a class="emlk" href="https://quote.eastmoney.com/sz300839.html" target="_blank" rel="noopener noreferrer">博汇股份</a> —— 主升分 86.6/100（全市场第 15 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +15.2%｜近60日 +37.7%｜站上MA60 +20.1%｜MA20斜率 +2.4%｜均线多头 +10.7%｜接近近20日高 -0.7%｜上涨放量 20%｜量能放大 1.85｜回调缩量 0.83</div><div class='bp'>买区 12.6~13.12｜结构位止损 10.99（RR 0.97）｜目标 T1/T2 15.18 / 15.91｜箱体 68.5%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sz300911.html" target="_blank" rel="noopener noreferrer">300911</a> <a class="emlk" href="https://quote.eastmoney.com/sz300911.html" target="_blank" rel="noopener noreferrer">亿田智能</a> —— 主升分 86.6/100（全市场第 16 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +17.4%｜近60日 +74.9%｜站上MA60 +28.3%｜MA20斜率 +16.5%｜均线多头 +13.9%｜接近近20日高 -9.7%｜上涨放量 35%｜量能放大 1.31｜回调缩量 0.86</div><div class='bp'>买区 30.27~31.5｜结构位止损 22.62（RR 0.82）｜目标 T1/T2 38.82 / 40.67｜箱体 59.7%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh603956.html" target="_blank" rel="noopener noreferrer">603956</a> <a class="emlk" href="https://quote.eastmoney.com/sh603956.html" target="_blank" rel="noopener noreferrer">威派格</a> —— 主升分 86.6/100（全市场第 17 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +23.6%｜近60日 +54.3%｜站上MA60 +20.1%｜MA20斜率 +14.6%｜均线多头 +15.7%｜接近近20日高 -1.6%｜上涨放量 30%｜量能放大 1.20｜回调缩量 1.07</div><div class='bp'>买区 7.08~7.37｜结构位止损 6.11（RR 0.98）｜目标 T1/T2 8.61 / 9.02｜箱体 67.4%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sz301608.html" target="_blank" rel="noopener noreferrer">301608</a> <a class="emlk" href="https://quote.eastmoney.com/sz301608.html" target="_blank" rel="noopener noreferrer">博实结</a> —— 主升分 86.5/100（全市场第 18 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +38.4%｜近60日 +36.7%｜站上MA60 +22.4%｜MA20斜率 +14.5%｜均线多头 +14.1%｜接近近20日高 -3.1%｜上涨放量 60%｜量能放大 2.79｜回调缩量 1.63</div><div class='bp'>买区 50.02~52.06｜结构位止损 39.93（RR 0.83）｜目标 T1/T2 62.16 / 65.12｜箱体 69.2%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh603818.html" target="_blank" rel="noopener noreferrer">603818</a> <a class="emlk" href="https://quote.eastmoney.com/sh603818.html" target="_blank" rel="noopener noreferrer">曲美家居</a> —— 主升分 86.5/100（全市场第 19 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +29.2%｜近60日 +58.4%｜站上MA60 +25.2%｜MA20斜率 +8.9%｜均线多头 +19.1%｜接近近20日高 -3.3%｜上涨放量 50%｜量能放大 1.66｜回调缩量 1.31</div><div class='bp'>买区 4.02~4.19｜结构位止损 3.4（RR 1.15）｜目标 T1/T2 5.09 / 5.33｜箱体 66.8%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sz301286.html" target="_blank" rel="noopener noreferrer">301286</a> <a class="emlk" href="https://quote.eastmoney.com/sz301286.html" target="_blank" rel="noopener noreferrer">侨源股份</a> —— 主升分 86.4/100（全市场第 20 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +21.2%｜近60日 +39.9%｜站上MA60 +19.8%｜MA20斜率 +3.7%｜均线多头 +10.4%｜接近近20日高 -1.0%｜上涨放量 35%｜量能放大 2.11｜回调缩量 1.08</div><div class='bp'>买区 45.59~47.45｜结构位止损 40.84（RR 1.2）｜目标 T1/T2 55.37 / 58.0｜箱体 66.1%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh688228.html" target="_blank" rel="noopener noreferrer">688228</a> <a class="emlk" href="https://quote.eastmoney.com/sh688228.html" target="_blank" rel="noopener noreferrer">开普云</a> —— 主升分 86.4/100（全市场第 21 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +24.9%｜近60日 +52.7%｜站上MA60 +21.5%｜MA20斜率 +7.1%｜均线多头 +13.5%｜接近近20日高 -1.4%｜上涨放量 15%｜量能放大 1.26｜回调缩量 0.84</div><div class='bp'>买区 83.05~86.44｜结构位止损 71.83（RR 0.97）｜目标 T1/T2 100.59 / 105.38｜箱体 67.3%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh688018.html" target="_blank" rel="noopener noreferrer">688018</a> <a class="emlk" href="https://quote.eastmoney.com/sh688018.html" target="_blank" rel="noopener noreferrer">乐鑫科技</a> —— 主升分 86.3/100（全市场第 22 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +36.9%｜近60日 +37.7%｜站上MA60 +25.7%｜MA20斜率 +3.4%｜均线多头 +11.4%｜接近近20日高 -1.2%｜上涨放量 35%｜量能放大 3.00｜回调缩量 1.19</div><div class='bp'>买区 113.87~118.51｜结构位止损 98.48（RR 1.55）｜目标 T1/T2 149.54 / 156.66｜箱体 72.6%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sz301119.html" target="_blank" rel="noopener noreferrer">301119</a> <a class="emlk" href="https://quote.eastmoney.com/sz301119.html" target="_blank" rel="noopener noreferrer">正强股份</a> —— 主升分 86.2/100（全市场第 23 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +41.0%｜近60日 +89.0%｜站上MA60 +39.7%｜MA20斜率 +16.6%｜均线多头 +29.4%｜接近近20日高 -5.7%｜上涨放量 40%｜量能放大 2.85｜回调缩量 1.36</div><div class='bp'>买区 28.06~29.21｜结构位止损 22.73（RR 1.38）｜目标 T1/T2 38.12 / 39.93｜箱体 66.9%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh688078.html" target="_blank" rel="noopener noreferrer">688078</a> <a class="emlk" href="https://quote.eastmoney.com/sh688078.html" target="_blank" rel="noopener noreferrer">龙软科技</a> —— 主升分 86.2/100（全市场第 24 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +15.9%｜近60日 +42.0%｜站上MA60 +20.0%｜MA20斜率 +17.6%｜均线多头 +14.5%｜接近近20日高 -4.0%｜上涨放量 50%｜量能放大 1.47｜回调缩量 1.24</div><div class='bp'>买区 28.9~30.07｜结构位止损 24.92（RR 0.68）｜目标 T1/T2 33.58 / 35.18｜箱体 56.2%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh688360.html" target="_blank" rel="noopener noreferrer">688360</a> <a class="emlk" href="https://quote.eastmoney.com/sh688360.html" target="_blank" rel="noopener noreferrer">德马科技</a> —— 主升分 85.8/100（全市场第 25 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +31.0%｜近60日 +32.7%｜站上MA60 +19.9%｜MA20斜率 +4.7%｜均线多头 +5.7%｜接近近20日高 -2.1%｜上涨放量 40%｜量能放大 4.60｜回调缩量 1.23</div><div class='bp'>买区 15.47~16.1｜结构位止损 13.4（RR 1.31）｜目标 T1/T2 19.64 / 20.57｜箱体 68.5%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh600316.html" target="_blank" rel="noopener noreferrer">600316</a> <a class="emlk" href="https://quote.eastmoney.com/sh600316.html" target="_blank" rel="noopener noreferrer">洪都航空</a> —— 主升分 85.7/100（全市场第 26 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +14.6%｜近60日 +41.4%｜站上MA60 +23.3%｜MA20斜率 +9.1%｜均线多头 +20.7%｜接近近20日高 -3.0%｜上涨放量 30%｜量能放大 1.44｜回调缩量 1.07</div><div class='bp'>买区 33.09~34.44｜结构位止损 29.18（RR 1.16）｜目标 T1/T2 40.54 / 42.47｜箱体 62.3%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh601595.html" target="_blank" rel="noopener noreferrer">601595</a> <a class="emlk" href="https://quote.eastmoney.com/sh601595.html" target="_blank" rel="noopener noreferrer">上海电影</a> —— 主升分 85.7/100（全市场第 27 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +22.4%｜近60日 +62.3%｜站上MA60 +40.2%｜MA20斜率 +33.6%｜均线多头 +38.7%｜接近近20日高 -5.0%｜上涨放量 35%｜量能放大 1.24｜回调缩量 1.20</div><div class='bp'>买区 24.55~25.55｜结构位止损 21.63（RR 1.54）｜目标 T1/T2 31.61 / 33.11｜箱体 60.7%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh603578.html" target="_blank" rel="noopener noreferrer">603578</a> <a class="emlk" href="https://quote.eastmoney.com/sh603578.html" target="_blank" rel="noopener noreferrer">三星新材</a> —— 主升分 85.7/100（全市场第 28 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +9.8%｜近60日 +38.8%｜站上MA60 +16.4%｜MA20斜率 +6.7%｜均线多头 +10.9%｜接近近20日高 -0.8%｜上涨放量 35%｜量能放大 2.45｜回调缩量 1.24</div><div class='bp'>买区 13.86~14.43｜结构位止损 12.52（RR 0.86）｜目标 T1/T2 16.07 / 16.83｜箱体 61.7%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh605058.html" target="_blank" rel="noopener noreferrer">605058</a> <a class="emlk" href="https://quote.eastmoney.com/sh605058.html" target="_blank" rel="noopener noreferrer">澳弘电子</a> —— 主升分 85.7/100（全市场第 29 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +93.1%｜近60日 +212.3%｜站上MA60 +92.9%｜MA20斜率 +98.4%｜均线多头 +87.4%｜接近近20日高 -7.1%｜上涨放量 75%｜量能放大 2.94｜回调缩量 2.35</div><div class='bp'>买区 55.34~57.6｜结构位止损 35.21（RR 1.0）｜目标 T1/T2 79.99 / 83.8｜箱体 73.1%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh603636.html" target="_blank" rel="noopener noreferrer">603636</a> <a class="emlk" href="https://quote.eastmoney.com/sh603636.html" target="_blank" rel="noopener noreferrer">南威软件</a> —— 主升分 85.5/100（全市场第 30 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +30.5%｜近60日 +45.5%｜站上MA60 +24.5%｜MA20斜率 +8.9%｜均线多头 +11.6%｜接近近20日高 +0.0%｜上涨放量 30%｜量能放大 3.30｜回调缩量 1.77</div><div class='bp'>买区 7.46~7.76｜结构位止损 6.32（RR 1.09）｜目标 T1/T2 9.33 / 9.78｜箱体 74.3%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh688517.html" target="_blank" rel="noopener noreferrer">688517</a> <a class="emlk" href="https://quote.eastmoney.com/sh688517.html" target="_blank" rel="noopener noreferrer">金冠电气</a> —— 主升分 85.5/100（全市场第 31 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +39.3%｜近60日 +49.6%｜站上MA60 +32.6%｜MA20斜率 +14.0%｜均线多头 +24.7%｜接近近20日高 -4.0%｜上涨放量 35%｜量能放大 2.19｜回调缩量 1.78</div><div class='bp'>买区 17.78~18.51｜结构位止损 14.55（RR 1.36）｜目标 T1/T2 23.89 / 25.03｜箱体 69.7%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sz301378.html" target="_blank" rel="noopener noreferrer">301378</a> <a class="emlk" href="https://quote.eastmoney.com/sz301378.html" target="_blank" rel="noopener noreferrer">通达海</a> —— 主升分 85.4/100（全市场第 32 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +17.1%｜近60日 +25.9%｜站上MA60 +11.0%｜MA20斜率 +1.5%｜均线多头 +5.0%｜接近近20日高 -0.9%｜上涨放量 30%｜量能放大 2.28｜回调缩量 0.92</div><div class='bp'>买区 24.76~25.78｜结构位止损 21.84（RR 0.89）｜目标 T1/T2 29.28 / 30.68｜箱体 65.7%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh601857.html" target="_blank" rel="noopener noreferrer">601857</a> <a class="emlk" href="https://quote.eastmoney.com/sh601857.html" target="_blank" rel="noopener noreferrer">中国石油</a> —— 主升分 85.4/100（全市场第 33 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +19.2%｜近60日 +19.5%｜站上MA60 +16.7%｜MA20斜率 +5.4%｜均线多头 +15.2%｜接近近20日高 -0.1%｜上涨放量 45%｜量能放大 0.96｜回调缩量 0.99</div><div class='bp'>买区 11.28~11.74｜结构位止损 10.11（RR 1.07）｜目标 T1/T2 13.5 / 14.15｜箱体 67.8%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh603939.html" target="_blank" rel="noopener noreferrer">603939</a> <a class="emlk" href="https://quote.eastmoney.com/sh603939.html" target="_blank" rel="noopener noreferrer">益丰药房</a> —— 主升分 85.4/100（全市场第 34 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +15.3%｜近60日 +21.4%｜站上MA60 +12.2%｜MA20斜率 +2.9%｜均线多头 +11.0%｜接近近20日高 -1.6%｜上涨放量 45%｜量能放大 1.16｜回调缩量 0.98</div><div class='bp'>买区 23.05~24.0｜结构位止损 20.99（RR 1.17）｜目标 T1/T2 27.5 / 28.81｜箱体 61.3%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sz301487.html" target="_blank" rel="noopener noreferrer">301487</a> <a class="emlk" href="https://quote.eastmoney.com/sz301487.html" target="_blank" rel="noopener noreferrer">盟固利</a> —— 主升分 85.3/100（全市场第 35 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +25.0%｜近60日 +32.9%｜站上MA60 +18.1%｜MA20斜率 +5.6%｜均线多头 +12.6%｜接近近20日高 -2.7%｜上涨放量 50%｜量能放大 2.66｜回调缩量 1.61</div><div class='bp'>买区 16.54~17.21｜结构位止损 14.4（RR 1.26）｜目标 T1/T2 20.76 / 21.75｜箱体 65.9%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sz300473.html" target="_blank" rel="noopener noreferrer">300473</a> <a class="emlk" href="https://quote.eastmoney.com/sz300473.html" target="_blank" rel="noopener noreferrer">德尔股份</a> —— 主升分 85.1/100（全市场第 36 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +27.6%｜近60日 +72.9%｜站上MA60 +33.4%｜MA20斜率 +34.0%｜均线多头 +29.1%｜接近近20日高 -5.4%｜上涨放量 40%｜量能放大 1.35｜回调缩量 1.45</div><div class='bp'>买区 34.04~35.43｜结构位止损 27.0（RR 0.61）｜目标 T1/T2 40.61 / 42.55｜箱体 61.8%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh600435.html" target="_blank" rel="noopener noreferrer">600435</a> <a class="emlk" href="https://quote.eastmoney.com/sh600435.html" target="_blank" rel="noopener noreferrer">北方导航</a> —— 主升分 85.1/100（全市场第 37 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +12.5%｜近60日 +30.0%｜站上MA60 +16.1%｜MA20斜率 +2.8%｜均线多头 +9.2%｜接近近20日高 -2.0%｜上涨放量 25%｜量能放大 2.28｜回调缩量 0.95</div><div class='bp'>买区 11.21~11.66｜结构位止损 10.36（RR 1.58）｜目标 T1/T2 13.73 / 14.39｜箱体 61.0%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sz003006.html" target="_blank" rel="noopener noreferrer">003006</a> <a class="emlk" href="https://quote.eastmoney.com/sz003006.html" target="_blank" rel="noopener noreferrer">百亚股份</a> —— 主升分 85.0/100（全市场第 38 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +20.6%｜近60日 +70.4%｜站上MA60 +36.2%｜MA20斜率 +49.2%｜均线多头 +38.1%｜接近近20日高 -7.3%｜上涨放量 60%｜量能放大 2.47｜回调缩量 2.13</div><div class='bp'>买区 21.89~23.4｜结构位止损 16.98（RR 0.44）｜目标 T1/T2 26.23 / 27.48｜箱体 58.9%（买区内·可买） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh603955.html" target="_blank" rel="noopener noreferrer">603955</a> <a class="emlk" href="https://quote.eastmoney.com/sh603955.html" target="_blank" rel="noopener noreferrer">大千生态</a> —— 主升分 85.0/100（全市场第 39 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +16.6%｜近60日 +39.1%｜站上MA60 +17.7%｜MA20斜率 +15.8%｜均线多头 +10.0%｜接近近20日高 -5.3%｜上涨放量 30%｜量能放大 1.38｜回调缩量 1.05</div><div class='bp'>买区 23.45~24.41｜结构位止损 20.63（RR 0.9）｜目标 T1/T2 27.83 / 29.15｜箱体 52.5%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sz300226.html" target="_blank" rel="noopener noreferrer">300226</a> <a class="emlk" href="https://quote.eastmoney.com/sz300226.html" target="_blank" rel="noopener noreferrer">上海钢联</a> —— 主升分 84.9/100（全市场第 40 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +12.7%｜近60日 +20.7%｜站上MA60 +10.8%｜MA20斜率 +3.4%｜均线多头 +5.9%｜接近近20日高 -0.2%｜上涨放量 40%｜量能放大 2.12｜回调缩量 1.07</div><div class='bp'>买区 16.8~17.49｜结构位止损 15.49（RR 0.93）｜目标 T1/T2 19.35 / 20.27｜箱体 60.7%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh601328.html" target="_blank" rel="noopener noreferrer">601328</a> <a class="emlk" href="https://quote.eastmoney.com/sh601328.html" target="_blank" rel="noopener noreferrer">交通银行</a> —— 主升分 84.8/100（全市场第 41 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +8.0%｜近60日 +17.1%｜站上MA60 +12.0%｜MA20斜率 +7.0%｜均线多头 +10.8%｜接近近20日高 -0.8%｜上涨放量 50%｜量能放大 1.22｜回调缩量 1.06</div><div class='bp'>买区 7.62~7.93｜结构位止损 7.16（RR 1.03）｜目标 T1/T2 8.72 / 9.13｜箱体 54.3%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh688499.html" target="_blank" rel="noopener noreferrer">688499</a> <a class="emlk" href="https://quote.eastmoney.com/sh688499.html" target="_blank" rel="noopener noreferrer">利元亨</a> —— 主升分 84.7/100（全市场第 42 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +42.2%｜近60日 +37.4%｜站上MA60 +23.6%｜MA20斜率 +17.3%｜均线多头 +16.7%｜接近近20日高 -6.3%｜上涨放量 60%｜量能放大 2.06｜回调缩量 1.82</div><div class='bp'>买区 38.86~40.45｜结构位止损 30.55（RR 0.98）｜目标 T1/T2 50.15 / 52.54｜箱体 64.6%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh600560.html" target="_blank" rel="noopener noreferrer">600560</a> <a class="emlk" href="https://quote.eastmoney.com/sh600560.html" target="_blank" rel="noopener noreferrer">金自天正</a> —— 主升分 84.6/100（全市场第 43 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +21.1%｜近60日 +33.6%｜站上MA60 +19.3%｜MA20斜率 +3.5%｜均线多头 +13.7%｜接近近20日高 -0.5%｜上涨放量 35%｜量能放大 3.93｜回调缩量 1.76</div><div class='bp'>买区 11.52~11.99｜结构位止损 10.34（RR 1.35）｜目标 T1/T2 14.23 / 14.91｜箱体 68.7%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh603883.html" target="_blank" rel="noopener noreferrer">603883</a> <a class="emlk" href="https://quote.eastmoney.com/sh603883.html" target="_blank" rel="noopener noreferrer">老百姓</a> —— 主升分 84.6/100（全市场第 44 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +13.3%｜近60日 +21.3%｜站上MA60 +13.3%｜MA20斜率 +4.1%｜均线多头 +12.0%｜接近近20日高 -2.1%｜上涨放量 30%｜量能放大 1.09｜回调缩量 0.94</div><div class='bp'>买区 13.19~13.73｜结构位止损 12.16（RR 1.27）｜目标 T1/T2 15.73 / 16.48｜箱体 58.1%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sh688199.html" target="_blank" rel="noopener noreferrer">688199</a> <a class="emlk" href="https://quote.eastmoney.com/sh688199.html" target="_blank" rel="noopener noreferrer">久日新材</a> —— 主升分 84.6/100（全市场第 45 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +15.1%｜近60日 +39.4%｜站上MA60 +13.5%｜MA20斜率 +10.0%｜均线多头 +12.9%｜接近近20日高 -3.6%｜上涨放量 45%｜量能放大 1.08｜回调缩量 1.20</div><div class='bp'>买区 25.24~26.27｜结构位止损 22.39（RR 0.75）｜目标 T1/T2 29.2 / 30.59｜箱体 53.9%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div><div class='case'><div class='h'>🔎 <a href="https://quote.eastmoney.com/sz301356.html" target="_blank" rel="noopener noreferrer">301356</a> <a class="emlk" href="https://quote.eastmoney.com/sz301356.html" target="_blank" rel="noopener noreferrer">天振股份</a> —— 主升分 84.5/100（全市场第 46 名 · 胜率代理最靠前）</div><div class='kv'>近20日动量 +21.9%｜近60日 +47.7%｜站上MA60 +17.2%｜MA20斜率 +1.5%｜均线多头 +10.0%｜接近近20日高 -1.6%｜上涨放量 35%｜量能放大 1.79｜回调缩量 1.19</div><div class='bp'>买区 19.87~20.68｜结构位止损 17.47（RR 1.14）｜目标 T1/T2 24.32 / 25.48｜箱体 66.5%（持有·待涨） <span class='tag ob'>观察候选·非可执行</span></div></div>
+
+<h2>三、为什么「精中取精」仍不能当出票</h2>
+<div class="card kv">
+① <b>胜率是档位统计量，不是逐票属性</b>：单只股票单次前向是「赚/亏」二值，谈不上「率」；
+   硬算逐票胜率等于用样本内数据拟合，是过拟合。本页的「胜率」单位是<b>档</b>（前 5% 整体 ~67%）。<br>
+② <b>胜率≠edge</b>：胜率高只说明「涨的次数多」，但若「涨时赚 1%、跌时亏 3%」，整体仍亏。
+   该档样本外 edge 为负即此理。<br>
+③ <b>样本外才是真钱</b>：第五道闸（符号一致 + 全频 R3≥95%）+ 成本闸（跨过 0.15pp 双边成本）
+   是出票的硬门槛；本档两关都不达 → fail-safe 空仓。<br>
+④ <b>唯一可用的杠杆是环境</b>：弱势档绝对胜率仅 ~41%、强势档 ~51%（差 10pp，远大于选股带来的 1~3pp）。
+   故正确动作是「弱势降暴露 / 空仓」，而非「弱势里精挑细选」。<br>
+⑤ 本页结论与 <code>web/selected/index.html</code>（主升精选主页）一致：主页按环境门控决定出手/观察，
+   本页只是把「观察池里胜率代理最靠前的一撮」单独拎出来方便你盯。</div>
+
+<div class="foot">本页为基于离线日K的量化筛选与方法论，<b>非个股推荐、非买卖建议</b>。
+决策责任在账户本人。数据基准 2026-10-20。精中取精 ≠ 可执行信号。</div>
+</div><!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* ④ 返回 / 回顶：页头「← 返回」优先走浏览器历史（从哪来退回哪），
+     无历史（直接打开链接/新标签）则用 href 兜底跳门户首页 —— 不用 javascript: 伪协议，
+     保证 href 始终是个真链接（断链门禁与无 JS 环境都成立）。
+     右下角浮动按钮：回顶在滚动 400px 后淡入，回门户常驻。 */
+  try {
+    document.querySelectorAll("a.wb-back").forEach(function (a) {
+      a.addEventListener("click", function (ev) {
+        try {
+          if (window.history && window.history.length > 1 && document.referrer) {
+            ev.preventDefault();
+            window.history.back();
+          }
+        } catch (e) {}
+      });
+    });
+    var top = document.querySelector(".wb-fab a.wb-top");
+    if (top) {
+      top.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        try { window.scrollTo({ top: 0, behavior: "smooth" }); }
+        catch (e) { window.scrollTo(0, 0); }
+      });
+      var sync = function () {
+        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        top.style.display = y > 400 ? "flex" : "none";
+      };
+      window.addEventListener("scroll", sync, { passive: true });
+      sync();
+    }
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--><!--WB_FAB--><div class='wb-fab'><a class='wb-top' href='#' title='回到顶部' aria-label='回到顶部'>↑</a><a class='wb-home' href='../../index.html' title='返回门户首页' aria-label='返回门户首页'>⌂</a></div><!--/WB_FAB--></body></html>
