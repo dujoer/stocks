@@ -373,7 +373,8 @@ def stat_n_shape():
 
 
 def stat_n_shape_bt():
-    """N字形历史回测：裸信号 → 健康回撤∩热点 → +整体价格位置（hb_pos），及市场热度门控（观察池·非出票）。"""
+    """N字形历史回测：裸信号 → 健康回撤∩热点 → +整体价格位置（hb_pos），及市场热度门控（观察池·非出票）。
+    头条指标用「首次触及胜率」(FOOLPROOF 真实交易判据：先触+目标/-止损)，比第10天终端价更贴近「继续拉升」。"""
     nbt = _load_json(os.path.join(QUANT, "n_shape", "backtest_summary.json"))
     if not nbt or not nbt.get("overall"):
         return "历史回测（继续拉升率/胜率/盈亏比）"
@@ -394,15 +395,15 @@ def stat_n_shape_bt():
     warm_ar = _ar(warm); osc_ar = _ar(osc)
     gate = ""
     if warm_ar is not None and osc_ar is not None:
-        gate = (f"市场热度门控：强势/震荡 平均收益 <b>{_p(warm_ar)}</b>/<b>{_p(osc_ar)}</b>（正）；"
-                f"破位显著为负 → 仅偏暖时启用候选区")
+        gate = (f"市场热度门控：强势/震荡 首次触及胜率 <b>{_p(warm.get('ft_win_rate'))}</b>/<b>{_p(osc.get('ft_win_rate'))}</b>、"
+                f"平均收益 <b>{_p(warm_ar)}</b>/<b>{_p(osc_ar)}</b>（正）；破位显著为负 → 仅偏暖时启用候选区")
     pos_line = ""
     if hbpos.get("n"):
         pos_line = (f"叠加<b>整体价格位置</b>（52周分位30~85）得 <b>健康回撤·完整</b>：样本 <b>{hbpos['n']}</b> ｜ "
-                    f"胜率 <b>{_p(hbpos.get('win_rate'))}</b> 盈亏比 <b>{'%.2f'%hbpos['profit_ratio']}</b> "
-                    f"平均收益 <b>{_p(hbpos.get('avg_ret'))}</b>（{_v(hbpos)}，首次逼近翻正）")
-    return (f"近 <b>{nbt.get('n_dates', '—')}</b> 回测日 ｜ 裸信号 胜率 <b>{_p(raw.get('win_rate'))}</b> 盈亏比 <b>{rawpr}</b>（{_v(raw)}）｜ "
-            f"健康回撤∩热点 样本 <b>{n}</b> 盈亏比 <b>{'%.2f'%ov['profit_ratio']}</b>（{_v(ov)}）｜ {pos_line}｜ {gate}｜ 观察池·非出票")
+                    f"首次触及胜率 <b>{_p(hbpos.get('ft_win_rate'))}</b>（高胜率档4/8% <b>{_p(hbpos.get('ft_hi_win_rate'))}</b>）｜ "
+                    f"平均收益 <b>{_p(hbpos.get('avg_ret'))}</b>（{_v(hbpos)}）")
+    return (f"近 <b>{nbt.get('n_dates', '—')}</b> 回测日 ｜ 裸信号 首次触及胜率 <b>{_p(raw.get('ft_win_rate'))}</b> 盈亏比 <b>{rawpr}</b>（{_v(raw)}）｜ "
+            f"健康回撤∩热点 样本 <b>{n}</b> 首次触及胜率 <b>{_p(ov.get('ft_win_rate'))}</b>（{_v(ov)}）｜ {pos_line}｜ {gate}｜ 观察池·非出票")
 
 
 def stat_macd():

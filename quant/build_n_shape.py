@@ -516,16 +516,21 @@ def main():
     combo_hist_str = None
     try:
         _bt = json.load(open(os.path.join(QUANT, "n_shape", "backtest_summary.json"), encoding="utf-8"))
-        _c = _bt.get("overall") or {}
+        _c = _bt.get("overall_hb_pos") or _bt.get("overall") or {}
         if _c.get("avg_ret") is not None and _c.get("n"):
-            wr = _c.get("win_rate"); ar = _c.get("avg_ret"); pr = _c.get("profit_ratio")
+            fwr = _c.get("ft_win_rate"); fwr_hi = _c.get("ft_hi_win_rate")
+            ar = _c.get("avg_ret"); pr = _c.get("profit_ratio")
             rr = _c.get("resume_rate"); rr15 = _c.get("resume_rate15")
             vlabel = "正期望(已验证)" if ar > 0 else "历史负期望"
             vcolor = "#188038" if ar > 0 else "#d93025"
-            combo_hist_str = ("历史往前回测（同口径·健康回撤∩热点）：样本 %d ｜ 10日胜率 %s ｜ 平均收益 %s ｜ 盈亏比 %s"
-                              " ｜ <b>继续拉升率(10日创新高) %s</b> ｜ 继续拉升率(15日) %s"
-                              "（<span style='color:%s;font-weight:700'>%s</span>）。本表为当日满足条件的候选，仅供观察，不构成建议。" % (
-                _c.get("n"), "—" if wr is None else "%+.2f%%" % (wr * 100),
+            combo_hist_str = ("历史往前回测（同口径·健康回撤∩热点∩位置合理）：样本 %d ｜ "
+                              "<b>首次触及胜率(先触+6%%/-8%%) %s</b> ｜ 高胜率档(4/8%%) %s ｜ "
+                              "平均收益 %s ｜ 盈亏比 %s ｜ 继续拉升率(10/15日) %s/%s"
+                              "（<span style='color:%s;font-weight:700'>%s</span>）。"
+                              "「首次触及胜率」= 入场后先触达目标或止损的真实交易判据；本表为当日候选，仅供观察，不构成建议。" % (
+                _c.get("n"),
+                "—" if fwr is None else "%+.2f%%" % (fwr * 100),
+                "—" if fwr_hi is None else "%+.2f%%" % (fwr_hi * 100),
                 "—" if ar is None else "%+.2f%%" % (ar * 100),
                 "—" if pr is None else "%.2f" % pr,
                 "—" if rr is None else "%+.1f%%" % (rr * 100),

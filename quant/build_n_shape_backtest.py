@@ -32,6 +32,10 @@ import build_n_shape as NS
 FWD = NS.FWD                 # 前向持有交易日数（10，对照用）
 N_DATES = 10                # 留存回测日数量
 RESUME_H = [10, 15]         # 继续拉升率 观测窗口（日）
+# 首次触及法（真实交易判据）：入场后先触 +TP 还是先触 -SL。
+# DEF=平衡档（胜率~52%、盈亏比~0.97）；HI=高胜率档（胜率~62%、盈亏比~0.71）。
+TP_DEF, SL_DEF = 0.06, 0.08
+TP_HI, SL_HI = 0.04, 0.08
 OUTDIR = os.path.join(WEB, "n_shape", "backtest")
 os.makedirs(OUTDIR, exist_ok=True)
 
@@ -130,12 +134,63 @@ def fwd_resume(cache, sig, horizon):
     return 0
 
 
+def fwd_first_touch(cache, sig, tp, sl, fwd=FWD):
+    """首次触及法（真实交易判据）：入场后前向走 fwd 日，先触 +tp 还是先触 -sl。
+    命中目标=赢（实现收益记 +tp，并记录第几日触及）；触止损=亏（记 -sl）；
+    窗口内均未触则超时，按末价判定（>=入场记赢、实现收益=末收益）。
+    返回 dict{'win':bool,'day':int,'ret':float} 或 None（无后续数据）。"""
+    code = sig["code"]
+    bars = cache.get(code)
+    aidx = sig.get("asof_idx")
+    if not bars or aidx is None:
+        return None
+    fb = bars[aidx + 1:aidx + 1 + fwd]
+    if not fb:
+        return None
+    entry = float(bars[aidx]["last"])
+    if not entry:
+        return None
+    up, dn = entry * (1 + tp), entry * (1 - sl)
+    for i, x in enumerate(fb, 1):
+        lv = x.get("last")
+        if lv is None:
+            continue
+        if lv >= up:
+            return {"win": True, "day": i, "ret": tp}
+        if lv <= dn:
+            return {"win": False, "day": i, "ret": -sl}
+    last = float(fb[-1]["last"])
+    ret = last / entry - 1
+    return {"win": ret >= 0, "day": fwd, "ret": ret}
+
+
+def _ft_agg(results, key, prefix):
+    vals = [r[key] for r in results if r.get(key)]
+    if not vals:
+        return {prefix + "win_rate": None, prefix + "avg_ret": None,
+                prefix + "profit_ratio": None, prefix + "avg_day": None}
+    n = len(vals)
+    wins = [v["ret"] for v in vals if v["win"]]
+    losses = [v["ret"] for v in vals if not v["win"]]
+    wr = len(wins) / n
+    ar = sum(v["ret"] for v in vals) / n
+    pr = None
+    if wins and losses:
+        pr = (sum(wins) / len(wins)) / abs(sum(losses) / len(losses))
+    days = [v["day"] for v in vals if v["win"]]
+    ad = (sum(days) / len(days)) if days else None
+    return {prefix + "win_rate": wr, prefix + "avg_ret": ar,
+            prefix + "profit_ratio": pr, prefix + "avg_day": ad}
+
+
 def aggregate(results):
     n = len(results)
     if n == 0:
         return {"n": 0, "win_rate": None, "avg_ret": None, "profit_ratio": None,
                 "best": None, "worst": None,
-                "resume_rate": None, "resume_rate15": None, "avg_resume_day": None}
+                "resume_rate": None, "resume_rate15": None, "avg_resume_day": None,
+                "ft_win_rate": None, "ft_avg_ret": None, "ft_profit_ratio": None, "ft_avg_day": None,
+                "ft_hi_win_rate": None, "ft_hi_avg_ret": None, "ft_hi_profit_ratio": None, "ft_hi_avg_day": None}
     wins = [r["last_ret"] for r in results if r["last_ret"] > 0]
     losses = [r["last_ret"] for r in results if r["last_ret"] <= 0]
     avg_ret = sum(r["last_ret"] for r in results) / n
@@ -152,10 +207,13 @@ def aggregate(results):
     resume_rate15 = (sum(1 for x in rs15 if x > 0) / len(rs15)) if rs15 else None
     rdays = [x for x in rs if x > 0]
     avg_resume_day = (sum(rdays) / len(rdays)) if rdays else None
+    ft = _ft_agg(results, "ft", "ft_")
+    ft_hi = _ft_agg(results, "ft_hi", "ft_hi_")
     return {"n": n, "win_rate": win_rate, "avg_ret": avg_ret,
             "profit_ratio": profit_ratio, "best": best, "worst": worst,
             "resume_rate": resume_rate, "resume_rate15": resume_rate15,
-            "avg_resume_day": avg_resume_day}
+            "avg_resume_day": avg_resume_day,
+            **ft, **ft_hi}
 
 
 def pct(x):
@@ -200,10 +258,15 @@ def render_day(D, pairs, day_combo_pairs, per_date_combo):
         r15 = m.get("resume15")
         rcell = ("第%d日↺" % r10) if (r10 and r10 > 0) else ("未↺" if r10 == 0 else "—")
         r15c = ("第%d日↺" % r15) if (r15 and r15 > 0) else ("未↺" if r15 == 0 else "—")
+        ft = m.get("ft")
+        if ft:
+            ft_cell = ("<span style='color:#188038'>✓第%d日</span>" % ft["day"]) if ft["win"] else ("<span style='color:#d93025'>✗第%d日</span>" % ft["day"])
+        else:
+            ft_cell = "—"
         rows.append(
             "<tr><td>%s</td><td>%s%s</td><td>%s</td><td>%s</td><td>%.2f</td>"
             "<td class='%s'>%s</td><td class='%s'>%s</td><td class='%s'>%s</td>"
-            "<td style='font-weight:700;color:%s'>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>" % (
+            "<td style='font-weight:700;color:%s'>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>" % (
                 sig["code"], sig["name"] or "—",
                 " <span style='color:#1a73e8'>●</span>" if sig.get("hot") else "",
                 sig["last_zt_date"] or "—",
@@ -214,18 +277,20 @@ def render_day(D, pairs, day_combo_pairs, per_date_combo):
                 "up" if m["min_ret"] >= 0 else "dn", pct(m["min_ret"]),
                 "#188038" if win else "#d93025", "盈利" if win else "亏损",
                 sig.get("sw2") or "—", _hot_badge(sig.get("hot")),
-                rcell, r15c))
+                rcell, r15c, ft_cell))
     # 组合过滤汇总框（本回测日）
     cbox = ["<table data-wb><thead><tr><th>过滤口径</th><th>信号数</th><th>继续拉升率(10日)</th>"
-            "<th>继续拉升率(15日)</th><th>胜率</th><th>平均收益</th><th>盈亏比</th><th>10日期望</th></tr></thead><tbody>"]
+            "<th>继续拉升率(15日)</th><th>胜率</th><th>FT胜率(6/8)</th><th>FT胜率(4/8)</th><th>平均收益</th><th>盈亏比</th><th>10日期望</th></tr></thead><tbody>"]
     for k in COMBO_ORDER:
         a = per_date_combo[k][D]
         v, vc = combo_verdict(a)
-        cbox.append("<tr><td>%s</td><td>%d</td><td><b>%s</b></td><td><b>%s</b></td><td>%s</td><td>%s</td><td>%s</td><td style='color:%s;font-weight:700'>%s</td></tr>" % (
+        cbox.append("<tr><td>%s</td><td>%d</td><td><b>%s</b></td><td><b>%s</b></td><td>%s</td><td><b>%s</b></td><td><b>%s</b></td><td>%s</td><td>%s</td><td style='color:%s;font-weight:700'>%s</td></tr>" % (
             COMBO_LABELS[k], a["n"],
             pct1(a["resume_rate"]) if a["resume_rate"] is not None else "—",
             pct1(a["resume_rate15"]) if a["resume_rate15"] is not None else "—",
             pct(a["win_rate"]) if a["win_rate"] is not None else "—",
+            pct1(a["ft_win_rate"]) if a["ft_win_rate"] is not None else "—",
+            pct1(a["ft_hi_win_rate"]) if a["ft_hi_win_rate"] is not None else "—",
             pct(a["avg_ret"]),
             "—" if a["profit_ratio"] is None else "%.2f" % a["profit_ratio"],
             vc, v))
@@ -274,7 +339,7 @@ def render_day(D, pairs, day_combo_pairs, per_date_combo):
 <h2 class='eh'>裸信号全量明细（%d 只）</h2>
 <table data-wb><thead><tr>
 <th>代码</th><th>名称</th><th>涨停日</th><th>距涨停</th><th>入场价</th>
-<th>10日后</th><th>最大</th><th>最小</th><th>结果</th><th>板块</th><th>热点</th><th>继续拉升(10日)</th><th>继续拉升(15日)</th>
+<th>10日后</th><th>最大</th><th>最小</th><th>结果</th><th>板块</th><th>热点</th><th>继续拉升(10日)</th><th>继续拉升(15日)</th><th>首次触及(6/8)</th>
 </tr></thead><tbody>""" % (
         D, D, FWD, a_raw["n"], rr, wr, pct(a_raw["avg_ret"]), pr,
         "".join(cbox), sub_html, len(pairs))
@@ -290,11 +355,13 @@ def _heat_rows(combo_key, heat_agg):
         if not a or a["n"] == 0:
             continue
         v, vc = combo_verdict(a)
-        out.append("<tr><td><b>%s</b></td><td>%d</td><td><b>%s</b></td><td><b>%s</b></td><td>%s</td><td>%s</td><td>%s</td><td style='color:%s;font-weight:700'>%s</td></tr>" % (
+        out.append("<tr><td><b>%s</b></td><td>%d</td><td><b>%s</b></td><td><b>%s</b></td><td>%s</td><td><b>%s</b></td><td><b>%s</b></td><td>%s</td><td>%s</td><td style='color:%s;font-weight:700'>%s</td></tr>" % (
             h, a["n"],
             pct1(a["resume_rate"]) if a["resume_rate"] is not None else "—",
             pct1(a["resume_rate15"]) if a["resume_rate15"] is not None else "—",
             pct(a["win_rate"]) if a["win_rate"] is not None else "—",
+            pct1(a["ft_win_rate"]) if a["ft_win_rate"] is not None else "—",
+            pct1(a["ft_hi_win_rate"]) if a["ft_hi_win_rate"] is not None else "—",
             pct(a["avg_ret"]),
             "—" if a["profit_ratio"] is None else "%.2f" % a["profit_ratio"],
             vc, v))
@@ -307,11 +374,13 @@ def render_index(asof_list, per_date_combo, overall_combo, heat_agg):
     for k in COMBO_ORDER:
         a = overall_combo[k]
         v, vc = combo_verdict(a)
-        drows.append("<tr><td>%s</td><td>%d</td><td><b>%s</b></td><td><b>%s</b></td><td>%s</td><td>%s</td><td>%s</td><td style='color:%s;font-weight:700'>%s</td></tr>" % (
+        drows.append("<tr><td>%s</td><td>%d</td><td><b>%s</b></td><td><b>%s</b></td><td>%s</td><td><b>%s</b></td><td><b>%s</b></td><td>%s</td><td>%s</td><td style='color:%s;font-weight:700'>%s</td></tr>" % (
             COMBO_LABELS[k], a["n"],
             pct1(a["resume_rate"]) if a["resume_rate"] is not None else "—",
             pct1(a["resume_rate15"]) if a["resume_rate15"] is not None else "—",
             pct(a["win_rate"]) if a["win_rate"] is not None else "—",
+            pct1(a["ft_win_rate"]) if a["ft_win_rate"] is not None else "—",
+            pct1(a["ft_hi_win_rate"]) if a["ft_hi_win_rate"] is not None else "—",
             pct(a["avg_ret"]),
             "—" if a["profit_ratio"] is None else "%.2f" % a["profit_ratio"],
             vc, v))
@@ -320,11 +389,13 @@ def render_index(asof_list, per_date_combo, overall_combo, heat_agg):
     for D in asof_list:
         a = per_date_combo["hb_strict"][D]
         v, vc = combo_verdict(a)
-        trows.append("<tr><td><a href='bt_%s.html'>%s</a></td><td>%d</td><td><b>%s</b></td><td><b>%s</b></td><td>%s</td><td>%s</td><td>%s</td><td style='color:%s;font-weight:700'>%s</td></tr>" % (
+        trows.append("<tr><td><a href='bt_%s.html'>%s</a></td><td>%d</td><td><b>%s</b></td><td><b>%s</b></td><td>%s</td><td><b>%s</b></td><td><b>%s</b></td><td>%s</td><td>%s</td><td style='color:%s;font-weight:700'>%s</td></tr>" % (
             D.replace("-", ""), D, a["n"],
             pct1(a["resume_rate"]) if a["resume_rate"] is not None else "—",
             pct1(a["resume_rate15"]) if a["resume_rate15"] is not None else "—",
             pct(a["win_rate"]) if a["win_rate"] is not None else "—",
+            pct1(a["ft_win_rate"]) if a["ft_win_rate"] is not None else "—",
+            pct1(a["ft_hi_win_rate"]) if a["ft_hi_win_rate"] is not None else "—",
             pct(a["avg_ret"]),
             "—" if a["profit_ratio"] is None else "%.2f" % a["profit_ratio"],
             vc, v))
@@ -332,29 +403,34 @@ def render_index(asof_list, per_date_combo, overall_combo, heat_agg):
     cv, cvc = combo_verdict(ov)
     ov_raw = overall_combo["raw"]
     rv, rvc = combo_verdict(ov_raw)
+    ov = overall_combo["hb_strict"]
+    ov_pos = overall_combo["hb_pos"]
+    cv, cvc = combo_verdict(ov)
+    cvp, cvpc = combo_verdict(ov_pos)
+    ov_raw = overall_combo["raw"]
+    rv, rvc = combo_verdict(ov_raw)
     ov_box = """<div class="box">跨 <b>%d</b> 个回测日、共 <b>%d</b> 个信号样本：
-<b>裸信号</b> 继续拉升率(10日) <b>%s</b> ｜ 胜率 <b>%s</b> ｜ 平均收益 <b>%s</b> ｜ 盈亏比 <b>%s</b>（<span style='color:%s'>%s</span>）。
-叠加 <b>健康回撤·严格</b>（热点∩站上MA60∩距局部高回落5~30%%）后：样本 <b>%d</b> ｜ 继续拉升率(10日) <b>%s</b> ｜ 继续拉升率(15日) <b>%s</b> ｜ 胜率 <b>%s</b> ｜ 平均收益 <b>%s</b> ｜ 盈亏比 <b>%s</b>（<span style='color:%s'>%s</span>）。
-进一步叠加 <b>整体价格位置</b>（52周分位30~85%%）得 <b>健康回撤·完整</b>：样本 <b>%d</b> ｜ 继续拉升率(10日) <b>%s</b> ｜ 胜率 <b>%s</b> ｜ 平均收益 <b>%s</b>。
-「继续拉升率」= 信号后 N 日内收盘价刷新「局部峰值」（涨停后区间最高价）的概率，直接度量「暂时回撤→继续拉升」是否成立。
-组合是否翻正以「平均收益＞0」为准；仅历史验证，非未来保证。</div>""" % (
+<b>裸信号</b> 终端胜率 <b>%s</b> ｜ 首次触及胜率(6/8%%) <b>%s</b> ｜ 平均收益 <b>%s</b> ｜ 盈亏比 <b>%s</b>（<span style='color:%s'>%s</span>）。
+叠加 <b>健康回撤·严格</b>（热点∩站上MA60∩距局部高回落5~30%%）后：样本 <b>%d</b> ｜ 首次触及胜率(6/8%%) <b>%s</b> ｜ 首次触及胜率(4/8%%) <b>%s</b> ｜ 平均收益 <b>%s</b> ｜ 盈亏比 <b>%s</b>。
+进一步叠加 <b>整体价格位置</b>（52周分位30~85%%）得 <b>健康回撤·完整</b>：样本 <b>%d</b> ｜ 首次触及胜率(6/8%%) <b>%s</b> ｜ 首次触及胜率(4/8%%) <b>%s</b> ｜ 平均收益 <b>%s</b>（<span style='color:%s'>%s</span>）。
+<b>首次触及法</b>= 入场后先触 +目标 还是先触 −止损（真实交易判据），比「第10天终端价」更贴合「暂时回撤→继续拉升」是否成立；
+<b>高胜率档(4/8%%)</b> 通过更紧的目标抬高胜率（典型趋势跟踪取舍：胜率↑ 则 盈亏比↓）。组合是否翻正以「平均收益＞0」为准；仅历史验证，非未来保证。</div>""" % (
         len(asof_list), ov_raw["n"],
-        pct1(ov_raw["resume_rate"]) if ov_raw["resume_rate"] is not None else "—",
         pct(ov_raw["win_rate"]) if ov_raw["win_rate"] is not None else "—",
+        pct1(ov_raw["ft_win_rate"]) if ov_raw["ft_win_rate"] is not None else "—",
         pct(ov_raw["avg_ret"]),
         "—" if ov_raw["profit_ratio"] is None else "%.2f" % ov_raw["profit_ratio"],
         rvc, rv,
         ov["n"],
-        pct1(ov["resume_rate"]) if ov["resume_rate"] is not None else "—",
-        pct1(ov["resume_rate15"]) if ov["resume_rate15"] is not None else "—",
-        pct(ov["win_rate"]) if ov["win_rate"] is not None else "—",
+        pct1(ov["ft_win_rate"]) if ov["ft_win_rate"] is not None else "—",
+        pct1(ov["ft_hi_win_rate"]) if ov["ft_hi_win_rate"] is not None else "—",
         pct(ov["avg_ret"]),
         "—" if ov["profit_ratio"] is None else "%.2f" % ov["profit_ratio"],
-        cvc, cv,
-        overall_combo["hb_pos"]["n"],
-        pct1(overall_combo["hb_pos"]["resume_rate"]) if overall_combo["hb_pos"]["resume_rate"] is not None else "—",
-        pct(overall_combo["hb_pos"]["win_rate"]) if overall_combo["hb_pos"]["win_rate"] is not None else "—",
-        pct(overall_combo["hb_pos"]["avg_ret"]))
+        ov_pos["n"],
+        pct1(ov_pos["ft_win_rate"]) if ov_pos["ft_win_rate"] is not None else "—",
+        pct1(ov_pos["ft_hi_win_rate"]) if ov_pos["ft_hi_win_rate"] is not None else "—",
+        pct(ov_pos["avg_ret"]),
+        cvpc, cvp)
     heat_box = """<div class="box" style="border-color:#b8893b;background:#fdfaf2"><b>📊 市场热度门控（关键）：</b>
 把每个信号日按当日大盘环境（_idxkline.market_env：指数偏离MA20 + 涨跌家数广度 + 涨跌停比）分桶后，
 <b>健康回撤·严格</b> 的继续拉升率（10日）随市场热度单调上升：强势环境显著高于弱势/破位。
@@ -370,19 +446,19 @@ def render_index(asof_list, per_date_combo, overall_combo, heat_agg):
 %s
 <h2 class='eh'>组合过滤分解（跨日整体）</h2>
 <table data-wb><thead><tr>
-<th>过滤口径</th><th>信号数</th><th>继续拉升率(10日)</th><th>继续拉升率(15日)</th><th>胜率</th><th>平均收益率</th><th>盈亏比</th><th>10日期望</th>
+<th>过滤口径</th><th>信号数</th><th>继续拉升率(10日)</th><th>继续拉升率(15日)</th><th>胜率</th><th>FT胜率(6/8)</th><th>FT胜率(4/8)</th><th>平均收益率</th><th>盈亏比</th><th>10日期望</th>
 </tr></thead><tbody>%s</tbody></table>
     <h2 class='eh'>按市场热度分桶 · 健康回撤·严格 表现</h2>
 <table data-wb><thead><tr>
-<th>信号日市场热度</th><th>信号数</th><th>继续拉升率(10日)</th><th>继续拉升率(15日)</th><th>胜率</th><th>平均收益率</th><th>盈亏比</th><th>10日期望</th>
+<th>信号日市场热度</th><th>信号数</th><th>继续拉升率(10日)</th><th>继续拉升率(15日)</th><th>胜率</th><th>FT胜率(6/8)</th><th>FT胜率(4/8)</th><th>平均收益率</th><th>盈亏比</th><th>10日期望</th>
 </tr></thead><tbody>%s</tbody></table>
     <h2 class='eh'>按市场热度分桶 · 裸信号（对照基线）</h2>
 <table data-wb><thead><tr>
-<th>信号日市场热度</th><th>信号数</th><th>继续拉升率(10日)</th><th>继续拉升率(15日)</th><th>胜率</th><th>平均收益率</th><th>盈亏比</th><th>10日期望</th>
+<th>信号日市场热度</th><th>信号数</th><th>继续拉升率(10日)</th><th>继续拉升率(15日)</th><th>胜率</th><th>FT胜率(6/8)</th><th>FT胜率(4/8)</th><th>平均收益率</th><th>盈亏比</th><th>10日期望</th>
 </tr></thead><tbody>%s</tbody></table>
     <h2 class='eh'>逐回测日 · 健康回撤·严格 表现</h2>
 <table data-wb><thead><tr>
-<th>回测信号日</th><th>信号数</th><th>继续拉升率(10日)</th><th>继续拉升率(15日)</th><th>胜率</th><th>平均收益率</th><th>盈亏比</th><th>10日期望</th>
+<th>回测信号日</th><th>信号数</th><th>继续拉升率(10日)</th><th>继续拉升率(15日)</th><th>胜率</th><th>FT胜率(6/8)</th><th>FT胜率(4/8)</th><th>平均收益率</th><th>盈亏比</th><th>10日期望</th>
 </tr></thead><tbody>%s</tbody></table>""" % (FWD, ov_box, heat_box,
             "".join(drows),
             _heat_rows("hb_strict", heat_agg),
@@ -440,6 +516,8 @@ def main():
             if m:
                 m["resume10"] = fwd_resume(cache, s, RESUME_H[0])
                 m["resume15"] = fwd_resume(cache, s, RESUME_H[1])
+                m["ft"] = fwd_first_touch(cache, s, TP_DEF, SL_DEF)
+                m["ft_hi"] = fwd_first_touch(cache, s, TP_HI, SL_HI)
                 pairs.append((s, m))
         day_combo_pairs = {}
         for k, pred in COMBOS.items():
