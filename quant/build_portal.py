@@ -366,7 +366,9 @@ def stat_n_shape():
     st = _load_json(os.path.join(QUANT, "n_shape", "n_shape_%s.json" % nshape_d.strftime("%Y%m%d")))
     if not st:
         return "近20日涨停 + 站上5日线（观察池）"
-    return (f"命中 <b>{st.get('count', '—')}</b> 只 ｜ "
+    tc = st.get("tier_counts") or {}
+    return (f"命中 <b>{st.get('count', '—')}</b> 只 ｜ 强 <b>{tc.get('强', '—')}</b> / "
+            f"中 <b>{tc.get('中', '—')}</b> / 弱 <b>{tc.get('弱', '—')}</b> ｜ "
             f"已剔除当日封涨停 <b>{st.get('excluded_today_zt', '—')}</b> 只 ｜ 观察池·非出票")
 
 
