@@ -171,6 +171,14 @@ def gen_signals_asof(cache, D, name_map=None):
 
         lo = max(0, aidx - (WINDOW + 5))
         win = bars[lo:aidx + 1]
+        # 扩展窗口用于 MA20/MA60（与主池/回测同口径，判断「股票位置」）
+        ma_lo = max(0, aidx - 65)
+        ma_win = bars[ma_lo:aidx + 1]
+        def _sma(n):
+            vs = [b.get("last") for b in ma_win[-n:] if b.get("last") is not None]
+            return (sum(vs) / len(vs)) if len(vs) >= n else None
+        ma20 = _sma(20)
+        ma60 = _sma(60)
         recs = list(M.scan_one(code, win))
         if len(recs) < WINDOW:
             continue
@@ -220,6 +228,15 @@ def gen_signals_asof(cache, D, name_map=None):
             if zt_close and lows:
                 pullback_pct = round((min(lows) / zt_close - 1) * 100, 2)
 
+        # 局部峰值（涨停后至当前区间最高价）—— 用于「健康回撤」位置判断
+        post_zt = last20[last_zt_idx:] if last_zt_idx is not None else last20
+        local_peak = None
+        for r in post_zt:
+            h = r.get("high")
+            if h is not None and (local_peak is None or h > local_peak):
+                local_peak = h
+        dist_local_peak = round((cur / local_peak - 1) * 100, 2) if local_peak else None
+
         # 当日%：as-of 根 vs 前一根
         chg_pct = 0.0
         if aidx >= 1:
@@ -234,6 +251,9 @@ def gen_signals_asof(cache, D, name_map=None):
             "days_since_zt": days_since, "pullback_pct": pullback_pct,
             "avg_amt_yi": round(avg_amt / 1e8, 2),
             "prev_peak_high": prev_peak_high, "asof_idx": aidx,
+            "ma20": round(ma20, 2) if ma20 is not None else None,
+            "ma60": round(ma60, 2) if ma60 is not None else None,
+            "local_peak": local_peak, "dist_local_peak": dist_local_peak,
         })
     return out
 
@@ -270,6 +290,26 @@ def tier_of(s):
     if s >= TIER_STRONG: return "强"
     if s >= TIER_MID: return "中"
     return "弱"
+
+
+def is_healthy_pullback(s, strict=False):
+    """健康回撤（暂时回调但上升趋势完好）判定 —— 用户方法论核心。
+
+    位置判断：涨停启动后，从「局部峰值」（涨停后区间最高价）回落 5%~30% 为健康区间
+    （<5% 尚未真正回调，>30% 可能已破位，均不属于「暂时回撤」）。
+    趋势结构：strict=True 要求站上 MA60（中长期趋势完好）；False 仅要求站上 MA20。
+    叠加：必须贴合热点（板块热度，申万二级抢筹/建仓 或 概念龙头）。
+    注：仅作观察池筛选，非出票、不构成建议。
+    """
+    d = s.get("dist_local_peak")
+    if d is None:
+        return False
+    if not (-30 <= d <= -5):
+        return False
+    ref = s.get("ma60") if strict else s.get("ma20")
+    if ref is not None and s["close"] <= ref:
+        return False
+    return bool(s.get("hot"))
 
 
 def price_verdict(dist_prev_peak, dist_52w_high):
@@ -379,6 +419,8 @@ def main():
     for r in rows:
         r["strength"] = compute_strength(r)
         r["tier"] = tier_of(r["strength"])
+        r["healthy_loose"] = is_healthy_pullback(r, False)
+        r["healthy_strict"] = is_healthy_pullback(r, True)
 
     rows.sort(key=lambda r: (-(r["strength"] or 0),
                              r["days_since_zt"] if r["days_since_zt"] is not None else 999))
@@ -388,28 +430,31 @@ def main():
         tier_counts[r["tier"]] = tier_counts.get(r["tier"], 0) + 1
     n_hot = sum(1 for r in rows if r["hot"])
 
-    # 热点∩深度回撤候选（贴合热点 ∩ 距前高≤−25%），与主池同口径的下一步短名单（B选项主推）
-    combo_rows = [r for r in rows
-                  if r["hot"]
-                  and (r.get("dist_prev_peak") is not None and r["dist_prev_peak"] <= -25)]
-    # 历史 10 日期望（取自回测汇总单源，避免双份口径）
+    # 健康回撤∩热点候选（站上MA60 + 距局部高回落5~30% + 热点），与主池同口径的下一步短名单
+    combo_rows = [r for r in rows if r.get("healthy_strict")]
+    # 历史回测期望（取自回测汇总单源，避免双份口径）
     combo_hist_str = None
     try:
         _bt = json.load(open(os.path.join(QUANT, "n_shape", "backtest_summary.json"), encoding="utf-8"))
         _c = _bt.get("overall") or {}
         if _c.get("avg_ret") is not None and _c.get("n"):
             wr = _c.get("win_rate"); ar = _c.get("avg_ret"); pr = _c.get("profit_ratio")
-            vlabel = "正期望" if ar > 0 else "负期望"
+            rr = _c.get("resume_rate"); rr15 = _c.get("resume_rate15")
+            vlabel = "正期望(已验证)" if ar > 0 else "历史负期望"
             vcolor = "#188038" if ar > 0 else "#d93025"
-            combo_hist_str = ("历史往前10日回测（同口径）：样本 %d ｜ 胜率 %s ｜ 平均收益 %s ｜ 盈亏比 %s"
+            combo_hist_str = ("历史往前回测（同口径·健康回撤∩热点）：样本 %d ｜ 10日胜率 %s ｜ 平均收益 %s ｜ 盈亏比 %s"
+                              " ｜ <b>继续拉升率(10日创新高) %s</b> ｜ 继续拉升率(15日) %s"
                               "（<span style='color:%s;font-weight:700'>%s</span>）。本表为当日满足条件的候选，仅供观察，不构成建议。" % (
                 _c.get("n"), "—" if wr is None else "%+.2f%%" % (wr * 100),
                 "—" if ar is None else "%+.2f%%" % (ar * 100),
-                "—" if pr is None else "%.2f" % pr, vcolor, vlabel))
+                "—" if pr is None else "%.2f" % pr,
+                "—" if rr is None else "%+.1f%%" % (rr * 100),
+                "—" if rr15 is None else "%+.1f%%" % (rr15 * 100),
+                vcolor, vlabel))
     except Exception:
         pass
 
-    print("  命中 %d 只（剔除当日涨停 %d 只）｜ 强 %d / 中 %d / 弱 %d ｜ 贴合热点 %d ｜ 热点∩回撤候选 %d" % (
+    print("  命中 %d 只（剔除当日涨停 %d 只）｜ 强 %d / 中 %d / 弱 %d ｜ 贴合热点 %d ｜ 健康回撤∩热点候选 %d" % (
         len(rows), excluded_today_zt, tier_counts["强"], tier_counts["中"], tier_counts["弱"], n_hot, len(combo_rows)))
 
     jout = {"date": D, "count": len(rows), "excluded_today_zt": excluded_today_zt,
@@ -436,6 +481,19 @@ def _hot_badge(hot):
     return "<span style='color:#1a73e8;font-weight:700'>✓热点</span>" if hot else "<span style='color:#9aa0a6'>—</span>"
 
 
+def _trend_cell(r):
+    a = r.get("ma20"); b = r.get("ma60")
+    above20 = (a is not None and r["close"] > a)
+    above60 = (b is not None and r["close"] > b)
+    if above20 and above60:
+        return "<span style='color:#188038;font-weight:600'>▲双线之上</span>"
+    if above20:
+        return "<span style='color:#5f6368'>△站MA20</span>"
+    if above60:
+        return "<span style='color:#5f6368'>△站MA60</span>"
+    return "<span style='color:#d93025'>▼线下</span>"
+
+
 def _sector_cell(r):
     sw2 = r.get("sw2") or "—"
     beh = r.get("sector_behavior") or "—"
@@ -454,32 +512,36 @@ def render_html(D, rows, excluded, elite, tiers, n_hot, archive_href, combo_rows
 <div class="sub">数据基准 %s · 条件：近20交易日有收盘涨停 且 收盘价&gt;MA5（已剔除当日封涨停）</div>
 <div class="box">本页为<b>观察池·非出票</b>：仅按机械条件筛选、打分与归因，未过样本外稳健性检验，不构成买卖建议。
 N字形=涨停启动 → 回调 → 再上穿均线，属短线动量延续形态。强度分综合<b>距涨停天数 / 流动性 / 站上MA5贴近度 / 当日动量 / 涨停后回撤</b>五维（0~100），仅供排序参考。
-新增：<b>价格优势</b>（当前价 vs 前高/52周高，判断是否高位或仍有空间）与 <b>热点贴合</b>（申万二级板块强度 + 热门概念龙头）两栏归因。
-<a href="backtest/index.html">📈 历史回测（往前10日胜率/盈亏比）→</a></div>
+核心方法论：<b>根据股票位置（上升趋势中的健康回撤）+ 板块热度，找暂时回调但大概率继续拉升的票</b>。「健康回撤」= 站上MA60（趋势完好）且从局部高点回落 5%%~30%% 且贴合热点（详见下方候选区与<a href="backtest/index.html">历史回测</a>）。
+另有 <b>价格优势</b>（当前价 vs 前高/52周高）与 <b>趋势位</b>（MA20/MA60）两栏归因。
+<a href="backtest/index.html">📈 历史回测（继续拉升率/胜率/盈亏比）→</a></div>
 """ % D
     if archive_href:
         head += "<div class='sub'><a href='%s'>📅 历史归档页（%s）</a></div>\n" % (archive_href, D)
 
     # 每日精选 Top 20
     eh = ("<h2 class='eh'>每日精选 · 强度分前 20</h2>"
-          "<div class='sub'>按强度分降序；档位 强(≥%d) / 中(≥%d) / 弱。蓝色=贴合热点。</div>"
+          "<div class='sub'>按强度分降序；档位 强(≥%d) / 中(≥%d) / 弱。蓝色=贴合热点。▲双线之上=站上MA20与MA60（趋势完好）。</div>"
           "<table data-wb><thead><tr>"
-          "<th>#</th><th>代码</th><th>名称</th><th>强度分</th><th>档位</th><th>板块·热点</th>"
-          "<th>距前高</th><th>52周位</th><th>距涨停</th><th>距MA5</th><th>涨停后回撤</th><th>20日均额(亿)</th>"
+          "<th>#</th><th>代码</th><th>名称</th><th>强度分</th><th>档位</th><th>板块·热点</th><th>趋势位</th>"
+          "<th>距前高</th><th>距局部高</th><th>52周位</th><th>距涨停</th><th>距MA5</th><th>涨停后回撤</th><th>20日均额(亿)</th>"
           "</tr></thead><tbody>") % (TIER_STRONG, TIER_MID)
     etr = []
     for i, r in enumerate(elite, 1):
         etr.append(
             "<tr><td>%d</td><td>%s</td><td>%s%s</td><td><b>%.1f</b></td>"
-            "<td style='color:%s;font-weight:600'>%s</td><td>%s %s</td>"
-            "<td class='%s'>%s</td><td class='%s'>%s</td><td>%s</td>"
+            "<td style='color:%s;font-weight:600'>%s</td><td>%s %s</td><td>%s</td>"
+            "<td class='%s'>%s</td><td class='%s'>%s</td><td class='%s'>%s</td><td>%s</td>"
             "<td class='%s'>%+.2f%%</td><td class='%s'>%+.2f%%</td><td>%.2f</td></tr>" % (
                 i, r["code"], r["name"] or "—",
                 " <span style='color:#1a73e8'>●</span>" if r["hot"] else "",
                 r["strength"], _tier_color(r["tier"]), r["tier"],
                 _sector_cell(r), _hot_badge(r["hot"]),
+                _trend_cell(r),
                 "up" if (r["dist_prev_peak"] or 0) >= 0 else "dn",
                 ("%+.2f%%" % r["dist_prev_peak"]) if r["dist_prev_peak"] is not None else "—",
+                "up" if (r["dist_local_peak"] or 0) >= 0 else "dn",
+                ("%+.2f%%" % r["dist_local_peak"]) if r["dist_local_peak"] is not None else "—",
                 "up" if (r["dist_52w_high"] or 0) >= 0 else "dn",
                 ("%+.2f%%" % r["dist_52w_high"]) if r["dist_52w_high"] is not None else "—",
                 ("%d日" % r["days_since_zt"]) if r["days_since_zt"] is not None else "—",
@@ -488,22 +550,26 @@ N字形=涨停启动 → 回调 → 再上穿均线，属短线动量延续形�
                 r["avg_amt_yi"] or 0))
     etail = "</tbody></table>"
 
-    # 三重组合过滤候选（强档 ∩ 热点 ∩ 回撤充分）
+    # 健康回撤∩热点候选（站上MA60 + 距局部高回落5~30% + 热点）
     combo_html = ""
     if combo_rows:
-        ch = ["<h2 class='eh'>热点∩深度回撤候选（贴合热点 且 距前高≤−25%%）· 共 %d 只</h2>" % len(combo_rows)]
+        ch = ["<h2 class='eh'>健康回撤∩热点候选（站上MA60 + 距局部高回落5~30%% + 贴合热点）· 共 %d 只</h2>" % len(combo_rows)]
         if combo_hist_str:
             ch.append("<div class='sub'>%s</div>" % combo_hist_str)
         ch.append("<table data-wb><thead><tr>"
                   "<th>#</th><th>代码</th><th>名称</th><th>强度分</th><th>板块·行为</th>"
-                  "<th>距前高</th><th>52周位</th><th>价格位置</th><th>距涨停</th><th>20日均额(亿)</th>"
+                  "<th>距局部高</th><th>趋势位</th><th>距前高</th><th>52周位</th><th>价格位置</th><th>距涨停</th><th>20日均额(亿)</th>"
                   "</tr></thead><tbody>")
         for i, r in enumerate(combo_rows, 1):
             ch.append("<tr><td>%d</td><td>%s</td><td>%s%s</td><td><b>%.1f</b></td><td>%s</td>"
+                      "<td class='%s'>%s</td><td>%s</td>"
                       "<td class='%s'>%s</td><td class='%s'>%s</td><td>%s</td><td>%s</td><td>%.2f</td></tr>" % (
                 i, r["code"], r["name"] or "—",
                 " <span style='color:#1a73e8'>●</span>" if r["hot"] else "",
                 r["strength"], _sector_cell(r),
+                "up" if (r["dist_local_peak"] or 0) >= 0 else "dn",
+                ("%+.2f%%" % r["dist_local_peak"]) if r["dist_local_peak"] is not None else "—",
+                _trend_cell(r),
                 "up" if (r["dist_prev_peak"] or 0) >= 0 else "dn",
                 ("%+.2f%%" % r["dist_prev_peak"]) if r["dist_prev_peak"] is not None else "—",
                 "up" if (r["dist_52w_high"] or 0) >= 0 else "dn",
@@ -518,8 +584,8 @@ N字形=涨停启动 → 回调 → 再上穿均线，属短线动量延续形�
     th = ("<h2 class='eh'>全量命中（按强度分降序，共 %d 只）</h2>"
           "<table data-wb><thead><tr>"
           "<th>#</th><th>代码</th><th>名称</th><th>现价</th><th>MA5</th><th>距MA5</th>"
-          "<th>当日%%</th><th>强度分</th><th>档位</th><th>板块·行为</th><th>热点</th>"
-          "<th>距前高</th><th>52周位</th><th>价格位置</th><th>最近涨停</th><th>距涨停</th>"
+          "<th>当日%%</th><th>强度分</th><th>档位</th><th>板块·行为</th><th>热点</th><th>趋势位</th>"
+          "<th>距前高</th><th>距局部高</th><th>52周位</th><th>价格位置</th><th>最近涨停</th><th>距涨停</th>"
           "<th>涨停后回撤</th><th>20日均额(亿)</th>"
           "</tr></thead><tbody>") % len(rows)
     trs = []
@@ -534,8 +600,8 @@ N字形=涨停启动 → 回调 → 再上穿均线，属短线动量延续形�
             "<tr><td>%d</td><td>%s</td><td>%s%s</td><td>%.2f</td><td>%.2f</td>"
             "<td class='%s'>%+.2f%%</td><td class='%s'>%s%.2f%%</td>"
             "<td><b>%.1f</b></td><td style='color:%s;font-weight:600'>%s</td>"
-            "<td>%s</td><td>%s</td>"
-            "<td class='%s'>%s</td><td class='%s'>%s</td><td>%s</td>"
+            "<td>%s</td><td>%s</td><td>%s</td>"
+            "<td class='%s'>%s</td><td class='%s'>%s</td><td class='%s'>%s</td><td>%s</td>"
             "<td>%s</td><td>%s</td><td class='%s'>%+.2f%%</td><td>%.2f</td></tr>" % (
                 i, r["code"], r["name"] or "—",
                 " <span style='color:#1a73e8'>●</span>" if r["hot"] else "",
@@ -543,9 +609,11 @@ N字形=涨停启动 → 回调 → 再上穿均线，属短线动量延续形�
                 "up" if r["dist_ma5"] >= 0 else "dn", r["dist_ma5"],
                 cls, sign, chg,
                 r["strength"], _tier_color(r["tier"]), r["tier"],
-                _sector_cell(r), _hot_badge(r["hot"]),
+                _sector_cell(r), _hot_badge(r["hot"]), _trend_cell(r),
                 "up" if (r["dist_prev_peak"] or 0) >= 0 else "dn",
                 ("%+.2f%%" % r["dist_prev_peak"]) if r["dist_prev_peak"] is not None else "—",
+                "up" if (r["dist_local_peak"] or 0) >= 0 else "dn",
+                ("%+.2f%%" % r["dist_local_peak"]) if r["dist_local_peak"] is not None else "—",
                 "up" if (r["dist_52w_high"] or 0) >= 0 else "dn",
                 ("%+.2f%%" % r["dist_52w_high"]) if r["dist_52w_high"] is not None else "—",
                 pv,

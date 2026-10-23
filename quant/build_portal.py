@@ -373,11 +373,11 @@ def stat_n_shape():
 
 
 def stat_n_shape_bt():
-    """N字形往前10日回测：裸信号 vs 热点∩深度回撤（观察池·非出票）。"""
+    """N字形历史回测：裸信号 vs 健康回撤∩热点（继续拉升率，观察池·非出票）。"""
     nbt = _load_json(os.path.join(QUANT, "n_shape", "backtest_summary.json"))
     if not nbt or not nbt.get("overall"):
-        return "往前10日历史回测（胜率/盈亏比）"
-    ov = nbt["overall"]            # 热点∩回撤（B选项主推）
+        return "历史回测（继续拉升率/胜率/盈亏比）"
+    ov = nbt["overall"]            # 健康回撤·严格（主推候选）
     raw = nbt.get("overall_raw") or {}
     n = ov.get("n", 0)
     def _p(x):
@@ -387,16 +387,16 @@ def stat_n_shape_bt():
         return ("正期望" if ar > 0 else "负期望") if ar is not None else "—"
     rawpr = "—" if raw.get("profit_ratio") is None else "%.2f" % raw["profit_ratio"]
     if n == 0:
-        combo_note = "样本 <b>0</b>（热点∩回撤 当期无命中）"
+        combo_note = "样本 <b>0</b>（健康回撤∩热点 当期无命中）"
     else:
         prs = "—" if ov.get("profit_ratio") is None else "%.2f" % ov["profit_ratio"]
-        combo_note = f"样本 <b>{n}</b> 胜率 <b>{_p(ov.get('win_rate'))}</b> 盈亏比 <b>{prs}</b>（<b>{_v(ov)}</b>）"
-    combo_empty = ""
-    oc = nbt.get("overall_combo") or {}
-    if oc.get("n") == 0:
-        combo_empty = "（原强档∩热点∩回撤三重组合样本0已弃用·强档为反向指标）"
-    return (f"近 <b>{nbt.get('n_dates', '—')}</b> 回测日 ｜ 裸信号 胜率 <b>{_p(raw.get('win_rate'))}</b> 盈亏比 <b>{rawpr}</b>（{_v(raw)}）｜ "
-            f"热点∩回撤 {combo_note}{combo_empty}｜ 观察池·非出票")
+        rr = "—" if ov.get("resume_rate") is None else "%+.1f%%" % (ov["resume_rate"] * 100)
+        rr15 = "—" if ov.get("resume_rate15") is None else "%+.1f%%" % (ov["resume_rate15"] * 100)
+        combo_note = (f"样本 <b>{n}</b> ｜ 继续拉升率(10日) <b>{rr}</b> ｜ 继续拉升率(15日) <b>{rr15}</b> ｜ "
+                      f"胜率 <b>{_p(ov.get('win_rate'))}</b> 盈亏比 <b>{prs}</b>（<b>{_v(ov)}</b>）")
+    return (f"近 <b>{nbt.get('n_dates', '—')}</b> 回测日 ｜ 裸信号 继续拉升率(10日) <b>{_p(raw.get('resume_rate'))}</b> "
+            f"胜率 <b>{_p(raw.get('win_rate'))}</b> 盈亏比 <b>{rawpr}</b>（{_v(raw)}）｜ "
+            f"健康回撤∩热点 {combo_note}｜ 观察池·非出票")
 
 
 def stat_macd():
