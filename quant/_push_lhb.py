@@ -246,6 +246,7 @@ FILES = [
     "quant/build_quant_strategy.py",  # 量化策略板（短/中/长三周期 + 买区/止损/目标）
     "quant/build_3yl.py",             # 三连阴观察池（按跌幅分档 + 出票许可）
     "quant/build_n_shape.py",          # N字形战法筛选（近20日涨停 + 站上5日线 · 观察池）
+    "quant/build_n_shape_backtest.py", # N字形战法 · 往前10日历史回测（胜率/盈亏比 · 留存页）
     "quant/_datahub_archive.py",     # 每日底座沉淀（hist 精简切片 + 资金流序列副本）
     "quant/_selected_flow_probe.py", # 资金流因子截面可行性探查（结论：无增量）
     "quant/_flow_lead_lag.py",       # 资金流领先/滞后判定（结论：领先但无增量，不进规则）

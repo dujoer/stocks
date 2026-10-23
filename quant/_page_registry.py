@@ -422,6 +422,13 @@ FAMILIES = [
          freq='quarterly', dated=False, start=None, date_re=None,
          need='季报/中报十大股东'),
 
+    dict(key='n_shape_bt', label='N字形战法 · 往前10日历史回测（胜率/盈亏比 · 观察池）',
+         patterns=['n_shape/backtest/bt_*.html', 'n_shape/backtest/index.html'],
+         entry='n_shape/backtest/index.html', script='build_n_shape_backtest.py', freq='daily',
+         dated=False, start=None, date_re=None,
+         need='_txk_cache.json（全市场日K，复用 gen_signals_asof）+ sector_strength_data.json（热点）；'
+              '对最近10个可回测日（各有>=10后续交易日）重算 N字形信号，前向持有10交易日算胜率/盈亏比；'
+              '回测日受数据末端限制（最新数据日无法前向回测），不做连续日期校验；观察池，非出票'),
     dict(key='n_shape', label='N字形战法筛选（近20日涨停+站上5日线 · 观察池）',
          patterns=['n_shape/n_shape_*.html', 'n_shape/index.html'],
          entry='n_shape/index.html', script='build_n_shape.py', freq='daily',

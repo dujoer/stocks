@@ -372,6 +372,22 @@ def stat_n_shape():
             f"已剔除当日封涨停 <b>{st.get('excluded_today_zt', '—')}</b> 只 ｜ 观察池·非出票")
 
 
+def stat_n_shape_bt():
+    """N字形往前10日回测：整体胜率 / 盈亏比（观察池·非出票）。"""
+    nbt = _load_json(os.path.join(QUANT, "n_shape", "backtest_summary.json"))
+    if not nbt or not nbt.get("overall"):
+        return "往前10日历史回测（胜率/盈亏比）"
+    ov = nbt["overall"]
+    wr = ov.get("win_rate")
+    pr = ov.get("profit_ratio")
+    n = ov.get("n", 0)
+    def _p(x):
+        return "—" if x is None else "%+.1f%%" % (x * 100)
+    prs = "—" if pr is None else "%.2f" % pr
+    return (f"近 <b>{nbt.get('n_dates', '—')}</b> 回测日 · 样本 <b>{n}</b> ｜ "
+            f"整体胜率 <b>{_p(wr)}</b> ｜ 盈亏比 <b>{prs}</b> ｜ 观察池·非出票")
+
+
 def stat_macd():
     """MACD 水上金叉观察池：入选数 / 水上金叉数 / 初筛数"""
     if not macd_d or not macd_f:
@@ -542,6 +558,7 @@ sanyin_txt, sanyin_cls = freshness(sanyin_d) if sanyin_d else ("—", "stale")
 STAT["sanyin"] = stat_three_yin()
 nshape_txt, nshape_cls = freshness(nshape_d) if nshape_d else ("—", "stale")
 STAT["nshape"] = stat_n_shape()
+STAT["nbt"] = stat_n_shape_bt()
 STAT["dragon"] = dragon_stat      # 龙道诀：阶段 + 涨停/炸板率/最高板（读 cycle_{DS}.json）
 
 def fmt(d):
@@ -839,6 +856,14 @@ ZONES = [
                          "N字形 = 涨停启动 → 回调 → 再上穿均线，属短线动量延续形态，距上次涨停越近动能越强。"),
                 "rel": "⚠️ 本板为<b>观察池·非出票</b>：仅按机械条件筛选，未过样本外稳健性检验，不构成买卖建议。",
                 "stat": STAT["nshape"], "date": fmt(nshape_d) if nshape_d else "—",
+                "fresh": badge(nshape_cls, nshape_txt),
+            },
+            {
+                "ic": "📈", "t": "N字形·往前10日回测（胜率/盈亏比）", "href": "web/n_shape/backtest/index.html",
+                "func": ("对最近若干「可回测日」重算 N字形信号（与主池同口径），以信号日收盘价买入、前向持有 <b>10 交易日</b>近似收益，"
+                         "统计<b>胜率 / 平均收益率 / 盈亏比</b>。用于验证该形态的历史表现，非未来保证。"),
+                "rel": "⚠️ <b>观察池·非出票</b>：裸条件（近20日涨停+站上MA5）历史 10 日持有期望为负，需叠加强度分/热点/价格优势过滤才有意义。",
+                "stat": STAT["nbt"], "date": fmt(nshape_d) if nshape_d else "—",
                 "fresh": badge(nshape_cls, nshape_txt),
             },
         ],

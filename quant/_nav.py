@@ -60,6 +60,7 @@ MODULES = [
         ("量化策略", "quant_strategy/index.html"),
         ("三连阴", "three_yin/index.html"),
         ("N字形", "n_shape/index.html"),
+        ("N字形回测", "n_shape/backtest/index.html"),
     ]),
     ("数据与工具", [
         ("数据中心", "db/index.html"),

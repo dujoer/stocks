@@ -188,10 +188,11 @@ STEPS = [
     #   放在第 13 步（第 14 步注入导航之前），保证新产出的页面能拿到统一导航与主题。
     (13, "auto", "量化策略板 + 全市场横截面 + 三连阴 + 精中取精（观察候选）",
      "build_quant_strategy.py {D}; build_cross_section.py --date {D}; build_3yl.py {D}; "
-     "build_selected_elite.py {D}; build_highwin_elite.py {D}; build_n_shape.py {D}",
+     "build_selected_elite.py {D}; build_highwin_elite.py {D}; build_n_shape.py {D}; "
+     "build_n_shape_backtest.py {D}",
      ["build_quant_strategy.py {D}", "build_cross_section.py --date {D}",
       "build_3yl.py {D}", "build_selected_elite.py {D}", "build_highwin_elite.py {D}",
-      "build_n_shape.py {D}"]),
+      "build_n_shape.py {D}", "build_n_shape_backtest.py {D}"]),
     # ★ 2026-10-13 修：孤儿页（无任何入链的归档页）此前靠手工跑 `_fix_orphans.py`，
     #   而各索引页每天被自家生成器重建 → 插好的归档链接块**第二天就被冲掉**，
     #   孤儿数从 0 反弹到 55（coverage 报 GAP、exit 1）。又是「没进 daily_all」。
