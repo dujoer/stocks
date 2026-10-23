@@ -388,9 +388,9 @@ def main():
         tier_counts[r["tier"]] = tier_counts.get(r["tier"], 0) + 1
     n_hot = sum(1 for r in rows if r["hot"])
 
-    # 三重组合过滤候选（强档 ∩ 热点 ∩ 回撤充分），与主池同口径的下一步短名单
+    # 热点∩深度回撤候选（贴合热点 ∩ 距前高≤−25%），与主池同口径的下一步短名单（B选项主推）
     combo_rows = [r for r in rows
-                  if r["tier"] == "强" and r["hot"]
+                  if r["hot"]
                   and (r.get("dist_prev_peak") is not None and r["dist_prev_peak"] <= -25)]
     # 历史 10 日期望（取自回测汇总单源，避免双份口径）
     combo_hist_str = None
@@ -409,7 +409,7 @@ def main():
     except Exception:
         pass
 
-    print("  命中 %d 只（剔除当日涨停 %d 只）｜ 强 %d / 中 %d / 弱 %d ｜ 贴合热点 %d ｜ 三重组合候选 %d" % (
+    print("  命中 %d 只（剔除当日涨停 %d 只）｜ 强 %d / 中 %d / 弱 %d ｜ 贴合热点 %d ｜ 热点∩回撤候选 %d" % (
         len(rows), excluded_today_zt, tier_counts["强"], tier_counts["中"], tier_counts["弱"], n_hot, len(combo_rows)))
 
     jout = {"date": D, "count": len(rows), "excluded_today_zt": excluded_today_zt,
@@ -491,7 +491,7 @@ N字形=涨停启动 → 回调 → 再上穿均线，属短线动量延续形�
     # 三重组合过滤候选（强档 ∩ 热点 ∩ 回撤充分）
     combo_html = ""
     if combo_rows:
-        ch = ["<h2 class='eh'>三重组合过滤候选（强档∩热点∩回撤≤−25%）· 共 %d 只</h2>" % len(combo_rows)]
+        ch = ["<h2 class='eh'>热点∩深度回撤候选（贴合热点 且 距前高≤−25%%）· 共 %d 只</h2>" % len(combo_rows)]
         if combo_hist_str:
             ch.append("<div class='sub'>%s</div>" % combo_hist_str)
         ch.append("<table data-wb><thead><tr>"

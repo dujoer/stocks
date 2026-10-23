@@ -373,11 +373,11 @@ def stat_n_shape():
 
 
 def stat_n_shape_bt():
-    """N字形往前10日回测：裸信号 vs 三重组合（观察池·非出票）。"""
+    """N字形往前10日回测：裸信号 vs 热点∩深度回撤（观察池·非出票）。"""
     nbt = _load_json(os.path.join(QUANT, "n_shape", "backtest_summary.json"))
     if not nbt or not nbt.get("overall"):
         return "往前10日历史回测（胜率/盈亏比）"
-    ov = nbt["overall"]            # 三重组合
+    ov = nbt["overall"]            # 热点∩回撤（B选项主推）
     raw = nbt.get("overall_raw") or {}
     n = ov.get("n", 0)
     def _p(x):
@@ -387,21 +387,16 @@ def stat_n_shape_bt():
         return ("正期望" if ar > 0 else "负期望") if ar is not None else "—"
     rawpr = "—" if raw.get("profit_ratio") is None else "%.2f" % raw["profit_ratio"]
     if n == 0:
-        combo_note = "样本 <b>0</b>（强档∩热点∩回撤 过严·无命中）"
+        combo_note = "样本 <b>0</b>（热点∩回撤 当期无命中）"
     else:
         prs = "—" if ov.get("profit_ratio") is None else "%.2f" % ov["profit_ratio"]
         combo_note = f"样本 <b>{n}</b> 胜率 <b>{_p(ov.get('win_rate'))}</b> 盈亏比 <b>{prs}</b>（<b>{_v(ov)}</b>）"
-    # 单因子中表现最优者（来自 breakdown，按平均收益由优到劣）
-    bd = nbt.get("breakdown") or {}
-    best = next((kk for kk in ("drawdown", "hot", "strong") if bd.get(kk, {}).get("avg_ret") is not None), None)
-    best_note = ""
-    if best:
-        bl = {"drawdown": "回撤充分", "hot": "贴合热点", "strong": "强档"}.get(best, best)
-        bv = bd[best]
-        bpr = "—" if bv.get("profit_ratio") is None else "%.2f" % bv["profit_ratio"]
-        best_note = (f" 单因子中『{bl}』最优：胜率 <b>{_p(bv.get('win_rate'))}</b> 均 <b>{_p(bv.get('avg_ret'))}</b> 比 <b>{bpr}</b>（仍为负期望）")
+    combo_empty = ""
+    oc = nbt.get("overall_combo") or {}
+    if oc.get("n") == 0:
+        combo_empty = "（原强档∩热点∩回撤三重组合样本0已弃用·强档为反向指标）"
     return (f"近 <b>{nbt.get('n_dates', '—')}</b> 回测日 ｜ 裸信号 胜率 <b>{_p(raw.get('win_rate'))}</b> 盈亏比 <b>{rawpr}</b>（{_v(raw)}）｜ "
-            f"三重组合 {combo_note}｜{best_note}｜ 观察池·非出票")
+            f"热点∩回撤 {combo_note}{combo_empty}｜ 观察池·非出票")
 
 
 def stat_macd():

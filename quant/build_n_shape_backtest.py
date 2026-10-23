@@ -37,9 +37,10 @@ COMBO_LABELS = {
     "strong": "强档（强度分≥%d）" % NS.TIER_STRONG,
     "hot": "贴合热点",
     "drawdown": "回撤充分（距前高≤%+.0f%%）" % DRAW_PCT,
+    "hot_dd": "热点∩回撤充分（距前高≤%+.0f%%）" % DRAW_PCT,
     "combo": "三重组合（强档∩热点∩回撤）",
 }
-COMBO_ORDER = ["raw", "strong", "hot", "drawdown", "combo"]
+COMBO_ORDER = ["raw", "strong", "hot", "drawdown", "hot_dd", "combo"]
 
 
 def is_strong(s):
@@ -60,6 +61,7 @@ COMBOS = {
     "strong": is_strong,
     "hot": is_hot,
     "drawdown": is_drawdown,
+    "hot_dd": lambda s: is_hot(s) and is_drawdown(s),
     "combo": lambda s: is_strong(s) and is_hot(s) and is_drawdown(s),
 }
 
@@ -165,8 +167,8 @@ def render_day(D, pairs, day_combo_pairs, per_date_combo):
             "—" if a["profit_ratio"] is None else "%.2f" % a["profit_ratio"],
             vc, v))
     cbox.append("</tbody></table>")
-    # 三重组合子集表
-    sub = day_combo_pairs["combo"]
+    # 热点∩深度回撤 子集表（B 选项主推过滤）
+    sub = day_combo_pairs["hot_dd"]
     subrows = []
     for sig, m in sub:
         subrows.append("<tr><td>%s</td><td>%s</td><td>%s</td><td>%.2f</td><td class='%s'>%s</td><td>%s</td><td>%s</td></tr>" % (
@@ -177,13 +179,13 @@ def render_day(D, pairs, day_combo_pairs, per_date_combo):
             ("%d日" % sig["days_since_zt"]) if sig["days_since_zt"] is not None else "—"))
     sub_n = len(sub)
     if sub_n:
-        sub_html = ("<h2 class='eh'>三重组合过滤子集（强档∩热点∩回撤≤%+.0f%%）· 共 %d 只</h2>" % (DRAW_PCT, sub_n) +
+        sub_html = ("<h2 class='eh'>热点∩深度回撤过滤子集（贴合热点 且 距前高≤%+.0f%%）· 共 %d 只</h2>" % (DRAW_PCT, sub_n) +
                     "<table data-wb><thead><tr><th>代码</th><th>名称</th><th>板块</th><th>入场价</th>"
                     "<th>10日后</th><th>距前高</th><th>距涨停</th></tr></thead><tbody>" +
                     "".join(subrows) + "</tbody></table>")
     else:
-        sub_html = ("<h2 class='eh'>三重组合过滤子集</h2>"
-                    "<div class='sub'>本回测日三重组合无命中样本（样本 0）。</div>")
+        sub_html = ("<h2 class='eh'>热点∩深度回撤过滤子集</h2>"
+                    "<div class='sub'>本回测日该组合无命中样本（样本 0）。</div>")
 
     a_raw = per_date_combo["raw"][D]
     wr = pct(a_raw["win_rate"]) if a_raw["win_rate"] is not None else "—"
@@ -227,7 +229,7 @@ def render_index(asof_list, per_date_combo, overall_combo):
     # 逐日三重组合表
     trows = []
     for D in asof_list:
-        a = per_date_combo["combo"][D]
+        a = per_date_combo["hot_dd"][D]
         v, vc = combo_verdict(a)
         trows.append("<tr><td><a href='bt_%s.html'>%s</a></td><td>%d</td><td><b>%s</b></td><td>%s</td><td>%s</td><td style='color:%s;font-weight:700'>%s</td></tr>" % (
             D.replace("-", ""), D, a["n"],
@@ -235,13 +237,15 @@ def render_index(asof_list, per_date_combo, overall_combo):
             pct(a["avg_ret"]),
             "—" if a["profit_ratio"] is None else "%.2f" % a["profit_ratio"],
             vc, v))
-    ov = overall_combo["combo"]
+    ov = overall_combo["hot_dd"]
     cv, cvc = combo_verdict(ov)
     ov_raw = overall_combo["raw"]
     rv, rvc = combo_verdict(ov_raw)
+    ov_combo = overall_combo["combo"]
     ov_box = """<div class="box">跨 <b>%d</b> 个回测日、共 <b>%d</b> 个信号样本：
 <b>裸信号</b> 胜率 <b>%s</b> ｜ 平均收益 <b>%s</b> ｜ 盈亏比 <b>%s</b>（<span style='color:%s'>%s</span>）。
-叠加 <b>三重组合</b>（强档∩热点∩回撤≤%+.0f%%）后：样本 <b>%d</b> ｜ 胜率 <b>%s</b> ｜ 平均收益 <b>%s</b> ｜ 盈亏比 <b>%s</b>（<span style='color:%s'>%s</span>）。
+叠加 <b>热点∩深度回撤</b>（贴合热点 且 距前高≤%+.0f%%）后：样本 <b>%d</b> ｜ 胜率 <b>%s</b> ｜ 平均收益 <b>%s</b> ｜ 盈亏比 <b>%s</b>（<span style='color:%s'>%s</span>）。
+（注：原「强档∩热点∩回撤」三重组合样本为 <b>%d</b>，条件过严无命中，已弃用；强度分=动量分，在本形态里为反向指标。）
 组合是否翻正以「平均收益＞0」为准；仅历史验证，非未来保证。</div>""" % (
         len(asof_list), ov_raw["n"],
         pct(ov_raw["win_rate"]) if ov_raw["win_rate"] is not None else "—",
@@ -252,7 +256,8 @@ def render_index(asof_list, per_date_combo, overall_combo):
         pct(ov["win_rate"]) if ov["win_rate"] is not None else "—",
         pct(ov["avg_ret"]),
         "—" if ov["profit_ratio"] is None else "%.2f" % ov["profit_ratio"],
-        cvc, cv)
+        cvc, cv,
+        ov_combo["n"])
     head = """<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -265,7 +270,7 @@ def render_index(asof_list, per_date_combo, overall_combo):
 <table data-wb><thead><tr>
 <th>过滤口径</th><th>信号数</th><th>胜率</th><th>平均收益率</th><th>盈亏比</th><th>10日期望</th>
 </tr></thead><tbody>%s</tbody></table>
-<h2 class='eh'>逐回测日 · 三重组合表现</h2>
+    <h2 class='eh'>逐回测日 · 热点∩深度回撤 表现</h2>
 <table data-wb><thead><tr>
 <th>回测信号日</th><th>信号数</th><th>胜率</th><th>平均收益率</th><th>盈亏比</th><th>10日期望</th>
 </tr></thead><tbody>%s</tbody></table>""" % (N_DATES, FWD, ov_box, "".join(drows), "".join(trows))
@@ -339,8 +344,9 @@ def main():
 
     summ = {"latest": latest, "n_dates": len(asof_dates), "asof_dates": asof_dates,
             "draw_pct": DRAW_PCT,
-            "overall": _round_agg(overall_combo["combo"]),
+            "overall": _round_agg(overall_combo["hot_dd"]),
             "overall_raw": _round_agg(overall_combo["raw"]),
+            "overall_combo": _round_agg(overall_combo["combo"]),
             "breakdown": {k: _round_agg(overall_combo[k]) for k in COMBO_ORDER},
             "per_date": {d: {k: _round_agg(per_date_combo[k][d]) for k in COMBO_ORDER} for d in asof_dates}}
     jdir = os.path.join(QUANT, "n_shape")
