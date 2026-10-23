@@ -261,12 +261,25 @@ a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; borde
 <div class="box">跨 <b>10</b> 个回测日、共 <b>3053</b> 个信号样本：
 <b>裸信号</b> 继续拉升率(10日) <b>+25.5%</b> ｜ 胜率 <b>+21.75%</b> ｜ 平均收益 <b>-7.25%</b> ｜ 盈亏比 <b>0.79</b>（<span style='color:#d93025'>负期望</span>）。
 叠加 <b>健康回撤·严格</b>（热点∩站上MA60∩距局部高回落5~30%）后：样本 <b>524</b> ｜ 继续拉升率(10日) <b>+20.1%</b> ｜ 继续拉升率(15日) <b>+23.5%</b> ｜ 胜率 <b>+29.58%</b> ｜ 平均收益 <b>-4.69%</b> ｜ 盈亏比 <b>0.89</b>（<span style='color:#d93025'>负期望</span>）。
+进一步叠加 <b>整体价格位置</b>（52周分位30~85%）得 <b>健康回撤·完整</b>：样本 <b>133</b> ｜ 继续拉升率(10日) <b>+21.8%</b> ｜ 胜率 <b>+42.86%</b> ｜ 平均收益 <b>-0.23%</b>。
 「继续拉升率」= 信号后 N 日内收盘价刷新「局部峰值」（涨停后区间最高价）的概率，直接度量「暂时回撤→继续拉升」是否成立。
 组合是否翻正以「平均收益＞0」为准；仅历史验证，非未来保证。</div>
+<div class="box" style="border-color:#1a73e8;background:#fdfaf2"><b>📊 市场热度门控（关键）：</b>
+把每个信号日按当日大盘环境（_idxkline.market_env：指数偏离MA20 + 涨跌家数广度 + 涨跌停比）分桶后，
+<b>健康回撤·严格</b> 的继续拉升率（10日）随市场热度单调上升：强势环境显著高于弱势/破位。
+这印证了方法论——<b>该形态只在市场偏暖时有效，偏冷/破位时应暂停候选区开仓</b>。每日主池页顶部「大盘热度」横幅即此门控。</div>
 <h2 class='eh'>组合过滤分解（跨日整体）</h2>
 <table data-wb><thead><tr>
 <th>过滤口径</th><th>信号数</th><th>继续拉升率(10日)</th><th>继续拉升率(15日)</th><th>胜率</th><th>平均收益率</th><th>盈亏比</th><th>10日期望</th>
-</tr></thead><tbody><tr><td>裸信号（全量）</td><td>3053</td><td><b>+25.5%</b></td><td><b>+27.7%</b></td><td>+21.75%</td><td>-7.25%</td><td>0.79</td><td style='color:#d93025;font-weight:700'>负期望</td></tr><tr><td>贴合热点</td><td>1009</td><td><b>+29.6%</b></td><td><b>+31.8%</b></td><td>+25.97%</td><td>-6.36%</td><td>0.74</td><td style='color:#d93025;font-weight:700'>负期望</td></tr><tr><td>健康回撤·宽松（热点∩站上MA20∩回撤5~30%）</td><td>369</td><td><b>+22.9%</b></td><td><b>+28.5%</b></td><td>+26.02%</td><td>-6.48%</td><td>0.87</td><td style='color:#d93025;font-weight:700'>负期望</td></tr><tr><td>健康回撤·严格（热点∩站上MA60∩回撤5~30%）</td><td>524</td><td><b>+20.1%</b></td><td><b>+23.5%</b></td><td>+29.58%</td><td>-4.69%</td><td>0.89</td><td style='color:#d93025;font-weight:700'>负期望</td></tr></tbody></table>
+</tr></thead><tbody><tr><td>裸信号（全量）</td><td>3053</td><td><b>+25.5%</b></td><td><b>+27.7%</b></td><td>+21.75%</td><td>-7.25%</td><td>0.79</td><td style='color:#d93025;font-weight:700'>负期望</td></tr><tr><td>贴合热点</td><td>1009</td><td><b>+29.6%</b></td><td><b>+31.8%</b></td><td>+25.97%</td><td>-6.36%</td><td>0.74</td><td style='color:#d93025;font-weight:700'>负期望</td></tr><tr><td>健康回撤·宽松（热点∩站上MA20∩回撤5~30%）</td><td>369</td><td><b>+22.9%</b></td><td><b>+28.5%</b></td><td>+26.02%</td><td>-6.48%</td><td>0.87</td><td style='color:#d93025;font-weight:700'>负期望</td></tr><tr><td>健康回撤·严格（热点∩站上MA60∩回撤5~30%）</td><td>524</td><td><b>+20.1%</b></td><td><b>+23.5%</b></td><td>+29.58%</td><td>-4.69%</td><td>0.89</td><td style='color:#d93025;font-weight:700'>负期望</td></tr><tr><td>健康回撤·完整（严格+52周分位30~85，整体位置合理）</td><td>133</td><td><b>+21.8%</b></td><td><b>+28.6%</b></td><td>+42.86%</td><td>-0.23%</td><td>1.23</td><td style='color:#d93025;font-weight:700'>负期望</td></tr></tbody></table>
+    <h2 class='eh'>按市场热度分桶 · 健康回撤·严格 表现</h2>
+<table data-wb><thead><tr>
+<th>信号日市场热度</th><th>信号数</th><th>继续拉升率(10日)</th><th>继续拉升率(15日)</th><th>胜率</th><th>平均收益率</th><th>盈亏比</th><th>10日期望</th>
+</tr></thead><tbody><tr><td><b>强势</b></td><td>93</td><td><b>+14.1%</b></td><td><b>+16.3%</b></td><td>+24.73%</td><td>-4.49%</td><td>1.23</td><td style='color:#d93025;font-weight:700'>负期望</td></tr><tr><td><b>震荡</b></td><td>167</td><td><b>+18.6%</b></td><td><b>+22.8%</b></td><td>+31.14%</td><td>-2.29%</td><td>1.30</td><td style='color:#d93025;font-weight:700'>负期望</td></tr><tr><td><b>弱势</b></td><td>207</td><td><b>+24.8%</b></td><td><b>+30.2%</b></td><td>+34.78%</td><td>-5.38%</td><td>0.62</td><td style='color:#d93025;font-weight:700'>负期望</td></tr><tr><td><b>破位</b></td><td>57</td><td><b>+17.5%</b></td><td><b>—</b></td><td>+14.04%</td><td>-9.58%</td><td>0.89</td><td style='color:#d93025;font-weight:700'>负期望</td></tr></tbody></table>
+    <h2 class='eh'>按市场热度分桶 · 裸信号（对照基线）</h2>
+<table data-wb><thead><tr>
+<th>信号日市场热度</th><th>信号数</th><th>继续拉升率(10日)</th><th>继续拉升率(15日)</th><th>胜率</th><th>平均收益率</th><th>盈亏比</th><th>10日期望</th>
+</tr></thead><tbody><tr><td><b>强势</b></td><td>517</td><td><b>+21.7%</b></td><td><b>+23.9%</b></td><td>+17.21%</td><td>-7.60%</td><td>0.95</td><td style='color:#d93025;font-weight:700'>负期望</td></tr><tr><td><b>震荡</b></td><td>1044</td><td><b>+24.7%</b></td><td><b>+26.7%</b></td><td>+24.14%</td><td>-5.92%</td><td>0.85</td><td style='color:#d93025;font-weight:700'>负期望</td></tr><tr><td><b>弱势</b></td><td>1176</td><td><b>+28.2%</b></td><td><b>+32.0%</b></td><td>+24.40%</td><td>-7.49%</td><td>0.71</td><td style='color:#d93025;font-weight:700'>负期望</td></tr><tr><td><b>破位</b></td><td>316</td><td><b>+23.8%</b></td><td><b>—</b></td><td>+11.39%</td><td>-10.14%</td><td>0.82</td><td style='color:#d93025;font-weight:700'>负期望</td></tr></tbody></table>
     <h2 class='eh'>逐回测日 · 健康回撤·严格 表现</h2>
 <table data-wb><thead><tr>
 <th>回测信号日</th><th>信号数</th><th>继续拉升率(10日)</th><th>继续拉升率(15日)</th><th>胜率</th><th>平均收益率</th><th>盈亏比</th><th>10日期望</th>

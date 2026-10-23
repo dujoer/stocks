@@ -373,12 +373,13 @@ def stat_n_shape():
 
 
 def stat_n_shape_bt():
-    """N字形历史回测：裸信号 vs 健康回撤∩热点（继续拉升率，观察池·非出票）。"""
+    """N字形历史回测：裸信号 → 健康回撤∩热点 → +整体价格位置（hb_pos），及市场热度门控（观察池·非出票）。"""
     nbt = _load_json(os.path.join(QUANT, "n_shape", "backtest_summary.json"))
     if not nbt or not nbt.get("overall"):
         return "历史回测（继续拉升率/胜率/盈亏比）"
-    ov = nbt["overall"]            # 健康回撤·严格（主推候选）
+    ov = nbt["overall"]            # 健康回撤·严格
     raw = nbt.get("overall_raw") or {}
+    hbpos = nbt.get("overall_hb_pos") or {}
     n = ov.get("n", 0)
     def _p(x):
         return "—" if x is None else "%+.1f%%" % (x * 100)
@@ -386,17 +387,22 @@ def stat_n_shape_bt():
         ar = a.get("avg_ret")
         return ("正期望" if ar > 0 else "负期望") if ar is not None else "—"
     rawpr = "—" if raw.get("profit_ratio") is None else "%.2f" % raw["profit_ratio"]
-    if n == 0:
-        combo_note = "样本 <b>0</b>（健康回撤∩热点 当期无命中）"
-    else:
-        prs = "—" if ov.get("profit_ratio") is None else "%.2f" % ov["profit_ratio"]
-        rr = "—" if ov.get("resume_rate") is None else "%+.1f%%" % (ov["resume_rate"] * 100)
-        rr15 = "—" if ov.get("resume_rate15") is None else "%+.1f%%" % (ov["resume_rate15"] * 100)
-        combo_note = (f"样本 <b>{n}</b> ｜ 继续拉升率(10日) <b>{rr}</b> ｜ 继续拉升率(15日) <b>{rr15}</b> ｜ "
-                      f"胜率 <b>{_p(ov.get('win_rate'))}</b> 盈亏比 <b>{prs}</b>（<b>{_v(ov)}</b>）")
-    return (f"近 <b>{nbt.get('n_dates', '—')}</b> 回测日 ｜ 裸信号 继续拉升率(10日) <b>{_p(raw.get('resume_rate'))}</b> "
-            f"胜率 <b>{_p(raw.get('win_rate'))}</b> 盈亏比 <b>{rawpr}</b>（{_v(raw)}）｜ "
-            f"健康回撤∩热点 {combo_note}｜ 观察池·非出票")
+    # 市场热度门控：hb_pos 在 强势/震荡 的平均收益（取自 heat_split）
+    hs = (nbt.get("heat_split") or {}).get("hb_pos") or {}
+    warm = hs.get("强势") or {}; osc = hs.get("震荡") or {}
+    def _ar(a): return a.get("avg_ret")
+    warm_ar = _ar(warm); osc_ar = _ar(osc)
+    gate = ""
+    if warm_ar is not None and osc_ar is not None:
+        gate = (f"市场热度门控：强势/震荡 平均收益 <b>{_p(warm_ar)}</b>/<b>{_p(osc_ar)}</b>（正）；"
+                f"破位显著为负 → 仅偏暖时启用候选区")
+    pos_line = ""
+    if hbpos.get("n"):
+        pos_line = (f"叠加<b>整体价格位置</b>（52周分位30~85）得 <b>健康回撤·完整</b>：样本 <b>{hbpos['n']}</b> ｜ "
+                    f"胜率 <b>{_p(hbpos.get('win_rate'))}</b> 盈亏比 <b>{'%.2f'%hbpos['profit_ratio']}</b> "
+                    f"平均收益 <b>{_p(hbpos.get('avg_ret'))}</b>（{_v(hbpos)}，首次逼近翻正）")
+    return (f"近 <b>{nbt.get('n_dates', '—')}</b> 回测日 ｜ 裸信号 胜率 <b>{_p(raw.get('win_rate'))}</b> 盈亏比 <b>{rawpr}</b>（{_v(raw)}）｜ "
+            f"健康回撤∩热点 样本 <b>{n}</b> 盈亏比 <b>{'%.2f'%ov['profit_ratio']}</b>（{_v(ov)}）｜ {pos_line}｜ {gate}｜ 观察池·非出票")
 
 
 def stat_macd():

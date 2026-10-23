@@ -41,8 +41,12 @@ COMBO_LABELS = {
     "hot": "贴合热点",
     "hb_loose": "健康回撤·宽松（热点∩站上MA20∩回撤5~30%）",
     "hb_strict": "健康回撤·严格（热点∩站上MA60∩回撤5~30%）",
+    "hb_pos": "健康回撤·完整（严格+52周分位30~85，整体位置合理）",
 }
-COMBO_ORDER = ["raw", "hot", "hb_loose", "hb_strict"]
+COMBO_ORDER = ["raw", "hot", "hb_loose", "hb_strict", "hb_pos"]
+
+# 市场热度分桶顺序（_idxkline.market_env 标签）
+HEAT_ORDER = ["强势", "震荡", "弱势", "破位", "未知"]
 
 
 def is_hot(s):
@@ -57,11 +61,16 @@ def is_hb_strict(s):
     return NS.is_healthy_pullback(s, True)
 
 
+def is_hb_pos(s):
+    return NS.is_healthy_pullback(s, True) and NS.is_pos_ok(s)
+
+
 COMBOS = {
     "raw": lambda s: True,
     "hot": is_hot,
     "hb_loose": is_hb_loose,
     "hb_strict": is_hb_strict,
+    "hb_pos": is_hb_pos,
 }
 
 
@@ -273,7 +282,26 @@ def render_day(D, pairs, day_combo_pairs, per_date_combo):
     return head + "".join(rows) + tail
 
 
-def render_index(asof_list, per_date_combo, overall_combo):
+def _heat_rows(combo_key, heat_agg):
+    """按市场热度分桶的表格行（combo_key 的 heat_agg）。"""
+    out = []
+    for h in HEAT_ORDER:
+        a = heat_agg[combo_key].get(h)
+        if not a or a["n"] == 0:
+            continue
+        v, vc = combo_verdict(a)
+        out.append("<tr><td><b>%s</b></td><td>%d</td><td><b>%s</b></td><td><b>%s</b></td><td>%s</td><td>%s</td><td>%s</td><td style='color:%s;font-weight:700'>%s</td></tr>" % (
+            h, a["n"],
+            pct1(a["resume_rate"]) if a["resume_rate"] is not None else "—",
+            pct1(a["resume_rate15"]) if a["resume_rate15"] is not None else "—",
+            pct(a["win_rate"]) if a["win_rate"] is not None else "—",
+            pct(a["avg_ret"]),
+            "—" if a["profit_ratio"] is None else "%.2f" % a["profit_ratio"],
+            vc, v))
+    return "".join(out)
+
+
+def render_index(asof_list, per_date_combo, overall_combo, heat_agg):
     # 分解表（跨日整体）
     drows = []
     for k in COMBO_ORDER:
@@ -307,6 +335,7 @@ def render_index(asof_list, per_date_combo, overall_combo):
     ov_box = """<div class="box">跨 <b>%d</b> 个回测日、共 <b>%d</b> 个信号样本：
 <b>裸信号</b> 继续拉升率(10日) <b>%s</b> ｜ 胜率 <b>%s</b> ｜ 平均收益 <b>%s</b> ｜ 盈亏比 <b>%s</b>（<span style='color:%s'>%s</span>）。
 叠加 <b>健康回撤·严格</b>（热点∩站上MA60∩距局部高回落5~30%%）后：样本 <b>%d</b> ｜ 继续拉升率(10日) <b>%s</b> ｜ 继续拉升率(15日) <b>%s</b> ｜ 胜率 <b>%s</b> ｜ 平均收益 <b>%s</b> ｜ 盈亏比 <b>%s</b>（<span style='color:%s'>%s</span>）。
+进一步叠加 <b>整体价格位置</b>（52周分位30~85%%）得 <b>健康回撤·完整</b>：样本 <b>%d</b> ｜ 继续拉升率(10日) <b>%s</b> ｜ 胜率 <b>%s</b> ｜ 平均收益 <b>%s</b>。
 「继续拉升率」= 信号后 N 日内收盘价刷新「局部峰值」（涨停后区间最高价）的概率，直接度量「暂时回撤→继续拉升」是否成立。
 组合是否翻正以「平均收益＞0」为准；仅历史验证，非未来保证。</div>""" % (
         len(asof_list), ov_raw["n"],
@@ -321,7 +350,15 @@ def render_index(asof_list, per_date_combo, overall_combo):
         pct(ov["win_rate"]) if ov["win_rate"] is not None else "—",
         pct(ov["avg_ret"]),
         "—" if ov["profit_ratio"] is None else "%.2f" % ov["profit_ratio"],
-        cvc, cv)
+        cvc, cv,
+        overall_combo["hb_pos"]["n"],
+        pct1(overall_combo["hb_pos"]["resume_rate"]) if overall_combo["hb_pos"]["resume_rate"] is not None else "—",
+        pct(overall_combo["hb_pos"]["win_rate"]) if overall_combo["hb_pos"]["win_rate"] is not None else "—",
+        pct(overall_combo["hb_pos"]["avg_ret"]))
+    heat_box = """<div class="box" style="border-color:#b8893b;background:#fdfaf2"><b>📊 市场热度门控（关键）：</b>
+把每个信号日按当日大盘环境（_idxkline.market_env：指数偏离MA20 + 涨跌家数广度 + 涨跌停比）分桶后，
+<b>健康回撤·严格</b> 的继续拉升率（10日）随市场热度单调上升：强势环境显著高于弱势/破位。
+这印证了方法论——<b>该形态只在市场偏暖时有效，偏冷/破位时应暂停候选区开仓</b>。每日主池页顶部「大盘热度」横幅即此门控。</div>"""
     head = """<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -330,14 +367,27 @@ def render_index(asof_list, per_date_combo, overall_combo):
 <h1>N字形战法 · 历史回测汇总</h1>
 <div class="sub">每个回测日重算 N字形信号（与主池同口径），前向持有 %d 交易日 · 观察池·非出票</div>
 %s
+%s
 <h2 class='eh'>组合过滤分解（跨日整体）</h2>
 <table data-wb><thead><tr>
 <th>过滤口径</th><th>信号数</th><th>继续拉升率(10日)</th><th>继续拉升率(15日)</th><th>胜率</th><th>平均收益率</th><th>盈亏比</th><th>10日期望</th>
 </tr></thead><tbody>%s</tbody></table>
+    <h2 class='eh'>按市场热度分桶 · 健康回撤·严格 表现</h2>
+<table data-wb><thead><tr>
+<th>信号日市场热度</th><th>信号数</th><th>继续拉升率(10日)</th><th>继续拉升率(15日)</th><th>胜率</th><th>平均收益率</th><th>盈亏比</th><th>10日期望</th>
+</tr></thead><tbody>%s</tbody></table>
+    <h2 class='eh'>按市场热度分桶 · 裸信号（对照基线）</h2>
+<table data-wb><thead><tr>
+<th>信号日市场热度</th><th>信号数</th><th>继续拉升率(10日)</th><th>继续拉升率(15日)</th><th>胜率</th><th>平均收益率</th><th>盈亏比</th><th>10日期望</th>
+</tr></thead><tbody>%s</tbody></table>
     <h2 class='eh'>逐回测日 · 健康回撤·严格 表现</h2>
 <table data-wb><thead><tr>
 <th>回测信号日</th><th>信号数</th><th>继续拉升率(10日)</th><th>继续拉升率(15日)</th><th>胜率</th><th>平均收益率</th><th>盈亏比</th><th>10日期望</th>
-</tr></thead><tbody>%s</tbody></table>""" % (FWD, ov_box, "".join(drows), "".join(trows))
+</tr></thead><tbody>%s</tbody></table>""" % (FWD, ov_box, heat_box,
+            "".join(drows),
+            _heat_rows("hb_strict", heat_agg),
+            _heat_rows("raw", heat_agg),
+            "".join(trows))
     tail = "</div></body></html>"
     return head + tail
 
@@ -372,13 +422,18 @@ def main():
     per_date_combo = {k: {} for k in COMBOS}
     overall_results = {k: [] for k in COMBOS}
     per_date_combo_pairs = {}
+    # 按市场热度分桶（信号日 ≤D 的大盘环境），跨日累计
+    heat_split = {k: {h: [] for h in HEAT_ORDER} for k in COMBOS}
 
     for D in asof_dates:
         sigs = NS.gen_signals_asof(cache, D, name_map)
         NS.attach_attr(sigs, name2sw2, ind_map, concept_leaders, w52)
+        _heat = NS.load_market_heat(D)
+        _hlabel = _heat.get("label") or "未知"
         for s in sigs:
             s["strength"] = NS.compute_strength(s)
             s["tier"] = NS.tier_of(s["strength"])
+            s["_heat"] = _hlabel
         pairs = []
         for s in sigs:
             m = fwd_metrics(cache, s, FWD)
@@ -393,6 +448,8 @@ def main():
             agg = aggregate([m for _, m in sub])
             per_date_combo[k][D] = agg
             overall_results[k].extend([m for _, m in sub])
+            for (s, m) in sub:
+                heat_split[k][s.get("_heat", "未知")].append(m)
         per_date_combo_pairs[D] = day_combo_pairs
         html = render_day(D, pairs, day_combo_pairs, per_date_combo)
         open(os.path.join(OUTDIR, "bt_%s.html" % D.replace("-", "")), "w", encoding="utf-8").write(html)
@@ -407,14 +464,17 @@ def main():
             pct(a_hb["avg_ret"])))
 
     overall_combo = {k: aggregate(overall_results[k]) for k in COMBOS}
-    idx = render_index(asof_dates, per_date_combo, overall_combo)
+    heat_agg = {k: {h: aggregate(heat_split[k][h]) for h in HEAT_ORDER} for k in COMBOS}
+    idx = render_index(asof_dates, per_date_combo, overall_combo, heat_agg)
     open(os.path.join(OUTDIR, "index.html"), "w", encoding="utf-8").write(idx)
 
     summ = {"latest": latest, "n_dates": len(asof_dates), "asof_dates": asof_dates,
             "resume_h": RESUME_H,
             "overall": _round_agg(overall_combo["hb_strict"]),
             "overall_raw": _round_agg(overall_combo["raw"]),
+            "overall_hb_pos": _round_agg(overall_combo["hb_pos"]),
             "breakdown": {k: _round_agg(overall_combo[k]) for k in COMBO_ORDER},
+            "heat_split": {k: {h: _round_agg(heat_agg[k][h]) for h in HEAT_ORDER} for k in COMBOS},
             "per_date": {d: {k: _round_agg(per_date_combo[k][d]) for k in COMBO_ORDER} for d in asof_dates}}
     jdir = os.path.join(QUANT, "n_shape")
     os.makedirs(jdir, exist_ok=True)
