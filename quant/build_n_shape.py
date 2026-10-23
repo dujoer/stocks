@@ -388,18 +388,40 @@ def main():
         tier_counts[r["tier"]] = tier_counts.get(r["tier"], 0) + 1
     n_hot = sum(1 for r in rows if r["hot"])
 
-    print("  命中 %d 只（剔除当日涨停 %d 只）｜ 强 %d / 中 %d / 弱 %d ｜ 贴合热点 %d" % (
-        len(rows), excluded_today_zt, tier_counts["强"], tier_counts["中"], tier_counts["弱"], n_hot))
+    # 三重组合过滤候选（强档 ∩ 热点 ∩ 回撤充分），与主池同口径的下一步短名单
+    combo_rows = [r for r in rows
+                  if r["tier"] == "强" and r["hot"]
+                  and (r.get("dist_prev_peak") is not None and r["dist_prev_peak"] <= -25)]
+    # 历史 10 日期望（取自回测汇总单源，避免双份口径）
+    combo_hist_str = None
+    try:
+        _bt = json.load(open(os.path.join(QUANT, "n_shape", "backtest_summary.json"), encoding="utf-8"))
+        _c = _bt.get("overall") or {}
+        if _c.get("avg_ret") is not None and _c.get("n"):
+            wr = _c.get("win_rate"); ar = _c.get("avg_ret"); pr = _c.get("profit_ratio")
+            vlabel = "正期望" if ar > 0 else "负期望"
+            vcolor = "#188038" if ar > 0 else "#d93025"
+            combo_hist_str = ("历史往前10日回测（同口径）：样本 %d ｜ 胜率 %s ｜ 平均收益 %s ｜ 盈亏比 %s"
+                              "（<span style='color:%s;font-weight:700'>%s</span>）。本表为当日满足条件的候选，仅供观察，不构成建议。" % (
+                _c.get("n"), "—" if wr is None else "%+.2f%%" % (wr * 100),
+                "—" if ar is None else "%+.2f%%" % (ar * 100),
+                "—" if pr is None else "%.2f" % pr, vcolor, vlabel))
+    except Exception:
+        pass
+
+    print("  命中 %d 只（剔除当日涨停 %d 只）｜ 强 %d / 中 %d / 弱 %d ｜ 贴合热点 %d ｜ 三重组合候选 %d" % (
+        len(rows), excluded_today_zt, tier_counts["强"], tier_counts["中"], tier_counts["弱"], n_hot, len(combo_rows)))
 
     jout = {"date": D, "count": len(rows), "excluded_today_zt": excluded_today_zt,
             "window": WINDOW, "tier_counts": tier_counts, "n_hot": n_hot,
-            "rows": rows, "elite": elite}
+            "rows": rows, "elite": elite, "combo_rows": combo_rows}
     jdir = os.path.join(QUANT, "n_shape")
     os.makedirs(jdir, exist_ok=True)
     json.dump(jout, open(os.path.join(jdir, "n_shape_%s.json" % DS), "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
 
-    html = render_html(D, rows, excluded_today_zt, elite, tier_counts, n_hot, "n_shape_%s.html" % DS)
+    html = render_html(D, rows, excluded_today_zt, elite, tier_counts, n_hot,
+                       "n_shape_%s.html" % DS, combo_rows, combo_hist_str)
     open(os.path.join(OUTDIR, "n_shape_%s.html" % DS), "w", encoding="utf-8").write(html)
     open(os.path.join(OUTDIR, "index.html"), "w", encoding="utf-8").write(html)
     print("  写出 n_shape_%s.html 与 index.html，共 %d 只" % (DS, len(rows)))
@@ -421,7 +443,7 @@ def _sector_cell(r):
     return "%s <span style='color:%s;font-size:12px'>(%s)</span>" % (sw2, color, beh)
 
 
-def render_html(D, rows, excluded, elite, tiers, n_hot, archive_href):
+def render_html(D, rows, excluded, elite, tiers, n_hot, archive_href, combo_rows=None, combo_hist_str=None):
     head = """<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -466,6 +488,32 @@ N字形=涨停启动 → 回调 → 再上穿均线，属短线动量延续形�
                 r["avg_amt_yi"] or 0))
     etail = "</tbody></table>"
 
+    # 三重组合过滤候选（强档 ∩ 热点 ∩ 回撤充分）
+    combo_html = ""
+    if combo_rows:
+        ch = ["<h2 class='eh'>三重组合过滤候选（强档∩热点∩回撤≤−25%）· 共 %d 只</h2>" % len(combo_rows)]
+        if combo_hist_str:
+            ch.append("<div class='sub'>%s</div>" % combo_hist_str)
+        ch.append("<table data-wb><thead><tr>"
+                  "<th>#</th><th>代码</th><th>名称</th><th>强度分</th><th>板块·行为</th>"
+                  "<th>距前高</th><th>52周位</th><th>价格位置</th><th>距涨停</th><th>20日均额(亿)</th>"
+                  "</tr></thead><tbody>")
+        for i, r in enumerate(combo_rows, 1):
+            ch.append("<tr><td>%d</td><td>%s</td><td>%s%s</td><td><b>%.1f</b></td><td>%s</td>"
+                      "<td class='%s'>%s</td><td class='%s'>%s</td><td>%s</td><td>%s</td><td>%.2f</td></tr>" % (
+                i, r["code"], r["name"] or "—",
+                " <span style='color:#1a73e8'>●</span>" if r["hot"] else "",
+                r["strength"], _sector_cell(r),
+                "up" if (r["dist_prev_peak"] or 0) >= 0 else "dn",
+                ("%+.2f%%" % r["dist_prev_peak"]) if r["dist_prev_peak"] is not None else "—",
+                "up" if (r["dist_52w_high"] or 0) >= 0 else "dn",
+                ("%+.2f%%" % r["dist_52w_high"]) if r["dist_52w_high"] is not None else "—",
+                r.get("price_verdict") or "—",
+                ("%d日" % r["days_since_zt"]) if r["days_since_zt"] is not None else "—",
+                r["avg_amt_yi"] or 0))
+        ch.append("</tbody></table>")
+        combo_html = "".join(ch)
+
     # 全量列表
     th = ("<h2 class='eh'>全量命中（按强度分降序，共 %d 只）</h2>"
           "<table data-wb><thead><tr>"
@@ -509,7 +557,7 @@ N字形=涨停启动 → 回调 → 再上穿均线，属短线动量延续形�
             "</div></body></html>" % (len(rows), excluded,
                                       tiers.get("强", 0), tiers.get("中", 0), tiers.get("弱", 0),
                                       n_hot, D))
-    return head + eh + "".join(etr) + etail + th + "".join(trs) + tail
+    return head + eh + "".join(etr) + etail + combo_html + th + "".join(trs) + tail
 
 
 if __name__ == "__main__":
