@@ -464,7 +464,9 @@ def render_index(asof_list, per_date_combo, overall_combo, heat_agg):
             _heat_rows("hb_strict", heat_agg),
             _heat_rows("raw", heat_agg),
             "".join(trows))
-    tail = "</div></body></html>"
+    tail = ("<div class='sub' style='margin-top:18px'>💡 想自己调 <b>目标价 / 止损价 / 持有天数 / 市场热度</b>，"
+            "看首次触及胜率如何随之变化？→ <a href='../sim/index.html'>N字形 · 首次触及法 实盘模拟器</a></div>"
+            "</div></body></html>")
     return head + tail
 
 

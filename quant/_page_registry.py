@@ -429,6 +429,13 @@ FAMILIES = [
          need='_txk_cache.json（全市场日K，复用 gen_signals_asof）+ sector_strength_data.json（热点）；'
               '对最近10个可回测日（各有>=10后续交易日）重算 N字形信号，前向持有10交易日算胜率/盈亏比；'
               '回测日受数据末端限制（最新数据日无法前向回测），不做连续日期校验；观察池，非出票'),
+    dict(key='n_shape_sim', label='N字形 · 首次触及法 实盘模拟器（可调参数 · 观察池）',
+         patterns=['n_shape/sim/index.html'],
+         entry='n_shape/sim/index.html', script='build_n_shape_sim.py', freq='daily',
+         dated=False, start=None, date_re=None,
+         need='_txk_cache.json（复用 gen_signals_asof/attach_attr/is_healthy_pullback/is_pos_ok）'
+              '+ 最新 quotes 快照（名称，缺当日快照时回退最近一日）；把 hb_pos 真实信号的前向价格嵌入页面，'
+              '用户调 目标%/止损%/持有天数/市场热度 即时重算首次触及胜率；回测日受数据末端限制，不做连续日期校验；观察池，非出票'),
     dict(key='n_shape', label='N字形战法筛选（近20日涨停+站上5日线 · 观察池）',
          patterns=['n_shape/n_shape_*.html', 'n_shape/index.html'],
          entry='n_shape/index.html', script='build_n_shape.py', freq='daily',

@@ -16,7 +16,7 @@
 输出：web/n_shape/n_shape_{DS}.html（每日归档）+ web/n_shape/index.html（滚动视图）。
 """
 from __future__ import annotations
-import os, sys, json, datetime, argparse
+import os, sys, json, datetime, argparse, re
 
 QUANT = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(QUANT)
@@ -124,10 +124,34 @@ def load_name2sw2():
         return {}
 
 
+_QDATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}\.json$")
+
+
+def _quotes_path(preferred):
+    """取 quotes 快照路径：优先 preferred 日；若该日快照尚未生成，则回退到
+    「最新可用」快照（YYYY-MM-DD.json，名称/52周高低的权威来源）。
+
+    背景：日更中 K线缓存（_txk_refresh，第1步）可能先于 quotes 快照
+    （_gen_pool_quotes.gen_market）刷新到新交易日；此时若只认 quotes/{latest}.json
+    会得到空 name_map → excluded_name(None) 把全市场误剔成 0 信号（静默 fail-unsafe）。
+    名称按设计「稳定」，回退到最近一日快照不改口径、不编数据。"""
+    p = os.path.join(QUANT, "quotes", "%s.json" % preferred)
+    if os.path.exists(p):
+        return p
+    best = None
+    try:
+        for fn in os.listdir(os.path.join(QUANT, "quotes")):
+            if _QDATE_RE.match(fn) and (best is None or fn > best):
+                best = fn
+    except Exception:
+        pass
+    return os.path.join(QUANT, "quotes", best) if best else p
+
+
 def load_name_map(latest):
     """code -> name（取自最新 quotes；名称稳定，回测也复用）。"""
     nm = {}
-    p = os.path.join(QUANT, "quotes", "%s.json" % latest)
+    p = _quotes_path(latest)
     if os.path.exists(p):
         try:
             qj = json.load(open(p, encoding="utf-8")).get("data", {})
@@ -142,7 +166,7 @@ def load_name_map(latest):
 def load_52w(latest):
     """code -> (high_52w, low_52w)。"""
     d = {}
-    p = os.path.join(QUANT, "quotes", "%s.json" % latest)
+    p = _quotes_path(latest)
     if os.path.exists(p):
         try:
             qj = json.load(open(p, encoding="utf-8")).get("data", {})
