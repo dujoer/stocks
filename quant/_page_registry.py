@@ -422,6 +422,12 @@ FAMILIES = [
          freq='quarterly', dated=False, start=None, date_re=None,
          need='季报/中报十大股东'),
 
+    dict(key='n_shape', label='N字形战法筛选（近20日涨停+站上5日线 · 观察池）',
+         patterns=['n_shape/n_shape_*.html', 'n_shape/index.html'],
+         entry='n_shape/index.html', script='build_n_shape.py', freq='daily',
+         dated=True, start='20261022', date_re=r'n_shape_(\d{8})\.html',
+         need='_txk_cache.json（全市场日K）+ _mkt_emo（涨停口径）+ quotes/{DATE}.json（名称/现价）；'
+              '筛选：近20交易日有收盘封涨停 且 收盘>MA5，剔除当日已封涨停；观察池，非出票'),
     dict(key='db', label='数据中心', patterns=['db/*.html'],
          entry='db/index.html', script='db_update.py;db_export.py;build_db.py',
          freq='daily', dated=False, start=None, date_re=None,
@@ -448,6 +454,7 @@ ORPHAN_WHITELIST_SUBSTR = (
     'selected/',
     'quant_strategy/',
     'three_yin/',
+    'n_shape/',              # 每日归档页由 index.html 静态链接入链，二者互为入口
     'sector/trend.html',     # 旧名跳转桩（已迁移到 sector-strength-trend.html，见 build_sector_trend）
 )
 

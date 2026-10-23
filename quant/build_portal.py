@@ -72,6 +72,7 @@ selected_d, selected_f = latest(r"^combined_(\d{8})\.html$", os.path.join(WEB, "
 accum_d, accum_f = latest(r"^combined_(\d{8})\.html$", os.path.join(WEB, "accumulation"))
 qstrat_d, qstrat_f = latest(r"^strategy_(\d{8})\.html$", os.path.join(WEB, "quant_strategy"))
 sanyin_d, sanyin_f = latest(r"^sanyin_(\d{8})\.html$", os.path.join(WEB, "three_yin"))
+nshape_d, nshape_f = latest(r"^n_shape_(\d{8})\.html$", os.path.join(WEB, "n_shape"))
 exec_d, exec_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "exec_chg"))
 blk_d, blk_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "block_chg"))
 # 龙道诀周期：读 quant/dragon/cycle_{DS}.json（DS 无横线，见 build_dragon 的注释）
@@ -358,6 +359,17 @@ def stat_three_yin():
             f"｜ 深跌禁区 <b>{c.get('fatal', '—')}</b> ｜ 环境 <b>{env}</b> ｜ 带买卖点")
 
 
+def stat_n_shape():
+    """N字形战法筛选（观察池）：近20日有收盘涨停 + 站上MA5，剔除当日封涨停。"""
+    if not nshape_d:
+        return ""
+    st = _load_json(os.path.join(QUANT, "n_shape", "n_shape_%s.json" % nshape_d.strftime("%Y%m%d")))
+    if not st:
+        return "近20日涨停 + 站上5日线（观察池）"
+    return (f"命中 <b>{st.get('count', '—')}</b> 只 ｜ "
+            f"已剔除当日封涨停 <b>{st.get('excluded_today_zt', '—')}</b> 只 ｜ 观察池·非出票")
+
+
 def stat_macd():
     """MACD 水上金叉观察池：入选数 / 水上金叉数 / 初筛数"""
     if not macd_d or not macd_f:
@@ -526,6 +538,8 @@ qstrat_txt, qstrat_cls = freshness(qstrat_d) if qstrat_d else ("—", "stale")
 STAT["qstrat"] = stat_quant_strategy()
 sanyin_txt, sanyin_cls = freshness(sanyin_d) if sanyin_d else ("—", "stale")
 STAT["sanyin"] = stat_three_yin()
+nshape_txt, nshape_cls = freshness(nshape_d) if nshape_d else ("—", "stale")
+STAT["nshape"] = stat_n_shape()
 STAT["dragon"] = dragon_stat      # 龙道诀：阶段 + 涨停/炸板率/最高板（读 cycle_{DS}.json）
 
 def fmt(d):
@@ -815,6 +829,15 @@ ZONES = [
                        "真正稳健的只有跌幅分档。环境与利空需人工核对。",
                 "stat": STAT["sanyin"], "date": fmt(sanyin_d) if sanyin_d else "—",
                 "fresh": badge(sanyin_cls, sanyin_txt),
+            },
+            {
+                "ic": "📐", "t": "N字形战法筛选（可建仓观察池）", "href": "web/n_shape/index.html",
+                "func": ("近 <b>20 个交易日</b>内至少 1 根日K <b>收盘封涨停</b>（统一口径 _mkt_emo），且最新收盘价 <b>站上 MA5</b>；"
+                         "「可建仓」附加剔除<b>当日已封涨停</b>（一字/封死买不进）。"
+                         "N字形 = 涨停启动 → 回调 → 再上穿均线，属短线动量延续形态，距上次涨停越近动能越强。"),
+                "rel": "⚠️ 本板为<b>观察池·非出票</b>：仅按机械条件筛选，未过样本外稳健性检验，不构成买卖建议。",
+                "stat": STAT["nshape"], "date": fmt(nshape_d) if nshape_d else "—",
+                "fresh": badge(nshape_cls, nshape_txt),
             },
         ],
     },
