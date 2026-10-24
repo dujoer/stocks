@@ -248,6 +248,9 @@ FILES = [
     "quant/build_n_shape.py",          # N字形战法筛选（近20日涨停 + 站上5日线 · 观察池）
     "quant/build_n_shape_backtest.py", # N字形战法 · 往前10日历史回测（胜率/盈亏比 · 留存页）
     "quant/build_n_shape_sim.py",      # N字形 · 首次触及法 实盘模拟器（可调参数交互页 · 观察池）
+    "quant/_nshape_diag.py",           # N字形 · hb_pos 全维度切片诊断（描述性·找负期望来源）
+    "quant/_nshape_opt.py",            # N字形 · 候选规则 walk-forward（前半选·后半盲测·池化口径参考）
+    "quant/_nshape_gate.py",           # N字形 · 候选档出票闸门（canonical 逐日平衡 edge+R3+留一+跨窗+随机对照）
     "quant/build_research.py",         # 研报分析（上传研报入库 · 逐股胜率排序 · 观察池）
     "quant/research/reports.json",     # 研报注册表（报告日期/来源/观点/提及标的，人工校读入库）
     "quant/_datahub_archive.py",     # 每日底座沉淀（hist 精简切片 + 资金流序列副本）
@@ -341,6 +344,10 @@ _AUTO_PATTERNS = [
     "quant/sw2_chg_live.json",
     "quant/sw1_detail.json",
     "quant/news.json",
+    # N字形：回测汇总 + 闸门证据（页面「深回撤观察档」数字的可追溯真源）
+    "quant/n_shape/backtest_summary.json",
+    "quant/n_shape/gate_wf_*.json",
+    "quant/n_shape/diag_*.json",
     # 心理雷达构建脚本（仍在 market-trend/，输出到 web/psychology/）
     "market-trend/*.py",
     # 数据中心静态切片（查询页数据源，由 quant/db_export.py 生成）

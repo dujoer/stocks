@@ -34,7 +34,8 @@ WINDOW = 20            # 近 N 个交易日查涨停
 MIN_BARS = 30          # 最少历史根数
 AMT_MIN = 30_000_000   # 20 日均成交额下限（元），剔除流动性差的
 EXCLUDE_BJ = True      # 剔除北交所（30cm，口径不同）
-FWD = 10               # 回测前向交易日数（往前回测 10 天）
+FWD = 10               # 回测前向交易
+DEEP_PB = -20          # 深回撤观察档阈值：距局部峰 ≤ -20%（非出票，见 is_deep_pullback）日数（往前回测 10 天）
 
 # 强度分权重（合计 100）
 W_REC, W_LIQ, W_MP, W_MO, W_PB = 35, 25, 20, 10, 10
@@ -429,6 +430,18 @@ def is_pos_ok(s):
     return POS_LO <= p <= POS_HI
 
 
+def is_deep_pullback(s):
+    """深回撤观察档（2026-10-24 新增，非出票）：距局部峰 ≤ -20% 的「跌透」子集。
+
+    证据（quant/n_shape/gate_wf_20261023.json，60 as-of 日 2026-07-10~10-09，+10/-8/10 档）：
+    canonical 闸门全过——逐日平衡 edge +3.75pp、R3=100%、留一全正、前后半同正、30 日派生窗同过；
+    但随机对照：同每日条数的随机子集过闸率 4.0~9.5%（35 档多重比较的噪声量级），
+    R1∩R2∩R3 族达 9.5% 特异性不足 → 仅观察池跟踪，待样本外 as-of 日验证，不出票。
+    """
+    d = s.get("dist_local_peak")
+    return d is not None and d <= DEEP_PB
+
+
 def price_verdict(dist_prev_peak, dist_52w_high):
     """价格优势 verdict：当前价相对前高/52周高的位置。"""
     if dist_52w_high is not None and dist_52w_high >= -3:
@@ -568,6 +581,8 @@ def main():
     # 候选（用户 2026-10-23 完整口径）：健康回撤∩热点∩整体价格位置合理
     # = 站上MA60 + 距局部高回落5~30% + 热点 + 52周分位在 [30,85]（非高位无空间、非低位破位）
     combo_rows = [r for r in rows if r.get("healthy_strict") and r.get("pos_ok")]
+    # 深回撤观察档（2026-10-24）：combo 内距局部峰 ≤ -20% 的「跌透」子集——仅观察，非出票
+    deep_rows = [r for r in combo_rows if is_deep_pullback(r)]
     # 历史回测期望（取自回测汇总单源，避免双份口径）
     combo_hist_str = None
     try:
@@ -595,20 +610,22 @@ def main():
     except Exception:
         pass
 
-    print("  命中 %d 只（剔除当日涨停 %d 只）｜ 强 %d / 中 %d / 弱 %d ｜ 贴合热点 %d ｜ 健康回撤∩热点∩位置候选 %d" % (
-        len(rows), excluded_today_zt, tier_counts["强"], tier_counts["中"], tier_counts["弱"], n_hot, len(combo_rows)))
+    print("  命中 %d 只（剔除当日涨停 %d 只）｜ 强 %d / 中 %d / 弱 %d ｜ 贴合热点 %d ｜ 健康回撤∩热点∩位置候选 %d（其中深回撤观察 %d）" % (
+        len(rows), excluded_today_zt, tier_counts["强"], tier_counts["中"], tier_counts["弱"], n_hot, len(combo_rows), len(deep_rows)))
 
     jout = {"date": D, "count": len(rows), "excluded_today_zt": excluded_today_zt,
             "window": WINDOW, "tier_counts": tier_counts, "n_hot": n_hot,
             "heat": heat,
-            "rows": rows, "elite": elite, "combo_rows": combo_rows}
+            "rows": rows, "elite": elite, "combo_rows": combo_rows,
+            "deep_pullback_count": len(deep_rows)}
     jdir = os.path.join(QUANT, "n_shape")
     os.makedirs(jdir, exist_ok=True)
     json.dump(jout, open(os.path.join(jdir, "n_shape_%s.json" % DS), "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
 
     html = render_html(D, rows, excluded_today_zt, elite, tier_counts, n_hot,
-                       "n_shape_%s.html" % DS, combo_rows, combo_hist_str, heat)
+                       "n_shape_%s.html" % DS, combo_rows, combo_hist_str, heat,
+                       deep_rows=deep_rows)
     open(os.path.join(OUTDIR, "n_shape_%s.html" % DS), "w", encoding="utf-8").write(html)
     open(os.path.join(OUTDIR, "index.html"), "w", encoding="utf-8").write(html)
     print("  写出 n_shape_%s.html 与 index.html，共 %d 只" % (DS, len(rows)))
@@ -643,7 +660,7 @@ def _sector_cell(r):
     return "%s <span style='color:%s;font-size:12px'>(%s)</span>" % (sw2, color, beh)
 
 
-def render_html(D, rows, excluded, elite, tiers, n_hot, archive_href, combo_rows=None, combo_hist_str=None, heat=None):
+def render_html(D, rows, excluded, elite, tiers, n_hot, archive_href, combo_rows=None, combo_hist_str=None, heat=None, deep_rows=None):
     # 大盘热度横幅
     hb = ""
     if heat:
@@ -762,6 +779,35 @@ N字形=涨停启动 → 回调 → 再上穿均线，属短线动量延续形�
         ch.append("</tbody></table>")
         combo_html = "".join(ch)
 
+    # 深回撤观察档（2026-10-24 新增，非出票）：距局部峰 ≤ -20% 的「跌透」子集
+    deep_html = ""
+    if deep_rows:
+        dh = ["<h2 class='eh'>深回撤观察档（距局部峰 ≤ -20%% 跌透子集）· 共 %d 只</h2>" % len(deep_rows)]
+        dh.append("<div class='sub'>证据口径（quant/n_shape/gate_wf_20261023.json，60 个 as-of 日 2026-07-10~10-09，+10%%/-8%%/10日档）："
+                  "canonical 闸门——逐日平衡 edge +3.75pp、R3=100%%、留一全正、前后半同正、30 日派生窗同过；"
+                  "<b>但同每日条数的随机子集过闸率 4.0~9.5%%（多重比较噪声量级）</b>，特异性不足 → "
+                  "<span style='color:#d93025;font-weight:700'>仅观察池跟踪，非出票</span>，待样本外 as-of 日验证。"
+                  "逻辑假设：高点回落 20%% 后的超跌反弹，非趋势延续。</div>")
+        dh.append("<table data-wb><thead><tr>"
+                  "<th>#</th><th>代码</th><th>名称</th><th>强度分</th><th>板块·行为</th>"
+                  "<th>距局部高</th><th>趋势位</th><th>52周分位</th><th>距涨停</th><th>20日均额(亿)</th>"
+                  "</tr></thead><tbody>")
+        for i, r in enumerate(deep_rows, 1):
+            pp = r.get("pos_pctile")
+            pp_s = "—" if pp is None else "%.0f%%" % pp
+            dh.append("<tr><td>%d</td><td>%s</td><td>%s%s</td><td><b>%.1f</b></td><td>%s</td>"
+                      "<td class='dn'>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%.2f</td></tr>" % (
+                i, r["code"], r["name"] or "—",
+                " <span style='color:#1a73e8'>●</span>" if r["hot"] else "",
+                r["strength"], _sector_cell(r),
+                ("%+.2f%%" % r["dist_local_peak"]) if r["dist_local_peak"] is not None else "—",
+                _trend_cell(r),
+                pp_s,
+                ("%d日" % r["days_since_zt"]) if r["days_since_zt"] is not None else "—",
+                r["avg_amt_yi"] or 0))
+        dh.append("</tbody></table>")
+        deep_html = "".join(dh)
+
     # 全量列表
     th = ("<h2 class='eh'>全量命中（按强度分降序，共 %d 只）</h2>"
           "<table data-wb><thead><tr>"
@@ -812,7 +858,7 @@ N字形=涨停启动 → 回调 → 再上穿均线，属短线动量延续形�
             "</div></body></html>" % (len(rows), excluded,
                                       tiers.get("强", 0), tiers.get("中", 0), tiers.get("弱", 0),
                                       n_hot, D))
-    return head + eh + "".join(etr) + etail + combo_html + th + "".join(trs) + tail
+    return head + eh + "".join(etr) + etail + combo_html + deep_html + th + "".join(trs) + tail
 
 
 if __name__ == "__main__":

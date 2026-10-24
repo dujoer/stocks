@@ -46,8 +46,9 @@ COMBO_LABELS = {
     "hb_loose": "健康回撤·宽松（热点∩站上MA20∩回撤5~30%）",
     "hb_strict": "健康回撤·严格（热点∩站上MA60∩回撤5~30%）",
     "hb_pos": "健康回撤·完整（严格+52周分位30~85，整体位置合理）",
+    "hb_deep": "深回撤观察档（完整+距局部峰≤-20%跌透，2026-10-24新增·非出票）",
 }
-COMBO_ORDER = ["raw", "hot", "hb_loose", "hb_strict", "hb_pos"]
+COMBO_ORDER = ["raw", "hot", "hb_loose", "hb_strict", "hb_pos", "hb_deep"]
 
 # 市场热度分桶顺序（_idxkline.market_env 标签）
 HEAT_ORDER = ["强势", "震荡", "弱势", "破位", "未知"]
@@ -69,12 +70,19 @@ def is_hb_pos(s):
     return NS.is_healthy_pullback(s, True) and NS.is_pos_ok(s)
 
 
+def is_hb_deep(s):
+    """深回撤观察档（2026-10-24，非出票）：hb_pos ∩ 距局部峰 ≤ -20%。
+    闸门证据见 NS.is_deep_pullback docstring；随机对照 4.0~9.5% 特异性不足。"""
+    return is_hb_pos(s) and NS.is_deep_pullback(s)
+
+
 COMBOS = {
     "raw": lambda s: True,
     "hot": is_hot,
     "hb_loose": is_hb_loose,
     "hb_strict": is_hb_strict,
     "hb_pos": is_hb_pos,
+    "hb_deep": is_hb_deep,
 }
 
 
