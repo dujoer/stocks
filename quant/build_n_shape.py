@@ -583,6 +583,19 @@ def main():
     combo_rows = [r for r in rows if r.get("healthy_strict") and r.get("pos_ok")]
     # 深回撤观察档（2026-10-24）：combo 内距局部峰 ≤ -20% 的「跌透」子集——仅观察，非出票
     deep_rows = [r for r in combo_rows if is_deep_pullback(r)]
+    # 量能优选观察档（2026-10-24 晚，非出票）：hb_pos 当日 vol_score 前 20%
+    # 模型与 WF 证据：quant/_nshape_vol_model.py / quant/n_shape/vol_final2_*_step*.json
+    try:
+        import _nshape_vol_model as VM
+        _vm = VM.load_model()
+        n_scored = VM.attach_vol(rows, cache, _vm) if _vm else 0
+        VM.mark_vol_top(rows)
+        vol_rows = sorted([r for r in rows if r.get("vol_top")],
+                          key=lambda r: -(r.get("vol_score") or 0))
+        vol_meta = _vm
+    except Exception as _e:
+        print("  [量能评分跳过] %s" % _e)
+        vol_rows, vol_meta = [], None
     # 历史回测期望（取自回测汇总单源，避免双份口径）
     combo_hist_str = None
     try:
@@ -610,14 +623,15 @@ def main():
     except Exception:
         pass
 
-    print("  命中 %d 只（剔除当日涨停 %d 只）｜ 强 %d / 中 %d / 弱 %d ｜ 贴合热点 %d ｜ 健康回撤∩热点∩位置候选 %d（其中深回撤观察 %d）" % (
-        len(rows), excluded_today_zt, tier_counts["强"], tier_counts["中"], tier_counts["弱"], n_hot, len(combo_rows), len(deep_rows)))
+    print("  命中 %d 只（剔除当日涨停 %d 只）｜ 强 %d / 中 %d / 弱 %d ｜ 贴合热点 %d ｜ 健康回撤∩热点∩位置候选 %d（其中深回撤观察 %d）｜ 量能优选观察 %d" % (
+        len(rows), excluded_today_zt, tier_counts["强"], tier_counts["中"], tier_counts["弱"], n_hot, len(combo_rows), len(deep_rows), len(vol_rows)))
 
     jout = {"date": D, "count": len(rows), "excluded_today_zt": excluded_today_zt,
             "window": WINDOW, "tier_counts": tier_counts, "n_hot": n_hot,
             "heat": heat,
             "rows": rows, "elite": elite, "combo_rows": combo_rows,
-            "deep_pullback_count": len(deep_rows)}
+            "deep_pullback_count": len(deep_rows),
+            "vol_top_count": len(vol_rows)}
     jdir = os.path.join(QUANT, "n_shape")
     os.makedirs(jdir, exist_ok=True)
     json.dump(jout, open(os.path.join(jdir, "n_shape_%s.json" % DS), "w", encoding="utf-8"),
@@ -625,7 +639,7 @@ def main():
 
     html = render_html(D, rows, excluded_today_zt, elite, tier_counts, n_hot,
                        "n_shape_%s.html" % DS, combo_rows, combo_hist_str, heat,
-                       deep_rows=deep_rows)
+                       deep_rows=deep_rows, vol_rows=vol_rows, vol_meta=vol_meta)
     open(os.path.join(OUTDIR, "n_shape_%s.html" % DS), "w", encoding="utf-8").write(html)
     open(os.path.join(OUTDIR, "index.html"), "w", encoding="utf-8").write(html)
     print("  写出 n_shape_%s.html 与 index.html，共 %d 只" % (DS, len(rows)))
@@ -660,7 +674,7 @@ def _sector_cell(r):
     return "%s <span style='color:%s;font-size:12px'>(%s)</span>" % (sw2, color, beh)
 
 
-def render_html(D, rows, excluded, elite, tiers, n_hot, archive_href, combo_rows=None, combo_hist_str=None, heat=None, deep_rows=None):
+def render_html(D, rows, excluded, elite, tiers, n_hot, archive_href, combo_rows=None, combo_hist_str=None, heat=None, deep_rows=None, vol_rows=None, vol_meta=None):
     # 大盘热度横幅
     hb = ""
     if heat:
@@ -808,6 +822,67 @@ N字形=涨停启动 → 回调 → 再上穿均线，属短线动量延续形�
         dh.append("</tbody></table>")
         deep_html = "".join(dh)
 
+    # 量能优选观察档（2026-10-24 晚新增，非出票）：hb_pos 当日 vol_score 前 20%
+    vol_html = ""
+    if vol_rows:
+        # WF 证据串（读冻结模型内嵌 validation，不写死）
+        ev = ""
+        try:
+            v = (vol_meta or {}).get("validation") or {}
+            parts = []
+            for sk in ("step10", "step5"):
+                d = v.get(sk) or {}
+                if not d:
+                    continue
+                parts.append("%s：edge %spp / R3 %s / 留一 %s / 随机对照 %s%%（n=%s，池化胜率A %s%% vs 基准 %s%%）" % (
+                    sk.replace("step", "步长"),
+                    ("%+.2f" % d["edge"]) if d.get("edge") is not None else "—",
+                    ("%.1f" % d["r3"]) if d.get("r3") is not None else "—",
+                    ("%+.2f" % d["loo_min"]) if d.get("loo_min") is not None else "—",
+                    ("%.1f" % d["rand_hit_pct"]) if d.get("rand_hit_pct") is not None else "—",
+                    d.get("n_top"),
+                    ("%.2f" % d["winA"]) if d.get("winA") is not None else "—",
+                    ("%.2f" % ((vol_meta or {}).get("trained_on") or {}).get("base_winA")) if (vol_meta or {}).get("trained_on") else "—"))
+            tr = (vol_meta or {}).get("trained_on") or {}
+            ev = ("滚动 walk-forward 证据（60 as-of 日 %s~%s，训练 AUC %s）：%s。" % (
+                tr.get("window", ["—", "—"])[0], tr.get("window", ["—", "—"])[-1],
+                tr.get("train_auc"), "；".join(parts)))
+        except Exception:
+            ev = ""
+        vh = ["<h2 class='eh'>量能优选观察档（当日 hb_pos 量能评分前 20%%）· 共 %d 只</h2>" % len(vol_rows)]
+        vh.append("<div class='sub'>%s"
+                  "<b>跨步长随机对照不一致（step5 7.5%% &gt; 5%%）且绝对收益≈0</b> → "
+                  "<span style='color:#d93025;font-weight:700'>仅观察池跟踪，非出票</span>；"
+                  "评分=逻辑回归预测「首触+10%%/-8%%/10日」胜率概率×100（训练窗 %s）。"
+                  "用法：作相对优选参考，须配合环境门控（弱势/破位空仓），不作为买入指令。</div>"
+                  % (ev, "样本内" if True else ""))
+        vh.append("<table data-wb><thead><tr>"
+                  "<th>#</th><th>代码</th><th>名称</th><th>量能评分</th><th>强度分</th><th>放量拐头度</th>"
+                  "<th>涨停潮强度</th><th>OBV斜率</th><th>地量后再放量</th><th>尾/初段量能</th>"
+                  "<th>距局部高</th><th>距涨停</th><th>20日均额(亿)</th>"
+                  "</tr></thead><tbody>")
+        for i, r in enumerate(vol_rows, 1):
+            vf = r.get("vf") or {}
+            def _f2(x):
+                return "—" if x is None else "%.2f" % x
+            sc = r.get("vol_score") or 0
+            scc = "#188038" if sc >= 55 else ("#b8893b" if sc >= 45 else "#9aa0a6")
+            vh.append("<tr><td>%d</td><td>%s</td><td>%s%s</td>"
+                      "<td><b style='color:%s'>%.1f</b></td><td>%.1f</td>"
+                      "<td>%s</td><td>%s</td><td class='%s'>%s</td><td>%s</td><td>%s</td>"
+                      "<td class='dn'>%s</td><td>%s</td><td>%.2f</td></tr>" % (
+                i, r["code"], r["name"] or "—",
+                " <span style='color:#1a73e8'>●</span>" if r["hot"] else "",
+                scc, sc, r["strength"],
+                _f2(vf.get("v_turn")), _f2(vf.get("v_surge")),
+                "up" if (vf.get("obv_slope") or 0) >= 0 else "dn", _f2(vf.get("obv_slope")),
+                _f2(vf.get("v_reb")), _f2(vf.get("vseq")),
+                ("%+.2f%%" % r["dist_local_peak"]) if r["dist_local_peak"] is not None else "—",
+                ("%d日" % r["days_since_zt"]) if r["days_since_zt"] is not None else "—",
+                r["avg_amt_yi"] or 0))
+        vh.append("</tbody></table>")
+        vol_html = "".join(vh)
+
     # 全量列表
     th = ("<h2 class='eh'>全量命中（按强度分降序，共 %d 只）</h2>"
           "<table data-wb><thead><tr>"
@@ -858,7 +933,7 @@ N字形=涨停启动 → 回调 → 再上穿均线，属短线动量延续形�
             "</div></body></html>" % (len(rows), excluded,
                                       tiers.get("强", 0), tiers.get("中", 0), tiers.get("弱", 0),
                                       n_hot, D))
-    return head + eh + "".join(etr) + etail + combo_html + deep_html + th + "".join(trs) + tail
+    return head + eh + "".join(etr) + etail + combo_html + deep_html + vol_html + th + "".join(trs) + tail
 
 
 if __name__ == "__main__":

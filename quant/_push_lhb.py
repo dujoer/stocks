@@ -251,6 +251,11 @@ FILES = [
     "quant/_nshape_diag.py",           # N字形 · hb_pos 全维度切片诊断（描述性·找负期望来源）
     "quant/_nshape_opt.py",            # N字形 · 候选规则 walk-forward（前半选·后半盲测·池化口径参考）
     "quant/_nshape_gate.py",           # N字形 · 候选档出票闸门（canonical 逐日平衡 edge+R3+留一+跨窗+随机对照）
+    "quant/_nshape_vol.py",            # N字形 · 量能特征预测力诊断（单特征五分位·无未来函数）
+    "quant/_nshape_vol2.py",           # N字形 · 量能评分合成+WF+随机对照（基础三特征）
+    "quant/_nshape_vol3.py",           # N字形 · 量能特征扩充+分组 WF AUC 对比
+    "quant/_nshape_vol4.py",           # N字形 · 量能模型决胜验证（插补+折内选参+canonical+随机对照）
+    "quant/_nshape_vol_model.py",      # N字形 · 量能评分模型（训练/冻结/打分·观察档非出票）
     "quant/build_research.py",         # 研报分析（上传研报入库 · 逐股胜率排序 · 观察池）
     "quant/research/reports.json",     # 研报注册表（报告日期/来源/观点/提及标的，人工校读入库）
     "quant/_datahub_archive.py",     # 每日底座沉淀（hist 精简切片 + 资金流序列副本）
@@ -341,6 +346,8 @@ _AUTO_PATTERNS = [
     # 龙虎榜富集 / 次日回测 / 要闻 / 申万映射
     "quant/lhb_enriched_*.json",
     "quant/lhb_nextday_backtest/2026-*.json",
+    # N字形 · 量能证据与冻结模型（vol_diag/vol_score/vol_groups/vol_final2/vol_model）
+    "quant/n_shape/vol_*.json",
     "quant/sw2_chg_live.json",
     "quant/sw1_detail.json",
     "quant/news.json",

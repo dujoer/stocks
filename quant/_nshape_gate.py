@@ -41,6 +41,7 @@ CANDIDATES = {
     "R1∩R3": lambda s: r_deep(s) and r_pos(s),
     "R2∩R3": lambda s: r_time(s) and r_pos(s),
     "R1∩R2∩R3∩R5": lambda s: r_deep(s) and r_time(s) and r_pos(s) and r_amt(s),
+    "VOL_top20": lambda s: bool(s.get("vol_top")),
 }
 PARAMS = [(0.06, 0.08, 10), (0.08, 0.06, 10), (0.10, 0.08, 10), (0.12, 0.08, 10),
           (0.10, 0.06, 10), (0.08, 0.08, 20), (0.12, 0.10, 10)]
@@ -52,6 +53,14 @@ def build_rows(cache, name_map, name2sw2, ind_map, cl, w52, asof_dates, heat_map
     for d in asof_dates:
         day = NS.gen_signals_asof(cache, d, name_map)
         NS.attach_attr(day, name2sw2, ind_map, cl, w52)
+        try:
+            import _nshape_vol_model as VM
+            _vm = VM.load_model()
+            if _vm:
+                VM.attach_vol(day, cache, _vm)
+                VM.mark_vol_top(day)
+        except Exception:
+            pass
         for r in day:
             if not BT.is_hb_pos(r):
                 continue

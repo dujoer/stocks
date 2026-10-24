@@ -47,8 +47,9 @@ COMBO_LABELS = {
     "hb_strict": "健康回撤·严格（热点∩站上MA60∩回撤5~30%）",
     "hb_pos": "健康回撤·完整（严格+52周分位30~85，整体位置合理）",
     "hb_deep": "深回撤观察档（完整+距局部峰≤-20%跌透，2026-10-24新增·非出票）",
+    "hb_vol": "量能优选观察档（完整+当日量能评分前20%，2026-10-24晚新增·非出票·样本内）",
 }
-COMBO_ORDER = ["raw", "hot", "hb_loose", "hb_strict", "hb_pos", "hb_deep"]
+COMBO_ORDER = ["raw", "hot", "hb_loose", "hb_strict", "hb_pos", "hb_deep", "hb_vol"]
 
 # 市场热度分桶顺序（_idxkline.market_env 标签）
 HEAT_ORDER = ["强势", "震荡", "弱势", "破位", "未知"]
@@ -76,6 +77,13 @@ def is_hb_deep(s):
     return is_hb_pos(s) and NS.is_deep_pullback(s)
 
 
+def is_hb_vol(s):
+    """量能优选观察档（2026-10-24 晚，非出票）：hb_pos ∩ 当日 vol_score 前 20%。
+    WF 证据：edge +2.4~3.1pp / R3 99%+ / 但跨步长随机对照 2.5% vs 7.5% 不一致、
+    绝对收益≈0 → 仅观察。样本内数字（模型训练窗 07-10~10-09），谨慎解读。"""
+    return bool(s.get("vol_top"))
+
+
 COMBOS = {
     "raw": lambda s: True,
     "hot": is_hot,
@@ -83,6 +91,7 @@ COMBOS = {
     "hb_strict": is_hb_strict,
     "hb_pos": is_hb_pos,
     "hb_deep": is_hb_deep,
+    "hb_vol": is_hb_vol,
 }
 
 
@@ -514,6 +523,15 @@ def main():
     for D in asof_dates:
         sigs = NS.gen_signals_asof(cache, D, name_map)
         NS.attach_attr(sigs, name2sw2, ind_map, concept_leaders, w52)
+        # 量能评分（观察档用；模型缺失时静默跳过，vol_score=None）
+        try:
+            import _nshape_vol_model as VM
+            _vm = VM.load_model()
+            if _vm:
+                VM.attach_vol(sigs, cache, _vm)
+                VM.mark_vol_top(sigs)
+        except Exception as _e:
+            print("  [量能评分跳过 %s] %s" % (D, _e))
         _heat = NS.load_market_heat(D)
         _hlabel = _heat.get("label") or "未知"
         for s in sigs:
