@@ -584,13 +584,16 @@ def main():
     # 深回撤观察档（2026-10-24）：combo 内距局部峰 ≤ -20% 的「跌透」子集——仅观察，非出票
     deep_rows = [r for r in combo_rows if is_deep_pullback(r)]
     # 量能优选观察档（2026-10-24 晚，非出票）：hb_pos 当日 vol_score 前 20%
+    # 口径与回测 hb_vol 档严格一致（hb_pos ∩ 当日 top20%），2026-10-25 修：
+    # 曾误把 mark_vol_top 用在全部信号行上，导致非 hb_pos（如 52周分位<30）混入名单。
     # 模型与 WF 证据：quant/_nshape_vol_model.py / quant/n_shape/vol_final2_*_step*.json
     try:
         import _nshape_vol_model as VM
         _vm = VM.load_model()
-        n_scored = VM.attach_vol(rows, cache, _vm) if _vm else 0
-        VM.mark_vol_top(rows)
-        vol_rows = sorted([r for r in rows if r.get("vol_top")],
+        hb_rows = [r for r in rows if is_healthy_pullback(r, True) and is_pos_ok(r)]
+        n_scored = VM.attach_vol(hb_rows, cache, _vm) if _vm else 0
+        VM.mark_vol_top(hb_rows)
+        vol_rows = sorted([r for r in hb_rows if r.get("vol_top")],
                           key=lambda r: -(r.get("vol_score") or 0))
         vol_meta = _vm
     except Exception as _e:
@@ -851,10 +854,13 @@ N字形=涨停启动 → 回调 → 再上穿均线，属短线动量延续形�
             ev = ""
         vh = ["<h2 class='eh'>量能优选观察档（当日 hb_pos 量能评分前 20%%）· 共 %d 只</h2>" % len(vol_rows)]
         vh.append("<div class='sub'>%s"
-                  "<b>跨步长随机对照不一致（step5 7.5%% &gt; 5%%）且绝对收益≈0</b> → "
+                  "<b>未过出票闸：全部配置（top20/25/33%%、排除破位日、热度门控）的随机对照达标率在 "
+                  "4.5%%~10.5%% 间漂移（200 次抽样），为该检验在此子集规模下的本底噪声，非单一规则问题</b> → "
                   "<span style='color:#d93025;font-weight:700'>仅观察池跟踪，非出票</span>；"
                   "评分=逻辑回归预测「首触+10%%/-8%%/10日」胜率概率×100（训练窗 %s）。"
-                  "用法：作相对优选参考，须配合环境门控（弱势/破位空仓），不作为买入指令。</div>"
+                  "<b>退出工程发现（2026-10-25，OOS 配对）：折内选退出一律跑赢固定首触 +0.70~0.94pp</b>"
+                  "——量能优选的相对 edge 真实，配合移动止盈（-12%%止损/+6%%激活/5%%回撤）比固定 +10%%/-8%% 更优；"
+                  "用法：作相对优选参考，弱势/破位空仓，不作为买入指令。</div>"
                   % (ev, "样本内" if True else ""))
         vh.append("<table data-wb><thead><tr>"
                   "<th>#</th><th>代码</th><th>名称</th><th>量能评分</th><th>强度分</th><th>放量拐头度</th>"

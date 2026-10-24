@@ -255,6 +255,9 @@ FILES = [
     "quant/_nshape_vol2.py",           # N字形 · 量能评分合成+WF+随机对照（基础三特征）
     "quant/_nshape_vol3.py",           # N字形 · 量能特征扩充+分组 WF AUC 对比
     "quant/_nshape_vol4.py",           # N字形 · 量能模型决胜验证（插补+折内选参+canonical+随机对照）
+    "quant/_nshape_vol5.py",           # N字形 · 组合诊断（量能×市场热度×退出，描述性）
+    "quant/_nshape_vol6.py",           # N字形 · 退出工程测试（移动止盈网格 vs 固定首触，样本内描述）
+    "quant/_nshape_vol7.py",           # N字形 · 退出工程决胜（折内选退出+OOS盲测+200次随机对照）
     "quant/_nshape_vol_model.py",      # N字形 · 量能评分模型（训练/冻结/打分·观察档非出票）
     "quant/build_research.py",         # 研报分析（上传研报入库 · 逐股胜率排序 · 观察池）
     "quant/research/reports.json",     # 研报注册表（报告日期/来源/观点/提及标的，人工校读入库）
@@ -348,6 +351,9 @@ _AUTO_PATTERNS = [
     "quant/lhb_nextday_backtest/2026-*.json",
     # N字形 · 量能证据与冻结模型（vol_diag/vol_score/vol_groups/vol_final2/vol_model）
     "quant/n_shape/vol_*.json",
+    "quant/n_shape/vol5_diag_*.json",     # 组合诊断（量能×热度×退出，描述性）
+    "quant/n_shape/vol6_exit_*.json",     # 退出工程样本内测试（移动止盈网格）
+    "quant/n_shape/vol7_exit_wf_*.json",  # 退出工程 OOS 决胜（折内选退出+200次随机对照）
     "quant/sw2_chg_live.json",
     "quant/sw1_detail.json",
     "quant/news.json",
