@@ -164,7 +164,12 @@ def load_name_map(latest):
 
 
 def load_52w(latest):
-    """code -> (high_52w, low_52w)。"""
+    """code -> (high_52w, low_52w)。
+
+    ⚠ 2026-10-24 证伪：quotes 快照的 high_52week/low_52week **并非真实 52 周区间**
+    （抽查 sh600610：缓存 250 根最高 13.49@2026-01-30，快照仅记 7.56；
+    窗口疑似被压缩到约一个季度）。用于「位置分位」会错判，**位置计算已改用
+    load_52w_cache（K 线缓存自算）**；本函数仅保留作对照，勿再用于出数。"""
     d = {}
     p = _quotes_path(latest)
     if os.path.exists(p):
@@ -175,6 +180,23 @@ def load_52w(latest):
                     d[code] = (v.get("high_52week"), v.get("low_52week"))
         except Exception:
             pass
+    return d
+
+
+def load_52w_cache(cache, n=250):
+    """code -> (high_52w, low_52w)，**取自 K 线缓存近 n 根**（≈52 周，唯一自洽真源）。
+
+    替代 load_52w：quotes 快照 52 周字段经抽查与价格历史矛盾（见 load_52w  docstring），
+    位置分位/距 52 周高必须用真实价格区间重算，否则「整体价格位置」维度建在错数据上。"""
+    d = {}
+    for code, bars in cache.items():
+        if not isinstance(bars, list) or len(bars) < 20:
+            continue
+        w = bars[-n:]
+        hs = [b.get("high") for b in w if b.get("high") is not None]
+        ls = [b.get("low") for b in w if b.get("low") is not None]
+        if hs and ls:
+            d[code] = (max(hs), min(ls))
     return d
 
 
@@ -219,6 +241,100 @@ def load_market_heat(D):
 
 
 # ----------------------------------------------------------------- 信号（as-of 切片，回测/主池通用）
+def eval_stock_signal(code, bars, aidx, name):
+    """单只股票在给定 as-of 根处的 N字形信号求值——**主池/回测/研报模块共用的唯一口径**。
+
+    返回信号 dict；不满足入场质量门槛返回 None。调用方负责定位 aidx 与 name
+    （研报模块按历史 as-of 逐日调用本函数，逐股统计胜率，杜绝口径分叉）。
+    """
+    lo = max(0, aidx - (WINDOW + 5))
+    win = bars[lo:aidx + 1]
+    # 扩展窗口用于 MA20/MA60（与主池/回测同口径，判断「股票位置」）
+    ma_lo = max(0, aidx - 65)
+    ma_win = bars[ma_lo:aidx + 1]
+    def _sma(n):
+        vs = [b.get("last") for b in ma_win[-n:] if b.get("last") is not None]
+        return (sum(vs) / len(vs)) if len(vs) >= n else None
+    ma20 = _sma(20)
+    ma60 = _sma(60)
+    recs = list(M.scan_one(code, win))
+    if len(recs) < WINDOW:
+        return None
+    last20 = recs[-WINDOW:]
+
+    today_zt = bool(last20[-1].get("closed"))
+    has_zt = any(r.get("closed") for r in last20)
+    if not has_zt:
+        return None
+
+    closes5 = [r["close"] for r in recs[-5:]]
+    if not closes5 or any(c is None for c in closes5):
+        return None
+    ma5 = sum(closes5) / len(closes5)
+    cur = last20[-1]["close"]
+    if cur is None or ma5 is None:
+        return None
+    if not (cur > ma5):
+        return None
+
+    amts = [r.get("amount") or 0 for r in last20]
+    avg_amt = sum(amts) / len(amts)
+    if avg_amt < AMT_MIN:
+        return None
+
+    # 可建仓：剔除当日已封涨停（买不进）—— 回测与主池同口径
+    if today_zt:
+        return None
+
+    # 涨停定位
+    last_zt_idx = None
+    for i in range(len(last20) - 1, -1, -1):
+        if last20[i].get("closed"):
+            last_zt_idx = i
+            break
+    last_zt_date = last20[last_zt_idx]["date"] if last_zt_idx is not None else None
+    days_since = (len(last20) - 1 - last_zt_idx) if last_zt_idx is not None else None
+
+    # 涨停后回撤：涨停收盘 → 其后最低价（越浅越强）
+    pullback_pct = 0.0
+    prev_peak_high = None
+    if last_zt_idx is not None:
+        zt_close = last20[last_zt_idx]["close"]
+        prev_peak_high = last20[last_zt_idx].get("high")
+        post = last20[last_zt_idx + 1:]
+        lows = [r.get("low") for r in post if r.get("low") is not None]
+        if zt_close and lows:
+            pullback_pct = round((min(lows) / zt_close - 1) * 100, 2)
+
+    # 局部峰值（涨停后至当前区间最高价）—— 用于「健康回撤」位置判断
+    post_zt = last20[last_zt_idx:] if last_zt_idx is not None else last20
+    local_peak = None
+    for r in post_zt:
+        h = r.get("high")
+        if h is not None and (local_peak is None or h > local_peak):
+            local_peak = h
+    dist_local_peak = round((cur / local_peak - 1) * 100, 2) if local_peak else None
+
+    # 当日%：as-of 根 vs 前一根
+    chg_pct = 0.0
+    if aidx >= 1:
+        pc = float(bars[aidx - 1].get("last") or 0)
+        if pc:
+            chg_pct = round((cur / pc - 1) * 100, 2)
+
+    return {
+        "code": code, "name": name, "close": cur, "ma5": round(ma5, 2),
+        "dist_ma5": round((cur / ma5 - 1) * 100, 2),
+        "chg_pct": chg_pct, "last_zt_date": last_zt_date,
+        "days_since_zt": days_since, "pullback_pct": pullback_pct,
+        "avg_amt_yi": round(avg_amt / 1e8, 2),
+        "prev_peak_high": prev_peak_high, "asof_idx": aidx,
+        "ma20": round(ma20, 2) if ma20 is not None else None,
+        "ma60": round(ma60, 2) if ma60 is not None else None,
+        "local_peak": local_peak, "dist_local_peak": dist_local_peak,
+    }
+
+
 def gen_signals_asof(cache, D, name_map=None):
     """重算 N字形信号（数据截至 D，含 D）。纯 K线，回测与主池共用，保证口径一致。"""
     out = []
@@ -240,93 +356,9 @@ def gen_signals_asof(cache, D, name_map=None):
         name = (name_map or {}).get(code)
         if excluded_name(name):
             continue
-
-        lo = max(0, aidx - (WINDOW + 5))
-        win = bars[lo:aidx + 1]
-        # 扩展窗口用于 MA20/MA60（与主池/回测同口径，判断「股票位置」）
-        ma_lo = max(0, aidx - 65)
-        ma_win = bars[ma_lo:aidx + 1]
-        def _sma(n):
-            vs = [b.get("last") for b in ma_win[-n:] if b.get("last") is not None]
-            return (sum(vs) / len(vs)) if len(vs) >= n else None
-        ma20 = _sma(20)
-        ma60 = _sma(60)
-        recs = list(M.scan_one(code, win))
-        if len(recs) < WINDOW:
-            continue
-        last20 = recs[-WINDOW:]
-
-        today_zt = bool(last20[-1].get("closed"))
-        has_zt = any(r.get("closed") for r in last20)
-        if not has_zt:
-            continue
-
-        closes5 = [r["close"] for r in recs[-5:]]
-        if not closes5 or any(c is None for c in closes5):
-            continue
-        ma5 = sum(closes5) / len(closes5)
-        cur = last20[-1]["close"]
-        if cur is None or ma5 is None:
-            continue
-        if not (cur > ma5):
-            continue
-
-        amts = [r.get("amount") or 0 for r in last20]
-        avg_amt = sum(amts) / len(amts)
-        if avg_amt < AMT_MIN:
-            continue
-
-        # 可建仓：剔除当日已封涨停（买不进）—— 回测与主池同口径
-        if today_zt:
-            continue
-
-        # 涨停定位
-        last_zt_idx = None
-        for i in range(len(last20) - 1, -1, -1):
-            if last20[i].get("closed"):
-                last_zt_idx = i
-                break
-        last_zt_date = last20[last_zt_idx]["date"] if last_zt_idx is not None else None
-        days_since = (len(last20) - 1 - last_zt_idx) if last_zt_idx is not None else None
-
-        # 涨停后回撤：涨停收盘 → 其后最低价（越浅越强）
-        pullback_pct = 0.0
-        prev_peak_high = None
-        if last_zt_idx is not None:
-            zt_close = last20[last_zt_idx]["close"]
-            prev_peak_high = last20[last_zt_idx].get("high")
-            post = last20[last_zt_idx + 1:]
-            lows = [r.get("low") for r in post if r.get("low") is not None]
-            if zt_close and lows:
-                pullback_pct = round((min(lows) / zt_close - 1) * 100, 2)
-
-        # 局部峰值（涨停后至当前区间最高价）—— 用于「健康回撤」位置判断
-        post_zt = last20[last_zt_idx:] if last_zt_idx is not None else last20
-        local_peak = None
-        for r in post_zt:
-            h = r.get("high")
-            if h is not None and (local_peak is None or h > local_peak):
-                local_peak = h
-        dist_local_peak = round((cur / local_peak - 1) * 100, 2) if local_peak else None
-
-        # 当日%：as-of 根 vs 前一根
-        chg_pct = 0.0
-        if aidx >= 1:
-            pc = float(bars[aidx - 1].get("last") or 0)
-            if pc:
-                chg_pct = round((cur / pc - 1) * 100, 2)
-
-        out.append({
-            "code": code, "name": name, "close": cur, "ma5": round(ma5, 2),
-            "dist_ma5": round((cur / ma5 - 1) * 100, 2),
-            "chg_pct": chg_pct, "last_zt_date": last_zt_date,
-            "days_since_zt": days_since, "pullback_pct": pullback_pct,
-            "avg_amt_yi": round(avg_amt / 1e8, 2),
-            "prev_peak_high": prev_peak_high, "asof_idx": aidx,
-            "ma20": round(ma20, 2) if ma20 is not None else None,
-            "ma60": round(ma60, 2) if ma60 is not None else None,
-            "local_peak": local_peak, "dist_local_peak": dist_local_peak,
-        })
+        s = eval_stock_signal(code, bars, aidx, name)
+        if s:
+            out.append(s)
     return out
 
 
@@ -474,7 +506,7 @@ def main():
     name_map = load_name_map(_d or D)
     name2sw2 = load_name2sw2()
     ind_map, concept_leaders = load_hot_maps()
-    w52 = load_52w(_d or D)
+    w52 = load_52w_cache(cache)   # 52周区间改从K线缓存自算（快照字段已被证伪）
     heat = load_market_heat(D)
 
     rows = gen_signals_asof(cache, D, name_map)

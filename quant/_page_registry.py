@@ -436,6 +436,17 @@ FAMILIES = [
          need='_txk_cache.json（复用 gen_signals_asof/attach_attr/is_healthy_pullback/is_pos_ok）'
               '+ 最新 quotes 快照（名称，缺当日快照时回退最近一日）；把 hb_pos 真实信号的前向价格嵌入页面，'
               '用户调 目标%/止损%/持有天数/市场热度 即时重算首次触及胜率；回测日受数据末端限制，不做连续日期校验；观察池，非出票'),
+    dict(key='research_report', label='研报分析（上传研报入库 · 逐股胜率排序 · 观察池）',
+         patterns=['research_report/index.html', 'research_report/report_*.html'],
+         entry='research_report/index.html', script='build_research.py', freq='daily',
+         dated=False, start=None, date_re=None,
+         need='quant/research/reports.json（人工校读上传PDF入库：报告日期/来源/观点/提及标的，'
+              'PDF原文与提取文本留存 quant/research/）+ _txk_cache.json（全市场日K）'
+              '+ 最新 quotes 快照（名称，缺当日快照回退最近一日）+ _name2sw2/sector_strength（热点）；'
+              '逐股现算：近一年N字形信号首次触及胜率（+6%/-8%/10日，与回测DEF档同口径）、'
+              '52周分位（K线缓存自算，quotes快照52周字段已证伪）、大盘环境门控、健康回撤判定；'
+              '输出：按胜率排序 + 是否可建仓 + 参考买卖点（买点=MA20回踩，止损-8%，目标+6%/60日高）；'
+              '观察池，非出票'),
     dict(key='n_shape', label='N字形战法筛选（近20日涨停+站上5日线 · 观察池）',
          patterns=['n_shape/n_shape_*.html', 'n_shape/index.html'],
          entry='n_shape/index.html', script='build_n_shape.py', freq='daily',

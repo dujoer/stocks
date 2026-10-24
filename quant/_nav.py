@@ -62,6 +62,7 @@ MODULES = [
         ("N字形", "n_shape/index.html"),
         ("N字形回测", "n_shape/backtest/index.html"),
         ("N字形模拟器", "n_shape/sim/index.html"),
+        ("研报分析", "research_report/index.html"),
     ]),
     ("数据与工具", [
         ("数据中心", "db/index.html"),

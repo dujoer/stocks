@@ -58,7 +58,7 @@ def collect_signals():
     name_map = NS.load_name_map(latest)
     name2sw2 = NS.load_name2sw2()
     ind_map, concept_leaders = NS.load_hot_maps()
-    w52 = NS.load_52w(latest)
+    w52 = NS.load_52w_cache(cache)   # 52周区间改从K线缓存自算（快照字段已被证伪）
 
     asof_dates = BT.pick_asof_dates(cache, BT.N_DATES, BT.FWD)
     if not asof_dates:

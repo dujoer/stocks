@@ -248,6 +248,8 @@ FILES = [
     "quant/build_n_shape.py",          # N字形战法筛选（近20日涨停 + 站上5日线 · 观察池）
     "quant/build_n_shape_backtest.py", # N字形战法 · 往前10日历史回测（胜率/盈亏比 · 留存页）
     "quant/build_n_shape_sim.py",      # N字形 · 首次触及法 实盘模拟器（可调参数交互页 · 观察池）
+    "quant/build_research.py",         # 研报分析（上传研报入库 · 逐股胜率排序 · 观察池）
+    "quant/research/reports.json",     # 研报注册表（报告日期/来源/观点/提及标的，人工校读入库）
     "quant/_datahub_archive.py",     # 每日底座沉淀（hist 精简切片 + 资金流序列副本）
     "quant/_selected_flow_probe.py", # 资金流因子截面可行性探查（结论：无增量）
     "quant/_flow_lead_lag.py",       # 资金流领先/滞后判定（结论：领先但无增量，不进规则）
@@ -351,6 +353,8 @@ _AUTO_PATTERNS = [
     "web/quant_strategy/stat_*.json",
     "web/three_yin/stat_*.json",
     "web/picks/stable_*.json",
+    # 研报分析：PDF 提取文本（注册表观点的原文留存，保证可复现；PDF 本体本地留存不推）
+    "quant/research/text/*.txt",
 ]
 # 覆盖度自检机制（2026-09-11 新增）：主题源 + 页面登记表 + 自检/归位/校验脚本
 for _p in ("quant/_theme.css", "quant/_app.js", "quant/_page_registry.py",
