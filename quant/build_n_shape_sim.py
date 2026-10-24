@@ -88,7 +88,7 @@ def collect_signals():
                 if lv is None:
                     break
                 fwd.append(float(lv))
-            if len(fwd) < NS.FWD:      # 至少 10 根前向收盘价，保证与回测口径一致
+            if not fwd:               # 至少 1 根前向收盘价（与回测 fwd_first_touch 同口径：有几根算几根，禁私自加严过滤）
                 continue
             signals.append({
                 "c": s["code"],
@@ -278,7 +278,6 @@ _LOGIC = """
     var rows=[];
     for(var k=0;k<SIG.length;k++){var s=SIG[k];
       if(heat!=='\\u5168\\u90e8' && s.h!==heat) continue;
-      if(s.f.length<H) continue;
       var r=firstTouch(s,tp,sl,H); r.sig=s; rows.push(r);}
     return rows;
   }

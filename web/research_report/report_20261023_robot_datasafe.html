@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>研报分析 · 磨底虽经百日艰 扬帆正待东风来——机器人+数据安全</title>
+<style>
+.rpt-note{background:var(--accent-soft);border:1px solid #cfe0fb;border-left:4px solid var(--accent);
+  border-radius:8px;padding:12px 14px;font-size:13px;color:var(--ink);margin:0 0 16px;line-height:1.75;}
+.rpt-note b{color:var(--accent-ink);}
+.rpt-meta{display:flex;flex-wrap:wrap;gap:8px 26px;font-size:13px;color:var(--muted);margin:0 0 14px;}
+.rpt-meta b{color:var(--ink);font-weight:600;}
+.rpt-box{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 16px;}
+.rpt-box h3{margin:0 0 8px;font-size:15px;color:var(--ink);}
+.rpt-box p{margin:0 0 8px;font-size:13px;line-height:1.8;color:var(--ink);}
+.rpt-box ul{margin:6px 0 0;padding-left:20px;font-size:13px;line-height:1.8;color:var(--ink);}
+.rpt-tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin:0 0 18px;}
+.rpt-tbl th{background:var(--surface);color:var(--muted);font-weight:600;text-align:right;
+  padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap;}
+.rpt-tbl td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;color:var(--ink);}
+.rpt-tbl th:nth-child(-n+3),.rpt-tbl td:nth-child(-n+3){text-align:left;}
+.rpt-tbl tr:hover td{background:var(--hover);}
+.rpt-tbl .nm{font-weight:600;}
+.rpt-tbl .code{color:var(--muted);font-size:11.5px;}
+.rpt-tbl .role{color:var(--muted);font-size:11.5px;white-space:normal;min-width:120px;}
+.rpt-tbl .why{color:var(--muted);font-size:11.5px;white-space:normal;min-width:110px;text-align:left;}
+.v-ok{background:var(--accent-soft);color:var(--accent-ink);border-radius:5px;padding:2px 8px;font-weight:600;}
+.v-mid{background:var(--surface);color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:2px 8px;}
+.v-no{color:var(--red);border:1px solid var(--red);border-radius:5px;padding:2px 8px;font-weight:600;}
+.rpt-h2{font-size:17px;margin:22px 0 10px;color:var(--ink);border-left:4px solid var(--accent);padding-left:10px;}
+.rpt-foot{font-size:12px;color:var(--muted);line-height:1.8;margin:18px 0 0;}
+.muted{color:var(--muted);}
+</style>
+<!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 数据时间戳条（真实数据日 + 返回入口） ----------
+   由 _apply_theme.py 按「页面自身写的数据日」与「全站最新数据日」比对后注入，
+   不是渲染时间、不是硬编码 —— 页面没写数据日就如实显示「未标注」，
+   落后全站就红字报警。这样「页面有没有更新」看页头一眼就知道。 */
+.wb-stamp{
+  display:flex !important; flex-wrap:wrap !important; align-items:center !important;
+  gap:6px 10px !important;
+  max-width:1440px !important; margin:-14px auto 18px !important;
+  padding:8px 14px !important;
+  background:var(--surface) !important; border:1px solid var(--line) !important;
+  border-left:4px solid var(--accent) !important; border-radius:8px !important;
+  font-size:12.5px !important; color:var(--muted) !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.08) !important;
+}
+.wb-stamp .s-l{ color:var(--muted) !important; }
+.wb-stamp .s-d{
+  color:var(--ink) !important; font-weight:700 !important;
+  font-variant-numeric:tabular-nums !important;
+}
+.wb-stamp .s-d.unknown{ color:#80868b !important; font-weight:600 !important; }
+.wb-stamp .s-ok{ color:var(--green) !important; }
+.wb-stamp .s-warn{ color:var(--red) !important; font-weight:600 !important; }
+.wb-stamp .s-hist{ color:var(--muted) !important; }
+.wb-stamp .s-src{ color:#80868b !important; }
+.wb-stamp a.wb-back{
+  margin-left:auto !important; white-space:nowrap !important;
+  display:inline-block !important; padding:3px 13px !important;
+  border:1px solid var(--line) !important; border-radius:16px !important;
+  color:var(--accent-ink) !important; background:var(--accent-soft) !important;
+  font-weight:600 !important; text-decoration:none !important;
+}
+.wb-stamp a.wb-back:hover{ background:var(--accent) !important; color:#fff !important; text-decoration:none !important; }
+
+/* ---------- 右下角浮动「回门户 / 回顶部」 ---------- */
+.wb-fab{
+  position:fixed; right:16px; bottom:18px; z-index:60;
+  display:flex; flex-direction:column; gap:8px;
+}
+.wb-fab a{
+  width:42px; height:42px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--surface); color:var(--ink);
+  border:1px solid var(--line); box-shadow:0 2px 6px rgba(60,64,67,.18);
+  font-size:17px; text-decoration:none; line-height:1;
+}
+.wb-fab a:hover{ background:var(--accent); color:#fff; border-color:var(--accent); text-decoration:none; }
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  /* ★ 窄屏必须让每个模块块各占一整行：
+     原来 .navgrp{flex-shrink:0} + 内部链接 white-space:nowrap，
+     整组宽度压不下去 → 导航溢出容器被裁掉，「主升精选 / 量化策略 / 三连阴」等
+     右侧入口在手机上根本看不见（看着像「没有导航」）。 */
+  .navgrp{ padding:5px 6px 5px 5px !important; width:100% !important; flex-shrink:1 !important; min-width:0 !important; }
+  /* 链接本身也要能收缩：全局 .topnav a{flex-shrink:0} 会让一行内最后一项
+     顶出容器被裁（手机上「高管增减持」就只剩「高管增减」）→ 窄屏放开收缩，
+     min-content 宽度仍是完整文字，不会被截断。 */
+  .topnav a{ flex-shrink:1 !important; }
+  .topnav a.home{ margin-left:0 !important; }
+  .wb-stamp{ margin:-8px auto 14px !important; font-size:12px !important; }
+  .wb-stamp a.wb-back{ margin-left:0 !important; }
+  .wb-fab{ right:10px; bottom:12px; }
+  .wb-fab a{ width:38px; height:38px; font-size:15px; }
+}
+
+</style><!--/WB_THEME--></head>
+<body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../market/index.html'>每日总览</a><a href='../psychology/index.html'>群体心理</a><a href='../dragon/index.html'>龙道诀</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../sector/index.html'>板块强度</a><a href='../sector/heatmap.html'>板块热力图</a><a href='../lhb/lhb.html'>龙虎榜</a><a href='../market/hotmoney.html'>游资看板</a><a href='../exec/index.html'>高管增减持</a><a href='../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../research/index.html'>个股调研</a><a href='../diagnosis/index.html'>个股研判</a><a href='../reversal/index.html'>底部反转</a><a href='../selected/index.html'>主升精选</a><a href='../accumulation/index.html'>增仓精选</a><a href='../tplus/index.html'>做T池</a><a href='../quant_strategy/index.html'>量化策略</a><a href='../three_yin/index.html'>三连阴</a><a href='../n_shape/index.html'>N字形</a><a href='../n_shape/backtest/index.html'>N字形回测</a><a href='../n_shape/sim/index.html'>N字形模拟器</a><a href='index.html'>研报分析</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../db/index.html'>数据中心</a><a href='../statement/index.html'>交割单复盘</a><a href='../statement/exit-replay.html'>退出规则回放</a><a href='../quant_strategy/freq-robust.html'>频率稳健性</a></div><a href='../../index.html' class='home'>首页</a></div>
+<!--WB_STAMP--><div class='wb-stamp'><span class='s-l'>本页数据基准</span><b class='s-d'>2026-10-23</b><span class='s-hist'>· 历史归档页（内容即该日快照，不随最新数据日更新）</span><a class='wb-back' href='../../index.html'>← 返回</a></div><!--/WB_STAMP-->
+<div class="wrap">
+<h1>磨底虽经百日艰 扬帆正待东风来——机器人+数据安全</h1><div class='rpt-meta'><span>报告日期 <b>2026-10-23</b></span><span>来源 <b>约牛软件投研部（云南约牛软件技术有限公司）</b></span><span>执笔 <b>虞文娟（A0670626010055）、高嘉伟（A0670625080079）</b></span><span>篇幅 <b>17 页</b></span><span>原文 <b>磨底虽经百日夭_扬帆正待东风来_机器人+数据安全.pdf</b></span><span>数据基准 <b>2026-10-23</b></span></div><div class='rpt-note'><b>大盘环境门控：弱势（评分 2.81）</b>（数据基准 2026-10-23）—— 谨慎。破位日全市场禁入；本模块所有个股判定均受此门控约束。</div><div class='rpt-box'><h3>研报市场观点（原文引用）</h3><p>市场弱势震荡中，关注高成长优质赛道。当前海内外宏观扰动频出，AI交易质疑再起，市场整体情绪偏脆弱、风险偏好走低、量能低位运行；市场处于弱势整固、结构轮动阶段，资金筹码出清再平衡，下行空间相对有限，性价比改善明显，机会大于风险，应重点聚焦高成长的机器人与数据安全赛道，积极把握结构性投资机会。</p></div><div class='rpt-h2'>人形机器人</div><div class='rpt-box'><h3>板块观点（原文引用）</h3><p>产业正处于从技术验证向规模化商业落地跨越的关键节点：2026年上半年全球出货约1.91万台，同比增长近300%，中国厂商份额超97%（来源：SAG）；智元与宇树合计占全球约75%份额。特斯拉Optimus弗里蒙特产线已启动量产，但对外交付需至2027年底。产业链利润高度向上游核心零部件集中，执行器、丝杠、减速器、电机、传感器五大环节合计占BOM成本约70%以上。2026年是量产验证与场景落地的关键窗口，投资应聚焦「量产确定性」与「技术卡位」的交集。</p><ul><li>2026H1全球出货约1.91万台，同比+近300%（来源：SAG）</li><li>智元约8400台（份额44%，同比+562%）；宇树约5900台（份额30.9%，同比+170%）（来源：福布斯、民银证券）</li><li>执行器总成约35%、丝杠约18%、减速器约15%、电机约12%、传感器及其他约20%（BOM占比，来源：浙商证券、M2觅途咨询）</li><li>特斯拉 Fremont 产线启动量产，对外交付需至2027年底（来源：特斯拉2026Q3业绩会）</li></ul></div><table class='rpt-tbl' data-wb><thead><tr><th>#</th><th>个股</th><th>研报定位</th><th>现价</th><th>当日%</th><th>研报以来%</th><th>MA20</th><th>MA60</th><th>52周分位</th><th>距60日高</th><th>20日均额(亿)</th><th>近一年信号</th><th>首次触及胜率</th><th>平均收益</th><th>盈亏比</th><th>是否可建仓</th><th>参考买点</th><th>止损</th><th>目标1</th><th>目标2</th></tr></thead><tbody><tr><td>1</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh603194.html" target="_blank" rel="noopener noreferrer">中力股份</a></span><br><span class='code'>sh603194</span></td><td><span class='role'>物流搬运</span></td><td>33.60</td><td><span class='up'>+1.20%</span></td><td><span class='muted'>—</span></td><td>33.19</td><td>33.77</td><td>23%</td><td><span class='dn'>-6.54%</span></td><td>0.27</td><td>8</td><td><span class='up'>62.5%</span></td><td><span class='dn'>-0.27%</span></td><td>0.52</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>33.19</td><td>30.53</td><td>35.18</td><td>35.95</td></tr><tr><td>2</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh688160.html" target="_blank" rel="noopener noreferrer">步科股份</a></span><br><span class='code'>sh688160</span></td><td><span class='role'>电机</span></td><td>102.88</td><td><span class='up'>+9.82%</span></td><td><span class='muted'>—</span></td><td>90.39</td><td>98.83</td><td>30%</td><td><span class='dn'>-12.81%</span></td><td>1.49</td><td>9</td><td><span class='up'>55.6%</span></td><td><span class='dn'>-0.22%</span></td><td>0.75</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>90.39</td><td>83.16</td><td>95.81</td><td>118.00</td></tr><tr><td>3</td><td><span class='nm'>XD索辰科</span><br><span class='code'>sh688507</span></td><td><span class='role'>物理AI仿真训练平台</span></td><td>183.08</td><td><span class='up'>+14.01%</span></td><td><span class='muted'>—</span></td><td>140.28</td><td>149.81</td><td>45%</td><td><span class='dn'>-5.36%</span></td><td>7.45</td><td>22</td><td><span class='up'>54.5%</span></td><td><span class='dn'>-0.36%</span></td><td>0.75</td><td><span class='v-mid' title='有信号但非健康回撤形态'>观察</span></td><td>140.28</td><td>129.06</td><td>148.70</td><td>193.45</td></tr><tr><td>4</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz001339.html" target="_blank" rel="noopener noreferrer">智微智能</a></span><br><span class='code'>sz001339</span></td><td><span class='role'>大小脑控制器</span></td><td>64.21</td><td><span class='up'>+7.02%</span></td><td><span class='muted'>—</span></td><td>67.96</td><td>74.03</td><td>38%</td><td><span class='dn'>-27.22%</span></td><td>4.03</td><td>43</td><td><span class='up'>51.2%</span></td><td><span class='dn'>-0.65%</span></td><td>0.79</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>67.96</td><td>62.52</td><td>72.04</td><td>88.23</td></tr><tr><td>5</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh603009.html" target="_blank" rel="noopener noreferrer">北特科技</a></span><br><span class='code'>sh603009</span></td><td><span class='role'>研报相关公司名单（未展开）</span></td><td>49.76</td><td><span class='up'>+6.17%</span></td><td><span class='muted'>—</span></td><td>45.43</td><td>44.48</td><td>58%</td><td><span class='up'>-0.80%</span></td><td>3.49</td><td>34</td><td><span class='up'>50.0%</span></td><td><span class='dn'>-0.30%</span></td><td>0.90</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>45.43</td><td>41.79</td><td>48.15</td><td>50.16</td></tr><tr><td>6</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh603119.html" target="_blank" rel="noopener noreferrer">浙江荣泰</a></span><br><span class='code'>sh603119</span></td><td><span class='role'>研报相关公司名单（未展开）</span></td><td>56.77</td><td><span class='up'>+5.32%</span></td><td><span class='muted'>—</span></td><td>50.60</td><td>50.94</td><td>29%</td><td><span class='up'>-1.87%</span></td><td>6.78</td><td>38</td><td><span class='up'>50.0%</span></td><td><span class='dn'>-0.82%</span></td><td>0.78</td><td><span class='v-mid' title='52周分位不合理（29%）'>观察</span></td><td>50.60</td><td>46.55</td><td>53.63</td><td>57.85</td></tr><tr><td>7</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz003021.html" target="_blank" rel="noopener noreferrer">兆威机电</a></span><br><span class='code'>sz003021</span></td><td><span class='role'>灵巧手（B20，20自由度）</span></td><td>91.73</td><td><span class='up'>+10.00%</span></td><td><span class='muted'>—</span></td><td>70.03</td><td>72.90</td><td>42%</td><td><span class='up'>+0.00%</span></td><td>3.83</td><td>28</td><td><span class='up'>50.0%</span></td><td><span class='dn'>-1.45%</span></td><td>0.57</td><td><span class='v-mid' title='当日封涨停'>观察</span></td><td>70.03</td><td>64.42</td><td>74.23</td><td>91.73</td></tr><tr><td>8</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh605056.html" target="_blank" rel="noopener noreferrer">咸亨国际</a></span><br><span class='code'>sh605056</span></td><td><span class='role'>特种作业</span></td><td>12.36</td><td><span class='up'>+4.13%</span></td><td><span class='muted'>—</span></td><td>12.95</td><td>13.66</td><td>5%</td><td><span class='dn'>-21.42%</span></td><td>0.89</td><td>42</td><td><span class='muted'>47.6%</span></td><td><span class='dn'>-0.63%</span></td><td>0.88</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>12.95</td><td>11.91</td><td>13.72</td><td>15.73</td></tr><tr><td>9</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh605488.html" target="_blank" rel="noopener noreferrer">福莱新材</a></span><br><span class='code'>sh605488</span></td><td><span class='role'>电子皮肤</span></td><td>38.15</td><td><span class='up'>+10.01%</span></td><td><span class='muted'>—</span></td><td>29.78</td><td>28.73</td><td>62%</td><td><span class='up'>+0.00%</span></td><td>4.06</td><td>46</td><td><span class='muted'>45.7%</span></td><td><span class='dn'>-1.69%</span></td><td>0.72</td><td><span class='v-mid' title='当日封涨停'>观察</span></td><td>29.78</td><td>27.39</td><td>31.56</td><td>38.15</td></tr><tr><td>10</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh688017.html" target="_blank" rel="noopener noreferrer">绿的谐波</a></span><br><span class='code'>sh688017</span></td><td><span class='role'>谐波减速器</span></td><td>290.00</td><td><span class='up'>+12.05%</span></td><td><span class='muted'>—</span></td><td>266.74</td><td>294.73</td><td>42%</td><td><span class='dn'>-24.75%</span></td><td>14.84</td><td>11</td><td><span class='muted'>45.5%</span></td><td><span class='dn'>-1.64%</span></td><td>0.75</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>266.74</td><td>245.40</td><td>282.74</td><td>385.37</td></tr><tr><td>11</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh603667.html" target="_blank" rel="noopener noreferrer">五洲新春</a></span><br><span class='code'>sh603667</span></td><td><span class='role'>丝杠</span></td><td>48.39</td><td><span class='up'>+8.35%</span></td><td><span class='muted'>—</span></td><td>46.77</td><td>50.15</td><td>15%</td><td><span class='dn'>-16.86%</span></td><td>6.33</td><td>40</td><td><span class='muted'>45.0%</span></td><td><span class='dn'>-1.70%</span></td><td>0.75</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>46.77</td><td>43.03</td><td>49.58</td><td>58.20</td></tr><tr><td>12</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz002896.html" target="_blank" rel="noopener noreferrer">中大力德</a></span><br><span class='code'>sz002896</span></td><td><span class='role'>研报相关公司名单（未展开）</span></td><td>60.98</td><td><span class='up'>+8.49%</span></td><td><span class='muted'>—</span></td><td>57.53</td><td>64.57</td><td>24%</td><td><span class='dn'>-29.91%</span></td><td>3.60</td><td>31</td><td><span class='dn'>38.7%</span></td><td><span class='dn'>-1.71%</span></td><td>0.91</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>57.53</td><td>52.93</td><td>60.98</td><td>87.00</td></tr><tr><td>13</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh601100.html" target="_blank" rel="noopener noreferrer">恒立液压</a></span><br><span class='code'>sh601100</span></td><td><span class='role'>丝杠</span></td><td>89.50</td><td><span class='up'>+6.74%</span></td><td><span class='muted'>—</span></td><td>86.56</td><td>97.27</td><td>27%</td><td><span class='dn'>-20.02%</span></td><td>7.47</td><td>16</td><td><span class='dn'>37.5%</span></td><td><span class='dn'>-0.90%</span></td><td>1.19</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>86.56</td><td>79.64</td><td>91.75</td><td>111.90</td></tr><tr><td>14</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz002050.html" target="_blank" rel="noopener noreferrer">三花智控</a></span><br><span class='code'>sz002050</span></td><td><span class='role'>执行器总成</span></td><td>35.08</td><td><span class='up'>+6.66%</span></td><td><span class='muted'>—</span></td><td>33.92</td><td>35.71</td><td>16%</td><td><span class='dn'>-13.02%</span></td><td>16.23</td><td>11</td><td><span class='dn'>36.4%</span></td><td><span class='dn'>-3.51%</span></td><td>0.48</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>33.92</td><td>31.20</td><td>35.95</td><td>40.33</td></tr><tr><td>15</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh603337.html" target="_blank" rel="noopener noreferrer">杰克科技</a></span><br><span class='code'>sh603337</span></td><td><span class='role'>研报相关公司名单（未展开）</span></td><td>39.26</td><td><span class='up'>+10.00%</span></td><td><span class='muted'>—</span></td><td>35.37</td><td>37.90</td><td>45%</td><td><span class='dn'>-16.70%</span></td><td>2.01</td><td>21</td><td><span class='dn'>28.6%</span></td><td><span class='dn'>-3.37%</span></td><td>0.73</td><td><span class='v-mid' title='当日封涨停'>观察</span></td><td>35.37</td><td>32.54</td><td>37.49</td><td>47.13</td></tr><tr><td>16</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh603728.html" target="_blank" rel="noopener noreferrer">鸣志电器</a></span><br><span class='code'>sh603728</span></td><td><span class='role'>空心杯电机</span></td><td>59.90</td><td><span class='up'>+9.97%</span></td><td><span class='muted'>—</span></td><td>49.80</td><td>49.62</td><td>48%</td><td><span class='up'>-0.03%</span></td><td>3.94</td><td>14</td><td><span class='dn'>28.6%</span></td><td><span class='dn'>-3.79%</span></td><td>0.78</td><td><span class='v-mid' title='当日封涨停'>观察</span></td><td>49.80</td><td>45.81</td><td>52.78</td><td>59.92</td></tr><tr><td>17</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh603893.html" target="_blank" rel="noopener noreferrer">瑞芯微</a></span><br><span class='code'>sh603893</span></td><td><span class='role'>端侧算力</span></td><td>214.04</td><td><span class='up'>+8.76%</span></td><td><span class='muted'>—</span></td><td>200.71</td><td>195.02</td><td>79%</td><td><span class='dn'>-6.86%</span></td><td>30.40</td><td>18</td><td><span class='dn'>27.8%</span></td><td><span class='dn'>-4.11%</span></td><td>0.75</td><td><span class='v-mid' title='有信号但非健康回撤形态'>观察</span></td><td>200.71</td><td>184.66</td><td>212.76</td><td>229.80</td></tr><tr><td>18</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz002979.html" target="_blank" rel="noopener noreferrer">雷赛智能</a></span><br><span class='code'>sz002979</span></td><td><span class='role'>灵巧驱控（规模化供货）＋电机</span></td><td>54.15</td><td><span class='up'>+9.99%</span></td><td><span class='muted'>—</span></td><td>52.50</td><td>55.09</td><td>48%</td><td><span class='dn'>-13.86%</span></td><td>5.16</td><td>30</td><td><span class='dn'>23.3%</span></td><td><span class='dn'>-4.10%</span></td><td>0.81</td><td><span class='v-mid' title='当日封涨停'>观察</span></td><td>52.50</td><td>48.30</td><td>55.65</td><td>62.86</td></tr><tr><td>19</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh688400.html" target="_blank" rel="noopener noreferrer">凌云光</a></span><br><span class='code'>sh688400</span></td><td><span class='role'>数据采集设备（光学动捕，宇树/智元批量应用）</span></td><td>48.78</td><td><span class='up'>+12.16%</span></td><td><span class='muted'>—</span></td><td>42.21</td><td>44.70</td><td>36%</td><td><span class='dn'>-5.00%</span></td><td>4.42</td><td>10</td><td><span class='dn'>20.0%</span></td><td><span class='dn'>-3.84%</span></td><td>0.75</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>42.21</td><td>38.83</td><td>44.74</td><td>51.35</td></tr><tr><td>20</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh603662.html" target="_blank" rel="noopener noreferrer">柯力传感</a></span><br><span class='code'>sh603662</span></td><td><span class='role'>传感器</span></td><td>51.29</td><td><span class='up'>+6.79%</span></td><td><span class='muted'>—</span></td><td>46.56</td><td>49.19</td><td>27%</td><td><span class='dn'>-8.25%</span></td><td>2.22</td><td>3</td><td><span class='up'>66.7%</span></td><td><span class='up'>+1.33%</span></td><td>0.75</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>46.56</td><td>42.83</td><td>49.35</td><td>55.90</td></tr><tr><td>21</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz002472.html" target="_blank" rel="noopener noreferrer">双环传动</a></span><br><span class='code'>sz002472</span></td><td><span class='role'>研报相关公司名单（未展开）</span></td><td>41.03</td><td><span class='up'>+7.21%</span></td><td><span class='muted'>—</span></td><td>37.10</td><td>36.90</td><td>51%</td><td><span class='up'>-0.73%</span></td><td>8.07</td><td>5</td><td><span class='up'>60.0%</span></td><td><span class='up'>+0.40%</span></td><td>0.75</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>37.10</td><td>34.13</td><td>39.33</td><td>41.33</td></tr><tr><td>22</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh601689.html" target="_blank" rel="noopener noreferrer">拓普集团</a></span><br><span class='code'>sh601689</span></td><td><span class='role'>执行器总成（Tier 0.5级供应商）</span></td><td>44.77</td><td><span class='up'>+5.74%</span></td><td><span class='muted'>—</span></td><td>43.34</td><td>45.75</td><td>15%</td><td><span class='dn'>-13.45%</span></td><td>11.13</td><td>2</td><td><span class='dn'>0.0%</span></td><td><span class='dn'>-8.00%</span></td><td>—</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>43.34</td><td>39.87</td><td>45.94</td><td>51.73</td></tr><tr><td>23</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz300853.html" target="_blank" rel="noopener noreferrer">申昊科技</a></span><br><span class='code'>sz300853</span></td><td><span class='role'>特种/电力巡检</span></td><td>27.24</td><td><span class='dn'>-1.27%</span></td><td><span class='muted'>—</span></td><td>29.29</td><td>27.32</td><td>42%</td><td><span class='dn'>-17.35%</span></td><td>2.12</td><td>0</td><td><span class='muted'>样本不足</span></td><td>—</td><td>—</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>29.29</td><td>26.95</td><td>31.05</td><td>32.96</td></tr><tr><td>24</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz300007.html" target="_blank" rel="noopener noreferrer">汉威科技</a></span><br><span class='code'>sz300007</span></td><td><span class='role'>电子皮肤</span></td><td>38.40</td><td><span class='up'>+9.84%</span></td><td><span class='muted'>—</span></td><td>30.27</td><td>31.50</td><td>31%</td><td><span class='up'>-0.78%</span></td><td>4.46</td><td>0</td><td><span class='muted'>样本不足</span></td><td>—</td><td>—</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>30.27</td><td>27.85</td><td>32.08</td><td>38.70</td></tr><tr><td>25</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh603298.html" target="_blank" rel="noopener noreferrer">杭叉集团</a></span><br><span class='code'>sh603298</span></td><td><span class='role'>物流搬运</span></td><td>22.46</td><td><span class='up'>+5.55%</span></td><td><span class='muted'>—</span></td><td>22.17</td><td>24.77</td><td>16%</td><td><span class='dn'>-20.75%</span></td><td>1.14</td><td>0</td><td><span class='muted'>样本不足</span></td><td>—</td><td>—</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>22.17</td><td>20.40</td><td>23.50</td><td>28.34</td></tr><tr><td>26</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz301413.html" target="_blank" rel="noopener noreferrer">安培龙</a></span><br><span class='code'>sz301413</span></td><td><span class='role'>传感器</span></td><td>67.80</td><td><span class='up'>+10.91%</span></td><td><span class='muted'>—</span></td><td>52.65</td><td>58.08</td><td>26%</td><td><span class='dn'>-9.60%</span></td><td>2.64</td><td>0</td><td><span class='muted'>样本不足</span></td><td>—</td><td>—</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>52.65</td><td>48.43</td><td>55.80</td><td>75.00</td></tr><tr><td>27</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh688322.html" target="_blank" rel="noopener noreferrer">奥比中光-W</a></span><br><span class='code'>sh688322</span></td><td><span class='role'>研报相关公司名单（未展开）</span></td><td>108.00</td><td><span class='up'>+18.97%</span></td><td><span class='muted'>—</span></td><td>85.07</td><td>93.86</td><td>46%</td><td><span class='dn'>-8.02%</span></td><td>8.25</td><td>0</td><td><span class='muted'>样本不足</span></td><td>—</td><td>—</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>85.07</td><td>78.27</td><td>90.18</td><td>117.42</td></tr><tr><td>28</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz300100.html" target="_blank" rel="noopener noreferrer">双林股份</a></span><br><span class='code'>sz300100</span></td><td><span class='role'>丝杠</span></td><td>21.24</td><td><span class='up'>+6.84%</span></td><td><span class='muted'>—</span></td><td>20.28</td><td>21.23</td><td>15%</td><td><span class='dn'>-10.98%</span></td><td>2.24</td><td>0</td><td><span class='muted'>样本不足</span></td><td>—</td><td>—</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>20.28</td><td>18.66</td><td>21.50</td><td>23.86</td></tr><tr><td>29</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz301502.html" target="_blank" rel="noopener noreferrer">华阳智能</a></span><br><span class='code'>sz301502</span></td><td><span class='role'>研报相关公司名单（未展开）</span></td><td>64.80</td><td><span class='up'>+20.00%</span></td><td><span class='muted'>—</span></td><td>49.15</td><td>50.06</td><td>49%</td><td><span class='up'>+0.00%</span></td><td>0.61</td><td>0</td><td><span class='muted'>样本不足</span></td><td>—</td><td>—</td><td><span class='v-mid' title='当日封涨停'>观察</span></td><td>49.15</td><td>45.22</td><td>52.10</td><td>64.80</td></tr><tr><td>30</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh688777.html" target="_blank" rel="noopener noreferrer">中控技术</a></span><br><span class='code'>sh688777</span></td><td><span class='role'>流程工业（Plantbot方案）</span></td><td>78.20</td><td><span class='up'>+8.60%</span></td><td><span class='muted'>—</span></td><td>76.15</td><td>86.28</td><td>38%</td><td><span class='dn'>-30.08%</span></td><td>10.72</td><td>0</td><td><span class='muted'>样本不足</span></td><td>—</td><td>—</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>76.15</td><td>70.06</td><td>80.72</td><td>111.85</td></tr></tbody></table><div class='rpt-foot'>买卖点口径：参考买点=回踩MA20；止损=买点-8%；目标1=买点+6%；目标2=60日局部高点（全部取自真实K线，非投资建议）。首次触及胜率口径：近一年该股N字形信号入场后先触+6%还是先触-8%（与N字形回测DEF档一致），样本&lt;6只标注样本不足。</div><div class='rpt-h2'>数据安全</div><div class='rpt-box'><h3>板块观点（原文引用）</h3><p>AI从攻防两端重塑产业逻辑，数据安全已从配套合规需求转向产业刚需，赛道迎来价值重估，是AI产业链中确定性较强的「卖水人」方向。2025年国内数据安全市场规模290亿元，2030年有望达509亿元（2025-2030年CAGR 11.91%，来源：Frost&Sullivan）。短期板块整体盈利仍承压、呈结构性机会，AI安全订单落地节奏与客户付费意愿是核心观测指标；中长期具备持续兑现的成长价值。重点关注AI数据安全平台型高弹性标的，以及壁垒深厚、确定性突出的商用密码核心赛道。</p><ul><li>国内数据安全市场：2021年186亿元→2025年290亿元，CAGR 11.74%（来源：Frost&Sullivan）</li><li>2026H1网安上市公司合计安全营收94.84亿元，同比-6.66%；扣非净亏损19.69亿元，亏损同比收窄27.35%（来源：数说安全，19家样本）</li><li>板块总市值较年内高点回撤约37%；截至2026年6月底PS-TTM中位数6.35（来源：数说安全）</li><li>自2026年4月起AI安全相关招标订单加速落地（来源：采招网）</li></ul></div><table class='rpt-tbl' data-wb><thead><tr><th>#</th><th>个股</th><th>研报定位</th><th>现价</th><th>当日%</th><th>研报以来%</th><th>MA20</th><th>MA60</th><th>52周分位</th><th>距60日高</th><th>20日均额(亿)</th><th>近一年信号</th><th>首次触及胜率</th><th>平均收益</th><th>盈亏比</th><th>是否可建仓</th><th>参考买点</th><th>止损</th><th>目标1</th><th>目标2</th></tr></thead><tbody><tr><td>1</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz300369.html" target="_blank" rel="noopener noreferrer">绿盟科技</a></span><br><span class='code'>sz300369</span></td><td><span class='role'>AI数据安全平台</span></td><td>11.71</td><td><span class='up'>+19.98%</span></td><td><span class='muted'>—</span></td><td>9.90</td><td>8.28</td><td>97%</td><td><span class='up'>-0.59%</span></td><td>10.79</td><td>12</td><td><span class='up'>83.3%</span></td><td><span class='up'>+3.67%</span></td><td>0.75</td><td><span class='v-mid' title='当日封涨停'>观察</span></td><td>9.90</td><td>9.11</td><td>10.50</td><td>11.78</td></tr><tr><td>2</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz002212.html" target="_blank" rel="noopener noreferrer">天融信</a></span><br><span class='code'>sz002212</span></td><td><span class='role'>AI安全防护</span></td><td>7.27</td><td><span class='up'>+4.01%</span></td><td><span class='muted'>—</span></td><td>7.19</td><td>6.78</td><td>35%</td><td><span class='dn'>-10.69%</span></td><td>9.23</td><td>21</td><td><span class='up'>76.2%</span></td><td><span class='up'>+2.94%</span></td><td>1.02</td><td><span class='v-ok' title='健康回撤∩热点∩位置合理（站上MA60）'>可关注</span></td><td>7.19</td><td>6.61</td><td>7.62</td><td>8.14</td></tr><tr><td>3</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh688244.html" target="_blank" rel="noopener noreferrer">永信至诚</a></span><br><span class='code'>sh688244</span></td><td><span class='role'>研报相关公司名单（未展开）</span></td><td>17.99</td><td><span class='up'>+2.62%</span></td><td><span class='muted'>—</span></td><td>19.10</td><td>16.40</td><td>35%</td><td><span class='dn'>-26.06%</span></td><td>2.72</td><td>24</td><td><span class='up'>75.0%</span></td><td><span class='up'>+2.50%</span></td><td>0.75</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>19.10</td><td>17.57</td><td>20.24</td><td>24.33</td></tr><tr><td>4</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz002439.html" target="_blank" rel="noopener noreferrer">启明星辰</a></span><br><span class='code'>sz002439</span></td><td><span class='role'>大模型应用防火墙</span></td><td>15.05</td><td><span class='up'>+10.01%</span></td><td><span class='muted'>—</span></td><td>14.41</td><td>13.92</td><td>57%</td><td><span class='up'>-0.99%</span></td><td>5.06</td><td>13</td><td><span class='up'>61.5%</span></td><td><span class='up'>+0.46%</span></td><td>0.74</td><td><span class='v-mid' title='当日封涨停'>观察</span></td><td>14.41</td><td>13.26</td><td>15.28</td><td>15.20</td></tr><tr><td>5</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh603232.html" target="_blank" rel="noopener noreferrer">格尔软件</a></span><br><span class='code'>sh603232</span></td><td><span class='role'>商用密码</span></td><td>16.10</td><td><span class='up'>+2.16%</span></td><td><span class='muted'>—</span></td><td>16.72</td><td>15.81</td><td>21%</td><td><span class='dn'>-13.81%</span></td><td>3.98</td><td>49</td><td><span class='muted'>49.0%</span></td><td><span class='dn'>-0.81%</span></td><td>0.80</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>16.72</td><td>15.39</td><td>17.73</td><td>18.68</td></tr><tr><td>6</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz300454.html" target="_blank" rel="noopener noreferrer">深信服</a></span><br><span class='code'>sz300454</span></td><td><span class='role'>AI数据安全平台</span></td><td>146.74</td><td><span class='up'>+12.85%</span></td><td><span class='muted'>—</span></td><td>137.28</td><td>127.62</td><td>59%</td><td><span class='dn'>-6.59%</span></td><td>17.91</td><td>19</td><td><span class='muted'>47.4%</span></td><td><span class='dn'>-1.02%</span></td><td>0.82</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>137.28</td><td>126.30</td><td>145.52</td><td>157.10</td></tr><tr><td>7</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz300017.html" target="_blank" rel="noopener noreferrer">网宿科技</a></span><br><span class='code'>sz300017</span></td><td><span class='role'>研报相关公司名单（未展开）</span></td><td>14.86</td><td><span class='up'>+9.43%</span></td><td><span class='muted'>—</span></td><td>14.28</td><td>14.74</td><td>38%</td><td><span class='dn'>-15.09%</span></td><td>12.94</td><td>30</td><td><span class='muted'>46.7%</span></td><td><span class='dn'>-1.29%</span></td><td>0.78</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>14.28</td><td>13.14</td><td>15.14</td><td>17.50</td></tr><tr><td>8</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh601360.html" target="_blank" rel="noopener noreferrer">三六零</a></span><br><span class='code'>sh601360</span></td><td><span class='role'>网安</span></td><td>8.57</td><td><span class='up'>+4.00%</span></td><td><span class='muted'>—</span></td><td>8.77</td><td>8.93</td><td>8%</td><td><span class='dn'>-14.47%</span></td><td>8.31</td><td>18</td><td><span class='dn'>22.2%</span></td><td><span class='dn'>-4.46%</span></td><td>0.77</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>8.77</td><td>8.06</td><td>9.29</td><td>10.02</td></tr><tr><td>9</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sz300768.html" target="_blank" rel="noopener noreferrer">迪普科技</a></span><br><span class='code'>sz300768</span></td><td><span class='role'>研报相关公司名单（未展开）</span></td><td>14.83</td><td><span class='up'>+7.08%</span></td><td><span class='muted'>—</span></td><td>14.75</td><td>15.20</td><td>14%</td><td><span class='dn'>-14.62%</span></td><td>1.16</td><td>0</td><td><span class='muted'>样本不足</span></td><td>—</td><td>—</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>14.75</td><td>13.57</td><td>15.64</td><td>17.37</td></tr><tr><td>10</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh688030.html" target="_blank" rel="noopener noreferrer">山石网科</a></span><br><span class='code'>sh688030</span></td><td><span class='role'>研报相关公司名单（未展开）</span></td><td>18.46</td><td><span class='up'>+3.88%</span></td><td><span class='muted'>—</span></td><td>18.85</td><td>17.37</td><td>63%</td><td><span class='dn'>-9.11%</span></td><td>1.09</td><td>0</td><td><span class='muted'>样本不足</span></td><td>—</td><td>—</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>18.85</td><td>17.34</td><td>19.98</td><td>20.31</td></tr><tr><td>11</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh688023.html" target="_blank" rel="noopener noreferrer">安恒信息</a></span><br><span class='code'>sh688023</span></td><td><span class='role'>AI原生安全</span></td><td>53.66</td><td><span class='up'>+13.37%</span></td><td><span class='muted'>—</span></td><td>48.11</td><td>42.62</td><td>61%</td><td><span class='up'>-0.79%</span></td><td>2.62</td><td>0</td><td><span class='muted'>样本不足</span></td><td>—</td><td>—</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>48.11</td><td>44.26</td><td>50.99</td><td>54.09</td></tr><tr><td>12</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh688561.html" target="_blank" rel="noopener noreferrer">奇安信-U</a></span><br><span class='code'>sh688561</span></td><td><span class='role'>AI数据安全平台</span></td><td>30.00</td><td><span class='up'>+8.81%</span></td><td><span class='muted'>—</span></td><td>29.03</td><td>27.37</td><td>35%</td><td><span class='dn'>-5.90%</span></td><td>3.80</td><td>0</td><td><span class='muted'>样本不足</span></td><td>—</td><td>—</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>29.03</td><td>26.71</td><td>30.78</td><td>31.88</td></tr><tr><td>13</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh688225.html" target="_blank" rel="noopener noreferrer">亚信安全</a></span><br><span class='code'>sh688225</span></td><td><span class='role'>研报相关公司名单（未展开）</span></td><td>16.16</td><td><span class='up'>+9.63%</span></td><td><span class='muted'>—</span></td><td>15.26</td><td>13.49</td><td>33%</td><td><span class='up'>-3.00%</span></td><td>1.63</td><td>0</td><td><span class='muted'>样本不足</span></td><td>—</td><td>—</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>15.26</td><td>14.04</td><td>16.18</td><td>16.66</td></tr><tr><td>14</td><td><span class='nm'><a class="emlk" href="https://quote.eastmoney.com/sh688489.html" target="_blank" rel="noopener noreferrer">三未信安</a></span><br><span class='code'>sh688489</span></td><td><span class='role'>商用密码</span></td><td>26.21</td><td><span class='up'>+5.98%</span></td><td><span class='muted'>—</span></td><td>26.51</td><td>24.39</td><td>35%</td><td><span class='dn'>-12.84%</span></td><td>0.74</td><td>0</td><td><span class='muted'>样本不足</span></td><td>—</td><td>—</td><td><span class='v-mid' title='无当前N字形信号'>观察</span></td><td>26.51</td><td>24.39</td><td>28.10</td><td>30.07</td></tr></tbody></table><div class='rpt-foot'>买卖点口径：参考买点=回踩MA20；止损=买点-8%；目标1=买点+6%；目标2=60日局部高点（全部取自真实K线，非投资建议）。首次触及胜率口径：近一年该股N字形信号入场后先触+6%还是先触-8%（与N字形回测DEF档一致），样本&lt;6只标注样本不足。</div><div class='rpt-box'><h3>未纳入逐股分析的提及标的（1）</h3><ul><li><b>优必选</b>（港股）——工业场景（Walker S进入一汽-大众等车企工厂）；港股上市，非A股，本地无K线数据，不纳入逐股分析</li></ul><p class='muted'>原因：非A股上市或本地行情快照未匹配到代码——按「宁可不选」铁律不猜代码、不出数。</p></div><div class='rpt-note'><b>汇总</b>：提及标的 45 个，A股匹配 44 只（可关注 1 / 观察 43 / 禁入 0），未匹配 1 个。全模块为<b>观察池·非出票</b>：以上为数据研判，不构成投资建议；逐股统计随数据日推进每日重算。</div><div class='rpt-foot'>免责声明：本页为研报信息的结构化整理与本地数据交叉验证，研报观点版权归原发布方所有；所涉个股仅作研究记录。股市有风险，投资需谨慎。</div></div><!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* ④ 返回 / 回顶：页头「← 返回」优先走浏览器历史（从哪来退回哪），
+     无历史（直接打开链接/新标签）则用 href 兜底跳门户首页 —— 不用 javascript: 伪协议，
+     保证 href 始终是个真链接（断链门禁与无 JS 环境都成立）。
+     右下角浮动按钮：回顶在滚动 400px 后淡入，回门户常驻。 */
+  try {
+    document.querySelectorAll("a.wb-back").forEach(function (a) {
+      a.addEventListener("click", function (ev) {
+        try {
+          if (window.history && window.history.length > 1 && document.referrer) {
+            ev.preventDefault();
+            window.history.back();
+          }
+        } catch (e) {}
+      });
+    });
+    var top = document.querySelector(".wb-fab a.wb-top");
+    if (top) {
+      top.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        try { window.scrollTo({ top: 0, behavior: "smooth" }); }
+        catch (e) { window.scrollTo(0, 0); }
+      });
+      var sync = function () {
+        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        top.style.display = y > 400 ? "flex" : "none";
+      };
+      window.addEventListener("scroll", sync, { passive: true });
+      sync();
+    }
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--><!--WB_FAB--><div class='wb-fab'><a class='wb-top' href='#' title='回到顶部' aria-label='回到顶部'>↑</a><a class='wb-home' href='../../index.html' title='返回门户首页' aria-label='返回门户首页'>⌂</a></div><!--/WB_FAB--></body></html>

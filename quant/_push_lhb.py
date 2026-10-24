@@ -43,7 +43,7 @@ TOKEN = _load_token()
 
 # 强制排除名单（路径含以下任一子串即跳过）—— 不对外展示个人持仓 / 选股
 # 2026-09-11：补充 web/research —— 个股调研页含个人持仓快照，按项目硬性边界一律不对外推送。
-EXCLUDE_FRAGMENTS = ("portfolio", "bottom-up", "portfolio_analysis", "_all_store", "web/research",
+EXCLUDE_FRAGMENTS = ("portfolio", "bottom-up", "portfolio_analysis", "_all_store", "web/research/",
                      "_mcp_cache",
                      # ★ 2026-10-09 补：资金流逐日序列（250 日 / 16MB）**明确不推送** ——
                      #   它是本地研究用，不是页面数据源；`quant/hub/*.json` 通配会把
