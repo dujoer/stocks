@@ -448,7 +448,7 @@ FAMILIES = [
               '输出：按胜率排序 + 是否可建仓 + 参考买卖点（买点=MA20回踩，止损-8%，目标+6%/60日高）；'
               '观察池，非出票'),
     dict(key='n_shape', label='N字形战法筛选（近20日涨停+站上5日线 · 观察池）',
-         patterns=['n_shape/n_shape_*.html', 'n_shape/index.html'],
+         patterns=['n_shape/n_shape_*.html', 'n_shape/index.html', 'n_shape/archive.html'],
          entry='n_shape/index.html', script='build_n_shape.py', freq='daily',
          dated=True, start='20261022', date_re=r'n_shape_(\d{8})\.html',
          need='_txk_cache.json（全市场日K）+ _mkt_emo（涨停口径）+ quotes/{DATE}.json（名称/现价）；'

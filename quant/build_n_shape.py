@@ -16,7 +16,7 @@
 输出：web/n_shape/n_shape_{DS}.html（每日归档）+ web/n_shape/index.html（滚动视图）。
 """
 from __future__ import annotations
-import os, sys, json, datetime, argparse, re
+import os, sys, json, datetime, argparse, re, glob
 
 QUANT = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(QUANT)
@@ -500,11 +500,13 @@ def attach_attr(rows, name2sw2, ind_map, concept_leaders, w52):
 
 def main():
     ap = argparse.ArgumentParser()
+    # ⚠ argparse 陷阱：位置参数与 --date 共用 dest='date' 时，仅传 --date 会被位置参数的
+    # 默认值 None 覆盖（等价退回 latest_date）。拆成独立 dest 再合并，两种调用都生效。
     ap.add_argument("date", nargs="?", default=None)
-    ap.add_argument("--date", dest="date", default=None)
+    ap.add_argument("--date", dest="date_opt", default=None)
     a = ap.parse_args()
     _d = latest_date()
-    D = a.date or (_d if _d else None)
+    D = a.date or a.date_opt or (_d if _d else None)
     if not D:
         print("无法确定数据日"); return
     DS = D.replace("-", "")
@@ -641,11 +643,13 @@ def main():
               ensure_ascii=False, indent=1)
 
     html = render_html(D, rows, excluded_today_zt, elite, tier_counts, n_hot,
-                       "n_shape_%s.html" % DS, combo_rows, combo_hist_str, heat,
+                       "archive.html", combo_rows, combo_hist_str, heat,
                        deep_rows=deep_rows, vol_rows=vol_rows, vol_meta=vol_meta)
     open(os.path.join(OUTDIR, "n_shape_%s.html" % DS), "w", encoding="utf-8").write(html)
     open(os.path.join(OUTDIR, "index.html"), "w", encoding="utf-8").write(html)
     print("  写出 n_shape_%s.html 与 index.html，共 %d 只" % (DS, len(rows)))
+    # 归档总览索引：列出全部按日页，随每日重跑刷新（方便回查）
+    build_archive()
 
 
 # ----------------------------------------------------------------- 渲染
@@ -723,7 +727,7 @@ N字形=涨停启动 → 回调 → 再上穿均线，属短线动量延续形�
 <a href="backtest/index.html">📈 历史回测（按市场热度分桶 / 继续拉升率 / 胜率 / 盈亏比）→</a></div>
 """ % (D, hb)
     if archive_href:
-        head += "<div class='sub'><a href='%s'>📅 历史归档页（%s）</a></div>\n" % (archive_href, D)
+        head += "<div class='sub'><a href='%s'>📅 历史归档总览（按日回查 →）</a></div>\n" % archive_href
 
     # 每日精选 Top 20
     eh = ("<h2 class='eh'>每日精选 · 强度分前 20</h2>"
@@ -940,6 +944,73 @@ N字形=涨停启动 → 回调 → 再上穿均线，属短线动量延续形�
                                       tiers.get("强", 0), tiers.get("中", 0), tiers.get("弱", 0),
                                       n_hot, D))
     return head + eh + "".join(etr) + etail + combo_html + deep_html + vol_html + th + "".join(trs) + tail
+
+
+# ----------------------------------------------------------------- 归档索引
+def build_archive():
+    """生成 web/n_shape/archive.html：列出全部按日 N字快照，方便回查。
+
+    每日 build_n_shape 跑完即刷新；与 daily_all.STEPS 内 build_n_shape.py 同源，
+    不另起 STEPS 条目。归档页由 _apply_theme 统一注入导航/时间戳，本函数只产出
+    正文骨架 + 含「数据基准 <最新一期日期>」的字样（让时间戳条正确显示）。
+    """
+    jdir = os.path.join(QUANT, "n_shape")
+    files = sorted(glob.glob(os.path.join(jdir, "n_shape_*.json")), reverse=True)
+    rows = []
+    for fp in files:
+        m = re.search(r"n_shape_(\d{8})\.json$", fp)
+        if not m:
+            continue
+        ds = m.group(1)
+        try:
+            j = json.load(open(fp, encoding="utf-8"))
+        except Exception:
+            continue
+        if not isinstance(j, dict) or "date" not in j:
+            continue
+        D = j.get("date")
+        tc = j.get("tier_counts") or {}
+        heat = (j.get("heat") or {}).get("label") or "未知"
+        rows.append({
+            "ds": ds, "D": D,
+            "count": j.get("count", 0),
+            "strong": tc.get("强", 0), "mid": tc.get("中", 0), "weak": tc.get("弱", 0),
+            "hot": j.get("n_hot", 0),
+            "deep": j.get("deep_pullback_count", 0),
+            "vol": j.get("vol_top_count", 0),
+            "heat": heat,
+        })
+    if not rows:
+        return
+    latest = rows[0]["D"]
+    trs = []
+    for r in rows:
+        trs.append(
+            "<tr><td><a href='n_shape_%s.html'>%s</a></td>"
+            "<td class='num'>%d</td><td class='num'>%d</td><td class='num'>%d</td>"
+            "<td class='num'>%d</td><td class='num'>%d</td><td class='num'>%d</td>"
+            "<td class='num'>%d</td><td>%s</td>"
+            "<td><a href='n_shape_%s.html'>查看明细 →</a></td></tr>" % (
+                r["ds"], r["D"], r["count"], r["strong"], r["mid"], r["weak"],
+                r["hot"], r["deep"], r["vol"], r["heat"], r["ds"]))
+    html = """<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>N字形战法 · 每日归档总览</title>
+</head><body>
+<div class="wrap">
+<h1>N字形战法 · 每日归档总览</h1>
+<div class="sub">数据基准 %s · 共 %d 期按日快照；点击任意日期查看当日完整筛选明细（观察池·非出票）。</div>
+<div class="box">本页为<b>归档索引</b>：N字形战法每日筛选结果按交易日留存，可逐日回查当时的命中标的、强弱分层、贴合热点数与大盘热度。最新一期见 <a href="index.html">滚动视图（index.html）</a>。N字形=涨停启动→回调→再上穿均线的短线动量延续形态，仅作观察，不构成买卖建议。</div>
+<h2 class='eh'>全部交易日（按日期倒序）</h2>
+<table data-wb><thead><tr>
+<th>交易日</th><th class='num'>命中</th><th class='num'>强</th><th class='num'>中</th><th class='num'>弱</th>
+<th class='num'>贴合热点</th><th class='num'>深回撤观察</th><th class='num'>量能优选</th><th>大盘热度</th><th>明细</th>
+</tr></thead><tbody>%s</tbody></table>
+<div class='sub'>共 %d 期 · 点击表头可排序</div>
+</div></body></html>""" % (latest, len(rows), "".join(trs), len(rows))
+    open(os.path.join(OUTDIR, "archive.html"), "w", encoding="utf-8").write(html)
+    print("  写出 n_shape/archive.html（%d 期归档索引）" % len(rows))
 
 
 if __name__ == "__main__":
