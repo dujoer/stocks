@@ -93,14 +93,27 @@ def code_list():
     return sorted(k for k in load_short().keys() if supported(k))
 
 
-def fetch_one(code, n, tries=3):
+def fetch_one(code, n, last_date=None, tries=3):
     """直接打腾讯 fqkline（不复用 _tx_fetch 的 250 根缓存判断）。
 
-    ⚠ 批量抓取必须节流：60 连发实测会被服务端限流，只返回 1 根当日数据
-    （**返回 200 + 合法 JSON，不是错误码**，不节流就会静默抓出一堆 1 根的假数据）。
-    因此这里固定 sleep + 失败指数退避；上层还会按根数校验再丢弃。
+    ★ 2026-10-28 增量追加改造（根治每日限流空转）：
+    - 若 `last_date` 给定（该票已缓存达标），只请求**尾部小段**（最近 ~40 根），
+      并过滤出 `date > last_date` 的新日K。qfq 前复权锚定**最新交易日**，
+      短段与全量序列的调整基准一致 → 可直接拼接，无价格断点。
+    - 限流时腾讯只返回「当日 1 根」，对增量模式恰好就是我们要追的那一根
+      → 每日刷新对限流**免疫**，不再 1 小时空转。
+    - 仅 `last_date=None`（新股 / 短历史）才全量请求 `--n` 根。
+
+    ⚠ 批量抓取仍须节流：60 连发实测会被服务端限流，只返回 1 根当日数据
+    （**返回 200 + 合法 JSON，不是错误码**），上层按根数校验再丢弃。
     """
-    url = "%s?param=%s,day,,,%d,qfq" % (T.TX_KLINE, code, n)
+    if last_date:
+        n_req = 40          # 尾部小段：覆盖落后若干交易日的缺口（含停牌后补）
+        min_accept = 1      # 增量只需 ≥1 根新K 即算成功
+    else:
+        n_req = n
+        min_accept = MIN_ACCEPT
+    url = "%s?param=%s,day,,,%d,qfq" % (T.TX_KLINE, code, n_req)
     for i in range(tries):
         try:
             import urllib.request
@@ -118,8 +131,11 @@ def fetch_one(code, n, tries=3):
                                 "volume": float(it[5])})
                 except Exception:
                     continue
+            # 增量模式：只保留比缓存末根更新的日K
+            if last_date:
+                out = [b for b in out if str(b["date"]) > str(last_date)]
             # 根数不足 = 被限流（真实新股也不会有 480 根），不当成功
-            if len(out) >= MIN_ACCEPT:
+            if len(out) >= min_accept:
                 return out
             time.sleep(1.2 * (i + 1))
         except Exception:
@@ -203,6 +219,19 @@ def main():
                   if len(long_d.get(c, [])) >= a.minbars and _needs(c))
     print("[待抓] %d 只（其中已达标但末根< %s 的 %d 只）" % (len(todo), ASOF, n_stale))
 
+    # ★ 2026-10-28 增量：已达标票传 last_date（只追尾部小段拼接），
+    #   未达标 / 新股全量 780。增量对腾讯限流免疫（限流返回的当日 1 根正好是所需新K）。
+    last_of = {}
+    mode_of = {}
+    for c in todo:
+        b = long_d.get(c, [])
+        if len(b) >= a.minbars:
+            last_of[c] = str(b[-1].get("date", ""))
+            mode_of[c] = "incr"
+        else:
+            last_of[c] = None
+            mode_of[c] = "full"
+
     ok = 0
     fail = 0
     done = 0
@@ -211,15 +240,27 @@ def main():
     #   的场景下要跑 40 分钟以上（旧判据只补极少数缺根票，才显得够快）。
     #   fetch_one 内已含失败退避与根数校验，这里按并发调度。
     with ThreadPoolExecutor(max_workers=a.workers) as ex:
-        futs = {ex.submit(fetch_one, c, a.n): c for c in todo}
+        futs = {ex.submit(fetch_one, c, a.n, last_of[c]): c for c in todo}
         for f in as_completed(futs):
             c = futs[f]
             try:
                 bars = f.result()
             except Exception:
                 bars = []
-            if len(bars) >= a.minbars:
-                long_d[c] = bars
+            if mode_of[c] == "incr":
+                accept = len(bars) >= 1          # 增量：追到 ≥1 根新K 即成功
+            else:
+                accept = len(bars) >= a.minbars  # 全量：达标根数
+            if accept:
+                if mode_of[c] == "incr":
+                    base = list(long_d.get(c, []))
+                    have = {x["date"] for x in base}
+                    for b in bars:
+                        if b["date"] not in have:
+                            base.append(b); have.add(b["date"])
+                    long_d[c] = base
+                else:
+                    long_d[c] = bars
                 failed.pop(c, None)
                 ok += 1
             else:
