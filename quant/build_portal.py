@@ -73,6 +73,8 @@ accum_d, accum_f = latest(r"^combined_(\d{8})\.html$", os.path.join(WEB, "accumu
 qstrat_d, qstrat_f = latest(r"^strategy_(\d{8})\.html$", os.path.join(WEB, "quant_strategy"))
 sanyin_d, sanyin_f = latest(r"^sanyin_(\d{8})\.html$", os.path.join(WEB, "three_yin"))
 nshape_d, nshape_f = latest(r"^n_shape_(\d{8})\.html$", os.path.join(WEB, "n_shape"))
+# 顾比倒数线：每日全市场扫描（观察池 · 非出票）
+guppy_d, guppy_f = latest(r"^guppy_(\d{8})\.html$", os.path.join(WEB, "guppy"))
 exec_d, exec_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "exec_chg"))
 blk_d, blk_f = latest(r"^(\d{4}-\d{2}-\d{2})\.json$", os.path.join(ROOT, "quant", "block_chg"))
 # 龙道诀周期：读 quant/dragon/cycle_{DS}.json（DS 无横线，见 build_dragon 的注释）
@@ -372,6 +374,22 @@ def stat_n_shape():
             f"已剔除当日封涨停 <b>{st.get('excluded_today_zt', '—')}</b> 只 ｜ 观察池·非出票")
 
 
+def stat_guppy():
+    """顾比倒数线（观察池·非出票）：每日全市场扫描 —— 收盘站上倒数入场线 / 跌破倒数止损线。
+
+    结论一栏直接取扫描产物里的 verdict_ok（由证据脚本现算），不在门户里写死结论。"""
+    if not guppy_d:
+        return "每日全市场扫描（观察池·非出票）"
+    st = _load_json(os.path.join(QUANT, "guppy", "scan_%s.json" % guppy_d.strftime("%Y%m%d")))
+    if not st:
+        return "每日全市场扫描（观察池·非出票）"
+    verdict = "可出票（待复核）" if st.get("verdict_ok") else "不可出票（观察池）"
+    return (f"可判 <b>{st.get('n_evaluable', '—')}</b> 只 ｜ "
+            f"今日站上入场线 <b>{st.get('n_cross_up', '—')}</b> 只 ｜ "
+            f"今日跌破止损线 <b>{st.get('n_stop_break', '—')}</b> 只 ｜ "
+            f"证据结论：<b>{verdict}</b>")
+
+
 def stat_n_shape_bt():
     """N字形历史回测：裸信号 → 健康回撤∩热点 → +整体价格位置（hb_pos），及市场热度门控（观察池·非出票）。
     头条指标用「首次触及胜率」(FOOLPROOF 真实交易判据：先触+目标/-止损)，比第10天终端价更贴近「继续拉升」。"""
@@ -577,6 +595,8 @@ STAT["sanyin"] = stat_three_yin()
 nshape_txt, nshape_cls = freshness(nshape_d) if nshape_d else ("—", "stale")
 STAT["nshape"] = stat_n_shape()
 STAT["nbt"] = stat_n_shape_bt()
+guppy_txt, guppy_cls = freshness(guppy_d) if guppy_d else ("—", "stale")
+STAT["guppy"] = stat_guppy()
 STAT["dragon"] = dragon_stat      # 龙道诀：阶段 + 涨停/炸板率/最高板（读 cycle_{DS}.json）
 
 def fmt(d):
@@ -883,6 +903,20 @@ ZONES = [
                 "rel": "⚠️ <b>观察池·非出票</b>：裸条件（近20日涨停+站上MA5）历史 10 日持有期望为负，需叠加强度分/热点/价格优势过滤才有意义。",
                 "stat": STAT["nbt"], "date": fmt(nshape_d) if nshape_d else "—",
                 "fresh": badge(nshape_cls, nshape_txt),
+            },
+            {
+                "ic": "🧮", "t": "顾比倒数线 · 每日全市场扫描（观察池）", "href": "web/guppy/index.html",
+                "func": ("按<b>顾比倒数线</b>（Guppy Countback Line）算法每日扫描全市场并输出两张清单："
+                         "① <b>今日收盘站上入场线</b>（自重要低点向左倒数 <b>3</b> 条「最高价更高」的重要K线，取第 3 条最高价画水平线，"
+                         "<b>收盘价</b>上穿即触发，盘中穿越无效）；"
+                         "② <b>今日跌破止损线</b>（自重要高点向左倒数 3 条「最低价更低」的重要K线取最低价，收盘跌破即离场信号）。"
+                         "重要高低点用左右各 2 根K线确认，<b>所有右侧确认均不越过判定日，无未来函数</b>。"),
+                "rel": ("⚠️ <b>观察池·非出票</b>：入场口径跨两个不重叠窗口<b>符号不一致</b>"
+                        "（当期窗为负、前移窗为正）→ 本质是顺势暴露而非无条件 alpha；"
+                        "离场口径跨步长同号但为负（倒数止损线并未跑赢固定持有 20 日）。"
+                        "页面底部<b>证据面板</b>全量展示窗口/步长/随机对照数字，结论由当日产物现算，不写死。"),
+                "stat": STAT["guppy"], "date": fmt(guppy_d) if guppy_d else "—",
+                "fresh": badge(guppy_cls, guppy_txt),
             },
         ],
     },
