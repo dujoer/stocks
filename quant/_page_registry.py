@@ -453,6 +453,18 @@ FAMILIES = [
          dated=True, start='20261022', date_re=r'n_shape_(\d{8})\.html',
          need='_txk_cache.json（全市场日K）+ _mkt_emo（涨停口径）+ quotes/{DATE}.json（名称/现价）；'
               '筛选：近20交易日有收盘封涨停 且 收盘>MA5，剔除当日已封涨停；观察池，非出票'),
+    dict(key='guppy', label='顾比倒数线 · 每日全市场扫描（观察池 · 非出票）',
+         patterns=['guppy/index.html', 'guppy/archive.html', 'guppy/guppy_*.html'],
+         entry='guppy/index.html', script='build_guppy.py', freq='daily',
+         dated=True, start='20261029', date_re=r'guppy_(\d{8})\.html',
+         need='_txk_cache.json（全市场日K）+ 最新 quotes 快照（名称，缺当日回退最近一日）；'
+              '顾比倒数线：自「重要低点」（左右各2根K线确认的 pivot，须滞后确认以杜绝未来函数）'
+              '向左倒数3条「最高价更高」的重要K线，取第3条最高价画水平「入场线」；'
+              '自「重要高点」同样倒数3条「最低价更低」取最低价画「止损线」；一律以收盘价判定；'
+              '每日扫描输出：① 当日收盘站上入场线（趋势转折确认触发）② 当日收盘跌破止损线（离场自查）；'
+              '剔除北交所与近20日日均成交额<3000万（与证据口径同域）；'
+              '页面证据面板读取 quant/guppy/*.json（入场口径 canonical edge/R3/留一 + 离场配对 Δ），'
+              '页面不写死任何统计数字；当前跨两窗结论：符号不一致 → 观察池，非出票'),
     dict(key='db', label='数据中心', patterns=['db/*.html'],
          entry='db/index.html', script='db_update.py;db_export.py;build_db.py',
          freq='daily', dated=False, start=None, date_re=None,

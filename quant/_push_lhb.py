@@ -259,6 +259,11 @@ FILES = [
     "quant/_nshape_vol6.py",           # N字形 · 退出工程测试（移动止盈网格 vs 固定首触，样本内描述）
     "quant/_nshape_vol7.py",           # N字形 · 退出工程决胜（折内选退出+OOS盲测+200次随机对照）
     "quant/_nshape_vol_model.py",      # N字形 · 量能评分模型（训练/冻结/打分·观察档非出票）
+    "quant/_guppy_core.py",             # 顾比倒数线 · 核心算法（重要低/高点识别 + 倒数3条 + 无未来函数保证）
+    "quant/_guppy_variants.py",         # 顾比倒数线 · 入场口径变体扫描（canonical edge/R3/留一，跨窗口）
+    "quant/_guppy_exit.py",             # 顾比倒数线 · 止损线离场配对检验（同开仓同票两条腿对比）
+    "quant/build_guppy.py",             # 顾比倒数线 · 每日全市场扫描页（观察池 · 非出票）
+    "quant/build_guppy_backtest.py",    # 顾比倒数线 · 三口径历史回测（绝对/逐日平衡 edge/原生止损出场）
     "quant/build_research.py",         # 研报分析（上传研报入库 · 逐股胜率排序 · 观察池）
     "quant/research/reports.json",     # 研报注册表（报告日期/来源/观点/提及标的，人工校读入库）
     "quant/_datahub_archive.py",     # 每日底座沉淀（hist 精简切片 + 资金流序列副本）
@@ -361,6 +366,11 @@ _AUTO_PATTERNS = [
     "quant/n_shape/backtest_summary.json",
     "quant/n_shape/gate_wf_*.json",
     "quant/n_shape/diag_*.json",
+    # 顾比倒数线 · 扫描产物与证据真源（页面所有统计数字都从这几个 JSON 读，缺了页面只能显示「未生成」）
+    "quant/guppy/scan_*.json",        # 每日全市场扫描结果
+    "quant/guppy/variants_*.json",    # 入场口径 canonical edge/R3/留一（跨窗口）
+    "quant/guppy/exit_pair_*.json",   # 止损线离场配对检验 Δ
+    "quant/guppy/backtest_*.json",    # 三口径历史回测（绝对收益 / 逐日平衡 edge / 原生止损出场）
     # 心理雷达构建脚本（仍在 market-trend/，输出到 web/psychology/）
     "market-trend/*.py",
     # 数据中心静态切片（查询页数据源，由 quant/db_export.py 生成）
