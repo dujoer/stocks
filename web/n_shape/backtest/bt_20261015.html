@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>N字形回测 · 2026-10-15</title><!--WB_THEME--><style id='wb-theme'>
+/* ============================================================
+   统一设计系统 (A股看板) — Google Material 风·朴素简洁
+   由 quant/_apply_theme.py 注入到每个页面 </head> 之前。
+   配色：浅灰底 + 近黑文字 + Google 蓝强调；涨红(#ea4335) 跌绿(#34a853) 遵循 A 股惯例。
+   导航：按模块分组、整条 flex 换行，不再横向滚动。
+   ============================================================ */
+:root{
+  --bg:#f8f9fa; --surface:#ffffff; --ink:#202124; --muted:#5f6368;
+  --accent:#1a73e8; --accent-soft:#e8f0fe; --accent-ink:#1967d2;
+  --red:#ea4335; --green:#34a853;
+  --line:#dadce0; --line-2:#e8eaed; --hover:#f1f3f4;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.6 'Roboto','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:1440px;margin:0 auto;padding:24px 22px 56px;}
+
+/* ---------- 顶部统一导航（按模块分组 · 整条换行 · 不横向滚动） ---------- */
+.topnav{
+  display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important;
+  gap:8px 10px !important;
+  max-width:1440px !important; margin:0 auto 22px !important;
+  padding:14px 16px !important;
+  background:var(--surface) !important;
+  border:1px solid var(--line) !important; border-radius:12px !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.12) !important;
+  font-size:13px !important;
+}
+.topnav a{
+  display:inline-block !important; color:var(--ink) !important;
+  text-decoration:none !important; padding:4px 11px !important;
+  border-radius:16px !important; white-space:nowrap !important;
+  background:transparent !important; border:none !important;
+  transition:background .15s,color .15s !important; font-size:13px !important;
+  flex-shrink:0 !important;
+}
+.topnav a:hover{ background:var(--hover) !important; color:var(--accent) !important; text-decoration:none !important; }
+.topnav a.cur{ background:var(--accent) !important; color:#fff !important; font-weight:600 !important; }
+.topnav a.home{
+  margin-left:auto !important; background:var(--accent) !important; color:#fff !important;
+  border-radius:18px !important; padding:6px 18px !important; font-weight:600 !important;
+}
+.topnav a.home:hover{ background:#1765cc !important; }
+.topnav a.xlink{ color:var(--muted) !important; }
+/* 模块分组：圆角块 + 模块名小药丸 + 链接芯片，整体作为 .topnav 的 flex 子项，可自然换行 */
+.navgrp{
+  display:inline-flex !important; align-items:center !important; flex-wrap:wrap !important;
+  gap:4px !important; padding:6px 8px 6px 6px !important;
+  background:var(--bg) !important; border:1px solid var(--line-2) !important;
+  border-radius:10px !important; flex-shrink:0 !important;
+}
+.navgrp-l{
+  display:inline-flex !important; align-items:center !important;
+  color:var(--muted) !important; font-size:11px !important; font-weight:600 !important;
+  background:var(--hover) !important; border-radius:12px !important;
+  padding:3px 9px !important; margin-right:6px !important;
+  white-space:nowrap !important; flex-shrink:0 !important; letter-spacing:.02em;
+}
+
+/* ---------- 数据时间戳条（真实数据日 + 返回入口） ----------
+   由 _apply_theme.py 按「页面自身写的数据日」与「全站最新数据日」比对后注入，
+   不是渲染时间、不是硬编码 —— 页面没写数据日就如实显示「未标注」，
+   落后全站就红字报警。这样「页面有没有更新」看页头一眼就知道。 */
+.wb-stamp{
+  display:flex !important; flex-wrap:wrap !important; align-items:center !important;
+  gap:6px 10px !important;
+  max-width:1440px !important; margin:-14px auto 18px !important;
+  padding:8px 14px !important;
+  background:var(--surface) !important; border:1px solid var(--line) !important;
+  border-left:4px solid var(--accent) !important; border-radius:8px !important;
+  font-size:12.5px !important; color:var(--muted) !important;
+  box-shadow:0 1px 2px rgba(60,64,67,.08) !important;
+}
+.wb-stamp .s-l{ color:var(--muted) !important; }
+.wb-stamp .s-d{
+  color:var(--ink) !important; font-weight:700 !important;
+  font-variant-numeric:tabular-nums !important;
+}
+.wb-stamp .s-d.unknown{ color:#80868b !important; font-weight:600 !important; }
+.wb-stamp .s-ok{ color:var(--green) !important; }
+.wb-stamp .s-warn{ color:var(--red) !important; font-weight:600 !important; }
+.wb-stamp .s-hist{ color:var(--muted) !important; }
+.wb-stamp .s-src{ color:#80868b !important; }
+.wb-stamp a.wb-back{
+  margin-left:auto !important; white-space:nowrap !important;
+  display:inline-block !important; padding:3px 13px !important;
+  border:1px solid var(--line) !important; border-radius:16px !important;
+  color:var(--accent-ink) !important; background:var(--accent-soft) !important;
+  font-weight:600 !important; text-decoration:none !important;
+}
+.wb-stamp a.wb-back:hover{ background:var(--accent) !important; color:#fff !important; text-decoration:none !important; }
+
+/* ---------- 右下角浮动「回门户 / 回顶部」 ---------- */
+.wb-fab{
+  position:fixed; right:16px; bottom:18px; z-index:60;
+  display:flex; flex-direction:column; gap:8px;
+}
+.wb-fab a{
+  width:42px; height:42px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--surface); color:var(--ink);
+  border:1px solid var(--line); box-shadow:0 2px 6px rgba(60,64,67,.18);
+  font-size:17px; text-decoration:none; line-height:1;
+}
+.wb-fab a:hover{ background:var(--accent); color:#fff; border-color:var(--accent); text-decoration:none; }
+
+/* ---------- 页头 ---------- */
+header{margin:0 0 8px;}
+header h1{
+  font-size:26px; font-weight:500; margin:0 0 6px; letter-spacing:-.2px;
+  color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important;
+}
+header .sub{color:var(--muted); font-size:13px;}
+
+/* ---------- 区块卡片（Google Material 浅投影 + 8px 圆角） ---------- */
+.section{
+  margin:22px 0; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:20px 22px; box-shadow:0 1px 2px rgba(60,64,67,.12);
+}
+.section > h2, .section > h3{
+  margin:0 0 14px; font-size:17px; color:var(--ink); font-weight:500;
+}
+.section > h3{ font-size:15px; opacity:.92; }
+
+/* ---------- 表格（列表页统一） ---------- */
+table{ border-collapse:collapse; width:100%; font-size:13px; margin:10px 0; }
+caption{ text-align:left; color:var(--muted); font-size:12px; padding:4px 0; }
+thead th{
+  text-align:left; padding:9px 10px; border-bottom:2px solid var(--line-2);
+  color:var(--muted); font-weight:600; white-space:nowrap; background:var(--bg);
+}
+tbody td{ padding:8px 10px; border-bottom:1px solid var(--line-2); vertical-align:top; }
+tbody tr:hover{ background:var(--hover); }
+.num{ text-align:right !important; font-variant-numeric:tabular-nums; }
+.up{ color:var(--red) !important; } .down{ color:var(--green) !important; }
+.buy{ color:var(--red) !important; } .sell{ color:var(--green) !important; }
+.prem{ color:var(--red) !important; } .disc{ color:var(--green) !important; }
+
+/* 排序表头 */
+th.sort{ cursor:pointer; user-select:none; position:relative; }
+th.sort:hover{ color:var(--accent); }
+th.sort.sorted{ color:var(--accent); }
+th.sort.sorted[data-asc="1"]::after{ content:" ▲"; font-size:10px; }
+th.sort.sorted[data-asc="0"]::after{ content:" ▼"; font-size:10px; }
+th.sort:not(.sorted)::after{ content:" ⇅"; font-size:10px; color:var(--muted); }
+
+/* ---------- 每表搜索筛选框（Google 药丸输入框） ---------- */
+.wb-search{
+  width:100%; max-width:420px; padding:11px 18px; margin:4px 0 14px;
+  border:1px solid var(--line); border-radius:24px; font-size:14px; outline:none;
+  background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(60,64,67,.08);
+}
+.wb-search:focus{ border-color:var(--accent); box-shadow:0 1px 6px rgba(26,115,232,.18); }
+.wb-empty{ color:var(--muted); font-size:12px; padding:8px 2px; }
+
+/* ---------- 星级/标签/徽章 ---------- */
+.chip,.badge{
+  display:inline-block; padding:2px 8px; border-radius:6px; font-size:12px;
+  background:var(--hover); color:var(--muted); border:1px solid var(--line-2);
+}
+/* 档位配色（Google 风）：A 蓝 / B 绿 / C 灰 / D 浅灰 */
+.bA{ background:var(--accent-soft) !important; color:var(--accent-ink) !important; border:1px solid #c5d8fb !important; }
+.bB{ background:#e6f4ea !important; color:#137333 !important; border:1px solid #bfe4c6 !important; }
+.bC{ background:var(--hover) !important; color:var(--muted) !important; border:1px solid var(--line) !important; }
+.bD{ background:var(--bg) !important; color:#80868b !important; border:1px solid var(--line) !important; }
+
+/* ---------- 历史归档链接块（把无入链的归档页接回索引页） ---------- */
+.arch{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.arch a{
+  display:inline-block; padding:5px 12px; border-radius:18px; font-size:12px;
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  text-decoration:none; white-space:nowrap;
+}
+.arch a:hover{
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-soft); text-decoration:none;
+}
+
+/* ---------- 说明/注释（左侧蓝条 info 风） ---------- */
+.note{
+  background:var(--bg); border:1px solid var(--line-2); border-left:4px solid var(--accent);
+  border-radius:8px; padding:12px 14px; color:var(--muted); font-size:13px; margin:12px 0; line-height:1.7;
+}
+.note b{ color:var(--ink); }
+/* 行内小字（代码/副标题用的 span.note 等）：不得套 info 框样式，否则撑破表格 */
+span.note, b.note, i.note, em.note, small.note, td .note, th .note, .note.inline{
+  background:none !important; border:0 !important; border-left:0 !important;
+  border-radius:0 !important; padding:0 !important; margin:0 0 0 4px !important;
+  color:var(--muted) !important; font-size:12px !important; line-height:1.6;
+  font-weight:400; display:inline;
+}
+
+/* ---------- 页脚 ---------- */
+footer{ margin-top:40px; color:var(--muted); font-size:12px; text-align:center; }
+
+/* ---------- 杂色压制兜底 ---------- */
+.pg:hover{ border-color:var(--accent) !important; background:var(--hover) !important; color:var(--accent) !important; }
+.tag.ondemand{ background:var(--hover) !important; color:var(--muted) !important; border-color:var(--line-2) !important; }
+
+/* ---------- 龙虎榜宽表修正（auto 布局会把「名称」列压成竖排） ---------- */
+.lhb{ table-layout:fixed !important; }
+.lhb th, .lhb td{ vertical-align:middle !important; }
+.lhb th:nth-child(1), .lhb td:nth-child(1){ width:46px !important; }
+.lhb th:nth-child(2), .lhb td:nth-child(2){ width:150px !important; white-space:nowrap; }
+.lhb th:nth-child(3), .lhb td:nth-child(3){ width:72px !important; }
+.lhb th:nth-child(4), .lhb td:nth-child(4){ width:86px !important; }
+.lhb th:nth-child(5), .lhb td:nth-child(5){ width:160px !important; }
+.lhb th:nth-child(6), .lhb td:nth-child(6){ width:96px !important; }
+.lhb th:nth-child(7), .lhb td:nth-child(7){ width:104px !important; }
+.lhb th:nth-child(8), .lhb td:nth-child(8){ width:72px !important; }
+.lhb th:nth-child(9), .lhb td:nth-child(9){ width:76px !important; }
+.lhb td.sec, .lhb td.reason{ white-space:normal !important; }
+.lhb tr.detail td{ width:auto !important; }
+
+/* ---------- 个股外链（东方财富 · 由 quant/linkify.py 注入） ---------- */
+a.emlk{ color:inherit; text-decoration:none; border-bottom:1px dashed rgba(128,128,128,.42); }
+a.emlk:hover{ color:var(--accent); border-bottom-color:var(--accent); }
+a.emlk:hover::after{ content:"\2197"; font-size:.78em; margin-left:1px; opacity:.75; }
+a.emlk:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; border-radius:2px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width:700px){
+  .wrap{ padding:16px 12px 40px; }
+  header h1{ font-size:22px; }
+  table{ font-size:12px; }
+  thead th,tbody td{ padding:7px 7px; }
+  .topnav{ padding:12px 10px !important; gap:6px 6px !important; }
+  .topnav a{ padding:4px 9px; font-size:12px; }
+  /* ★ 窄屏必须让每个模块块各占一整行：
+     原来 .navgrp{flex-shrink:0} + 内部链接 white-space:nowrap，
+     整组宽度压不下去 → 导航溢出容器被裁掉，「主升精选 / 量化策略 / 三连阴」等
+     右侧入口在手机上根本看不见（看着像「没有导航」）。 */
+  .navgrp{ padding:5px 6px 5px 5px !important; width:100% !important; flex-shrink:1 !important; min-width:0 !important; }
+  /* 链接本身也要能收缩：全局 .topnav a{flex-shrink:0} 会让一行内最后一项
+     顶出容器被裁（手机上「高管增减持」就只剩「高管增减」）→ 窄屏放开收缩，
+     min-content 宽度仍是完整文字，不会被截断。 */
+  .topnav a{ flex-shrink:1 !important; }
+  .topnav a.home{ margin-left:0 !important; }
+  .wb-stamp{ margin:-8px auto 14px !important; font-size:12px !important; }
+  .wb-stamp a.wb-back{ margin-left:0 !important; }
+  .wb-fab{ right:10px; bottom:12px; }
+  .wb-fab a{ width:38px; height:38px; font-size:15px; }
+}
+
+</style><!--/WB_THEME--></head><body>
+<div class='topnav'><div class='navgrp'><span class='navgrp-l'>大盘与情绪</span><a href='../../market/index.html'>每日总览</a><a href='../../psychology/index.html'>群体心理</a><a href='../../dragon/index.html'>龙道诀</a></div><div class='navgrp'><span class='navgrp-l'>板块与资金</span><a href='../../sector/index.html'>板块强度</a><a href='../../sector/heatmap.html'>板块热力图</a><a href='../../lhb/lhb.html'>龙虎榜</a><a href='../../market/hotmoney.html'>游资看板</a><a href='../../exec/index.html'>高管增减持</a><a href='../../block/index.html'>大宗交易</a></div><div class='navgrp'><span class='navgrp-l'>牛人与股东</span><a href='../../shareholder/2026-q2-industry-elite.html'>行业最强</a><a href='../../shareholder/tracker.html'>牛人追踪</a></div><div class='navgrp'><span class='navgrp-l'>选股与策略</span><a href='../../research/index.html'>个股调研</a><a href='../../diagnosis/index.html'>个股研判</a><a href='../../reversal/index.html'>底部反转</a><a href='../../selected/index.html'>主升精选</a><a href='../../accumulation/index.html'>增仓精选</a><a href='../../tplus/index.html'>做T池</a><a href='../../quant_strategy/index.html'>量化策略</a><a href='../../three_yin/index.html'>三连阴</a><a href='../index.html'>N字形</a><a href='index.html'>N字形回测</a><a href='../sim/index.html'>N字形模拟器</a><a href='../../research_report/index.html'>研报分析</a></div><div class='navgrp'><span class='navgrp-l'>数据与工具</span><a href='../../db/index.html'>数据中心</a><a href='../../statement/index.html'>交割单复盘</a><a href='../../statement/exit-replay.html'>退出规则回放</a><a href='../../quant_strategy/freq-robust.html'>频率稳健性</a></div><a href='../../../index.html' class='home'>首页</a></div>
+<!--WB_STAMP--><div class='wb-stamp'><span class='s-l'>本页数据基准</span><b class='s-d'>2026-10-15</b><span class='s-hist'>· 历史归档页（内容即该日快照，不随最新数据日更新）</span><a class='wb-back' href='../../../index.html'>← 返回</a></div><!--/WB_STAMP-->
+<div class="wrap">
+<h1>N字形回测明细 · 信号日 2026-10-15</h1>
+<div class="sub">前向持有 10 交易日（以信号日收盘价买入，未计滑点/次日跳空）· 继续拉升率=信号后N日内收盘价刷新「局部峰值」的概率 · 观察池·非出票</div>
+<div class="box">本页为<b>历史回测留存</b>，仅验证 N字形信号的历史表现，不构成买卖建议。
+裸信号共 <b>102</b> 个：继续拉升率(10日) <b>+27.0%</b> ｜ 胜率 <b>+14.71%</b> ｜ 平均收益率 <b>-13.64%</b> ｜ 盈亏比 <b>0.59</b>。
+下方「组合过滤」表为叠加「健康回撤 + 板块热度」后、本回测日的分层表现。</div>
+<h2 class='eh'>组合过滤分层（本回测日）</h2>
+<table data-wb><thead><tr><th>过滤口径</th><th>信号数</th><th>继续拉升率(10日)</th><th>继续拉升率(15日)</th><th>胜率</th><th>FT胜率(6/8)</th><th>FT胜率(4/8)</th><th>平均收益</th><th>盈亏比</th><th>10日期望</th></tr></thead><tbody><tr><td>裸信号（全量）</td><td>102</td><td><b>+27.0%</b></td><td><b>—</b></td><td>+14.71%</td><td><b>+26.5%</b></td><td><b>+32.4%</b></td><td>-13.64%</td><td>0.59</td><td style='color:#d93025;font-weight:700'>负期望</td></tr><tr><td>贴合热点</td><td>46</td><td><b>+26.7%</b></td><td><b>—</b></td><td>+10.87%</td><td><b>+23.9%</b></td><td><b>+28.3%</b></td><td>-16.03%</td><td>0.14</td><td style='color:#d93025;font-weight:700'>负期望</td></tr><tr><td>健康回撤·宽松（热点∩站上MA20∩回撤5~30%）</td><td>20</td><td><b>+15.0%</b></td><td><b>—</b></td><td>+20.00%</td><td><b>+20.0%</b></td><td><b>+25.0%</b></td><td>-12.72%</td><td>0.16</td><td style='color:#d93025;font-weight:700'>负期望</td></tr><tr><td>健康回撤·严格（热点∩站上MA60∩回撤5~30%）</td><td>24</td><td><b>+16.7%</b></td><td><b>—</b></td><td>+16.67%</td><td><b>+20.8%</b></td><td><b>+25.0%</b></td><td>-13.97%</td><td>0.16</td><td style='color:#d93025;font-weight:700'>负期望</td></tr><tr><td>健康回撤·完整（严格+52周分位30~85，整体位置合理）</td><td>20</td><td><b>+15.0%</b></td><td><b>—</b></td><td>+15.00%</td><td><b>+15.0%</b></td><td><b>+20.0%</b></td><td>-14.45%</td><td>0.14</td><td style='color:#d93025;font-weight:700'>负期望</td></tr><tr><td>深回撤观察档（完整+距局部峰≤-20%跌透，2026-10-24新增·非出票）</td><td>2</td><td><b>+0.0%</b></td><td><b>—</b></td><td>+0.00%</td><td><b>+0.0%</b></td><td><b>+0.0%</b></td><td>-23.18%</td><td>—</td><td style='color:#d93025;font-weight:700'>负期望</td></tr><tr><td>量能优选观察档（完整+当日量能评分前20%，2026-10-24晚新增·非出票·样本内）</td><td>13</td><td><b>+30.8%</b></td><td><b>—</b></td><td>+23.08%</td><td><b>+38.5%</b></td><td><b>+38.5%</b></td><td>-9.23%</td><td>0.40</td><td style='color:#d93025;font-weight:700'>负期望</td></tr></tbody></table>
+<h2 class='eh'>健康回撤·严格 候选子集（热点∩站上MA60∩回撤5~30%）· 共 24 只</h2><table data-wb><thead><tr><th>代码</th><th>名称</th><th>板块</th><th>趋势位</th><th>入场价</th><th>距局部高</th><th>10日后</th><th>继续拉升</th></tr></thead><tbody><tr><td>sh600391</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600391.html" target="_blank" rel="noopener noreferrer">航发科技</a></td><td>航空装备Ⅱ</td><td><span style='color:#5f6368'>△站MA60</span></td><td>40.40</td><td class='dn'>-5.30%</td><td class='dn'>-4.18%</td><td>第2日↺</td></tr><tr><td>sh601858</td><td><a class="emlk" href="https://quote.eastmoney.com/sh601858.html" target="_blank" rel="noopener noreferrer">中国科传</a></td><td>出版</td><td><span style='color:#188038;font-weight:600'>▲双线之上</span></td><td>25.80</td><td class='dn'>-6.45%</td><td class='dn'>-13.29%</td><td>未↺</td></tr><tr><td>sh603188</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603188.html" target="_blank" rel="noopener noreferrer">亚邦股份</a></td><td>化学制品</td><td><span style='color:#188038;font-weight:600'>▲双线之上</span></td><td>5.29</td><td class='dn'>-11.98%</td><td class='dn'>-22.68%</td><td>未↺</td></tr><tr><td>sh603258</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603258.html" target="_blank" rel="noopener noreferrer">电魂网络</a></td><td>游戏Ⅱ</td><td><span style='color:#188038;font-weight:600'>▲双线之上</span></td><td>16.81</td><td class='dn'>-5.40%</td><td class='dn'>-10.29%</td><td>未↺</td></tr><tr><td>sh603466</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603466.html" target="_blank" rel="noopener noreferrer">风语筑</a></td><td>数字媒体</td><td><span style='color:#188038;font-weight:600'>▲双线之上</span></td><td>12.86</td><td class='dn'>-11.55%</td><td class='up'>+3.81%</td><td>第6日↺</td></tr><tr><td>sh603533</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603533.html" target="_blank" rel="noopener noreferrer">掌阅科技</a></td><td>数字媒体</td><td><span style='color:#188038;font-weight:600'>▲双线之上</span></td><td>29.01</td><td class='dn'>-11.85%</td><td class='dn'>-6.96%</td><td>未↺</td></tr><tr><td>sh603936</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603936.html" target="_blank" rel="noopener noreferrer">博敏电子</a></td><td>元件</td><td><span style='color:#5f6368'>△站MA60</span></td><td>17.88</td><td class='dn'>-24.75%</td><td class='dn'>-27.80%</td><td>未↺</td></tr><tr><td>sh603968</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603968.html" target="_blank" rel="noopener noreferrer">醋化股份</a></td><td>化学制品</td><td><span style='color:#188038;font-weight:600'>▲双线之上</span></td><td>14.22</td><td class='dn'>-10.00%</td><td class='dn'>-28.41%</td><td>未↺</td></tr><tr><td>sh603992</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603992.html" target="_blank" rel="noopener noreferrer">松霖科技</a></td><td>家居用品</td><td><span style='color:#188038;font-weight:600'>▲双线之上</span></td><td>23.82</td><td class='dn'>-7.96%</td><td class='dn'>-8.06%</td><td>未↺</td></tr><tr><td>sh605398</td><td><a class="emlk" href="https://quote.eastmoney.com/sh605398.html" target="_blank" rel="noopener noreferrer">新炬网络</a></td><td>IT服务Ⅱ</td><td><span style='color:#188038;font-weight:600'>▲双线之上</span></td><td>23.78</td><td class='dn'>-5.97%</td><td class='dn'>-8.12%</td><td>未↺</td></tr><tr><td>sz002322</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002322.html" target="_blank" rel="noopener noreferrer">理工能科</a></td><td>软件开发</td><td><span style='color:#188038;font-weight:600'>▲双线之上</span></td><td>12.52</td><td class='dn'>-6.08%</td><td class='up'>+2.72%</td><td>第6日↺</td></tr><tr><td>sz002395</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002395.html" target="_blank" rel="noopener noreferrer">双象股份</a></td><td>塑料</td><td><span style='color:#188038;font-weight:600'>▲双线之上</span></td><td>14.00</td><td class='dn'>-9.44%</td><td class='dn'>-22.71%</td><td>未↺</td></tr><tr><td>sz002579</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002579.html" target="_blank" rel="noopener noreferrer">中京电子</a></td><td>元件</td><td><span style='color:#5f6368'>△站MA60</span></td><td>16.08</td><td class='dn'>-8.06%</td><td class='dn'>-26.06%</td><td>未↺</td></tr><tr><td>sz002585</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002585.html" target="_blank" rel="noopener noreferrer">双星新材</a></td><td>塑料</td><td><span style='color:#5f6368'>△站MA60</span></td><td>10.52</td><td class='dn'>-17.23%</td><td class='dn'>-22.15%</td><td>未↺</td></tr><tr><td>sz002636</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002636.html" target="_blank" rel="noopener noreferrer">金安国纪</a></td><td>元件</td><td><span style='color:#5f6368'>△站MA60</span></td><td>71.09</td><td class='dn'>-22.73%</td><td class='dn'>-18.57%</td><td>未↺</td></tr><tr><td>sz002780</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002780.html" target="_blank" rel="noopener noreferrer">三夫户外</a></td><td>服装家纺</td><td><span style='color:#188038;font-weight:600'>▲双线之上</span></td><td>15.20</td><td class='dn'>-6.35%</td><td class='dn'>-11.51%</td><td>未↺</td></tr><tr><td>sz002878</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002878.html" target="_blank" rel="noopener noreferrer">元隆雅图</a></td><td>广告营销</td><td><span style='color:#188038;font-weight:600'>▲双线之上</span></td><td>13.79</td><td class='dn'>-12.50%</td><td class='up'>+3.34%</td><td>未↺</td></tr><tr><td>sz002917</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002917.html" target="_blank" rel="noopener noreferrer">金奥博</a></td><td>化学制品</td><td><span style='color:#188038;font-weight:600'>▲双线之上</span></td><td>10.89</td><td class='dn'>-10.00%</td><td class='dn'>-3.76%</td><td>第3日↺</td></tr><tr><td>sz300299</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300299.html" target="_blank" rel="noopener noreferrer">富春股份</a></td><td>游戏Ⅱ</td><td><span style='color:#188038;font-weight:600'>▲双线之上</span></td><td>6.38</td><td class='dn'>-7.27%</td><td class='dn'>-8.78%</td><td>未↺</td></tr><tr><td>sz300413</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300413.html" target="_blank" rel="noopener noreferrer">芒果超媒</a></td><td>数字媒体</td><td><span style='color:#188038;font-weight:600'>▲双线之上</span></td><td>24.51</td><td class='dn'>-9.62%</td><td class='dn'>-4.94%</td><td>未↺</td></tr><tr><td>sz300821</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300821.html" target="_blank" rel="noopener noreferrer">东岳硅材</a></td><td>化学制品</td><td><span style='color:#188038;font-weight:600'>▲双线之上</span></td><td>18.32</td><td class='dn'>-10.98%</td><td class='dn'>-21.67%</td><td>未↺</td></tr><tr><td>sz301052</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301052.html" target="_blank" rel="noopener noreferrer">果麦文化</a></td><td>出版</td><td><span style='color:#188038;font-weight:600'>▲双线之上</span></td><td>35.37</td><td class='dn'>-7.91%</td><td class='up'>+0.93%</td><td>未↺</td></tr><tr><td>sz301132</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301132.html" target="_blank" rel="noopener noreferrer">满坤科技</a></td><td>元件</td><td><span style='color:#188038;font-weight:600'>▲双线之上</span></td><td>75.18</td><td class='dn'>-5.29%</td><td class='dn'>-37.84%</td><td>未↺</td></tr><tr><td>sz301251</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301251.html" target="_blank" rel="noopener noreferrer">威尔高</a></td><td>元件</td><td><span style='color:#188038;font-weight:600'>▲双线之上</span></td><td>82.72</td><td class='dn'>-13.80%</td><td class='dn'>-38.33%</td><td>未↺</td></tr></tbody></table>
+<h2 class='eh'>裸信号全量明细（102 只）</h2>
+<table data-wb><thead><tr>
+<th>代码</th><th>名称</th><th>涨停日</th><th>距涨停</th><th>入场价</th>
+<th>10日后</th><th>最大</th><th>最小</th><th>结果</th><th>板块</th><th>热点</th><th>继续拉升(10日)</th><th>继续拉升(15日)</th><th>首次触及(6/8)</th>
+</tr></thead><tbody><tr><td>sh600072</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600072.html" target="_blank" rel="noopener noreferrer">中船科技</a></td><td>2026-09-30</td><td>6日</td><td>9.58</td><td class='dn'>-10.13%</td><td class='up'>+6.89%</td><td class='dn'>-10.13%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>风电设备</td><td><span style='color:#9aa0a6'>—</span></td><td>第2日↺</td><td>—</td><td><span style='color:#188038'>✓第2日</span></td></tr><tr><td>sh600110</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600110.html" target="_blank" rel="noopener noreferrer">诺德股份</a></td><td>2026-09-15</td><td>16日</td><td>10.17</td><td class='dn'>-17.90%</td><td class='dn'>-0.29%</td><td class='dn'>-17.90%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>电池</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第8日</span></td></tr><tr><td>sh600121</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600121.html" target="_blank" rel="noopener noreferrer">郑州煤电</a></td><td>2026-10-14</td><td>1日</td><td>5.68</td><td class='dn'>-26.23%</td><td class='dn'>-4.58%</td><td class='dn'>-26.41%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>煤炭开采</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第2日</span></td></tr><tr><td>sh600199</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600199.html" target="_blank" rel="noopener noreferrer">金种子酒</a></td><td>2026-10-13</td><td>2日</td><td>7.75</td><td class='dn'>-11.74%</td><td class='up'>+4.77%</td><td class='dn'>-12.00%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>白酒Ⅱ</td><td><span style='color:#9aa0a6'>—</span></td><td>第1日↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sh600202</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600202.html" target="_blank" rel="noopener noreferrer">哈空调</a></td><td>2026-10-14</td><td>1日</td><td>5.54</td><td class='dn'>-16.79%</td><td class='up'>+10.65%</td><td class='dn'>-16.79%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>通用设备</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第3日</span></td></tr><tr><td>sh600228</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600228.html" target="_blank" rel="noopener noreferrer">返利科技</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-13</td><td>2日</td><td>9.92</td><td class='dn'>-13.51%</td><td class='up'>+3.02%</td><td class='dn'>-13.51%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>数字媒体</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第7日</span></td></tr><tr><td>sh600237</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600237.html" target="_blank" rel="noopener noreferrer">铜峰电子</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-13</td><td>2日</td><td>9.18</td><td class='dn'>-18.30%</td><td class='up'>+1.63%</td><td class='dn'>-18.30%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>元件</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第7日</span></td></tr><tr><td>sh600241</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600241.html" target="_blank" rel="noopener noreferrer">时代万恒</a></td><td>2026-10-12</td><td>3日</td><td>13.99</td><td class='dn'>-42.39%</td><td class='up'>+1.14%</td><td class='dn'>-42.39%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>电池</td><td><span style='color:#9aa0a6'>—</span></td><td>第1日↺</td><td>—</td><td><span style='color:#d93025'>✗第2日</span></td></tr><tr><td>sh600330</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600330.html" target="_blank" rel="noopener noreferrer">天通股份</a></td><td>2026-09-14</td><td>17日</td><td>23.12</td><td class='dn'>-16.52%</td><td class='up'>+0.39%</td><td class='dn'>-16.52%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>电子化学品Ⅱ</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第7日</span></td></tr><tr><td>sh600391</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600391.html" target="_blank" rel="noopener noreferrer">航发科技</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-14</td><td>1日</td><td>40.40</td><td class='dn'>-4.18%</td><td class='up'>+6.88%</td><td class='dn'>-5.57%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>航空装备Ⅱ</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>第2日↺</td><td>—</td><td><span style='color:#188038'>✓第2日</span></td></tr><tr><td>sh600560</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600560.html" target="_blank" rel="noopener noreferrer">金自天正</a></td><td>2026-10-12</td><td>3日</td><td>12.40</td><td class='dn'>-11.13%</td><td class='up'>+8.71%</td><td class='dn'>-11.13%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>专用设备</td><td><span style='color:#9aa0a6'>—</span></td><td>第1日↺</td><td>—</td><td><span style='color:#188038'>✓第3日</span></td></tr><tr><td>sh600577</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600577.html" target="_blank" rel="noopener noreferrer">精达股份</a></td><td>2026-09-18</td><td>13日</td><td>8.96</td><td class='dn'>-19.64%</td><td class='dn'>-1.79%</td><td class='dn'>-21.54%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>电网设备</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第2日</span></td></tr><tr><td>sh600621</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600621.html" target="_blank" rel="noopener noreferrer">华鑫股份</a></td><td>2026-10-09</td><td>4日</td><td>15.42</td><td class='dn'>-19.91%</td><td class='dn'>-3.37%</td><td class='dn'>-19.91%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>证券Ⅱ</td><td><span style='color:#9aa0a6'>—</span></td><td>—</td><td>—</td><td><span style='color:#d93025'>✗第4日</span></td></tr><tr><td>sh600847</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600847.html" target="_blank" rel="noopener noreferrer">万里股份</a></td><td>2026-10-14</td><td>1日</td><td>14.06</td><td class='dn'>-24.89%</td><td class='dn'>-10.03%</td><td class='dn'>-24.89%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>电池</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第1日</span></td></tr><tr><td>sh600851</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600851.html" target="_blank" rel="noopener noreferrer">海欣股份</a></td><td>2026-10-13</td><td>2日</td><td>8.80</td><td class='dn'>-5.23%</td><td class='up'>+5.00%</td><td class='dn'>-5.23%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>化学制药</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第10日</span></td></tr><tr><td>sh600967</td><td><a class="emlk" href="https://quote.eastmoney.com/sh600967.html" target="_blank" rel="noopener noreferrer">内蒙一机</a></td><td>2026-09-11</td><td>18日</td><td>13.03</td><td class='dn'>-1.92%</td><td class='up'>+11.28%</td><td class='dn'>-1.92%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>地面兵装Ⅱ</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#188038'>✓第1日</span></td></tr><tr><td>sh601188</td><td><a class="emlk" href="https://quote.eastmoney.com/sh601188.html" target="_blank" rel="noopener noreferrer">龙江交通</a></td><td>2026-10-14</td><td>1日</td><td>3.18</td><td class='up'>+10.06%</td><td class='up'>+10.06%</td><td class='dn'>-5.35%</td><td style='font-weight:700;color:#188038'>盈利</td><td>铁路公路</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#188038'>✓第10日</span></td></tr><tr><td>sh601519</td><td><a class="emlk" href="https://quote.eastmoney.com/sh601519.html" target="_blank" rel="noopener noreferrer">大智慧</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-09</td><td>4日</td><td>9.65</td><td class='dn'>-8.50%</td><td class='dn'>-1.76%</td><td class='dn'>-12.85%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>软件开发</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sh601595</td><td><a class="emlk" href="https://quote.eastmoney.com/sh601595.html" target="_blank" rel="noopener noreferrer">上海电影</a></td><td>2026-10-12</td><td>3日</td><td>28.60</td><td class='up'>+1.22%</td><td class='up'>+2.83%</td><td class='dn'>-7.76%</td><td style='font-weight:700;color:#188038'>盈利</td><td>影视院线</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#188038'>✓第10日</span></td></tr><tr><td>sh601858</td><td><a class="emlk" href="https://quote.eastmoney.com/sh601858.html" target="_blank" rel="noopener noreferrer">中国科传</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-14</td><td>1日</td><td>25.80</td><td class='dn'>-13.29%</td><td class='up'>+2.79%</td><td class='dn'>-15.12%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>出版</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第7日</span></td></tr><tr><td>sh603096</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603096.html" target="_blank" rel="noopener noreferrer">新经典</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-14</td><td>1日</td><td>23.25</td><td class='dn'>-33.59%</td><td class='dn'>-9.68%</td><td class='dn'>-33.63%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>出版</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第1日</span></td></tr><tr><td>sh603105</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603105.html" target="_blank" rel="noopener noreferrer">芯能科技</a></td><td>2026-09-10</td><td>19日</td><td>9.23</td><td class='dn'>-18.85%</td><td class='up'>+9.97%</td><td class='dn'>-21.56%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>电力</td><td><span style='color:#9aa0a6'>—</span></td><td>第1日↺</td><td>—</td><td><span style='color:#188038'>✓第1日</span></td></tr><tr><td>sh603127</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603127.html" target="_blank" rel="noopener noreferrer">昭衍新药</a></td><td>2026-09-30</td><td>6日</td><td>50.65</td><td class='dn'>-9.62%</td><td class='dn'>-2.07%</td><td class='dn'>-14.00%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>医疗服务</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第2日</span></td></tr><tr><td>sh603188</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603188.html" target="_blank" rel="noopener noreferrer">亚邦股份</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-13</td><td>2日</td><td>5.29</td><td class='dn'>-22.68%</td><td class='up'>+5.10%</td><td class='dn'>-22.68%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>化学制品</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sh603258</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603258.html" target="_blank" rel="noopener noreferrer">电魂网络</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-14</td><td>1日</td><td>16.81</td><td class='dn'>-10.29%</td><td class='dn'>-7.67%</td><td class='dn'>-19.33%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>游戏Ⅱ</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第1日</span></td></tr><tr><td>sh603276</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603276.html" target="_blank" rel="noopener noreferrer">恒兴新材</a> <span style='color:#1a73e8'>●</span></td><td>2026-09-16</td><td>15日</td><td>18.95</td><td class='dn'>-8.07%</td><td class='up'>+7.18%</td><td class='dn'>-8.07%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>化学制品</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>第3日↺</td><td>—</td><td><span style='color:#188038'>✓第3日</span></td></tr><tr><td>sh603328</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603328.html" target="_blank" rel="noopener noreferrer">依顿电子</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-13</td><td>2日</td><td>13.87</td><td class='dn'>-31.51%</td><td class='dn'>-4.97%</td><td class='dn'>-31.51%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>元件</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第4日</span></td></tr><tr><td>sh603466</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603466.html" target="_blank" rel="noopener noreferrer">风语筑</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-13</td><td>2日</td><td>12.86</td><td class='up'>+3.81%</td><td class='up'>+14.54%</td><td class='dn'>-1.71%</td><td style='font-weight:700;color:#188038'>盈利</td><td>数字媒体</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>第6日↺</td><td>—</td><td><span style='color:#188038'>✓第3日</span></td></tr><tr><td>sh603533</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603533.html" target="_blank" rel="noopener noreferrer">掌阅科技</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-14</td><td>1日</td><td>29.01</td><td class='dn'>-6.96%</td><td class='dn'>-0.55%</td><td class='dn'>-12.17%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>数字媒体</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sh603656</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603656.html" target="_blank" rel="noopener noreferrer">泰禾智能</a></td><td>2026-10-14</td><td>1日</td><td>17.83</td><td class='up'>+3.65%</td><td class='up'>+9.81%</td><td class='up'>+1.63%</td><td style='font-weight:700;color:#188038'>盈利</td><td>专用设备</td><td><span style='color:#9aa0a6'>—</span></td><td>第5日↺</td><td>—</td><td><span style='color:#188038'>✓第5日</span></td></tr><tr><td>sh603693</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603693.html" target="_blank" rel="noopener noreferrer">江苏新能</a></td><td>2026-09-11</td><td>18日</td><td>12.75</td><td class='dn'>-8.08%</td><td class='up'>+6.12%</td><td class='dn'>-9.80%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>电力</td><td><span style='color:#9aa0a6'>—</span></td><td>第2日↺</td><td>—</td><td><span style='color:#188038'>✓第2日</span></td></tr><tr><td>sh603919</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603919.html" target="_blank" rel="noopener noreferrer">金徽酒</a></td><td>2026-09-30</td><td>6日</td><td>16.82</td><td class='dn'>-8.80%</td><td class='up'>+2.56%</td><td class='dn'>-8.80%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>白酒Ⅱ</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第10日</span></td></tr><tr><td>sh603936</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603936.html" target="_blank" rel="noopener noreferrer">博敏电子</a> <span style='color:#1a73e8'>●</span></td><td>2026-09-11</td><td>18日</td><td>17.88</td><td class='dn'>-27.80%</td><td class='dn'>-2.13%</td><td class='dn'>-27.80%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>元件</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第1日</span></td></tr><tr><td>sh603956</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603956.html" target="_blank" rel="noopener noreferrer">威派格</a></td><td>2026-10-13</td><td>2日</td><td>7.76</td><td class='dn'>-24.10%</td><td class='up'>+3.99%</td><td class='dn'>-24.10%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>专用设备</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第6日</span></td></tr><tr><td>sh603968</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603968.html" target="_blank" rel="noopener noreferrer">醋化股份</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-14</td><td>1日</td><td>14.22</td><td class='dn'>-28.41%</td><td class='dn'>-6.12%</td><td class='dn'>-28.41%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>化学制品</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第2日</span></td></tr><tr><td>sh603992</td><td><a class="emlk" href="https://quote.eastmoney.com/sh603992.html" target="_blank" rel="noopener noreferrer">松霖科技</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-14</td><td>1日</td><td>23.82</td><td class='dn'>-8.06%</td><td class='up'>+2.02%</td><td class='dn'>-13.48%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>家居用品</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sh605258</td><td><a class="emlk" href="https://quote.eastmoney.com/sh605258.html" target="_blank" rel="noopener noreferrer">协和电子</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-13</td><td>2日</td><td>42.42</td><td class='dn'>-2.90%</td><td class='up'>+8.58%</td><td class='dn'>-8.06%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>元件</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>—</td><td>—</td><td><span style='color:#d93025'>✗第1日</span></td></tr><tr><td>sh605287</td><td><a class="emlk" href="https://quote.eastmoney.com/sh605287.html" target="_blank" rel="noopener noreferrer">德才股份</a></td><td>2026-10-12</td><td>3日</td><td>45.57</td><td class='up'>+4.28%</td><td class='up'>+5.09%</td><td class='dn'>-8.65%</td><td style='font-weight:700;color:#188038'>盈利</td><td>装修装饰Ⅱ</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sh605298</td><td><a class="emlk" href="https://quote.eastmoney.com/sh605298.html" target="_blank" rel="noopener noreferrer">必得科技</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-08</td><td>5日</td><td>41.93</td><td class='dn'>-3.48%</td><td class='up'>+9.28%</td><td class='dn'>-3.48%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>轨交设备Ⅱ</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>第6日↺</td><td>—</td><td><span style='color:#188038'>✓第5日</span></td></tr><tr><td>sh605398</td><td><a class="emlk" href="https://quote.eastmoney.com/sh605398.html" target="_blank" rel="noopener noreferrer">新炬网络</a> <span style='color:#1a73e8'>●</span></td><td>2026-09-22</td><td>11日</td><td>23.78</td><td class='dn'>-8.12%</td><td class='dn'>-1.43%</td><td class='dn'>-8.24%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>IT服务Ⅱ</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sh688137</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688137.html" target="_blank" rel="noopener noreferrer">近岸蛋白</a></td><td>2026-09-21</td><td>12日</td><td>151.18</td><td class='dn'>-14.34%</td><td class='dn'>-7.79%</td><td class='dn'>-29.88%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>生物制品</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第2日</span></td></tr><tr><td>sh688685</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688685.html" target="_blank" rel="noopener noreferrer">迈信林</a> <span style='color:#1a73e8'>●</span></td><td>2026-09-29</td><td>7日</td><td>38.51</td><td class='dn'>-17.76%</td><td class='up'>+2.96%</td><td class='dn'>-17.76%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>航空装备Ⅱ</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第8日</span></td></tr><tr><td>sh688781</td><td><a class="emlk" href="https://quote.eastmoney.com/sh688781.html" target="_blank" rel="noopener noreferrer">视涯科技-UW</a></td><td>2026-09-22</td><td>11日</td><td>41.88</td><td class='up'>+1.00%</td><td class='up'>+12.23%</td><td class='dn'>-7.28%</td><td style='font-weight:700;color:#188038'>盈利</td><td>—</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#188038'>✓第3日</span></td></tr><tr><td>sz000573</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000573.html" target="_blank" rel="noopener noreferrer">粤宏远Ａ</a></td><td>2026-10-14</td><td>1日</td><td>4.06</td><td class='dn'>-7.14%</td><td class='up'>+10.10%</td><td class='dn'>-7.14%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>—</td><td><span style='color:#9aa0a6'>—</span></td><td>第1日↺</td><td>—</td><td><span style='color:#188038'>✓第1日</span></td></tr><tr><td>sz000601</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000601.html" target="_blank" rel="noopener noreferrer">韶能股份</a></td><td>2026-10-14</td><td>1日</td><td>6.63</td><td class='dn'>-19.31%</td><td class='dn'>-1.06%</td><td class='dn'>-19.31%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>电力</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sz000607</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000607.html" target="_blank" rel="noopener noreferrer">华媒控股</a> <span style='color:#1a73e8'>●</span></td><td>2026-09-29</td><td>7日</td><td>4.19</td><td class='dn'>-13.37%</td><td class='up'>+10.02%</td><td class='dn'>-13.37%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>广告营销</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>第1日↺</td><td>—</td><td><span style='color:#188038'>✓第1日</span></td></tr><tr><td>sz000668</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000668.html" target="_blank" rel="noopener noreferrer">荣丰控股</a></td><td>2026-10-14</td><td>1日</td><td>20.36</td><td class='dn'>-25.74%</td><td class='up'>+1.57%</td><td class='dn'>-25.74%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>房地产开发</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第2日</span></td></tr><tr><td>sz000692</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000692.html" target="_blank" rel="noopener noreferrer">惠天热电</a></td><td>2026-09-30</td><td>6日</td><td>4.73</td><td class='dn'>-14.38%</td><td class='dn'>-3.59%</td><td class='dn'>-14.38%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>电力</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第3日</span></td></tr><tr><td>sz000823</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000823.html" target="_blank" rel="noopener noreferrer">超声电子</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-14</td><td>1日</td><td>25.87</td><td class='dn'>-36.10%</td><td class='dn'>-1.01%</td><td class='dn'>-36.10%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>元件</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sz000833</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000833.html" target="_blank" rel="noopener noreferrer">粤桂股份</a></td><td>2026-10-13</td><td>2日</td><td>20.98</td><td class='dn'>-20.02%</td><td class='dn'>-5.96%</td><td class='dn'>-20.02%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>综合Ⅱ</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第2日</span></td></tr><tr><td>sz000892</td><td><a class="emlk" href="https://quote.eastmoney.com/sz000892.html" target="_blank" rel="noopener noreferrer">欢瑞世纪</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-12</td><td>3日</td><td>5.45</td><td class='dn'>-18.35%</td><td class='dn'>-8.26%</td><td class='dn'>-23.12%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>影视院线</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第1日</span></td></tr><tr><td>sz001216</td><td><a class="emlk" href="https://quote.eastmoney.com/sz001216.html" target="_blank" rel="noopener noreferrer">华瓷股份</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-14</td><td>1日</td><td>24.43</td><td class='dn'>-24.48%</td><td class='up'>+15.10%</td><td class='dn'>-24.48%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>家居用品</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>第5日↺</td><td>—</td><td><span style='color:#d93025'>✗第1日</span></td></tr><tr><td>sz001233</td><td><a class="emlk" href="https://quote.eastmoney.com/sz001233.html" target="_blank" rel="noopener noreferrer">海安集团</a></td><td>2026-09-18</td><td>13日</td><td>47.01</td><td class='up'>+19.59%</td><td class='up'>+29.72%</td><td class='up'>+2.53%</td><td style='font-weight:700;color:#188038'>盈利</td><td>汽车零部件</td><td><span style='color:#9aa0a6'>—</span></td><td>第2日↺</td><td>—</td><td><span style='color:#188038'>✓第2日</span></td></tr><tr><td>sz001299</td><td><a class="emlk" href="https://quote.eastmoney.com/sz001299.html" target="_blank" rel="noopener noreferrer">美能能源</a></td><td>2026-10-14</td><td>1日</td><td>11.04</td><td class='dn'>-18.84%</td><td class='dn'>-2.54%</td><td class='dn'>-18.84%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>燃气Ⅱ</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sz002058</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002058.html" target="_blank" rel="noopener noreferrer">紫竹高科</a></td><td>2026-10-09</td><td>4日</td><td>23.74</td><td class='dn'>-27.13%</td><td class='dn'>-2.91%</td><td class='dn'>-27.13%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>电池</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第2日</span></td></tr><tr><td>sz002141</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002141.html" target="_blank" rel="noopener noreferrer">贤丰控股</a> <span style='color:#1a73e8'>●</span></td><td>2026-09-22</td><td>11日</td><td>5.64</td><td class='dn'>-16.31%</td><td class='dn'>-1.77%</td><td class='dn'>-16.31%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>元件</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sz002164</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002164.html" target="_blank" rel="noopener noreferrer">宁波东力</a></td><td>2026-09-30</td><td>6日</td><td>13.72</td><td class='up'>+31.12%</td><td class='up'>+31.12%</td><td class='dn'>-2.70%</td><td style='font-weight:700;color:#188038'>盈利</td><td>通用设备</td><td><span style='color:#9aa0a6'>—</span></td><td>第2日↺</td><td>—</td><td><span style='color:#188038'>✓第2日</span></td></tr><tr><td>sz002172</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002172.html" target="_blank" rel="noopener noreferrer">澳洋健康</a></td><td>2026-10-13</td><td>2日</td><td>5.79</td><td class='dn'>-7.25%</td><td class='dn'>-0.35%</td><td class='dn'>-26.60%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>医疗服务</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第4日</span></td></tr><tr><td>sz002242</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002242.html" target="_blank" rel="noopener noreferrer">九阳股份</a></td><td>2026-10-12</td><td>3日</td><td>17.31</td><td class='up'>+32.87%</td><td class='up'>+32.87%</td><td class='up'>+2.77%</td><td style='font-weight:700;color:#188038'>盈利</td><td>小家电</td><td><span style='color:#9aa0a6'>—</span></td><td>第2日↺</td><td>—</td><td><span style='color:#188038'>✓第2日</span></td></tr><tr><td>sz002317</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002317.html" target="_blank" rel="noopener noreferrer">众生药业</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-09</td><td>4日</td><td>26.53</td><td class='dn'>-10.93%</td><td class='up'>+5.31%</td><td class='dn'>-10.93%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>中药Ⅱ</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>第2日↺</td><td>—</td><td><span style='color:#d93025'>✗第8日</span></td></tr><tr><td>sz002322</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002322.html" target="_blank" rel="noopener noreferrer">理工能科</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-13</td><td>2日</td><td>12.52</td><td class='up'>+2.72%</td><td class='up'>+9.19%</td><td class='dn'>-0.72%</td><td style='font-weight:700;color:#188038'>盈利</td><td>软件开发</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>第6日↺</td><td>—</td><td><span style='color:#188038'>✓第6日</span></td></tr><tr><td>sz002383</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002383.html" target="_blank" rel="noopener noreferrer">合众思壮</a></td><td>2026-09-16</td><td>15日</td><td>7.64</td><td class='dn'>-11.13%</td><td class='dn'>-0.39%</td><td class='dn'>-11.52%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>军工电子Ⅱ</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第8日</span></td></tr><tr><td>sz002395</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002395.html" target="_blank" rel="noopener noreferrer">双象股份</a> <span style='color:#1a73e8'>●</span></td><td>2026-09-24</td><td>9日</td><td>14.00</td><td class='dn'>-22.71%</td><td class='up'>+2.86%</td><td class='dn'>-22.71%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>塑料</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sz002469</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002469.html" target="_blank" rel="noopener noreferrer">三维化学</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-14</td><td>1日</td><td>7.00</td><td class='dn'>-22.43%</td><td class='up'>+2.14%</td><td class='dn'>-22.43%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>专业工程</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sz002552</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002552.html" target="_blank" rel="noopener noreferrer">宝鼎科技</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-14</td><td>1日</td><td>46.73</td><td class='dn'>-29.36%</td><td class='dn'>-9.99%</td><td class='dn'>-29.36%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>元件</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第1日</span></td></tr><tr><td>sz002549</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002549.html" target="_blank" rel="noopener noreferrer">凯美特气</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-13</td><td>2日</td><td>14.11</td><td class='dn'>-22.68%</td><td class='dn'>-1.98%</td><td class='dn'>-22.68%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>化学制品</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第3日</span></td></tr><tr><td>sz002579</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002579.html" target="_blank" rel="noopener noreferrer">中京电子</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-13</td><td>2日</td><td>16.08</td><td class='dn'>-26.06%</td><td class='dn'>-3.30%</td><td class='dn'>-26.06%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>元件</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sz002585</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002585.html" target="_blank" rel="noopener noreferrer">双星新材</a> <span style='color:#1a73e8'>●</span></td><td>2026-09-21</td><td>12日</td><td>10.52</td><td class='dn'>-22.15%</td><td class='dn'>-0.38%</td><td class='dn'>-22.15%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>塑料</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第7日</span></td></tr><tr><td>sz002636</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002636.html" target="_blank" rel="noopener noreferrer">金安国纪</a> <span style='color:#1a73e8'>●</span></td><td>2026-09-10</td><td>19日</td><td>71.09</td><td class='dn'>-18.57%</td><td class='dn'>-8.14%</td><td class='dn'>-25.08%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>元件</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第1日</span></td></tr><tr><td>sz002639</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002639.html" target="_blank" rel="noopener noreferrer">雪人集团</a></td><td>2026-10-13</td><td>2日</td><td>15.37</td><td class='dn'>-8.46%</td><td class='up'>+1.89%</td><td class='dn'>-11.78%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>通用设备</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第3日</span></td></tr><tr><td>sz002640</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002640.html" target="_blank" rel="noopener noreferrer">跨境通</a></td><td>2026-10-13</td><td>2日</td><td>3.81</td><td class='dn'>-19.16%</td><td class='up'>+3.15%</td><td class='dn'>-19.16%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>互联网电商</td><td><span style='color:#9aa0a6'>—</span></td><td>第1日↺</td><td>—</td><td><span style='color:#d93025'>✗第6日</span></td></tr><tr><td>sz002693</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002693.html" target="_blank" rel="noopener noreferrer">双成药业</a></td><td>2026-10-13</td><td>2日</td><td>9.93</td><td class='dn'>-17.22%</td><td class='dn'>-5.14%</td><td class='dn'>-17.22%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>化学制药</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第2日</span></td></tr><tr><td>sz002780</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002780.html" target="_blank" rel="noopener noreferrer">三夫户外</a> <span style='color:#1a73e8'>●</span></td><td>2026-09-16</td><td>15日</td><td>15.20</td><td class='dn'>-11.51%</td><td class='dn'>-1.64%</td><td class='dn'>-13.49%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>服装家纺</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第8日</span></td></tr><tr><td>sz002811</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002811.html" target="_blank" rel="noopener noreferrer">郑中设计</a></td><td>2026-10-13</td><td>2日</td><td>19.70</td><td class='dn'>-12.28%</td><td class='up'>+25.13%</td><td class='dn'>-12.28%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>装修装饰Ⅱ</td><td><span style='color:#9aa0a6'>—</span></td><td>第3日↺</td><td>—</td><td><span style='color:#188038'>✓第3日</span></td></tr><tr><td>sz002813</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002813.html" target="_blank" rel="noopener noreferrer">路畅科技</a></td><td>2026-10-14</td><td>1日</td><td>26.12</td><td class='dn'>-2.53%</td><td class='up'>+3.75%</td><td class='dn'>-4.94%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>汽车零部件</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第10日</span></td></tr><tr><td>sz002860</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002860.html" target="_blank" rel="noopener noreferrer">星帅尔</a></td><td>2026-10-14</td><td>1日</td><td>18.29</td><td class='dn'>-14.87%</td><td class='dn'>-0.71%</td><td class='dn'>-14.87%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>家电零部件Ⅱ</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sz002862</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002862.html" target="_blank" rel="noopener noreferrer">实丰文化</a></td><td>2026-10-13</td><td>2日</td><td>15.31</td><td class='up'>+10.52%</td><td class='up'>+10.52%</td><td class='dn'>-10.06%</td><td style='font-weight:700;color:#188038'>盈利</td><td>文娱用品</td><td><span style='color:#9aa0a6'>—</span></td><td>第10日↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sz002878</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002878.html" target="_blank" rel="noopener noreferrer">元隆雅图</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-13</td><td>2日</td><td>13.79</td><td class='up'>+3.34%</td><td class='up'>+4.28%</td><td class='dn'>-3.41%</td><td style='font-weight:700;color:#188038'>盈利</td><td>广告营销</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#188038'>✓第10日</span></td></tr><tr><td>sz002908</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002908.html" target="_blank" rel="noopener noreferrer">德生科技</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-12</td><td>3日</td><td>7.69</td><td class='dn'>-10.79%</td><td class='up'>+8.58%</td><td class='dn'>-10.79%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>IT服务Ⅱ</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>第3日↺</td><td>—</td><td><span style='color:#188038'>✓第4日</span></td></tr><tr><td>sz002917</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002917.html" target="_blank" rel="noopener noreferrer">金奥博</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-14</td><td>1日</td><td>10.89</td><td class='dn'>-3.76%</td><td class='up'>+14.51%</td><td class='dn'>-3.76%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>化学制品</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>第3日↺</td><td>—</td><td><span style='color:#188038'>✓第1日</span></td></tr><tr><td>sz002956</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002956.html" target="_blank" rel="noopener noreferrer">西麦食品</a> <span style='color:#1a73e8'>●</span></td><td>2026-09-16</td><td>15日</td><td>17.97</td><td class='up'>+2.45%</td><td class='up'>+7.12%</td><td class='dn'>-0.06%</td><td style='font-weight:700;color:#188038'>盈利</td><td>休闲食品</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>第3日↺</td><td>—</td><td><span style='color:#188038'>✓第3日</span></td></tr><tr><td>sz002961</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002961.html" target="_blank" rel="noopener noreferrer">瑞达期货</a></td><td>2026-09-16</td><td>15日</td><td>14.10</td><td class='dn'>-22.41%</td><td class='dn'>-2.77%</td><td class='dn'>-22.41%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>多元金融</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sz002980</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002980.html" target="_blank" rel="noopener noreferrer">华盛昌</a></td><td>2026-10-13</td><td>2日</td><td>110.41</td><td class='dn'>-33.41%</td><td class='up'>+1.34%</td><td class='dn'>-33.41%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>电网设备</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sz002990</td><td><a class="emlk" href="https://quote.eastmoney.com/sz002990.html" target="_blank" rel="noopener noreferrer">盛视科技</a></td><td>2026-10-12</td><td>3日</td><td>59.00</td><td class='dn'>-38.81%</td><td class='dn'>-2.54%</td><td class='dn'>-38.81%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>计算机设备</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第4日</span></td></tr><tr><td>sz003037</td><td><a class="emlk" href="https://quote.eastmoney.com/sz003037.html" target="_blank" rel="noopener noreferrer">三和管桩</a></td><td>2026-10-13</td><td>2日</td><td>6.62</td><td class='dn'>-21.30%</td><td class='dn'>-1.66%</td><td class='dn'>-21.30%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>水泥</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sz300006</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300006.html" target="_blank" rel="noopener noreferrer">莱美药业</a></td><td>2026-10-14</td><td>1日</td><td>8.13</td><td class='up'>+28.91%</td><td class='up'>+28.91%</td><td class='dn'>-4.67%</td><td style='font-weight:700;color:#188038'>盈利</td><td>化学制药</td><td><span style='color:#9aa0a6'>—</span></td><td>第1日↺</td><td>—</td><td><span style='color:#188038'>✓第1日</span></td></tr><tr><td>sz300299</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300299.html" target="_blank" rel="noopener noreferrer">富春股份</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-14</td><td>1日</td><td>6.38</td><td class='dn'>-8.78%</td><td class='dn'>-5.64%</td><td class='dn'>-13.01%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>游戏Ⅱ</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sz300324</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300324.html" target="_blank" rel="noopener noreferrer">旋极信息</a></td><td>2026-09-22</td><td>11日</td><td>3.78</td><td class='dn'>-14.55%</td><td class='dn'>-1.85%</td><td class='dn'>-14.55%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>计算机设备</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sz300413</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300413.html" target="_blank" rel="noopener noreferrer">芒果超媒</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-09</td><td>4日</td><td>24.51</td><td class='dn'>-4.94%</td><td class='up'>+0.86%</td><td class='dn'>-11.06%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>数字媒体</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sz300434</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300434.html" target="_blank" rel="noopener noreferrer">金石亚药</a></td><td>2026-09-17</td><td>14日</td><td>13.20</td><td class='dn'>-8.64%</td><td class='dn'>-4.39%</td><td class='dn'>-14.32%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>化学制药</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sz300530</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300530.html" target="_blank" rel="noopener noreferrer">领湃科技</a></td><td>2026-10-09</td><td>4日</td><td>30.16</td><td class='dn'>-26.03%</td><td class='dn'>-6.96%</td><td class='dn'>-26.03%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>电池</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第3日</span></td></tr><tr><td>sz300691</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300691.html" target="_blank" rel="noopener noreferrer">联合光电</a></td><td>2026-09-21</td><td>12日</td><td>16.95</td><td class='dn'>-18.47%</td><td class='dn'>-5.37%</td><td class='dn'>-18.47%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>计算机设备</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sz300821</td><td><a class="emlk" href="https://quote.eastmoney.com/sz300821.html" target="_blank" rel="noopener noreferrer">东岳硅材</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-09</td><td>4日</td><td>18.32</td><td class='dn'>-21.67%</td><td class='dn'>-3.60%</td><td class='dn'>-21.67%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>化学制品</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第5日</span></td></tr><tr><td>sz301010</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301010.html" target="_blank" rel="noopener noreferrer">晶雪节能</a></td><td>2026-10-13</td><td>2日</td><td>24.27</td><td class='dn'>-17.96%</td><td class='up'>+7.38%</td><td class='dn'>-22.58%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>装修建材</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#188038'>✓第1日</span></td></tr><tr><td>sz301041</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301041.html" target="_blank" rel="noopener noreferrer">金百泽</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-13</td><td>2日</td><td>41.06</td><td class='dn'>-33.07%</td><td class='dn'>-11.59%</td><td class='dn'>-33.07%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>元件</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第1日</span></td></tr><tr><td>sz301052</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301052.html" target="_blank" rel="noopener noreferrer">果麦文化</a> <span style='color:#1a73e8'>●</span></td><td>2026-10-12</td><td>3日</td><td>35.37</td><td class='up'>+0.93%</td><td class='up'>+7.52%</td><td class='dn'>-17.16%</td><td style='font-weight:700;color:#188038'>盈利</td><td>出版</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第3日</span></td></tr><tr><td>sz301132</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301132.html" target="_blank" rel="noopener noreferrer">满坤科技</a> <span style='color:#1a73e8'>●</span></td><td>2026-09-14</td><td>17日</td><td>75.18</td><td class='dn'>-37.84%</td><td class='dn'>-5.68%</td><td class='dn'>-37.84%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>元件</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第1日</span></td></tr><tr><td>sz301190</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301190.html" target="_blank" rel="noopener noreferrer">善水科技</a> <span style='color:#1a73e8'>●</span></td><td>2026-09-30</td><td>6日</td><td>48.00</td><td class='dn'>-29.04%</td><td class='up'>+12.08%</td><td class='dn'>-29.04%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>化学原料</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>第2日↺</td><td>—</td><td><span style='color:#188038'>✓第2日</span></td></tr><tr><td>sz301251</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301251.html" target="_blank" rel="noopener noreferrer">威尔高</a> <span style='color:#1a73e8'>●</span></td><td>2026-09-16</td><td>15日</td><td>82.72</td><td class='dn'>-38.33%</td><td class='dn'>-8.72%</td><td class='dn'>-38.33%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>元件</td><td><span style='color:#1a73e8;font-weight:700'>✓</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第1日</span></td></tr><tr><td>sz301311</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301311.html" target="_blank" rel="noopener noreferrer">昆船智能</a></td><td>2026-09-24</td><td>9日</td><td>19.80</td><td class='dn'>-8.13%</td><td class='up'>+5.86%</td><td class='dn'>-8.13%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>通用设备</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第10日</span></td></tr><tr><td>sz301520</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301520.html" target="_blank" rel="noopener noreferrer">万邦医药</a></td><td>2026-09-14</td><td>17日</td><td>67.50</td><td class='dn'>-25.85%</td><td class='dn'>-8.01%</td><td class='dn'>-27.42%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>医疗服务</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第1日</span></td></tr><tr><td>sz301583</td><td><a class="emlk" href="https://quote.eastmoney.com/sz301583.html" target="_blank" rel="noopener noreferrer">托伦斯</a></td><td>2026-09-18</td><td>13日</td><td>120.26</td><td class='dn'>-27.53%</td><td class='dn'>-6.21%</td><td class='dn'>-27.53%</td><td style='font-weight:700;color:#d93025'>亏损</td><td>半导体</td><td><span style='color:#9aa0a6'>—</span></td><td>未↺</td><td>—</td><td><span style='color:#d93025'>✗第3日</span></td></tr></tbody></table><div class='sub'>数据基准（回测信号日）%s · <a href='index.html'>← 回测汇总</a></div></div><!--WB_APP--><script id='wb-app'>
+/* ============================================================
+   通用交互 (A股看板) — 由 _apply_theme.py 注入每个页面。
+   功能：① 当前页导航高亮 ② 带 data-wb 的列表表可点表头排序
+        ③ 每表上方搜索框做全表筛选。
+   对已有自备排序的表（表头带 data-k）不接管排序，只加搜索框，避免重复绑定。
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ① 当前页导航高亮 —— 保证「有且仅有一项」被点亮
+     先按「web/ 相对路径」精确匹配（避免同名 index.html 误点亮多个），
+     再依次降级：前缀归属（归档/明细子页）→ 同目录首页 → 同目录唯一项。
+     导航链接是相对路径，须经 a.href 解析成绝对 URL 再比较。 */
+  try {
+    function pageKey(pathname) {
+      var p = String(pathname || "").replace(/\.html$/i, "");
+      var i = p.indexOf("/web/");
+      if (i > -1) return p.slice(i + 1);    // "web/sector/index"
+      return p.replace(/^.*\//, "");        // 仓库根 index.html -> "index"
+    }
+    function keyOf(href) {
+      var cut = String(href || "").split("#")[0];
+      var q = cut.indexOf("?");
+      var search = q > -1 ? cut.slice(q).toLowerCase() : "";
+      var p = q > -1 ? cut.slice(0, q) : cut;
+      try { p = new URL(p, location.href).pathname; } catch (e) {}
+      return { key: pageKey(p), search: search };
+    }
+    function dirOf(k) { return k.replace(/\/[^\/]*$/, ""); }
+
+    var curKey = pageKey(location.pathname);
+    var curSearch = (location.search || "").toLowerCase();
+    var entries = [];
+    document.querySelectorAll(".topnav a, nav a, .wb-nav a").forEach(function (a) {
+      var h = a.getAttribute("href") || "";
+      if (!h || h === "#" || h.indexOf("javascript:") === 0) return;
+      var info = keyOf(a.href || h);
+      if (!info.key) return;
+      if (curSearch && !info.search) return;
+      if (info.search && curSearch.indexOf(info.search) < 0) return;
+      entries.push({ a: a, key: info.key });
+    });
+
+    /* 1) 精确命中 */
+    var picked = entries.filter(function (e) { return e.key === curKey; });
+
+    /* 2) 前缀归属：归档/明细子页点亮其所属板块主项（取最长匹配） */
+    if (!picked.length) {
+      var pre = entries.filter(function (e) { return curKey.indexOf(e.key) === 0; });
+      if (pre.length) {
+        pre.sort(function (x, y) { return y.key.length - x.key.length; });
+        picked = [pre[0]];
+      }
+    }
+
+    /* 3) 同目录：唯一项直接命中；多候选时只取目录首页(index) */
+    if (!picked.length) {
+      var cd = dirOf(curKey), uniq = {};
+      entries.forEach(function (e) { if (dirOf(e.key) === cd) uniq[e.key] = e; });
+      var ks = Object.keys(uniq);
+      if (ks.length === 1) {
+        picked = [uniq[ks[0]]];
+      } else if (ks.length > 1) {
+        var idx = ks.filter(function (k) { return /\/index$/.test(k); });
+        if (idx.length === 1) picked = [uniq[idx[0]]];
+      }
+    }
+
+    picked.forEach(function (e) { e.a.classList.add("cur"); });
+  } catch (e) {}
+
+  /* ④ 返回 / 回顶：页头「← 返回」优先走浏览器历史（从哪来退回哪），
+     无历史（直接打开链接/新标签）则用 href 兜底跳门户首页 —— 不用 javascript: 伪协议，
+     保证 href 始终是个真链接（断链门禁与无 JS 环境都成立）。
+     右下角浮动按钮：回顶在滚动 400px 后淡入，回门户常驻。 */
+  try {
+    document.querySelectorAll("a.wb-back").forEach(function (a) {
+      a.addEventListener("click", function (ev) {
+        try {
+          if (window.history && window.history.length > 1 && document.referrer) {
+            ev.preventDefault();
+            window.history.back();
+          }
+        } catch (e) {}
+      });
+    });
+    var top = document.querySelector(".wb-fab a.wb-top");
+    if (top) {
+      top.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        try { window.scrollTo({ top: 0, behavior: "smooth" }); }
+        catch (e) { window.scrollTo(0, 0); }
+      });
+      var sync = function () {
+        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        top.style.display = y > 400 ? "flex" : "none";
+      };
+      window.addEventListener("scroll", sync, { passive: true });
+      sync();
+    }
+  } catch (e) {}
+
+  /* 工具：判断单元格是否为数值 */
+  function isNum(s) {
+    if (s == null) return false;
+    s = String(s).replace(/[,\s%]/g, "");
+    if (s === "" || s === "—" || s === "-") return false;
+    return !isNaN(parseFloat(s)) && isFinite(parseFloat(s));
+  }
+  function cellText(tr, ci) {
+    var c = tr.children[ci];
+    if (!c) return "";
+    if (c.dataset) {
+      if (c.dataset.val !== undefined) return c.dataset.val;
+      if (c.dataset.v !== undefined) return c.dataset.v;
+    }
+    return c.textContent || "";
+  }
+
+  /* ②+③ 列表表排序 + 筛选 */
+  document.querySelectorAll("table[data-wb]").forEach(function (tbl) {
+    var thead = tbl.querySelector("thead");
+    if (!thead) return;
+    var ths = thead.querySelectorAll("th");
+    if (ths.length < 1) return;
+
+    /* 搜索框 */
+    try {
+      var box = document.createElement("input");
+      box.type = "search";
+      box.className = "wb-search";
+      box.placeholder = "筛选本表（输入关键字，支持跨列）…";
+      box.setAttribute("aria-label", "筛选表格");
+      tbl.parentNode.insertBefore(box, tbl);
+      box.addEventListener("input", function () {
+        var q = box.value.trim().toLowerCase();
+        var rows = tbl.querySelectorAll("tbody tr");
+        var shown = 0;
+        rows.forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.style.display = hit ? "" : "none";
+          if (hit) shown++;
+        });
+        var old = tbl.parentNode.querySelector(".wb-empty");
+        if (old) old.parentNode.removeChild(old);
+        if (q && shown === 0) {
+          var tip = document.createElement("div");
+          tip.className = "wb-empty";
+          tip.textContent = "无匹配结果";
+          tbl.parentNode.insertBefore(tip, tbl.nextSibling);
+        }
+      });
+    } catch (e) {}
+
+    /* 排序：列级数值自动识别。
+       若表头带 data-k，说明页面自备了更精确的排序脚本（按 data-v 数值排），
+       通用脚本不再接管排序（只保留上面的搜索框），避免双重绑定互相覆盖。 */
+    var hasCustom = !!thead.querySelector("th[data-k]");
+    if (!hasCustom) ths.forEach(function (th, ci) {
+      if (th.dataset && th.dataset.noSort !== undefined) return;
+      th.style.cursor = "pointer";
+      th.classList.add("sort");
+      th.addEventListener("click", function () {
+        var numeric = th.classList.contains("num");
+        if (!numeric) {
+          var sample = tbl.querySelectorAll("tbody tr");
+          var nN = 0, nT = 0;
+          sample.forEach(function (r) {
+            if (r.children[ci]) { nT++; if (isNum(cellText(r, ci))) nN++; }
+          });
+          numeric = nT > 0 && nN / nT >= 0.7;
+        }
+        var asc = th.dataset.asc !== "1";
+        var rows = [].slice.call(tbl.querySelectorAll("tbody tr"));
+        rows.sort(function (a, b) {
+          var va = cellText(a, ci), vb = cellText(b, ci);
+          if (numeric) {
+            var fa = parseFloat(String(va).replace(/[,\s%]/g, "")) || 0;
+            var fb = parseFloat(String(vb).replace(/[,\s%]/g, "")) || 0;
+            return asc ? fa - fb : fb - fa;
+          }
+          va = String(va || ""); vb = String(vb || "");
+          return asc ? va.localeCompare(vb, "zh") : vb.localeCompare(va, "zh");
+        });
+        var tb = tbl.querySelector("tbody");
+        rows.forEach(function (r) { tb.appendChild(r); });
+        ths.forEach(function (x) { x.classList.remove("sorted"); x.removeAttribute("data-asc"); });
+        th.classList.add("sorted");
+        th.dataset.asc = asc ? "1" : "0";
+      });
+    });
+  });
+})();
+
+</script><!--/WB_APP--><!--WB_FAB--><div class='wb-fab'><a class='wb-top' href='#' title='回到顶部' aria-label='回到顶部'>↑</a><a class='wb-home' href='../../../index.html' title='返回门户首页' aria-label='返回门户首页'>⌂</a></div><!--/WB_FAB--></body></html>
