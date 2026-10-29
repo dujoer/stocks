@@ -189,21 +189,28 @@ STEPS = [
     # ★ 2026-10-29 补登记：顾比倒数线（每日全市场扫描 + 当日证据）。
     #   顺序有讲究 —— build_guppy 页面的「证据面板」读 quant/guppy/*.json，
     #   **必须先跑证据脚本再跑页面**，否则页面会拿昨天的窗口冒充当日（违反「严禁旧数据冒充当日」）。
-    #   证据脚本：_guppy_variants（入场口径 canonical edge/R3/留一，跑当期窗 + 前移 60 日对照窗）
+    #   证据脚本：_guppy_variants（入场口径 canonical edge/R3/留一/随机对照，
+    #                             跑当期窗 + 前移 60 日对照窗，随机对照 200 次固定种子）
     #             _guppy_exit（止损线离场配对检验 Δ，跨步长 5/10）
+    #   ⚠ 随机对照是全变体里最贵的一步（~25s/变体），日更只对 4 条定型号口径跑
+    #     （--rand-names），约 100s/窗；其余行页面显示「—」不参与定型。
     (13, "auto", "量化策略板 + 全市场横截面 + 三连阴 + 精中取精 + 研报分析 + 顾比倒数线（观察候选）",
      "build_quant_strategy.py {D}; build_cross_section.py --date {D}; build_3yl.py {D}; "
      "build_selected_elite.py {D}; build_highwin_elite.py {D}; build_n_shape.py {D}; "
      "build_n_shape_backtest.py {D}; build_n_shape_sim.py {D}; build_research.py {D}; "
-     "_guppy_variants.py --asof 60 --tradable-only; "
-     "_guppy_variants.py --asof 60 --offset 60 --tradable-only; "
+     "_guppy_variants.py --asof 60 --tradable-only --rand "
+     "--rand-names raw_cross_up,cu_ma20,cu_ret20_le10,combo_core; "
+     "_guppy_variants.py --asof 60 --offset 60 --tradable-only --rand "
+     "--rand-names raw_cross_up,cu_ma20,cu_ret20_le10,combo_core; "
      "_guppy_exit.py --hold 20 --ndates 60 --steps 5,10; build_guppy.py {D}",
      ["build_quant_strategy.py {D}", "build_cross_section.py --date {D}",
       "build_3yl.py {D}", "build_selected_elite.py {D}", "build_highwin_elite.py {D}",
       "build_n_shape.py {D}", "build_n_shape_backtest.py {D}", "build_n_shape_sim.py {D}",
       "build_research.py {D}",
-      "_guppy_variants.py --asof 60 --tradable-only",
-      "_guppy_variants.py --asof 60 --offset 60 --tradable-only",
+      "_guppy_variants.py --asof 60 --tradable-only --rand "
+      "--rand-names raw_cross_up,cu_ma20,cu_ret20_le10,combo_core",
+      "_guppy_variants.py --asof 60 --offset 60 --tradable-only --rand "
+      "--rand-names raw_cross_up,cu_ma20,cu_ret20_le10,combo_core",
       "_guppy_exit.py --hold 20 --ndates 60 --steps 5,10",
       "build_guppy.py {D}"]),
     # ★ 2026-10-13 修：孤儿页（无任何入链的归档页）此前靠手工跑 `_fix_orphans.py`，

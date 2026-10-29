@@ -132,6 +132,7 @@ KEY_VARIANTS = [
 
 MIN_N_ROWS = 1000     # 低于此样本量不进结论 （off120 那种个位/百位样本不参与定型）
 COST_PP = 0.15        # 双边成本地板（佣金.05+印花.05+过户.002+滑点.05）
+RAND_P_MAX = 0.05     # 随机对照门槛：p = P(随机等额抽样 edge ≥ 实际 edge)，>5% 判噪声
 
 
 def verdict_of(ev):
@@ -146,7 +147,8 @@ def verdict_of(ev):
                 continue
             recs.append({"win": win, "tag": tag, "key": key, "label": label,
                          "n": r.get("n_rows"), "edge": r["edge"], "r3": r.get("r3"),
-                         "loo": r.get("loo_min")})
+                         "loo": r.get("loo_min"), "rand_p": r.get("rand_p"),
+                         "rand_mean": r.get("rand_edge_mean")})
     big = [r for r in recs if (r["n"] or 0) >= MIN_N_ROWS and r["key"] != "stop_break"]
     lines, ok = [], False
     if not big:
@@ -161,6 +163,28 @@ def verdict_of(ev):
                      "符号在不同窗口<b>%s</b>。"
                      % (best["label"], best["edge"], best["r3"] or 0, best["loo"] or 0,
                         "一致" if len(signs) == 1 else "<span style='color:#d93025'>不一致</span>"))
+        # 随机对照：每个窗口内取该窗 edge 最强的定型号口径，报告 p = P(随机等额抽样 edge ≥ 实际)
+        by_win = {}
+        for r in big:
+            if r["rand_p"] is None:
+                continue
+            cur = by_win.get(r["win"])
+            if cur is None or r["edge"] > cur["edge"]:
+                by_win[r["win"]] = r
+        if by_win:
+            boots = [rr["rand_boots"] for v in ev["variants"]
+                     for rr in (v.get("variants") or {}).values()
+                     if isinstance(rr, dict) and rr.get("rand_boots")]
+            n_b = ("×%d 次" % boots[0]) if boots else ""
+            parts = []
+            for w in sorted(by_win):
+                r = by_win[w]
+                cls = "up" if r["rand_p"] <= RAND_P_MAX else "dn"
+                parts.append("窗 %s 最强「%s」p=<b class='%s'>%.3f</b>（随机均值 %+.3fpp）"
+                             % (w, r["label"], cls, r["rand_p"], r["rand_mean"] or 0))
+            lines.append("随机对照（每日等额随机抽样%s）：%s。"
+                         "两边 p 差距极大说明<b>信号不是噪声</b>，但方向随行情段翻转 "
+                         "→ 是<b>顺势暴露</b>而非无条件超额。" % (n_b, "；".join(parts)))
         if len(signs) != 1:
             lines.append("→ 结论随行情段翻转（顺势暴露，不是无条件超额），<b>不可出票</b>。")
         elif best["edge"] <= 0:
@@ -169,6 +193,11 @@ def verdict_of(ev):
             lines.append("→ R3 未过 95%，robustness 不足，<b>不可出票</b>。")
         elif best["edge"] < COST_PP:
             lines.append("→ edge 低于双边成本地板 %.2fpp，<b>经济上不可执行</b>。" % COST_PP)
+        elif best["rand_p"] is None:
+            lines.append("→ 最强口径<b>未跑随机对照</b>，无法排除「随手一抽也能抽到」，<b>不可出票</b>。")
+        elif best["rand_p"] > RAND_P_MAX:
+            lines.append("→ 随机对照 p=%.3f &gt; %.2f：同数量随机抽样也能达到该 edge，"
+                         "<b>不可出票</b>。" % (best["rand_p"], RAND_P_MAX))
         else:
             ok = True
             lines.append("→ 通过门槛（可继续按第五/六道闸复核），但本页仍按观察池处理。")
@@ -295,10 +324,12 @@ def _evidence_html(ev, ok, lines):
 
     if ev["variants"]:
         h.append("<div class='sub'>入场口径 canonical 检验：逐日平衡 edge（对照域 = 当日全部可判个股）、"
-                 "按日 block bootstrap 的 R3 = P(edge&gt;0)、留一法下限。"
+                 "按日 block bootstrap 的 R3 = P(edge&gt;0)、留一法下限、"
+                 "随机对照 p = P(每日等额随机抽样的 edge ≥ 该口径实际 edge)。"
                  "样本量 &lt; %d 条的不参与定型。</div>" % MIN_N_ROWS)
         h.append("<table data-wb><thead><tr><th>时间窗</th><th>口径</th><th>样本</th>"
-                 "<th>edge(pp)</th><th>R3%</th><th>留一下限(pp)</th></tr></thead><tbody>")
+                 "<th>edge(pp)</th><th>R3%</th><th>留一下限(pp)</th>"
+                 "<th>随机对照 p</th><th>随机均值(pp)</th></tr></thead><tbody>")
         for v in ev["variants"]:
             win = v.get("window") or ["?", "?"]
             tag = v["file"].replace("variants_", "").replace(".json", "")
@@ -308,19 +339,33 @@ def _evidence_html(ev, ok, lines):
                     continue
                 if r.get("edge") is None:
                     h.append("<tr><td>%s→%s<br><span class='note'>%s</span></td><td>%s</td>"
-                             "<td>%s</td><td colspan='3'>%s</td></tr>" % (
+                             "<td>%s</td><td colspan='5'>%s</td></tr>" % (
                                  win[0], win[1], tag, label, _num(r.get("n_rows"), "%d"),
                                  r.get("note") or "样本不足"))
                     continue
                 small = (r.get("n_rows") or 0) < MIN_N_ROWS
                 style = " style='color:#9aa0a6'" if small else ""
                 ecls = "up" if r["edge"] >= 0 else "dn"
+                if r.get("rand_p") is None:
+                    pcell = "<td>—</td>"
+                else:
+                    pcls = "up" if r["rand_p"] <= RAND_P_MAX else "dn"
+                    pcell = "<td class='%s'>%.3f</td>" % (pcls, r["rand_p"])
+                mcell = "—" if r.get("rand_edge_mean") is None else "%+.3f" % r["rand_edge_mean"]
                 h.append("<tr%s><td>%s→%s<br><span class='note'>%s</span></td><td>%s</td>"
-                         "<td>%s</td><td class='%s'>%+.3f</td><td>%.1f</td><td>%+.3f</td></tr>" % (
+                         "<td>%s</td><td class='%s'>%+.3f</td><td>%.1f</td><td>%+.3f</td>"
+                         "%s<td>%s</td></tr>" % (
                              style, win[0], win[1], tag, label,
                              _num(r.get("n_rows"), "%d"), ecls, r["edge"],
-                             r.get("r3") or 0, r.get("loo_min") or 0))
+                             r.get("r3") or 0, r.get("loo_min") or 0, pcell, mcell))
         h.append("</tbody></table>")
+        nb = [rr["rand_boots"] for v in ev["variants"]
+              for rr in (v.get("variants") or {}).values()
+              if isinstance(rr, dict) and rr.get("rand_boots")]
+        h.append("<div class='sub'>随机对照：每日抽与信号<b>等额</b>的随机样本、固定种子重复 %s 次；"
+                 "p 越小说明该口径越不像「随手一抽」（门槛 ≤ %.2f）。"
+                 "未跑的行显示「—」，不参与定型。</div>" % (
+                     ("%d" % nb[0]) if nb else "N", RAND_P_MAX))
 
     if ev["exit"]:
         e = ev["exit"]

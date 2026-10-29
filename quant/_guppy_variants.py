@@ -13,6 +13,7 @@ import json
 import os
 import random
 import sys
+import time
 
 QUANT = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(QUANT)
@@ -177,6 +178,10 @@ def main():
     ap.add_argument("--offset", type=int, default=0,
                     help="往前让出 N 个回测日，用于跨窗口复核")
     ap.add_argument("--rand", action="store_true", help="对全部变体跑随机对照（慢）")
+    ap.add_argument("--rand-names", default="",
+                    help="只对这些变体跑随机对照（逗号分隔，如 raw_cross_up,cu_ma20）")
+    ap.add_argument("--rand-boots", type=int, default=RAND_N,
+                    help="随机对照抽样次数（默认 %d，越大越慢）" % RAND_N)
     a = ap.parse_args()
 
     global TP, SL, FWD
@@ -206,6 +211,11 @@ def main():
            "cb_n": a.cb, "tp": a.tp, "sl": a.sl, "fwd": a.fwd,
            "boot": BOOT, "rand_n": RAND_N,
            "n_domain": len(domain), "variants": {}}
+    tail = "_tradable" if a.tradable_only else ""
+    if a.offset:
+        tail += "_off%d" % a.offset
+    os.makedirs(OUT_DIR, exist_ok=True)
+    p_tmp = os.path.join(OUT_DIR, "variants_%s%s.json" % (DS, tail))
     print("\n%-20s %6s %8s %7s %9s %8s" % ("变体", "n_rows", "edge(pp)", "R3%", "留一下限", "胜率%"))
     for name, fn in variants().items():
         st = GC.edge_stats(domain, fn, lambda r: True, boot=BOOT, name=name)
@@ -221,26 +231,36 @@ def main():
         out["variants"][name] = rec
 
     if a.rand:
-        print("\n---- 随机对照（每日等额随机抽样 × %d 次，固定种子 %d）----" % (RAND_N, RAND_SEED))
+        names = [x.strip() for x in a.rand_names.split(",") if x.strip()]
+        want = set(names)
+        vmap = variants()
+        if want:
+            miss = [x for x in names if x not in vmap]
+            if miss:
+                print("[WARN] 随机对照指定了不存在的变体：%s（已忽略）" % "、".join(miss))
+        sel = [(n, f) for n, f in vmap.items() if (not want) or n in want]
+        print("\n---- 随机对照（每日等额随机抽样 × %d 次，固定种子 %d）----"
+              % (a.rand_boots, RAND_SEED))
         print("  p = 随机抽样 edge ≥ 该变体实际 edge 的比例；p 越小越不像噪声")
-        for name, fn in variants().items():
+        print("  本次参与：%s" % "、".join(n for n, _ in sel))
+        for name, fn in sel:
             st = GC.edge_stats(domain, fn, lambda r: True, boot=BOOT, name=name)
             if st.get("edge") is None:
                 continue
-            p, mean_e = rand_control(domain, fn, st["edge"])
-            print("  %-20s edge=%+.3fpp  随机均值=%+.3fpp  p=%.3f"
-                  % (name, st["edge"], mean_e if mean_e is not None else float("nan"), p))
+            t0 = time.time()
+            p, mean_e = rand_control(domain, fn, st["edge"], boots=a.rand_boots)
+            print("  %-20s edge=%+.3fpp  随机均值=%+.3fpp  p=%s  （%.1fs）"
+                  % (name, st["edge"], mean_e if mean_e is not None else float("nan"),
+                     "—" if p is None else "%.3f" % p, time.time() - t0))
             out["variants"][name]["rand_p"] = p
             out["variants"][name]["rand_edge_mean"] = mean_e
+            out["variants"][name]["rand_boots"] = a.rand_boots
+            json.dump(out, open(p_tmp, "w", encoding="utf-8"), ensure_ascii=False,
+                      indent=1, sort_keys=True)   # 边跑边落盘，防中断丢整批
 
-    os.makedirs(OUT_DIR, exist_ok=True)
-    tail = "_tradable" if a.tradable_only else ""
-    if a.offset:
-        tail += "_off%d" % a.offset
-    p = os.path.join(OUT_DIR, "variants_%s%s.json" % (DS, tail))
-    json.dump(out, open(p, "w", encoding="utf-8"), ensure_ascii=False,
+    json.dump(out, open(p_tmp, "w", encoding="utf-8"), ensure_ascii=False,
               indent=1, sort_keys=True)
-    print("\n存档：%s" % p)
+    print("\n存档：%s" % p_tmp)
 
 
 if __name__ == "__main__":
