@@ -593,6 +593,28 @@ python quant/gen_highwin.py  --date {DATE}   # 渲染 → web/picks/highwin_{YYY
 <p class="note">⚠️ 旧的 <code>build_highwin_0914.py</code> 把日期和路径<b>写死在脚本里</b>，每天要改文件名，现已归档。基底文件 <code>quant/macd_scan_{YYYYMMDD}.json</code> 缺失会输出 0 行；增强数据缺失时对应维度自动记 0，页面上显示「—」。</p>
 </div>
 
+<h3>⑩ 顾比倒数线 · 每日全市场扫描（观察池 · 非出票）</h3>
+<div class="card">
+<p>自「重要低点」向左倒数 3 条「最高价更高」的重要 K 线，取第 3 条最高价画水平<b>入场线</b>；自「重要高点」同样倒数 3 条「最低价更低」取最低价画<b>止损线</b>；一律以<b>收盘价</b>判定（盘中穿越无效）。重要高低点用左右各 2 根 K 线确认，<b>pivot 必须滞后确认，重算历史任一日都不会用到当日之后的数据</b>。</p>
+<p>每日输出两张清单：① 今日收盘站上入场线；② 今日收盘跌破止损线（供持仓者做离场自查）。</p>
+<pre># 顺序不能反：页面读 quant/guppy/*.json，证据脚本必须先于页面跑
+# （否则页面会拿昨天的窗口冒充当日，违反「严禁旧数据冒充当日」）
+python3 quant/_guppy_variants.py --asof 60 --tradable-only --rand \
+        --rand-names raw_cross_up,cu_ma20,cu_ret20_le10,combo_core
+python3 quant/_guppy_variants.py --asof 60 --offset 60 --tradable-only --rand \
+        --rand-names raw_cross_up,cu_ma20,cu_ret20_le10,combo_core
+python3 quant/_guppy_exit.py --hold 20 --ndates 60 --steps 5,10
+python3 quant/build_guppy.py {DATE}
+
+# 单跑（不重算证据，只重渲染页面）：python3 quant/build_guppy.py {DATE}</pre>
+<p class="note">⚠️ 三个易漏点：<br>
+① <b>顺序</b>：证据脚本（_guppy_variants / _guppy_exit）必须在 build_guppy 之前，页面顶部与底部的「证据面板」全靠它。<br>
+② <b>两个窗口都要跑</b>：<code>--offset 60</code> 的对照窗用于跨窗复核；只跑当期窗会让结论变成「按最好看的窗口判」。<br>
+③ <b>随机对照很贵</b>（约 25 秒 / 变体 × 200 次抽样）：日更只对 4 条定型号口径跑（<code>--rand-names</code>），其余行页面显示「—」不参与定型。<br>
+④ 扫描与证据都用<b>可交易口径</b>（剔除北交所 + 近 20 日日均成交额 &lt; 3000 万），页面只读 <code>*_tradable*.json</code>；全市场口径的旧产物已归档到 <code>quant/guppy/archive_allmarket/</code>，不要混读。</p>
+<p class="danger">结论由产物<b>现算</b>（<code>build_guppy.verdict_of</code>），页面<b>不写死任何统计数字</b>。当前跨两窗符号不一致 → 观察池 · 非出票；若某天符号转一致，仍须过随机对照 p ≤ 5% + 逐日 edge &gt; 0.15pp 成本地板才谈得上可执行。</p>
+</div>
+
 <h3>⑪ 当日要闻 + 数据库累积</h3>
 <div class="card">
 <pre># data_hot(kind=news) 榜单落盘（结构：[["来源","标题"], …]）
@@ -603,7 +625,7 @@ python quant/db_update.py {DATE}   # SQLite 主库幂等 upsert（9 张表）
 python quant/db_export.py          # 导出列式分片到 web/data/，供查询页</pre>
 </div>
 
-<h3>⑪ 刷新总门户 + 校验</h3>
+<h3>⑫ 刷新总门户 + 校验</h3>
 <div class="card">
 <pre>python quant/build_portal.py     # 重建总门户，自动带出各子系统最新日期与新鲜度
 python quant/build_sections.py   # 生成跳转页（内容已并入门户）
