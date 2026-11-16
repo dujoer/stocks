@@ -223,7 +223,24 @@ def day_stats(cache, date=None, min_codes=0):
     if total < min_codes:               # 覆盖不足 → 不给「最高连板」这种脆弱数字
         hi = None
     else:
-        hi = None
+        # 最高连板 = 当日封板票里 run（连续涨停天数）的最大值。
+        # scan_one_day 为省算力不返回 run，这里只对**当日封板的票**回溯算 run，
+        # 与 streak_blocks 的 hi 口径一致（断板归零，scan_one 同一套判定）。
+        hi = 0
+        for code, bars in cache.items():
+            if len(bars) < 2:
+                continue
+            r = scan_one_day(code, bars, date)
+            if not r or not r["closed"]:
+                continue
+            run = 0
+            for br in scan_one(code, bars):
+                if br["date"] == r["date"]:
+                    run = br["run"]
+                    break
+            if run > hi:
+                hi = run
+        hi = hi if hi else None
     return dict(up=up, down=down, flat=flat, total=total,
                 zt=zt, dn=dn, touched=touched, zb=touched - zt if touched >= zt else 0,
                 amount=amt, hi=hi, date=date)

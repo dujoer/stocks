@@ -182,6 +182,15 @@ def main():
         time.sleep(a.sleep)
     print(f"拉取完成 quote={len(quotes)} chip={len(chips)} flow={len(flows)}")
 
+    # 52周区间：quotes 快照的 high_52week/low_52week 已被证伪（窗口压缩到约一季度），
+    # 唯一自洽真源 = K线缓存近250根自算（与 build_n_shape / research 同口径）。
+    import _txk
+    import build_n_shape as NS
+    _txk.set_asof(a.date)
+    kcache = _txk.load()
+    w52 = NS.load_52w_cache(kcache)
+    print(f"52周区间自 K线缓存自算：覆盖 {len(w52)} 只")
+
     extra = {}
     missing = []
     for code in codes:
@@ -196,7 +205,8 @@ def main():
             missing.append(code)
             continue
         close = _f(q.get("price"))
-        hi, lo = _f(q.get("high_52week")), _f(q.get("low_52week"))
+        w52pair = w52.get(code)
+        hi, lo = (w52pair if w52pair else (None, None))
         if close is None or hi is None or lo is None:
             missing.append(code)
             continue

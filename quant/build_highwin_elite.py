@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""高胜率候选池 · 精中取精（胜率候选 · 观察用 · 未过样本外稳健性闸 + 底池冻结）
+"""高胜率候选池 · 精中取精（胜率候选 · 观察用 · 未过样本外稳健性闸）
 
 目的
 ----
@@ -9,10 +9,11 @@
 
 ⚠ 红线约束（不可逾越）
 ----------------------
-本页**只作观察 / 待选，不构成可执行信号**，且高胜率池比主升精选多一道更硬的否决：
-  · 数据有效性闸：MACD 底池自 2026-09-17 起连续 6 期逐字节冻结，收盘价反查 35/35 只精确等于
-    2026-09-11 —— 当前页面标的用的是一份旧快照冒充当日，违反「严禁旧数据冒充当日」。
-    → 在数据修好前，本池候选连「当日信号」都不是，更谈不上出票（优先级高于一切策略优化）。
+本页**只作观察 / 待选，不构成可执行信号**，且高胜率池比主升精选多一道更硬的数据有效性闸：
+  · 数据有效性闸（冻结检测）：读 quant/_hw_tier_gate.json 的 freeze 段动态判定——
+    若近期各期 frozen=true 才显示「底池冻结/旧快照冒充当日」红线；若已按日重扫（frozen=false）
+    则据实显示「底池有效、无冻结」。2026-11-16 修：此前此处硬编码冻结结论，底池早已修复却仍误报。
+    无论冻结与否，本池均不给出票结论。
   · 第五道闸：CORE 档（可得子分前 10% 降级口径）样本外 edge 在 7 个采样频率下全为负
     （−1.886~−0.2929pp、R3 最低 3.0%）→ 全站 23 档无一跨过 0.15pp 双边成本线。
   · 胜率：乐观口径 55.80%、保守（可兑现）口径仅 49.64%（Δ−6.16pp），且两口径均值均为负
@@ -86,9 +87,7 @@ th{color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa;white-
 
 <div class="box red"><b>⚠️ 红线声明（必读）：本页是「观察候选」，不是「出票」。</b><br>
 本页列出的票是判断逻辑里<b>综合分（胜率代理）最靠前</b>的一撮，但它们<b>未过样本外稳健性闸</b>，且高胜率池当前另有一道更硬的否决：<br>
-<b>① 底池冻结（数据有效性闸，优先级最高）</b>：MACD 底池自 <b>__FROZEN_FROM__</b> 起连续 <b>__FROZEN_DAYS__</b> 期逐字节未重扫
-（dif/dea/close 全同），其收盘价反查 <b>__FROZEN_HIT__/__FROZEN_N__</b> 只精确等于 <b>__FROZEN_CLOSE__</b> ——
-即本页标的实为一份旧快照冒充当日，违反「严禁旧数据冒充当日」。<b>在数据修好前，本池连「当日信号」都不是</b>。<br>
+__FREEZE_REDLINE__
 <b>② 第五道闸</b>：CORE 档（可得子分前 10% 降级口径）样本外 edge 在 7 个采样频率下<b>全为负</b>
 （__EDGE_MIN__~__EDGE_MAX__pp、R3 最低 __R3_MIN__%）；全站 23 个可判定档<b>无一跨过 0.15pp 双边成本线</b>。<br>
 <b>③ 胜率≠edge</b>：CORE 乐观口径胜率 <b>__WR_OLD__%</b>、保守（可兑现）口径仅 <b>__WR_REAL__%</b>（Δ__WR_DELTA__pp），两口径<b>均值均为负</b>。
@@ -114,15 +113,14 @@ th{color:var(--muted);font-weight:600;font-size:11.5px;background:#fafafa;white-
 <th>52周分位</th><th>20日主力净流入</th><th>RSI</th><th>关键因子</th><th>性质</th></tr></thead>
 <tbody>__ELITE_TBL__</tbody></table></div>
 <div class="sub">综合分 = 8 维打分（趋势25/位置15/资金20/筹码15/板块12/龙虎榜8/高管大宗5）的当日横截面排序，越高=越像高胜率形态=历史胜率代理越靠前。
-<b>所有标的均为观察候选，非买入信号</b>；且本页底座为冻结快照（见红线声明①），仅供参考、不可作为当日下单依据。</div></div>
+<b>所有标的均为观察候选，非买入信号</b>；__FREEZE_TABLE_NOTE__</div></div>
 
 <h2>二、逐票明细（前 __MIN40__ 只）</h2>
 __ELITE_CARDS__
 
 <h2>三、为什么「精中取精」仍不能当出票（高胜率池额外两条）</h2>
 <div class="card kv">
-① <b>底池是旧快照（最硬否决）</b>：MACD 底池自 __FROZEN_FROM__ 起冻结 __FROZEN_DAYS__ 期，收盘价反查等于 __FROZEN_CLOSE__。
-哪怕打分再漂亮，拿过期信息下单 = 用 9 月 11 日的图决定 10 月 9 日的买卖，纯属无效。<b>先修底池重扫，再谈胜率</b>。<br>
+① __FREEZE_SECTION1__<br>
 ② <b>胜率是档位统计量，不是逐票属性</b>：单只股票单次前向是「赚/亏」二值，谈不上「率」；
 硬算逐票胜率等于用样本内数据拟合，是过拟合。本页「胜率」单位是<b>档</b>（CORE 整体）。<br>
 ③ <b>胜率≠edge</b>：CORE 乐观口径胜率 55.80% 但均值 −1.77%（涨时赚得少、跌时亏得多），保守口径胜率降至 49.64% —— 整体仍亏。<br>
@@ -131,10 +129,10 @@ CORE 两关都不达 → fail-safe 空仓。<br>
 ⑤ <b>唯一可用的杠杆是环境</b>：弱势档绝对胜率仅 ~41%、强势档 ~51%（差 10pp，远大于选股带来的 1~3pp）。
 故正确动作是「弱势降暴露 / 空仓」，而非「弱势里精挑细选」。<br>
 ⑥ 本页结论与 <code>web/picks/highwin_tier_gate.html</code>（分档核验页）一致：当前不出票（宁可不选）。
-本页只是把「观察池里综合分最靠前的一撮」单独拎出来方便你盯——且提醒你这撮数据本身已过期。</div>
+本页只是把「观察池里综合分最靠前的一撮」单独拎出来方便你盯。__FREEZE_TAIL__</div>
 
 <div class="foot">本页为基于离线日K的量化筛选与方法论，<b>非个股推荐、非买卖建议</b>。
-决策责任在账户本人。数据基准 __DATE__（底池实际为 __FROZEN_CLOSE__ 冻结快照）。精中取精 ≠ 可执行信号。</div>
+决策责任在账户本人。数据基准 __DATE__。__FREEZE_FOOT__ 精中取精 ≠ 可执行信号。</div>
 </div></body></html>"""
 
 
@@ -167,7 +165,12 @@ def render(elite, hw, date, elite_n, n_pool, pool_total):
             wr_delta = (mz.get("wr") - m0.get("wr")) if (mz.get("wr") is not None and m0.get("wr") is not None) else None
             break
     frz = gate.get("freeze") or []
-    fz = [x for x in frz if x.get("frozen")]
+    # ★ 冻结只认「当前数据日当期」：历史某期曾冻结（如 2026-09-18~30 的旧快照期）
+    #   早已在 10 月恢复逐日重扫，不能拿 9 月的冻结证据去否定 11 月的当日底池。
+    #   2026-11-16 修：原先用全部历史 frozen 条目（fz[-1]=09-30）套在当期页上，
+    #   造成「已修复仍宣称旧快照冒充当日」的误报。
+    ds = date.replace("-", "")
+    fz = [x for x in frz if x.get("frozen") and str(x.get("file", "")) >= ds]
     frozen_from = frozen_days = frozen_hit = frozen_n = frozen_close = "—"
     if fz:
         allr = sorted(frz, key=lambda x: x["file"])
@@ -178,6 +181,32 @@ def render(elite, hw, date, elite_n, n_pool, pool_total):
         frozen_hit = fz[-1].get("frozen_close_hit")
         frozen_n = fz[-1].get("frozen_close_n")
         frozen_close = fz[-1].get("frozen_close_date") or "—"
+
+    # ★ 冻结文案必须跟真源走（2026-11-16 修）：此前无论 frozen 与否都硬编码
+    #   「底池冻结/旧快照冒充当日」，而 MACD 底池早已按日重扫（freeze 全 False），
+    #   属「写死的已证伪结论」，违反「统计数字不得写死 / 旧数据不得冒充当日」。
+    if fz:
+        freeze_redline = (
+            "<b>① 底池冻结（数据有效性闸，优先级最高）</b>：MACD 底池自 <b>%s</b> 起连续 <b>%s</b> 期逐字节未重扫"
+            "（dif/dea/close 全同），其收盘价反查 <b>%s/%s</b> 只精确等于 <b>%s</b> —— "
+            "即本页标的实为一份旧快照冒充当日，违反「严禁旧数据冒充当日」。<b>在数据修好前，本池连「当日信号」都不是</b>。<br>"
+            % (frozen_from, frozen_days, frozen_hit, frozen_n, frozen_close))
+        freeze_sec1 = ("<b>底池是旧快照（最硬否决）</b>：MACD 底池自 %s 起冻结 %s 期，收盘价反查等于 %s。"
+                       "哪怕打分再漂亮，拿过期信息下单 = 用旧图决定当日买卖，纯属无效。<b>先修底池重扫，再谈胜率</b>。"
+                       % (frozen_from, frozen_days, frozen_close))
+        freeze_table_note = "且本页底座经核验为冻结快照（见红线声明①），仅供参考、不可作为当日下单依据。"
+        freeze_tail = "且提醒你这撮数据本身已过期。"
+        freeze_foot = "（底池实际为 %s 冻结快照）。" % frozen_close
+    else:
+        freeze_redline = (
+            "<b>① 底池数据有效性闸</b>：MACD 底池已按数据日逐期重扫（<code>quant/_hw_tier_gate.json</code> freeze 段"
+            "近期各期 <code>frozen=false</code>，dif/dea/close 逐期不同），<b>未发现冻结或旧快照冒充当日</b>。"
+            "本页标的为当日真实底池的观察候选。<br>")
+        freeze_sec1 = ("<b>底池数据有效</b>：MACD 底池按日重扫、无冻结（见 <code>freeze</code> 段），当日底池有效。"
+                       "仍须过第五道闸与成本闸才谈出票。")
+        freeze_table_note = "本页为当日底池观察候选，非买入信号、不可直接作为下单依据。"
+        freeze_tail = "数据有效性闸已核（无冻结）。"
+        freeze_foot = "（底池按日重扫、无冻结）。"
 
     emit_ok = hw.get("emit_ok")
     emit_why = hw.get("emit_why") or "证据不可用"
@@ -216,6 +245,11 @@ def render(elite, hw, date, elite_n, n_pool, pool_total):
             .replace("__FROZEN_HIT__", str(frozen_hit))
             .replace("__FROZEN_N__", str(frozen_n))
             .replace("__FROZEN_CLOSE__", str(frozen_close))
+            .replace("__FREEZE_REDLINE__", freeze_redline)
+            .replace("__FREEZE_SECTION1__", freeze_sec1)
+            .replace("__FREEZE_TABLE_NOTE__", freeze_table_note)
+            .replace("__FREEZE_TAIL__", freeze_tail)
+            .replace("__FREEZE_FOOT__", freeze_foot)
             .replace("__EDGE_MIN__", _fmt(edge_min) if edge_min is not None else "—")
             .replace("__EDGE_MAX__", _fmt(edge_max) if edge_max is not None else "—")
             .replace("__R3_MIN__", ("%.1f" % r3_min) if r3_min is not None else "—")
@@ -247,9 +281,15 @@ def main(date):
     html = render(elite, hw, date, elite_n, n_pool, pool_total)
     out = os.path.join(PAGE, "highwin_elite_%s.html" % ds)
     open(out, "w", encoding="utf-8").write(html)
+    # note 里的「底池冻结」同样按当期真源判定，不写死（2026-11-16 修）
+    _gate = _load(os.path.join(QUANT, "_hw_tier_gate.json")) or {}
+    _frozen_now = any(x.get("frozen") and str(x.get("file", "")) >= ds
+                      for x in (_gate.get("freeze") or []))
+    _note = ("观察候选·底池冻结+未过样本外稳健性闸·非可执行信号" if _frozen_now else
+             "观察候选·底池按日重扫无冻结·未过样本外稳健性闸·非可执行信号")
     json.dump({"date": date, "n_pool": n_pool, "pool_total": pool_total,
                "elite_n": len(elite), "elite_codes": [r["code"] for r in elite],
-               "note": "观察候选·底池冻结+未过样本外稳健性闸·非可执行信号"},
+               "note": _note},
               open(os.path.join(PAGE, "highwin_elite_%s.json" % ds), "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
     print("[hw-elite] 精中取精 %d 只（底池 %d / 全市场域 %s）→ %s" % (len(elite), n_pool, pool_total, out))
